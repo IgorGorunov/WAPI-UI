@@ -8,20 +8,26 @@ import {
   Tooltip,
   Legend,
   BarController,
+  ChartOptions,
+  elements,
+  plugins,
+  scales, TooltipItem,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import classes from "./Diagram.module.scss";
-//import { inter } from "../../../../pages/_app";
 import { PeriodType } from "@/types/dashboard";
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  BarController
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    BarController,
+    elements,
+    plugins,
+    scales,
 );
 
 type DataPoint = {
@@ -44,17 +50,17 @@ function hexToRgba(hex: string, opacity: number): string {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
-const Diagram: React.FC<DashboardDataProps> = ({
+let Diagram: React.FC<DashboardDataProps> = ({
   diagramData,
   diagramType = "DAY",
   setDiagramType,
 }) => {
-  const chartRef = useRef<any>(0);
+  let chartRef = useRef<ChartJS<"bar", number[], string> | null>(null);
 
-  const labels = diagramData.map((item) => item.Key);
-  const values = diagramData.map((item) => item.Value);
+  let labels = diagramData.map((item) => item.Key);
+  let values = diagramData.map((item) => item.Value);
 
-  const data = useMemo(
+  let data = useMemo(
     () => ({
       labels: labels,
       datasets: [
@@ -70,7 +76,8 @@ const Diagram: React.FC<DashboardDataProps> = ({
     [labels, values]
   );
 
-  const defaultOptions = {
+  let defaultOptions: ChartOptions<'bar'>;
+  defaultOptions = {
     maintainAspectRatio: false,
     elements: {
       bar: {
@@ -85,19 +92,18 @@ const Diagram: React.FC<DashboardDataProps> = ({
       },
       tooltip: {
         callbacks: {
-          label: (context: any[]) => {
+          label(tooltipItem: TooltipItem<"bar">): string | string[] | void {
             return "";
           },
-          footer: (context: any[]) => {
+          footer(tooltipItems: TooltipItem<'bar'>[]): string | string[] | void {
             return "";
           },
-          title: (context: any[]) => {
-            const tooltipItem = context[0];
+          title(tooltipItems: TooltipItem<'bar'>[]): string | string[] | void {
+            const tooltipItem = tooltipItems[0];
             if (tooltipItem) {
               const value = tooltipItem.formattedValue;
               return `Orders ${value}`;
             }
-            return "";
           },
         },
         mode: "nearest",

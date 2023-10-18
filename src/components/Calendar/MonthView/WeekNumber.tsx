@@ -43,7 +43,7 @@ export default function WeekNumber(props: WeekNumberProps) {
     const { date, onClickWeekNumber, weekNumber, ...otherProps } = props;
 
     return (
-      <div {...otherProps} className={className}>
+      <div className={className}>
         {children}
       </div>
     );
