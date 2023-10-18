@@ -1,11 +1,12 @@
 import { PeriodType } from "@/types/dashboard";
 import React, { useState } from "react";
-import { DateRange } from "react-date-range";
+import {DateRange, DefinedRange} from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import styles from ".//Datepicker.module.scss";
+import styles from "./Datepicker.module.scss";
 
-type DatePickerPropsType = {
+
+type DatePickerPropsType =  {
   currentPeriod: {
     periodType: PeriodType;
     startDate: Date;
@@ -22,6 +23,7 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
   setShowCustom,
   setDiagramType,
 }) => {
+
   const initialStartDate = currentPeriod.startDate;
   const initialEndDate = currentPeriod.endDate;
 
@@ -50,7 +52,13 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
   return (
     <div>
       <div className={styles["date-range-container"]}>
-        <DateRange ranges={dateRange} onChange={handleSelect} />
+        <DateRange
+            ranges={dateRange}
+            onChange={handleSelect}
+            months={2}
+            direction="horizontal"
+            weekStartsOn={1}
+        />
       </div>
       <div className={styles["button-container"]}>
         <button className={styles["save-button"]} onClick={handleSave}>
