@@ -184,7 +184,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
           </div>
         </div>
       </div>
-      <div style={{ height: 370 }}>
+      <div style={{ height: 300 }}>
         <Bar
           ref={(ref: any) => {
             chartRef.current = ref?.chartInstance;
