@@ -154,7 +154,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
   }, [data]);
 
   return (
-    <div className={`card ${classes.wrapper} mb-md`} style={{ height: 370 }}>
+    <div className={`card ${classes.wrapper} mb-md`}>
       <div className={classes.header}>
         <h4 className={classes.title}>Orders</h4>
         <div className={classes["diagram-types"]}>
@@ -184,13 +184,15 @@ let Diagram: React.FC<DashboardDataProps> = ({
           </div>
         </div>
       </div>
-      <Bar
-        ref={(ref: any) => {
-          chartRef.current = ref?.chartInstance;
-        }}
-        data={data}
-        options={defaultOptions}
-      />
+      <div style={{ height: 370 }}>
+        <Bar
+          ref={(ref: any) => {
+            chartRef.current = ref?.chartInstance;
+          }}
+          data={data}
+          options={defaultOptions}
+        />
+      </div>
     </div>
   );
 };

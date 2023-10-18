@@ -15,15 +15,6 @@ import OrdersByCountry from "./components/OrdersByCountry";
 import classes from "./DashboardPage.module.scss";
 
 const DashboardPage: React.FC = () => {
-  //   console.log("pageData: ", pageData);
-  //   const {
-  //     orderByCountryArrival,
-  //     orderByCountryDeparture,
-  //     ordesrDiagramm,
-  //     totalOrders,
-  //     ordersByStatuses,
-  //     gmv,
-  //   } = pageData;
 
   type pageDataType = {
     ordersDiagram: any;
