@@ -85,13 +85,13 @@ const Diagram: React.FC<DashboardDataProps> = ({
       },
       tooltip: {
         callbacks: {
-          label: (context) => {
+          label: (context: any[]) => {
             return "";
           },
-          footer: (context) => {
+          footer: (context: any[]) => {
             return "";
           },
-          title: (context) => {
+          title: (context: any[]) => {
             const tooltipItem = context[0];
             if (tooltipItem) {
               const value = tooltipItem.formattedValue;
