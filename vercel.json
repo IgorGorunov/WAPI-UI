@@ -1,7 +1,7 @@
 {
   "build": {
     "env": {
-      "CI": false
+      "CI": "false"
     }
   }
 }
