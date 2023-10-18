@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 26px;
+}
+
+.title {
+    margin-bottom: 18px;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}

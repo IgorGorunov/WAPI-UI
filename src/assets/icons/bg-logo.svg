@@ -1,0 +1,26 @@
+<?xml version="1.0" standalone="no"?>
+<svg id="Group15" width="1117" height="642" viewBox="0 0 1117 642" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; max-height: 100%;">
+<g opacity="0.05">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M890.503 7.44H728.708V254.32H769.159V189.227H930.946V152.96H769.159V43.7067H930.946V7.44H890.503ZM930.984 43.7067V152.96H971.434V43.7133L930.984 43.7067ZM641.822 72.5333V145.293H480.027V72.5333H439.584V254.32H480.027V181.56H641.822V254.32H682.265V72.5333H641.822ZM480.004 72.5333H520.455V36.2667H480.004V72.5333ZM520.463 0L520.455 36.2667H601.356V0H520.463ZM601.372 72.5333H641.822L641.815 36.2667H601.372V72.5333ZM388.454 5.15333L331.063 210.64H313.342L258.471 5.15333H179.032L124.16 210.64H106.432L49.0405 5.15333H7L76.72 248.033H155.387L209.853 42.5333H227.626L282.521 248.027H361.21L430.517 5.15333H388.454ZM1072.46 5.15333H989.485V42.36H1030.98V217.113H989.485V254.313H1113.96V217.113H1072.46V42.36H1113.96V5.16L1072.46 5.15333Z" fill="#26334D" stroke-dasharray="0,0,0,6272.373046875"><animate attributeType="XML" attributeName="stroke-dasharray" repeatCount="1" dur="2.5s" values="0,0,0,6272.373046875; 
+          0,3136.1865234375,3136.1865234375,0; 
+          6272.373046875,0,0,0" keyTimes="0; 0.5; 1" fill="freeze"></animate></path>
+</g>
+<rect y="333" width="100" height="100" fill="#EDEEF1" stroke-dasharray="0,0,0,400"><animate attributeType="XML" attributeName="stroke-dasharray" repeatCount="1" dur="2.5s" values="0,0,0,400; 
+          0,200,200,0; 
+          400,0,0,0" keyTimes="0; 0.5; 1" fill="freeze"></animate></rect>
+<rect x="100" y="433" width="100" height="100" fill="white" stroke-dasharray="0,0,0,400"><animate attributeType="XML" attributeName="stroke-dasharray" repeatCount="1" dur="2.5s" values="0,0,0,400; 
+          0,200,200,0; 
+          400,0,0,0" keyTimes="0; 0.5; 1" fill="freeze"></animate></rect>
+<rect x="57" y="586" width="50" height="50" fill="white" stroke-dasharray="0,0,0,200"><animate attributeType="XML" attributeName="stroke-dasharray" repeatCount="1" dur="2.5s" values="0,0,0,200; 
+          0,100,100,0; 
+          200,0,0,0" keyTimes="0; 0.5; 1" fill="freeze"></animate></rect>
+<rect width="100" height="100" transform="matrix(-1 0 0 1 1093 343)" fill="white" stroke-dasharray="0,0,0,400"><animate attributeType="XML" attributeName="stroke-dasharray" repeatCount="1" dur="2.5s" values="0,0,0,400; 
+          0,200,200,0; 
+          400,0,0,0" keyTimes="0; 0.5; 1" fill="freeze"></animate></rect>
+<path d="M993 443H893V642H993V443Z" fill="#EDEEF1" stroke-dasharray="0,0,0,598"><animate attributeType="XML" attributeName="stroke-dasharray" repeatCount="1" dur="2.5s" values="0,0,0,598; 
+          0,299,299,0; 
+          598,0,0,0" keyTimes="0; 0.5; 1" fill="freeze"></animate></path>
+<rect width="48" height="50" transform="matrix(-1 0 0 1 1102 592)" fill="white" stroke-dasharray="0,0,0,196"><animate attributeType="XML" attributeName="stroke-dasharray" repeatCount="1" dur="2.5s" values="0,0,0,196; 
+          0,98,98,0; 
+          196,0,0,0" keyTimes="0; 0.5; 1" fill="freeze"></animate></rect>
+<setting>{"type":"direct","speed":20,"random":1,"shift":1,"size":1,"rupture":50}</setting></svg>

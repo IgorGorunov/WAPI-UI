@@ -1,0 +1,23 @@
+.form-control {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    padding: 12px 0 8px;
+
+    label {
+        margin-bottom: 12px;
+    }
+
+    input {
+        margin-bottom: 4px;
+        margin-left: -2px;
+    }
+}
+
+.error {
+    position: absolute;
+    bottom: -6px;
+    font-size: 10px;
+    color: var(--color-error);
+}

@@ -1,0 +1,22 @@
+.container {
+    position: relative;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: var(--color-gray);
+}
+
+.filter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

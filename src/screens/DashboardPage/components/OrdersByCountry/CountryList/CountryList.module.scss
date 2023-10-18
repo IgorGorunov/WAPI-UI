@@ -1,0 +1,16 @@
+.list {
+    list-style: none;
+
+    &-item {
+        border-top: 2px solid var(--border-color);
+
+        &:last-child {
+            border: 0 1px 1px 1px solid #EDEFF2;
+            border-radius: 0 0 15px 15px;
+        }
+    }
+}
+
+.highlight {
+    background-color: #FAFBFC;
+}
