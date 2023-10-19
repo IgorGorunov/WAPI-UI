@@ -19,11 +19,11 @@ type DatePickerPropsType =  {
 };
 
 const Datepicker: React.FC<DatePickerPropsType> = ({
-                                                     currentPeriod,
-                                                     setCurrentPeriod,
-                                                     setShowCustom,
-                                                     setDiagramType,
-                                                   }) => {
+  currentPeriod,
+  setCurrentPeriod,
+  setShowCustom,
+  setDiagramType,
+}) => {
 
   const initialStartDate = currentPeriod.startDate;
   const initialEndDate = currentPeriod.endDate;
