@@ -78,12 +78,14 @@ let Diagram: React.FC<DashboardDataProps> = ({
 
   let defaultOptions: ChartOptions<'bar'>;
   defaultOptions = {
+
     maintainAspectRatio: false,
     elements: {
       bar: {
         borderWidth: {
           top: 2,
         },
+        hoverBackgroundColor: hexToRgba("#5380F5", 0.15),
       },
     },
     plugins: {
@@ -122,6 +124,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
     },
     scales: {
       y: {
+        beginAtZero: true,
         ticks: {
           font: {
             size: 13,
