@@ -4,6 +4,7 @@ import {DateRange, DefinedRange} from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import styles from "./Datepicker.module.scss";
+import {TRUE} from "sass";
 
 
 type DatePickerPropsType =  {
@@ -58,6 +59,7 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
             months={1}
             direction="horizontal"
             weekStartsOn={1}
+            showMonthAndYearPickers={false}
         />
       </div>
       <div className={styles["button-container"]}>
