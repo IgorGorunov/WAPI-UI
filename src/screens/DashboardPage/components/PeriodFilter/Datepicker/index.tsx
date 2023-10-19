@@ -55,7 +55,7 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
         <DateRange
             ranges={dateRange}
             onChange={handleSelect}
-            months={2}
+            months={1}
             direction="horizontal"
             weekStartsOn={1}
         />
