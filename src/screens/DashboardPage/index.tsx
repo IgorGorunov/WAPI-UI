@@ -12,7 +12,7 @@ import Diagram from "./components/Diagram";
 import Forecast from "./components/Forecast";
 import OrderStatuses from "./components/OrderStatuses";
 import OrdersByCountry from "./components/OrdersByCountry";
-import classes from "./DashboardPage.module.scss";
+import "./styles.scss";
 
 const DashboardPage: React.FC = () => {
 
@@ -111,7 +111,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <Layout hasFooter>
-      <div className={classes.container}>
+      <div className="dashboard-page__container">
         <Header
           currentPeriod={currentPeriod}
           setCurrentPeriod={setCurrentPeriod}

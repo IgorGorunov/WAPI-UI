@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   reactStrictMode: true,
 
@@ -26,6 +28,17 @@ const nextConfig = {
 
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i
+
+    // if not work, try `config.module.rules[2]...`
+    // loop over all rules and find the ones with `oneOf` key
+    config.module.rules.forEach(rule => {
+      if (!rule.oneOf) return
+
+      rule.oneOf.forEach(one => {
+        if (!`${one.issuer?.and}`.includes('_app')) return
+        one.issuer.and = [path.resolve(__dirname)]
+      })
+    })
 
     return config
   },

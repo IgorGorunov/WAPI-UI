@@ -1,25 +1,25 @@
 import React, { memo } from "react";
 import LogoWAPI from "@/assets/icons/LogoWAPI.svg";
-import classes from "./Footer.module.scss";
+import "./styles.scss";
 
 const Footer: React.FC = () => {
   return (
-    <div className={classes.footer}>
-      <div className={classes.wrapper}>
-        <div className={classes["footer-left"]}>
-          <div className={classes.logo}>
+    <div className="footer">
+      <div className="footer-wrapper">
+        <div className="footer-left">
+          <div className="logo">
             <LogoWAPI />
           </div>
-          <p className={classes.copyright}>
+          <p className="copyright">
             ©2023 all rights reserved by – WAPI OÜ
           </p>
-          <p className={classes.address}>
+          <p className="address">
             Kadaka tee 7, Mustamae linnaosa, Tallinn, 12915 EstoniaWAPI OÜ, Reg
             no. 14699305
           </p>
         </div>
-        <div className={classes["footer-right"]}>
-          <ul className={classes["footer-links"]}>
+        <div className="footer-right">
+          <ul className="footer-links">
             <li>info@wapi.com</li>
             <li>Privacy Policy</li>
             <li>Cookie Policy</li>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { GroupOrderStatusType, StatusColors } from "../index";
 import StatusPopup from "../StatusPopUp";
-import classes from "./StatusBar.module.scss";
+import "./styles.scss";
 
 type StatusBarPropsType = {
   groupStatus: GroupOrderStatusType;
@@ -24,21 +24,21 @@ const StatusBar: React.FC<StatusBarPropsType> = ({
       : Math.round((groupStatus.ordersCount / maxAmount) * 100) + "%";
   const barColor = StatusColors[groupStatus.status];
   return (
-    <div className={`${classes["status-wrapper"]}`}>
+    <div className={`status-bar status-bar__wrapper`}>
       <div
-        className={classes.label}
+        className="status-bar__label"
         onMouseOver={showPopup}
         onMouseOut={hidePopup}
       >
         {groupStatus.status}
-        <div className={classes.count}>
+        <div className="status-bar__count">
           <span>{groupStatus.ordersCount}</span>
           {groupStatus.ordersCount !== 0 && isDisplayedPopup && (
             <StatusPopup innerStatuses={groupStatus.statuses} />
           )}
         </div>
       </div>
-      <div className={classes["colored-bar"]}>
+      <div className="colored-bar">
         <div
           style={{
             background: barColor,

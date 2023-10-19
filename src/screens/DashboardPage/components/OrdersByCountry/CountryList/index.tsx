@@ -1,7 +1,7 @@
 import React from "react";
 import { OrderByCountryType } from "..";
 import CountryBlock from "../CountryBlock";
-import classes from "./CountryList.module.scss";
+import "./styles.scss";
 
 type PropsType = {
   data: OrderByCountryType[];
@@ -14,14 +14,14 @@ const CountryList: React.FC<PropsType> = ({ data }) => {
   }
 
   return (
-    <div className={classes.wrapper}>
-      <ul className={classes.list}>
+    <div className="country-list">
+      <ul className="country-list__list">
         {data &&
           data.map((country: OrderByCountryType, index: number) => (
             <li
               key={country.country + "_" + country.ordersCount + "_" + index}
-              className={` ${classes["list-item"]} ${
-                index % 2 === 1 ? classes.highlight : " "
+              className={`"country-list__list-item" ${
+                index % 2 === 1 ? "highlight" : " "
               }`}
             >
               <CountryBlock {...country} sum={sum} />

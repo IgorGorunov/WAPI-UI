@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "../../../components/Button/Button";
 
-import classes from "./SignUpBlock.module.scss";
+import "./styles.scss";
 
 const SignUpBlock: React.FC = () => {
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -9,8 +9,8 @@ const SignUpBlock: React.FC = () => {
   };
 
   return (
-    <div className={`card ${classes.container}`}>
-      <h2 className={classes["signup-title"]}>
+    <div className={`card signup-container`}>
+      <h2 className="signup-title">
         Are you looking for enrollment?
       </h2>
       <Button disabled onClick={handleClick}>

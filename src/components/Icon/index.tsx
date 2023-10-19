@@ -5,6 +5,7 @@ import ArrowLeft from "../../assets/icons/arrow-left.svg";
 import MenuIcon from "@/assets/icons/MenuIcon.svg";
 import Notification from "@/assets/icons/notifications.svg";
 import BGLogo from "@/assets/icons/bg-logo.svg";
+import Search from "@/assets/icons/search.svg";
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -12,6 +13,7 @@ export const icons = {
   "menu-icon": MenuIcon,
   notification: Notification,
   "bg-logo": BGLogo,
+  "search": Search,
 };
 
 export type IconType = keyof typeof icons;

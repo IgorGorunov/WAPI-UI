@@ -1,23 +1,24 @@
-.wrapper {
+.dashboard-diagram {
+  &__wrapper {
     padding: 26px;
-}
+  }
 
-.header {
+  &__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
-}
+  }
 
-.diagram-types {
+  &__diagram-types {
     display: flex;
     border: 2px solid var(--border-color);
     border-radius: 30px;
-    box-shadow: 0px 2px 5px 0px rgba(38, 51, 77, 0.03);
+    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
     overflow: hidden;
-}
+  }
 
-.option {
+  &__option {
     font-size: 12px;
     font-weight: 900;
     line-height: 20px;
@@ -27,18 +28,18 @@
     transition: all 0.3s ease-in;
 
     &:hover {
-        color: var(--color-white);
-        background-color: var(--color-blue);
-        cursor: pointer;
+      color: var(--color-white);
+      background-color: var(--color-blue);
+      cursor: pointer;
     }
 
     &:last-child {
-        border-right: none;
+      border-right: none;
     }
 
     &.active {
-        color: var(--color-white);
-        background-color: var(--color-blue);
+      color: var(--color-white);
+      background-color: var(--color-blue);
     }
+  }
 }
-

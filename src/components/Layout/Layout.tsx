@@ -1,6 +1,6 @@
 import React from "react";
 import Footer from "@/components/Footer/Footer";
-import classes from "./Layout.module.scss";
+import "./styles.scss";
 
 type Props = {
   hasHeader?: boolean;
@@ -14,9 +14,9 @@ const Layout: React.FC<Props> = ({
   children,
 }) => {
   return (
-    <div className={classes.main}>
-      <div className={classes.content}>
-        {hasHeader && <div>Htader</div>}
+    <div className="main">
+      <div className="main-content">
+        {hasHeader && <div>Header</div>}
         {children}
       </div>
       {hasFooter && <Footer />}

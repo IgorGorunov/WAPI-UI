@@ -1,0 +1,61 @@
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 30px;
+  background-color: var(--color-blue);
+  color: white;
+  border: none;
+  transition: all .3s ease-in;
+
+  &:hover,
+  &:focus {
+    background-color: var(--color-dark-blue);
+  }
+
+  &-size {
+    &-sm {
+      padding: 5px 8px;
+    }
+
+    &-md {
+      min-width: 128px;
+      padding: 5px 14px;
+    }
+
+    &-lg {
+      min-width: 200px;
+      padding: 5px 16px;
+    }
+  }
+
+  &-form {
+    &-br0 {
+      border-radius: 0;
+    }
+
+    &-br2 {
+      border-radius: 2px;
+    }
+
+    &-br30 {
+      border-radius: 30px;
+    }
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+
+    &-right {
+      margin-right: -5px;
+    }
+  }
+
+  &.full-width {
+    width: 100%;
+  }
+}

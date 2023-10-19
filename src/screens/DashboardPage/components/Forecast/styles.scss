@@ -1,53 +1,55 @@
-.container {
-    padding: 26px;  
-}
+.forecast {
+  &__container {
+    padding: 26px;
+  }
 
-.gmv {
+  &.gmv {
     color: var(--color-white);
     background-color: var(--color-green);
 
     .line {
-        border-left: 1px solid rgba(255, 255, 255, 0.2);
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
     }
-}
+  }
 
-.wrapper {
+  &__wrapper {
     padding: 0 15px;
-}
+  }
 
-.title {
+  .title {
     margin-bottom: 18px;
-}
+  }
 
-.main-amount {
+  &__main-amount {
     font-size: 40px;
     font-weight: 700;
     line-height: 1;
     margin-bottom: 2px;
-}
+  }
 
-.amount {
+  &__amount {
     font-size: 20px;
     font-weight: 700;
     line-height: 1;
     margin-bottom: 6px;
     white-space: nowrap;
-}
+  }
 
-.row {
+  &__row {
     display: flex;
-}
+  }
 
-.col {
+  &__col {
     padding-bottom: 15px;
-}
+  }
 
-.line {
+  .line {
     border-left: 1px solid rgba(125,143,179, 0.2);
     padding-left: 24px;
-}
+  }
 
-.mb {
+  .mb {
     margin-bottom: 15px;
+  }
 }
 

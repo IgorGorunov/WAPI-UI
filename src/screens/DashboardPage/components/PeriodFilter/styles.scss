@@ -1,43 +1,45 @@
-.container {
+.period-filter {
+  &__container {
     position: relative;
     display: block;
-}
+  }
 
-.list {
+  &__list {
     list-style: none;
     display: flex;
     border: 2px solid var(--border-color);
     border-radius: 30px;
     box-shadow: 0px 2px 5px 0px rgba(38, 51, 77, 0.03);
     overflow: hidden;
-    
-}
 
-.item {
-    font-size: 12px;
-    font-weight: 900;
-    line-height: 20px;
-    padding: 10px 20px;
-    color: var(--color-gray);
-    border-right: 2px solid var(--border-color);
-    transition: all 0.3s ease-in;
 
-    &:hover {
+    &-item {
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 20px;
+      padding: 10px 20px;
+      color: var(--color-gray);
+      border-right: 2px solid var(--border-color);
+      transition: all 0.3s ease-in;
+
+      &:hover {
         color: var(--color-white);
         background-color: var(--color-blue);
         cursor: pointer;
-    }
+      }
 
-    &:last-child {
+      &:last-child {
         border-right: none;
-    }
+      }
 
-    &.active {
+      &.active {
         color: var(--color-white);
         background-color: var(--color-blue);
+      }
     }
-}
+  }
 
-.datepicker {
+  &__datepicker {
     position: absolute;
+  }
 }

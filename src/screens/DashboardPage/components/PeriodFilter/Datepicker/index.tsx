@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import {DateRange, DefinedRange} from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import styles from "./Datepicker.module.scss";
+import Button from "@/components/Button/Button";
+import "./styles.scss";
 
 
 type DatePickerPropsType =  {
@@ -18,11 +19,11 @@ type DatePickerPropsType =  {
 };
 
 const Datepicker: React.FC<DatePickerPropsType> = ({
-  currentPeriod,
-  setCurrentPeriod,
-  setShowCustom,
-  setDiagramType,
-}) => {
+                                                     currentPeriod,
+                                                     setCurrentPeriod,
+                                                     setShowCustom,
+                                                     setDiagramType,
+                                                   }) => {
 
   const initialStartDate = currentPeriod.startDate;
   const initialEndDate = currentPeriod.endDate;
@@ -50,22 +51,21 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
   };
 
   return (
-    <div>
-      <div className={styles["date-range-container"]}>
-        <DateRange
-            ranges={dateRange}
-            onChange={handleSelect}
-            months={2}
-            direction="horizontal"
-            weekStartsOn={1}
-        />
+      <div className="datepicker">
+        <div className="date-range-container">
+          <DateRange
+              ranges={dateRange}
+              onChange={handleSelect}
+              months={1}
+              direction="horizontal"
+              weekStartsOn={1}
+              showMonthAndYearPickers={false}
+          />
+        </div>
+        <div className="button-container">
+            <Button icon="search" isFullWidth iconOnTheRight onClick={handleSave}>Search</Button>
+        </div>
       </div>
-      <div className={styles["button-container"]}>
-        <button className={styles["save-button"]} onClick={handleSave}>
-          Search
-        </button>
-      </div>
-    </div>
   );
 };
 

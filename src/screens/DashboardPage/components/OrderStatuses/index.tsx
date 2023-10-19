@@ -1,6 +1,6 @@
 import React from "react";
 import StatusBar from "./StatusBar";
-import classes from "./OrderStatuses.module.scss";
+import "./styles.scss";
 
 export const enum GroupStatuses {
   "Assigned" = "Assigned",
@@ -48,9 +48,9 @@ const OrderStatuses: React.FC<OrderStatusesPropsType> = ({
   }
 
   return (
-    <div className={`card ${classes.container}`}>
-      <h4 className={classes.title}>Orders by statuses</h4>
-      <div className={classes.wrapper}>
+    <div className={`card order-statuses order-statuses__container`}>
+      <h4 className="title">Orders by statuses</h4>
+      <div className="order-statuses__wrapper">
         {ordersByStatuses.map((item: GroupOrderStatusType) => (
           <StatusBar
             key={item.status}
