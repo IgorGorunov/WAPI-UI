@@ -170,22 +170,28 @@ input {
   border-radius: 15px;
 }
 
-.grid {
-  display: flex;
-}
-
 .grid-row {
-  display: flex;
+  @media (min-width: 900px) {
+    display: flex;
+  }
 }
 
 
 
 .grid-col-2 {
   flex: 0 0 50%;
+
+  @media (max-width: 899px) {
+    margin-bottom: 28px;
+  }
 }
 
 .grid-col-3 {
   flex: 0 0 33.33%;
+
+  @media (max-width: 899px) {
+    margin-bottom: 28px;
+  }
 }
 
 .gap-md {

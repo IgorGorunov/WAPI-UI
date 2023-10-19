@@ -2,7 +2,7 @@ import React from "react";
 import { DashboardPeriodType, PeriodType } from "@/types/dashboard";
 import Icon from "@/components/Icon";
 import PeriodFilter from "../PeriodFilter";
-import classes from "./Header.module.scss";
+import "./styles.scss";
 
 type HeaderProps = {
   currentPeriod: DashboardPeriodType;
@@ -12,12 +12,12 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = (props) => {
   return (
-    <div className={`card ${classes.container} mb-md`}>
-      <div className={classes.menu}>
+    <div className={`card dashboard-header__container mb-md`}>
+      <div className="dashboard-header__menu">
         <Icon name={"menu-icon"} />
         <h2>Dashboard</h2>
       </div>
-      <div className={classes.filter}>
+      <div className="dashboard-header__filter">
         <PeriodFilter {...props} />
       </div>
       <Icon name={"notification"} />

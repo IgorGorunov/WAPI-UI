@@ -1,10 +1,10 @@
 import React, { ComponentProps } from "react";
 import { Icon, IconType } from "../Icon";
-import classes from "./Button.module.scss";
+import "./styles.scss";
 
 export const enum ButtonSize {
   SMALL = "sm",
-  MEDUIM = "md",
+  MEDIUM = "md",
   LARGE = "lg",
 }
 
@@ -21,6 +21,7 @@ export type ButtonType = ComponentProps<"button"> & {
   iconOnTheRight?: boolean;
   form?: ButtonForm;
   size?: ButtonSize;
+  isFullWidth?: boolean;
 };
 
 const Button: React.FC<ButtonType> = (props) => {
@@ -29,7 +30,8 @@ const Button: React.FC<ButtonType> = (props) => {
     icon,
     iconOnTheRight,
     form = ButtonForm.BR30,
-    size = ButtonSize.MEDUIM,
+    size = ButtonSize.MEDIUM,
+      isFullWidth = false,
     children,
     ...otherProps
   } = props;
@@ -39,17 +41,17 @@ const Button: React.FC<ButtonType> = (props) => {
   return (
     <button
       type={type || "button"}
-      className={`${classes.btn} ${classes[sizeClassName]} ${classes[formClassName]}`}
+      className={`btn ${sizeClassName} ${formClassName} ${isFullWidth ? "full-width" : ""}`}
       {...otherProps}
     >
       {icon && !iconOnTheRight ? (
-        <span className={classes["icon-left"]}>
+        <span className="icon-left">
           <Icon name={icon} />
         </span>
       ) : null}
       {children}
       {icon && iconOnTheRight ? (
-        <span className={`${classes.icon} ${classes["icon-right"]} `}>
+        <span className={`icon icon-right`}>
           <Icon name={icon} />
         </span>
       ) : null}

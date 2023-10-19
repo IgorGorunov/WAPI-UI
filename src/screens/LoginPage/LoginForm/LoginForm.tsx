@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FormBuilderType, FormFieldTypes } from "../../../types/forms";
+import { FormBuilderType, FormFieldTypes } from "@/types/forms";
 import { authenticate } from "@/services/auth";
 import Router from "next/router";
 import { Routes } from "@/types/routes";
 import useAuth from "@/context/authContext";
-import FieldBuilder from "../../../components/FormBuilder/FieldBuilder";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 
-import Button from "../../../components/Button/Button";
+import Button from "@/components/Button/Button";
 
-import classes from "./LoginForm.module.scss";
+import "./styles.scss";
 // type LoginFormType = {}
 
 const LoginForm: React.FC = () => {
@@ -64,7 +64,6 @@ const LoginForm: React.FC = () => {
       response?: {
         data?: any;
       };
-      // Вы можете заменить any на более конкретный тип, если знаете структуру данных.
     };
 
     try {
@@ -89,7 +88,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className={`card ${classes["login-form"]}`}>
+    <div className={`card login-form`}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         {formFields.map((field: any, index: number) => (
           <FieldBuilder
@@ -101,9 +100,9 @@ const LoginForm: React.FC = () => {
             message={field.errorMessage}
           />
         ))}
-        {error && <p className={classes.error}>{error}</p>}
-        <div className={classes["submit-block"]}>
-          <p className={classes["recovery-link"]}>Password recovery</p>
+        {error && <p className="login-error">{error}</p>}
+        <div className="login-submit-block">
+          <p className="login-recovery-link">Password recovery</p>
           <Button
             type="submit"
             icon={"arrow-right"}

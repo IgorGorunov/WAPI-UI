@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Country } from "@/types/countries";
 import CountryList from "./CountryList";
-import classes from "./OrdersByCountry.module.scss";
+import "./styles.scss";
 
 export type OrderByCountryType = {
   ordersCount: number;
@@ -20,19 +20,19 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className={`card ${classes.container} mb-md`}>
-      <h4 className={classes.title}>Orders by contries</h4>
-      <div className={classes.wrapper}>
-        <ul className={classes.tablist} role="tablist">
+    <div className={`orders-by-country orders-by-country__container card mb-md`}>
+      <h4 className="title">Orders by contries</h4>
+      <div className="orders-by-country__wrapper">
+        <ul className="orders-by-country__tablist" role="tablist">
           <li
-            className={`${classes.tab} ${
-              activeTab === 0 ? classes["active-tab"] : ""
+            className={`tab ${
+              activeTab === 0 ? "active-tab" : ""
             }`}
             key="departure"
           >
             <a
               key="tab-0"
-              className={classes["tab-link"]}
+              className="tab-link"
               href="#"
               onClick={(event) => {
                 event.preventDefault();
@@ -47,14 +47,14 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
             </a>
           </li>
           <li
-            className={`${classes.tab} ${
-              activeTab === 1 ? classes["active-tab"] : ""
+            className={`tab ${
+              activeTab === 1 ? "active-tab" : ""
             }`}
             key="arrival"
           >
             <a
               key="tab-1"
-              className={classes["tab-link"]}
+              className="tab-link"
               href="#"
               onClick={(event) => {
                 event.preventDefault();
@@ -69,10 +69,10 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
             </a>
           </li>
         </ul>
-        <div className={classes.content}>
+        <div className="orders-by-country__content">
           <div
             key="tabpanel-0"
-            className={classes.panel}
+            className="panel"
             hidden={activeTab !== 0}
             role="tabpanel"
             aria-labelledby="tab-id-0"
@@ -82,7 +82,7 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
           </div>
           <div
             key="tabpanel-1"
-            className={classes.panel}
+            className="panel"
             hidden={activeTab !== 1}
             role="tabpanel"
             aria-labelledby="tab-id-1"

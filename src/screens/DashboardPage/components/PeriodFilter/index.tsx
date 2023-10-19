@@ -5,7 +5,7 @@ import {
   PeriodTypes,
 } from "@/types/dashboard";
 import Datepicker from "./Datepicker";
-import classes from "./PeriodFilter.module.scss";
+import "./styles.scss";
 
 export type PeriodFilterProps = {
   currentPeriod: DashboardPeriodType;
@@ -132,12 +132,12 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   };
 
   return (
-    <div className={classes.container}>
-      <ul className={classes.list}>
+    <div className="period-filter period-filter__container">
+      <ul className="period-filter__list">
         <li
           key={PeriodTypes.DAY}
-          className={`${classes.item} ${
-            curPeriodType === "DAY" ? classes.active : ""
+          className={`period-filter__list-item ${
+            curPeriodType === "DAY" ? "active" : ""
           }`}
           onClick={handleDay}
         >
@@ -145,8 +145,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.WEEK}
-          className={`${classes.item} ${
-            curPeriodType === "WEEK" ? classes.active : ""
+          className={`period-filter__list-item ${
+            curPeriodType === "WEEK" ? "active" : ""
           }`}
           onClick={handleWeek}
         >
@@ -154,8 +154,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.MONTH}
-          className={`${classes.item} ${
-            curPeriodType === "MONTH" ? classes.active : ""
+          className={`period-filter__list-item ${
+            curPeriodType === "MONTH" ? "active" : ""
           }`}
           onClick={handleMonth}
         >
@@ -163,8 +163,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.QUARTER}
-          className={`${classes.item} ${
-            curPeriodType === "QUARTER" ? classes.active : ""
+          className={`period-filter__list-item ${
+            curPeriodType === "QUARTER" ? "active" : ""
           }`}
           onClick={handleQuarter}
         >
@@ -172,8 +172,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.YEAR}
-          className={`${classes.item} ${
-            curPeriodType === "YEAR" ? classes.active : ""
+          className={`period-filter__list-item ${
+            curPeriodType === "YEAR" ? "active" : ""
           }`}
           onClick={handleYear}
         >
@@ -181,15 +181,15 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.CUSTOM}
-          className={`${classes.item} ${
-            curPeriodType === "CUSTOM" ? classes.active : ""
+          className={`period-filter__list-item ${
+            curPeriodType === "CUSTOM" ? "active" : ""
           }`}
           onClick={handleCustom}
         >
           Custom
         </li>
       </ul>
-      <div className={classes.datepicker}>
+      <div className="period-filter__datepicker">
         {showCustom && (
           <Datepicker
             currentPeriod={currentPeriod}

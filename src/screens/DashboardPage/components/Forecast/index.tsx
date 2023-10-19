@@ -1,7 +1,7 @@
 import React from "react";
 import { ForecastType } from "@/types/dashboard";
 
-import classes from "./Forecast.module.scss";
+import "./styles.scss";
 
 type ForecastPropsType = {
   type?: ForecastType;
@@ -62,28 +62,28 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
 
   return (
     <div
-      className={`card ${classes.container} ${
-        type === "GMV" ? classes.gmv : null
+      className={`card forecast forecast__container ${
+        type === "GMV" ? "gmv" : null
       }`}
     >
-      <div className={classes.wrapper}>
-        <h4 className={classes.title}>{isGMV ? "GMV" : "Orders"}</h4>
-        <p className={classes["main-amount"]}>
+      <div className="forecast__wrapper">
+        <h4 className="title">{isGMV ? "GMV" : "Orders"}</h4>
+        <p className="forecast__main-amount">
           {amountPrefix}
           {Formatter.format(Math.floor(amountInPeriod)).replaceAll(",", " ")}
         </p>
-        <p className={classes.mb}>In period</p>
+        <p className="mb">In period</p>
         <div className="">
           <div className="grid-row">
-            <div className={`grid-col-2 ${classes.col}`}>
-              <p className={`${classes.amount}`}>
+            <div className={`grid-col-2 forecast__col`}>
+              <p className={`forecast__amount}`}>
                 {amountPrefix}
                 {amounts.beginOfMonth}
               </p>
               <p>Begin of month</p>
             </div>
-            <div className={`grid-col-2 ${classes.line} ${classes.col}`}>
-              <p className={`${classes.amount}`}>
+            <div className={`grid-col-2 line forecast__col`}>
+              <p className={`forecast__amount`}>
                 {amountPrefix}
                 {amounts.beginOfYear}
               </p>
@@ -92,14 +92,14 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
           </div>
           <div className="grid-row">
             <div className={`grid-col-2 `}>
-              <p className={`${classes.amount}`}>
+              <p className={`forecast__amount`}>
                 {amountPrefix}
                 {amounts.forecastByMonth}
               </p>
               <p>Forecast of month</p>
             </div>
-            <div className={`grid-col-2 ${classes.line} `}>
-              <p className={`${classes.amount}`}>
+            <div className={`grid-col-2 line `}>
+              <p className={`forecast__amount`}>
                 {amountPrefix}
                 {amounts.forecastByYear}
               </p>

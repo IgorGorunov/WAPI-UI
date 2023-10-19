@@ -2,7 +2,7 @@ import React from "react";
 import { OrderByCountryType } from "..";
 import { CountryCodes } from "@/types/countries";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import classes from "./CountryBlock.module.scss";
+import "./styles.scss";
 
 type CountryBlockProps = OrderByCountryType & {
   sum: number;
@@ -17,12 +17,12 @@ const CountryBlock: React.FC<CountryBlockProps> = ({
   const countryCode = CountryCodes[country];
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.flag}>
-        <span className={`fi fi-${countryCode} ${classes["flag-icon"]}`}></span>
+    <div className="country-block country-block__wrapper">
+      <div className="flag">
+        <span className={`fi fi-${countryCode} "flag-icon"`}></span>
       </div>
-      <div className={classes.name}>{country}</div>
-      <div className={classes.bar}>
+      <div className="country-block__name">{country}</div>
+      <div className="country-block__bar">
         <div
           style={{
             background: "#5380F5",
@@ -32,7 +32,7 @@ const CountryBlock: React.FC<CountryBlockProps> = ({
           }}
         ></div>
       </div>
-      <div className={classes.count}>{ordersCount}</div>
+      <div className="country-block__count">{ordersCount}</div>
     </div>
   );
 };

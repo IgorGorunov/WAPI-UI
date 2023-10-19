@@ -1,0 +1,23 @@
+.datepicker {
+  &__wrapper {
+    background-color: aquamarine;
+    z-index: 101;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .date-range-container {
+    width: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #F5F6F7;
+  }
+
+  .rdrMonthName {
+    display: none;
+  }
+}

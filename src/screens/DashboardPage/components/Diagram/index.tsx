@@ -14,7 +14,7 @@ import {
   scales, TooltipItem,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import classes from "./Diagram.module.scss";
+import "./styles.scss";
 import { PeriodType } from "@/types/dashboard";
 
 ChartJS.register(
@@ -154,29 +154,29 @@ let Diagram: React.FC<DashboardDataProps> = ({
   }, [data]);
 
   return (
-    <div className={`card ${classes.wrapper} mb-md`}>
-      <div className={classes.header}>
-        <h4 className={classes.title}>Orders</h4>
-        <div className={classes["diagram-types"]}>
+    <div className={`card dashboard-diagram__wrapper mb-md`}>
+      <div className="dashboard-diagram__header">
+        <h4>Orders</h4>
+        <div className="dashboard-diagram__diagram-types">
           <div
-            className={`${classes.option} ${
-              diagramType === "DAY" ? classes.active : ""
+            className={`dashboard-diagram__option ${
+              diagramType === "DAY" ? "active" : ""
             }`}
             onClick={() => setDiagramType("DAY")}
           >
             Days
           </div>
           <div
-            className={`${classes.option} ${
-              diagramType === "WEEK" ? classes.active : ""
+            className={`dashboard-diagram__option ${
+              diagramType === "WEEK" ? "active" : ""
             }`}
             onClick={() => setDiagramType("WEEK")}
           >
             Weeks
           </div>
           <div
-            className={`${classes.option} ${
-              diagramType === "MONTH" ? classes.active : ""
+            className={`dashboard-diagram__option ${
+              diagramType === "MONTH" ? "active" : ""
             }`}
             onClick={() => setDiagramType("MONTH")}
           >

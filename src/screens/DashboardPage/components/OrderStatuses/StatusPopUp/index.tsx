@@ -1,6 +1,6 @@
 import React from "react";
 import { StatusType } from "../index";
-import classes from "./StatusPopUp.module.scss";
+import "./styles.scss";
 
 type PopupPropsType = {
   innerStatuses: StatusType[];
@@ -8,13 +8,13 @@ type PopupPropsType = {
 
 const StatusPopup: React.FC<PopupPropsType> = ({ innerStatuses }) => {
   return (
-    <div className={classes.wrapper}>
-      <ul className={classes["status-list"]}>
+    <div className="status-popup status-popup__wrapper">
+      <ul className="status-popup__status-list">
         {innerStatuses
           .filter((item) => item.ordersCount !== 0)
           .map((item: StatusType, index: number) => (
-            <li key={item.status + index} className={classes.status}>
-              <p className={classes["status-text"]}>{item.status}</p>
+            <li key={item.status + index} className="status-popup__status">
+              <p className="status-popup__status-text">{item.status}</p>
               <p>{item.ordersCount}</p>
             </li>
           ))}
