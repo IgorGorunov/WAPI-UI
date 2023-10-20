@@ -37,6 +37,10 @@
 
   &__row {
     display: flex;
+
+    .grid-col-2 {
+      margin-bottom: 0;
+    }
   }
 
   &__col {
