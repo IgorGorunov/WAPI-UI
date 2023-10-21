@@ -20,7 +20,7 @@ const CountryList: React.FC<PropsType> = ({ data }) => {
           data.map((country: OrderByCountryType, index: number) => (
             <li
               key={country.country + "_" + country.ordersCount + "_" + index}
-              className={`"country-list__list-item" ${
+              className={`country-list__list-item ${
                 index % 2 === 1 ? "highlight" : " "
               }`}
             >

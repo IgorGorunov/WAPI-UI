@@ -165,9 +165,10 @@ input {
 .card {
   // padding: 16px;
   background-color: white;
-  box-shadow: 0px 2px 5px 0px #26334D08;
+  box-shadow: 0 2px 5px 0 #26334D08;
   border: 1px solid #EDEFF2;
   border-radius: 15px;
+  overflow: hidden;
 }
 
 .grid-row {
