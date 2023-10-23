@@ -1,6 +1,8 @@
 import React from "react";
 import Head from "next/head";
+import Cookie from "js-cookie";
 import useAuth from "@/context/authContext";
+
 // import { getDasboardData } from "@/services/dashboard";
 // import {
 //   DashboardPeriodType,
@@ -8,10 +10,16 @@ import useAuth from "@/context/authContext";
 //   PeriodTypes,
 // } from "@/types/dashboard";
 import DashboardPage from "@/screens/DashboardPage";
-import LoginPage from "@/screens/LoginPage";
+
 
 export default function Home() {
-  const { token } = useAuth();
+  const { token, setToken } = useAuth();
+  const savedToken = Cookie.get('token');
+
+  if (!token && savedToken) setToken(savedToken);
+  // const router = useRouter();
+
+  console.log('login page: ', token, savedToken);
   // const [pageData, setPageData] = useState<any>(null);
 
   // const initData = {
@@ -31,9 +39,9 @@ export default function Home() {
   //   const response = fetchData();
   // }, []);
 
-  if (!token) {
-    return <LoginPage />;
-  }
+  // if (!token && !savedToken) {
+  //   router.push('login');
+  // }
 
   return (
     <>

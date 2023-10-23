@@ -2,25 +2,28 @@ import React, {
   createContext,
   PropsWithChildren,
   useContext,
-  useState,
 } from "react";
+import Cookie from "js-cookie";
 
 type authContextType = {
   token: string | null;
   setToken: (token: string) => void;
+  getToken: () => string | null;
 };
 
 const AuthContext = createContext<authContextType>({} as authContextType);
 
 const useAuth = (): authContextType => {
-  const context = useContext(AuthContext);
-  return context;
+  return useContext(AuthContext);
 };
 
 export const AuthProvider = (props: PropsWithChildren) => {
-  const [token, setToken] = useState<string | null>(null);
+  const token = Cookie.get('token');
+  const setToken = (token:string) => Cookie.set('token', token);
+  const getToken = () => Cookie.get('token');
+
   return (
-    <AuthContext.Provider value={{ token, setToken }}>
+    <AuthContext.Provider value={{ token, setToken, getToken }}>
       {props.children}
     </AuthContext.Provider>
   );

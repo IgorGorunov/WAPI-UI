@@ -9,7 +9,6 @@ const getDasboardData = async (
     startDate: string;
     endDate: string;
     periodType: PeriodType;
-    diagramType: PeriodType;
     token: string;
   }
 ) => {

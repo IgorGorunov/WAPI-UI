@@ -6,6 +6,7 @@ import Router from "next/router";
 import { Routes } from "@/types/routes";
 import useAuth from "@/context/authContext";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
+import Cookie from 'js-cookie';
 
 import Button from "@/components/Button/Button";
 
@@ -45,7 +46,7 @@ const LoginForm: React.FC = () => {
     },
   ];
 
-  const { setToken } = useAuth();
+  const { token, setToken } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,6 +76,7 @@ const LoginForm: React.FC = () => {
       if (res?.status === 200) {
         const { accessToken } = res?.data;
         setToken(accessToken);
+        Cookie.set('token', accessToken);
         await Router.push(Routes.Dashboard);
         // } else if (res?.response.status === 401) {
       } else {

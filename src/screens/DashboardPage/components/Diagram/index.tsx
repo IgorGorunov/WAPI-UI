@@ -15,7 +15,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import "./styles.scss";
-import { PeriodType } from "@/types/dashboard";
+import { PeriodType, PeriodTypes } from "@/types/dashboard";
 
 ChartJS.register(
     CategoryScale,
@@ -36,7 +36,11 @@ type DataPoint = {
 };
 
 type DashboardDataProps = {
-  diagramData: DataPoint[];
+  diagramData: {
+    [PeriodTypes.DAY]: DataPoint[];
+    [PeriodTypes.WEEK]: DataPoint[];
+    [PeriodTypes.MONTH]: DataPoint[];
+  }
   diagramType?: PeriodType;
   setDiagramType: React.Dispatch<React.SetStateAction<PeriodType>>;
 };
@@ -52,13 +56,16 @@ function hexToRgba(hex: string, opacity: number): string {
 
 let Diagram: React.FC<DashboardDataProps> = ({
   diagramData,
-  diagramType = "DAY",
-  setDiagramType,
+    diagramType = "DAY",
+    setDiagramType
 }) => {
+
   let chartRef = useRef<ChartJS<"bar", number[], string> | null>(null);
 
-  let labels = diagramData.map((item) => item.Key);
-  let values = diagramData.map((item) => item.Value);
+
+
+  let labels = diagramData[diagramType].map((item) => item.Key);
+  let values = diagramData[diagramType].map((item) => item.Value);
 
   let data = useMemo(
     () => ({
