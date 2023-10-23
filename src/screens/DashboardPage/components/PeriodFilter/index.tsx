@@ -44,7 +44,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   };
 
   const [isPeriodDropdownOpen, setIsPeriodDropdownOpen] = useState(false);
-  const [selectedPeriodType, setSelectedPeriodType] = useState("Period type");
+  const [selectedPeriodType, setSelectedPeriodType] = useState(currentPeriod.periodType.toString());
 
   const handleWeek = () => {
     setShowCustom(false);

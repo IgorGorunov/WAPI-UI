@@ -139,6 +139,9 @@ let Diagram: React.FC<DashboardDataProps> = ({
           color: "#ADB8CC",
         },
         position: "right",
+        grid:{
+
+        }
       },
       x: {
         ticks: {
@@ -150,6 +153,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
         },
         grid: {
           display: false,
+
         },
       },
     },
