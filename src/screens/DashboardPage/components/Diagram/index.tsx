@@ -131,7 +131,6 @@ let Diagram: React.FC<DashboardDataProps> = ({
     },
     scales: {
       y: {
-        beginAtZero: true,
         ticks: {
           font: {
             size: 13,
