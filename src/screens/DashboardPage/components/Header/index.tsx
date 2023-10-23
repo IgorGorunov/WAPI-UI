@@ -8,6 +8,8 @@ type HeaderProps = {
   currentPeriod: DashboardPeriodType;
   setCurrentPeriod: React.Dispatch<React.SetStateAction<DashboardPeriodType>>;
   setDiagramType: React.Dispatch<React.SetStateAction<PeriodType>>;
+  clickedPeriod: PeriodType;
+  setClickedPeriod: React.Dispatch<React.SetStateAction<PeriodType>>;
 };
 
 const Header: React.FC<HeaderProps> = (props) => {
