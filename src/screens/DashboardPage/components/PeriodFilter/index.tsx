@@ -11,18 +11,23 @@ export type PeriodFilterProps = {
   currentPeriod: DashboardPeriodType;
   setCurrentPeriod: React.Dispatch<React.SetStateAction<DashboardPeriodType>>;
   setDiagramType: React.Dispatch<React.SetStateAction<PeriodType>>;
+  clickedPeriod: PeriodType;
+  setClickedPeriod: React.Dispatch<React.SetStateAction<PeriodType>>;
 };
 
 const PeriodFilter: React.FC<PeriodFilterProps> = ({
   currentPeriod,
   setCurrentPeriod,
   setDiagramType,
+  clickedPeriod,
+  setClickedPeriod
 }) => {
   const [showCustom, setShowCustom] = useState(false);
   const curPeriodType = currentPeriod.periodType;
 
   const handleDay = () => {
     setShowCustom(false);
+    setClickedPeriod("DAY");
     if (curPeriodType !== "DAY") {
       const startDate = new Date();
       const endDate = new Date();
@@ -31,25 +36,13 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
     }
   };
 
-  // const getMonday = (d: Date) => {
-  //   d = new Date(d);
-  //   var day = d.getDay(),
-  //     diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
-  //   return new Date(d.setDate(diff));
-  // };
-
-  // const getSunday = (d: Date) => {
-  //   const lastDay = new Date(d);
-  //   lastDay.setDate(lastDay.getDate() + 6);
-  //   return lastDay;
-  // };
-
   const getStartDate = (daysAmount: number) => {
     return new Date(new Date().setDate(new Date().getDate() - daysAmount + 1));
   };
 
   const handleWeek = () => {
     setShowCustom(false);
+    setClickedPeriod("WEEK");
     if (curPeriodType !== "WEEK") {
       // const startDate = getMonday(new Date());
       // const endDate = getSunday(startDate);
@@ -67,6 +60,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
 
   const handleMonth = () => {
     setShowCustom(false);
+    setClickedPeriod("MONTH");
     if (curPeriodType !== "MONTH") {
       // const curDate = new Date();
       // const startDate = new Date(curDate.getFullYear(), curDate.getMonth(), 1);
@@ -88,6 +82,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
 
   const handleQuarter = () => {
     setShowCustom(false);
+    setClickedPeriod("QUARTER");
     if (curPeriodType !== "QUARTER") {
       // const curDay = new Date();
       // const currentQuarter = Math.floor(curDay.getMonth() / 3);
@@ -109,6 +104,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
 
   const handleYear = () => {
     setShowCustom(false);
+    setClickedPeriod("YEAR");
     if (curPeriodType !== "YEAR") {
       // const curDay = new Date();
       // const year = curDay.getFullYear();
@@ -128,6 +124,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   };
 
   const handleCustom = () => {
+    setClickedPeriod("CUSTOM");
     setShowCustom((prevState) => !prevState);
   };
 
@@ -137,7 +134,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         <li
           key={PeriodTypes.DAY}
           className={`period-filter__list-item ${
-            curPeriodType === "DAY" ? "active" : ""
+            clickedPeriod === "DAY" ? "active" : ""
           }`}
           onClick={handleDay}
         >
@@ -146,7 +143,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         <li
           key={PeriodTypes.WEEK}
           className={`period-filter__list-item ${
-            curPeriodType === "WEEK" ? "active" : ""
+            clickedPeriod === "WEEK" ? "active" : ""
           }`}
           onClick={handleWeek}
         >
@@ -155,7 +152,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         <li
           key={PeriodTypes.MONTH}
           className={`period-filter__list-item ${
-            curPeriodType === "MONTH" ? "active" : ""
+            clickedPeriod === "MONTH" ? "active" : ""
           }`}
           onClick={handleMonth}
         >
@@ -164,7 +161,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         <li
           key={PeriodTypes.QUARTER}
           className={`period-filter__list-item ${
-            curPeriodType === "QUARTER" ? "active" : ""
+            clickedPeriod === "QUARTER" ? "active" : ""
           }`}
           onClick={handleQuarter}
         >
@@ -173,7 +170,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         <li
           key={PeriodTypes.YEAR}
           className={`period-filter__list-item ${
-            curPeriodType === "YEAR" ? "active" : ""
+            clickedPeriod === "YEAR" ? "active" : ""
           }`}
           onClick={handleYear}
         >
@@ -182,7 +179,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         <li
           key={PeriodTypes.CUSTOM}
           className={`period-filter__list-item ${
-            curPeriodType === "CUSTOM" ? "active" : ""
+            clickedPeriod === "CUSTOM" ? "active" : ""
           }`}
           onClick={handleCustom}
         >

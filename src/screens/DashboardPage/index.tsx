@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import useAuth from "@/context/authContext";
 import { getDasboardData } from "@/services/dashboard";
 import {
-  PeriodTypes,
   PeriodType,
   DashboardPeriodType,
 } from "@/types/dashboard";
@@ -45,6 +44,8 @@ const DashboardPage: React.FC = () => {
     endDate: new Date(),
     periodType: "DAY" as PeriodType,
   });
+
+  const [clickedPeriod, setClickedPeriod] = useState<PeriodType>("DAY");
   const [diagramType, setDiagramType] = useState<PeriodType>("DAY");
 
   useEffect(() => {
@@ -116,6 +117,8 @@ const DashboardPage: React.FC = () => {
           currentPeriod={currentPeriod}
           setCurrentPeriod={setCurrentPeriod}
           setDiagramType={setDiagramType}
+          clickedPeriod={clickedPeriod}
+          setClickedPeriod={setClickedPeriod}
         />
         <div className="grid-row gap-md mb-md">
           <div className="grid-col-3">
