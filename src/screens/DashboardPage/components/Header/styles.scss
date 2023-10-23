@@ -24,3 +24,9 @@
     transform: translate(-50%, -50%);
   }
 }
+
+@media (max-width: 600px) {
+  .dashboard-header__menu h2 {
+    display: none;
+  }
+}
