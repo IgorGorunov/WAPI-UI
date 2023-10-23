@@ -7,6 +7,11 @@ import Notification from "@/assets/icons/notifications.svg";
 import BGLogo from "@/assets/icons/bg-logo.svg";
 import Search from "@/assets/icons/search.svg";
 import Home from "@/assets/icons/home.svg";
+import Close from "@/assets/icons/close.svg";
+import Products from "@/assets/icons/products.svg";
+import KeyboardArrowUp from "@/assets/icons/keyboard_arrow_up.svg";
+import KeyboardArrowRight from "@/assets/icons/keyboard_arrow_right.svg";
+
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -16,6 +21,10 @@ export const icons = {
   "bg-logo": BGLogo,
   "search": Search,
   "home": Home,
+  "close": Close,
+  "products": Products,
+  "keyboard-arrow-up": KeyboardArrowUp,
+  "keyboard-arrow-right": KeyboardArrowRight,
 };
 
 export type IconType = keyof typeof icons;
