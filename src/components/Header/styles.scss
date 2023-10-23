@@ -1,0 +1,11 @@
+.main-header {
+  position: relative;
+  width: 100%;
+  z-index: 101;
+
+  &__icon {
+    position: absolute;
+    left: 20px;
+    top: 16px;
+  }
+}

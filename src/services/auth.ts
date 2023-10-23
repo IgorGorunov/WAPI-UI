@@ -24,15 +24,23 @@ const authenticate = async (login: string, password: string) => {
   }
 };
 
-// function setToken(userToken: string) {
-//   // sessionStorage.setItem("token", JSON.stringify(userToken));
-// }
+const verifyToken = async (token: string) => {
+  try {
+    const response = await axios.post(`${API_ENDPOINT}/TokenIsValid`,
+      {
+        token
+      },
+      {
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
+    return (response?.status === 200);
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
 
-// function getToken() {
-//   // const tokenString = sessionStorage.getItem("token");
-//   // const userToken = JSON.parse(tokenString || "");
-//   // return userToken?.token;
-//   return "";
-// }
-
-export { authenticate };
+export { authenticate, verifyToken };

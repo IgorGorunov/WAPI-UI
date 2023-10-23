@@ -1,4 +1,5 @@
 import React from "react";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer/Footer";
 import "./styles.scss";
 
@@ -16,7 +17,7 @@ const Layout: React.FC<Props> = ({
   return (
     <div className="main">
       <div className="main-content">
-        {hasHeader && <div>Header</div>}
+        {hasHeader && <Header />}
         {children}
       </div>
       {hasFooter && <Footer />}

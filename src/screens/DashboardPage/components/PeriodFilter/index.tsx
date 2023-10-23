@@ -124,7 +124,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   };
 
   const handleCustom = () => {
-    setClickedPeriod("CUSTOM");
+    clickedPeriod === "CUSTOM" ? setClickedPeriod(curPeriodType) : setClickedPeriod("CUSTOM");
     setShowCustom((prevState) => !prevState);
   };
 

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
+import {useRouter} from "next/router";
 import { getDasboardData } from "@/services/dashboard";
 import {
   PeriodType,
   DashboardPeriodType,
 } from "@/types/dashboard";
+import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from "./components/Header";
 import Diagram from "./components/Diagram";
@@ -12,6 +15,7 @@ import Forecast from "./components/Forecast";
 import OrderStatuses from "./components/OrderStatuses";
 import OrdersByCountry from "./components/OrdersByCountry";
 import "./styles.scss";
+import {verifyToken} from "@/services/auth";
 
 const DashboardPage: React.FC = () => {
 
@@ -36,7 +40,14 @@ const DashboardPage: React.FC = () => {
     return [year, month, day].join("-");
   };
 
-  const { token } = useAuth();
+  const Router = useRouter();
+  console.log("router: ", Router);
+  const { token, setToken } = useAuth();
+  const savedToken = Cookie.get('token');
+  if (!token && savedToken) setToken(savedToken);
+
+  // if (!token ) router.push("/login");
+
   const [pageData, setPageData] = useState<pageDataType | null>(null);
 
   const [currentPeriod, setCurrentPeriod] = useState<DashboardPeriodType>({
@@ -56,26 +67,30 @@ const DashboardPage: React.FC = () => {
     const createRequestData = (
       periodType: PeriodType,
       startDate: Date,
-      endDate: Date,
-      diagramType: PeriodType
+      endDate: Date
     ) => {
       return {
         periodType,
         startDate: formatDate(startDate),
         endDate: formatDate(endDate),
-        diagramType: diagramType || "DAY",
         token: token || "",
       };
     };
 
+
     const fetchData = async () => {
       try {
+        //verify token
+        if (!await verifyToken(token)) {
+            console.log("token is wrong");
+            await Router.push(Routes.Login);
+        }
+
         const res: ApiResponse = await getDasboardData(
           createRequestData(
             currentPeriod.periodType,
             currentPeriod.startDate,
-            currentPeriod.endDate,
-            diagramType
+            currentPeriod.endDate
           )
         );
 
@@ -90,7 +105,7 @@ const DashboardPage: React.FC = () => {
     };
 
     fetchData();
-  }, [token, currentPeriod, diagramType]);
+  }, [token, currentPeriod]);
 
   console.log("page data: ", pageData);
 
@@ -108,10 +123,9 @@ const DashboardPage: React.FC = () => {
     pageData && pageData.orderByCountryDeparture
       ? pageData.orderByCountryDeparture
       : null;
-  //console.log("---", ForecastTypes, gmv);
 
   return (
-    <Layout hasFooter>
+    <Layout hasHeader hasFooter>
       <div className="dashboard-page__container">
         <Header
           currentPeriod={currentPeriod}
