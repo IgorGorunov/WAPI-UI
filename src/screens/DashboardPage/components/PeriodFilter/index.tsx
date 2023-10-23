@@ -6,6 +6,7 @@ import {
 } from "@/types/dashboard";
 import Datepicker from "./Datepicker";
 import "./styles.scss";
+import Icon from "@/components/Icon";
 
 export type PeriodFilterProps = {
   currentPeriod: DashboardPeriodType;
@@ -33,12 +34,17 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
       const endDate = new Date();
       setCurrentPeriod({ periodType: "DAY", startDate, endDate });
       setDiagramType("DAY");
+      setIsPeriodDropdownOpen(false);
+      setSelectedPeriodType("DAY");
     }
   };
 
   const getStartDate = (daysAmount: number) => {
     return new Date(new Date().setDate(new Date().getDate() - daysAmount + 1));
   };
+
+  const [isPeriodDropdownOpen, setIsPeriodDropdownOpen] = useState(false);
+  const [selectedPeriodType, setSelectedPeriodType] = useState("Period type");
 
   const handleWeek = () => {
     setShowCustom(false);
@@ -55,6 +61,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
       });
 
       setDiagramType("DAY");
+      setIsPeriodDropdownOpen(false);
+      setSelectedPeriodType("WEEK");
     }
   };
 
@@ -77,6 +85,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         endDate,
       });
       setDiagramType("DAY");
+      setIsPeriodDropdownOpen(false);
+      setSelectedPeriodType("MONTH");
     }
   };
 
@@ -99,6 +109,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         endDate,
       });
       setDiagramType("WEEK");
+      setIsPeriodDropdownOpen(false);
+      setSelectedPeriodType("QUARTER");
     }
   };
 
@@ -120,17 +132,24 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         endDate,
       });
       setDiagramType("MONTH");
+      setIsPeriodDropdownOpen(false);
+      setSelectedPeriodType("YEAR");
     }
   };
 
   const handleCustom = () => {
     clickedPeriod === "CUSTOM" ? setClickedPeriod(curPeriodType) : setClickedPeriod("CUSTOM");
     setShowCustom((prevState) => !prevState);
+    setIsPeriodDropdownOpen(false);
+    setSelectedPeriodType("CUSTOM");
   };
 
   return (
     <div className="period-filter period-filter__container">
-      <ul className="period-filter__list">
+      <div onClick={() => setIsPeriodDropdownOpen(!isPeriodDropdownOpen)} className="period-filter__dropdown">
+        {selectedPeriodType}
+      </div>
+      <ul className={`period-filter__list ${isPeriodDropdownOpen ? "open" : ""}`}>
         <li
           key={PeriodTypes.DAY}
           className={`period-filter__list-item ${
