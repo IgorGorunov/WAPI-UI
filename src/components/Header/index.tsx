@@ -28,19 +28,15 @@ const Header = () => {
                     <div className={`submenu-container-${isProductSubmenuOpen ? 'expanded' : ''}`}>
                         <div className="submenu-header" onClick={() => setProductSubmenuOpen(!isProductSubmenuOpen)}>
                             <Icon name="products" style={{width: "30px", height: "30px"}} />
-                            {isProductSubmenuOpen ?
-                                <span style={{marginLeft: "20px"}}>Products</span>:
-                                <span style={{marginLeft: "20px"}}>Products</span>}
+                            <span style={{marginLeft: "20px"}}>Products</span>
                             {isProductSubmenuOpen ?
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-up"/></span> :
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
                             }
                         </div>
-                        {isProductSubmenuOpen && (
-                            <div className="submenu-items anim">
-                                <div>Product list</div>
-                            </div>
-                        )}
+                        <div className="submenu-items">
+                            <div>Product list</div>
+                        </div>
                     </div>
 
                 </div>
