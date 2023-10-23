@@ -35,7 +35,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
       setCurrentPeriod({ periodType: "DAY", startDate, endDate });
       setDiagramType("DAY");
       setIsPeriodDropdownOpen(false);
-      setSelectedPeriodType("DAY");
+      setSelectedPeriodType("Day");
     }
   };
 
@@ -62,7 +62,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
 
       setDiagramType("DAY");
       setIsPeriodDropdownOpen(false);
-      setSelectedPeriodType("WEEK");
+      setSelectedPeriodType("Week");
     }
   };
 
@@ -86,7 +86,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
       });
       setDiagramType("DAY");
       setIsPeriodDropdownOpen(false);
-      setSelectedPeriodType("MONTH");
+      setSelectedPeriodType("Month");
     }
   };
 
@@ -110,7 +110,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
       });
       setDiagramType("WEEK");
       setIsPeriodDropdownOpen(false);
-      setSelectedPeriodType("QUARTER");
+      setSelectedPeriodType("Quarter");
     }
   };
 
@@ -133,7 +133,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
       });
       setDiagramType("MONTH");
       setIsPeriodDropdownOpen(false);
-      setSelectedPeriodType("YEAR");
+      setSelectedPeriodType("Year");
     }
   };
 
