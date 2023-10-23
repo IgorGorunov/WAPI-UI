@@ -65,12 +65,10 @@ const DashboardPage: React.FC = () => {
     };
 
     const createRequestData = (
-      periodType: PeriodType,
       startDate: Date,
       endDate: Date
     ) => {
       return {
-        periodType,
         startDate: formatDate(startDate),
         endDate: formatDate(endDate),
         token: token || "",
@@ -88,7 +86,6 @@ const DashboardPage: React.FC = () => {
 
         const res: ApiResponse = await getDasboardData(
           createRequestData(
-            currentPeriod.periodType,
             currentPeriod.startDate,
             currentPeriod.endDate
           )
