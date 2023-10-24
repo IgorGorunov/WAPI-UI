@@ -17,8 +17,9 @@
   }
 
   &:hover {
-    background-color: var(--color-blue);
+    background-color: var(--color-blue-15);
     cursor: pointer;
+    color: var(--color-gray-blue);
   }
 
   &-size {
