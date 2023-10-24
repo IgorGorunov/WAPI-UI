@@ -184,6 +184,8 @@ const DashboardPage: React.FC = () => {
                 ?
                 <Diagram
                     diagramData={null}
+                    setDiagramType={setDiagramType}
+                    diagramType={diagramType}
                 />
                 : <Diagram
                     diagramData={pageData.ordersDiagram}
