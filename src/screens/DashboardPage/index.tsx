@@ -16,8 +16,10 @@ import OrderStatuses from "./components/OrderStatuses";
 import OrdersByCountry from "./components/OrdersByCountry";
 import "./styles.scss";
 import {verifyToken} from "@/services/auth";
+import Skeleton from "@/components/Skeleton/Skeleton";
 
 const DashboardPage: React.FC = () => {
+
 
   type pageDataType = {
     ordersDiagram: any;
@@ -57,6 +59,8 @@ const DashboardPage: React.FC = () => {
 
   const [clickedPeriod, setClickedPeriod] = useState<PeriodType>("DAY");
   const [diagramType, setDiagramType] = useState<PeriodType>("DAY");
+  const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     type ApiResponse = {
@@ -77,6 +81,7 @@ const DashboardPage: React.FC = () => {
 
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         //verify token
         if (!await verifyToken(token)) {
             console.log("token is wrong");
@@ -92,11 +97,14 @@ const DashboardPage: React.FC = () => {
 
         if (res && "data" in res) {
           setPageData(res.data);
+          setIsLoading(false);
         } else {
           console.error("API did not return expected data");
         }
+
       } catch (error) {
         console.error("Error fetching data:", error);
+        setIsLoading(false);
       }
     };
 
@@ -121,61 +129,76 @@ const DashboardPage: React.FC = () => {
       : null;
 
   return (
-    <Layout hasHeader hasFooter>
-      <div className="dashboard-page__container">
-        <Header
-          currentPeriod={currentPeriod}
-          setCurrentPeriod={setCurrentPeriod}
-          setDiagramType={setDiagramType}
-          clickedPeriod={clickedPeriod}
-          setClickedPeriod={setClickedPeriod}
-        />
-        <div className="grid-row gap-md mb-md">
-          <div className="grid-col-3">
-            {pageData?.gmv && (
+      <Layout hasHeader hasFooter>
+        <div className="dashboard-page__container">
+          {isLoading && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                zIndex: 1000
+              }}>
+                <Skeleton type="spinner" width= "250px" height= "250px" />
+              </div>
+          )}
+          <Header
+              currentPeriod={currentPeriod}
+              setCurrentPeriod={setCurrentPeriod}
+              setDiagramType={setDiagramType}
+              clickedPeriod={clickedPeriod}
+              setClickedPeriod={setClickedPeriod}
+          />
+          <div className="grid-row gap-md mb-md">
+            <div className="grid-col-3">
               <Forecast
-                type="GMV"
-                amountInPeriod={gmv?.gmvInPeriod}
-                beginOfMonth={gmv?.gmvBEginOfMonth}
-                beginOfYear={gmv?.gmvBeginOfYear}
-                forecastByMonth={gmv?.gmvForecastByMonth}
-                forecastByYear={gmv?.gmvForecastByYear}
+                  type="GMV"
+                  amountInPeriod={!gmv?.gmvInPeriod ? 0 : gmv?.gmvInPeriod}
+                  beginOfMonth={!gmv?.gmvBEginOfMonth ? 0 : gmv?.gmvBEginOfMonth}
+                  beginOfYear={!gmv?.gmvBeginOfYear ? 0 : gmv?.gmvBeginOfYear}
+                  forecastByMonth={!gmv?.gmvForecastByMonth ? 0 : gmv?.gmvForecastByMonth}
+                  forecastByYear={!gmv?.gmvForecastByYear ? 0 : gmv?.gmvForecastByYear}
               />
-            )}
-          </div>
-          <div className="grid-col-3">
-            {ordersByStatuses && (
-              <OrderStatuses ordersByStatuses={ordersByStatuses} />
-            )}
-          </div>
-          <div className="grid-col-3">
-            {orders && (
+            </div>
+            <div className="grid-col-3">
+              <OrderStatuses ordersByStatuses={ordersByStatuses}/>
+            </div>
+            <div className="grid-col-3">
               <Forecast
-                type="ORDERS"
-                amountInPeriod={orders?.ordersInPeriod}
-                beginOfMonth={orders?.ordersBeginOfMonth}
-                beginOfYear={orders?.ordersBeginOfYear}
-                forecastByMonth={orders?.ordersForecastByMonth}
-                forecastByYear={orders?.ordersForecastByYear}
+                  type="ORDERS"
+                  amountInPeriod={!orders?.ordersInPeriod ? 0 : orders?.ordersInPeriod}
+                  beginOfMonth={!orders?.ordersInPeriod ? 0 : orders?.ordersBeginOfMonth}
+                  beginOfYear={!orders?.ordersBeginOfYear ? 0 : orders?.ordersBeginOfYear}
+                  forecastByMonth={!orders?.ordersForecastByMonth ? 0 : orders?.ordersForecastByMonth}
+                  forecastByYear={!orders?.ordersForecastByYear ? 0 : orders?.ordersForecastByYear}
               />
-            )}
+            </div>
           </div>
+          {
+            isLoading
+                ?
+                <Diagram
+                    diagramData={null}
+                />
+                : <Diagram
+                    diagramData={pageData.ordersDiagram}
+                    setDiagramType={setDiagramType}
+                    diagramType={diagramType}
+                />
+          }
+          {
+            <OrdersByCountry
+                arrival={!orderByCountryArrival ? [] : orderByCountryArrival}
+                departure={!orderByCountryDeparture ? [] : orderByCountryDeparture}
+            />
+          }
         </div>
-        {pageData && (
-          <Diagram
-            diagramData={pageData.ordersDiagram}
-            setDiagramType={setDiagramType}
-            diagramType={diagramType}
-          />
-        )}
-        {(orderByCountryArrival || orderByCountryDeparture) && (
-          <OrdersByCountry
-            arrival={orderByCountryArrival}
-            departure={orderByCountryDeparture}
-          />
-        )}
-      </div>
-    </Layout>
+      </Layout>
   );
 };
 

@@ -16,7 +16,6 @@ const Header: React.FC<HeaderProps> = (props) => {
   return (
     <div className={`card dashboard-header__container mb-md`}>
       <div className="dashboard-header__menu">
-        {/*<Icon name={"menu-icon"} />*/}
         <h2>Dashboard</h2>
       </div>
       <div className="dashboard-header__filter">

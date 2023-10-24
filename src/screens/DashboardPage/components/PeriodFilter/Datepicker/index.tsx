@@ -5,6 +5,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import Button from "@/components/Button/Button";
 import "./styles.scss";
+import {red} from "next/dist/lib/picocolors";
 
 
 type DatePickerPropsType =  {
@@ -60,6 +61,7 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
               direction="horizontal"
               weekStartsOn={1}
               showMonthAndYearPickers={false}
+              rangeColors={["#5380F5", "#5380F5"]}
           />
         </div>
         <div className="button-container">

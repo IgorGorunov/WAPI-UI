@@ -62,10 +62,12 @@ let Diagram: React.FC<DashboardDataProps> = ({
 
   let chartRef = useRef<ChartJS<"bar", number[], string> | null>(null);
 
-
-
-  let labels = diagramData[diagramType].map((item) => item.Key);
-  let values = diagramData[diagramType].map((item) => item.Value);
+  let labels = diagramData && diagramData[diagramType]
+      ? diagramData[diagramType].map((item) => item.Key)
+      : [];
+  let values = diagramData && diagramData[diagramType]
+      ? diagramData[diagramType].map((item) => item.Value)
+      : [];
 
   let data = useMemo(
     () => ({

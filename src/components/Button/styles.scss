@@ -11,9 +11,14 @@
   border: none;
   transition: all .3s ease-in;
 
-  &:hover,
   &:focus {
-    background-color: var(--color-dark-blue);
+    background-color: var(--color-blue);
+    cursor: pointer;
+  }
+
+  &:hover {
+    background-color: var(--color-blue);
+    cursor: pointer;
   }
 
   &-size {

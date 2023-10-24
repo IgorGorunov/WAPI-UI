@@ -7,8 +7,22 @@
     position: absolute;
     left: 20px;
     top: 16px;
+    cursor: pointer;
   }
+
 }
+.main-header__icon:hover svg rect:first-of-type {
+  fill: var(--color-blue-15);
+}
+
+.main-header__icon:hover svg path {
+  fill: var(--gray-blue-grey-blue-60, #6B7A99);
+}
+
+.main-header__icon:hover svg rect:last-of-type {
+  stroke: none;
+}
+
 
 .burger-menu {
   display: flex;
@@ -59,7 +73,8 @@
 }
 
  .button-link:hover {
-   background-color: #5380F5;
+   background-color: var(--color-blue-15);
+   color: var(--gray-blue-grey-blue-60, #6B7A99);
  }
 
 .close-button {

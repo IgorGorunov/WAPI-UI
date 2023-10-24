@@ -1,5 +1,6 @@
 import React from "react";
 import StatusBar from "./StatusBar";
+import Skeleton from "@/components/Skeleton/Skeleton";
 import "./styles.scss";
 
 export const enum GroupStatuses {
@@ -38,28 +39,29 @@ export type OrderStatusesPropsType = {
 };
 
 const OrderStatuses: React.FC<OrderStatusesPropsType> = ({
-  ordersByStatuses,
-}) => {
+                                                           ordersByStatuses,
+                                                         }) => {
+
   let maxAmount = 0;
-  for (let i = 0; i < ordersByStatuses.length; i++) {
-    if (maxAmount < ordersByStatuses[i].ordersCount) {
-      maxAmount = ordersByStatuses[i].ordersCount;
-    }
+  if (ordersByStatuses) {
+      for (let i = 0; i < ordersByStatuses.length; i++) {
+        if (maxAmount < ordersByStatuses[i].ordersCount) {
+          maxAmount = ordersByStatuses[i].ordersCount;
+        }
+      }
   }
 
   return (
-    <div className={`card order-statuses order-statuses__container`}>
-      <h4 className="title">Orders by statuses</h4>
-      <div className="order-statuses__wrapper">
-        {ordersByStatuses.map((item: GroupOrderStatusType) => (
-          <StatusBar
-            key={item.status}
-            groupStatus={item}
-            maxAmount={maxAmount}
-          />
-        ))}
+      <div className={`card order-statuses order-statuses__container`}>
+        <h4 className="title">Orders by statuses</h4>
+          {ordersByStatuses && ordersByStatuses.map((item: GroupOrderStatusType) => (
+              <StatusBar
+                  key={item.status}
+                  groupStatus={item}
+                  maxAmount={maxAmount}
+              />
+          ))}
       </div>
-    </div>
   );
 };
 
