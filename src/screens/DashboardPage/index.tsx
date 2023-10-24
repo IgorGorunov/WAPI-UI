@@ -41,7 +41,6 @@ const DashboardPage: React.FC = () => {
   };
 
   const Router = useRouter();
-  console.log("router: ", Router);
   const { token, setToken } = useAuth();
   const savedToken = Cookie.get('token');
   if (!token && savedToken) setToken(savedToken);
