@@ -1,5 +1,7 @@
 .order-statuses {
   &__container {
+    animation: fadeInDown 1s forwards;
+    opacity: 0;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -14,5 +16,16 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

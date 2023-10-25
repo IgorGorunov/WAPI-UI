@@ -20,7 +20,6 @@ import Skeleton from "@/components/Skeleton/Skeleton";
 
 const DashboardPage: React.FC = () => {
 
-
   type pageDataType = {
     ordersDiagram: any;
     gmv: any;
@@ -45,9 +44,7 @@ const DashboardPage: React.FC = () => {
   const Router = useRouter();
   const { token, setToken } = useAuth();
   const savedToken = Cookie.get('token');
-  if (!token && savedToken) setToken(savedToken);
-
-  // if (!token ) router.push("/login");
+  if (savedToken) setToken(savedToken);
 
   const [pageData, setPageData] = useState<pageDataType | null>(null);
 
@@ -60,7 +57,6 @@ const DashboardPage: React.FC = () => {
   const [clickedPeriod, setClickedPeriod] = useState<PeriodType>("DAY");
   const [diagramType, setDiagramType] = useState<PeriodType>("DAY");
   const [isLoading, setIsLoading] = useState(true);
-
 
   useEffect(() => {
     type ApiResponse = {

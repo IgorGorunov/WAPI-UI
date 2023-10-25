@@ -1,6 +1,8 @@
 .dashboard-diagram {
   &__wrapper {
     padding: 26px;
+    animation: fadeInDown 1s forwards;
+    opacity: 0;
   }
 
   &__header {
@@ -40,5 +42,16 @@
       color: var(--color-white);
       background-color: var(--color-blue);
     }
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
