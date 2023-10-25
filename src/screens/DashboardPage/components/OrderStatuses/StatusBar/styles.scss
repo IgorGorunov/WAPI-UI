@@ -24,6 +24,7 @@
   }
 
   &__count {
+    cursor: pointer;
     position: relative;
     display: flex;
     justify-content: right;
@@ -35,9 +36,6 @@
     padding-right: 10px;
     width: 25px;
     line-height: 21px;
-    //border-radius: 50%;
-    //border: 2px solid var(--color-gray2);
-    //box-shadow: 0px 2px 5px 0px rgba(38, 51, 77, 0.03);
     border-right: 1px solid rgba(125,143,179, 0.2);
   }
 }
