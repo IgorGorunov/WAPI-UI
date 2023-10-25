@@ -54,6 +54,15 @@ function hexToRgba(hex: string, opacity: number): string {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
+function getBackgroundColor(value: number): string {
+  if (value < 5) {
+    return "#5380F5";
+  } else {
+    return hexToRgba("#5380F5", 0.05);
+  }
+}
+
+
 let Diagram: React.FC<DashboardDataProps> = ({
   diagramData,
     diagramType = "DAY",
@@ -69,6 +78,8 @@ let Diagram: React.FC<DashboardDataProps> = ({
       ? diagramData[diagramType].map((item) => item.Value)
       : [];
 
+  let backgroundColors = values.map(value => getBackgroundColor(value));
+
   let data = useMemo(
     () => ({
       labels: labels,
@@ -77,7 +88,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
           label: "",
           data: values,
           borderColor: "#5380F5",
-          backgroundColor: hexToRgba("#5380F5", 0.05),
+          backgroundColor: backgroundColors,
           barPercentage: 1.25,
         },
       ],
@@ -141,7 +152,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
           color: "#ADB8CC",
         },
         position: "right",
-        grid:{
+        grid: {
 
         }
       },
@@ -155,7 +166,6 @@ let Diagram: React.FC<DashboardDataProps> = ({
         },
         grid: {
           display: false,
-
         },
       },
     },
