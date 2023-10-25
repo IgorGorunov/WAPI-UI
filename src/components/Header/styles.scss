@@ -29,8 +29,6 @@
   fill: var(--color-gray-blue);
 }
 
-
-
 .burger-menu {
   display: flex;
   justify-content: center;
@@ -80,10 +78,16 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
- .button-link:hover {
-   background-color: var(--color-blue-15);
-   color: var(--color-gray-blue);
- }
+.icon-home path {
+  transition: all 0.3s ease, color 0.3s ease;
+}
+.button-link:hover {
+  background-color: var(--color-blue-15);
+  color: var(--color-gray-blue);
+  .icon-home path{
+      fill: var(--color-gray-blue);;
+  }
+}
 
 .close-button {
   position: absolute;
@@ -125,6 +129,9 @@
   font-size: 12px;
   font-weight: 700;
   width: 100%;
+  &:hover {
+    color: var(--color-blue);
+  }
 }
 
 .submenu-items {
@@ -160,3 +167,5 @@
 .nav-arrow-icon {
   margin-left: auto;
 }
+
+

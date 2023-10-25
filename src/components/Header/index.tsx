@@ -21,7 +21,7 @@ const Header = () => {
                         <Icon name="close" style={{width: "30px", height: "30px"}} />
                     </button>
                     <Link href="/" className="button-link" passHref onClick={()=>{setMenuOpen(false)}}>
-                        <Icon name="home" style={{width: "30px", height: "30px"}} />
+                        <Icon name="home" className="icon-home"/>
                         <span style={{marginLeft: "20px"}}>Dashboard</span>
                     </Link>
 

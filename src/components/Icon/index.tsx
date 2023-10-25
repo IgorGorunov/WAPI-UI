@@ -31,12 +31,13 @@ export type IconType = keyof typeof icons;
 
 export type IconProps = React.ImgHTMLAttributes<HTMLImageElement> & {
   name: IconType;
+  className?: string;
 };
 
-export const Icon: React.FC<IconProps> = memo(({ name = "arrow-left" }) => {
+export const Icon: React.FC<IconProps> = memo(({ name = "arrow-left", className="" }) => {
   const IconComponent = useMemo(() => icons[name], [name]);
 
-  return <IconComponent />;
+  return <IconComponent className={className}/>;
 });
 
 Icon.displayName = "Icon";

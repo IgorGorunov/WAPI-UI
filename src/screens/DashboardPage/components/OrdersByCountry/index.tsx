@@ -21,7 +21,7 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
 
   return (
     <div className={`orders-by-country orders-by-country__container card mb-md`}>
-      <h4 className="title">Orders by contries</h4>
+      <h4 className="title">Orders by countries</h4>
       <div className="orders-by-country__wrapper">
         <ul className="orders-by-country__tablist" role="tablist">
           <li
