@@ -147,7 +147,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   return (
     <div className="period-filter period-filter__container">
       <div onClick={() => setIsPeriodDropdownOpen(!isPeriodDropdownOpen)} className="period-filter__dropdown">
-        {selectedPeriodType}
+        <span className="nav-arrow-icon">  {selectedPeriodType} <Icon name="expand" className="icon-right"  /> </span>
       </div>
       <ul className={`period-filter__list ${isPeriodDropdownOpen ? "open" : ""}`}>
         <li

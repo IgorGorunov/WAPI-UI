@@ -80,6 +80,16 @@
     padding: 10px 20px;
     background-color: var(--color-blue);
     color: white;
+    width: 120px;
   }
 }
 
+.nav-arrow-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height:  20px;
+}
+.icon-right {
+  margin-left: auto;
+}
