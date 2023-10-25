@@ -1,0 +1,33 @@
+.dashboard-header {
+  &__container {
+    position: relative;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: visible;
+    z-index: 100;
+  }
+
+  &__menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-left: 75px;
+    color: var(--color-gray);
+  }
+
+  &__filter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+
+@media (max-width: 600px) {
+  .dashboard-header__menu h2 {
+    display: none;
+  }
+}
