@@ -45,7 +45,7 @@ const Button: React.FC<ButtonType> = (props) => {
       {...otherProps}
     >
       {icon && !iconOnTheRight ? (
-        <span className="icon-left">
+        <span className="icon icon-left">
           <Icon name={icon} />
         </span>
       ) : null}

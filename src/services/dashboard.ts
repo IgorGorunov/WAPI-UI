@@ -1,5 +1,4 @@
 import axios from "axios";
-import { PeriodType } from "@/types/dashboard";
 
 const API_ENDPOINT = "https://first.wapi.com:4443/WAPI/hs/v1/UI";
 
