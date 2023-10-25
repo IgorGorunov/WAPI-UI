@@ -1,7 +1,8 @@
-.dashboard-header {
+.products-header {
   &__container {
     position: relative;
-    padding: 10px 20px;
+    padding: 22px 20px;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -17,17 +18,15 @@
     color: var(--color-gray);
   }
 
-  &__filter {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  &__buttons {
+    display: flex;
+    gap: 30px;
   }
 }
 
 
 @media (max-width: 600px) {
-  .dashboard-header__menu h2 {
+  .products-header__menu h2 {
     display: none;
   }
 }
