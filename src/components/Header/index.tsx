@@ -35,7 +35,7 @@ const Header = () => {
                             }
                         </div>
                         <div className="submenu-items">
-                            <div>Product list</div>
+                            <Link href="/products" >Product list</Link>
                         </div>
                     </div>
 

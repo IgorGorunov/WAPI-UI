@@ -115,7 +115,6 @@
   .submenu-header {
     border-bottom: 2px solid var(--border-color);
     padding: 0 0 15px 0;
-
   }
 }
 
@@ -135,6 +134,7 @@
 }
 
 .submenu-items {
+  cursor: pointer;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -149,6 +149,9 @@
   height: 0;
   visibility: hidden;
   transition:  all 0.5s ease-in-out, opacity 0.5s, transform 0.5s;
+  &:hover {
+    color: var(--color-blue);
+  }
 }
 .submenu-container-expanded .submenu-items {
   opacity: 1;

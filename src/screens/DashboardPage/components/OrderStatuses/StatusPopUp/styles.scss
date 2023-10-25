@@ -5,11 +5,10 @@
     left: 32px;
     background-color: var(--color-dark-blue);
     color: white;
-    //padding: 10px;
     border-radius: 5px;
     transform: translateY(-50%);
-    z-index: 100;
-
+    opacity: 0;
+    animation: fadeIn 1s forwards;
     &::before {
       content: '';
       position: absolute;
@@ -49,5 +48,14 @@
         background-color: var(--color-light-blue-gray);
       }
     }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
