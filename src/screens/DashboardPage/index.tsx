@@ -144,7 +144,7 @@ const DashboardPage: React.FC = () => {
                 backgroundColor: 'rgba(255, 255, 255, 0.5)',
                 zIndex: 1000
               }}>
-                <Skeleton type="spinner" width= "150px" height= "150px" />
+                <Skeleton type="spinner" width= "100px" height= "100px" />
               </div>
           )}
           <Header
