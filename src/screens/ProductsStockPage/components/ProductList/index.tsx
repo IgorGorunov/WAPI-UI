@@ -4,6 +4,7 @@ import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import { CountryCodes } from "@/types/countries";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
+import StatusWarehouseSelector from "@/components/InputSelect";
 
 type ProductType = {
     name: string;
@@ -33,14 +34,38 @@ const pageOptions = [
     { value: '100', label: '100 per page' },
 ];
 
+
+
 const ProductList: React.FC<ProductListType> = ({products}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
+    const [filterWarehouse, setFilterWarehouse] = useState('');
+    const allWarehouses = products.map(product => product.warehouse);
+    const uniqueWarehouses = Array.from(new Set(allWarehouses));
 
+    const warehouseToCountry = products.reduce((acc, product) => {
+        acc[product.warehouse] = product.country;
+        return acc;
+    }, {});
+
+    const transformedWarehouses = [
+        {
+            value: '',
+            label: 'All warehouses',
+            countryCode: null
+        },
+        ...uniqueWarehouses.map(warehouse => ({
+            value: warehouse,
+            label: warehouse,
+            countryCode: warehouseToCountry[warehouse]
+        }))
+    ];
+
+
+    console.log(uniqueWarehouses);
     const handleChangePage = (page: number) => {
         setAnimating(true);
         setTimeout(() => {
@@ -54,20 +79,37 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         setCurrent(1);
     };
 
-    const handleFilterChange = (newSearchTerm) => {
+    const handleFilterChange = (newSearchTerm, newStatusFilter) => {
+
         if (newSearchTerm !== undefined) {
             setSearchTerm(newSearchTerm);
+            setCurrent(1);
+        }
+        if (newStatusFilter !== undefined) {
+            setFilterWarehouse(newStatusFilter);
+            setCurrent(1);
         }
     };
 
     const filteredProducts = products.filter(product => {
-        if (!searchTerm) return true;
+        let matchesSearch = false;
+        let matchesStatus = true;
 
-        const searchTermLower = searchTerm.toLowerCase();
+        if (searchTerm) {
+            const searchTermLower = searchTerm.toLowerCase();
 
-        return Object.values(product).some(value =>
-            String(value).toLowerCase().includes(searchTermLower)
-        );
+            matchesSearch = Object.values(product).some(value =>
+                String(value).toLowerCase().includes(searchTermLower)
+            );
+        } else {
+            matchesSearch = true;
+        }
+
+        if (filterWarehouse) {
+            matchesStatus = product.warehouse === filterWarehouse;
+        }
+
+        return matchesSearch && matchesStatus;
     });
 
     const columns: TableColumnProps<ProductType>[]  = [
@@ -159,11 +201,18 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         ];
     return (
         <div style={{width: '100%'}}>
-            <div className="status-filter-container">
+            <div className="warehouse-filter-container">
+                <div>
+                    <StatusWarehouseSelector
+                        options={transformedWarehouses}
+                        value={filterWarehouse}
+                        onChange={(value) => handleFilterChange(undefined, value)}
+                    />
+                </div>
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}
-                    onChange={e => handleFilterChange(e.target.value)}
+                    onChange={e => handleFilterChange(e.target.value, undefined)}
                     className="search-input"
                 />
             </div>

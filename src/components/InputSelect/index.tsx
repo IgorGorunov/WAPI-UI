@@ -8,18 +8,23 @@ const CustomSelect = ({ options, value , onChange }) => {
 
     const formatOptionLabel = (option) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span
-                style={{
-                    width: '13px',
-                    height: '13px',
-                    borderRadius: '50%',
-                    backgroundColor: option.color,
-                    marginRight: '10px'
-                }}
-            ></span>
+            {option.countryCode ? (
+                <span className={`fi fi-${option.countryCode.toLowerCase()}`} style={{ marginRight: '10px' }}></span>
+            ) : (
+                <span
+                    style={{
+                        width: '13px',
+                        height: '13px',
+                        borderRadius: '50%',
+                        backgroundColor: option.color,
+                        marginRight: '10px'
+                    }}
+                ></span>
+            )}
             {option.label}
         </div>
     );
+
 
     return (
         <div className="input-select-container">

@@ -86,9 +86,11 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
 
         if (newSearchTerm !== undefined) {
             setSearchTerm(newSearchTerm);
+            setCurrent(1);
         }
         if (newStatusFilter !== undefined) {
             setFilterStatus(newStatusFilter);
+            setCurrent(1);
         }
     };
 
