@@ -1,0 +1,32 @@
+.products-header {
+  &__container {
+    position: relative;
+    padding: 22px 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: visible;
+    z-index: 100;
+  }
+
+  &__menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-left: 75px;
+    color: var(--color-gray);
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 30px;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .products-header__menu h2 {
+    display: none;
+  }
+}
