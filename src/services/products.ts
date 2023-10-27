@@ -26,5 +26,25 @@ const getProducts = async (
         return err;
     }
 };
+const getProductsStock = async (
+    //token: string,
+    data: {
+        token: string;
+    }
+) => {
+    try {
+        console.log("data: ", data)
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/GetProductsStock`,
+            data
 
-export { getProducts };
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+export { getProducts, getProductsStock};

@@ -1,4 +1,4 @@
-.status-popup {
+.universal-popup {
   &__wrapper {
     position: absolute;
     top: calc(50% - 2px);
@@ -9,6 +9,7 @@
     transform: translateY(-50%);
     opacity: 0;
     animation: fadeIn 1s forwards;
+    z-index:10000;
     &::before {
       content: '';
       position: absolute;
@@ -22,7 +23,7 @@
     }
   }
 
-  &__status {
+  &__item{
     display: flex;
     justify-content: space-between;
     padding: 5px 10px;

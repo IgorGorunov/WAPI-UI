@@ -142,17 +142,26 @@
   font-feature-settings: 'clig' off, 'liga' off;
   font-size: 12px;
   font-weight: 700;
-  padding: 15px 0;
+  padding-top: 10px;
   width: 100%;
   opacity: 0;
   transform: translateY(-20px);
   height: 0;
   visibility: hidden;
   transition:  all 0.5s ease-in-out, opacity 0.5s, transform 0.5s;
+  gap: 10px;
+}
+
+.submenu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
   &:hover {
     color: var(--color-blue);
   }
 }
+
 .submenu-container-expanded .submenu-items {
   opacity: 1;
   transform: translateY(0);

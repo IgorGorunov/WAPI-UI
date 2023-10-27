@@ -35,8 +35,16 @@ const Header = () => {
                             }
                         </div>
                         <div className="submenu-items">
-                            <Link href="/products" >Product list</Link>
+                            <div className="submenu-item">
+                                <Link href="/products" >Products list </Link>
+                                <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
+                            </div>
+                            <div className="submenu-item">
+                                <Link href="/productsStock" >Products stock</Link>
+                                <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
+                            </div>
                         </div>
+
                     </div>
 
                 </div>

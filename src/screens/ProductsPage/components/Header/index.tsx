@@ -19,8 +19,8 @@ const Header: React.FC = (props) => {
               <h2>Products</h2>
           </div>
           <div className="products-header__buttons">
-              <Button icon="search" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
-              <Button icon="search" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
+              <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
+              <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
           </div>
 
       </div>

@@ -17,7 +17,7 @@ export type GroupStatusType = keyof typeof GroupStatuses;
 export const StatusColors = {
   [GroupStatuses.Assigned]: "#FEDB4F",
   [GroupStatuses.Delivered]: "#29CC39",
-  [GroupStatuses["In transit"]]: "#3361FF",
+  [GroupStatuses["In transit"]]: "#5380F5",
   [GroupStatuses.Returned]: "#FF4000",
   [GroupStatuses.Returning]: "#FF4000",
   [GroupStatuses["Trouble status"]]: "#FEDB4F",

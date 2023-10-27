@@ -12,6 +12,10 @@ import Products from "@/assets/icons/products.svg";
 import KeyboardArrowUp from "@/assets/icons/keyboard_arrow_up.svg";
 import KeyboardArrowRight from "@/assets/icons/keyboard_arrow_right.svg";
 import Expand from "@/assets/icons/expand.svg";
+import Info from "@/assets/icons/info.svg";
+import Add from "@/assets/icons/add.svg";
+import ImportFile from "@/assets/icons/import-file.svg";
+import DownloadFile from "@/assets/icons/download.svg";
 
 
 export const icons = {
@@ -27,6 +31,10 @@ export const icons = {
   "keyboard-arrow-up": KeyboardArrowUp,
   "keyboard-arrow-right": KeyboardArrowRight,
   'expand': Expand,
+  'info': Info,
+  'add': Add,
+  'import-file': ImportFile,
+  'download-file': DownloadFile,
 };
 
 export type IconType = keyof typeof icons;
