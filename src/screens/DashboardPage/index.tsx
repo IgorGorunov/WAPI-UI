@@ -129,7 +129,7 @@ const DashboardPage: React.FC = () => {
         <div className="dashboard-page__container">
           {isLoading && (
               <div style={{
-                position: 'absolute',
+                position: 'fixed',
                 top: 0,
                 left: 0,
                 right: 0,
@@ -140,7 +140,7 @@ const DashboardPage: React.FC = () => {
                 backgroundColor: 'rgba(255, 255, 255, 0.5)',
                 zIndex: 1000
               }}>
-                <Skeleton type="spinner" width= "100px" height= "100px" />
+                <Skeleton type="loader" width="500px" height="300px" />
               </div>
           )}
           <Header
@@ -150,7 +150,7 @@ const DashboardPage: React.FC = () => {
               clickedPeriod={clickedPeriod}
               setClickedPeriod={setClickedPeriod}
           />
-          <div className="grid-row gap-md mb-md">
+          <div className="dashboard-animated-grid grid-row gap-md mb-md">
             <div className="grid-col-3">
               <Forecast
                   type="GMV"

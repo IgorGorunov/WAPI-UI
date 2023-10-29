@@ -10,6 +10,7 @@ const Header = () => {
     const { userName, getUserName, setToken, setUserName } = useAuth();
     const [isMenuOpen, setMenuOpen] = useState(false);
     const [isProductSubmenuOpen, setProductSubmenuOpen] = useState(false);
+    const [isOrderSubmenuOpen, setOrderSubmenuOpen] = useState(false);
 
     const Router = useRouter();
     const handleClick = () => {
@@ -63,7 +64,27 @@ const Header = () => {
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
                             </div>
                         </div>
+                    </div>
 
+                    <div className={`submenu-container-${isOrderSubmenuOpen ? 'expanded' : ''}`}>
+                        <div className="submenu-header" onClick={() => setOrderSubmenuOpen(!isOrderSubmenuOpen)}>
+                            <Icon name="orders" style={{width: "30px", height: "30px"}} />
+                            <span style={{marginLeft: "20px"}}>Orders</span>
+                            {isOrderSubmenuOpen ?
+                                <span className="nav-arrow-icon"><Icon name="keyboard-arrow-up"/></span> :
+                                <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
+                            }
+                        </div>
+                        <div className="submenu-items">
+                            <div className="submenu-item">
+                                <Link href="/orders" >Fulfillment</Link>
+                                <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
+                            </div>
+                            {/*<div className="submenu-item">*/}
+                            {/*    <Link href="/orders" >Amazon prep/Link>*/}
+                            {/*    <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>*/}
+                            {/*</div>*/}
+                        </div>
                     </div>
 
                 </div>

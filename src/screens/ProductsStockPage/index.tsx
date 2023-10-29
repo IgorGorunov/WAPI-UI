@@ -9,10 +9,8 @@ import Layout from "@/components/Layout/Layout";
 import Header from "./components/Header"
 import ProductList from "./components/ProductList";
 import {verifyToken} from "@/services/auth";
-import Skeleton from "@/components/Skeleton/Skeleton";
-import "./styles.scss";
-import {getDasboardData} from "@/services/dashboard";
 
+import "./styles.scss";
 
 const ProductsStockPage = () => {
 

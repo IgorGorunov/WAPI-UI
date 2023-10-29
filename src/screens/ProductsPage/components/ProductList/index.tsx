@@ -60,7 +60,6 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
     const [hoveredProduct, setHoveredProduct] = useState<ProductType | null>(null);
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
 
-
     const popupItems = products.flatMap(product => {
         return product.stock.map(stockItem => ({
             uuid: product.uuid,
@@ -74,7 +73,7 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         setTimeout(() => {
             setCurrent(page);
             setAnimating(false);
-        }, 500); // Это время должно совпадать с длительностью вашей CSS-анимации.
+        }, 500);
     };
 
     const handleChangePageSize = (size: number) => {
@@ -115,13 +114,11 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         return matchesSearch && matchesStatus;
     });
 
-
     const columns: TableColumnProps<ProductType>[]  = [
         {
             title: '',
             dataIndex: 'status',
             key: 'status',
-            width:'5%',
             render: (status: string) => {
                 let color;
                 switch (status) {
@@ -150,40 +147,59 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             }
         },
         {
+            render: (text: string) => (
+                <div style={{ width: '100px'}}>
+                    <span>{text}</span>
+                </div>
+            ),
             title: 'SKU',
             dataIndex: 'sku',
             key: 'sku',
-            width:'15%',
         },
         {
-            render: (text: string) => <span className="name-cell-style">{text}</span>,
+            render: (text: string) => (
+                <div style={{width: '200px', color: 'var(--color-blue)', cursor:'pointer'}}>
+                    <span>{text}</span>
+                </div>
+            ),
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            width:'30%',
         },
         {
-            render: (text: string) => <span className="dimension-cell-style">{text}</span>,
+            render: (text: string) => (
+                <div style={{width: '100px',display: 'flex', justifyContent:'center', alignItems:'center'}}>
+                    <span>{text}</span>
+                </div>
+            ),
             title: <div style={{ textAlign: 'center' }}>Dimension | mm</div>,
             dataIndex: 'dimension',
             key: 'dimension',
-            width:'15%',
+
         },
         {
-            render: (text: string) => <span className="weight-cell-style">{text}</span>,
+            render: (text: string) => (
+                <div style={{width: '100px', display: 'flex',justifyContent:'center', alignItems:'center'}}>
+                    <span>{text}</span>
+                </div>
+            ),
             title: <div style={{ textAlign: 'center' }}>Weight | kg</div>,
             dataIndex: 'weight',
             key: 'weight',
-            width:'10%',
         },
         {
+            render: (text: string) => (
+                <div style={{ width: '200px'}}>
+                    <span>{text}</span>
+                </div>
+            ),
             title: 'Aliases',
             dataIndex: 'aliases',
             key: 'aliases',
-            width:'15%',
         },
         {
             render: (text: string, record: ProductType) => (
+                <div style={{ width: '100px'}}>
                 <span
                     className="stock-cell-style"
                     onMouseEnter={(e) => {
@@ -197,13 +213,14 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
                         setMousePosition(null);
                     }}
                 >
-            {text} <Icon name="info" />
-        </span>
+                    {text} <Icon name="info" />
+                </span>
+                </div>
+
             ),
             title: <div style={{ textAlign: 'center' }}>Available</div>,
             dataIndex: 'available',
             key: 'available',
-            width: '10%',
         },
         ];
     return (
