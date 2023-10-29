@@ -26,12 +26,12 @@ const Header = () => {
 
     return (
         <div className='main-header'>
-            <div className="main-header__wrapper">
+            <div className = 'main-header__wrapper'>
                 <div className='main-header__icon' onClick={handleClick}>
                     <Icon name={"menu-icon"} />
                 </div>
                 <div className='main-header__user card' onClick={handleLogOut}>
-                    <Icon name={"user"} />
+                    <Icon name='user' />
                     <span className='user-name'>{getUserName()}</span>
                 </div>
             </div>
@@ -68,7 +68,7 @@ const Header = () => {
 
                     <div className={`submenu-container-${isOrderSubmenuOpen ? 'expanded' : ''}`}>
                         <div className="submenu-header" onClick={() => setOrderSubmenuOpen(!isOrderSubmenuOpen)}>
-                            <Icon name="orders" style={{width: "30px", height: "30px"}} />
+                            <Icon name="products" style={{width: "30px", height: "30px"}} />
                             <span style={{marginLeft: "20px"}}>Orders</span>
                             {isOrderSubmenuOpen ?
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-up"/></span> :
