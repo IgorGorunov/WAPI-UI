@@ -114,7 +114,6 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         return matchesSearch && matchesStatus;
     });
 
-
     const columns: TableColumnProps<ProductType>[]  = [
         {
             title: '',
