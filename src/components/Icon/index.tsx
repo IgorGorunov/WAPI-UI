@@ -16,6 +16,8 @@ import Info from "@/assets/icons/info.svg";
 import Add from "@/assets/icons/add.svg";
 import ImportFile from "@/assets/icons/import-file.svg";
 import DownloadFile from "@/assets/icons/download.svg";
+import Orders from "@/assets/icons/orders.svg";
+import Car from "@/assets/icons/car.svg";
 
 
 export const icons = {
@@ -35,6 +37,8 @@ export const icons = {
   'add': Add,
   'import-file': ImportFile,
   'download-file': DownloadFile,
+  'orders': Orders,
+  'car': Car,
 };
 
 export type IconType = keyof typeof icons;

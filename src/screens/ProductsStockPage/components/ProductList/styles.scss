@@ -31,7 +31,7 @@
 .ant-table-cell {
   background-color: white !important;
   color: var(--color-gray-blue) !important;
-  Font-size: 12px !important;
+  font-size: 12px !important;
   font-style: normal !important;
   font-weight: 700 !important;
   text-align: start !important;
@@ -102,18 +102,6 @@
   font-weight: 900;
   line-height: 20px;
   padding-left: 10px;
-}
-
-
-.name-cell-style {
-  color: var(--color-blue);
-  cursor: pointer;
-}
-
-.centred-cell-style {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .animated-row {

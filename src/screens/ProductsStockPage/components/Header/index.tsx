@@ -3,13 +3,11 @@ import Icon from "@/components/Icon";
 import Button from "@/components/Button/Button";
 import "./styles.scss";
 
-
-
 const Header: React.FC = (props) => {
     const handleAddProduct = () => {
 
     }
-    const handleImportXLS = () => {
+    const handleExportXLS = () => {
 
     }
 
@@ -19,7 +17,7 @@ const Header: React.FC = (props) => {
               <h2>Products stock</h2>
           </div>
           <div className="products-header__buttons">
-              <Button icon="download-file" iconOnTheRight onClick={handleImportXLS}>Download report</Button>
+              <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>
           </div>
 
       </div>
