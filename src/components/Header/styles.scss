@@ -20,6 +20,14 @@
     border-radius: 20px;
     cursor: pointer;
 
+    &:focus {
+      background-color: var(--color-blue);
+    }
+
+    &:hover {
+      background-color: var(--color-blue-15);
+    }
+
     .user-name {
       font-size: 12px;
       font-weight: 900;
