@@ -68,7 +68,7 @@ const Header = () => {
 
                     <div className={`submenu-container-${isOrderSubmenuOpen ? 'expanded' : ''}`}>
                         <div className="submenu-header" onClick={() => setOrderSubmenuOpen(!isOrderSubmenuOpen)}>
-                            <Icon name="products" style={{width: "30px", height: "30px"}} />
+                            <Icon name="orders" style={{width: "30px", height: "30px"}} />
                             <span style={{marginLeft: "20px"}}>Orders</span>
                             {isOrderSubmenuOpen ?
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-up"/></span> :
