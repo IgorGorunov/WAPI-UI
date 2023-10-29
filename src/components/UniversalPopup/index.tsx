@@ -8,11 +8,12 @@ type PopupItem = {
 
 type PopupPropsType = {
     items: PopupItem[];
+    position?: 'left' | 'right';
 };
 
-const UniversalPopup: React.FC<PopupPropsType> = ({ items }) => {
+const UniversalPopup: React.FC<PopupPropsType> = ({ items, position = 'right' }) => {
     return (
-        <div className="universal-popup__wrapper">
+        <div className={`universal-popup__wrapper${position === 'right' ? '--right' : '--left'}`}>
             <ul className="universal-popup__list">
                 {items.map((item: PopupItem, index: number) => (
                     <li key={item.title + index} className="universal-popup__item">

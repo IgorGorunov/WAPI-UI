@@ -2,8 +2,7 @@
   &__container {
     padding: 40px 26px 0 26px;
     overflow: hidden;
-    animation: fadeInDown 1s forwards;
-    opacity: 0;
+    opacity: 1;
   }
 
   .title {
@@ -40,13 +39,3 @@
   }
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}

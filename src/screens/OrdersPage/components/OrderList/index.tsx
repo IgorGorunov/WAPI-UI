@@ -8,6 +8,7 @@ import * as XLSX from 'xlsx';
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { StatusColors } from '@/screens/DashboardPage/components/OrderStatuses';
+import UniversalPopup from "@/components/UniversalPopup";
 
 
 type OrderType = {
@@ -78,7 +79,7 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
     ];
 
     const getUnderlineColor = (statusText: string) => {
-        return StatusColors[statusText] || 'black';  // используйте цвет по умолчанию, если статус неизвестен
+        return StatusColors[statusText] || 'black';
     };
 
 
@@ -310,6 +311,20 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
                     showSizeChanger={false}
                 />
              </div>
+            {hoveredOrder && isDisplayedPopup && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: mousePosition?.y || 0,
+                        left: mousePosition?.x || 0,
+                    }}
+                >
+                    <UniversalPopup
+                        items={popupItems}
+                        position='left'
+                    />
+                </div>
+            )}
         </div>
     );
 };

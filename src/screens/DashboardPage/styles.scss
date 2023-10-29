@@ -3,3 +3,19 @@
   color: var(--color-gray-blue);
   position: relative;
 }
+
+.dashboard-animated-grid {
+  opacity: 0;
+  animation: fadeInDown 1s forwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -268,14 +268,14 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             {hoveredProduct && isDisplayedPopup && (
                 <div
                     style={{
-                        position: 'fixed', // используем 'fixed', так как координаты clientX и clientY основаны на видимой области окна
+                        position: 'fixed',
                         top: mousePosition?.y || 0,
                         left: mousePosition?.x || 0,
-                        // ... другие стили
                     }}
                 >
                     <UniversalPopup
                         items={popupItems}
+                        position='left'
                     />
                 </div>
             )}

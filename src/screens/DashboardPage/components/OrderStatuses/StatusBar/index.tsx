@@ -42,7 +42,10 @@ const StatusBar: React.FC<StatusBarPropsType> = ({
                 <div className="status-bar__count">
                     <span>{groupStatus.ordersCount}</span>
                     {groupStatus.ordersCount !== 0 && isDisplayedPopup && (
-                        <UniversalPopup items={popupItems} />
+                        <UniversalPopup
+                            items={popupItems}
+                            position='right'
+                        />
                     )}
                 </div>
             </div>
