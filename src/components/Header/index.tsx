@@ -16,11 +16,11 @@ const Header = () => {
     }
 
     const Router = useRouter();
-    const [curUserName, setCurUserName] = useState("");
+    // const [curUserName, setCurUserName] = useState("");
 
-    useEffect(() => {
-        setCurUserName(getUserName());
-    }, []);
+    // useEffect(() => {
+    //     setCurUserName(getUserName());
+    // }, []);
 
     const handleLogOut = async() => {
         setToken("");
@@ -36,7 +36,7 @@ const Header = () => {
                 </div>
                 <div className='main-header__user card' onClick={handleLogOut}>
                     <Icon name='user' />
-                    <span className='user-name'>{curUserName}</span>
+                    {/*<span className='user-name'>{curUserName}</span>*/}
                 </div>
             </div>
             <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`}>
