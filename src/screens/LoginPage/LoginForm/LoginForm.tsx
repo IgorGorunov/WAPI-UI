@@ -46,7 +46,7 @@ const LoginForm: React.FC = () => {
     },
   ];
 
-  const { token, setToken } = useAuth();
+  const { token, setToken, userName, setUserName } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -77,6 +77,7 @@ const LoginForm: React.FC = () => {
         const { accessToken } = res?.data;
         setToken(accessToken);
         Cookie.set('token', accessToken);
+        setUserName(login);
         await Router.push(Routes.Dashboard);
         // } else if (res?.response.status === 401) {
       } else {

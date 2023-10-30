@@ -2,19 +2,38 @@ import React, { useState } from "react";
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import Link from "next/link";
+import {useRouter} from "next/router";
+import useAuth from "@/context/authContext";
+import {Routes} from "@/types/routes";
 
 const Header = () => {
+    const { userName, getUserName, setToken, setUserName } = useAuth();
     const [isMenuOpen, setMenuOpen] = useState(false);
     const [isProductSubmenuOpen, setProductSubmenuOpen] = useState(false);
     const [isOrderSubmenuOpen, setOrderSubmenuOpen] = useState(false);
+
+    const Router = useRouter();
     const handleClick = () => {
         setMenuOpen(!isMenuOpen);
     }
 
+    console.log("userName: ", userName);
+    const handleLogOut = async() => {
+        setToken("");
+        setUserName("");
+        await Router.push(Routes.Login);
+    }
+
     return (
         <div className='main-header'>
-            <div className='main-header__icon' onClick={handleClick}>
-                <Icon name={"menu-icon"} />
+            <div className = 'main-header__wrapper'>
+                <div className='main-header__icon' onClick={handleClick}>
+                    <Icon name={"menu-icon"} />
+                </div>
+                <div className='main-header__user card' onClick={handleLogOut}>
+                    <Icon name='user' />
+                    <span className='user-name'>{getUserName()}</span>
+                </div>
             </div>
             <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`}>
                 <div className={`burger-menu-child`}>

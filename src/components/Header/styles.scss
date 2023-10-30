@@ -10,6 +10,33 @@
     cursor: pointer;
   }
 
+  &__user {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    display: flex;
+    align-items: center;
+    padding: 6px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+
+    &:focus {
+      background-color: var(--color-blue);
+    }
+
+    &:hover {
+      background-color: var(--color-blue-15);
+    }
+
+    .user-name {
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 20px;
+      color: var(--color-gray-blue);
+      margin-left: 5px;
+    }
+  }
+
 }
 
 .main-header__icon svg rect:first-of-type {
