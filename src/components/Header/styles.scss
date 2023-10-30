@@ -3,17 +3,35 @@
   width: 100%;
   z-index: 101;
 
-  &__icon {
-    position: absolute;
-    left: 20px;
-    top: 16px;
-    cursor: pointer;
+  &__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 10px 20px;
+    margin-bottom: 38px;
+  }
+
+  &__menu-block {
+    display: flex;
+    align-items: center;
+
+    .page-title {
+      margin-left: 20px;
+    }
+  }
+
+  &__components {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    &.align-right {
+      margin-left: auto;
+    }
   }
 
   &__user {
-    position: absolute;
-    right: 20px;
-    top: 20px;
     display: flex;
     align-items: center;
     padding: 6px 15px;

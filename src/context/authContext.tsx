@@ -7,7 +7,7 @@ import Cookie from "js-cookie";
 
 type authContextType = {
   token: string | null;
-  userName: string | null;
+  userName: string | null | undefined;
   setToken: (token: string) => void;
   getToken: () => string | null;
   setUserName: (token: string) => void;

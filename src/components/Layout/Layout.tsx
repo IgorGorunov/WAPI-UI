@@ -17,7 +17,7 @@ const Layout: React.FC<Props> = ({
   return (
     <div className="main">
       <div className="main-content">
-        {hasHeader && <Header />}
+        {/*{hasHeader && <Header />}*/}
         {children}
       </div>
       {hasFooter && <Footer />}

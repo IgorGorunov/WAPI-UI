@@ -9,7 +9,8 @@ import {
 } from "@/types/dashboard";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
-import Header from "./components/Header";
+//import Header from "./components/Header";
+import Header from "@/components/Header"
 import Diagram from "./components/Diagram";
 import Forecast from "./components/Forecast";
 import OrderStatuses from "./components/OrderStatuses";
@@ -17,6 +18,7 @@ import OrdersByCountry from "./components/OrdersByCountry";
 import "./styles.scss";
 import {verifyToken} from "@/services/auth";
 import Skeleton from "@/components/Skeleton/Skeleton";
+import PeriodFilter from "@/screens/DashboardPage/components/PeriodFilter";
 
 const DashboardPage: React.FC = () => {
 
@@ -143,13 +145,21 @@ const DashboardPage: React.FC = () => {
                 <Skeleton type="loader" width="500px" height="300px" />
               </div>
           )}
-          <Header
-              currentPeriod={currentPeriod}
-              setCurrentPeriod={setCurrentPeriod}
-              setDiagramType={setDiagramType}
-              clickedPeriod={clickedPeriod}
-              setClickedPeriod={setClickedPeriod}
-          />
+
+          {/*<Header*/}
+          {/*    currentPeriod={currentPeriod}*/}
+          {/*    setCurrentPeriod={setCurrentPeriod}*/}
+          {/*    setDiagramType={setDiagramType}*/}
+          {/*    clickedPeriod={clickedPeriod}*/}
+          {/*    setClickedPeriod={setClickedPeriod}*/}
+          {/*/>*/}
+          <Header pageTitle="Dashboard">
+            <PeriodFilter currentPeriod={currentPeriod}
+                setCurrentPeriod={setCurrentPeriod}
+                setDiagramType={setDiagramType}
+                clickedPeriod={clickedPeriod}
+                setClickedPeriod={setClickedPeriod} />
+          </Header>
           <div className="dashboard-animated-grid grid-row gap-md mb-md">
             <div className="grid-col-3">
               <Forecast
