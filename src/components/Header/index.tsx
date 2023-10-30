@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import Link from "next/link";
@@ -11,13 +11,17 @@ const Header = () => {
     const [isMenuOpen, setMenuOpen] = useState(false);
     const [isProductSubmenuOpen, setProductSubmenuOpen] = useState(false);
     const [isOrderSubmenuOpen, setOrderSubmenuOpen] = useState(false);
-
-    const Router = useRouter();
     const handleClick = () => {
         setMenuOpen(!isMenuOpen);
     }
 
-    console.log("userName: ", userName);
+    const Router = useRouter();
+    // const [curUserName, setCurUserName] = useState("");
+
+    // useEffect(() => {
+    //     setCurUserName(getUserName());
+    // }, []);
+
     const handleLogOut = async() => {
         setToken("");
         setUserName("");
@@ -32,7 +36,7 @@ const Header = () => {
                 </div>
                 <div className='main-header__user card' onClick={handleLogOut}>
                     <Icon name='user' />
-                    <span className='user-name'>{getUserName()}</span>
+                    {/*<span className='user-name'>{curUserName}</span>*/}
                 </div>
             </div>
             <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`}>
@@ -64,8 +68,8 @@ const Header = () => {
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                     <div className={`submenu-container-${isOrderSubmenuOpen ? 'expanded' : ''}`}>
                         <div className="submenu-header" onClick={() => setOrderSubmenuOpen(!isOrderSubmenuOpen)}>
                             <Icon name="orders" style={{width: "30px", height: "30px"}} />
