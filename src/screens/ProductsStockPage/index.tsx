@@ -6,12 +6,14 @@ import { getProductsStock } from "@/services/products";
 
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
-import Header from "./components/Header"
+//import Header from "./components/Header"
+import Header from '@/components/Header';
 import ProductList from "./components/ProductList";
 import {verifyToken} from "@/services/auth";
 
 import "./styles.scss";
 import Skeleton from "@/components/Skeleton/Skeleton";
+import Button from "@/components/Button/Button";
 
 const ProductsStockPage = () => {
 
@@ -61,6 +63,13 @@ const ProductsStockPage = () => {
 
     console.log("products data: ", productsData);
 
+    const handleAddProduct = () => {
+
+    }
+    const handleExportXLS = () => {
+
+    }
+
     return (
         <Layout hasHeader hasFooter>
             <div className="products-page__container">
@@ -80,7 +89,9 @@ const ProductsStockPage = () => {
                         <Skeleton type="loader" width="500px" height="300px" />
                     </div>
                 )}
-                <Header />
+                <Header pageTitle='Products stock' toRight >
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>
+                </Header>
                 {productsData && <ProductList products={productsData}/>}
             </div>
         </Layout>

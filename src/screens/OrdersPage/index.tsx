@@ -6,12 +6,14 @@ import { getProducts } from "@/services/products";
 
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
-import Header from "./components/Header"
+//import Header from "./components/Header"
+import Header from '@/components/Header';
 import OrderList from "./components/OrderList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import {getOrders} from "@/services/orders";
 import Skeleton from "@/components/Skeleton/Skeleton";
+import Button from "@/components/Button/Button";
 
 const OrdersPage = () => {
 
@@ -59,7 +61,12 @@ const OrdersPage = () => {
     }, [token]);
 
     console.log("orders data: ", ordersData);
+    const handleAddOrder= () => {
 
+    }
+    const handleImportXLS = () => {
+
+    }
     return (
         <Layout hasHeader hasFooter>
             <div className="orders-page__container">
@@ -79,7 +86,11 @@ const OrdersPage = () => {
                         <Skeleton type="loader" width="500px" height="300px" />
                     </div>
                 )}
-                <Header />
+                <Header pageTitle='Fulfillment' toRight >
+                    <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
+                    <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
+                </Header>
+
                 {ordersData && <OrderList orders={ordersData}/>}
             </div>
         </Layout>

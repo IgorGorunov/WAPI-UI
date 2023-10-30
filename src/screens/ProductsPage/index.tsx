@@ -6,12 +6,14 @@ import { getProducts } from "@/services/products";
 
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
-import Header from "./components/Header"
+//import Header from "./components/Header"
+import Header from "@/components/Header";
 import ProductList from "./components/ProductList";
 import {verifyToken} from "@/services/auth";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import "./styles.scss";
 import {getDasboardData} from "@/services/dashboard";
+import Button from "@/components/Button/Button";
 
 
 const ProductsPage = () => {
@@ -62,8 +64,15 @@ const ProductsPage = () => {
 
     console.log("products data: ", productsData);
 
+    const handleAddProduct = () => {
+
+    }
+    const handleImportXLS = () => {
+
+    }
+
     return (
-        <Layout hasHeader hasFooter>
+        <Layout hasFooter>
             <div className="products-page__container">
                 {isLoading && (
                     <div style={{
@@ -81,7 +90,10 @@ const ProductsPage = () => {
                         <Skeleton type="loader" width="500px" height="300px" />
                     </div>
                 )}
-                <Header />
+                <Header pageTitle='Products' toRight >
+                    <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
+                    <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
+                </Header>
                 {productsData && <ProductList products={productsData}/>}
             </div>
         </Layout>
