@@ -19,7 +19,7 @@ type OrderType = {
     date: string;
     wapiTrackingNumber: string,
     isCod: boolean,
-    сodAmount: string,
+    codAmount: string,
     codCurrency: string,
     clientOrderID: string,
     warehouse: string,
@@ -65,27 +65,15 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
 
-    function sortByLabel(items: { label: string }[]) {
-        return items.sort((a, b) => a.label.localeCompare(b.label));
-    }
+    // function sortByLabel(items: { label: string }[]) {
+    //     return items.sort((a, b) => a.label.localeCompare(b.label));
+    // }
 
-    const [filterWarehouse, setFilterWarehouse] = useState('');
-    const allWarehouses = orders.map(order => order.warehouse);
-    const uniqueWarehouses = Array.from(new Set(allWarehouses)).filter(warehouse => warehouse);
-    const transformedWarehouses = sortByLabel([
-        {
-            value: '',
-            label: 'All warehouses',
-        },
-        ...uniqueWarehouses.map(warehouse => ({
-            value: warehouse,
-            label: warehouse,
-        }))
-    ]);
-
-    const [selectedStatus, setSelectedStatus] = useState('');
-    const uniqueStatuses = Array.from(new Set(orders.map(order => order.status)));
-    const transformedStatuses = sortByLabel([
+    const [filterStatus, setFilterStatus] = useState('');
+    const allStatuses = orders.map(order => order.status);
+    const uniqueStatuses = Array.from(new Set(allStatuses)).filter(status => status);
+    uniqueStatuses.sort();
+    const transformedStatuses = [
         {
             value: '',
             label: 'All statuses',
@@ -94,37 +82,53 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             value: status,
             label: status,
         }))
-    ]);
+    ];
+
+    const [filterWarehouse, setFilterWarehouse] = useState('');
+    const allWarehouses = orders.map(order => order.warehouse);
+    const uniqueWarehouses = Array.from(new Set(allWarehouses)).filter(warehouse => warehouse);
+    uniqueWarehouses.sort();
+    const transformedWarehouses = [
+        {
+            value: '',
+            label: '-All warehouses-',
+        },
+        ...uniqueWarehouses.map(warehouse => ({
+            value: warehouse,
+            label: warehouse,
+        }))
+    ];
+
 
     const [filterCourierService, setFilterCourierService] = useState('');
     const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = Array.from(new Set(allCourierServices)).filter(courier => courier);
-    const transformedCourierServices = sortByLabel([
+    uniqueCourierServices.sort();
+    const transformedCourierServices = [
         {
             value: '',
-            label: 'All couriers',
+            label: '-All couriers-',
         },
         ...uniqueCourierServices.map(courier => ({
             value: courier,
             label: courier,
         }))
-    ]);
+    ];
 
     const [filterReceiverCountry, setFilterReceiverCountry] = useState('');
     const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = Array.from(new Set(allReceiverCountries)).filter(country => country);
-    const transformedReceiverCountries = sortByLabel([
+    uniqueReceiverCountries.sort();
+    const transformedReceiverCountries = [
         {
             value: '',
-            label: 'All countries',
+            label: '-All countries-',
         },
         ...uniqueReceiverCountries.map(country => ({
             value: country,
             label: country,
         }))
-    ]);
-
-
+    ];
 
     const getUnderlineColor = (statusText: string) => {
         return StatusColors[statusText] || 'black';
@@ -143,20 +147,38 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
         setCurrent(1);
     };
 
-    const handleFilterChange = (newSearchTerm, newStatusFilter) => {
+    const handleFilterChange = (newSearchTerm :string, newStatusFilter: string, newWarehouseFilter: string, newCourierServiceFilter:string, newReceiverCountryFilter:string) => {
 
-        if (newSearchTerm !== undefined) {
+        if (newSearchTerm !== "") {
             setSearchTerm(newSearchTerm);
             setCurrent(1);
         }
-        if (newStatusFilter !== undefined) {
-            setFilterWarehouse(newStatusFilter);
+
+
+
+        if (newStatusFilter !== "") {
+            setFilterStatus(newStatusFilter);
+            setCurrent(1);
+        }
+
+        if (newWarehouseFilter!== "") {
+            setFilterWarehouse(newWarehouseFilter);
+            setCurrent(1);
+        }
+
+        if (newCourierServiceFilter!== "") {
+            setFilterCourierService(newCourierServiceFilter);
+            setCurrent(1);
+        }
+
+        if (newReceiverCountryFilter!== "") {
+            setFilterReceiverCountry(newReceiverCountryFilter);
             setCurrent(1);
         }
     };
 
     const filteredOrders = orders.filter(order => {
-        let matchesSearch = false;
+        let matchesSearch: boolean;
         let matchesStatus = true;
         let matchesWarehouse = true;
         let matchesCourierService = true;
@@ -171,13 +193,14 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             matchesSearch = true;
         }
 
+        if (filterStatus) {
+            matchesStatus = order.status === filterStatus;
+        }
+
         if (filterWarehouse) {
             matchesWarehouse = order.warehouse === filterWarehouse;
         }
 
-        if (selectedStatus) {
-            matchesStatus = order.status === selectedStatus;
-        }
 
         if (filterCourierService) {
             matchesCourierService = order.courierService === filterCourierService;
@@ -205,9 +228,9 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             key: 'icon',
             render: (text: string, record) =>
                 <div className="flag"  style={{ width: '50px'}}>
-                    <span className={`fi fi-${record.warehouseCountry.toLowerCase()} "flag-icon"`}></span>
+                    <span className={`fi fi-${record.warehouseCountry.toLowerCase()} flag-icon`}></span>
                     <span> ➔ </span>
-                    <span className={`fi fi-${record.receiverCountry.toLowerCase()} "flag-icon"`}></span>
+                    <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
                 </div>
         },
         {
@@ -260,8 +283,8 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
                 );
             },
             title: 'COD',
-            dataIndex: 'сodAmount',
-            key: 'сodAmount',
+            dataIndex: 'codAmount',
+            key: 'codAmount',
         },
         {
             render: (text: string) => (
@@ -334,14 +357,14 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             <div className="filter-container">
                 <Selector
                     options={transformedStatuses}
-                    value={selectedStatus}
-                    onChange={(value) => setSelectedStatus(value)}
+                    value={filterStatus}
+                    onChange={(value) => setFilterStatus(value)}
                 />
                 <div>
                     <Selector
                         options={transformedWarehouses}
                         value={filterWarehouse}
-                        onChange={(value) => handleFilterChange(undefined, value)}
+                        onChange={(value) => setFilterWarehouse(value)}
                     />
                 </div>
                 <div>
@@ -363,7 +386,7 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}
-                    onChange={e => handleFilterChange(e.target.value, undefined)}
+                    //onChange={e => handleFilterChange(e.target.value, "", "", "", "")}
                     className="search-input"
                 />
             </div>
