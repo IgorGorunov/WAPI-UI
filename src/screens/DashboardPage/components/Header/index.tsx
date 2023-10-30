@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = (props) => {
       <div className="dashboard-header__filter">
         <PeriodFilter {...props} />
       </div>
-      <Icon name={"notification"} />
+      {/*<Icon name={"notification"} />*/}
     </div>
   );
 };
