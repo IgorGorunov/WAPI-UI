@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import {Table, TableColumnProps, Pagination, Input} from 'antd';
+import React, {useState} from "react";
+import {Input, Pagination, Table, TableColumnProps} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
@@ -7,8 +7,12 @@ import Selector from "@/components/InputSelect";
 import * as XLSX from 'xlsx';
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
-import { StatusColors } from '@/screens/DashboardPage/components/OrderStatuses';
+import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
 import UniversalPopup from "@/components/UniversalPopup";
+import {ColumnType} from "antd/es/table";
+import Datepicker from '@/components/Datepicker';
+import Button from "@/components/Button/Button";
+
 
 
 type OrderType = {
@@ -64,11 +68,6 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
-
-    // function sortByLabel(items: { label: string }[]) {
-    //     return items.sort((a, b) => a.label.localeCompare(b.label));
-    // }
-
     const [filterStatus, setFilterStatus] = useState('');
     const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = Array.from(new Set(allStatuses)).filter(status => status);
@@ -76,7 +75,7 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
     const transformedStatuses = [
         {
             value: '',
-            label: 'All statuses',
+            label: '-All statuses-',
         },
         ...uniqueStatuses.map(status => ({
             value: status,
@@ -98,7 +97,6 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             label: warehouse,
         }))
     ];
-
 
     const [filterCourierService, setFilterCourierService] = useState('');
     const allCourierServices = orders.map(order => order.courierService);
@@ -151,31 +149,28 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
 
         if (newSearchTerm !== "") {
             setSearchTerm(newSearchTerm);
-            setCurrent(1);
         }
-
-
 
         if (newStatusFilter !== "") {
             setFilterStatus(newStatusFilter);
-            setCurrent(1);
         }
 
         if (newWarehouseFilter!== "") {
             setFilterWarehouse(newWarehouseFilter);
-            setCurrent(1);
         }
 
         if (newCourierServiceFilter!== "") {
             setFilterCourierService(newCourierServiceFilter);
-            setCurrent(1);
         }
 
         if (newReceiverCountryFilter!== "") {
             setFilterReceiverCountry(newReceiverCountryFilter);
-            setCurrent(1);
         }
+        setCurrent(1);
     };
+
+    const [sortColumn, setSortColumn] = useState<keyof OrderType | null>(null);
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
 
     const filteredOrders = orders.filter(order => {
         let matchesSearch: boolean;
@@ -201,7 +196,6 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             matchesWarehouse = order.warehouse === filterWarehouse;
         }
 
-
         if (filterCourierService) {
             matchesCourierService = order.courierService === filterCourierService;
         }
@@ -212,7 +206,28 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
 
         return matchesSearch && matchesStatus && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
 
+    }).sort((a, b) => {
+        if (!sortColumn) return 0;
+
+        if (sortDirection === 'ascend') {
+            return a[sortColumn] > b[sortColumn] ? 1 : -1;
+        } else {
+            return a[sortColumn] < b[sortColumn] ? 1 : -1;
+        }
     });
+
+    const [currentRange, setCurrentRange] = useState({
+        startDate: new Date(),
+        endDate: new Date(),
+    });
+
+    const [showDatepicker, setShowDatepicker] = useState(false);
+
+    const handleDateRangeSave = (newRange) => {
+        setCurrentRange(newRange);
+        setShowDatepicker(false); // Закрываем Datepicker после выбора
+        // Дополнительная логика обработки
+    };
 
     const exportToExcel = () => {
         const ws = XLSX.utils.json_to_sheet(filteredOrders);
@@ -251,6 +266,18 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            sorter: true,
+
+            onHeaderCell: (column:ColumnType<OrderType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof OrderType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
@@ -261,6 +288,17 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             title: 'Date',
             dataIndex: 'date',
             key: 'date',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<OrderType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof OrderType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
@@ -271,7 +309,17 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             title: 'WH number',
             dataIndex: 'wapiTrackingNumber',
             key: 'wapiTrackingNumber',
-
+            sorter: true,
+            onHeaderCell: (column:ColumnType<OrderType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof OrderType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string, record) => {
@@ -285,6 +333,17 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             title: 'COD',
             dataIndex: 'codAmount',
             key: 'codAmount',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<OrderType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof OrderType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
@@ -295,6 +354,17 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             title: 'Order ID',
             dataIndex: 'clientOrderID',
             key: 'clientOrderID',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<OrderType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof OrderType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
@@ -305,6 +375,17 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             title: 'Warehouse',
             dataIndex: 'warehouse',
             key: 'warehouse',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<OrderType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof OrderType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
@@ -315,6 +396,17 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             title: 'Courier',
             dataIndex: 'courierService',
             key: 'courierService',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<OrderType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof OrderType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
@@ -325,6 +417,17 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             title: 'Tracking number',
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<OrderType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof OrderType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string, record: OrderType) => (
@@ -355,30 +458,47 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
     return (
         <div style={{width: '100%'}}>
             <div className="filter-container">
+                <Button
+                    style={{ height: '50px', width: "250px"}}
+                    icon="search"
+                    iconOnTheRight
+                    onClick={() => setShowDatepicker(true)}
+                >
+                    {`${currentRange.startDate.toLocaleDateString()}-${currentRange.endDate.toLocaleDateString()}`}
+                </Button>
+
+                <div className="period-filter__datepicker">
+                    {showDatepicker && (
+                        <Datepicker
+                            initialRange={currentRange}
+                            onDateRangeSave={handleDateRangeSave}
+                        />
+                    )}
+                </div>
                 <Selector
                     options={transformedStatuses}
                     value={filterStatus}
-                    onChange={(value) => setFilterStatus(value)}
+                    onChange={(value: string) => setFilterStatus(value)}
                 />
                 <div>
                     <Selector
                         options={transformedWarehouses}
                         value={filterWarehouse}
-                        onChange={(value) => setFilterWarehouse(value)}
+                        onChange={(value: string) => setFilterWarehouse(value)}
                     />
                 </div>
                 <div>
                     <Selector
                         options={transformedCourierServices}
                         value={filterCourierService}
-                        onChange={(value) => setFilterCourierService(value)}
+                        onChange={(value: string) => setFilterCourierService(value)}
                     />
                 </div>
                 <div>
                     <Selector
                         options={transformedReceiverCountries}
                         value={filterReceiverCountry}
-                        onChange={(value) => setFilterReceiverCountry(value)}
+                        onChange={(value: string) => setFilterReceiverCountry(value)}
                     />
                 </div>
             </div>
@@ -386,7 +506,7 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}
-                    //onChange={e => handleFilterChange(e.target.value, "", "", "", "")}
+                    onChange={e => handleFilterChange(e.target.value, "", "", "", "")}
                     className="search-input"
                 />
             </div>
@@ -395,7 +515,7 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
                 <PageSizeSelector
                     options={pageOptions}
                     value={pageSize}
-                    onChange={(value) => handleChangePageSize(value)}
+                    onChange={(value: number) => handleChangePageSize(value)}
                 />
             </div>
             <div className={`card order-list__container mb-md ${animating ? '' : 'fade-in-down '}`}>

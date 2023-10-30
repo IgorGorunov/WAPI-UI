@@ -31,7 +31,7 @@ const Button: React.FC<ButtonType> = (props) => {
     iconOnTheRight,
     form = ButtonForm.BR30,
     size = ButtonSize.MEDIUM,
-      isFullWidth = false,
+    isFullWidth = false,
     children,
     ...otherProps
   } = props;

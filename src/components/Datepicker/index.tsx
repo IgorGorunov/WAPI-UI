@@ -1,38 +1,26 @@
-import { PeriodType } from "@/types/dashboard";
 import React, { useState } from "react";
-import {DateRange} from "react-date-range";
+import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import Button from "@/components/Button/Button";
 import "./styles.scss";
 
-
-
-type DatePickerPropsType =  {
-  currentPeriod: {
-    periodType: PeriodType;
-    startDate: Date;
-    endDate: Date;
-  };
-  setCurrentPeriod: (period: any) => void;
-  setShowCustom: React.Dispatch<React.SetStateAction<boolean>>;
-  setDiagramType: React.Dispatch<React.SetStateAction<PeriodType>>;
+type DateRangeType = {
+  startDate: Date;
+  endDate: Date;
 };
 
-const Datepicker: React.FC<DatePickerPropsType> = ({
-  currentPeriod,
-  setCurrentPeriod,
-  setShowCustom,
-  setDiagramType,
-}) => {
+type DatepickerPropsType = {
+  initialRange: DateRangeType;
+  onDateRangeSave: (dateRange: DateRangeType) => void;
+};
 
-  const initialStartDate = currentPeriod.startDate;
-  const initialEndDate = currentPeriod.endDate;
+const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSave }) => {
 
   const [dateRange, setDateRange] = useState([
     {
-      startDate: initialStartDate,
-      endDate: initialEndDate,
+      startDate: initialRange.startDate,
+      endDate: initialRange.endDate,
       key: "selection",
     },
   ]);
@@ -42,13 +30,10 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
   };
 
   const handleSave = () => {
-    setCurrentPeriod({
-      periodType: "CUSTOM",
+    onDateRangeSave({
       startDate: dateRange[0].startDate,
       endDate: dateRange[0].endDate,
     });
-    setShowCustom(false);
-    setDiagramType("DAY");
   };
 
   return (
@@ -65,7 +50,7 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
           />
         </div>
         <div className="button-container">
-            <Button icon="search" isFullWidth iconOnTheRight onClick={handleSave}>Search</Button>
+          <Button icon="search" isFullWidth iconOnTheRight onClick={handleSave}>Search</Button>
         </div>
       </div>
   );
