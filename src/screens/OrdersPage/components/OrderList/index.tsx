@@ -3,7 +3,7 @@ import {Table, TableColumnProps, Pagination, Input} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import StatusWarehouseSelector from "@/components/InputSelect";
+import Selector from "@/components/InputSelect";
 import * as XLSX from 'xlsx';
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -52,13 +52,10 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterWarehouse, setFilterWarehouse] = useState('');
-    const allWarehouses = orders.map(order => order.warehouse);
-    const uniqueWarehouses = Array.from(new Set(allWarehouses)).filter(warehouse => warehouse);
+
     const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
     const [hoveredOrder, setHoveredOrder] = useState<OrderType | null>(null);
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
-
     const popupItems = orders.flatMap(order => {
         return order.products.map(orderItem => ({
             uuid: order.uuid,
@@ -67,7 +64,15 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
-    const transformedWarehouses = [
+
+    function sortByLabel(items: { label: string }[]) {
+        return items.sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    const [filterWarehouse, setFilterWarehouse] = useState('');
+    const allWarehouses = orders.map(order => order.warehouse);
+    const uniqueWarehouses = Array.from(new Set(allWarehouses)).filter(warehouse => warehouse);
+    const transformedWarehouses = sortByLabel([
         {
             value: '',
             label: 'All warehouses',
@@ -76,12 +81,54 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             value: warehouse,
             label: warehouse,
         }))
-    ];
+    ]);
+
+    const [selectedStatus, setSelectedStatus] = useState('');
+    const uniqueStatuses = Array.from(new Set(orders.map(order => order.status)));
+    const transformedStatuses = sortByLabel([
+        {
+            value: '',
+            label: 'All statuses',
+        },
+        ...uniqueStatuses.map(status => ({
+            value: status,
+            label: status,
+        }))
+    ]);
+
+    const [filterCourierService, setFilterCourierService] = useState('');
+    const allCourierServices = orders.map(order => order.courierService);
+    const uniqueCourierServices = Array.from(new Set(allCourierServices)).filter(courier => courier);
+    const transformedCourierServices = sortByLabel([
+        {
+            value: '',
+            label: 'All couriers',
+        },
+        ...uniqueCourierServices.map(courier => ({
+            value: courier,
+            label: courier,
+        }))
+    ]);
+
+    const [filterReceiverCountry, setFilterReceiverCountry] = useState('');
+    const allReceiverCountries = orders.map(order => order.receiverCountry);
+    const uniqueReceiverCountries = Array.from(new Set(allReceiverCountries)).filter(country => country);
+    const transformedReceiverCountries = sortByLabel([
+        {
+            value: '',
+            label: 'All countries',
+        },
+        ...uniqueReceiverCountries.map(country => ({
+            value: country,
+            label: country,
+        }))
+    ]);
+
+
 
     const getUnderlineColor = (statusText: string) => {
         return StatusColors[statusText] || 'black';
     };
-
 
     const handleChangePage = (page: number) => {
         setAnimating(true);
@@ -111,10 +158,12 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
     const filteredOrders = orders.filter(order => {
         let matchesSearch = false;
         let matchesStatus = true;
+        let matchesWarehouse = true;
+        let matchesCourierService = true;
+        let matchesReceiverCountry = true;
 
         if (searchTerm) {
             const searchTermLower = searchTerm.toLowerCase();
-
             matchesSearch = Object.values(order).some(value =>
                 String(value).toLowerCase().includes(searchTermLower)
             );
@@ -123,11 +172,25 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
         }
 
         if (filterWarehouse) {
-            matchesStatus = order.warehouse === filterWarehouse;
+            matchesWarehouse = order.warehouse === filterWarehouse;
         }
 
-        return matchesSearch && matchesStatus;
+        if (selectedStatus) {
+            matchesStatus = order.status === selectedStatus;
+        }
+
+        if (filterCourierService) {
+            matchesCourierService = order.courierService === filterCourierService;
+        }
+
+        if (filterReceiverCountry) {
+            matchesReceiverCountry = order.receiverCountry === filterReceiverCountry;
+        }
+
+        return matchesSearch && matchesStatus && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
+
     });
+
 
     const exportToExcel = () => {
         const ws = XLSX.utils.json_to_sheet(filteredOrders);
@@ -270,15 +333,34 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
     return (
         <div style={{width: '100%'}}>
             <div className="filter-container">
+                <Selector
+                    options={transformedStatuses}
+                    value={selectedStatus}
+                    onChange={(value) => setSelectedStatus(value)}
+                />
                 <div>
-                    <StatusWarehouseSelector
+                    <Selector
                         options={transformedWarehouses}
                         value={filterWarehouse}
                         onChange={(value) => handleFilterChange(undefined, value)}
                     />
                 </div>
+                <div>
+                    <Selector
+                        options={transformedCourierServices}
+                        value={filterCourierService}
+                        onChange={(value) => setFilterCourierService(value)}
+                    />
+                </div>
+                <div>
+                    <Selector
+                        options={transformedReceiverCountries}
+                        value={filterReceiverCountry}
+                        onChange={(value) => setFilterReceiverCountry(value)}
+                    />
+                </div>
             </div>
-            <div className="filter-container">
+            <div>
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}

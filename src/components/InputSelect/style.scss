@@ -1,10 +1,7 @@
-
-
 .input-select {
 
   &-container {
     width: 200px;
-    margin-left: auto;
   }
 
   &__menu {
@@ -72,3 +69,20 @@
   opacity: 0 !important;
 }
 
+.fade-enter {
+  opacity: 0.01;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
