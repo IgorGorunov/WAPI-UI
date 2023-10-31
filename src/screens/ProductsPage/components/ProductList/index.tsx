@@ -7,6 +7,7 @@ import "./styles.scss";
 import { SearchOutlined } from '@ant-design/icons';
 import Icon from "@/components/Icon";
 import UniversalPopup from "@/components/UniversalPopup";
+import {ColumnType} from "antd/es/table";
 
 type ProductType = {
     aliases: string;
@@ -93,6 +94,9 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         }
     };
 
+    const [sortColumn, setSortColumn] = useState<keyof ProductType | null>(null);
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
+
     const filteredProducts = products.filter(product => {
         let matchesSearch = false;
         let matchesStatus = true;
@@ -112,6 +116,14 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         }
 
         return matchesSearch && matchesStatus;
+    }).sort((a, b) => {
+        if (!sortColumn) return 0;
+
+        if (sortDirection === 'ascend') {
+            return a[sortColumn] > b[sortColumn] ? 1 : -1;
+        } else {
+            return a[sortColumn] < b[sortColumn] ? 1 : -1;
+        }
     });
 
     const columns: TableColumnProps<ProductType>[]  = [
@@ -155,6 +167,17 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             title: 'SKU',
             dataIndex: 'sku',
             key: 'sku',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
@@ -165,6 +188,17 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
@@ -175,6 +209,17 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             title: <div style={{ textAlign: 'center' }}>Dimension | mm</div>,
             dataIndex: 'dimension',
             key: 'dimension',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
 
         },
         {
@@ -186,6 +231,17 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             title: <div style={{ textAlign: 'center' }}>Weight | kg</div>,
             dataIndex: 'weight',
             key: 'weight',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
@@ -196,6 +252,17 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             title: 'Aliases',
             dataIndex: 'aliases',
             key: 'aliases',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string, record: ProductType) => (
@@ -221,6 +288,17 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             title: <div style={{ textAlign: 'center' }}>Available</div>,
             dataIndex: 'available',
             key: 'available',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         ];
     return (
