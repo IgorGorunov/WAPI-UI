@@ -1,14 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {Table, TableColumnProps, Pagination, Input} from 'antd';
-import Button from "@/components/Button/Button";
 import PageSizeSelector from '@/components/LabelSelect';
 import StatusFilterSelector from '@/components/InputSelect';
 import "./styles.scss";
-import { SearchOutlined } from '@ant-design/icons';
 import Icon from "@/components/Icon";
 import UniversalPopup from "@/components/UniversalPopup";
 import { ProductType} from "@/types/products";
-import {OrderType} from "@/types/orders";
 import {ColumnType} from "antd/es/table";
 
 
@@ -33,7 +30,7 @@ const statusFilter = [
     { value: 'Expired', label: 'Expired' , color: '#FF4000'},
 ];
 
-const ProductList: React.FC<ProductListType> = ({products}) => {
+const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -76,6 +73,9 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             setCurrent(1);
         }
     };
+
+    const [sortColumn, setSortColumn] = useState<keyof ProductType | null>(null);
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
 
     const filteredProducts = products.filter(product => {
         let matchesSearch = false;
