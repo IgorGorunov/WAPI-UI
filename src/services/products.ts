@@ -26,6 +26,32 @@ const getProducts = async (
         return err;
     }
 };
+
+const getProductByUID = async (
+
+    data: {
+        token: string;
+        uid: string;
+    }
+) => {
+    try {
+        console.log("data: ", data)
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/GetProduct`,
+            data
+            //   {
+            //     headers: {
+            //       Authorization: token,
+            //     },
+            //   }
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
 const getProductsStock = async (
     //token: string,
     data: {
@@ -47,4 +73,4 @@ const getProductsStock = async (
     }
 };
 
-export { getProducts, getProductsStock};
+export { getProducts, getProductByUID, getProductsStock};

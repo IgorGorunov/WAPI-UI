@@ -12,6 +12,7 @@ import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
 import Datepicker from '@/components/Datepicker';
 import Button from "@/components/Button/Button";
+import DateInput from "@/components/DateInput";
 
 
 
@@ -458,23 +459,24 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
     return (
         <div style={{width: '100%'}}>
             <div className="filter-container">
-                <Button
-                    style={{ height: '50px', width: "250px"}}
-                    icon="search"
-                    iconOnTheRight
-                    onClick={() => setShowDatepicker(true)}
-                >
-                    {`${currentRange.startDate.toLocaleDateString()}-${currentRange.endDate.toLocaleDateString()}`}
-                </Button>
+                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
+                {/*<Button*/}
+                {/*    style={{ height: '50px', width: "250px"}}*/}
+                {/*    icon="search"*/}
+                {/*    iconOnTheRight*/}
+                {/*    onClick={() => setShowDatepicker(true)}*/}
+                {/*>*/}
+                {/*    {`${currentRange.startDate.toLocaleDateString()}-${currentRange.endDate.toLocaleDateString()}`}*/}
+                {/*</Button>*/}
 
-                <div className="period-filter__datepicker">
-                    {showDatepicker && (
-                        <Datepicker
-                            initialRange={currentRange}
-                            onDateRangeSave={handleDateRangeSave}
-                        />
-                    )}
-                </div>
+                {/*<div className="period-filter__datepicker">*/}
+                {/*    {showDatepicker && (*/}
+                {/*        <Datepicker*/}
+                {/*            initialRange={currentRange}*/}
+                {/*            onDateRangeSave={handleDateRangeSave}*/}
+                {/*        />*/}
+                {/*    )}*/}
+                {/*</div>*/}
                 <Selector
                     options={transformedStatuses}
                     value={filterStatus}

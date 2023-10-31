@@ -3,17 +3,20 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import Button from "@/components/Button/Button";
+import { DateRangeType} from "@/types/dashboard";
 import "./styles.scss";
 
-type DateRangeType = {
-  startDate: Date;
-  endDate: Date;
-};
+// type DateRangeType = {
+//   startDate: Date;
+//   endDate: Date;
+// };
 
 type DatepickerPropsType = {
   initialRange: DateRangeType;
   onDateRangeSave: (dateRange: DateRangeType) => void;
 };
+
+
 
 const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSave }) => {
 
@@ -30,6 +33,7 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
   };
 
   const handleSave = () => {
+    console.log("clicked 1");
     onDateRangeSave({
       startDate: dateRange[0].startDate,
       endDate: dateRange[0].endDate,
