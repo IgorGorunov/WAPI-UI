@@ -454,29 +454,23 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
             title: <div style={{ textAlign: 'center' }}>Products</div>,
             dataIndex: 'productLines',
             key: 'productLines',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<OrderType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof OrderType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         ];
     return (
         <div style={{width: '100%'}}>
-            <div className="filter-container">
+            <div className="filter-container" >
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
-                {/*<Button*/}
-                {/*    style={{ height: '50px', width: "250px"}}*/}
-                {/*    icon="search"*/}
-                {/*    iconOnTheRight*/}
-                {/*    onClick={() => setShowDatepicker(true)}*/}
-                {/*>*/}
-                {/*    {`${currentRange.startDate.toLocaleDateString()}-${currentRange.endDate.toLocaleDateString()}`}*/}
-                {/*</Button>*/}
-
-                {/*<div className="period-filter__datepicker">*/}
-                {/*    {showDatepicker && (*/}
-                {/*        <Datepicker*/}
-                {/*            initialRange={currentRange}*/}
-                {/*            onDateRangeSave={handleDateRangeSave}*/}
-                {/*        />*/}
-                {/*    )}*/}
-                {/*</div>*/}
                 <Selector
                     options={transformedStatuses}
                     value={filterStatus}
