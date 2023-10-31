@@ -9,6 +9,10 @@ export const enum PeriodTypes {
 
 export type PeriodType = keyof typeof PeriodTypes;
 
+export type DateRangeType = {
+  startDate: Date;
+  endDate: Date;
+}
 export type DashboardPeriodType = {
   startDate: Date;
   endDate: Date;

@@ -19,7 +19,7 @@ import DownloadFile from "@/assets/icons/download.svg";
 import User from "@/assets/icons/user-icon.svg";
 import Orders from "@/assets/icons/orders.svg";
 import Car from "@/assets/icons/car.svg";
-
+import Calendar from "@/assets/icons/calendar.svg";
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -41,6 +41,7 @@ export const icons = {
   'user': User,
   'orders': Orders,
   'car': Car,
+  'calendar': Calendar,
 };
 
 export type IconType = keyof typeof icons;
