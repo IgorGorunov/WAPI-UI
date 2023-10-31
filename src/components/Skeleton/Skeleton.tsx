@@ -10,11 +10,17 @@ const Skeleton = ({ type, width, height }) => {
         return <div className="line" style={{ width, height }}></div>;
     }
 
-    if (type === 'loader') {
+    if (type === 'loading') {
         return (
-            <div className="loader">Loading...</div>
+            <div className="loading">Loading...</div>
         );
     }
+    if (type === 'round') {
+        return (
+            <span className="round"></span>
+        );
+    }
+
 
 
     return null;

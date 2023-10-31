@@ -83,7 +83,7 @@ const OrdersPage = () => {
                         backgroundColor: 'rgba(255, 255, 255, 0.5)',
                         zIndex: 1000
                     }}>
-                        <Skeleton type="loader" width="500px" height="300px" />
+                        <Skeleton type="round" width="500px" height="300px" />
                     </div>
                 )}
                 <Header pageTitle='Fulfillment' toRight >
