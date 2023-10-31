@@ -18,3 +18,20 @@ export type ProductType = {
         available: number,
     }[]
 }
+
+export type ProductStockType = {
+    name: string;
+    sku: string;
+    uuid: string;
+    warehouse: string,
+    warehouseSku: string,
+    country: string,
+    total: number,
+    damaged: number,
+    expired: number,
+    undefinedStatus: number,
+    withoutBox: number,
+    forPlacement: number,
+    reserved: number,
+    available: number,
+}

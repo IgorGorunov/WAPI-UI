@@ -14,6 +14,8 @@ import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
+import {ProductStockType} from "@/types/products";
+import {exportFileXLS} from "@/utils/files";
 
 const ProductsStockPage = () => {
 
@@ -23,7 +25,7 @@ const ProductsStockPage = () => {
     if (savedToken) setToken(savedToken);
 
     const [productsData, setProductsData] = useState<any | null>(null);
-
+    const [filteredProducts, setFilteredProducts] = useState<ProductStockType[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -47,6 +49,7 @@ const ProductsStockPage = () => {
 
                 if (res && "data" in res) {
                     setProductsData(res.data);
+                    setFilteredProducts(res.data);
                     setIsLoading(false);
                 } else {
                     console.error("API did not return expected data");
@@ -67,7 +70,7 @@ const ProductsStockPage = () => {
 
     }
     const handleExportXLS = () => {
-
+        exportFileXLS(filteredProducts, "ProductsStock")
     }
 
     return (
@@ -92,7 +95,7 @@ const ProductsStockPage = () => {
                 <Header pageTitle='Products stock' toRight >
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>
                 </Header>
-                {productsData && <ProductList products={productsData}/>}
+                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts}/>}
             </div>
         </Layout>
     )
