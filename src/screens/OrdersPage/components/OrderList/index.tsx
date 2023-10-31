@@ -254,7 +254,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             dataIndex: 'status',
             key: 'status',
             sorter: true,
-
             onHeaderCell: (column:ColumnType<OrderType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {

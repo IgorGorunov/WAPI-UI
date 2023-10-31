@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import {Table, TableColumnProps, Pagination, Input} from 'antd';
 import Button from "@/components/Button/Button";
 import PageSizeSelector from '@/components/LabelSelect';
@@ -9,6 +9,7 @@ import Icon from "@/components/Icon";
 import UniversalPopup from "@/components/UniversalPopup";
 import { ProductType} from "@/types/products";
 import {OrderType} from "@/types/orders";
+import {ColumnType} from "antd/es/table";
 
 
 type ProductListType = {
@@ -32,7 +33,7 @@ const statusFilter = [
     { value: 'Expired', label: 'Expired' , color: '#FF4000'},
 ];
 
-const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts}) => {
+const ProductList: React.FC<ProductListType> = ({products}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -95,6 +96,14 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
         }
 
         return matchesSearch && matchesStatus;
+    }).sort((a, b) => {
+        if (!sortColumn) return 0;
+
+        if (sortDirection === 'ascend') {
+            return a[sortColumn] > b[sortColumn] ? 1 : -1;
+        } else {
+            return a[sortColumn] < b[sortColumn] ? 1 : -1;
+        }
     });
 
     useEffect(() => {
@@ -103,7 +112,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
 
     const columns: TableColumnProps<ProductType>[]  = [
         {
-            title: '',
+            title: <div style={{display: 'block', width: '30px'}}></div>,
             dataIndex: 'status',
             key: 'status',
             render: (status: string) => {
@@ -130,63 +139,108 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                     default:
                         color = 'white';
                 }
-                return <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: color }}></div>;
+                return <div style={{ display: 'block', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: color }}></div>;
             }
         },
         {
             render: (text: string) => (
-                <div style={{ width: '100px'}}>
-                    <span>{text}</span>
-                </div>
+                <div style={{display: 'block', width: '100px'}}>{text}</div>
             ),
-            title: 'SKU',
+            title:  <div style={{display: 'block', width: '100px'}}>SKU</div>,
             dataIndex: 'sku',
             key: 'sku',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
-                <div style={{width: '200px', color: 'var(--color-blue)', cursor:'pointer'}}>
-                    <span>{text}</span>
-                </div>
+                <div style={{display: 'block', width: '250px', color: 'var(--color-blue)', cursor:'pointer' }}>{text}</div>
             ),
-            title: 'Name',
+            title:  <div style={{display: 'block', width: '250px'}}>Name</div>,
             dataIndex: 'name',
             key: 'name',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
-                <div style={{width: '100px',display: 'flex', justifyContent:'center', alignItems:'center'}}>
-                    <span>{text}</span>
-                </div>
+                <div style={{display: 'block', width: '100px', textAlign:'center'}}>{text}</div>
             ),
-            title: <div style={{ textAlign: 'center' }}>Dimension | mm</div>,
+            title:  <div style={{display: 'block', width: '100px', textAlign: 'center'}}>Dimension | mm</div>,
             dataIndex: 'dimension',
             key: 'dimension',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
 
         },
         {
             render: (text: string) => (
-                <div style={{width: '100px', display: 'flex',justifyContent:'center', alignItems:'center'}}>
-                    <span>{text}</span>
-                </div>
+                <div style={{display: 'block', width: '100px', textAlign:'center'}}>{text}</div>
             ),
-            title: <div style={{ textAlign: 'center' }}>Weight | kg</div>,
+            title:  <div style={{display: 'block', width: '100px', textAlign: 'center'}}>Weight | kg</div>,
             dataIndex: 'weight',
             key: 'weight',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string) => (
-                <div style={{ width: '200px'}}>
-                    <span>{text}</span>
-                </div>
+                <div style={{display: 'block', width: '250px'}}>{text}</div>
             ),
-            title: 'Aliases',
+            title:  <div style={{display: 'block', width: '250px'}}>Aliases</div>,
             dataIndex: 'aliases',
             key: 'aliases',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         {
             render: (text: string, record: ProductType) => (
-                <div style={{ width: '100px'}}>
+                <div style={{ width: '100%'}}>
                 <span
                     className="stock-cell-style"
                     onMouseEnter={(e) => {
@@ -205,9 +259,20 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                 </div>
 
             ),
-            title: <div style={{ textAlign: 'center' }}>Available</div>,
+            title: <div style={{display: 'block',  width: '100%', textAlign: 'center'}}>Available</div>,
             dataIndex: 'available',
             key: 'available',
+            sorter: true,
+            onHeaderCell: (column:ColumnType<ProductType>) => ({
+                onClick: () => {
+                    if (sortColumn === column.dataIndex) {
+                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
+                    } else {
+                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortDirection('ascend');
+                    }
+                },
+            }),
         },
         ];
     return (
