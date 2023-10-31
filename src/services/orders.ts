@@ -6,6 +6,8 @@ const getOrders = async (
     //token: string,
     data: {
         token: string;
+        startDate: string;
+        endDate: string;
     }
 ) => {
     try {
@@ -13,11 +15,7 @@ const getOrders = async (
         const response: any = await axios.post(
             `${API_ENDPOINT}/GetOrdersList`,
             data
-            //   {
-            //     headers: {
-            //       Authorization: token,
-            //     },
-            //   }
+
         );
 
         return response;

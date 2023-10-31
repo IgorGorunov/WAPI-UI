@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {Table, TableColumnProps, Pagination, Input} from 'antd';
 import Button from "@/components/Button/Button";
 import PageSizeSelector from '@/components/LabelSelect';
@@ -7,30 +7,13 @@ import "./styles.scss";
 import { SearchOutlined } from '@ant-design/icons';
 import Icon from "@/components/Icon";
 import UniversalPopup from "@/components/UniversalPopup";
+import { ProductType} from "@/types/products";
+import {OrderType} from "@/types/orders";
 
-type ProductType = {
-    aliases: string;
-    dimension: string;
-    name: string;
-    sku: string;
-    uuid: string;
-    weight: number;
-    status: string,
-    stock: {
-        warehouse: string,
-        total: number,
-        damaged: number,
-        expired: number,
-        undefinedStatus: number,
-        withoutBox: number,
-        forPlacement: number,
-        reserved: number,
-        available: number,
-    }[]
-}
 
 type ProductListType = {
     products: ProductType[];
+    setFilteredProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
 }
 
 const pageOptions = [
@@ -49,7 +32,7 @@ const statusFilter = [
     { value: 'Expired', label: 'Expired' , color: '#FF4000'},
 ];
 
-const ProductList: React.FC<ProductListType> = ({products}) => {
+const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -113,6 +96,10 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
 
         return matchesSearch && matchesStatus;
     });
+
+    useEffect(() => {
+        setFilteredProducts(filteredProducts)
+    }, [searchTerm, filterStatus]);
 
     const columns: TableColumnProps<ProductType>[]  = [
         {
@@ -283,4 +270,4 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
     );
 };
 
-export default ProductList;
+export default React.memo(ProductList);

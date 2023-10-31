@@ -14,7 +14,8 @@ import Skeleton from "@/components/Skeleton/Skeleton";
 import "./styles.scss";
 import {getDasboardData} from "@/services/dashboard";
 import Button from "@/components/Button/Button";
-
+import {exportFileXLS} from "@/utils/files";
+import {ProductType} from "@/types/products";
 
 const ProductsPage = () => {
 
@@ -62,6 +63,7 @@ const ProductsPage = () => {
         fetchData();
     }, [token]);
 
+    const [filteredProducts, setFilteredProducts] = useState<ProductType[]>(productsData)
     console.log("products data: ", productsData);
 
     const handleAddProduct = () => {
@@ -69,6 +71,10 @@ const ProductsPage = () => {
     }
     const handleImportXLS = () => {
 
+    }
+
+    const handleExportXLS = () => {
+        exportFileXLS(filteredProducts, "Products")
     }
 
     return (
@@ -93,8 +99,9 @@ const ProductsPage = () => {
                 <Header pageTitle='Products' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
                     <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
                 </Header>
-                {productsData && <ProductList products={productsData}/>}
+                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts}/>}
             </div>
         </Layout>
     )
