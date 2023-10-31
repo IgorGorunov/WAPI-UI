@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {Table, TableColumnProps, Pagination, Input} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
@@ -6,26 +6,12 @@ import "/node_modules/flag-icons/css/flag-icons.min.css";
 import StatusWarehouseSelector from "@/components/InputSelect";
 import * as XLSX from 'xlsx';
 import {ColumnType} from "antd/es/table";
+import { ProductStockType} from "@/types/products";
 
-type ProductType = {
-    name: string;
-    sku: string;
-    uuid: string;
-    warehouse: string,
-    warehouseSku: string,
-    country: string,
-    total: number,
-    damaged: number,
-    expired: number,
-    undefinedStatus: number,
-    withoutBox: number,
-    forPlacement: number,
-    reserved: number,
-    available: number,
-}
 
 type ProductListType = {
-    products: ProductType[];
+    products: ProductStockType[];
+    setFilteredProducts: React.Dispatch<React.SetStateAction<ProductStockType[]>>;
 }
 
 const pageOptions = [
@@ -36,7 +22,7 @@ const pageOptions = [
 ];
 
 
-const ProductList: React.FC<ProductListType> = ({products}) => {
+const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -82,7 +68,7 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         }
     };
 
-    const [sortColumn, setSortColumn] = useState<keyof ProductType | null>(null);
+    const [sortColumn, setSortColumn] = useState<keyof ProductStockType | null>(null);
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
 
     const filteredProducts = products.filter(product => {
@@ -114,15 +100,11 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         }
     });
 
-    const exportToExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(filteredProducts);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Products");
-        XLSX.writeFile(wb, "products.xlsx");
-    }
+    useEffect(() => {
+        setFilteredProducts(filteredProducts)
+    }, [filteredProducts]);
 
-
-    const columns: TableColumnProps<ProductType>[]  = [
+    const columns: TableColumnProps<ProductStockType>[]  = [
         {
             render: (text: string) => (
                 <div className="flag" style={{display: 'block', width: '30px', textAlign:'center'}}>
@@ -141,12 +123,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'warehouse',
             key: 'warehouse',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -160,12 +142,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'warehouseSku',
             key: 'warehouseSku',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -179,12 +161,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'name',
             key: 'name',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -198,12 +180,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'total',
             key: 'total',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -217,12 +199,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'available',
             key: 'available',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -236,12 +218,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'reserved',
             key: 'reserved',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -255,12 +237,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'damaged',
             key: 'damaged',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -274,12 +256,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'expired',
             key: 'expired',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -293,12 +275,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'undefinedStatus',
             key: 'undefinedStatus',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -312,12 +294,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'withoutBox',
             key: 'withoutBox',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -331,12 +313,12 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             dataIndex: 'forPlacement',
             key: 'forPlacement',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductType>) => ({
+            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
                 onClick: () => {
                     if (sortColumn === column.dataIndex) {
                         setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
                     } else {
-                        setSortColumn(column.dataIndex as keyof ProductType);
+                        setSortColumn(column.dataIndex as keyof ProductStockType);
                         setSortDirection('ascend');
                     }
                 },
@@ -389,4 +371,4 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
     );
 };
 
-export default ProductList;
+export default React.memo(ProductList);
