@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Input, Pagination, Table, TableColumnProps} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
@@ -13,34 +13,15 @@ import {ColumnType} from "antd/es/table";
 import Datepicker from '@/components/Datepicker';
 import Button from "@/components/Button/Button";
 import DateInput from "@/components/DateInput";
+import {DateRangeType, PeriodType} from "@/types/dashboard";
+import {OrderType} from "@/types/orders";
 
-
-
-type OrderType = {
-    icon: string,
-    uuid: string;
-    status: string;
-    statusGroup: string;
-    date: string;
-    wapiTrackingNumber: string,
-    isCod: boolean,
-    codAmount: string,
-    codCurrency: string,
-    clientOrderID: string,
-    warehouse: string,
-    warehouseCountry: string,
-    courierService: string,
-    trackingNumber: string,
-    receiverCountry: string,
-    productLines: number,
-    products: {
-        product: string,
-        quantity: number,
-    } [],
-}
 
 type OrderListType = {
     orders: OrderType[];
+    currentRange: DateRangeType;
+    setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
+    setFilteredOrders: React.Dispatch<React.SetStateAction<OrderType[]>>;
 }
 
 const pageOptions = [
@@ -51,7 +32,7 @@ const pageOptions = [
 ];
 
 
-const OrderList: React.FC<OrderListType> = ({orders}) => {
+const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -217,10 +198,15 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
         }
     });
 
-    const [currentRange, setCurrentRange] = useState({
-        startDate: new Date(),
-        endDate: new Date(),
-    });
+    useEffect(() => {
+        setFilteredOrders(filteredOrders);
+        console.log("clicked123")
+    }, [filteredOrders]);
+
+    // const [currentRange, setCurrentRange] = useState({
+    //     startDate: new Date(),
+    //     endDate: new Date(),
+    // });
 
     const [showDatepicker, setShowDatepicker] = useState(false);
 
@@ -548,4 +534,4 @@ const OrderList: React.FC<OrderListType> = ({orders}) => {
     );
 };
 
-export default OrderList;
+export default React.memo(OrderList);

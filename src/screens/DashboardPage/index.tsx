@@ -19,6 +19,7 @@ import "./styles.scss";
 import {verifyToken} from "@/services/auth";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import PeriodFilter from "@/screens/DashboardPage/components/PeriodFilter";
+import {formatDateToString} from "@/utils/date";
 
 const DashboardPage: React.FC = () => {
 
@@ -31,17 +32,7 @@ const DashboardPage: React.FC = () => {
     orderByCountryDeparture: any;
   };
 
-  const formatDate = (date: Date) => {
-    let d = new Date(date),
-      month = "" + (d.getMonth() + 1),
-      day = "" + d.getDate(),
-      year = d.getFullYear();
 
-    if (month.length < 2) month = "0" + month;
-    if (day.length < 2) day = "0" + day;
-
-    return [year, month, day].join("-");
-  };
 
   const Router = useRouter();
   const { token, setToken } = useAuth();
@@ -70,8 +61,8 @@ const DashboardPage: React.FC = () => {
       endDate: Date
     ) => {
       return {
-        startDate: formatDate(startDate),
-        endDate: formatDate(endDate),
+        startDate: formatDateToString(startDate),
+        endDate: formatDateToString(endDate),
         token: token || "",
       };
     };

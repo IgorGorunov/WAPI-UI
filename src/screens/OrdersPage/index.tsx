@@ -3,7 +3,6 @@ import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import { getProducts } from "@/services/products";
-
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 //import Header from "./components/Header"
@@ -14,15 +13,23 @@ import "./styles.scss";
 import {getOrders} from "@/services/orders";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
+import {DateRangeType} from "@/types/dashboard";
+import {formatDateToString, getFirstDayOfMonth} from "@/utils/date";
+import * as XLSX from "xlsx";
+import {OrderType} from "@/types/orders";
+import {exportFileXLS} from "@/utils/files";
 
 const OrdersPage = () => {
-
+    const today = new Date();
+    const firstDay = getFirstDayOfMonth(today);
+    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
     const Router = useRouter();
     const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
     const [ordersData, setOrdersData,] = useState<any | null>(null);
+    const [filteredOrders, setFilteredOrders] = useState<OrderType[]>(ordersData);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -41,7 +48,7 @@ const OrdersPage = () => {
                 }
 
                 const res: ApiResponse = await getOrders(
-                    {token: token}
+                    {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
                 );
 
                 if (res && "data" in res) {
@@ -58,7 +65,7 @@ const OrdersPage = () => {
         };
 
         fetchData();
-    }, [token]);
+    }, [token, curPeriod]);
 
     console.log("orders data: ", ordersData);
     const handleAddOrder= () => {
@@ -67,6 +74,11 @@ const OrdersPage = () => {
     const handleImportXLS = () => {
 
     }
+
+    const handleExportXLS = () => {
+        exportFileXLS(filteredOrders, "Orders");
+    }
+
     return (
         <Layout hasHeader hasFooter>
             <div className="orders-page__container">
@@ -89,9 +101,10 @@ const OrdersPage = () => {
                 <Header pageTitle='Fulfillment' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
                     <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
                 </Header>
 
-                {ordersData && <OrderList orders={ordersData}/>}
+                {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders}/>}
             </div>
         </Layout>
     )

@@ -7,32 +7,14 @@ import "./styles.scss";
 import { SearchOutlined } from '@ant-design/icons';
 import Icon from "@/components/Icon";
 import UniversalPopup from "@/components/UniversalPopup";
+import { ProductType} from "@/types/products";
+import {OrderType} from "@/types/orders";
 import {ColumnType} from "antd/es/table";
 
-type ProductType = {
-    aliases: string;
-    dimension: string;
-    name: string;
-    sku: string;
-    uuid: string;
-    weight: number;
-    status: string,
-    available: number,
-    stock: {
-        warehouse: string,
-        total: number,
-        damaged: number,
-        expired: number,
-        undefinedStatus: number,
-        withoutBox: number,
-        forPlacement: number,
-        reserved: number,
-        available: number,
-    }[]
-}
 
 type ProductListType = {
     products: ProductType[];
+    setFilteredProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
 }
 
 const pageOptions = [
@@ -95,9 +77,6 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
         }
     };
 
-    const [sortColumn, setSortColumn] = useState<keyof ProductType | null>(null);
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
-
     const filteredProducts = products.filter(product => {
         let matchesSearch = false;
         let matchesStatus = true;
@@ -126,6 +105,10 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
             return a[sortColumn] < b[sortColumn] ? 1 : -1;
         }
     });
+
+    useEffect(() => {
+        setFilteredProducts(filteredProducts)
+    }, [searchTerm, filterStatus]);
 
     const columns: TableColumnProps<ProductType>[]  = [
         {
@@ -352,4 +335,4 @@ const ProductList: React.FC<ProductListType> = ({products}) => {
     );
 };
 
-export default ProductList;
+export default React.memo(ProductList);
