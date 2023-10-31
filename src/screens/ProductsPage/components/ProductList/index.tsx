@@ -17,6 +17,7 @@ type ProductType = {
     uuid: string;
     weight: number;
     status: string,
+    available: number,
     stock: {
         warehouse: string,
         total: number,
