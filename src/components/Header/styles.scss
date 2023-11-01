@@ -1,7 +1,7 @@
 .main-header {
   position: relative;
   width: 100%;
-  z-index: 101;
+  z-index: 1000;
 
   &__wrapper {
     display: flex;
@@ -101,7 +101,6 @@
   display: flex;
   padding: 25px 15px;
   flex-direction: column;
-  //gap: 25px;
   border-radius: 20px;
   border: 2px solid var(--gray-blue-grey-blue-95, #EDEFF2);
   background: #EDEFF2;
@@ -170,7 +169,7 @@
 .submenu-header {
   display: flex;
   align-items: center;
-  padding: 15px 15px;
+  padding: 10px;
   cursor: pointer;
   color: var(--color-gray-blue);
   font-feature-settings: 'clig' off, 'liga' off;
@@ -191,7 +190,6 @@
   font-feature-settings: 'clig' off, 'liga' off;
   font-size: 12px;
   font-weight: 700;
-  padding-top: 10px;
   width: 100%;
   opacity: 0;
   transform: translateY(-20px);
@@ -206,7 +204,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 5px 0 5px 0;
+  padding: 15px 0 10px 0;
   &:hover {
     color: var(--color-blue);
   }

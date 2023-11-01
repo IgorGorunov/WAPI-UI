@@ -1,5 +1,7 @@
 .input-select {
 
+  z-index: 102;
+
   &-container {
     width: 200px;
   }
@@ -16,7 +18,7 @@
 
   &__dropdown-indicator svg {
     fill: var(--color-gray-blue);
-    margin-right: 15px;
+    margin-right: 10px;
     cursor: pointer;
   }
 

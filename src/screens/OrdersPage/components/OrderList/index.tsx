@@ -4,7 +4,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import Selector from "@/components/InputSelect";
-import * as XLSX from 'xlsx';
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
@@ -203,11 +202,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         console.log("clicked123")
     }, [filteredOrders]);
 
-    // const [currentRange, setCurrentRange] = useState({
-    //     startDate: new Date(),
-    //     endDate: new Date(),
-    // });
-
     const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange) => {
@@ -216,41 +210,33 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         // Дополнительная логика обработки
     };
 
-    const exportToExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(filteredOrders);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Orders");
-        XLSX.writeFile(wb, "Orders.xlsx");
-    }
-
     const columns: TableColumnProps<OrderType>[]  = [
         {
-            title:  <Icon name={"car"} />,
-            dataIndex: 'icon',
-            key: 'icon',
+            title:  <Icon name={"car"} style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}/>,
             render: (text: string, record) =>
-                <div className="flag"  style={{ width: '50px'}}>
+                <div className="flag" style={{ width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>
                     <span className={`fi fi-${record.warehouseCountry.toLowerCase()} flag-icon`}></span>
                     <span> ➔ </span>
                     <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
-                </div>
+                </div>,
+            dataIndex: 'icon',
+            key: 'icon',
         },
         {
+            title:  <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Status</div>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
-
                 return (
-                    <div style={{ width: '70px' }}>
-            <span style={{
-                borderBottom: `2px solid ${underlineColor}`,
-                display: 'inline-block'
-            }}>
-                {text}
-            </span>
+                    <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
+                        <span style={{
+                            borderBottom: `2px solid ${underlineColor}`,
+                            display: 'inline-block'
+                        }}>
+                            {text}
+                        </span>
                     </div>
                 );
             },
-            title: 'Status',
             dataIndex: 'status',
             key: 'status',
             sorter: true,
@@ -266,12 +252,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '75px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Date</div>,
             render: (text: string) => (
-                <div style={{ width: '80px'}}>
+                <div style={{display: 'flex', width: '75px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
                     <span>{text}</span>
                 </div>
             ),
-            title: 'Date',
             dataIndex: 'date',
             key: 'date',
             sorter: true,
@@ -287,12 +273,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '75px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>WH number</div>,
             render: (text: string) => (
-                <div style={{ width: '110px', color: 'var(--color-blue)', cursor:'pointer'}}>
+                <div style={{ display: 'flex', width: '75px', color: 'var(--color-blue)', cursor:'pointer', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
                     <span>{text}</span>
                 </div>
             ),
-            title: 'WH number',
             dataIndex: 'wapiTrackingNumber',
             key: 'wapiTrackingNumber',
             sorter: true,
@@ -308,15 +294,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>COD</div>,
             render: (text: string, record) => {
                 const currencySymbol = getSymbolFromCurrency(record.codCurrency);
                 return (
-                    <div style={{ width: '60px'}}>
+                    <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
                         <span>{text} {currencySymbol}</span>
                     </div>
                 );
             },
-            title: 'COD',
             dataIndex: 'codAmount',
             key: 'codAmount',
             sorter: true,
@@ -332,12 +318,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Order ID</div>,
             render: (text: string) => (
-                <div style={{ width: '80px'}}>
+                <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
                     <span>{text}</span>
                 </div>
             ),
-            title: 'Order ID',
+
             dataIndex: 'clientOrderID',
             key: 'clientOrderID',
             sorter: true,
@@ -353,12 +340,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Warehouse</div>,
             render: (text: string) => (
-                <div style={{ width: '60px'}}>
+                <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
                     <span>{text}</span>
                 </div>
             ),
-            title: 'Warehouse',
             dataIndex: 'warehouse',
             key: 'warehouse',
             sorter: true,
@@ -374,12 +361,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Courier</div>,
             render: (text: string) => (
-                <div style={{ width: '60px'}}>
+                <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
                     <span>{text}</span>
                 </div>
             ),
-            title: 'Courier',
             dataIndex: 'courierService',
             key: 'courierService',
             sorter: true,
@@ -395,12 +382,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '150px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Tracking number</div>,
             render: (text: string) => (
-                <div style={{ width: '90px'}}>
+                <div style={{display: 'flex', width: '150px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
                     <span>{text}</span>
                 </div>
             ),
-            title: 'Tracking number',
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
             sorter: true,
@@ -416,8 +403,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Products</div>,
             render: (text: string, record: OrderType) => (
-                <div style={{ width: '80px'}}>
+                <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>
                 <span
                     className="products-cell-style"
                     onMouseEnter={(e) => {
@@ -436,7 +424,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 </div>
 
             ),
-            title: <div style={{ textAlign: 'center' }}>Products</div>,
             dataIndex: 'productLines',
             key: 'productLines',
             sorter: true,
@@ -453,7 +440,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         ];
     return (
-        <div style={{width: '100%'}}>
+        <div className="order-list">
             <div className="filter-container" >
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <Selector

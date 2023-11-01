@@ -8,7 +8,6 @@ import UniversalPopup from "@/components/UniversalPopup";
 import { ProductType} from "@/types/products";
 import {ColumnType} from "antd/es/table";
 
-
 type ProductListType = {
     products: ProductType[];
     setFilteredProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
@@ -112,41 +111,20 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
 
     const columns: TableColumnProps<ProductType>[]  = [
         {
-            title: <div style={{display: 'block', width: '30px'}}></div>,
+            title: <div style={{display: 'flex', width: '20px', justifyContent:'center', alignItems:'center', textAlign:'center'}}></div>,
+            render: (status: string) => {
+                const statusObj = statusFilter.find(s => s.value === status);
+                let color = statusObj ? statusObj.color : 'white';
+                return <div style={{ display: 'flex', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: color }}></div>;
+            },
             dataIndex: 'status',
             key: 'status',
-            render: (status: string) => {
-                let color;
-                switch (status) {
-                    case "Approved":
-                        color = '#5380F5';
-                        break;
-                    case "Declined":
-                        color = '#FF4000';
-                        break;
-                    case "Draft":
-                        color = '#FEDB4F';
-                        break;
-                    case "Pending":
-                        color = '#FEDB4F';
-                        break;
-                    case "Cancelled":
-                        color = '#FF4000';
-                        break;
-                    case "Expired":
-                        color = '#FF4000';
-                        break;
-                    default:
-                        color = 'white';
-                }
-                return <div style={{ display: 'block', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: color }}></div>;
-            }
         },
         {
+            title:  <div style={{display: 'flex', width: '130px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>SKU</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '100px'}}>{text}</div>
+                <div style={{display: 'flex', width: '130px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '100px'}}>SKU</div>,
             dataIndex: 'sku',
             key: 'sku',
             sorter: true,
@@ -162,10 +140,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '200px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Name</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '250px', color: 'var(--color-blue)', cursor:'pointer' }}>{text}</div>
+                <div style={{display: 'flex', width: '200px', color: 'var(--color-blue)', cursor:'pointer', justifyContent:'start', alignItems:'start', textAlign:'start'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '250px'}}>Name</div>,
             dataIndex: 'name',
             key: 'name',
             sorter: true,
@@ -181,10 +159,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '100px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Dimension | mm</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '100px', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex',  width: '100px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '100px', textAlign: 'center'}}>Dimension | mm</div>,
             dataIndex: 'dimension',
             key: 'dimension',
             sorter: true,
@@ -201,10 +179,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
 
         },
         {
+            title:  <div style={{display: 'flex', width: '100px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Weight | kg</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '100px', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex', width: '100px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '100px', textAlign: 'center'}}>Weight | kg</div>,
             dataIndex: 'weight',
             key: 'weight',
             sorter: true,
@@ -220,10 +198,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '150px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Aliases</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '250px'}}>{text}</div>
+                <div style={{display: 'flex', width: '150px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '250px'}}>Aliases</div>,
             dataIndex: 'aliases',
             key: 'aliases',
             sorter: true,
@@ -239,8 +217,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title: <div style={{display: 'flex',  width: '100px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Available</div>,
             render: (text: string, record: ProductType) => (
-                <div style={{ width: '100%'}}>
+                <div style={{ display: 'flex', width: '100px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>
                 <span
                     className="stock-cell-style"
                     onMouseEnter={(e) => {
@@ -259,7 +238,6 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                 </div>
 
             ),
-            title: <div style={{display: 'block',  width: '100%', textAlign: 'center'}}>Available</div>,
             dataIndex: 'available',
             key: 'available',
             sorter: true,
@@ -276,7 +254,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
         },
         ];
     return (
-        <div style={{width: '100%'}}>
+        <div className='product-list'>
             <div className="status-filter-container">
                 <div>
                     <StatusFilterSelector

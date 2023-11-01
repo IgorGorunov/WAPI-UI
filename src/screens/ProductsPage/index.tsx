@@ -74,7 +74,15 @@ const ProductsPage = () => {
     }
 
     const handleExportXLS = () => {
-        exportFileXLS(filteredProducts, "Products")
+        const filteredData = filteredProducts.map(item => ({
+            status: item.status,
+            sku: item.sku,
+            name: item.name,
+            dimension: item.dimension,
+            weight: item.weight,
+            aliases: item.aliases,
+        }));
+        exportFileXLS(filteredData, "Products")
     }
 
     return (

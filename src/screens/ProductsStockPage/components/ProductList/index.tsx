@@ -4,7 +4,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import StatusWarehouseSelector from "@/components/InputSelect";
-import * as XLSX from 'xlsx';
 import {ColumnType} from "antd/es/table";
 import { ProductStockType} from "@/types/products";
 
@@ -106,20 +105,20 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
 
     const columns: TableColumnProps<ProductStockType>[]  = [
         {
+            title: <div style={{display: 'flex', width: '20px', justifyContent:'center', alignItems:'center', textAlign:'center'}}></div>,
             render: (text: string) => (
-                <div className="flag" style={{display: 'block', width: '30px', textAlign:'center'}}>
+                <div className="flag" style={{display: 'flex', width: '30px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>
                     <span className={`fi fi-${text.toLowerCase()} "flag-icon"`}></span>
                 </div>
             ),
-            title: <div style={{display: 'block'}}></div>,
             dataIndex: 'country',
             key: 'country',
         },
         {
+            title:  <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Warehouse</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '70px'}}>{text}</div>
+                <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '70px'}}>Warehouse</div>,
             dataIndex: 'warehouse',
             key: 'warehouse',
             sorter: true,
@@ -135,10 +134,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '80px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>SKU</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '80px'}}>{text}</div>
+                <div style={{display: 'flex', width: '80px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '80px'}}>SKU</div>,
             dataIndex: 'warehouseSku',
             key: 'warehouseSku',
             sorter: true,
@@ -154,10 +153,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '90px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Name</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '90px', color: 'var(--color-blue)', cursor:'pointer' }}>{text}</div>
+                <div style={{display: 'flex', width: '90px', color: 'var(--color-blue)', cursor:'pointer', justifyContent:'start', alignItems:'start' , textAlign:'start'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '90px'}}>Name</div>,
             dataIndex: 'name',
             key: 'name',
             sorter: true,
@@ -173,10 +172,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '40px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Total</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '40px', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex', width: '40px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '40px', textAlign: 'center'}}>Total</div>,
             dataIndex: 'total',
             key: 'total',
             sorter: true,
@@ -192,10 +191,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Available</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '60px', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '60px', textAlign: 'center'}}>Available</div>,
             dataIndex: 'available',
             key: 'available',
             sorter: true,
@@ -211,10 +210,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Reversed</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '60px', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '60px', textAlign: 'center'}}>Reversed</div>,
             dataIndex: 'reserved',
             key: 'reserved',
             sorter: true,
@@ -230,10 +229,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Damaged</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '60x', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex', width: '60x', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '60px', textAlign: 'center'}}>Damaged</div>,
             dataIndex: 'damaged',
             key: 'damaged',
             sorter: true,
@@ -249,10 +248,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Expired</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '50px', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '50px', textAlign: 'center'}}>Expired</div>,
             dataIndex: 'expired',
             key: 'expired',
             sorter: true,
@@ -268,10 +267,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '65px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Undefined status</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '65px', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex', width: '65px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '65px', textAlign: 'center'}}>Undefined status</div>,
             dataIndex: 'undefinedStatus',
             key: 'undefinedStatus',
             sorter: true,
@@ -287,10 +286,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Without box</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '50px', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '50px', textAlign: 'center'}}>Without box</div>,
             dataIndex: 'withoutBox',
             key: 'withoutBox',
             sorter: true,
@@ -306,10 +305,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
+            title:  <div style={{display: 'flex', width: '65px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Returning</div>,
             render: (text: string) => (
-                <div style={{display: 'block', width: '65px', textAlign:'center'}}>{text}</div>
+                <div style={{display: 'flex', width: '65px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
             ),
-            title:  <div style={{display: 'block', width: '65px', textAlign: 'center'}}>Returning</div>,
             dataIndex: 'forPlacement',
             key: 'forPlacement',
             sorter: true,
@@ -326,7 +325,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
         },
         ];
     return (
-        <div style={{width: '100%'}}>
+        <div className='product-stock'>
             <div className="warehouse-filter-container">
                 <div>
                     <StatusWarehouseSelector

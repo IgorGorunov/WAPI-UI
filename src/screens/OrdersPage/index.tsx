@@ -76,7 +76,19 @@ const OrdersPage = () => {
     }
 
     const handleExportXLS = () => {
-        exportFileXLS(filteredOrders, "Orders");
+        const filteredData = filteredOrders.map(item => ({
+            wapiTrackingNumber: item.wapiTrackingNumber,
+            status: item.status,
+            date: item.date,
+            codAmount: item.codAmount,
+            codCurrency: item.codCurrency,
+            clientOrderID: item.clientOrderID,
+            warehouse: item.warehouse,
+            courierService: item.courierService,
+            trackingNumber: item.trackingNumber,
+            receiverCountry: item.receiverCountry,
+        }));
+        exportFileXLS(filteredData, "Orders");
     }
 
     return (

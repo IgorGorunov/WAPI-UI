@@ -70,7 +70,22 @@ const ProductsStockPage = () => {
 
     }
     const handleExportXLS = () => {
-        exportFileXLS(filteredProducts, "ProductsStock")
+        const filteredData = filteredProducts.map(item => ({
+            sku: item.sku,
+            name: item.name,
+            warehouse: item.warehouse,
+            warehouseSku: item.warehouseSku,
+            country: item.country,
+            total: item.total,
+            damaged: item.damaged,
+            expired: item.expired,
+            undefinedStatus: item.undefinedStatus,
+            withoutBox: item.withoutBox,
+            forPlacement: item.forPlacement,
+            reserved: item.reserved,
+            available: item.available,
+        }));
+        exportFileXLS(filteredData, "ProductsStock")
     }
 
     return (
