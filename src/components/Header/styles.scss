@@ -159,6 +159,8 @@
   background: var(--white-white, #FFF);
   box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
   margin-bottom: 25px;
+  margin-right: 10px;
+  margin-left: 10px;
   padding: 15px;
   .submenu-header {
     border-bottom: 2px solid var(--border-color);
@@ -197,7 +199,6 @@
   visibility: hidden;
   transition:  all 0.5s ease-in-out, opacity 0.5s, transform 0.5s;
   padding-top: 5px;
-
 }
 
 .submenu-item {
@@ -216,6 +217,11 @@
   transform: translateY(0);
   height: auto;
   visibility: visible;
+  padding-top: 5px;
+}
+
+.submenu-container-expanded .submenu-item {
+  padding: 5px 10px 5px 10px;
 }
 
 .submenu-items.anim {

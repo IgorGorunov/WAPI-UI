@@ -318,9 +318,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Order ID</div>,
+            title:  <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Order ID</div>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
+                <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
                     <span>{text}</span>
                 </div>
             ),
