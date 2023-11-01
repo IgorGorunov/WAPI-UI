@@ -212,9 +212,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const columns: TableColumnProps<OrderType>[]  = [
         {
-            title:  <Icon name={"car"} style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}/>,
+            title:  <Icon name={"car"} style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}/>,
             render: (text: string, record) =>
-                <div className="flag" style={{ width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>
+                <div className="flag" style={{ width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>
                     <span className={`fi fi-${record.warehouseCountry.toLowerCase()} flag-icon`}></span>
                     <span> ➔ </span>
                     <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
