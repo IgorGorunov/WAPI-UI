@@ -90,7 +90,7 @@ const ProductsStockPage = () => {
 
     return (
         <Layout hasHeader hasFooter>
-            <div className="products-page__container">
+            <div className="products-stock__container">
                 {isLoading && (
                     <div style={{
                         position: 'fixed',
