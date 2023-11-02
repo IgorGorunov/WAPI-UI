@@ -1,5 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
 import './style.scss';
 
 const CustomSelect = ({ options, value, onChange }) => {

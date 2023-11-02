@@ -63,7 +63,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                         </Link>
                     </div>
 
-                    <div className={`submenu-container-${isProductSubmenuOpen ? 'expanded' : ''}`}>
+                    <div className={`submenu-container${isProductSubmenuOpen ? '-expanded' : ''}`}>
                         <div className="submenu-header" onClick={() => setProductSubmenuOpen(!isProductSubmenuOpen)}>
                             <Icon name="products" style={{width: "30px", height: "30px"}} />
                             <span style={{marginLeft: "20px"}}>Products</span>
@@ -85,7 +85,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                         </div>
 
                     </div>
-                    <div className={`submenu-container-${isOrderSubmenuOpen ? 'expanded' : ''}`}>
+                    <div className={`submenu-container${isOrderSubmenuOpen ? '-expanded' : ''}`}>
                         <div className="submenu-header" onClick={() => setOrderSubmenuOpen(!isOrderSubmenuOpen)}>
                             <Icon name="orders" style={{width: "30px", height: "30px"}} />
                             <span style={{marginLeft: "20px"}}>Orders</span>

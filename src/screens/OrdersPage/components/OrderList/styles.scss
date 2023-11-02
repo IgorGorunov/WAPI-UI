@@ -161,19 +161,22 @@
       animation: fadeInDown 1s forwards;
     }
 
-    .fade-in-down {
-      animation: fadeInDown 1s forwards;
-    }
 
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+
+  }
+}
+
+.fade-in-down {
+  animation: fadeInDown 1s forwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
