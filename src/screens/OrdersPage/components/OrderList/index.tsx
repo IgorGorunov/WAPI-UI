@@ -65,8 +65,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     uniqueStatuses.sort();
     const transformedStatuses = [
         {
-            value: '',
+            value: '-All statuses-',
             label: '-All statuses-',
+        },
+        {
+            value: '-Trouble statuses-',
+            label: '-Trouble statuses-',
         },
         ...uniqueStatuses.map(status => ({
             value: status,
@@ -181,6 +185,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
         if (filterStatus) {
             matchesStatus = order.status === filterStatus;
+            switch (filterStatus) {
+                case '-All statuses-':
+                    return true;
+                case '-Trouble statuses-':
+                    return matchesStatus = order.troubleStatusesExist === true;
+                default:
+                    return matchesStatus = order.status === filterStatus;
+            }
         }
 
         if (filterWarehouse) {
@@ -507,7 +519,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     />
                 </div>
             </div>
-            <div>
+            <div className="filter-container" >
+
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}

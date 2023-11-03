@@ -1,6 +1,7 @@
 .date-input {
   &-field {
     position: relative;
+
   }
   &-btn {
     position: relative;
@@ -10,7 +11,7 @@
     width: 220px;
     padding: 6px 36px 6px 16px;
     border: 1px solid var(--color-light-gray) !important;
-    border-radius: 20px;
+    border-radius: 30px;
     box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03) !important;
     color: var(--color-gray-blue) !important;
     font-feature-settings: 'clig' off, 'liga' off;
@@ -29,5 +30,6 @@
   &__datepicker {
     position: absolute;
     z-index: 1000;
+
   }
 }
