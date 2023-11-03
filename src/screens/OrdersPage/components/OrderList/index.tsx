@@ -140,27 +140,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
     };
 
-    const handleFilterChange = (newSearchTerm :string, newStatusFilter: string, newWarehouseFilter: string, newCourierServiceFilter:string, newReceiverCountryFilter:string) => {
-
-        if (newSearchTerm) {
-            setSearchTerm(newSearchTerm);
-        }
-
-        if (newStatusFilter) {
-            setFilterStatus(newStatusFilter);
-        }
-
-        if (newWarehouseFilter) {
-            setFilterWarehouse(newWarehouseFilter);
-        }
-
-        if (newCourierServiceFilter) {
-            setFilterCourierService(newCourierServiceFilter);
-        }
-
-        if (newReceiverCountryFilter) {
-            setFilterReceiverCountry(newReceiverCountryFilter);
-        }
+    const handleFilterChange = (newSearchTerm :string) => {
+        setSearchTerm(newSearchTerm);
         setCurrent(1);
     };
 
@@ -491,11 +472,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 </div>
             </div>
             <div className="filter-container" >
-
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}
-                    onChange={e => handleFilterChange(e.target.value, "", "", "", "")}
+                    onChange={e => handleFilterChange(e.target.value)}
                     className="search-input"
                 />
             </div>
