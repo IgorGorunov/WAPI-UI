@@ -59,7 +59,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
-    const [filterStatus, setFilterStatus] = useState('');
+    const [filterStatus, setFilterStatus] = useState('-All statuses-');
     const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = Array.from(new Set(allStatuses)).filter(status => status);
     uniqueStatuses.sort();
