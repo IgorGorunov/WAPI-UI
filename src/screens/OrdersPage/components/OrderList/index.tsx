@@ -184,7 +184,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }
 
         if (filterStatus) {
-            matchesStatus = order.status === filterStatus;
             switch (filterStatus) {
                 case '-All statuses-':
                     return true;
