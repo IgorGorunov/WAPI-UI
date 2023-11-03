@@ -227,8 +227,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const handleDateRangeSave = (newRange) => {
         setCurrentRange(newRange);
-        setShowDatepicker(false); // Закрываем Datepicker после выбора
-        // Дополнительная логика обработки
+        setShowDatepicker(false);
     };
 
     const columns: TableColumnProps<OrderType>[]  = [
