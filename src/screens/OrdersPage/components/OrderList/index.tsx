@@ -78,7 +78,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ];
 
-    const [filterWarehouse, setFilterWarehouse] = useState('');
+    const [filterWarehouse, setFilterWarehouse] = useState('-All warehouses-');
     const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = Array.from(new Set(allWarehouses)).filter(warehouse => warehouse);
     uniqueWarehouses.sort();
@@ -93,7 +93,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ];
 
-    const [filterCourierService, setFilterCourierService] = useState('');
+    const [filterCourierService, setFilterCourierService] = useState('-All couriers-');
     const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = Array.from(new Set(allCourierServices)).filter(courier => courier);
     uniqueCourierServices.sort();
@@ -108,7 +108,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ];
 
-    const [filterReceiverCountry, setFilterReceiverCountry] = useState('');
+    const [filterReceiverCountry, setFilterReceiverCountry] = useState('-All countries-');
     const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = Array.from(new Set(allReceiverCountries)).filter(country => country);
     uniqueReceiverCountries.sort();
