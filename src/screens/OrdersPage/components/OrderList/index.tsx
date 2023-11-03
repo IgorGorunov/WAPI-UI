@@ -250,8 +250,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <div style={{display: 'flex', width: '80px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
                         {record.troubleStatusesExist && (
                             <div style={{
-                                height: '8px',
-                                width: '8px',
+                                minHeight: '8px',
+                                minWidth: '8px',
                                 backgroundColor: 'red',
                                 borderRadius: '50%',
                                 display: 'inline-block',
@@ -274,9 +274,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         <span style={{
                             borderBottom: `2px solid ${underlineColor}`,
                             display: 'inline-block',
-
                         }}>
-
                         {text}
                         </span>
                     </div>
