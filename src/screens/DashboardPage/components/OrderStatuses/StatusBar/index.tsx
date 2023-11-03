@@ -45,6 +45,7 @@ const StatusBar: React.FC<StatusBarPropsType> = ({
                         <UniversalPopup
                             items={popupItems}
                             position='right'
+                            width='200px'
                         />
                     )}
                 </div>

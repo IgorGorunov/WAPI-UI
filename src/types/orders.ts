@@ -19,4 +19,11 @@ export type OrderType = {
         product: string,
         quantity: number,
     } [],
+    troubleStatusesExist: boolean,
+    troubleStatuses: {
+        period: string,
+        status: string,
+        troubleStatus: string,
+        additionalInfo: string,
+    }[],
 }

@@ -28,6 +28,7 @@ const pageOptions = [
     { value: '20', label: '20 per page' },
     { value: '50', label: '50 per page' },
     { value: '100', label: '100 per page' },
+    { value: '1000', label: '1000 per page' },
 ];
 
 
@@ -39,13 +40,22 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [searchTerm, setSearchTerm] = useState('');
 
     const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
+    const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
     const [hoveredOrder, setHoveredOrder] = useState<OrderType | null>(null);
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
-    const popupItems = orders.flatMap(order => {
+    const productItems = orders.flatMap(order => {
         return order.products.map(orderItem => ({
             uuid: order.uuid,
             title: orderItem.product,
             description: orderItem.quantity
+        }));
+    }).filter(item => item.uuid === hoveredOrder?.uuid);
+
+    const troubleStatusesItems = orders.flatMap(order => {
+        return order.troubleStatuses.map(orderItem => ({
+            uuid: order.uuid,
+            title: orderItem.period +': '+ orderItem.status,
+            description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
@@ -223,16 +233,41 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             key: 'icon',
         },
         {
-            title:  <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Status</div>,
+            title:  <div style={{display: 'flex', width: '80px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Status</div>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
-                    <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
+                    <div style={{display: 'flex', width: '80px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
+                        {record.troubleStatusesExist && (
+                            <div style={{
+                                height: '8px',
+                                width: '8px',
+                                backgroundColor: 'red',
+                                borderRadius: '50%',
+                                display: 'inline-block',
+                                marginRight: '5px',
+                                alignSelf: 'center',
+                            }}
+                             onMouseEnter={(e) => {
+                                 setHoveredOrder(record);
+                                 setHoveredColumn('status');
+                                 setIsDisplayedPopup(true);
+                                 setMousePosition({ x: e.clientX, y: e.clientY });
+                             }}
+                             onMouseLeave={() => {
+                                 setHoveredOrder(null);
+                                 setHoveredColumn('');
+                                 setIsDisplayedPopup(false);
+                                 setMousePosition(null);
+                             }}/>
+                        )}
                         <span style={{
                             borderBottom: `2px solid ${underlineColor}`,
-                            display: 'inline-block'
+                            display: 'inline-block',
+
                         }}>
-                            {text}
+
+                        {text}
                         </span>
                     </div>
                 );
@@ -410,11 +445,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     className="products-cell-style"
                     onMouseEnter={(e) => {
                         setHoveredOrder(record);
+                        setHoveredColumn('productLines');
                         setIsDisplayedPopup(true);
                         setMousePosition({ x: e.clientX, y: e.clientY });
                     }}
                     onMouseLeave={() => {
                         setHoveredOrder(null);
+                        setHoveredColumn('');
                         setIsDisplayedPopup(false);
                         setMousePosition(null);
                     }}
@@ -512,8 +549,42 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     }}
                 >
                     <UniversalPopup
-                        items={popupItems}
-                        position='left'
+                        width={
+                            (() => {
+                                switch (hoveredColumn) {
+                                    case 'productLines':
+                                        return '200px';
+                                    case 'status':
+                                        return '800px';
+                                    default:
+                                        return '200px';
+                                }
+                            })()
+                        }
+                        items={
+                            (() => {
+                                switch (hoveredColumn) {
+                                    case 'productLines':
+                                        return productItems;
+                                    case 'status':
+                                        return troubleStatusesItems;
+                                    default:
+                                        return [];
+                                }
+                            })()
+                        }
+                        position={
+                            (() => {
+                                switch (hoveredColumn) {
+                                    case 'productLines':
+                                        return 'left';
+                                    case 'status':
+                                        return 'right';
+                                    default:
+                                        return 'left';
+                                }
+                            })()
+                        }
                     />
                 </div>
             )}

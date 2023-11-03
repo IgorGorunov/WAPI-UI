@@ -306,6 +306,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                     <UniversalPopup
                         items={popupItems}
                         position='left'
+                        width='150px'
                     />
                 </div>
             )}
