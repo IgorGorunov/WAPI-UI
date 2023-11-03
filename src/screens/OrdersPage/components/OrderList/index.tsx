@@ -84,7 +84,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     uniqueWarehouses.sort();
     const transformedWarehouses = [
         {
-            value: '',
+            value: '-All warehouses-',
             label: '-All warehouses-',
         },
         ...uniqueWarehouses.map(warehouse => ({
@@ -99,7 +99,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     uniqueCourierServices.sort();
     const transformedCourierServices = [
         {
-            value: '',
+            value: '-All couriers-',
             label: '-All couriers-',
         },
         ...uniqueCourierServices.map(courier => ({
@@ -114,7 +114,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     uniqueReceiverCountries.sort();
     const transformedReceiverCountries = [
         {
-            value: '',
+            value: '-All countries-',
             label: '-All countries-',
         },
         ...uniqueReceiverCountries.map(country => ({
@@ -142,23 +142,23 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const handleFilterChange = (newSearchTerm :string, newStatusFilter: string, newWarehouseFilter: string, newCourierServiceFilter:string, newReceiverCountryFilter:string) => {
 
-        if (newSearchTerm !== "") {
+        if (newSearchTerm) {
             setSearchTerm(newSearchTerm);
         }
 
-        if (newStatusFilter !== "") {
+        if (newStatusFilter) {
             setFilterStatus(newStatusFilter);
         }
 
-        if (newWarehouseFilter!== "") {
+        if (newWarehouseFilter) {
             setFilterWarehouse(newWarehouseFilter);
         }
 
-        if (newCourierServiceFilter!== "") {
+        if (newCourierServiceFilter) {
             setFilterCourierService(newCourierServiceFilter);
         }
 
-        if (newReceiverCountryFilter!== "") {
+        if (newReceiverCountryFilter) {
             setFilterReceiverCountry(newReceiverCountryFilter);
         }
         setCurrent(1);
@@ -167,47 +167,22 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [sortColumn, setSortColumn] = useState<keyof OrderType | null>(null);
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
 
+// ...
+
     const filteredOrders = orders.filter(order => {
-        let matchesSearch: boolean;
-        let matchesStatus = true;
-        let matchesWarehouse = true;
-        let matchesCourierService = true;
-        let matchesReceiverCountry = true;
+        let matchesSearch = !searchTerm || Object.values(order).some(value =>
+            String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
-        if (searchTerm) {
-            const searchTermLower = searchTerm.toLowerCase();
-            matchesSearch = Object.values(order).some(value =>
-                String(value).toLowerCase().includes(searchTermLower)
-            );
-        } else {
-            matchesSearch = true;
-        }
+        let matchesStatus = filterStatus === '-All statuses-' || (filterStatus === '-Trouble statuses-' ? order.troubleStatusesExist : order.status === filterStatus);
 
-        if (filterStatus) {
-            switch (filterStatus) {
-                case '-All statuses-':
-                    return true;
-                case '-Trouble statuses-':
-                    return matchesStatus = order.troubleStatusesExist === true;
-                default:
-                    return matchesStatus = order.status === filterStatus;
-            }
-        }
+        let matchesWarehouse = !filterWarehouse|| filterWarehouse === '-All warehouses-' || order.warehouse.toLowerCase() === filterWarehouse.toLowerCase();
 
-        if (filterWarehouse) {
-            matchesWarehouse = order.warehouse === filterWarehouse;
-        }
+        let matchesCourierService = !filterCourierService|| filterCourierService === '-All couriers-' || order.courierService.toLowerCase() === filterCourierService.toLowerCase();
 
-        if (filterCourierService) {
-            matchesCourierService = order.courierService === filterCourierService;
-        }
-
-        if (filterReceiverCountry) {
-            matchesReceiverCountry = order.receiverCountry === filterReceiverCountry;
-        }
+        let matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-All countries-' || order.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
 
         return matchesSearch && matchesStatus && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
-
     }).sort((a, b) => {
         if (!sortColumn) return 0;
 
@@ -220,7 +195,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     useEffect(() => {
         setFilteredOrders(filteredOrders);
-        console.log("clicked123")
+
     }, [filteredOrders]);
 
     const [showDatepicker, setShowDatepicker] = useState(false);
