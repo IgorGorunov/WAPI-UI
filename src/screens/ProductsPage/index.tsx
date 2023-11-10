@@ -3,19 +3,19 @@ import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import { getProducts } from "@/services/products";
-
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
-//import Header from "./components/Header"
 import Header from "@/components/Header";
 import ProductList from "./components/ProductList";
 import {verifyToken} from "@/services/auth";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import "./styles.scss";
-import {getDasboardData} from "@/services/dashboard";
 import Button from "@/components/Button/Button";
 import {exportFileXLS} from "@/utils/files";
 import {ProductType} from "@/types/products";
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const ProductsPage = () => {
 
@@ -65,14 +65,23 @@ const ProductsPage = () => {
 
 
     const handleEditProduct = (uuid: string) => {
-        console.log("uuid", uuid)
+        toast.warning("Under construction", {
+            position: "top-right",
+            autoClose: 1000,
+        });
     }
 
     const handleAddProduct = () => {
-
+        toast.warning("Under construction", {
+            position: "top-right",
+            autoClose: 1000,
+        });
     }
     const handleImportXLS = () => {
-
+        toast.warning("Under construction", {
+            position: "top-right",
+            autoClose: 1000,
+        });
     }
 
     const handleExportXLS = () => {
@@ -89,6 +98,7 @@ const ProductsPage = () => {
 
     return (
         <Layout hasFooter>
+            <ToastContainer />
             <div className="products-page__container">
                 {isLoading && (
                     <div style={{
