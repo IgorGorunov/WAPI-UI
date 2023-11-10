@@ -20,7 +20,6 @@ const DateInput: React.FC<DateInputType> = ({currentRange = {startDate: new Date
         setCurRange(periodRange);
         handleRangeChange(periodRange);
         setShowDateInput(false);
-        console.log("clicked 2", periodRange);
     }
 
     return <div className='date-input-field'>

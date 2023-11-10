@@ -11,7 +11,6 @@ const getOrders = async (
     }
 ) => {
     try {
-        console.log("data: ", data)
         const response: any = await axios.post(
             `${API_ENDPOINT}/GetOrdersList`,
             data
@@ -31,7 +30,6 @@ const getOrderData= async (
     }
 ) => {
     try {
-        console.log("data: ", data)
         const response: any = await axios.post(
             `${API_ENDPOINT}/GetOrderData`,
             data

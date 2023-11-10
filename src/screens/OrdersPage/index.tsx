@@ -40,10 +40,8 @@ const OrdersPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                //verify token
-                console.log("token: ", token);
+
                 if (!await verifyToken(token)) {
-                    console.log("token is wrong");
                     await Router.push(Routes.Login);
                 }
 
@@ -67,7 +65,7 @@ const OrdersPage = () => {
         fetchData();
     }, [token, curPeriod]);
 
-    console.log("orders data: ", ordersData);
+
     const handleAddOrder= () => {
 
     }

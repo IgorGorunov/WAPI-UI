@@ -37,9 +37,7 @@ const ProductsPage = () => {
             try {
                 setIsLoading(true);
                 //verify token
-                console.log("token: ", token);
                 if (!await verifyToken(token)) {
-                    console.log("token is wrong");
                     await Router.push(Routes.Login);
                 }
 
@@ -64,7 +62,11 @@ const ProductsPage = () => {
     }, [token]);
 
     const [filteredProducts, setFilteredProducts] = useState<ProductType[]>(productsData)
-    console.log("products data: ", productsData);
+
+
+    const handleEditProduct = (uuid: string) => {
+        console.log("uuid", uuid)
+    }
 
     const handleAddProduct = () => {
 
@@ -109,7 +111,7 @@ const ProductsPage = () => {
                     <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
                 </Header>
-                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts}/>}
+                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
             </div>
         </Layout>
     )

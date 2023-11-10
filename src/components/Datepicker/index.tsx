@@ -33,7 +33,6 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
   };
 
   const handleSave = () => {
-    console.log("clicked 1");
     onDateRangeSave({
       startDate: dateRange[0].startDate,
       endDate: dateRange[0].endDate,

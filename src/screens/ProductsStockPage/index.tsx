@@ -36,10 +36,7 @@ const ProductsStockPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                //verify token
-                console.log("token: ", token);
                 if (!await verifyToken(token)) {
-                    console.log("token is wrong");
                     await Router.push(Routes.Login);
                 }
 
@@ -63,8 +60,6 @@ const ProductsStockPage = () => {
 
         fetchData();
     }, [token]);
-
-    console.log("products data: ", productsData);
 
     const handleAddProduct = () => {
 

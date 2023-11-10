@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useMemo, useState, useEffect} from "react";
 import {Input, Pagination, Table, TableColumnProps} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
+import "@/styles/tables.scss";
 import Selector from "@/components/InputSelect";
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -14,6 +15,9 @@ import Button from "@/components/Button/Button";
 import DateInput from "@/components/DateInput";
 import {DateRangeType, PeriodType} from "@/types/dashboard";
 import {OrderType} from "@/types/orders";
+import TitleColumn from "@/components/TitleColumn";
+import TableCell from "@/components/TableCell";
+import {ProductType} from "@/types/products";
 
 
 type OrderListType = {
@@ -30,7 +34,6 @@ const pageOptions = [
     { value: '100', label: '100 per page' },
     { value: '1000', label: '1000 per page' },
 ];
-
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders}) => {
 
@@ -50,7 +53,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             description: orderItem.quantity
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
-
     const troubleStatusesItems = orders.flatMap(order => {
         return order.troubleStatuses.map(orderItem => ({
             uuid: order.uuid,
@@ -61,9 +63,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const [filterStatus, setFilterStatus] = useState('-All statuses-');
     const allStatuses = orders.map(order => order.status);
-    const uniqueStatuses = Array.from(new Set(allStatuses)).filter(status => status);
+    const uniqueStatuses = useMemo(() => {
+        const statuses = orders.map(order => order.status);
+        return Array.from(new Set(statuses)).filter(status => status).sort();
+    }, [orders]);
     uniqueStatuses.sort();
-    const transformedStatuses = [
+    const transformedStatuses = useMemo(() => ([
         {
             value: '-All statuses-',
             label: '-All statuses-',
@@ -76,13 +81,16 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             value: status,
             label: status,
         }))
-    ];
+    ]), [uniqueStatuses]);
 
     const [filterWarehouse, setFilterWarehouse] = useState('-All warehouses-');
     const allWarehouses = orders.map(order => order.warehouse);
-    const uniqueWarehouses = Array.from(new Set(allWarehouses)).filter(warehouse => warehouse);
+    const uniqueWarehouses = useMemo(() => {
+        const warehouses = orders.map(order => order.warehouse);
+        return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
+    }, [orders]);
     uniqueWarehouses.sort();
-    const transformedWarehouses = [
+    const transformedWarehouses = useMemo(() => ([
         {
             value: '-All warehouses-',
             label: '-All warehouses-',
@@ -91,13 +99,16 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             value: warehouse,
             label: warehouse,
         }))
-    ];
+    ]), [uniqueWarehouses]);
 
     const [filterCourierService, setFilterCourierService] = useState('-All couriers-');
     const allCourierServices = orders.map(order => order.courierService);
-    const uniqueCourierServices = Array.from(new Set(allCourierServices)).filter(courier => courier);
+    const uniqueCourierServices = useMemo(() => {
+        const courierServices = orders.map(order => order.courierService);
+        return Array.from(new Set(courierServices)).filter(courier => courier).sort();
+    }, [orders]);
     uniqueCourierServices.sort();
-    const transformedCourierServices = [
+    const transformedCourierServices = useMemo(() => ([
         {
             value: '-All couriers-',
             label: '-All couriers-',
@@ -106,13 +117,16 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             value: courier,
             label: courier,
         }))
-    ];
+    ]), [uniqueCourierServices]);
 
     const [filterReceiverCountry, setFilterReceiverCountry] = useState('-All countries-');
     const allReceiverCountries = orders.map(order => order.receiverCountry);
-    const uniqueReceiverCountries = Array.from(new Set(allReceiverCountries)).filter(country => country);
+    const uniqueReceiverCountries = useMemo(() => {
+        const receiverCountries = orders.map(order => order.receiverCountry);
+        return Array.from(new Set(receiverCountries)).filter(country => country).sort();
+    }, [orders]);
     uniqueReceiverCountries.sort();
-    const transformedReceiverCountries = [
+    const transformedReceiverCountries = useMemo(() => ([
         {
             value: '-All countries-',
             label: '-All countries-',
@@ -121,11 +135,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             value: country,
             label: country,
         }))
-    ];
+    ]), [uniqueReceiverCountries]);
 
-    const getUnderlineColor = (statusText: string) => {
+    const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
-    };
+    }, []);
 
     const handleChangePage = (page: number) => {
         setAnimating(true);
@@ -142,42 +156,42 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const handleFilterChange = (newSearchTerm :string) => {
         setSearchTerm(newSearchTerm);
-        setCurrent(1);
     };
 
     const [sortColumn, setSortColumn] = useState<keyof OrderType | null>(null);
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
-
-// ...
-
-    const filteredOrders = orders.filter(order => {
-        let matchesSearch = !searchTerm || Object.values(order).some(value =>
-            String(value).toLowerCase().includes(searchTerm.toLowerCase())
+    const handleHeaderCellClick = useCallback((columnDataIndex: keyof OrderType) => {
+        setSortDirection(currentDirection =>
+            sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
         );
+        setSortColumn(columnDataIndex);
+    }, [sortColumn]);
 
-        let matchesStatus = filterStatus === '-All statuses-' || (filterStatus === '-Trouble statuses-' ? order.troubleStatusesExist : order.status === filterStatus);
 
-        let matchesWarehouse = !filterWarehouse|| filterWarehouse === '-All warehouses-' || order.warehouse.toLowerCase() === filterWarehouse.toLowerCase();
-
-        let matchesCourierService = !filterCourierService|| filterCourierService === '-All couriers-' || order.courierService.toLowerCase() === filterCourierService.toLowerCase();
-
-        let matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-All countries-' || order.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
-
-        return matchesSearch && matchesStatus && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
-    }).sort((a, b) => {
-        if (!sortColumn) return 0;
-
-        if (sortDirection === 'ascend') {
-            return a[sortColumn] > b[sortColumn] ? 1 : -1;
-        } else {
-            return a[sortColumn] < b[sortColumn] ? 1 : -1;
-        }
-    });
-
-    useEffect(() => {
-        setFilteredOrders(filteredOrders);
-
-    }, [filteredOrders]);
+    const filteredOrders = useMemo(() => {
+        const searchTermLower = searchTerm.toLowerCase();
+        return orders.filter(order => {
+            const matchesSearch = !searchTerm || Object.values(order).some(value =>
+                String(value).toLowerCase().includes(searchTermLower)
+            );
+            const matchesStatus = filterStatus === '-All statuses-' ||
+                (filterStatus === '-Trouble statuses-' ? order.troubleStatusesExist : order.status === filterStatus);
+            const matchesWarehouse = !filterWarehouse || filterWarehouse === '-All warehouses-' ||
+                order.warehouse.toLowerCase() === filterWarehouse.toLowerCase();
+            const matchesCourierService = !filterCourierService || filterCourierService === '-All couriers-' ||
+                order.courierService.toLowerCase() === filterCourierService.toLowerCase();
+            const matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-All countries-' ||
+                order.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
+            return matchesSearch && matchesStatus && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
+        }).sort((a, b) => {
+            if (!sortColumn) return 0;
+            if (sortDirection === 'ascend') {
+                return a[sortColumn] > b[sortColumn] ? 1 : -1;
+            } else {
+                return a[sortColumn] < b[sortColumn] ? 1 : -1;
+            }
+        });
+    }, [orders, searchTerm, filterStatus, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection]);
 
     const [showDatepicker, setShowDatepicker] = useState(false);
 
@@ -186,262 +200,212 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setShowDatepicker(false);
     };
 
+    useEffect(() => {
+        setFilteredOrders(filteredOrders);
+
+    }, [filteredOrders]);
+
     const columns: TableColumnProps<OrderType>[]  = [
         {
-            title:  <Icon name={"car"} style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}/>,
+            title: <TitleColumn
+                    width="60px"
+                    contentPosition="center"
+                    childrenBefore={<Icon name={"car"}/>}>
+                    </TitleColumn>,
             render: (text: string, record) =>
-                <div className="flag" style={{ width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>
-                    <span className={`fi fi-${record.warehouseCountry.toLowerCase()} flag-icon`}></span>
-                    <span> ➔ </span>
-                    <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
-                </div>,
+                <TableCell
+                    width="60px"
+                    contentPosition="center"
+                    value={'➔'}
+                    childrenBefore={<span className={`fi fi-${record.warehouseCountry.toLowerCase()} flag-icon`}></span>}
+                    childrenAfter={<span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>}>
+                </TableCell>,
             dataIndex: 'icon',
             key: 'icon',
         },
         {
-            title:  <div style={{display: 'flex', width: '80px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Status</div>,
+            title: <TitleColumn title="Status" width="80px" contentPosition="start"/>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
-                    <div style={{display: 'flex', width: '80px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
-                        {record.troubleStatusesExist && (
-                            <div style={{
-                                minHeight: '8px',
-                                minWidth: '8px',
-                                backgroundColor: 'red',
-                                borderRadius: '50%',
+                    <TableCell
+                        width="80px"
+                        contentPosition="start"
+                        childrenBefore={
+                            record.troubleStatusesExist && (
+                                    <div style={{
+                                        minHeight: '8px',
+                                        minWidth: '8px',
+                                        backgroundColor: 'red',
+                                        borderRadius: '50%',
+                                        display: 'inline-block',
+                                        marginRight: '5px',
+                                        alignSelf: 'center',
+                                    }}
+                                         onMouseEnter={(e) => {
+                                             setHoveredOrder(record);
+                                             setHoveredColumn('status');
+                                             setMousePosition({ x: e.clientX, y: e.clientY });
+                                             setIsDisplayedPopup(true);
+
+                                         }}
+                                         onMouseLeave={() => {
+                                             setHoveredOrder(null);
+                                             setHoveredColumn('');
+                                             setMousePosition(null);
+                                             setIsDisplayedPopup(false);
+                                         }}/>
+                                )
+                        }
+                        childrenAfter={
+                            <span style={{
+                                borderBottom: `2px solid ${underlineColor}`,
                                 display: 'inline-block',
-                                marginRight: '5px',
-                                alignSelf: 'center',
-                            }}
-                             onMouseEnter={(e) => {
-                                 setHoveredOrder(record);
-                                 setHoveredColumn('status');
-                                 setIsDisplayedPopup(true);
-                                 setMousePosition({ x: e.clientX, y: e.clientY });
-                             }}
-                             onMouseLeave={() => {
-                                 setHoveredOrder(null);
-                                 setHoveredColumn('');
-                                 setIsDisplayedPopup(false);
-                                 setMousePosition(null);
-                             }}/>
-                        )}
-                        <span style={{
-                            borderBottom: `2px solid ${underlineColor}`,
-                            display: 'inline-block',
-                        }}>
+                            }}>
                         {text}
                         </span>
-                    </div>
+                        }
+                    >
+                    </TableCell>
                 );
             },
             dataIndex: 'status',
             key: 'status',
             sorter: true,
-            onHeaderCell: (column:ColumnType<OrderType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof OrderType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '75px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Date</div>,
+            title: <TitleColumn title="Date" width="75px" contentPosition="start"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '75px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
-                    <span>{text}</span>
-                </div>
+                <TableCell value={text} width="75px" contentPosition="start"/>
             ),
             dataIndex: 'date',
             key: 'date',
             sorter: true,
-            onHeaderCell: (column:ColumnType<OrderType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof OrderType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '75px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>WH number</div>,
+            title: <TitleColumn title="WH number" width="75px" contentPosition="start"/>,
             render: (text: string) => (
-                <div style={{ display: 'flex', width: '75px', color: 'var(--color-blue)', cursor:'pointer', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
-                    <span>{text}</span>
-                </div>
+                <TableCell value={text} width="75px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
             dataIndex: 'wapiTrackingNumber',
             key: 'wapiTrackingNumber',
             sorter: true,
-            onHeaderCell: (column:ColumnType<OrderType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof OrderType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>COD</div>,
+            title: <TitleColumn title="COD" width="60px" contentPosition="start"/>,
             render: (text: string, record) => {
                 const currencySymbol = getSymbolFromCurrency(record.codCurrency);
                 return (
-                    <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
-                        <span>{text} {currencySymbol}</span>
-                    </div>
+                    <TableCell
+                        value={`${text} ${currencySymbol}`}
+                        width="75px"
+                        contentPosition="start">
+                    </TableCell>
                 );
             },
             dataIndex: 'codAmount',
             key: 'codAmount',
             sorter: true,
-            onHeaderCell: (column:ColumnType<OrderType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof OrderType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Order ID</div>,
+            title: <TitleColumn title="Order ID" width="70px" contentPosition="start"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
-                    <span>{text}</span>
-                </div>
+                <TableCell value={text} width="70px" contentPosition="start"/>
             ),
 
             dataIndex: 'clientOrderID',
             key: 'clientOrderID',
             sorter: true,
-            onHeaderCell: (column:ColumnType<OrderType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof OrderType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Warehouse</div>,
+            title: <TitleColumn title="Warehouse" width="60px" contentPosition="start"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
-                    <span>{text}</span>
-                </div>
+                <TableCell value={text} width="60px" contentPosition="start"/>
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
             sorter: true,
-            onHeaderCell: (column:ColumnType<OrderType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof OrderType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Courier</div>,
+            title: <TitleColumn title="Courier" width="60px" contentPosition="start"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '60px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
-                    <span>{text}</span>
-                </div>
+                <TableCell value={text} width="60px" contentPosition="start"/>
             ),
             dataIndex: 'courierService',
             key: 'courierService',
             sorter: true,
-            onHeaderCell: (column:ColumnType<OrderType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof OrderType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '150px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Tracking number</div>,
+            title: <TitleColumn title="Tracking number" width="150px" contentPosition="start"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '150px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>
-                    <span>{text}</span>
-                </div>
+                <TableCell value={text} width="150px" contentPosition="start"/>
             ),
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
             sorter: true,
-            onHeaderCell: (column:ColumnType<OrderType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof OrderType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Products</div>,
+            title: <TitleColumn title="Products" width="50px" contentPosition="start"/>,
             render: (text: string, record: OrderType) => (
-                <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>
-                <span
-                    className="products-cell-style"
-                    onMouseEnter={(e) => {
-                        setHoveredOrder(record);
-                        setHoveredColumn('productLines');
-                        setIsDisplayedPopup(true);
-                        setMousePosition({ x: e.clientX, y: e.clientY });
-                    }}
-                    onMouseLeave={() => {
-                        setHoveredOrder(null);
-                        setHoveredColumn('');
-                        setIsDisplayedPopup(false);
-                        setMousePosition(null);
-                    }}
-                >
-                    {text} <Icon name="info" />
-                </span>
-                </div>
+                <TableCell
+                    width="50px"
+                    contentPosition="center"
+                    childrenAfter ={
+                    <span
+                        className="products-cell-style"
+                        onMouseEnter={(e) => {
+                            setHoveredOrder(record);
+                            setHoveredColumn('productLines');
+                            setMousePosition({ x: e.clientX, y: e.clientY });
+                            setIsDisplayedPopup(true);
+                        }}
+                        onMouseLeave={() => {
+                            setHoveredOrder(null);
+                            setHoveredColumn('');
+                            setMousePosition(null);
+                            setIsDisplayedPopup(false);
+
+                        }}
+                    >
+                        {text} <Icon name="info" />
+                    </span>}>
+                </TableCell>
 
             ),
             dataIndex: 'productLines',
             key: 'productLines',
             sorter: true,
-            onHeaderCell: (column:ColumnType<OrderType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof OrderType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         ];
     return (
-        <div className="order-list">
+        <div className="table">
             <div className="filter-container" >
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <Selector
@@ -487,7 +451,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     onChange={(value: number) => handleChangePageSize(value)}
                 />
             </div>
-            <div className={`card order-list__container mb-md ${animating ? '' : 'fade-in-down '}`}>
+            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '}`}>
                 <Table
                     dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
@@ -517,11 +481,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                             (() => {
                                 switch (hoveredColumn) {
                                     case 'productLines':
-                                        return '200px';
+                                        return 200;
                                     case 'status':
-                                        return '800px';
+                                        return 800;
                                     default:
-                                        return '200px';
+                                        return 200;
                                 }
                             })()
                         }

@@ -56,6 +56,10 @@
   }
 }
 
+.main-header__icon {
+  cursor: pointer;
+}
+
 .main-header__icon svg rect:first-of-type {
   transition: fill 0.3s ease;
 }

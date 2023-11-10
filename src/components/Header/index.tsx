@@ -24,7 +24,6 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
     const [curUserName, setCurUserName] = useState<string|null|undefined>("");
 
     useEffect(() => {
-        console.log("userName: ", getUserName())
         setCurUserName(getUserName());
     }, []);
 
@@ -38,7 +37,9 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
         <div className='main-header'>
             <div className = 'main-header__wrapper card'>
                 <div className='main-header__menu-block' onClick={handleClick}>
-                    <Icon name={"menu-icon"} />
+                    <div className='main-header__icon'>
+                        <Icon name={"menu-icon"} />
+                    </div>
                     <div className="page-title"><h2>{pageTitle}</h2></div>
                 </div>
 

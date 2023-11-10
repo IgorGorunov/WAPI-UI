@@ -12,10 +12,14 @@ const setColWidth = (data: any[]) => {
     }));
 };
 
-const exportFileXLS = (data: any, fileName: string) => {
+const exportFileXLS = (data: any[], fileName: string) => {
+
+    if (data.length === 0) {
+        return null;
+    }
+
     const ws = XLSX.utils.json_to_sheet(data);
 
-    // Устанавливаем ширину столбцов
     ws['!cols'] = setColWidth(data);
 
     const wb = XLSX.utils.book_new();
