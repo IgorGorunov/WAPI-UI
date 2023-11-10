@@ -65,20 +65,20 @@ const ProductsPage = () => {
 
 
     const handleEditProduct = (uuid: string) => {
-        toast.info("Under construction", {
+        toast.warn("Under construction", {
             position: "top-right",
             autoClose: 1000,
         });
     }
 
     const handleAddProduct = () => {
-        toast.info("Under construction", {
+        toast.warn("Under construction", {
             position: "top-right",
             autoClose: 1000,
         });
     }
     const handleImportXLS = () => {
-        toast.info("Under construction", {
+        toast.warn("Under construction", {
             position: "top-right",
             autoClose: 1000,
         });
