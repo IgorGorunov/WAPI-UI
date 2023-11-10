@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useContext} from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
@@ -15,7 +15,7 @@ import {exportFileXLS} from "@/utils/files";
 import {ProductType} from "@/types/products";
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import '@/components/Toast/styles.scss'
 
 const ProductsPage = () => {
 
@@ -65,20 +65,20 @@ const ProductsPage = () => {
 
 
     const handleEditProduct = (uuid: string) => {
-        toast.warning("Under construction", {
+        toast.info("Under construction", {
             position: "top-right",
             autoClose: 1000,
         });
     }
 
     const handleAddProduct = () => {
-        toast.warning("Under construction", {
+        toast.info("Under construction", {
             position: "top-right",
             autoClose: 1000,
         });
     }
     const handleImportXLS = () => {
-        toast.warning("Under construction", {
+        toast.info("Under construction", {
             position: "top-right",
             autoClose: 1000,
         });
@@ -97,33 +97,34 @@ const ProductsPage = () => {
     }
 
     return (
-        <Layout hasFooter>
-            <ToastContainer />
-            <div className="products-page__container">
-                {isLoading && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        zIndex: 1000
-                    }}>
-                        <Skeleton type="round" width="500px" height="300px" />
-                    </div>
-                )}
-                <Header pageTitle='Products' toRight >
-                    <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
-                    <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
-                </Header>
-                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
-            </div>
-        </Layout>
+            <Layout hasFooter>
+            <ToastContainer/>
+                <div className="products-page__container">
+                    {isLoading && (
+                        <div style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                            zIndex: 1000
+                        }}>
+                            <Skeleton type="round" width="500px" height="300px" />
+                        </div>
+                    )}
+                    <Header pageTitle='Products' toRight >
+                        <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
+                        <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
+                        <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
+                    </Header>
+                    {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
+                </div>
+            </Layout>
+
     )
 }
 

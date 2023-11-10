@@ -1,0 +1,40 @@
+.Toastify__toast-container{
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 9999;
+  &--top-right {
+    top: 12px;
+    right: 12px;
+    animation: toast-in-right 0.7s;
+  }
+
+}
+
+.Toastify__toast {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-gray);
+  background-color: var(--color-blue-5);
+  height: 200px;
+  transition: 0.3s ease;
+  position: relative;
+  pointer-events: auto;
+  overflow: hidden;
+  padding: 20px;
+  width: 300px;
+  max-height: 100px;
+  border-radius: 3px;
+  box-shadow: 0 0 10px #999;
+  opacity: 0.9;
+}
+.Toastify__progress-bar{
+  background: var(--color-blue) !important;;
+}
+
+.Toastify__toast:hover {
+  box-shadow: 0 0 12px #fff;
+  opacity: 1;
+  cursor: pointer;
+}
+
+
