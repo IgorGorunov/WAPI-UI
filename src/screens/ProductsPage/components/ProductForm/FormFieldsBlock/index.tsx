@@ -1,7 +1,7 @@
 import React from 'react';
 import {Controller} from "react-hook-form";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {FieldPropsType, FormBuilderType} from "@/types/forms";
+import {FormBuilderType} from "@/types/forms";
 
 type FormFieldsBlockType = {
     control: any;
@@ -10,7 +10,7 @@ type FormFieldsBlockType = {
 }
 const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, errors}) => {
     return <>
-        {fieldsArray.map((curField, index) => (
+        {fieldsArray.map((curField) => (
             //<div key={curField.name}  className={`${curField.width ? 'width-'+curField.width : ''}`}>
                 <Controller
                     name={curField.name}

@@ -11,8 +11,6 @@ import Cookie from 'js-cookie';
 import Button from "@/components/Button/Button";
 
 import "./styles.scss";
-import {FormFieldsGeneral} from "@/screens/ProductsPage/components/ProductForm/FroductFormFields";
-// type LoginFormType = {}
 
 const LoginForm: React.FC = () => {
   const formFields: FormBuilderType[] = [
@@ -49,7 +47,7 @@ const LoginForm: React.FC = () => {
     },
   ];
 
-  const { token, setToken, userName, setUserName } = useAuth();
+  const { setToken, setUserName } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -96,7 +94,7 @@ const LoginForm: React.FC = () => {
   return (
     <div className={`card login-form`}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
-        {formFields.map((curField: any, index: number) => (
+        {formFields.map((curField: any ) => (
 
           <div key={curField.name}>
             <Controller

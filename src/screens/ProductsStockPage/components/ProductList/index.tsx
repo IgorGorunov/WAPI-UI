@@ -1,12 +1,17 @@
-import React, {useEffect, useState} from "react";
-import {Table, TableColumnProps, Pagination, Input} from 'antd';
-import PageSizeSelector from '@/components/LabelSelect';
-import "./styles.scss";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
-import StatusWarehouseSelector from "@/components/InputSelect";
+import React, {useCallback, useMemo, useState, useEffect} from "react";
+import {Table, Pagination, Input} from 'antd';
 import {ColumnType} from "antd/es/table";
-import { ProductStockType} from "@/types/products";
 
+import "./styles.scss";
+import "@/styles/tables.scss";
+import "/node_modules/flag-icons/css/flag-icons.min.css";
+
+import {ProductStockType} from "@/types/products";
+
+import StatusWarehouseSelector from "@/components/InputSelect";
+import PageSizeSelector from '@/components/LabelSelect';
+import TitleColumn from "@/components/TitleColumn"
+import TableCell from "@/components/TableCell";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -20,17 +25,41 @@ const pageOptions = [
     { value: '100', label: '100 per page' },
 ];
 
-
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts}) => {
 
+    const [animating, setAnimating] = useState(false);
+
+    // Pagination
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
-    const [animating, setAnimating] = useState(false);
+    const handleChangePage = (page: number) => {
+        setAnimating(true);
+        setTimeout(() => {
+            setCurrent(page);
+            setAnimating(false);
+        }, 500); // Это время должно совпадать с длительностью вашей CSS-анимации.
+    };
+    const handleChangePageSize = (size: number) => {
+        setPageSize(size);
+        setCurrent(1);
+    };
+
+    // Sorting
+    const [sortColumn, setSortColumn] = useState<keyof ProductStockType | null>(null);
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
+    const handleHeaderCellClick = useCallback((columnDataIndex: keyof ProductStockType) => {
+        setSortDirection(currentDirection =>
+            sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
+        );
+        setSortColumn(columnDataIndex);
+    }, [sortColumn]);
+
+
+    // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
     const [filterWarehouse, setFilterWarehouse] = useState('');
     const allWarehouses = products.map(product => product.warehouse);
     const uniqueWarehouses = Array.from(new Set(allWarehouses));
-
     const transformedWarehouses = [
         {
             value: '',
@@ -41,297 +70,194 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             label: warehouse,
         }))
     ];
-
-    const handleChangePage = (page: number) => {
-        setAnimating(true);
-        setTimeout(() => {
-            setCurrent(page);
-            setAnimating(false);
-        }, 500); // Это время должно совпадать с длительностью вашей CSS-анимации.
-    };
-
-    const handleChangePageSize = (size: number) => {
-        setPageSize(size);
-        setCurrent(1);
-    };
-
-    const handleFilterChange = (newSearchTerm, newStatusFilter) => {
-
+    const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
         if (newSearchTerm !== undefined) {
             setSearchTerm(newSearchTerm);
-            setCurrent(1);
         }
         if (newStatusFilter !== undefined) {
             setFilterWarehouse(newStatusFilter);
-            setCurrent(1);
         }
     };
-
-    const [sortColumn, setSortColumn] = useState<keyof ProductStockType | null>(null);
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
-
-    const filteredProducts = products.filter(product => {
-        let matchesSearch = false;
-        let matchesStatus = true;
-
-        if (searchTerm) {
-            const searchTermLower = searchTerm.toLowerCase();
-
-            matchesSearch = Object.values(product).some(value =>
+    const filteredProducts = useMemo(() => {
+        const searchTermLower = searchTerm.toLowerCase();
+        const filtered = products.filter(product => {
+            const matchesSearch = !searchTerm || Object.values(product).some(value =>
                 String(value).toLowerCase().includes(searchTermLower)
             );
-        } else {
-            matchesSearch = true;
-        }
+            const matchesStatus = !filterWarehouse || product.warehouse === filterWarehouse;
+            return matchesSearch && matchesStatus;
+        });
 
-        if (filterWarehouse) {
-            matchesStatus = product.warehouse === filterWarehouse;
+        if (sortColumn) {
+            filtered.sort((a, b) => {
+                if (sortDirection === 'ascend') {
+                    return a[sortColumn] > b[sortColumn] ? 1 : -1;
+                } else {
+                    return a[sortColumn] < b[sortColumn] ? 1 : -1;
+                }
+            });
         }
-
-        return matchesSearch && matchesStatus;
-    }).sort((a, b) => {
-        if (!sortColumn) return 0;
-
-        if (sortDirection === 'ascend') {
-            return a[sortColumn] > b[sortColumn] ? 1 : -1;
-        } else {
-            return a[sortColumn] < b[sortColumn] ? 1 : -1;
-        }
-    });
+        return filtered;
+    }, [products, searchTerm, filterWarehouse, sortColumn, sortDirection]);
 
     useEffect(() => {
         setFilteredProducts(filteredProducts)
     }, [filteredProducts]);
 
-    const columns: TableColumnProps<ProductStockType>[]  = [
+    const columns: ColumnType<ProductStockType>[] = useMemo(() => [
         {
-            title: <div style={{display: 'flex', width: '20px', justifyContent:'center', alignItems:'center', textAlign:'center'}}></div>,
+            title: <TitleColumn title="" width="30px" contentPosition="center"/>,
             render: (text: string) => (
-                <div className="flag" style={{display: 'flex', width: '30px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>
-                    <span className={`fi fi-${text.toLowerCase()} "flag-icon"`}></span>
-                </div>
+               <TableCell
+                    width="20px"
+                    contentPosition="center"
+                    childrenBefore={<span className={`fi fi-${text.toLowerCase()} "flag-icon"`}></span>}>
+               </TableCell>
             ),
             dataIndex: 'country',
             key: 'country',
         },
         {
-            title:  <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Warehouse</div>,
+            title: <TitleColumn title="Warehouse" width="70px" contentPosition="start"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '70px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>{text}</div>
+                <TableCell value={text} width="70px" contentPosition="start"/>
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '80px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>SKU</div>,
+            title: <TitleColumn title="SKU" width="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '80px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>{text}</div>
+                <TableCell value={text} width="80px" contentPosition="start"/>
             ),
             dataIndex: 'warehouseSku',
             key: 'warehouseSku',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '90px', justifyContent:'start', alignItems:'start', textAlign:'start'}}>Name</div>,
+            title: <TitleColumn title="Name" width="90px" contentPosition="start"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '90px', color: 'var(--color-blue)', cursor:'pointer', justifyContent:'start', alignItems:'start' , textAlign:'start'}}>{text}</div>
+                <TableCell value={text} width="90px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
             dataIndex: 'name',
             key: 'name',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '40px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Total</div>,
+            title: <TitleColumn title="Total" width="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '40px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
+                <TableCell value={text} width="40px" contentPosition="center"/>
             ),
             dataIndex: 'total',
             key: 'total',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Available</div>,
+            title: <TitleColumn title="Available" width="60px" contentPosition="center"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
+                <TableCell value={text} width="60px" contentPosition="center"/>
             ),
             dataIndex: 'available',
             key: 'available',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Reversed</div>,
+            title: <TitleColumn title="Reserved" width="60px" contentPosition="center"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
+                <TableCell value={text} width="60px" contentPosition="center"/>
             ),
             dataIndex: 'reserved',
             key: 'reserved',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '60px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Damaged</div>,
+            title: <TitleColumn title="Damaged" width="60px" contentPosition="center"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '60x', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
+                <TableCell value={text} width="60px" contentPosition="center"/>
             ),
             dataIndex: 'damaged',
             key: 'damaged',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Expired</div>,
+            title: <TitleColumn title="Expired" width="50px" contentPosition="center"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
+                <TableCell value={text} width="50px" contentPosition="center"/>
             ),
             dataIndex: 'expired',
             key: 'expired',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '65px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Undefined status</div>,
+            title: <TitleColumn title="Undefined status" width="65px" contentPosition="center"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '65px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
+                <TableCell value={text} width="65px" contentPosition="center"/>
             ),
             dataIndex: 'undefinedStatus',
             key: 'undefinedStatus',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Without box</div>,
+            title: <TitleColumn title="Without box" width="50px" contentPosition="center"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '50px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
+                <TableCell value={text} width="50px" contentPosition="center"/>
             ),
             dataIndex: 'withoutBox',
             key: 'withoutBox',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
         {
-            title:  <div style={{display: 'flex', width: '65px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>Returning</div>,
+            title: <TitleColumn title="Returning" width="65px" contentPosition="center"/>,
             render: (text: string) => (
-                <div style={{display: 'flex', width: '65px', justifyContent:'center', alignItems:'center', textAlign:'center'}}>{text}</div>
+                <TableCell value={text} width="65px" contentPosition="center"/>
             ),
             dataIndex: 'forPlacement',
             key: 'forPlacement',
             sorter: true,
-            onHeaderCell: (column:ColumnType<ProductStockType>) => ({
-                onClick: () => {
-                    if (sortColumn === column.dataIndex) {
-                        setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend');
-                    } else {
-                        setSortColumn(column.dataIndex as keyof ProductStockType);
-                        setSortDirection('ascend');
-                    }
-                },
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
-        ];
+        ], [handleHeaderCellClick]);
     return (
-        <div className='product-stock'>
+        <div className='table'>
             <div className="warehouse-filter-container">
                 <div>
                     <StatusWarehouseSelector
                         options={transformedWarehouses}
                         value={filterWarehouse}
-                        onChange={(value) => handleFilterChange(undefined, value)}
+                        onChange={(value: string) => handleFilterChange(undefined, value)}
                     />
                 </div>
                 <Input
@@ -346,10 +272,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                 <PageSizeSelector
                     options={pageOptions}
                     value={pageSize}
-                    onChange={(value) => handleChangePageSize(value)}
+                    onChange={(value: number) => handleChangePageSize(value)}
                 />
             </div>
-            <div className={`card product-list__container mb-md ${animating ? '' : 'fade-in-down '}`}>
+            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '}`}>
                 <Table
                     dataSource={filteredProducts.slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}

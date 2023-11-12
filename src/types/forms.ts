@@ -1,10 +1,5 @@
-import React, { RefObject, ChangeEvent } from 'react'
-import {RefCallBack} from "react-hook-form";
-import Select from 'react-select'
+import {ChangeEvent } from 'react'
 
-
-//type RefType = React.Ref<HTMLInputElement> | Ref<CreatableSelect> | null ;
-//type RefType=React.ReactElement<any, string> | RefCallBack | Ref<Select<string | OptionType, false, GroupBase<string | OptionType>>> | null;
 type RefType=any;
 
 export const enum FormFieldTypes {
@@ -20,7 +15,6 @@ export type OptionType = {
   value: string
   label: string
 }
-
 
 export type SelectFieldType = {
   name: string;

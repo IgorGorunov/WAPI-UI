@@ -9,7 +9,6 @@ const getProducts = async (
     }
 ) => {
     try {
-        console.log("data: ", data)
         const response: any = await axios.post(
             `${API_ENDPOINT}/GetProductsList`,
             data
@@ -35,7 +34,6 @@ const getProductByUID = async (
     }
 ) => {
     try {
-        console.log("data: ", data)
         const response: any = await axios.post(
             `${API_ENDPOINT}/GetProductData`,
             data
@@ -85,7 +83,6 @@ const getProductsStock = async (
     }
 ) => {
     try {
-        console.log("data: ", data)
         const response: any = await axios.post(
             `${API_ENDPOINT}/GetProductsStock`,
             data

@@ -306,7 +306,7 @@ export enum CountryCodes {
   "CoteDIvoire" = "ci",
   "Croatia" = "hr",
   "Cuba" = "cu",
-  "Curaçao" = "cw",
+  "Curacao" = "cw",
   "Cyprus" = "cy",
   "CzechRepublic" = "cz",
   "Denmark" = "dk",

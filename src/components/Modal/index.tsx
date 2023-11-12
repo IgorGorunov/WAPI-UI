@@ -1,16 +1,15 @@
-import React, {useCallback, useEffect, useRef} from "react";
+import React, {useRef} from "react";
 import ReactDOM from "react-dom"
 import Icon from "@/components/Icon";
 import "./styles.scss";
 
 type ModalType = {
     classNames?: string;
-    name: string;
     title?: string;
     children?: React.ReactNode;
     onClose: ()=> void;
 }
-const Modal:React.FC<ModalType> = ({name, title, children, onClose, classNames=''}) => {
+const Modal:React.FC<ModalType> = ({title, children, onClose, classNames=''}) => {
     const modalWrapperRef = useRef<HTMLDivElement>();
 
     // const backDropHandler = useCallback((e: MouseEvent) => {

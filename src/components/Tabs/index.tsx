@@ -1,9 +1,5 @@
-import React, {MouseEventHandler, useCallback, useEffect, useRef, useState} from "react";
-import ReactDOM from "react-dom"
-import Icon from "@/components/Icon";
+import React, {useState} from "react";
 import "./styles.scss";
-
-
 
 type TabsType = {
     id: string;

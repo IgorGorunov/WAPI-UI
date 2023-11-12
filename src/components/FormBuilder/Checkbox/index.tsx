@@ -1,5 +1,5 @@
 import React from "react";
-import { FormFieldTypes, FieldPropsType } from "@/types/forms";
+import { FieldPropsType } from "@/types/forms";
 import "./styles.scss"
 
 const Checkbox: React.FC<FieldPropsType> = ({

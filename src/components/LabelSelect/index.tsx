@@ -6,6 +6,7 @@ const CustomSelect = ({ options, value , onChange }) => {
 
     const selectedOption = options.find(option => option.value == value);
 
+
     return (
         <div className="label-select-container">
             <Select

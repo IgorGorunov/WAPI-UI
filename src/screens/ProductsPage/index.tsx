@@ -11,13 +11,14 @@ import ProductList from "./components/ProductList";
 import {verifyToken} from "@/services/auth";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import "./styles.scss";
-import {getDasboardData} from "@/services/dashboard";
 import Button from "@/components/Button/Button";
 import {exportFileXLS} from "@/utils/files";
 import {ProductType, ProductParamsType, SingleProductType} from "@/types/products";
 import Modal from "@/components/Modal";
-import Tabs from "@/components/Tabs";
 import ProductForm from "@/screens/ProductsPage/components/ProductForm";
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '@/components/Toast/styles.scss'
 
 const ProductsPage = () => {
     const Router = useRouter();
@@ -80,7 +81,15 @@ const ProductsPage = () => {
     }, [token]);
 
     const [filteredProducts, setFilteredProducts] = useState<ProductType[]>(productsData)
-    console.log("products data: ", productsData);
+
+
+    const handleEditProduct = (uuid: string) => {
+        // toast.warn("Under construction", {
+        //     position: "top-right",
+        //     autoClose: 1000,
+        // });
+        fetchProductData(uuid);
+    }
 
 
     const fetchProductData = async (uuid) => {
@@ -112,14 +121,20 @@ const ProductsPage = () => {
         }
     };
     const handleAddProduct = () => {
-
-        //temporary
-
-
+        // toast.warn("Under construction", {
+        //     position: "top-right",
+        //     autoClose: 1000,
+        // });
+        //
+        // //temporary
+        setSingleProductData(null);
         setShowModal(true);
     }
     const handleImportXLS = () => {
-
+        toast.warn("Under construction", {
+            position: "top-right",
+            autoClose: 1000,
+        });
     }
 
     const handleExportXLS = () => {
@@ -140,38 +155,41 @@ const ProductsPage = () => {
     }
 
     return (
-        <Layout hasFooter>
-            <div className="products-page__container">
-                {isLoading && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        zIndex: 1000
-                    }}>
-                        <Skeleton type="round" width="500px" height="300px" />
-                    </div>
-                )}
-                <Header pageTitle='Products' toRight >
-                    {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
-                    <Button icon="add" iconOnTheRight onClick={()=>fetchProductData('94962cb9-fc73-4554-b7d0-ea2485d346ec')}>Add product</Button>
-                    <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
-                </Header>
-                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts}/>}
-            </div>
-            {showModal &&
-                <Modal name='product' title='Add product' onClose={onModalClose} >
-                    <ProductForm productParams={productParams} productData={singleProductData} />
-                </Modal>
-            }
-        </Layout>
+            <Layout hasFooter>
+                <ToastContainer/>
+                <div className="products-page__container">
+                    {isLoading && (
+                        <div style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                            zIndex: 1000
+                        }}>
+                            <Skeleton type="round" width="500px" height="300px" />
+                        </div>
+                    )}
+                    <Header pageTitle='Products' toRight >
+                        {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
+                        <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
+                        <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
+                        <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
+                    </Header>
+                    {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
+                </div>
+                {showModal &&
+                    <Modal title={`${singleProductData ? 'Edit product': 'Add product'}`} onClose={onModalClose} >
+                        <ProductForm productParams={productParams} productData={singleProductData} />
+                    </Modal>
+                }
+            </Layout>
+
+
     )
 }
 

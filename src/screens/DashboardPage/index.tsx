@@ -73,7 +73,6 @@ const DashboardPage: React.FC = () => {
         setIsLoading(true);
         //verify token
         if (!await verifyToken(token)) {
-            console.log("token is wrong");
             await Router.push(Routes.Login);
         }
 
@@ -100,7 +99,7 @@ const DashboardPage: React.FC = () => {
     fetchData();
   }, [token, currentPeriod]);
 
-  console.log("page data: ", pageData);
+
 
   const gmv = pageData && pageData.gmv ? pageData.gmv : null;
   const orders = pageData && pageData.totalOrders ? pageData.totalOrders : null;

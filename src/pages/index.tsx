@@ -19,7 +19,7 @@ export default function Home() {
   if (!token && savedToken) setToken(savedToken);
   // const router = useRouter();
 
-  console.log('login page: ', token, savedToken);
+
   // const [pageData, setPageData] = useState<any>(null);
 
   // const initData = {

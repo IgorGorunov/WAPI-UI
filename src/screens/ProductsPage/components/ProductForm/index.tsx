@@ -28,10 +28,11 @@ type ProductPropsType = {
     isAdd?: boolean;
     uuid?: string;
     productParams: ProductParamsType;
-    productData?: SingleProductType;
+    productData?: SingleProductType | null;
 }
 const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, productParams, productData}) => {
     //get parameters to setup form
+
     const Router = useRouter();
     const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
@@ -61,7 +62,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
     const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
         defaultValues: {
-            [PRODUCT.name]: productData?.name || 'abs',
+            [PRODUCT.name]: productData?.name || '',
             [PRODUCT.fullName]: productData?.fullName || '',
             [PRODUCT.aliases]: productData?.aliases || '',
             [PRODUCT.countryOfOrigin]: productData?.countryOfOrigin || '',

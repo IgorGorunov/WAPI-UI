@@ -1,9 +1,8 @@
 import React from 'react';
 import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
 import './style.scss';
 
-const CustomSelect = ({ options, value, onChange, name, errors, errorMessage }) => {
+const CustomSelect = ({ options, value, onChange, name="", errors={}, errorMessage="" }) => {
     const selectedOption = options.find(option => option.value === value);
 
     const formatOptionLabel = (option) => (

@@ -1,7 +1,7 @@
-import React, {FormEvent, useCallback} from "react";
-import { FieldPropsType, OptionType, SelectFieldType } from '@/types/forms';
+import React, {useCallback} from "react";
+import { FieldPropsType, OptionType } from '@/types/forms';
 import Select from 'react-select'
-import {GetOptionValue, GetOptionLabel, OnChangeValue} from "react-select";
+import {GetOptionValue, GetOptionLabel} from "react-select";
 import "./styles.scss"
 
 const SelectField: React.FC<FieldPropsType> = ({
@@ -35,8 +35,6 @@ const SelectField: React.FC<FieldPropsType> = ({
     const getOptionLabel: GetOptionLabel<OptionType> = useCallback(
         option => option?.label
     ,[])
-
-    const selectedOption1 = options && options.length && options.find(option => option.value === value) || '';
 
     return (
         <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} `}>

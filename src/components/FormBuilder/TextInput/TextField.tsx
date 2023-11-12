@@ -1,7 +1,6 @@
 import React, {FormEvent, useCallback} from "react";
 import { FieldPropsType } from "@/types/forms";
 import "./styles.scss";
-import errorEntry from "next/dist/server/typescript/rules/error";
 
 const TextField: React.FC<FieldPropsType> = ({
     classNames='',
@@ -28,6 +27,8 @@ const TextField: React.FC<FieldPropsType> = ({
       if (onChange) onChange(value);
   } ,[] )
 
+    const curVal = value && (type === 'number') ? value as number : value as string;
+
   return (
     <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''}`}>
         {label && <label htmlFor={name}>{label}</label>}
@@ -36,7 +37,7 @@ const TextField: React.FC<FieldPropsType> = ({
             type={type}
             placeholder={placeholder}
             onChange={handleChange}
-            value={value || ""}
+            value={curVal || ""}
             {...otherProps}
             //ref={innerRef}
           />
