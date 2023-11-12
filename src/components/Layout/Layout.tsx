@@ -21,6 +21,7 @@ const Layout: React.FC<Props> = ({
         {children}
       </div>
       {hasFooter && <Footer />}
+      <div id="modal-root"></div>
     </div>
   );
 };

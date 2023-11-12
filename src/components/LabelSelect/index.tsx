@@ -5,7 +5,6 @@ import './style.scss';
 const CustomSelect = ({ options, value , onChange }) => {
 
     const selectedOption = options.find(option => option.value == value);
-    console.log(options , value, selectedOption);
 
     return (
         <div className="label-select-container">

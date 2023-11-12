@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import { FormBuilderType, FormFieldTypes } from "@/types/forms";
 import { authenticate } from "@/services/auth";
 import Router from "next/router";
@@ -11,6 +11,7 @@ import Cookie from 'js-cookie';
 import Button from "@/components/Button/Button";
 
 import "./styles.scss";
+import {FormFieldsGeneral} from "@/screens/ProductsPage/components/ProductForm/FroductFormFields";
 // type LoginFormType = {}
 
 const LoginForm: React.FC = () => {
@@ -22,7 +23,7 @@ const LoginForm: React.FC = () => {
       label: "Your email",
       placeholder: "laithoff@gmail.com",
       rules: {
-        required: true,
+        required: "Email is required!",
         pattern: {
           value: "^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$",
           message: "please. enter valid email",
@@ -30,6 +31,7 @@ const LoginForm: React.FC = () => {
       },
       errorMessage: "Email is required!",
       isFullWidth: true,
+      classNames: 'big-version',
     },
     {
       fieldType: FormFieldTypes.TEXT,
@@ -38,11 +40,12 @@ const LoginForm: React.FC = () => {
       label: "Your password",
       placeholder: "********",
       rules: {
-        required: true,
+        required:  "Please, enter valid password!",
         min: 8,
       },
       errorMessage: "Please, enter valid password!",
       isFullWidth: true,
+      classNames: 'big-version',
     },
   ];
 
@@ -52,7 +55,7 @@ const LoginForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm();
@@ -93,15 +96,28 @@ const LoginForm: React.FC = () => {
   return (
     <div className={`card login-form`}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
-        {formFields.map((field: any, index: number) => (
-          <FieldBuilder
-            classNames="text"
-            key={field.name + index}
-            {...field}
-            registerInput={register}
-            errors={errors}
-            message={field.errorMessage}
-          />
+        {formFields.map((curField: any, index: number) => (
+
+          <div key={curField.name}>
+            <Controller
+                name={curField.name}
+                control={control}
+                render={({field: { ...props}, fieldState: {error}}) => (
+                <FieldBuilder
+                    {...curField}
+                    {...props}
+                    type={curField.type}
+                    name={curField.name}
+                    label={curField.label}
+                    fieldType={curField.fieldType}
+                    placeholder={curField.placeholder}
+                    errorMessage={error?.message}
+                    isRequired={!!curField.rules?.required || false}
+                /> )}
+               rules = {curField.rules}
+            />
+          </div>
+
         ))}
         {error && <p className="login-error">{error}</p>}
         <div className="login-submit-block">

@@ -3,8 +3,7 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import './style.scss';
 
-const CustomSelect = ({ options, value, onChange }) => {
-
+const CustomSelect = ({ options, value, onChange, name, errors, errorMessage }) => {
     const selectedOption = options.find(option => option.value === value);
 
     const formatOptionLabel = (option) => (
@@ -32,6 +31,11 @@ const CustomSelect = ({ options, value, onChange }) => {
                 classNamePrefix="input-select"
                 formatOptionLabel={formatOptionLabel}
             />
+            {errors && name in errors ? (
+                <p className="error">
+                    {(errors && errors[name]?.message) || errorMessage}
+                </p>
+            ) : null}
         </div>
     );
 };

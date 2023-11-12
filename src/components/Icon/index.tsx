@@ -20,6 +20,14 @@ import User from "@/assets/icons/user-icon.svg";
 import Orders from "@/assets/icons/orders.svg";
 import Car from "@/assets/icons/car.svg";
 import Calendar from "@/assets/icons/calendar.svg";
+import Remove from "@/assets/icons/remove.svg";
+import Check from "@/assets/icons/check.svg";
+import General from '@/assets/icons/general.svg';
+import SKU from '@/assets/icons/sku.svg';
+import Warehouse from "@/assets/icons/warehouse.svg";
+import Additional from '@/assets/icons/additional.svg';
+import Dimensions from "@/assets/icons/dimensions.svg";
+import Barcodes from '@/assets/icons/barcodes.svg';
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -42,6 +50,14 @@ export const icons = {
   'orders': Orders,
   'car': Car,
   'calendar': Calendar,
+  'remove': Remove,
+  'check': Check,
+  'general': General,
+  'sku': SKU,
+  'warehouse': Warehouse,
+  'additional': Additional,
+  'dimensions': Dimensions,
+  'barcodes': Barcodes,
 };
 
 export type IconType = keyof typeof icons;

@@ -14,6 +14,11 @@ export const enum ButtonForm {
   BR30 = "br30",
 }
 
+export const enum ButtonVariant {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+}
+
 export type ButtonType = ComponentProps<"button"> & {
   children?: React.ReactNode;
   classNames?: string;
@@ -21,6 +26,7 @@ export type ButtonType = ComponentProps<"button"> & {
   iconOnTheRight?: boolean;
   form?: ButtonForm;
   size?: ButtonSize;
+  variant?: ButtonVariant;
   isFullWidth?: boolean;
 };
 
@@ -32,6 +38,7 @@ const Button: React.FC<ButtonType> = (props) => {
     form = ButtonForm.BR30,
     size = ButtonSize.MEDIUM,
     isFullWidth = false,
+    variant= ButtonVariant.PRIMARY,
     children,
     ...otherProps
   } = props;
@@ -41,7 +48,7 @@ const Button: React.FC<ButtonType> = (props) => {
   return (
     <button
       type={type || "button"}
-      className={`btn ${sizeClassName} ${formClassName} ${isFullWidth ? "full-width" : ""}`}
+      className={`btn ${sizeClassName} ${formClassName} ${isFullWidth ? "full-width" : ""} ${variant}`}
       {...otherProps}
     >
       {icon && !iconOnTheRight ? (

@@ -1,0 +1,1 @@
+export const createOptions = (optionArray: string[]) => (optionArray.map((item)=>({value: item, label: item})));
