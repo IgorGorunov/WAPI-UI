@@ -1,34 +1,76 @@
-import React from "react";
-import { FieldPropsType, OptionType } from "../../../types/forms";
+import React, {useCallback} from "react";
+import { FieldPropsType, OptionType } from '@/types/forms';
+import Select from 'react-select'
+import {GetOptionValue, GetOptionLabel} from "react-select";
+import "./styles.scss"
 
-const Select: React.FC<FieldPropsType> = ({
-  classNames,
-  name,
-  placeholder,
-  isRequired,
-  options,
-  // onChange,
-  value,
-  registerInput,
-  rules,
-  ...otherProps
+const SelectField: React.FC<FieldPropsType> = ({
+    classNames,
+    name,
+    label='',
+    placeholder = "",
+    width,
+    isRequired = false,
+    options=[],
+    onChange,
+    value,
+    disabled = false,
+    errors,
+    errorMessage,
+    ...otherProps
 }) => {
-  return (
-    <select
-      className={`${classNames} ${isRequired ? "required" : ""}`}
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      {...registerInput(name, { ...rules })}
-      {...otherProps}
-    >
-      {options?.map((item: OptionType, index: number) => (
-        <option value={item.value} key={`${value}-${index}`}>
-          {item.value}
-        </option>
-      ))}
-    </select>
-  );
+
+    const handleChange = useCallback((selectedOption: OptionType) => {
+
+        if (selectedOption) {
+            onChange(selectedOption.value);
+        }
+        //return onChange(selectedOption.value);
+    } ,[] )
+
+    const getOptionValue: GetOptionValue<OptionType> = useCallback(
+        option => option?.value, []
+    )
+
+    const getOptionLabel: GetOptionLabel<OptionType> = useCallback(
+        option => option?.label
+    ,[])
+
+    return (
+        <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} `}>
+            {label && <label htmlFor={name}>{label}</label>}
+            <Select
+                {...otherProps}
+                value={options.find((option) => option.value === value) || null}
+                getOptionLabel={getOptionLabel}
+                getOptionValue={getOptionValue}
+                name={name}
+                options={options}
+                placeholder={placeholder}
+                onChange={handleChange} // Use the handleChange function to handle the change
+                isDisabled={!!disabled}
+                required={!!isRequired}
+                classNamePrefix='select-field'
+                instanceId={`select-${name}`}
+                // name={name}
+                // ref={innerRef}
+                // options={options}
+                // value={selectedOption}
+                // placeholder={placeholder}
+                // //onChange={handleChange}
+                // className="select-field"
+                // required={isRequired}
+                // classNamePrefix='select-field'
+                // instanceId={`select-${name}`}
+            />
+            {errorMessage && <p className="error">{errorMessage}</p>}
+            {errors && name in errors ? (
+                <p className="error">
+                    {(errors && errors[name]?.message) || errorMessage}
+                </p>
+            ) : null}
+        </div>
+    );
 };
 
-export default Select;
+export default SelectField;

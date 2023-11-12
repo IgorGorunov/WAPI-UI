@@ -10,14 +10,11 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
 import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
-import Datepicker from '@/components/Datepicker';
-import Button from "@/components/Button/Button";
 import DateInput from "@/components/DateInput";
 import {DateRangeType, PeriodType} from "@/types/dashboard";
 import {OrderType} from "@/types/orders";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
-import {ProductType} from "@/types/products";
 
 
 type OrderListType = {

@@ -1,5 +1,4 @@
 import React from 'react';
-import {Property} from "csstype";
 
 interface TableCellProps {
     value?: string;

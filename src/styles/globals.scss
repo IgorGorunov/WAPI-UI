@@ -14,6 +14,7 @@
   --color-gray-blue: #7D8FB3;
   --color-green: #29CC39;
   --color-light-blue-gray: #C3CAD9;
+  --color-modal-bg: #FAFBFC;
 
 
 
@@ -156,7 +157,7 @@ input {
   font-size: 12px;
   font-weight: 700;
   line-height: 20px;
-  color: var(--color-gray);
+  color: var(--color-gray-blue);
   padding: 10px 16px;
   background-color: white;
   border: 2px solid var(--border-color);
@@ -173,9 +174,30 @@ input {
 }
 
 .grid-row {
-  //@media (min-width: 900px) {
-    display: flex;
-  //}
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px
+}
+
+.width-100 {
+  flex: 0 0 100%;
+  padding: 0 15px;
+}
+.width-67 {
+  flex: 0 0 66.66%;
+  padding: 0 15px;
+}
+.width-50 {
+  flex: 0 0 50%;
+  padding: 0 15px;
+}
+.width-33 {
+  flex: 0 0 33.33%;
+  padding: 0 15px;
+}
+.width-25 {
+  flex: 0 0 25%;
+  padding: 0 15px;
 }
 
 

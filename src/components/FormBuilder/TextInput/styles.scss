@@ -2,16 +2,24 @@
     position: relative;
     display: flex;
     flex-direction: column;
-
-    padding: 12px 0 8px;
+    padding-top: 12px;
+    padding-bottom: 8px;
 
     label {
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     input {
       margin-bottom: 4px;
       margin-left: -2px;
+      font-size: 10px;
+      padding: 7px 16px;
+      outline: none;
+      box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+
+      &::placeholder {
+        color: var(--color-gray-blue);
+      }
     }
 
     .error {
@@ -20,6 +28,44 @@
       font-size: 10px;
       color: var(--color-error);
     }
+
+  .table-form-fields & {
+    padding: 0;
+    margin-bottom: 0;
+
+    input {
+      margin-bottom: 0;
+      box-shadow: none;
+      border-radius: 5px;
+      padding: 6px 10px;
+    }
+  }
+
+  &.required {
+    label {
+      position: relative;
+      &::after {
+        content: ' *';
+      }
+    }
+  }
+
+  &.has-error {
+    input {
+      border-color: var(--color-error);
+    }
+  }
+
+  &.big-version {
+    label {
+      margin-bottom: 12px;
+    }
+
+    input {
+      font-size: 12px;
+      padding: 10px 16px;
+    }
+  }
 }
 
 

@@ -6,7 +6,7 @@ import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 
-import {ProductStockType, ProductType} from "@/types/products";
+import {ProductStockType} from "@/types/products";
 
 import StatusWarehouseSelector from "@/components/InputSelect";
 import PageSizeSelector from '@/components/LabelSelect';

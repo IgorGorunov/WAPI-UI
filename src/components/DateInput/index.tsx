@@ -1,5 +1,5 @@
-import React, {ComponentProps, useState} from "react";
-import { Icon, IconType } from "../Icon";
+import React, {useState} from "react";
+import { Icon } from "../Icon";
 import "./styles.scss";
 import {DateRangeType} from "@/types/dashboard";
 import Datepicker from "@/components/Datepicker"

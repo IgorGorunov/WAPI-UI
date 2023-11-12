@@ -12,7 +12,7 @@ type HeaderType = {
     children?: React.ReactNode;
 }
 const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) => {
-    const { userName, getUserName, setToken, setUserName } = useAuth();
+    const { getUserName, setToken, setUserName } = useAuth();
     const [isMenuOpen, setMenuOpen] = useState(false);
     const [isProductSubmenuOpen, setProductSubmenuOpen] = useState(false);
     const [isOrderSubmenuOpen, setOrderSubmenuOpen] = useState(false);

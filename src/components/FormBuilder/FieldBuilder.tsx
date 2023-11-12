@@ -1,15 +1,17 @@
 import React from "react";
 
-import { FormFieldTypes, FormBuilderType } from "../../types/forms";
+import { FormFieldTypes, FormBuilderType } from "@/types/forms";
 
 import TextField from "./TextInput/TextField";
 import SelectField from "./Select/SelectField";
-import Switch from "./Switch/Switch";
+//import SelectField from "../S";
+import Checkbox from "./Checkbox";
 
 const formComponentsMap = {
   [FormFieldTypes.TEXT]: TextField,
+  [FormFieldTypes.NUMBER]: TextField,
   [FormFieldTypes.SELECT]: SelectField,
-  [FormFieldTypes.SWITCH]: Switch,
+  [FormFieldTypes.CHECKBOX]: Checkbox,
 };
 
 const FieldBuilder: React.FC<FormBuilderType> = ({
@@ -21,7 +23,7 @@ const FieldBuilder: React.FC<FormBuilderType> = ({
 
   if (!Component) return null;
 
-  return <Component {...otherProps} />;
+  return <Component type={fieldType} {...otherProps} />;
 };
 
 export default FieldBuilder;

@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
-import { getProducts } from "@/services/products";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
-//import Header from "./components/Header"
 import Header from '@/components/Header';
 import OrderList from "./components/OrderList";
 import {verifyToken} from "@/services/auth";
@@ -15,7 +13,6 @@ import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfMonth} from "@/utils/date";
-import * as XLSX from "xlsx";
 import {OrderType} from "@/types/orders";
 import {exportFileXLS} from "@/utils/files";
 

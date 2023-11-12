@@ -1,0 +1,52 @@
+.checkbox {
+  padding-top: 12px;
+  margin-bottom: 15px;
+
+  &-label {
+    display: flex;
+
+    span {
+      color: var(--color-gray-blue);
+    }
+
+    input {
+      -webkit-appearance: none;
+      background-color: var(--color-white);
+      border: 2px solid var(--border-color);
+      padding: 9px;
+      border-radius: 5px;
+      display: inline-block;
+      position: relative;
+      margin-right: 15px;
+      box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03) !important;
+
+      &:checked {
+        background-color: var(--color-blue);
+        border: 2px solid var(--color-blue);
+
+        &:after {
+          content: "";
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          background: url('../../../assets/icons/check.svg') no-repeat;
+          top: calc(50% - 3px);
+          left: calc(50% - 4px);
+        }
+      }
+    }
+  }
+
+  .table-form-fields & {
+    padding-top: 0;
+    margin-bottom: 0;
+
+    &-label {
+      justify-content: center;
+    }
+
+    input {
+      margin: 0
+    }
+  }
+}
