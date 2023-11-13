@@ -20,6 +20,10 @@
     color: var(--color-gray-blue);
     margin-bottom: 16px;
 
+    &-small {
+      margin-bottom: 0;
+    }
+
     svg {
       margin-right: 16px;
     }
@@ -31,18 +35,26 @@
       margin-bottom: 26px;
     }
 
-    &-table {
-      margin: 0 -28px;
 
-      &-btns {
-        display: flex;
-        justify-content: flex-end;
-        align-items: end;
-        padding-bottom: 8px;
-        gap: 30px;
+  }
+
+  &--table {
+    margin: 0 -28px;
+
+    &-btns {
+      display: flex;
+      justify-content: flex-end;
+      align-items: end;
+      padding-bottom: 8px;
+      gap: 30px;
+
+      &.small-paddings {
+        padding-bottom: 0;
       }
     }
   }
+
+
 
 
 
