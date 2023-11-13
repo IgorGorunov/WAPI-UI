@@ -26,7 +26,7 @@ export const PRODUCT = {
     unitOfMeasures: 'UnitOfMeasures',
     unitOfMeasuresFields: {
         unitName: "name",
-        unitQuantity: 'quantity',
+        unitCoefficient: 'coefficient',
         unitWidth: "width",
         unitLength: 'length',
         unitHeight: 'height',
