@@ -405,7 +405,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'ID',
+                title: 'Barcode',
                 dataIndex: 'barcode',
                 key: 'barcode',
                 render: (text, record, index) => (
@@ -614,7 +614,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                         )}
                                     />
                                     {/*</div>*/}
-                                    <div className='product-info--unitOfMeasures-table-btns width-67'>
+                                    <div className='product-info--table-btns width-67'>
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
                                             Remove
                                         </Button>
@@ -637,13 +637,13 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     </div>
                     <div className="barcodes-tab">
                         <div className="card product-info--barcodes">
-                            <h3 className='product-info__block-title'>
+                            <h3 className='product-info__block-title-small'>
                                 <Icon name='barcodes' />
                                 Barcodes
                             </h3>
                             <div className='product-info--barcodes-btns'>
                                 <div className='grid-row'>
-                                    <div className='product-info--unitOfMeasures-table-btns width-100'>
+                                    <div className='product-info--table-btns small-paddings width-100'>
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
                                             Remove
                                         </Button>
@@ -654,7 +654,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 </div>
                             </div>
                             <div className='product-info--unitOfMeasures-table table-form-fields'>
-
                                 <Table
                                     columns={getBarcodesColumns(control)}
                                     dataSource={getValues('barcodes')?.map((field, index) => ({ key: field.barcode, ...field })) || []}
@@ -667,13 +666,13 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     </div>
                     <div className="aliases-tab">
                         <div className="card product-info--aliases">
-                            <h3 className='product-info__block-title'>
+                            <h3 className='product-info__block-title-small'>
                                 <Icon name='aliases' />
                                 Aliases
                             </h3>
                             <div className='product-info--aliases-btns'>
                                 <div className='grid-row'>
-                                    <div className='product-info--unitOfMeasures-table-btns width-100'>
+                                    <div className='product-info--table-btns small-paddings width-100'>
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
                                             Remove
                                         </Button>
