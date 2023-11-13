@@ -54,7 +54,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
                 required: "Name of the product couldn't be empty!",
             },
             errorMessage: "Name of the product couldn't be empty!",
-            width: WidthType.w100,
+            width: WidthType.w33,
             classNames: "",
         },
         {
@@ -67,7 +67,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
                 required: "Full name of the product couldn't be empty!",
             },
             //errorMessage: "Name of the product couldn't be empty!",
-            width: WidthType.w100,
+            width: WidthType.w67,
             classNames: "",
         },
 
