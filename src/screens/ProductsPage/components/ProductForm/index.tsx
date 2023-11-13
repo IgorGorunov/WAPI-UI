@@ -112,13 +112,15 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     ],
             barcodes:
                 productData && productData?.barcodes && productData.barcodes.length
-                    ? productData.barcodes.map(code => (
+                    ? productData.barcodes.map((code, index: number) => (
                         {
+                            key: code || `${Date.now().toString()}_${index}`,
                             selected: false,
                             barcode: code || '',
                         }))
                     : [
                         {
+                            key: Date.now().toString(),
                             selected: false,
                             barcode: '',
                         }
@@ -399,7 +401,20 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     const removeBarcodes = () => {
         const newBarcodesArr = barcodes.filter(item => !item.selected);
         setValue('barcodes', newBarcodesArr);
+        // console.log("barcodes", barcodes, barcodes.length);
+        // for (let i=barcodes.length-1; i>=0; i-- ) {
+        //     if (barcodes[i].selected) removeBarcodes();
+        // }
+        console.log("barcodes: ",getValues('barcodes'));
+
         setSelectAllBarcodes(false);
+    }
+
+    const guidGenerator = () => {
+        var S4 = function() {
+            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        };
+        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
     }
 
 
@@ -533,7 +548,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
                                 <Table
                                     columns={getUnitsColumns(control)}
-                                    dataSource={getValues('unitOfMeasures')?.map((field, index) => ({ key: index, ...field })) || []}
+                                    dataSource={getValues('unitOfMeasures')?.map((field, index) => ({ key: field.name, ...field })) || []}
                                     pagination={false}
                                     rowKey="key"
                                 />
@@ -554,7 +569,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
                                             Remove
                                         </Button>
-                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendBarcode({ selected: false, barcode: '' })}>
+                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendBarcode({ key: Date.now().toString(), selected: false, barcode: '' })}>
                                             Add
                                         </Button>
                                     </div>
@@ -564,7 +579,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
                                 <Table
                                     columns={getBarcodesColumns(control)}
-                                    dataSource={getValues('barcodes')?.map((field, index) => ({ key: index, ...field })) || []}
+                                    dataSource={getValues('barcodes')?.map((field, index) => ({ key: field.barcode, ...field })) || []}
                                     pagination={false}
                                     rowKey="key"
                                 />
