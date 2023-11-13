@@ -64,12 +64,10 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
         defaultValues: {
             [PRODUCT.name]: productData?.name || '',
             [PRODUCT.fullName]: productData?.fullName || '',
-            [PRODUCT.aliases]: productData?.aliases || '',
             [PRODUCT.countryOfOrigin]: productData?.countryOfOrigin || '',
             [PRODUCT.purchaseValue]: productData?.purchaseValue || '',
             [PRODUCT.SKU]: productData?.sku || '',
             [PRODUCT.AmazonSKU]: productData?.amazonSku || '',
-            [PRODUCT.WarehouseSKU]: productData?.warehouseSku || '',
             [PRODUCT.hsCode]: productData?.hsCode || '',
             [PRODUCT.typeOfStorage]: productData?.typeOfStorage || '',
             [PRODUCT.salesPackingMaterial] : productData?.salesPackingMaterial || '',
@@ -77,16 +75,13 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
             [PRODUCT.specialDeliveryStorageRequest]: productData?.specialDeliveryOrStorageRequirements || '',
             [PRODUCT.whoProvidesPackagingMaterial]: productData?.whoProvideExtraPacking || '',
             [PRODUCT.expiringTerm]: '',
-            [PRODUCT.bundle]: productData?.bundle,
             [PRODUCT.liquid]: productData?.liquid,
             [PRODUCT.glass]: productData?.glass,
-            [PRODUCT.insurance]: productData?.insurance,
             [PRODUCT.fragile]: productData?.fragile,
             [PRODUCT.fireproof]: productData?.fireproof,
             [PRODUCT.packingBox]: productData?.packingBox,
             [PRODUCT.hazmat]: productData?.hazmat,
             unitOfMeasure: productData?.unitOfMeasure || '',
-            boxUnitOfMeasure: productData?.boxUnitOfMeasure || '',
             unitOfMeasures:
                 productData && productData.unitOfMeasures
                     ? productData.unitOfMeasures.map(unit => (
@@ -515,21 +510,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                                 placeholder="Select Name"
                                                 width={WidthType.w33}
                                                 errors={errors}
-                                            />
-                                        )}
-                                    />
-                                    <Controller
-                                        name="boxUnitOfMeasure"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <FieldBuilder
-                                                fieldType={FormFieldTypes.SELECT}
-                                                name='boxUnitOfMeasure'
-                                                label='Box unit'
-                                                {...field}
-                                                options={getOptions() || []}
-                                                placeholder="Select unit"
-                                                width={WidthType.w33}
                                             />
                                         )}
                                     />
