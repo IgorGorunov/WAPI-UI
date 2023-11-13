@@ -26,6 +26,7 @@ export const PRODUCT = {
     unitOfMeasures: 'UnitOfMeasures',
     unitOfMeasuresFields: {
         unitName: "name",
+        unitQuantity: 'quantity',
         unitWidth: "width",
         unitLength: 'length',
         unitHeight: 'height',
@@ -35,7 +36,11 @@ export const PRODUCT = {
     barcodes: 'barcodes',
     barcodeFields: {
         barcode: 'barcode',
-    }
+    },
+    aliases: 'aliases',
+    aliasFields: {
+        alias: 'alias',
+    },
 } as const;
 
 export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
@@ -49,19 +54,6 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
                 required: "Name of the product couldn't be empty!",
             },
             errorMessage: "Name of the product couldn't be empty!",
-            width: WidthType.w50,
-            classNames: "",
-        },
-        {
-            fieldType: FormFieldTypes.TEXT,
-            type: "text",
-            name: PRODUCT.fullName,
-            label: "Full name",
-            placeholder: "",
-            rules: {
-                required: "Full name of the product couldn't be empty!",
-            },
-            errorMessage: "Full name of the product couldn't be empty!",
             width: WidthType.w50,
             classNames: "",
         },
@@ -88,6 +80,20 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
             width: WidthType.w25,
             classNames: "",
         },
+        {
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: PRODUCT.fullName,
+            label: "Full name",
+            placeholder: "",
+            rules: {
+                required: "Full name of the product couldn't be empty!",
+            },
+            errorMessage: "Full name of the product couldn't be empty!",
+            width: WidthType.w100,
+            classNames: "",
+        },
+
 
     ];
 
