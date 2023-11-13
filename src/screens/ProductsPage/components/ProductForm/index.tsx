@@ -624,7 +624,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     </div>
                                 </div>
                             </div>
-                            <div className='product-info--unitOfMeasures-table table-form-fields'>
+                            <div className='product-info--table table-form-fields'>
                                 <Table
                                     columns={getUnitsColumns(control)}
                                     dataSource={getValues('unitOfMeasures')?.map((field, index) => ({ key: field.name, ...field })) || []}
@@ -637,7 +637,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     </div>
                     <div className="barcodes-tab">
                         <div className="card product-info--barcodes">
-                            <h3 className='product-info__block-title-small'>
+                            <h3 className='product-info__block-title title-small'>
                                 <Icon name='barcodes' />
                                 Barcodes
                             </h3>
@@ -653,7 +653,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     </div>
                                 </div>
                             </div>
-                            <div className='product-info--unitOfMeasures-table table-form-fields'>
+                            <div className='product-info--table table-form-fields'>
                                 <Table
                                     columns={getBarcodesColumns(control)}
                                     dataSource={getValues('barcodes')?.map((field, index) => ({ key: field.barcode, ...field })) || []}
@@ -666,7 +666,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     </div>
                     <div className="aliases-tab">
                         <div className="card product-info--aliases">
-                            <h3 className='product-info__block-title-small'>
+                            <h3 className='product-info__block-title title-small'>
                                 <Icon name='aliases' />
                                 Aliases
                             </h3>
@@ -682,7 +682,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     </div>
                                 </div>
                             </div>
-                            <div className='product-info--unitOfMeasures-table table-form-fields'>
+                            <div className='product-info--table table-form-fields'>
                                 <Table
                                     columns={getAliasesColumns(control)}
                                     dataSource={getValues('aliases')?.map((field, index) => ({ key: field.alias, ...field })) || []}
