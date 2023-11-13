@@ -574,7 +574,8 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     </div>
                 </Tabs>
                 <div className='form-submit-btn'>
-                    <Button type="submit">Save</Button>
+                    <Button type="submit" variant={ButtonVariant.SECONDARY}>Save as draft</Button>
+                    <Button type="submit">Send to approve</Button>
                 </div>
             </form>
 
