@@ -82,7 +82,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             key: `unit-${unit.name}_${index}`,
                             selected: false,
                             [PRODUCT.unitOfMeasuresFields.unitName]: unit.name || '',
-                            [PRODUCT.unitOfMeasuresFields.unitQuantity]: unit.coefficient || '',
+                            [PRODUCT.unitOfMeasuresFields.unitCoefficient]: unit.coefficient || '',
                             [PRODUCT.unitOfMeasuresFields.unitWidth]: unit.width || '',
                             [PRODUCT.unitOfMeasuresFields.unitLength]: unit.length || '',
                             [PRODUCT.unitOfMeasuresFields.unitHeight]: unit.height || '',
@@ -93,13 +93,13 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         {
                             key: `unit-${Date.now().toString()}`,
                             selected: false,
-                            name: '',
-                            quantity: '',
-                            width: '',
-                            length: '',
-                            height:  '',
-                            weightGross: '',
-                            weightNet: '',
+                            [PRODUCT.unitOfMeasuresFields.unitName]: '',
+                            [PRODUCT.unitOfMeasuresFields.unitCoefficient]: '',
+                            [PRODUCT.unitOfMeasuresFields.unitWidth]: '',
+                            [PRODUCT.unitOfMeasuresFields.unitLength]: '',
+                            [PRODUCT.unitOfMeasuresFields.unitHeight]:  '',
+                            [PRODUCT.unitOfMeasuresFields.unitWeightGross]: '',
+                            [PRODUCT.unitOfMeasuresFields.unitWeightNet]: '',
                         }
                     ],
             barcodes:
@@ -230,8 +230,8 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
             },
             {
                 title: 'Quantity',
-                dataIndex: 'quantity',
-                key: 'quantity',
+                dataIndex: 'coefficient',
+                key: 'coefficient',
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].quantity`}
@@ -518,7 +518,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
         console.log("it is form submit ");
 
         const isValid = await trigger();
-        if (isValid) console.log("form is valid!");
+        if (isValid) console.log("form is valid!", data);
     }
 
     const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr}), [COUNRTIES])
@@ -618,7 +618,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
                                             Remove
                                         </Button>
-                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', quantity:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
+                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
                                             Add
                                         </Button>
                                     </div>
@@ -643,8 +643,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             </h3>
                             <div className='product-info--barcodes-btns'>
                                 <div className='grid-row'>
-                                    <h3 className='width-67'>Barcodes</h3>
-                                    <div className='product-info--unitOfMeasures-table-btns width-33'>
+                                    <div className='product-info--unitOfMeasures-table-btns width-100'>
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
                                             Remove
                                         </Button>
@@ -674,8 +673,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             </h3>
                             <div className='product-info--aliases-btns'>
                                 <div className='grid-row'>
-                                    <h3 className='width-67'>Aliases</h3>
-                                    <div className='product-info--unitOfMeasures-table-btns width-33'>
+                                    <div className='product-info--unitOfMeasures-table-btns width-100'>
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
                                             Remove
                                         </Button>
