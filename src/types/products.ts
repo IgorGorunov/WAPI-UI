@@ -47,6 +47,7 @@ export type UnitOfMeasuresType = {
     height: number;
     length: number;
     name: number;
+    coefficient: number;
     volume: number;
     weightGross: number;
     weightNet: number;
@@ -75,4 +76,5 @@ export type SingleProductType = {
     unitOfMeasure: string;
     unitOfMeasures: UnitOfMeasuresType[];
     whoProvideExtraPacking: string;
+    aliases: string[];
 }

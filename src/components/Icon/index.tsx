@@ -29,6 +29,7 @@ import Additional from '@/assets/icons/additional.svg';
 import Dimensions from "@/assets/icons/dimensions.svg";
 import Barcodes from '@/assets/icons/barcodes.svg';
 import UnderConstruction from "@/assets/icons/under-construction.svg";
+import Aliases from '@/assets/icons/aliases.svg';
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -60,6 +61,7 @@ export const icons = {
   'dimensions': Dimensions,
   'barcodes': Barcodes,
   'under-construction': UnderConstruction,
+  'aliases': Aliases,
 };
 
 export type IconType = keyof typeof icons;
