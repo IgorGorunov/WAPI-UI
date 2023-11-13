@@ -54,11 +54,8 @@ export type UnitOfMeasuresType = {
 }
 
 export type SingleProductType = {
-    aliases: string;
     amazonSku: string;
     barcodes: string[];
-    boxUnitOfMeasure: string;
-    bundle: boolean;
     countryOfOrigin: string;
     fireproof: boolean;
     fragile: boolean;
@@ -66,7 +63,6 @@ export type SingleProductType = {
     glass: boolean;
     hazmat: boolean;
     hsCode: string;
-    insurance: boolean;
     liquid: boolean;
     name: string;
     packingBox: boolean;
@@ -78,6 +74,5 @@ export type SingleProductType = {
     typeOfStorage: string;
     unitOfMeasure: string;
     unitOfMeasures: UnitOfMeasuresType[];
-    warehouseSku: string;
     whoProvideExtraPacking: string;
 }
