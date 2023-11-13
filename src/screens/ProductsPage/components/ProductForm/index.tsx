@@ -26,7 +26,7 @@ import Icon from "@/components/Icon";
 type ProductPropsType = {
     isEdit?: boolean;
     isAdd?: boolean;
-    uuid?: string;
+    uuid?: string | null;
     productParams: ProductParamsType;
     productData?: SingleProductType | null;
 }
@@ -53,13 +53,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     console.log("product params: ", productParams);
     console.log("product data: ", productData);
 
-    const tabsArray = [
-        {title: 'tab1', content: []},
-        {title: 'tab2', content: []},
-        {title: 'tab3', content: []}
-    ];
-
-
     const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
         defaultValues: {
             [PRODUCT.name]: productData?.name || '',
@@ -84,10 +77,12 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
             unitOfMeasure: productData?.unitOfMeasure || '',
             unitOfMeasures:
                 productData && productData.unitOfMeasures
-                    ? productData.unitOfMeasures.map(unit => (
+                    ? productData.unitOfMeasures.map((unit, index) => (
                         {
+                            key: `unit-${unit.name}_${index}`,
                             selected: false,
                             [PRODUCT.unitOfMeasuresFields.unitName]: unit.name || '',
+                            [PRODUCT.unitOfMeasuresFields.unitQuantity]: unit.coefficient || '',
                             [PRODUCT.unitOfMeasuresFields.unitWidth]: unit.width || '',
                             [PRODUCT.unitOfMeasuresFields.unitLength]: unit.length || '',
                             [PRODUCT.unitOfMeasuresFields.unitHeight]: unit.height || '',
@@ -96,8 +91,10 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         }))
                     : [
                         {
+                            key: `unit-${Date.now().toString()}`,
                             selected: false,
                             name: '',
+                            quantity: '',
                             width: '',
                             length: '',
                             height:  '',
@@ -107,22 +104,40 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     ],
             barcodes:
                 productData && productData?.barcodes && productData.barcodes.length
-                    ? productData.barcodes.map(code => (
+                    ? productData.barcodes.map((code, index: number) => (
                         {
+                            key: code || `barcode-${Date.now().toString()}_${index}`,
                             selected: false,
                             barcode: code || '',
                         }))
                     : [
                         {
+                            key: `barcode-${Date.now().toString()}`,
                             selected: false,
                             barcode: '',
                         }
-                    ]
+                    ],
+            aliases:
+                productData && productData?.aliases && productData.aliases.length
+                    ? productData.aliases.map((alias, index: number) => (
+                        {
+                            key: alias || `alias-${Date.now().toString()}_${index}`,
+                            selected: false,
+                            alias: alias || '',
+                        }))
+                    : [
+                        {
+                            key: `alias-${Date.now().toString()}`,
+                            selected: false,
+                            alias: '',
+                        }
+                    ],
 
         }
     })
     const { fields, append, update, remove } = useFieldArray({ control, name: 'unitOfMeasures' });
-    const { fields: fieldsBarcodes, append: appendBarcode, update: updateBarcode, remove: removeBarcode } = useFieldArray({ control, name: 'barcodes' });
+    const { fields: fieldsBarcodes, append: appendBarcode,  remove: removeBarcode } = useFieldArray({ control, name: 'barcodes' });
+    const { fields: fieldsAliases, append: appendAlias, remove: removeAlias } = useFieldArray({ control, name: 'aliases' });
     const unitOfMeasures = watch('unitOfMeasures');
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState<string[]>([]);
 
@@ -137,7 +152,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     useEffect(() => {
         // Update the select options when the unitOfMeasures array changes
         const names: string[] = unitOfMeasures.map((row) => row.name as string);
-        console.log("options units: ", unitOfMeasures, names);
         setUnitOfMeasureOptions(names);
     }, [unitOfMeasures, setUnitOfMeasureOptions]);
 
@@ -145,13 +159,14 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
     const handleUnitNameChange = (newValue: string, index: number) => {
         // Update the unitOfMeasureOptions based on the changed "Unit Name"
-        const updatedOptions = [...unitOfMeasureOptions];
-        updatedOptions[index] = newValue;
-        setUnitOfMeasureOptions(updatedOptions);
+        setUnitOfMeasureOptions(prevState => {
+            const arr = [...prevState];
+            arr[index]=newValue;
+            return arr;
+        });
     };
 
     const getUnitsColumns = (control: any) => {
-
         return [
             {
                 title: (
@@ -201,7 +216,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         control={control}
 
                         render={({ field }) => (
-                            <div style={{width: '505px'}}>
+                            <div style={{width: '250px'}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].name`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -214,7 +229,27 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Width',
+                title: 'Quantity',
+                dataIndex: 'quantity',
+                key: 'quantity',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`unitOfMeasures[${index}].quantity`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '110px'}}>
+                                <FieldBuilder
+                                    name={`unitOfMeasures[${index}].quantity`}
+                                    fieldType={FormFieldTypes.NUMBER}
+                                    {...field}
+                                /></div>
+
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Width/mm',
                 dataIndex: 'width',
                 key: 'width',
                 render: (text, record, index) => (
@@ -222,7 +257,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         name={`unitOfMeasures[${index}].width`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '85px'}}>
+                            <div style={{width: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].width`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -234,7 +269,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Length',
+                title: 'Length/mm',
                 dataIndex: 'length',
                 key: 'length',
                 render: (text, record, index) => (
@@ -242,7 +277,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         name={`unitOfMeasures[${index}].length`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '85px'}}>
+                            <div style={{width: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].length`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -253,7 +288,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Height',
+                title: 'Height/mm',
                 dataIndex: 'height',
                 key: 'height',
                 render: (text, record, index) => (
@@ -261,7 +296,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         name={`unitOfMeasures[${index}].height`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '85px'}}>
+                            <div style={{width: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].height`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -273,7 +308,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Weight gross',
+                title: 'Weight gross/kg',
                 dataIndex: 'weightGross',
                 key: 'weightGross',
                 render: (text, record, index) => (
@@ -281,7 +316,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         name={`unitOfMeasures[${index}].weightGross`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '85px'}}>
+                            <div style={{width: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].weightGross`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -293,7 +328,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Weight net',
+                title: 'Weight net/kg',
                 dataIndex: 'Weight net',
                 key: 'weightNet',
                 render: (text, record, index) => (
@@ -301,7 +336,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         name={`unitOfMeasures[${index}].weightNet`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '85px'}}>
+                            <div style={{width: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].weightNet`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -394,10 +429,91 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     const removeBarcodes = () => {
         const newBarcodesArr = barcodes.filter(item => !item.selected);
         setValue('barcodes', newBarcodesArr);
+        // console.log("barcodes", barcodes, barcodes.length);
+        // for (let i=barcodes.length-1; i>=0; i-- ) {
+        //     if (barcodes[i].selected) removeBarcodes();
+        // }
+        console.log("barcodes: ",getValues('barcodes'));
+
         setSelectAllBarcodes(false);
     }
 
 
+    //Aliases
+    const aliases = watch('aliases');
+    const [selectAllAliases, setSelectAllAliases] = useState(false);
+
+    const getAliasesColumns = (control: any) => {
+        return [
+            {
+                title: (
+                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                        <FieldBuilder
+                            name={'selectedAllAliases'}
+                            fieldType={FormFieldTypes.CHECKBOX}
+                            checked ={selectAllAliases}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                setSelectAllAliases(e.target.checked);
+                                // Update the values of all checkboxes in the form when "Select All" is clicked
+                                const values = getValues();
+                                const fields = values.aliases;
+                                fields &&
+                                fields.forEach((field, index) => {
+                                    setValue(`aliases.${index}.selected`, e.target.checked);
+                                });
+                            }}
+                        />
+                    </div>
+
+                ),
+                dataIndex: 'selected',
+                key: 'selected',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`aliases.${index}.selected`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                                <FieldBuilder
+                                    name={'aliases.${index}.selected'}
+                                    fieldType={FormFieldTypes.CHECKBOX}
+                                    {...field}
+                                />
+                            </div>
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Alias',
+                dataIndex: 'alias',
+                key: 'alias',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`aliases[${index}].alias`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '1000px'}}>
+                                <FieldBuilder
+                                    name={`aliases.${index}.alias`}
+                                    fieldType={FormFieldTypes.TEXT}
+                                    {...field}
+                                /></div>
+                        )}
+                    />
+                ),
+            },
+        ];
+    }
+
+    const removeAliases = () => {
+        setValue('aliases', aliases.filter(item => !item.selected ));
+
+        setSelectAllAliases(false);
+    }
+
+
+    //
     const onSubmitForm = async (data: any) => {
         console.log("it is form submit ");
 
@@ -412,9 +528,8 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     const additionalCheckboxes = useMemo(()=>FormFieldsAdditional2(), []);
 
     return <div className='product-info'>
-
             <form onSubmit={handleSubmit(onSubmitForm)}>
-                <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes']} classNames='inside-modal'>
+                <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases']} classNames='inside-modal'>
                     <div className='primary-tab'>
                         <div className='card product-info--general'>
                             <h3 className='product-info__block-title'>
@@ -499,21 +614,20 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                         )}
                                     />
                                     {/*</div>*/}
-                                    <div className='product-info--unitOfMeasures-table-btns width-33'>
+                                    <div className='product-info--unitOfMeasures-table-btns width-67'>
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
                                             Remove
                                         </Button>
-                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => append({ selected: false, name: '', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
+                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', quantity:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
                                             Add
                                         </Button>
                                     </div>
                                 </div>
                             </div>
                             <div className='product-info--unitOfMeasures-table table-form-fields'>
-
                                 <Table
                                     columns={getUnitsColumns(control)}
-                                    dataSource={getValues('unitOfMeasures')?.map((field, index) => ({ key: index, ...field })) || []}
+                                    dataSource={getValues('unitOfMeasures')?.map((field, index) => ({ key: field.name, ...field })) || []}
                                     pagination={false}
                                     rowKey="key"
                                 />
@@ -534,7 +648,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
                                             Remove
                                         </Button>
-                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendBarcode({ selected: false, barcode: '' })}>
+                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
                                             Add
                                         </Button>
                                     </div>
@@ -544,7 +658,37 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
                                 <Table
                                     columns={getBarcodesColumns(control)}
-                                    dataSource={getValues('barcodes')?.map((field, index) => ({ key: index, ...field })) || []}
+                                    dataSource={getValues('barcodes')?.map((field, index) => ({ key: field.barcode, ...field })) || []}
+                                    pagination={false}
+                                    rowKey="key"
+                                />
+
+                            </div>
+                        </div>
+                    </div>
+                    <div className="aliases-tab">
+                        <div className="card product-info--aliases">
+                            <h3 className='product-info__block-title'>
+                                <Icon name='aliases' />
+                                Aliases
+                            </h3>
+                            <div className='product-info--aliases-btns'>
+                                <div className='grid-row'>
+                                    <h3 className='width-67'>Aliases</h3>
+                                    <div className='product-info--unitOfMeasures-table-btns width-33'>
+                                        <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
+                                            Remove
+                                        </Button>
+                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendAlias({ key: `barcode-${Date.now().toString()}`, selected: false, alias: '' })}>
+                                            Add
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='product-info--unitOfMeasures-table table-form-fields'>
+                                <Table
+                                    columns={getAliasesColumns(control)}
+                                    dataSource={getValues('aliases')?.map((field, index) => ({ key: field.alias, ...field })) || []}
                                     pagination={false}
                                     rowKey="key"
                                 />

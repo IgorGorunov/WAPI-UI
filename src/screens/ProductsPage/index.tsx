@@ -28,6 +28,7 @@ const ProductsPage = () => {
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [singleProductData, setSingleProductData] = useState<SingleProductType|null>(null);
+    const [uuid, setUuid]=useState<string|null>(null);
 
     const [isLoading, setIsLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -54,6 +55,7 @@ const ProductsPage = () => {
 
             if (res && "data" in res) {
                 setProductsData(res.data);
+                setUuid(uuid);
                 setIsLoading(false);
             } else {
                 console.error("API did not return expected data");
@@ -128,6 +130,7 @@ const ProductsPage = () => {
         //
         // //temporary
         setSingleProductData(null);
+        setUuid(null);
         setShowModal(true);
     }
     const handleImportXLS = () => {
@@ -184,7 +187,7 @@ const ProductsPage = () => {
                 </div>
                 {showModal &&
                     <Modal title={`${singleProductData ? 'Edit product': 'Add product'}`} onClose={onModalClose} >
-                        <ProductForm productParams={productParams} productData={singleProductData} />
+                        <ProductForm productParams={productParams} productData={singleProductData} uuid={uuid}/>
                     </Modal>
                 }
             </Layout>
