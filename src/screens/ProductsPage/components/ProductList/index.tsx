@@ -32,7 +32,7 @@ const statusFilter = [
     { value: 'Declined', label: 'Declined' , color: '#FF4000'},
     { value: 'Draft', label: 'Draft' , color: '#FEDB4F'},
     { value: 'Pending', label: 'Pending' , color: '#FEDB4F'},
-    { value: 'Cancelled', label: 'Cancelled' , color: '#FF4000'},
+    { value: 'Rejected', label: 'Rejected' , color: '#FF4000'},
     { value: 'Expired', label: 'Expired' , color: '#FF4000'},
 ];
 
