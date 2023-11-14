@@ -478,11 +478,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                             (() => {
                                 switch (hoveredColumn) {
                                     case 'productLines':
-                                        return 400;
+                                        return 300;
                                     case 'status':
                                         return 800;
                                     default:
-                                        return 400;
+                                        return 300;
                                 }
                             })()
                         }
