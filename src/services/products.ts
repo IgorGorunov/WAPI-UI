@@ -1,4 +1,5 @@
 import axios from "axios";
+import {SingleProductType} from '@/types/products';
 
 const API_ENDPOINT = "https://first.wapi.com:4443/WAPI/hs/v1/UI";
 
@@ -27,7 +28,6 @@ const getProducts = async (
 };
 
 const getProductByUID = async (
-
     data: {
         token: string;
         uuid: string;
@@ -96,4 +96,26 @@ const getProductsStock = async (
     }
 };
 
-export { getProducts, getProductByUID, getProductParameters, getProductsStock};
+//send product info
+
+const sendProductInfo = async (
+    data: {
+        productData: SingleProductType,
+        token: string;
+    }
+) => {
+    try {
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/CreateUpdateProduct`,
+            data
+
+        );
+        console.log("edit product: ", response);
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+}
+
+export { getProducts, getProductByUID, getProductParameters, getProductsStock, sendProductInfo};

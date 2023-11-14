@@ -20,7 +20,6 @@ export type SelectFieldType = {
   name: string;
   label?: string;
   options?: OptionType[];
-  disabled?: boolean;
   value?: string | OptionType | undefined;
   onChange?:  (value: OptionType) => void;
   registerInput?: any;
