@@ -249,7 +249,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Width/mm',
+                title: 'Width | mm',
                 dataIndex: 'width',
                 key: 'width',
                 render: (text, record, index) => (
@@ -269,7 +269,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Length/mm',
+                title: 'Length | mm',
                 dataIndex: 'length',
                 key: 'length',
                 render: (text, record, index) => (
@@ -288,7 +288,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Height/mm',
+                title: 'Height | mm',
                 dataIndex: 'height',
                 key: 'height',
                 render: (text, record, index) => (
@@ -308,7 +308,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Weight gross/kg',
+                title: 'Weight gross | kg',
                 dataIndex: 'weightGross',
                 key: 'weightGross',
                 render: (text, record, index) => (
@@ -328,7 +328,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 ),
             },
             {
-                title: 'Weight net/kg',
+                title: 'Weight net | kg',
                 dataIndex: 'Weight net',
                 key: 'weightNet',
                 render: (text, record, index) => (
