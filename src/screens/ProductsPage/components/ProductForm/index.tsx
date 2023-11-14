@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useMemo, useState} from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {FormFieldTypes, WidthType} from "@/types/forms";
 import {COUNRTIES} from "@/types/countries";
@@ -22,6 +22,15 @@ import {Table} from 'antd';
 import FormFieldsBlock from "./FormFieldsBlock";
 import Tabs from "@/components/Tabs";
 import Icon from "@/components/Icon";
+import {verifyToken} from "@/services/auth";
+import {Routes} from "@/types/routes";
+import {getProductParameters, getProducts, sendProductInfo} from "@/services/products";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+
+const enum SendStatusType {
+    DRAFT = 'draft',
+    PENDING = 'pending',
+}
 
 type ProductPropsType = {
     isEdit?: boolean;
@@ -29,18 +38,40 @@ type ProductPropsType = {
     uuid?: string | null;
     productParams: ProductParamsType;
     productData?: SingleProductType | null;
+    closeProductModal: ()=>void;
 }
-const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, productParams, productData}) => {
+const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, productParams, productData, closeProductModal}) => {
     //get parameters to setup form
+
+
+    const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending');
+
+
+    console.log("uuid: ", uuid, productData)
 
     const Router = useRouter();
     const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeSuccessModal = useCallback(()=>{
+        setShowStatusModal(false);
+        closeProductModal();
+    }, []);
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
+
+
     const [isLoading, setIsLoading] = useState(false);
+    const [sendStatus, setSendStatus] = useState(SendStatusType.DRAFT);
 
     const countryArr = COUNRTIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
+
+
 
     type ApiResponse = {
         data: any;
@@ -55,6 +86,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
     const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
         defaultValues: {
+            [PRODUCT.uuid]: productData?.uuid || uuid || '',
             [PRODUCT.name]: productData?.name || '',
             [PRODUCT.fullName]: productData?.fullName || '',
             [PRODUCT.countryOfOrigin]: productData?.countryOfOrigin || '',
@@ -142,8 +174,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState<string[]>([]);
 
 
-    console.log('form-errors: ', errors);
-
     const getOptions = () => {
         // Extract names from unitOfMeasures array
         return unitOfMeasureOptions.map((item) => ({ value: item, label: item }));
@@ -175,6 +205,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         name={'selectedAllUnits'}
                         fieldType={FormFieldTypes.CHECKBOX}
                         checked ={selectAllUnits}
+                        disabled={isDisabled}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => {
                             setSelectAllUnits(e.target.checked);
                             // Update the values of all checkboxes in the form when "Select All" is clicked
@@ -200,6 +231,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     name={'unitOfMeasures.${index}.selected'}
                                     fieldType={FormFieldTypes.CHECKBOX}
                                     {...field}
+                                    disabled={isDisabled}
                                 />
                             </div>
                         )}
@@ -222,6 +254,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     onChange={(newValue: string) => {field.onChange(newValue); handleUnitNameChange(newValue, index)}}
+                                    disabled={isDisabled}
                                 /></div>
                         )}
                         rules={{required: "Name couldn't be empty!",}}
@@ -242,6 +275,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     name={`unitOfMeasures[${index}].quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
+                                    disabled={isDisabled}
                                 /></div>
 
                         )}
@@ -262,6 +296,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 name={`unitOfMeasures[${index}].width`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
+                                disabled={isDisabled}
                             /></div>
 
                         )}
@@ -282,6 +317,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 name={`unitOfMeasures[${index}].length`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
+                                disabled={isDisabled}
                             /></div>
                         )}
                     />
@@ -301,6 +337,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 name={`unitOfMeasures[${index}].height`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
+                                disabled={isDisabled}
                             /></div>
 
                         )}
@@ -321,6 +358,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 name={`unitOfMeasures[${index}].weightGross`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
+                                disabled={isDisabled}
                             /></div>
 
                         )}
@@ -341,6 +379,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 name={`unitOfMeasures[${index}].weightNet`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
+                                disabled={isDisabled}
                             /></div>
 
                         )}
@@ -372,6 +411,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             name={'selectedAllBarcodes'}
                             fieldType={FormFieldTypes.CHECKBOX}
                             checked ={selectAllBarcodes}
+                            disabled={isDisabled}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setSelectAllBarcodes(e.target.checked);
                                 // Update the values of all checkboxes in the form when "Select All" is clicked
@@ -398,6 +438,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     name={'barcodes.${index}.selected'}
                                     fieldType={FormFieldTypes.CHECKBOX}
                                     {...field}
+                                    disabled={isDisabled}
                                 />
                             </div>
                         )}
@@ -418,6 +459,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     name={`barcodes.${index}.barcode`}
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
+                                    disabled={isDisabled}
                                 /></div>
                         )}
                     />
@@ -452,6 +494,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             name={'selectedAllAliases'}
                             fieldType={FormFieldTypes.CHECKBOX}
                             checked ={selectAllAliases}
+                            disabled={isDisabled}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setSelectAllAliases(e.target.checked);
                                 // Update the values of all checkboxes in the form when "Select All" is clicked
@@ -478,6 +521,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     name={'aliases.${index}.selected'}
                                     fieldType={FormFieldTypes.CHECKBOX}
                                     {...field}
+                                    disabled={isDisabled}
                                 />
                             </div>
                         )}
@@ -498,6 +542,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                     name={`aliases.${index}.alias`}
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
+                                    disabled={isDisabled}
                                 /></div>
                         )}
                     />
@@ -513,12 +558,64 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     }
 
 
+    const prepareProductDataForSending = (data) => {
+        return {
+            ...data,
+            aliases: data.aliases.map(item => item.alias).filter(item => item !== ""),
+            barcodes: data.barcodes.map(item => item.barcode).filter(item => item !== ""),
+        }
+    }
     //
     const onSubmitForm = async (data: any) => {
         console.log("it is form submit ");
 
         const isValid = await trigger();
         if (isValid) console.log("form is valid!", data);
+
+        data.status = sendStatus;
+
+        console.log("send: ", prepareProductDataForSending(data));
+
+        try {
+            setIsLoading(true);
+            //verify token
+            if (!await verifyToken(token)) {
+                console.log("token is wrong");
+                await Router.push(Routes.Login);
+            }
+
+            const res: ApiResponse = await sendProductInfo(
+                {
+                    token: token,
+                    productData: prepareProductDataForSending(data)
+                }
+            );
+
+            console.log("send response: ", res);
+
+            if (res && "status" in res) {
+                if (res?.status === 200) {
+                    //success
+                    setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Product is successfully ${ productData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setShowStatusModal(true);
+                }
+            } else if (res && 'response' in res ) {
+                const errResponse = res.response;
+                console.log('errorMessages1', errResponse)
+
+                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+                    const errorMessages = errResponse?.data.errorMessage;
+                    console.log('errorMessages', errorMessages)
+
+                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setShowStatusModal(true);
+                }
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setIsLoading(false);
+        }
     }
 
     const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr}), [COUNRTIES])
@@ -528,177 +625,181 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     const additionalCheckboxes = useMemo(()=>FormFieldsAdditional2(), []);
 
     return <div className='product-info'>
-            <form onSubmit={handleSubmit(onSubmitForm)}>
-                <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases']} classNames='inside-modal'>
-                    <div className='primary-tab'>
-                        <div className='card product-info--general'>
-                            <h3 className='product-info__block-title'>
-                                <Icon name='general' />
-                                General
-                            </h3>
-                            <div className='grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors}/>
-                            </div>
-                        </div>
-                        <div className='card product-info--sku'>
-                            <h3 className='product-info__block-title'>
-                                <Icon name='sku' />
-                                SKU
-                            </h3>
-                            <div className='grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors}/>
-                            </div>
-                        </div>
-                        <div className='card product-info--warehouse'>
-                            <h3 className='product-info__block-title'>
-                                <Icon name='warehouse' />
-                                Warehouse
-                            </h3>
-                            <div className='grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={warehouseFields} errors={errors} />
-                            </div>
-                        </div>
-                        <div className='card product-info--additional'>
-                            <h3 className='product-info__block-title'>
-                                <Icon name='additional' />
-                                Additional
-                            </h3>
-                            <div className='grid-row'>
-                                <div className='additional-selects width-33'>
-                                    <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} />
-                                </div>
-                                <div className='dropzone width-33'></div>
-                                <div className='checkboxes width-33'>
-                                    <div className='grid-row'>
-                                        {additionalCheckboxes.map((curField, index) => (
-                                            <div key={curField.name} className={`${curField.width ? 'width-'+curField.width : ''}`}>
-                                                <Controller name={curField.name} control={control} render={({field: {value, ...props}, fieldState: {error}}) => (
-                                                    <FieldBuilder
-                                                        {...props}
-                                                        label={curField.label}
-                                                        fieldType={curField.fieldType}
-                                                        errorMessage={error?.message}
-                                                        checked={!!value}
-                                                    /> )}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
+        <form onSubmit={handleSubmit(onSubmitForm)}>
+            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases']} classNames='inside-modal'>
+                <div className='primary-tab'>
+                    <div className='card product-info--general'>
+                        <h3 className='product-info__block-title'>
+                            <Icon name='general' />
+                            General
+                        </h3>
+                        <div className='grid-row'>
+                            <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
                         </div>
                     </div>
-                    <div className="dimensions-tab">
-                        <div className="card product-info--unitOfMeasures">
-                            <h3 className='product-info__block-title'>
-                                <Icon name='dimensions' />
-                                Dimensions
-                            </h3>
-                            <div className='product-info--unitOfMeasures-select'>
+                    <div className='card product-info--sku'>
+                        <h3 className='product-info__block-title'>
+                            <Icon name='sku' />
+                            SKU
+                        </h3>
+                        <div className='grid-row'>
+                            <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors} isDisabled={isDisabled}/>
+                        </div>
+                    </div>
+                    <div className='card product-info--warehouse'>
+                        <h3 className='product-info__block-title'>
+                            <Icon name='warehouse' />
+                            Warehouse
+                        </h3>
+                        <div className='grid-row'>
+                            <FormFieldsBlock control={control} fieldsArray={warehouseFields} errors={errors} isDisabled={isDisabled} />
+                        </div>
+                    </div>
+                    <div className='card product-info--additional'>
+                        <h3 className='product-info__block-title'>
+                            <Icon name='additional' />
+                            Additional
+                        </h3>
+                        <div className='grid-row'>
+                            <div className='additional-selects width-33'>
+                                <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
+                            </div>
+                            <div className='dropzone width-33'></div>
+                            <div className='checkboxes width-33'>
                                 <div className='grid-row'>
-                                {/*    <div className='width-67 grid-row'>*/}
-                                    <Controller
-                                        name="unitOfMeasure"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <FieldBuilder
-                                                fieldType={FormFieldTypes.SELECT}
-                                                name='unitOfMeasure'
-                                                label='Default unit'
-                                                {...field}
-                                                options={getOptions() || []}
-                                                placeholder="Select Name"
-                                                width={WidthType.w33}
-                                                errors={errors}
+                                    {additionalCheckboxes.map((curField, index) => (
+                                        <div key={curField.name} className={`${curField.width ? 'width-'+curField.width : ''}`}>
+                                            <Controller name={curField.name} control={control} render={({field: {value, ...props}, fieldState: {error}}) => (
+                                                <FieldBuilder
+                                                    {...props}
+                                                    label={curField.label}
+                                                    fieldType={curField.fieldType}
+                                                    errorMessage={error?.message}
+                                                    disabled={!!isDisabled}
+                                                    checked={!!value}
+                                                /> )}
                                             />
-                                        )}
-                                    />
-                                    {/*</div>*/}
-                                    <div className='product-info--table-btns width-67'>
-                                        <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
-                                            Remove
-                                        </Button>
-                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
-                                            Add
-                                        </Button>
-                                    </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            </div>
-                            <div className='product-info--table table-form-fields'>
-                                <Table
-                                    columns={getUnitsColumns(control)}
-                                    dataSource={getValues('unitOfMeasures')?.map((field, index) => ({ key: field.name, ...field })) || []}
-                                    pagination={false}
-                                    rowKey="key"
-                                />
-
                             </div>
                         </div>
                     </div>
-                    <div className="barcodes-tab">
-                        <div className="card product-info--barcodes">
-                            <h3 className='product-info__block-title title-small'>
-                                <Icon name='barcodes' />
-                                Barcodes
-                            </h3>
-                            <div className='product-info--barcodes-btns'>
-                                <div className='grid-row'>
-                                    <div className='product-info--table-btns small-paddings width-100'>
-                                        <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
-                                            Remove
-                                        </Button>
-                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
-                                            Add
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='product-info--table table-form-fields'>
-                                <Table
-                                    columns={getBarcodesColumns(control)}
-                                    dataSource={getValues('barcodes')?.map((field, index) => ({ key: field.barcode, ...field })) || []}
-                                    pagination={false}
-                                    rowKey="key"
-                                />
-
-                            </div>
-                        </div>
-                    </div>
-                    <div className="aliases-tab">
-                        <div className="card product-info--aliases">
-                            <h3 className='product-info__block-title title-small'>
-                                <Icon name='aliases' />
-                                Aliases
-                            </h3>
-                            <div className='product-info--aliases-btns'>
-                                <div className='grid-row'>
-                                    <div className='product-info--table-btns small-paddings width-100'>
-                                        <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
-                                            Remove
-                                        </Button>
-                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendAlias({ key: `barcode-${Date.now().toString()}`, selected: false, alias: '' })}>
-                                            Add
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='product-info--table table-form-fields'>
-                                <Table
-                                    columns={getAliasesColumns(control)}
-                                    dataSource={getValues('aliases')?.map((field, index) => ({ key: field.alias, ...field })) || []}
-                                    pagination={false}
-                                    rowKey="key"
-                                />
-
-                            </div>
-                        </div>
-                    </div>
-                </Tabs>
-                <div className='form-submit-btn'>
-                    <Button type="submit" variant={ButtonVariant.SECONDARY}>Save as draft</Button>
-                    <Button type="submit">Send to approve</Button>
                 </div>
-            </form>
+                <div className="dimensions-tab">
+                    <div className="card product-info--unitOfMeasures">
+                        <h3 className='product-info__block-title'>
+                            <Icon name='dimensions' />
+                            Dimensions
+                        </h3>
+                        <div className='product-info--unitOfMeasures-select'>
+                            <div className='grid-row'>
+                            {/*    <div className='width-67 grid-row'>*/}
+                                <Controller
+                                    name="unitOfMeasure"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FieldBuilder
+                                            fieldType={FormFieldTypes.SELECT}
+                                            name='unitOfMeasure'
+                                            label='Default unit'
+                                            {...field}
+                                            options={getOptions() || []}
+                                            placeholder="Select Name"
+                                            width={WidthType.w33}
+                                            errors={errors}
+                                            disabled={isDisabled}
+                                        />
+                                    )}
+                                />
+                                {/*</div>*/}
+                                <div className='product-info--table-btns width-67'>
+                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
+                                        Remove
+                                    </Button>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
+                                        Add
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='product-info--table table-form-fields'>
+                            <Table
+                                columns={getUnitsColumns(control)}
+                                dataSource={getValues('unitOfMeasures')?.map((field, index) => ({ key: field.name, ...field })) || []}
+                                pagination={false}
+                                rowKey="key"
+                            />
+
+                        </div>
+                    </div>
+                </div>
+                <div className="barcodes-tab">
+                    <div className="card product-info--barcodes">
+                        <h3 className='product-info__block-title title-small'>
+                            <Icon name='barcodes' />
+                            Barcodes
+                        </h3>
+                        <div className='product-info--barcodes-btns'>
+                            <div className='grid-row'>
+                                <div className='product-info--table-btns small-paddings width-100'>
+                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
+                                        Remove
+                                    </Button>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
+                                        Add
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='product-info--table table-form-fields'>
+                            <Table
+                                columns={getBarcodesColumns(control)}
+                                dataSource={getValues('barcodes')?.map((field, index) => ({ key: field.barcode, ...field })) || []}
+                                pagination={false}
+                                rowKey="key"
+                            />
+
+                        </div>
+                    </div>
+                </div>
+                <div className="aliases-tab">
+                    <div className="card product-info--aliases">
+                        <h3 className='product-info__block-title title-small'>
+                            <Icon name='aliases' />
+                            Aliases
+                        </h3>
+                        <div className='product-info--aliases-btns'>
+                            <div className='grid-row'>
+                                <div className='product-info--table-btns small-paddings width-100'>
+                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
+                                        Remove
+                                    </Button>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendAlias({ key: `barcode-${Date.now().toString()}`, selected: false, alias: '' })}>
+                                        Add
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='product-info--table table-form-fields'>
+                            <Table
+                                columns={getAliasesColumns(control)}
+                                dataSource={getValues('aliases')?.map((field, index) => ({ key: field.alias, ...field })) || []}
+                                pagination={false}
+                                rowKey="key"
+                            />
+
+                        </div>
+                    </div>
+                </div>
+            </Tabs>
+            <div className='form-submit-btn'>
+                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.SECONDARY}>Save as draft</Button>
+                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} >Send to approve</Button>
+            </div>
+        </form>
+
+        {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
 
     </div>
 }

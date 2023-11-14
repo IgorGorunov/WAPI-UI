@@ -7,8 +7,9 @@ type FormFieldsBlockType = {
     control: any;
     fieldsArray: FormBuilderType[];
     errors: any;
+    isDisabled?: boolean;
 }
-const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, errors}) => {
+const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, errors, isDisabled=false}) => {
     return <>
         {fieldsArray.map((curField) => (
             //<div key={curField.name}  className={`${curField.width ? 'width-'+curField.width : ''}`}>
@@ -30,6 +31,7 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
                             placeholder={curField.placeholder}
                             errorMessage={error?.message}
                             errors={errors}
+                            disabled={!!isDisabled}
                             isRequired={!!curField.rules || false}
                             classNames={curField.classNames}
                         /> )}

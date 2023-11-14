@@ -11,6 +11,7 @@ const TextField: React.FC<FieldPropsType> = ({
   isRequired = false,
   placeholder = '',
   errorMessage,
+  disabled = false,
   //innerRef,
   value='',
   //registerInput,
@@ -38,6 +39,7 @@ const TextField: React.FC<FieldPropsType> = ({
             placeholder={placeholder}
             onChange={handleChange}
             value={curVal || ""}
+            disabled={disabled}
             {...otherProps}
             //ref={innerRef}
           />

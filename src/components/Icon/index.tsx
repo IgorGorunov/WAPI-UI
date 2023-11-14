@@ -30,6 +30,9 @@ import Dimensions from "@/assets/icons/dimensions.svg";
 import Barcodes from '@/assets/icons/barcodes.svg';
 import UnderConstruction from "@/assets/icons/under-construction.svg";
 import Aliases from '@/assets/icons/aliases.svg';
+import SuccessIcon from '@/assets/icons/success-icon.svg';
+import ErrorIcon from '@/assets/icons/error-icon.svg';
+import CloseInCircle from '@/assets/icons/close-in-circle.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -62,6 +65,9 @@ export const icons = {
   'barcodes': Barcodes,
   'under-construction': UnderConstruction,
   'aliases': Aliases,
+  'success': SuccessIcon,
+  'error': ErrorIcon,
+  'close-in-circle': CloseInCircle,
 };
 
 export type IconType = keyof typeof icons;

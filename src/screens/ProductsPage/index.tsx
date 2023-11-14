@@ -19,6 +19,7 @@ import ProductForm from "@/screens/ProductsPage/components/ProductForm";
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/components/Toast/styles.scss'
+import {router} from "next/client";
 
 const ProductsPage = () => {
     const Router = useRouter();
@@ -108,6 +109,7 @@ const ProductsPage = () => {
             );
 
             if (res && "data" in res) {
+                // res.data.uuid = uuid;
                 setSingleProductData(res.data);
                 setIsLoading(false);
                 setShowModal(true);
@@ -122,6 +124,7 @@ const ProductsPage = () => {
 
         }
     };
+
     const handleAddProduct = () => {
         // toast.warn("Under construction", {
         //     position: "top-right",
@@ -187,7 +190,7 @@ const ProductsPage = () => {
                 </div>
                 {showModal &&
                     <Modal title={`${singleProductData ? 'Edit product': 'Add product'}`} onClose={onModalClose} >
-                        <ProductForm productParams={productParams} productData={singleProductData} uuid={uuid}/>
+                        <ProductForm productParams={productParams} productData={singleProductData} uuid={uuid} closeProductModal={()=>{setShowModal(false);fetchData();}}/>
                     </Modal>
                 }
             </Layout>

@@ -55,6 +55,7 @@ export type UnitOfMeasuresType = {
 }
 
 export type SingleProductType = {
+    uuid?: string;
     amazonSku: string;
     barcodes: string[];
     countryOfOrigin: string;
@@ -77,4 +78,5 @@ export type SingleProductType = {
     unitOfMeasures: UnitOfMeasuresType[];
     whoProvideExtraPacking: string;
     aliases: string[];
+    status: string;
 }

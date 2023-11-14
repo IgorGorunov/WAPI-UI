@@ -19,7 +19,9 @@ const Layout: React.FC<Props> = ({
       </div>
       {hasFooter && <Footer />}
       <div id="modal-root"></div>
-    </div>
+      <div id="modal-root-status"></div>
+    </div
+    >
   );
 };
 

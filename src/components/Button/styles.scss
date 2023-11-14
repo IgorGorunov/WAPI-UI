@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 40px;
   gap: 8px;
   font-size: 12px;
   font-weight: 900;
@@ -69,8 +70,7 @@
     background-color: var(--color-white);
     color: var(--color-gray-blue);
     border-radius: 20px;
-    border: 2px solid var(--gray-blue-grey-blue-97, #F5F6F7);
-    box-shadow: 0px 2px 5px 0px rgba(38, 51, 77, 0.03);
+    border: 2px solid var(--color-blue);
 
     &:hover {
       background-color: var(--color-blue-15);
