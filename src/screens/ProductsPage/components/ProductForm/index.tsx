@@ -74,7 +74,12 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
 
     type ApiResponse = {
-        data: any;
+        data?: any;
+        response?: {
+            data?: {
+                errorMessage: string[];
+            }
+        }
     };
 
     // useEffect(() => {

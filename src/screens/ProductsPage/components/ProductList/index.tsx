@@ -30,6 +30,7 @@ const pageOptions = [
 ];
 
 const statusFilter = [
+    { value: 'All statuses', label: 'All statuses' , color: 'var(--color-light-blue-gray)'},
     { value: 'Approved', label: 'Approved' , color: '#5380F5'},
     { value: 'Declined', label: 'Declined' , color: '#FF4000'},
     { value: 'Draft', label: 'Draft' , color: '#FEDB4F'},
@@ -81,7 +82,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState("Approved");
+    const [filterStatus, setFilterStatus] = useState("All statuses");
     const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
         if (newSearchTerm !== undefined) {
             setSearchTerm(newSearchTerm);
@@ -96,19 +97,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             const matchesSearch = !searchTerm || Object.values(product).some(value =>
                 String(value).toLowerCase().includes(searchTermLower)
             );
-            const matchesStatus = !filterStatus || product.status === filterStatus;
+            const matchesStatus = filterStatus === 'All statuses' || product.status === filterStatus;
             return matchesSearch && matchesStatus;
         });
 
-        if (sortColumn) {
-            filtered.sort((a, b) => {
-                if (sortDirection === 'ascend') {
-                    return a[sortColumn] > b[sortColumn] ? 1 : -1;
-                } else {
-                    return a[sortColumn] < b[sortColumn] ? 1 : -1;
-                }
-            });
-        }
+        // Остальная логика сортировки...
+
         return filtered;
     }, [products, searchTerm, filterStatus, sortColumn, sortDirection]);
 

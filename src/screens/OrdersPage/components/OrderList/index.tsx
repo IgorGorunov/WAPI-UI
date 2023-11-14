@@ -215,8 +215,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     width="60px"
                     contentPosition="center"
                     value={'➔'}
-                    childrenBefore={<span className={`fi fi-${record.warehouseCountry.toLowerCase()} flag-icon`}></span>}
-                    childrenAfter={<span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>}>
+                    childrenBefore={
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <span className={`fi fi-${record.warehouseCountry.toLowerCase()} flag-icon`}></span>
+                            <div style={{ fontSize: '8px' }}>{record.warehouseCountry}</div>
+                        </div>
+                    }
+                    childrenAfter={
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
+                            <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
+                        </div>
+                }
+                >
                 </TableCell>,
             dataIndex: 'icon',
             key: 'icon',
