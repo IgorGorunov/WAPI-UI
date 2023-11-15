@@ -83,10 +83,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
         }
     };
 
-    // useEffect(() => {
-    //     fetchData();
-    // }, [token]);
-
     console.log("product params: ", productParams);
     console.log("product data: ", productData);
 
@@ -671,8 +667,8 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             <div className='additional-selects width-33'>
                                 <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
                             </div>
-                            <div className='dropzone width-33'>
-                                <DropZone></DropZone>
+                            <div className='dropzoneBlock width-33'>
+                                <DropZone/>
                             </div>
                             <div className='checkboxes width-33'>
                                 <div className='grid-row'>
