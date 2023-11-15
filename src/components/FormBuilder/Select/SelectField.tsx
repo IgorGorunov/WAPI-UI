@@ -17,6 +17,7 @@ const SelectField: React.FC<FieldPropsType> = ({
     disabled = false,
     errors,
     errorMessage,
+    isSearchable=false,
     ...otherProps
 }) => {
 
@@ -37,7 +38,7 @@ const SelectField: React.FC<FieldPropsType> = ({
     ,[])
 
     return (
-        <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} `}>
+        <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''}`}>
             {label && <label htmlFor={name}>{label}</label>}
             <Select
                 {...otherProps}

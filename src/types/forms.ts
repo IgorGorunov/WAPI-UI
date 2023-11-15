@@ -32,6 +32,8 @@ export type SelectFieldType = {
   innerRef?: RefType;
   rules?: any;
   checked?: boolean;
+  isSearchable?: boolean;
+  isClearable?: boolean;
 }
 
 export type CheckboxType = {
@@ -76,7 +78,8 @@ export type FieldPropsType = {
   rules?: any
   // onInputChange?: (inputValue: string, meta: InputActionMeta) => void;
   options?: OptionType[]
-  errors?: any
+  errors?: any;
+  isClearable?: boolean;
 }
 
 export type FormBuilderType = FieldPropsType & {

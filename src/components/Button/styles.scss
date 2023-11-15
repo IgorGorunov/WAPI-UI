@@ -23,6 +23,11 @@
     color: var(--color-gray-blue);
   }
 
+  &:disabled,
+  &[disabled]{
+    cursor: not-allowed;
+  }
+
   &-size {
     &-sm {
       padding: 5px 16px;

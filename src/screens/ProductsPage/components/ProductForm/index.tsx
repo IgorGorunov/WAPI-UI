@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {Controller, useFieldArray, useForm} from "react-hook-form";
-import {FormFieldTypes, WidthType} from "@/types/forms";
+import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {COUNRTIES} from "@/types/countries";
 import "./styles.scss";
 import {useRouter} from "next/router";
@@ -40,15 +40,14 @@ type ProductPropsType = {
     productParams: ProductParamsType;
     productData?: SingleProductType | null;
     closeProductModal: ()=>void;
+    products: {name: string; uuid: string; quantity: number }[];
 }
-const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, productParams, productData, closeProductModal}) => {
+const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, products, productParams, productData, closeProductModal}) => {
     //get parameters to setup form
-
 
     const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending');
 
-
-    console.log("uuid: ", uuid, productData)
+    console.log("uuid: ", uuid, products, productData)
 
     const Router = useRouter();
     const { token, setToken } = useAuth();
@@ -72,8 +71,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
     const countryArr = COUNRTIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
-
-
     type ApiResponse = {
         data?: any;
         response?: {
@@ -83,9 +80,13 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
         }
     };
 
-    // useEffect(() => {
-    //     fetchData();
-    // }, [token]);
+    const bundleOptions = useMemo(()=>{
+        return products.filter(item=>item.quantity>0).map(item=>{return{value:item.uuid, label:item.name}})
+    }, [products]);
+
+    const analogueOptions = useMemo(()=>{
+        return products.map(item=>{return{value:item.uuid, label:item.name}})
+    }, [products]);
 
     console.log("product params: ", productParams);
     console.log("product data: ", productData);
@@ -170,12 +171,45 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             alias: '',
                         }
                     ],
-
+            bundleKit:
+                productData && productData?.bundleKit && productData.bundleKit.length
+                    ? productData.bundleKit.map((bundle, index: number) => (
+                        {
+                            key: bundle || `bundle-${Date.now().toString()}_${index}`,
+                            selected: false,
+                            uuid: bundle.uuid || '',
+                            quantity: bundle.quantity || '',
+                        }))
+                    : [
+                        {
+                            key: `bundle-${Date.now().toString()}`,
+                            selected: false,
+                            uuid: '',
+                            quantity: '',
+                        }
+                    ],
+            analogues:
+                productData && productData?.analogues && productData.analogues.length
+                    ? productData.analogues.map((analogue, index: number) => (
+                        {
+                            key: analogue || `analogue-${Date.now().toString()}_${index}`,
+                            selected: false,
+                            analogue: analogue || '',
+                        }))
+                    : [
+                        {
+                            key: `analogue-${Date.now().toString()}`,
+                            selected: false,
+                            analogue: '',
+                        }
+                    ],
         }
     })
     const { fields, append, update, remove } = useFieldArray({ control, name: 'unitOfMeasures' });
     const { fields: fieldsBarcodes, append: appendBarcode,  remove: removeBarcode } = useFieldArray({ control, name: 'barcodes' });
     const { fields: fieldsAliases, append: appendAlias, remove: removeAlias } = useFieldArray({ control, name: 'aliases' });
+    const { fields: fieldsBundles, append: appendBundle, remove: removeBandle } = useFieldArray({ control, name: 'bundleKit' });
+    const { fields: fieldsAnalogues, append: appendAnalogue, remove: removeAnalogue } = useFieldArray({ control, name: 'analogues' });
     const unitOfMeasures = watch('unitOfMeasures');
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState<string[]>([]);
 
@@ -563,12 +597,191 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
         setSelectAllAliases(false);
     }
 
+    //Bundles
+    const bundleKit = watch('bundleKit');
+    const [selectAllBundles, setSelectAllBundles] = useState(false);
 
+    const getBundlesColumns = (control: any) => {
+        return [
+            {
+                title: (
+                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                        <FieldBuilder
+                            name={'selectedAllBundles'}
+                            fieldType={FormFieldTypes.CHECKBOX}
+                            checked ={selectAllBundles}
+                            disabled={isDisabled}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                setSelectAllBundles(e.target.checked);
+                                // Update the values of all checkboxes in the form when "Select All" is clicked
+                                const values = getValues();
+                                const fields = values.bundleKit;
+                                fields &&
+                                fields.forEach((field, index) => {
+                                    setValue(`bundleKit.${index}.selected`, e.target.checked);
+                                });
+                            }}
+                        />
+                    </div>
+
+                ),
+                dataIndex: 'selected',
+                key: 'selected',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`bundleKit.${index}.selected`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                                <FieldBuilder
+                                    name={'bundleKit.${index}.selected'}
+                                    fieldType={FormFieldTypes.CHECKBOX}
+                                    {...field}
+                                    disabled={isDisabled}
+                                />
+                            </div>
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Product',
+                dataIndex: 'uuid',
+                key: 'uuid',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`bundleKit[${index}].uuid`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '870px'}}>
+                                <FieldBuilder
+                                    name={`bundleKit.${index}.uuid`}
+                                    fieldType={FormFieldTypes.SELECT}
+                                    {...field}
+                                    disabled={isDisabled}
+                                    options={analogueOptions}
+                                    isSearchable={true}
+                                /></div>
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Quantity',
+                dataIndex: 'quantity',
+                key: 'quantity',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`bundleKit[${index}].quantity`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '120px'}}>
+                                <FieldBuilder
+                                    name={`bundleKit.${index}.quantity`}
+                                    fieldType={FormFieldTypes.NUMBER}
+                                    {...field}
+                                    disabled={isDisabled}
+                                /></div>
+                        )}
+                    />
+                ),
+            },
+        ];
+    }
+
+    const removeBundles = () => {
+        setValue('bundleKit', bundleKit.filter(item => !item.selected ));
+        setSelectAllBundles(false);
+    }
+
+
+    //Analogues
+    const analogues = watch('analogues');
+    const [selectAllAnalogues, setSelectAllAnalogues] = useState(false);
+
+    const getAnaloguesColumns = (control: any) => {
+        return [
+            {
+                title: (
+                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                        <FieldBuilder
+                            name={'selectedAllAnalogues'}
+                            fieldType={FormFieldTypes.CHECKBOX}
+                            checked ={selectAllAnalogues}
+                            disabled={isDisabled}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                setSelectAllAnalogues(e.target.checked);
+                                // Update the values of all checkboxes in the form when "Select All" is clicked
+                                const values = getValues();
+                                const fields = values.analogues;
+                                fields &&
+                                fields.forEach((field, index) => {
+                                    setValue(`analogues.${index}.selected`, e.target.checked);
+                                });
+                            }}
+                        />
+                    </div>
+
+                ),
+                dataIndex: 'selected',
+                key: 'selected',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`analogues.${index}.selected`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                                <FieldBuilder
+                                    name={'analogues.${index}.selected'}
+                                    fieldType={FormFieldTypes.CHECKBOX}
+                                    {...field}
+                                    disabled={isDisabled}
+                                />
+                            </div>
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Analogue',
+                dataIndex: 'analogue',
+                key: 'analogue',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`analogues[${index}].analogue`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '1000px'}}>
+                                <FieldBuilder
+                                    name={`analogues.${index}.analogue`}
+                                    fieldType={FormFieldTypes.SELECT}
+                                    {...field}
+                                    disabled={isDisabled}
+                                    options={analogueOptions}
+                                    isSearchable={true}
+                                    isClearable={true}
+                                /></div>
+                        )}
+                    />
+                ),
+            },
+        ];
+    }
+
+    const removeAnalogues = () => {
+        setValue('analogues', analogues.filter(item => !item.selected ));
+        setSelectAllAnalogues(false);
+    }
+
+
+
+    /////////////////////////
     const prepareProductDataForSending = (data) => {
         return {
             ...data,
             aliases: data.aliases.map(item => item.alias).filter(item => item !== ""),
             barcodes: data.barcodes.map(item => item.barcode).filter(item => item !== ""),
+            analogues: data.analogues.map(item => item.analogue).filter(item => item !== ""),
         }
     }
     //
@@ -633,7 +846,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
     return <div className='product-info'>
         <form onSubmit={handleSubmit(onSubmitForm)}>
-            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases']} classNames='inside-modal'>
+            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogs']} classNames='inside-modal'>
                 <div className='primary-tab'>
                     <div className='card product-info--general'>
                         <h3 className='product-info__block-title'>
@@ -696,7 +909,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     </div>
                 </div>
                 <div className="dimensions-tab">
-                    <div className="card product-info--unitOfMeasures">
+                    <div className="card min-height-600 product-info--unitOfMeasures">
                         <h3 className='product-info__block-title'>
                             <Icon name='dimensions' />
                             Dimensions
@@ -723,10 +936,10 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 />
                                 {/*</div>*/}
                                 <div className='product-info--table-btns width-67'>
-                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
+                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
                                         Remove
                                     </Button>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
                                         Add
                                     </Button>
                                 </div>
@@ -744,7 +957,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     </div>
                 </div>
                 <div className="barcodes-tab">
-                    <div className="card product-info--barcodes">
+                    <div className="card min-height-600 product-info--barcodes">
                         <h3 className='product-info__block-title title-small'>
                             <Icon name='barcodes' />
                             Barcodes
@@ -752,10 +965,10 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         <div className='product-info--barcodes-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
+                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
                                         Remove
                                     </Button>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
                                         Add
                                     </Button>
                                 </div>
@@ -773,7 +986,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                     </div>
                 </div>
                 <div className="aliases-tab">
-                    <div className="card product-info--aliases">
+                    <div className="card min-height-600 product-info--aliases">
                         <h3 className='product-info__block-title title-small'>
                             <Icon name='aliases' />
                             Aliases
@@ -781,10 +994,10 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
+                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
                                         Remove
                                     </Button>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL}  onClick={() => appendAlias({ key: `barcode-${Date.now().toString()}`, selected: false, alias: '' })}>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
                                         Add
                                     </Button>
                                 </div>
@@ -794,6 +1007,64 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             <Table
                                 columns={getAliasesColumns(control)}
                                 dataSource={getValues('aliases')?.map((field, index) => ({ key: field.alias, ...field })) || []}
+                                pagination={false}
+                                rowKey="key"
+                            />
+
+                        </div>
+                    </div>
+                </div>
+                <div className="bundles-tab">
+                    <div className="card min-height-600 product-info--bundleKit">
+                        <h3 className='product-info__block-title title-small'>
+                            <Icon name='aliases' />
+                            Bundle kit
+                        </h3>
+                        <div className='product-info--aliases-btns'>
+                            <div className='grid-row'>
+                                <div className='product-info--table-btns small-paddings width-100'>
+                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
+                                        Remove
+                                    </Button>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:'' })}>
+                                        Add
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='product-info--table table-form-fields'>
+                            <Table
+                                columns={getBundlesColumns(control)}
+                                dataSource={getValues('bundleKit')?.map((field, index) => ({ key: `field.uuid-${Date.now().toString()}`, ...field })) || []}
+                                pagination={false}
+                                rowKey="key"
+                            />
+
+                        </div>
+                    </div>
+                </div>
+                <div className="analogues-tab">
+                    <div className="card min-height-600 product-info--analogues">
+                        <h3 className='product-info__block-title title-small'>
+                            <Icon name='aliases' />
+                            Analogues
+                        </h3>
+                        <div className='product-info--aliases-btns'>
+                            <div className='grid-row'>
+                                <div className='product-info--table-btns small-paddings width-100'>
+                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
+                                        Remove
+                                    </Button>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
+                                        Add
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='product-info--table table-form-fields'>
+                            <Table
+                                columns={getAnaloguesColumns(control)}
+                                dataSource={getValues('analogues')?.map((field, index) => ({ key: field.analogue, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
                             />

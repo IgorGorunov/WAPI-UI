@@ -41,6 +41,11 @@ export const PRODUCT = {
     aliasFields: {
         alias: 'alias',
     },
+    analogs: 'analogs',
+    analogFields: {
+        analog: 'analog',
+    }
+
 } as const;
 
 export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
