@@ -1,10 +1,30 @@
-import React from "react";
-import "./styles.scss";
+import React, { useCallback, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import FileDisplay from '@/components/FileDisplay';
+import './styles.scss';
 
-const Dropzone: React.FC = () => {
-    return <div className="dropzone">
-        I am a dropzone :)
-    </div>
-}
+const DropZone = () => {
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
-export default Dropzone;
+    const onDrop = useCallback((acceptedFiles) => {
+        const updatedFiles = acceptedFiles.map((file) => ({
+            name: file.name,
+            type: file.type.split('/')[0], // Вид файла (например, image, audio, video, pdf)
+        }));
+        setSelectedFiles((prevFiles) => [...prevFiles, ...updatedFiles]);
+    }, []);
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+    return (
+        <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
+            <input {...getInputProps()} />
+            <p>
+                Drop files here or click to select
+            </p>
+            {selectedFiles.length > 0 && <FileDisplay files={selectedFiles} />}
+        </div>
+    );
+};
+
+export default DropZone;

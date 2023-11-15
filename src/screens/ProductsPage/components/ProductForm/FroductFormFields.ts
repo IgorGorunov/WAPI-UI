@@ -237,7 +237,7 @@ export const FormFieldsAdditional2 = () => [
         {
             fieldType: FormFieldTypes.CHECKBOX,
             name: PRODUCT.packingBox,
-            label: "packing box",
+            label: "Packing box",
             width: WidthType.w50,
             classNames: "",
         },

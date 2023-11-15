@@ -26,6 +26,7 @@ import {verifyToken} from "@/services/auth";
 import {Routes} from "@/types/routes";
 import {getProductParameters, getProducts, sendProductInfo} from "@/services/products";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import DropZone from '@/components/Dropzone'
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -579,6 +580,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
         data.status = sendStatus;
 
+
         console.log("send: ", prepareProductDataForSending(data));
 
         try {
@@ -669,7 +671,9 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             <div className='additional-selects width-33'>
                                 <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
                             </div>
-                            <div className='dropzone width-33'></div>
+                            <div className='dropzone width-33'>
+                                <DropZone></DropZone>
+                            </div>
                             <div className='checkboxes width-33'>
                                 <div className='grid-row'>
                                     {additionalCheckboxes.map((curField, index) => (

@@ -1,0 +1,17 @@
+.dropzone {
+  border: 2px solid var(--color-light-gray);
+  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+  border-radius: 30px;
+  padding: 20px 20px 20px 20px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--color-gray-blue);
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.dropzone.active {
+  border-color: var(--color-blue);
+}

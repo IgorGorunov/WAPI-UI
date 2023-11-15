@@ -54,6 +54,11 @@ export type UnitOfMeasuresType = {
     width: number;
 }
 
+export type BundleKitType = {
+    uuid: string;
+    quantity: number;
+}
+
 export type SingleProductType = {
     uuid?: string;
     amazonSku: string;
@@ -79,4 +84,6 @@ export type SingleProductType = {
     whoProvideExtraPacking: string;
     aliases: string[];
     status: string;
+    bundleKit: BundleKitType[];
+    analogues: string[];
 }
