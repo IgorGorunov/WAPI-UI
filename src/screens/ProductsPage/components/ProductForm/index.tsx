@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {Controller, useFieldArray, useForm} from "react-hook-form";
-import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import {FormFieldTypes, WidthType} from "@/types/forms";
 import {COUNRTIES} from "@/types/countries";
 import "./styles.scss";
 import {useRouter} from "next/router";
@@ -884,8 +884,8 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             <div className='additional-selects width-33'>
                                 <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
                             </div>
-                            <div className='dropzone width-33'>
-                                <DropZone></DropZone>
+                            <div className='dropzoneBlock width-33'>
+                                <DropZone/>
                             </div>
                             <div className='checkboxes width-33'>
                                 <div className='grid-row'>

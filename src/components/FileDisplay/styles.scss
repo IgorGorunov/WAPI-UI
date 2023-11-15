@@ -1,0 +1,51 @@
+
+.file-display {
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.file-display ul {
+  list-style: none;
+  padding: 0;
+}
+
+.file-display li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.file-icon {
+  margin-right: 8px;
+  color: var(--color-blue);
+  font-size: 24px;
+}
+
+.file-display span {
+  margin-right: 8px;
+  color: var(--color-gray-blue);
+  word-break: break-all;
+}
+
+.delete-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10000;
+  margin-left: auto;
+}
+
+.open-file-button {
+  background-color: var(--color-white);
+  color: var(--color-gray-blue);
+  border-radius: 16px;
+  border: 2px solid var(--color-gray2);
+  cursor: pointer;
+  margin-top: 10px;
+  z-index: 10000;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 30px;
+  padding: 5px 10px 5px 10px;
+  width: 100px;
+}
