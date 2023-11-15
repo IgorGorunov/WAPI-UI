@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useState, useEffect, useCallback, useMemo} from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
@@ -14,6 +14,7 @@ import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {exportFileXLS} from "@/utils/files";
 import {ProductType, ProductParamsType, SingleProductType} from "@/types/products";
+import {OptionType} from "@/types/forms";
 import Modal from "@/components/Modal";
 import ProductForm from "@/screens/ProductsPage/components/ProductForm";
 import {toast, ToastContainer} from 'react-toastify';
@@ -56,6 +57,7 @@ const ProductsPage = () => {
 
             if (res && "data" in res) {
                 setProductsData(res.data);
+                console.log("products: ", res.data);
                 setUuid(uuid);
                 setIsLoading(false);
             } else {
@@ -85,6 +87,14 @@ const ProductsPage = () => {
 
     const [filteredProducts, setFilteredProducts] = useState<ProductType[]>(productsData)
 
+    const productsAsOptions = useMemo(()=>{
+        const prods = productsData ? productsData.map(item => {
+            const sum = item.stock.reduce((sum: number, cur)=> sum+cur.available, 0);
+            return {...item, quantity: sum};
+        }) : [];
+        console.log("options: ", prods)
+        return prods;
+    },[productsData])
 
     const handleEditProduct = (uuid: string) => {
         // toast.warn("Under construction", {
@@ -111,6 +121,7 @@ const ProductsPage = () => {
             if (res && "data" in res) {
                 // res.data.uuid = uuid;
                 setSingleProductData(res.data);
+                setUuid(uuid);
                 setIsLoading(false);
                 setShowModal(true);
             } else {
@@ -190,7 +201,7 @@ const ProductsPage = () => {
                 </div>
                 {showModal &&
                     <Modal title={`${singleProductData ? 'Edit product': 'Add product'}`} onClose={onModalClose} >
-                        <ProductForm productParams={productParams} productData={singleProductData} uuid={uuid} closeProductModal={()=>{setShowModal(false);fetchData();}}/>
+                        <ProductForm productParams={productParams} productData={singleProductData} uuid={uuid} products={productsAsOptions} closeProductModal={()=>{setShowModal(false);fetchData();}}/>
                     </Modal>
                 }
             </Layout>
