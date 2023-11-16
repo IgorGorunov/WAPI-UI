@@ -23,10 +23,7 @@
     color: var(--color-gray-blue);
   }
 
-  &:disabled,
-  &[disabled]{
-    cursor: not-allowed;
-  }
+
 
   &-size {
     &-sm {
@@ -79,6 +76,18 @@
 
     &:hover {
       background-color: var(--color-blue-15);
+    }
+  }
+
+  &:disabled,
+  &[disabled]{
+    cursor: not-allowed;
+    background-color: var(--color-blue-15);
+    color: var(--color-gray-blue);
+    border-radius: 20px;
+    border: none;
+    &:hover {
+      background-color: var(--color-blue-5);
     }
   }
 }

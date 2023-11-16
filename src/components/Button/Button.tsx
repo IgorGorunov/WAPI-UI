@@ -17,6 +17,7 @@ export const enum ButtonForm {
 export const enum ButtonVariant {
   PRIMARY = 'primary',
   SECONDARY = 'secondary',
+
 }
 
 export type ButtonType = ComponentProps<"button"> & {

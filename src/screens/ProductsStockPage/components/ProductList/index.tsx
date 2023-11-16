@@ -146,7 +146,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
         {
             title: <TitleColumn title="Name" width="90px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="90px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+                <TableCell value={text} width="90px" contentPosition="start"/>
             ),
             dataIndex: 'name',
             key: 'name',
@@ -282,6 +282,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                     dataSource={filteredProducts.slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
+                    scroll={{ y: 600 }}
                 />
             </div>
             <div className={'custom-pagination'}>

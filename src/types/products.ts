@@ -59,6 +59,11 @@ export type BundleKitType = {
     quantity: number;
 }
 
+export type AttachedFilesType = {
+    fileName: string;
+    bynaryData: string;
+}
+
 export type SingleProductType = {
     uuid?: string;
     amazonSku: string;
@@ -86,4 +91,5 @@ export type SingleProductType = {
     status: string;
     bundleKit: BundleKitType[];
     analogues: string[];
+    attachedFiles: AttachedFilesType[];
 }

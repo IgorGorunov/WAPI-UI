@@ -465,6 +465,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
+                    scroll={{ y: 700 }}
                 />
             </div>
             <div className={'custom-pagination'}>
@@ -490,11 +491,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                             (() => {
                                 switch (hoveredColumn) {
                                     case 'productLines':
-                                        return 300;
+                                        return null;
                                     case 'status':
                                         return 800;
                                     default:
-                                        return 300;
+                                        return null;
                                 }
                             })()
                         }

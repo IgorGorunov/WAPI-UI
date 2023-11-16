@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
             ©2023 all rights reserved by – WAPI OÜ
           </p>
           <p className="address">
-            Kadaka tee 7, Mustamae linnaosa, Tallinn, 12915 EstoniaWAPI OÜ, Reg
+            Kadaka tee 7, Mustamae linnaosa, Tallinn, 12915 Estonia WAPI OÜ, Reg
             no. 14699305
           </p>
         </div>

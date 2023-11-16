@@ -45,7 +45,8 @@ type ProductPropsType = {
 const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, products, productParams, productData, closeProductModal}) => {
     //get parameters to setup form
 
-    const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending');
+    const [isDisabled, setIsDisabled] = useState((productData !== null))
+    // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
     console.log("uuid: ", uuid, products, productData)
 
@@ -773,7 +774,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
         setSelectAllAnalogues(false);
     }
 
-
+    const [selectedFilesData, setSelectedFilesData] = useState([]);
 
     /////////////////////////
     const prepareProductDataForSending = (data) => {
@@ -784,7 +785,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
             analogues: data.analogues.map(item => item.analogue).filter(item => item !== ""),
         }
     }
-    //
+
     const onSubmitForm = async (data: any) => {
         console.log("it is form submit ");
 
@@ -844,6 +845,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     const additionalFields = useMemo(()=> FormFieldsAdditional1({whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking)}), [])
     const additionalCheckboxes = useMemo(()=>FormFieldsAdditional2(), []);
 
+
     return <div className='product-info'>
         <form onSubmit={handleSubmit(onSubmitForm)}>
             <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogs']} classNames='inside-modal'>
@@ -885,7 +887,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
                             </div>
                             <div className='dropzoneBlock width-33'>
-                                <DropZone/>
+                                <DropZone />
                             </div>
                             <div className='checkboxes width-33'>
                                 <div className='grid-row'>
@@ -1074,6 +1076,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 </div>
             </Tabs>
             <div className='form-submit-btn'>
+                <Button type="button" disabled={false} onClick={()=>setIsDisabled(false)} variant={ButtonVariant.SECONDARY}>Edit</Button>
                 <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.SECONDARY}>Save as draft</Button>
                 <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} >Send to approve</Button>
             </div>

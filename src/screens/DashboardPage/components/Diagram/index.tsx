@@ -55,7 +55,7 @@ function hexToRgba(hex: string, opacity: number): string {
 }
 
 function getBackgroundColor(value: number): string {
-  if (value < 5) {
+  if (value < 3 ) {
     return "#5380F5";
   } else {
     return hexToRgba("#5380F5", 0.05);
