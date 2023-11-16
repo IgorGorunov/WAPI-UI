@@ -66,6 +66,12 @@ export type AttachedFilesType = {
     data: string;
 }
 
+export type StatusHistoryType = {
+    date: string;
+    status: string;
+    comment: string;
+}
+
 export type SingleProductType = {
     uuid?: string;
     amazonSku: string;
@@ -94,4 +100,5 @@ export type SingleProductType = {
     bundleKit: BundleKitType[];
     analogues: string[];
     attachedFiles: AttachedFilesType[];
+    statusHistory: StatusHistoryType[];
 }

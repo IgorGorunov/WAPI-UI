@@ -1,0 +1,40 @@
+.status-history {
+  margin-top: 24px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--color-gray-blue);
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  &__list {
+    list-style: none;
+    &-item {
+      display: flex;
+      font-size: 10px;
+      color: var(--color-gray-blue);
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  .date-column {
+    flex: 0 0 200px;
+    padding: 8px 12px;
+  }
+  .status-column {
+    flex: 0 0 200px;
+    padding: 10px 12px;
+  }
+  .comment-column {
+    flex: 1 1 auto;
+    padding: 8px 12px;
+  }
+
+  .highlight {
+    background-color: #FAFBFC;
+  }
+}
