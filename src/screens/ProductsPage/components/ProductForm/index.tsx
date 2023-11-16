@@ -774,8 +774,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
         setSelectAllAnalogues(false);
     }
 
-    const [selectedFilesData, setSelectedFilesData] = useState([]);
-
     /////////////////////////
     const prepareProductDataForSending = (data) => {
         return {
@@ -783,20 +781,23 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
             aliases: data.aliases.map(item => item.alias).filter(item => item !== ""),
             barcodes: data.barcodes.map(item => item.barcode).filter(item => item !== ""),
             analogues: data.analogues.map(item => item.analogue).filter(item => item !== ""),
+            attachedFiles: selectedFiles,
         }
     }
 
+    const [selectedFiles, setSelectedFiles] = useState(productData?.attachedFiles);
+    const handleFilesChange = (files) => {
+        setSelectedFiles(files);
+    };
+
     const onSubmitForm = async (data: any) => {
         console.log("it is form submit ");
-
         const isValid = await trigger();
         if (isValid) console.log("form is valid!", data);
 
         data.status = sendStatus;
 
-
         console.log("send: ", prepareProductDataForSending(data));
-
         try {
             setIsLoading(true);
             //verify token
@@ -887,7 +888,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
                             </div>
                             <div className='dropzoneBlock width-33'>
-                                <DropZone />
+                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} />
                             </div>
                             <div className='checkboxes width-33'>
                                 <div className='grid-row'>

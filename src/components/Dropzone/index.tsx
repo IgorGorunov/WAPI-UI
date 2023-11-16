@@ -1,21 +1,42 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import FileDisplay from '@/components/FileDisplay';
 import './styles.scss';
 
-const DropZone: React.FC = () => {
+const DropZone = ({ files, onFilesChange , readOnly = false}) => {
     const [selectedFiles, setSelectedFiles] = useState([]);
 
-    const onDrop = useCallback((acceptedFiles) => {
-        const updatedFiles = acceptedFiles.map((file) => ({
-            id: file.name,
-            name: file.name,
-            type: file.type.split('/')[0],
-        }));
-        setSelectedFiles((prevFiles) => [...prevFiles, ...updatedFiles]);
+    useEffect(() => {
+        if (files) {
+            setSelectedFiles(files);
+        }
     }, []);
 
+    const onDrop = useCallback(async (acceptedFiles) => {
+        if (readOnly) {
+            return;
+        }
+        const updatedFiles = await Promise.all(
+            acceptedFiles.map(async (file) => {
+                const arrayBuffer = await readFileAsArrayBuffer(file);
+                const base64String = arrayBufferToBase64(arrayBuffer);
+
+                return {
+                    id: file.name,
+                    name: file.name,
+                    type: file.type.split('/')[0],
+                    data: base64String,
+                };
+            })
+        );
+
+        setSelectedFiles((prevFiles) => [...prevFiles, ...updatedFiles]);
+    }, [readOnly]);
+
     const onFileDelete = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
+        if (readOnly) {
+            return;
+        }
         event.preventDefault();
 
         const updatedFiles = selectedFiles.filter((_, i) => i !== index);
@@ -29,8 +50,35 @@ const DropZone: React.FC = () => {
     };
 
     const openFileDialog = () => {
+        if (readOnly) {
+            return;
+        }
         document.getElementById('file-input')?.click();
     };
+
+    const readFileAsArrayBuffer = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(file);
+        });
+    };
+
+    const arrayBufferToBase64 = (arrayBuffer) => {
+        const bytes = new Uint8Array(arrayBuffer);
+        let binary = '';
+        for (let i = 0; i < bytes.length; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    };
+
+    useEffect(() => {
+        if (onFilesChange) {
+            onFilesChange(selectedFiles);
+        }
+    }, [selectedFiles, onFilesChange]);
 
     return (
         <div

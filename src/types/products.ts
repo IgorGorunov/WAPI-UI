@@ -60,8 +60,10 @@ export type BundleKitType = {
 }
 
 export type AttachedFilesType = {
-    fileName: string;
-    bynaryData: string;
+    id: string;
+    name: string;
+    type: string;
+    data: string;
 }
 
 export type SingleProductType = {
