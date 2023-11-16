@@ -465,7 +465,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
-                    scroll={{y:700}}
+                    scroll={{y:800}}
                 />
             </div>
             <div className={'custom-pagination'}>

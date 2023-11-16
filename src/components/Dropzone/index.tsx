@@ -35,10 +35,11 @@ const DropZone = ({ files, onFilesChange , readOnly = false}) => {
     }, [readOnly]);
 
     const onFileDelete = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
+        event.preventDefault();
         if (readOnly) {
             return;
         }
-        event.preventDefault();
+
 
         const updatedFiles = selectedFiles.filter((_, i) => i !== index);
         setSelectedFiles(updatedFiles);
@@ -47,10 +48,12 @@ const DropZone = ({ files, onFilesChange , readOnly = false}) => {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
     const handleDivClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
         event.stopPropagation();
     };
 
-    const openFileDialog = () => {
+    const openFileDialog = (event) => {
+        event.preventDefault();
         if (readOnly) {
             return;
         }
