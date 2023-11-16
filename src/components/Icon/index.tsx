@@ -33,6 +33,7 @@ import Aliases from '@/assets/icons/aliases.svg';
 import SuccessIcon from '@/assets/icons/success-icon.svg';
 import ErrorIcon from '@/assets/icons/error-icon.svg';
 import CloseInCircle from '@/assets/icons/close-in-circle.svg'
+import Upload from '@/assets/icons/upload.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -68,6 +69,7 @@ export const icons = {
   'success': SuccessIcon,
   'error': ErrorIcon,
   'close-in-circle': CloseInCircle,
+  'upload': Upload,
 };
 
 export type IconType = keyof typeof icons;

@@ -1,4 +1,3 @@
-// FileDisplay.js
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile, faFileImage, faFileAudio, faFileVideo, faFilePdf, faTimes } from '@fortawesome/free-solid-svg-icons';

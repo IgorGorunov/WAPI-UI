@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import FileDisplay from '@/components/FileDisplay';
 import './styles.scss';
+import Icon from '@/components/Icon'
 
 const DropZone = ({ files, onFilesChange , readOnly = false}) => {
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -81,19 +82,21 @@ const DropZone = ({ files, onFilesChange , readOnly = false}) => {
     }, [selectedFiles, onFilesChange]);
 
     return (
-        <div
-            {...getRootProps()}
-            onClick={handleDivClick}
-            className={`dropzone ${isDragActive ? 'active' : ''}`}
-        >
-            <input {...getInputProps()} id="file-input" />
-            <p>Drop file here or</p>
-            <button type="button" onClick={openFileDialog} className="open-file-button">
-                Select file
-            </button>
-            {selectedFiles.length > 0 && (
-                <FileDisplay files={selectedFiles} onFileDelete={onFileDelete} />
-            )}
+        <div onClick={handleDivClick} className="dropzone-container">
+            <div
+                {...getRootProps()}
+                onClick={handleDivClick}
+                className={`dropzone ${isDragActive ? 'active' : ''}`}
+            >
+                <input {...getInputProps()} id="file-input" />
+                {selectedFiles.length == 0 &&  (<div className="circle"  onClick={openFileDialog} >
+                    <Icon name='upload'/>
+                </div>)}
+                <p onClick={openFileDialog}>Drop files here</p>
+                {selectedFiles.length > 0 && (
+                    <FileDisplay files={selectedFiles} onFileDelete={onFileDelete} />
+                )}
+            </div>
         </div>
     );
 };

@@ -144,3 +144,10 @@
     transform: translateY(0);
   }
 }
+
+
+.ant-table-body {
+    table {
+      table-layout: auto !important;
+    }
+}

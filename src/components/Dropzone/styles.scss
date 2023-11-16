@@ -1,18 +1,28 @@
+.dropzone-container {
+  border: 1px solid var(--color-gray2);
+  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+  border-radius: 30px;
+  height: 100%;
+  width: 100%;
+  padding: 20px 20px 20px 20px;
+  position: relative;
+  display: flex;
+}
 .dropzone {
-    border: 2px solid var(--color-light-gray);
-    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-    border-radius: 30px;
-    padding: 20px 20px 20px 20px;
-    text-align: center;
-    cursor: pointer;
-    color: var(--color-gray-blue);
-    font-feature-settings: 'clig' off, 'liga' off;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 700;
-    height: 100%;
-    width: 100%;
-    background-color: var(--color-light-gray);
+
+  padding: 20px 20px 20px 20px;
+  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+  border-radius: 30px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--color-gray-blue);
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-light-gray);
 }
 
 .dropzone.active {
@@ -32,4 +42,30 @@
   width: 100px;
   padding-right: 10px;
   object-fit: cover;
+}
+
+.circle-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Выберите нужную высоту */
+}
+
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fa-icon {
+  color: #3498db; /* Подстройте цвет иконки */
+  font-size: 24px; /* Подстройте размер иконки */
 }

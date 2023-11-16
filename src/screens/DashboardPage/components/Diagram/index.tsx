@@ -55,11 +55,11 @@ function hexToRgba(hex: string, opacity: number): string {
 }
 
 function getBackgroundColor(value: number): string {
-  if (value < 3 ) {
+  if (value < 1 ) {
     return "#5380F5";
   } else {
     return hexToRgba("#5380F5", 0.05);
-  }
+   }
 }
 
 
@@ -153,7 +153,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
         },
         position: "right",
         grid: {
-
+          drawTicks: false,
         }
       },
       x: {

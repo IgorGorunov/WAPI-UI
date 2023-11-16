@@ -21,6 +21,7 @@ const TitleColumn: React.FC<TitleColumnProps> = ({ title, width, contentPosition
         cursor: cursor,
         gap: 5,
     };
+
     return (
         <div style={style}>
             {childrenBefore}
