@@ -200,7 +200,7 @@ const ProductsPage = () => {
                     {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
                 </div>
                 {showModal &&
-                    <Modal title={`${singleProductData ? 'Edit product': 'Add product'}`} onClose={onModalClose} >
+                    <Modal title={`${singleProductData ? 'Product': 'Product'}`} onClose={onModalClose} >
                         <ProductForm productParams={productParams} productData={singleProductData} uuid={uuid} products={productsAsOptions} closeProductModal={()=>{setShowModal(false);fetchData();}}/>
                     </Modal>
                 }
