@@ -26,7 +26,8 @@ import {verifyToken} from "@/services/auth";
 import {Routes} from "@/types/routes";
 import {getProductParameters, getProducts, sendProductInfo} from "@/services/products";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import DropZone from '@/components/Dropzone'
+import DropZone from '@/components/Dropzone';
+import StatusHistory from "./StatusHistory";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -204,6 +205,24 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             analogue: '',
                         }
                     ],
+            statusHistory:
+                productData && productData?.statusHistory && productData.statusHistory.length
+                    ? productData.statusHistory.map((status, index: number) => (
+                        {
+                            key: status || `status-${Date.now().toString()}_${index}`,
+                            date: status.date || '',
+                            status: status.status || '',
+                            comment: status.comment || '',
+                        }))
+                    : [
+                        {
+                            key: `status-${Date.now().toString()}`,
+                            date: '',
+                            status: '',
+                            comment: '',
+                        }
+                    ],
+
         }
     })
     const { fields, append, update, remove } = useFieldArray({ control, name: 'unitOfMeasures' });
@@ -512,15 +531,8 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     const removeBarcodes = () => {
         const newBarcodesArr = barcodes.filter(item => !item.selected);
         setValue('barcodes', newBarcodesArr);
-        // console.log("barcodes", barcodes, barcodes.length);
-        // for (let i=barcodes.length-1; i>=0; i-- ) {
-        //     if (barcodes[i].selected) removeBarcodes();
-        // }
-        console.log("barcodes: ",getValues('barcodes'));
-
         setSelectAllBarcodes(false);
     }
-
 
     //Aliases
     const aliases = watch('aliases');
@@ -594,7 +606,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
     const removeAliases = () => {
         setValue('aliases', aliases.filter(item => !item.selected ));
-
         setSelectAllAliases(false);
     }
 
@@ -849,7 +860,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
     return <div className='product-info'>
         <form onSubmit={handleSubmit(onSubmitForm)}>
-            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogs']} classNames='inside-modal'>
+            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogs', 'Status history']} classNames='inside-modal'>
                 <div className='primary-tab'>
                     <div className='card product-info--general'>
                         <h3 className='product-info__block-title'>
@@ -1020,7 +1031,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 <div className="bundles-tab">
                     <div className="card min-height-600 product-info--bundleKit">
                         <h3 className='product-info__block-title title-small'>
-                            <Icon name='aliases' />
+                            <Icon name='bundle' />
                             Bundle kit
                         </h3>
                         <div className='product-info--aliases-btns'>
@@ -1049,7 +1060,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 <div className="analogues-tab">
                     <div className="card min-height-600 product-info--analogues">
                         <h3 className='product-info__block-title title-small'>
-                            <Icon name='aliases' />
+                            <Icon name='analogues' />
                             Analogues
                         </h3>
                         <div className='product-info--aliases-btns'>
@@ -1073,6 +1084,15 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             />
 
                         </div>
+                    </div>
+                </div>
+                <div className="status-history-tab">
+                    <div className="card min-height-600 product-info--analogues">
+                        <h3 className='product-info__block-title'>
+                            <Icon name='history' />
+                            Status history
+                        </h3>
+                        <StatusHistory statusHistory={productData?.statusHistory} />
                     </div>
                 </div>
             </Tabs>
