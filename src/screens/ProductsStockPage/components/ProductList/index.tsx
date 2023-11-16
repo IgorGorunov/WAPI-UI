@@ -282,7 +282,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                     dataSource={filteredProducts.slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
-                    scroll={{y:600}}
+                    scroll={{y:800}}
                 />
             </div>
             <div className={'custom-pagination'}>
