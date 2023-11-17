@@ -18,14 +18,18 @@ const SelectField: React.FC<FieldPropsType> = ({
     errors,
     errorMessage,
     isSearchable=false,
+    isClearable = true,
     ...otherProps
 }) => {
 
     const handleChange = useCallback((selectedOption: OptionType) => {
-
+        console.log("is changed: ", selectedOption);
         if (selectedOption) {
             onChange(selectedOption.value);
+        } else {
+            onChange('');
         }
+
         //return onChange(selectedOption.value);
     } ,[] )
 
@@ -53,16 +57,7 @@ const SelectField: React.FC<FieldPropsType> = ({
                 required={!!isRequired}
                 classNamePrefix='select-field'
                 instanceId={`select-${name}`}
-                // name={name}
-                // ref={innerRef}
-                // options={options}
-                // value={selectedOption}
-                // placeholder={placeholder}
-                // //onChange={handleChange}
-                // className="select-field"
-                // required={isRequired}
-                // classNamePrefix='select-field'
-                // instanceId={`select-${name}`}
+                isClearable={isClearable}
             />
             {errorMessage && <p className="error">{errorMessage}</p>}
             {errors && name in errors ? (
