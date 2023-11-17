@@ -92,11 +92,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         }
     };
     const filteredProducts = useMemo(() => {
+        setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
         const filtered = products.filter(product => {
-            const matchesSearch = !searchTerm || Object.values(product).some(value =>
-                String(value).toLowerCase().includes(searchTermLower)
-            );
+            const matchesSearch = !searchTerm || Object.keys(product).some(key => {
+                const value = product[key];
+                return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
+            });
             const matchesStatus = filterStatus === 'All statuses' || product.status === filterStatus;
             return matchesSearch && matchesStatus;
         });

@@ -30,6 +30,10 @@
   border-color: var(--color-blue);
 }
 
+.file-details {
+  word-wrap: anywhere;
+}
+
 .file-list {
   display: flex;
   flex-wrap: wrap;

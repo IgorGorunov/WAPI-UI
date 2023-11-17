@@ -167,11 +167,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
 
     const filteredOrders = useMemo(() => {
+        setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
         return orders.filter(order => {
-            const matchesSearch = !searchTerm || Object.values(order).some(value =>
-                String(value).toLowerCase().includes(searchTermLower)
-            );
+            const matchesSearch = !searchTerm || Object.keys(order).some(key => {
+                const value = order[key];
+                return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
+            });
             const matchesStatus = filterStatus === '-All statuses-' ||
                 (filterStatus === '-Trouble statuses-' ? order.troubleStatusesExist : order.status === filterStatus);
             const matchesWarehouse = !filterWarehouse || filterWarehouse === '-All warehouses-' ||
