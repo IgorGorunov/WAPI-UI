@@ -860,7 +860,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
     return <div className='product-info'>
         <form onSubmit={handleSubmit(onSubmitForm)}>
-            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogs', 'Status history']} classNames='inside-modal'>
+            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogs', 'Status history', 'Files']} classNames='inside-modal'>
                 <div className='primary-tab'>
                     <div className='card product-info--general'>
                         <h3 className='product-info__block-title'>
@@ -895,14 +895,12 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             Additional
                         </h3>
                         <div className='grid-row'>
-                            <div className='additional-selects width-33'>
+                            <div className='additional-selects width-100 grid-row'>
                                 <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
                             </div>
-                            <div className='dropzoneBlock width-33'>
-                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} />
-                            </div>
-                            <div className='checkboxes width-33'>
-                                <div className='grid-row'>
+
+                            <div className='checkboxes width-100 grid-row'>
+
                                     {additionalCheckboxes.map((curField, index) => (
                                         <div key={curField.name} className={`${curField.width ? 'width-'+curField.width : ''}`}>
                                             <Controller name={curField.name} control={control} render={({field: {value, ...props}, fieldState: {error}}) => (
@@ -917,7 +915,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                             />
                                         </div>
                                     ))}
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -1093,6 +1091,17 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             Status history
                         </h3>
                         <StatusHistory statusHistory={productData?.statusHistory} />
+                    </div>
+                </div>
+                <div className='files-tab'>
+                    <div className="card min-height-600 product-info--files">
+                        <h3 className='product-info__block-title'>
+                            <Icon name='aliases' />
+                            Files
+                        </h3>
+                        <div className='dropzoneBlock'>
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} />
+                        </div>
                     </div>
                 </div>
             </Tabs>

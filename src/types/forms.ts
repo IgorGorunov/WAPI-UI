@@ -50,7 +50,8 @@ export const enum WidthType {
   w50 = "50",
   w33 = '33',
   w67 = '67',
-  w25 = '25'
+  w25 = '25',
+  w17 = '17',
 }
 
 export type FieldPropsType = {
