@@ -37,6 +37,8 @@ import Upload from '@/assets/icons/upload.svg'
 import Bundle from '@/assets/icons/bundle.svg'
 import History from '@/assets/icons/history.svg'
 import Analogues from '@/assets/icons/analogues.svg'
+import Files from '@/assets/icons/files.svg'
+import Delete from '@/assets/icons/delete.svg'
 
 
 export const icons = {
@@ -76,7 +78,9 @@ export const icons = {
   'upload': Upload,
   'bundle': Bundle,
   'history': History,
-  'analogues': Analogues
+  'analogues': Analogues,
+  'files': Files,
+  'delete': Delete,
 };
 
 export type IconType = keyof typeof icons;

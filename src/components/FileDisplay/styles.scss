@@ -1,51 +1,36 @@
-
 .file-display {
-  padding: 10px;
-  margin-top: 10px;
-}
-
-.file-display ul {
-  list-style: none;
-  padding: 0;
-}
-
-.file-display li {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.file-item {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  padding: 20px;
+  border: 1px solid var(--color-white);
+  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+  background-color: white;
+  height: 200px;
+  width: 150px;
+  border-radius: 8px;
+  margin-right: 30px;
+  margin-top: 20px;
 }
 
 .file-icon {
-  margin-right: 8px;
-  color: var(--color-blue);
-  font-size: 24px;
+    color: var(--color-blue);
+    font-size: 48px;
 }
 
-.file-display span {
-  margin-right: 8px;
-  color: var(--color-gray-blue);
-  word-break: break-all;
+.file-details {
+  display: flex;
+  flex-direction: column;
 }
 
 .delete-button {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 10000;
-  margin-left: auto;
-}
-
-.open-file-button {
-  background-color: var(--color-white);
-  color: var(--color-gray-blue);
-  border-radius: 16px;
-  border: 2px solid var(--color-gray2);
-  cursor: pointer;
-  margin-top: 10px;
-  z-index: 10000;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 30px;
-  padding: 5px 10px 5px 10px;
-  width: 100px;
+  border-radius: 4px;
+  background-color: var(--color-blue-5);
 }

@@ -920,6 +920,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         </div>
                     </div>
                 </div>
+
                 <div className="dimensions-tab">
                     <div className="card min-height-600 product-info--unitOfMeasures">
                         <h3 className='product-info__block-title'>
@@ -1096,7 +1097,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 <div className='files-tab'>
                     <div className="card min-height-600 product-info--files">
                         <h3 className='product-info__block-title'>
-                            <Icon name='aliases' />
+                            <Icon name='files' />
                             Files
                         </h3>
                         <div className='dropzoneBlock'>
