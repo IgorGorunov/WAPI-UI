@@ -29,7 +29,7 @@ const Checkbox: React.FC<FieldPropsType> = ({
           id={`${name}-checkbox`}
           checked={!!value || checked}
           onChange={onChange}
-          // ref={innerRef}
+          onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
         />
         {label && <span>{label}</span>}
       </label>

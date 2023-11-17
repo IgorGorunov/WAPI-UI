@@ -177,7 +177,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 productData && productData?.bundleKit && productData.bundleKit.length
                     ? productData.bundleKit.map((bundle, index: number) => (
                         {
-                            key: bundle || `bundle-${Date.now().toString()}_${index}`,
+                            key: bundle.uuid || `bundle-${Date.now().toString()}_${index}`,
                             selected: false,
                             uuid: bundle.uuid || '',
                             quantity: bundle.quantity || '',
@@ -859,7 +859,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
 
     return <div className='product-info'>
-        <form onSubmit={handleSubmit(onSubmitForm)}>
+        <form onSubmit={handleSubmit(onSubmitForm)} >
             <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogs', 'Status history', 'Files']} classNames='inside-modal'>
                 <div className='primary-tab'>
                     <div className='card product-info--general'>
@@ -894,29 +894,26 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                             <Icon name='additional' />
                             Additional
                         </h3>
-                        <div className='grid-row'>
-                            <div className='additional-selects width-100 grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
-                            </div>
 
-                            <div className='checkboxes width-100 grid-row'>
+                        <div className='additional-selects grid-row'>
+                            <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
+                        </div>
 
-                                    {additionalCheckboxes.map((curField, index) => (
-                                        <div key={curField.name} className={`${curField.width ? 'width-'+curField.width : ''}`}>
-                                            <Controller name={curField.name} control={control} render={({field: {value, ...props}, fieldState: {error}}) => (
-                                                <FieldBuilder
-                                                    {...props}
-                                                    label={curField.label}
-                                                    fieldType={curField.fieldType}
-                                                    errorMessage={error?.message}
-                                                    disabled={!!isDisabled}
-                                                    checked={!!value}
-                                                /> )}
-                                            />
-                                        </div>
-                                    ))}
-
-                            </div>
+                        <div className='checkboxes grid-row'>
+                            {additionalCheckboxes.map((curField, index) => (
+                                <div key={curField.name} className={`${curField.width ? 'width-'+curField.width : ''}`}>
+                                    <Controller name={curField.name} control={control} render={({field: {value, ...props}, fieldState: {error}}) => (
+                                        <FieldBuilder
+                                            {...props}
+                                            label={curField.label}
+                                            fieldType={curField.fieldType}
+                                            errorMessage={error?.message}
+                                            disabled={!!isDisabled}
+                                            checked={!!value}
+                                        /> )}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
