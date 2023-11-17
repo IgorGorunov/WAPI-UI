@@ -19,6 +19,9 @@ const FileDisplay = ({ files, onFileDelete }) => {
                 return faFile;
         }
     };
+    const ShowFile = (file) => {
+        console.log(file.data);
+    };
 
     return (
         <div className="file-display">
@@ -26,7 +29,7 @@ const FileDisplay = ({ files, onFileDelete }) => {
                 {files.map((file, index) => (
                     <li key={index}>
                         <FontAwesomeIcon icon={getFileIcon(file.type)} className="file-icon" />
-                        <span>{file.name}</span>
+                        <span onClick={() => ShowFile(file)}>{file.name}</span>
                         <button className='delete-button' onClick={() => onFileDelete(event, index)}>
                             <Icon name="close"/>
                         </button>
