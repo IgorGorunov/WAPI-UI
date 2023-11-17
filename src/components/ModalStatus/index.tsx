@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useEffect, useRef} from "react";
 import ReactDOM from "react-dom"
 import Icon from "@/components/Icon";
 import "./styles.scss";
@@ -17,6 +17,12 @@ const ModalStatus:React.FC<ModalStatusType> = ({isSuccess = false, title, subtit
         e.preventDefault();
         onClose();
     };
+
+    useEffect(() => {
+        if (isSuccess) {
+            setTimeout(()=>onClose(), 2000);
+        }
+    }, []);
 
     const modalContent = (
         <div className={`status-modal-overlay } ${classNames ? classNames : ''}`}>

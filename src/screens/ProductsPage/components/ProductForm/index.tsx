@@ -848,6 +848,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
         } catch (error) {
             console.error("Error fetching data:", error);
+        } finally {
             setIsLoading(false);
         }
     }
@@ -1094,7 +1095,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                                 pagination={false}
                                 rowKey="key"
                             />
-
                         </div>
                     </div>
                 </div>
