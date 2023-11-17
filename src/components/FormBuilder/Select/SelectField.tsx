@@ -53,7 +53,6 @@ const SelectField: React.FC<FieldPropsType> = ({
                 required={!!isRequired}
                 classNamePrefix='select-field'
                 instanceId={`select-${name}`}
-                onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                 // name={name}
                 // ref={innerRef}
                 // options={options}
