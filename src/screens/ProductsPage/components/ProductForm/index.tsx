@@ -28,6 +28,7 @@ import {getProductParameters, getProducts, sendProductInfo} from "@/services/pro
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
+import Skeleton from "@/components/Skeleton/Skeleton";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -177,7 +178,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 productData && productData?.bundleKit && productData.bundleKit.length
                     ? productData.bundleKit.map((bundle, index: number) => (
                         {
-                            key: bundle.uuid || `bundle-${Date.now().toString()}_${index}`,
+                            key: bundle || `bundle-${Date.now().toString()}_${index}`,
                             selected: false,
                             uuid: bundle.uuid || '',
                             quantity: bundle.quantity || '',
@@ -802,6 +803,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     };
 
     const onSubmitForm = async (data: any) => {
+        setIsLoading(true);
         console.log("it is form submit ");
         const isValid = await trigger();
         if (isValid) console.log("form is valid!", data);
@@ -810,7 +812,6 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
         console.log("send: ", prepareProductDataForSending(data));
         try {
-            setIsLoading(true);
             //verify token
             if (!await verifyToken(token)) {
                 console.log("token is wrong");
@@ -859,8 +860,24 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
 
     return <div className='product-info'>
-        <form onSubmit={handleSubmit(onSubmitForm)} >
-            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogs', 'Status history', 'Files']} classNames='inside-modal'>
+        {isLoading && (
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                zIndex: 1000
+            }}>
+                <Skeleton type="round" width="500px" height="300px" />
+            </div>
+        )}
+        <form onSubmit={handleSubmit(onSubmitForm)}>
+            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogues', 'Status history', 'Files']} classNames='inside-modal'>
                 <div className='primary-tab'>
                     <div className='card product-info--general'>
                         <h3 className='product-info__block-title'>
@@ -1093,7 +1110,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 <div className='files-tab'>
                     <div className="card min-height-600 product-info--files">
                         <h3 className='product-info__block-title'>
-                            <Icon name='aliases' />
+                            <Icon name='files' />
                             Files
                         </h3>
                         <div className='dropzoneBlock'>

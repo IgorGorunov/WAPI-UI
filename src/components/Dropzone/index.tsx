@@ -3,9 +3,11 @@ import { useDropzone } from 'react-dropzone';
 import FileDisplay from '@/components/FileDisplay';
 import './styles.scss';
 import Icon from '@/components/Icon'
+import Skeleton from "@/components/Skeleton/Skeleton";
 
 const DropZone = ({ files, onFilesChange , readOnly = false}) => {
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [isDragging, setIsDragging] = useState(false);
 
     useEffect(() => {
         if (files) {
@@ -17,6 +19,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false}) => {
         if (readOnly) {
             return;
         }
+        setIsDragging(true);
         const updatedFiles = await Promise.all(
             acceptedFiles.map(async (file) => {
                 const arrayBuffer = await readFileAsArrayBuffer(file);
@@ -31,6 +34,8 @@ const DropZone = ({ files, onFilesChange , readOnly = false}) => {
             })
         );
 
+        setIsDragging(false);
+
         setSelectedFiles((prevFiles) => [...prevFiles, ...updatedFiles]);
     }, [readOnly]);
 
@@ -40,12 +45,13 @@ const DropZone = ({ files, onFilesChange , readOnly = false}) => {
             return;
         }
 
-
         const updatedFiles = selectedFiles.filter((_, i) => i !== index);
         setSelectedFiles(updatedFiles);
     };
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop,
+    });
 
     const handleDivClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -86,6 +92,22 @@ const DropZone = ({ files, onFilesChange , readOnly = false}) => {
 
     return (
         <div onClick={handleDivClick} className="dropzone-container">
+            {isDragging && (
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    zIndex: 1000,
+                }}>
+                    <Skeleton type="loading" width="500px" height="300px" />
+                </div>
+            )}
             <div
                 {...getRootProps()}
                 onClick={handleDivClick}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faFileImage, faFileAudio, faFileVideo, faFilePdf, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faFile, faFileImage, faFileAudio, faFileVideo, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import './styles.scss';
 import Icon from '@/components/Icon';
 
@@ -19,23 +19,24 @@ const FileDisplay = ({ files, onFileDelete }) => {
                 return faFile;
         }
     };
+
     const ShowFile = (file) => {
         console.log(file.data);
     };
 
     return (
         <div className="file-display">
-            <ul>
-                {files.map((file, index) => (
-                    <li key={index}>
-                        <FontAwesomeIcon icon={getFileIcon(file.type)} className="file-icon" />
+            {files.map((file, index) => (
+                <div key={index} className="file-item">
+                    <FontAwesomeIcon icon={getFileIcon(file.type)} className="file-icon" />
+                    <div className="file-details">
                         <span onClick={() => ShowFile(file)}>{file.name}</span>
-                        <button className='delete-button' onClick={() => onFileDelete(event, index)}>
-                            <Icon name="close"/>
-                        </button>
-                    </li>
-                ))}
-            </ul>
+                    </div>
+                    <div className='delete-button' onClick={() => onFileDelete(event, index)}>
+                        <Icon name="delete"/>
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
