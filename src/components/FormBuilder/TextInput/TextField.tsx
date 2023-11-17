@@ -40,6 +40,7 @@ const TextField: React.FC<FieldPropsType> = ({
             onChange={handleChange}
             value={curVal || ""}
             disabled={disabled}
+            onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
             {...otherProps}
             //ref={innerRef}
           />
