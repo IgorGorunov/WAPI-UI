@@ -7,7 +7,6 @@ type PropsType = {
 };
 
 const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
-    console.log("history:", statusHistory)
 
     return (
         <div className="status-history">

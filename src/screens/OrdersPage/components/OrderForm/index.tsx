@@ -1,18 +1,20 @@
-import React, {useMemo, useState} from 'react';
+import React, {ChangeEvent, useEffect, useMemo, useState} from 'react';
 import {OrderParamsType, SingleOrderType, WarehouseType, OrderProductType} from "@/types/orders";
 import "./styles.scss";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import useAuth from "@/context/authContext";
-import {useForm} from "react-hook-form";
+import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
-import Button, {ButtonVariant} from "@/components/Button/Button";
+import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNRTIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
 import {DetailsFields, GeneralFields, ReceiverFields} from "@/screens/OrdersPage/components/OrderForm/OrderFormFields";
-import {OptionType} from "@/types/forms";
+import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
+import {Table} from "antd";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -30,11 +32,10 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     const [isDisabled, setIsDisabled] = useState(!!orderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
-    const [sendStatus, setSendStatus] = useState(SendStatusType.DRAFT);
 
     const { token, setToken } = useAuth();
     const countries = COUNRTIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
-    const warehouses = useMemo( () => orderParams?.warehouses.map((item: WarehouseType) => {return {label: item.warehouse, value: item.warehouse} as OptionType}), []);
+    const warehouses = useMemo( () => orderParams?.warehouses.map((item: WarehouseType) => {return {label: item.warehouse.trim(), value: item.warehouse.trim()} as OptionType}), []);
 
     //form
     const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
@@ -83,8 +84,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                             key: product.product.uuid || `product-${Date.now().toString()}_${index}`,
                             selected: false,
                             sku: product.product.sku || '',
-                            product: product.product.name || '',
-                            analogue: product.analogue.name || '',
+                            product: product.product.uuid || '',
+                            analogue: product.analogue.uuid || '',
                             quantity: product.quantity || '',
                             price: product.price || '',
                             discount: product.discount || '',
@@ -111,11 +112,276 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         }
     })
 
+    const { append: appendProduct, update: updateProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
+    const products = watch('products');
+    //const [productOptions, setProductOptions] = useState<string[]>([]);
+
+
+    //products
+    const [selectAllProducts, setSelectAllProducts] = useState(false);
+    const handleProductChange=(product, index) => {
+        const productSKU = product ? '12345' : "";
+        updateProduct(index, {...products[index], sku: productSKU});
+        console.log('updated: ', products);
+    }
+    const productOptions = useMemo(() =>{
+        return orderParams.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid}});
+    },[]);
+    const getProductColumns = (control: any) => {
+        return [
+            {
+                title: (
+                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                        <FieldBuilder
+                            name={'selectedAllUnits'}
+                            fieldType={FormFieldTypes.CHECKBOX}
+                            checked ={selectAllProducts}
+                            disabled={isDisabled}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                setSelectAllProducts(e.target.checked);
+                                // Update the values of all checkboxes in the form when "Select All" is clicked
+                                const values = getValues();
+                                const fields = values.products;
+                                fields &&
+                                fields.forEach((field, index) => {
+                                    setValue(`products.${index}.selected`, e.target.checked);
+                                });
+                            }}
+                        /></div>
+
+                ),
+                dataIndex: 'selected',
+                key: 'selected',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products.${index}.selected`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                                <FieldBuilder
+                                    name={'products.${index}.selected'}
+                                    fieldType={FormFieldTypes.CHECKBOX}
+                                    {...field}
+                                    disabled={isDisabled}
+                                />
+                            </div>
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'SKU',
+                dataIndex: 'sku',
+                key: 'sku',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`sku[${index}].name`}
+                        control={control}
+
+                        render={({ field }) => (
+                            <div style={{width: '130px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}].sku`}
+                                    fieldType={FormFieldTypes.TEXT}
+                                    {...field}
+                                    disabled={true}
+                                /></div>
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Product',
+                dataIndex: 'product',
+                key: 'product',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products[${index}].product`}
+                        control={control}
+
+                        render={({ field }) => (
+                            <div style={{width: '220px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}].product`}
+                                    fieldType={FormFieldTypes.SELECT}
+                                    {...field}
+                                    options={productOptions}
+                                    disabled={isDisabled}
+                                    //onChange={(newValue: string) => {field.onChange(newValue); handleProductChange(newValue, index)}}
+
+                                /></div>
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Analogue',
+                dataIndex: 'analogue',
+                key: 'analogue',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products[${index}].analogue`}
+                        control={control}
+
+                        render={({ field }) => (
+                            <div style={{width: '220px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}].product`}
+                                    fieldType={FormFieldTypes.SELECT}
+                                    {...field}
+                                    options={productOptions}
+                                    disabled={isDisabled}
+                                /></div>
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Quantity',
+                dataIndex: 'quantity',
+                key: 'quantity',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products[${index}].quantity`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '50px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}].quantity`}
+                                    fieldType={FormFieldTypes.NUMBER}
+                                    {...field}
+                                    disabled={isDisabled}
+                                /></div>
+
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Price',
+                dataIndex: 'price',
+                key: 'price',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products[${index}].width`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '50px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}].price`}
+                                    fieldType={FormFieldTypes.NUMBER}
+                                    {...field}
+                                    disabled={isDisabled}
+                                /></div>
+
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Discount',
+                dataIndex: 'discount',
+                key: 'discount',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products[${index}].discount`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '50px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}].discount`}
+                                    fieldType={FormFieldTypes.NUMBER}
+                                    {...field}
+                                    disabled={isDisabled}
+                                /></div>
+
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Tax',
+                dataIndex: 'tax',
+                key: 'tax',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products[${index}].tax`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '50px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}].tax`}
+                                    fieldType={FormFieldTypes.NUMBER}
+                                    {...field}
+                                    disabled={isDisabled}
+                                /></div>
+
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Total',
+                dataIndex: 'total',
+                key: 'total',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products[${index}].total`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '50px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}].tax`}
+                                    fieldType={FormFieldTypes.NUMBER}
+                                    {...field}
+                                    disabled={isDisabled}
+                                /></div>
+
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'COD (EUR)',
+                dataIndex: 'cod',
+                key: 'cod',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products[${index}].cod`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{width: '50px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}]cod`}
+                                    fieldType={FormFieldTypes.NUMBER}
+                                    {...field}
+                                    disabled={isDisabled}
+                                /></div>
+
+                        )}
+                    />
+                ),
+            },
+        ];
+    }
+
+    const removeProducts = () => {
+        setValue('products', products.filter(item => !item.selected));
+        setSelectAllProducts(false);
+    }
+
 
     //form fields
+    const warehouse = watch('warehouse');
+    const getCourierServices = (warehouse: string) => {
+        return orderParams.warehouses.filter((item:WarehouseType)=>item.warehouse.trim() || !warehouse).map((item:WarehouseType)=>{return {label: item.warehouse.trim(), value: item.warehouse.trim()} as OptionType})
+    }
+
+
     const generalFields = useMemo(()=> GeneralFields(), [])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses}), []);
+    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse)}), [warehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries}),[])
+
 
 
     const onSubmitForm = (data) => {
@@ -191,7 +457,36 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         </div>
                     </div>
                 </div>
-                <div className='product-tab'></div>
+                <div className='product-tab'>
+                    <div className="card min-height-600 order-info--products">
+                        <div className='  grid-row mb-md'>
+                            <h3 className='product-info__block-title width-50 '>
+                                <Icon name='goods' />
+                                Products
+                            </h3>
+                            <div className='product-info--products-btns width-50'>
+                                <div className='grid-row'>
+                                    <div className='order-info--table-btns small-paddings width-100'>
+                                        <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
+                                            Remove
+                                        </Button>
+                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, sku: '', product: '', analogue:'',quantity:'', price:'',discount:'',tax:'',total:'', cod:'' })}>
+                                            Add
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='order-info--table table-form-fields'>
+                            <Table
+                                columns={getProductColumns(control)}
+                                dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
+                                pagination={false}
+                                rowKey="key"
+                            />
+                        </div>
+                    </div>
+                </div>
                 <div className='services-tab'></div>
                 <div className='status-history-tab'>
                     <div className="card min-height-600 order-info--history">
@@ -207,8 +502,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
             <div className='form-submit-btn'>
                 <Button type="button" disabled={false} onClick={()=>setIsDisabled(false)} variant={ButtonVariant.SECONDARY}>Edit</Button>
-                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.SECONDARY}>Save as draft</Button>
-                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} >Send to approve</Button>
+                <Button type="submit" disabled={isDisabled}>Save</Button>
             </div>
 
         </form>
