@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_ENDPOINT = "https://ui.wapi.com/WAPI/hs/v1/UI";
+const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
 const getDasboardData = async (
   //token: string,

@@ -6,7 +6,7 @@ import toast from "react-simple-toasts";
 
 // import { Routes } from "@/types/routes";
 
-const API_URL = "https://ui.wapi.com/WAPI/hs/v1/UI";
+const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
 const api = axios.create({ baseURL: API_URL });
 
 api.interceptors.response.use(

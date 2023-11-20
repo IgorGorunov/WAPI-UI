@@ -1,7 +1,7 @@
 import axios from "axios";
 // import api from "./api";
 
-const API_ENDPOINT = "https://ui.wapi.com/WAPI/hs/v1/UI";
+const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
 const authenticate = async (login: string, password: string) => {
   try {
