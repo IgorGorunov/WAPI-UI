@@ -1,0 +1,35 @@
+.order-info {
+
+  width: 1090px;
+
+  .card {
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+
+  &__block-title {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 25px;
+    color: var(--color-gray-blue);
+    margin-bottom: 16px;
+
+    &.title-small {
+      margin-bottom: 0;
+    }
+
+    svg {
+      margin-right: 16px;
+    }
+  }
+
+
+  .form-submit-btn {
+    display: flex;
+    justify-content: flex-end;
+    gap: 22px;
+    margin-top: 30px;
+  }
+}

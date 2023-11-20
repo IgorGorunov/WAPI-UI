@@ -122,7 +122,6 @@ const ProductsPage = () => {
                 // res.data.uuid = uuid;
                 setSingleProductData(res.data);
                 setUuid(uuid);
-                setIsLoading(false);
                 setShowModal(true);
             } else {
                 console.error("API did not return expected data");
@@ -132,7 +131,7 @@ const ProductsPage = () => {
             console.error("Error fetching data:", error);
             setIsLoading(false);
         } finally {
-
+            setIsLoading(false);
         }
     };
 

@@ -6,6 +6,7 @@ export const enum FormFieldTypes {
   NUMBER = 'number',
   SELECT = 'select',
   TEXT = 'text',
+  DATE = 'date',
   CHECKBOX = 'checkbox',
 }
 
@@ -71,7 +72,7 @@ export type FieldPropsType = {
   disabled?: boolean
   // size?: SizeTypes.large | SizeTypes.medium | SizeTypes.small;
   innerRef?: RefType
-  value?: string | number | boolean;
+  value?: string | number | boolean | Date;
   checked?: boolean;
   onChange?: (event: ChangeEvent | ChangeEvent<HTMLInputElement> | string | OptionType) => void
   inputValue?: string

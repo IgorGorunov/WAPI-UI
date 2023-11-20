@@ -10,6 +10,7 @@ import Checkbox from "./Checkbox";
 const formComponentsMap = {
   [FormFieldTypes.TEXT]: TextField,
   [FormFieldTypes.NUMBER]: TextField,
+  [FormFieldTypes.DATE]: TextField,
   [FormFieldTypes.SELECT]: SelectField,
   [FormFieldTypes.CHECKBOX]: Checkbox,
 };
