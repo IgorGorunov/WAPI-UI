@@ -41,6 +41,8 @@ const SelectField: React.FC<FieldPropsType> = ({
         option => option?.label
     ,[])
 
+    // console.log("select: ", value, options);
+
     return (
         <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''}`}>
             {label && <label htmlFor={name}>{label}</label>}

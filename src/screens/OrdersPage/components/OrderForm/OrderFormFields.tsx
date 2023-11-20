@@ -65,7 +65,7 @@ export const GeneralFields = () => [
     }
 ];
 
-export const DetailsFields = ({warehouses}: { warehouses: OptionType[] }) => [
+export const DetailsFields = ({warehouses, courierServices}: { warehouses: OptionType[], courierServices: OptionType[] }) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -79,6 +79,20 @@ export const DetailsFields = ({warehouses}: { warehouses: OptionType[] }) => [
         width: WidthType.w25,
         classNames: "",
     },
+    {
+        fieldType: FormFieldTypes.SELECT,
+        type: "text",
+        name: ' courierService',
+        label: 'Courier service',
+        placeholder: "Select courier service",
+        // rules: {
+        //     required: "Warehouse couldn't be empty!",
+        // },
+        options: courierServices,
+        width: WidthType.w25,
+        classNames: "",
+    },
+
 
 ];
 
