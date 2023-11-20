@@ -1,7 +1,7 @@
 import axios from "axios";
 import {SingleProductType} from '@/types/products';
 
-const API_ENDPOINT = "https://first.wapi.com:4443/WAPI/hs/v1/UI";
+const API_ENDPOINT = "https://ui.wapi.com/WAPI/hs/v1/UI";
 
 const getProducts = async (
     //token: string,

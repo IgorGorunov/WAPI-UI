@@ -22,6 +22,7 @@ type OrderListType = {
     currentRange: DateRangeType;
     setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
     setFilteredOrders: React.Dispatch<React.SetStateAction<OrderType[]>>;
+    handleEditOrder(uuid: string): void;
 }
 
 const pageOptions = [
@@ -33,7 +34,7 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
-const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders}) => {
+const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -298,6 +299,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            onCell: (record, rowIndex) => {
+                return {
+                    onClick: () => handleEditOrder(record.uuid)
+                };
+            },
         },
         {
             title: <TitleColumn title="WH number" width="75px" contentPosition="start"/>,
