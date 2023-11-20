@@ -26,6 +26,7 @@ const getOrders = async (
 const getOrderData= async (
     //token: string,
     data: {
+        uuid: string;
         token: string;
     }
 ) => {
@@ -43,4 +44,23 @@ const getOrderData= async (
     }
 };
 
-export { getOrders, getOrderData};
+const getOrderParameters = async (
+
+    data: {
+        token: string;
+    }
+) => {
+    try {
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/GetOrderParameters`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+export { getOrders, getOrderData, getOrderParameters};

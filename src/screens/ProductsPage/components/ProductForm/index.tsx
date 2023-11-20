@@ -19,7 +19,7 @@ import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {createOptions} from "@/utils/selectOptions";
 import {Table} from 'antd';
-import FormFieldsBlock from "./FormFieldsBlock";
+import FormFieldsBlock from "@/components/FormFieldsBlock";
 import Tabs from "@/components/Tabs";
 import Icon from "@/components/Icon";
 import {verifyToken} from "@/services/auth";
@@ -1121,8 +1121,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
             </Tabs>
             <div className='form-submit-btn'>
                 <Button type="button" disabled={false} onClick={()=>setIsDisabled(false)} variant={ButtonVariant.SECONDARY}>Edit</Button>
-                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.SECONDARY}>Save as draft</Button>
-                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} >Send to approve</Button>
+                <Button type="submit" disabled={isDisabled} >Save</Button>
             </div>
         </form>
 

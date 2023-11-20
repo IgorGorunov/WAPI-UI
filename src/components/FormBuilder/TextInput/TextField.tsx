@@ -28,7 +28,8 @@ const TextField: React.FC<FieldPropsType> = ({
       if (onChange) onChange(value);
   } ,[] )
 
-    const curVal = value && (type === 'number') ? value as number : value as string;
+
+    const curVal = (type === 'number') ? value as number : type=== 'date' ? (value as string).substring(0,10) : value as string;
 
   return (
     <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''}`}>

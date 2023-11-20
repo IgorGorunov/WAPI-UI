@@ -299,11 +299,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
-            onCell: (record, rowIndex) => {
-                return {
-                    onClick: () => handleEditOrder(record.uuid)
-                };
-            },
+
         },
         {
             title: <TitleColumn title="WH number" width="75px" contentPosition="start"/>,
@@ -316,6 +312,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            onCell: (record, rowIndex) => {
+                return {
+                    onClick: () => handleEditOrder(record.uuid)
+                };
+            },
         },
         {
             title: <TitleColumn title="COD" width="60px" contentPosition="start"/>,

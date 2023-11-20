@@ -22,6 +22,7 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
                             fieldState: {error}
                         }) => (
                         <FieldBuilder
+                            disabled={!!isDisabled}
                             {...curField}
                             {...props}
                             name={curField.name}
@@ -31,7 +32,6 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
                             placeholder={curField.placeholder}
                             errorMessage={error?.message}
                             errors={errors}
-                            disabled={!!isDisabled}
                             isRequired={!!curField.rules || false}
                             classNames={curField.classNames}
                         /> )}

@@ -1,0 +1,47 @@
+.status-history {
+  margin-top: 24px;
+  margin-left: -28px;
+  margin-right: -28px;
+  &__header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--color-gray-blue);
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  &__list {
+    list-style: none;
+    &-item {
+      display: flex;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--color-gray-blue);
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  .date-column {
+    flex: 0 0 200px;
+    padding: 8px 12px 8px 0;
+    margin-left: 20px;
+  }
+  .status-column {
+    flex: 0 0 200px;
+    padding: 10px 12px;
+  }
+  .tracking-number-column {
+    flex: 0 0 200px;
+    padding: 10px 12px;
+  }
+  .comment-column {
+    flex: 1 1 auto;
+    padding: 8px 12px;
+  }
+
+  .highlight {
+    background-color: #FAFBFC;
+  }
+}
