@@ -500,7 +500,7 @@ export enum CountryCodes {
   "Zimbabwe" = "zw",
 }
 
-export const COUNRTIES = [
+export const COUNTRIES = [
   {label: "Afghanistan", value: "af"},
   {label: "AlandIslands", value: "ax"},
   {label: "Albania", value: "al"},

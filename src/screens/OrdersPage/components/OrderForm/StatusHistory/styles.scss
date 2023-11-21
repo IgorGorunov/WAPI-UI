@@ -1,4 +1,4 @@
-.status-history {
+.order-status-history {
   margin-top: 24px;
   margin-left: -28px;
   margin-right: -28px;
@@ -24,7 +24,7 @@
   }
 
   .date-column {
-    flex: 0 0 200px;
+    flex: 0 0 100px;
     padding: 8px 12px 8px 0;
     margin-left: 20px;
   }
@@ -33,13 +33,18 @@
     padding: 10px 12px;
   }
   .tracking-number-column {
-    flex: 0 0 200px;
+    flex: 0 0 150px;
     padding: 10px 12px;
   }
-  .comment-column {
-    flex: 1 1 auto;
+  .trouble-status-column {
+    flex: 1 1 100px;
     padding: 8px 12px;
   }
+  .comment-column {
+    flex: 0 0 500px;
+    padding: 8px 12px;
+  }
+
 
   .highlight {
     background-color: #FAFBFC;

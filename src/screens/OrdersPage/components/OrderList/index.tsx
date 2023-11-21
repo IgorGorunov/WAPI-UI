@@ -321,14 +321,18 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             title: <TitleColumn title="COD" width="60px" contentPosition="start"/>,
             render: (text: string, record) => {
-                const currencySymbol = getSymbolFromCurrency(record.codCurrency);
-                return (
-                    <TableCell
-                        value={`${text} ${currencySymbol}`}
-                        width="75px"
-                        contentPosition="start">
-                    </TableCell>
-                );
+                if (record.codCurrency) {
+                    const currencySymbol = getSymbolFromCurrency(record.codCurrency);
+                    return (
+                        <TableCell
+                            value={`${text} ${currencySymbol}`}
+                            width="75px"
+                            contentPosition="start">
+                        </TableCell>
+                    );
+                } else {
+                    return null;
+                }
             },
             dataIndex: 'codAmount',
             key: 'codAmount',

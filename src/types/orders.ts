@@ -53,6 +53,7 @@ export type OrderHistoryType = {
     status: string;
     trackingNumber: string;
     troubleStatus: string;
+    statusGroup: string;
 }
 
 export type OrderServiceType = {
@@ -77,7 +78,6 @@ export type SingleOrderType = {
     courierServiceTrackingNumber: string;
     courierServiceTrackingNumberCurrent: string;
     date: string;
-    exportReason: string;
     incomingDate: string;
     preferredCourierService: string;
     preferredCourierServiceMandatory: boolean;
@@ -98,7 +98,6 @@ export type SingleOrderType = {
     receiverPickUpID: string;
     receiverPickUpName: string;
     receiverZip: string;
-    selfCollect: boolean;
     status: string;
     statusAdditionalInfo: string;
     trackingLink: string;
@@ -108,6 +107,14 @@ export type SingleOrderType = {
     products: SingleOrderProductType[];
     statusHistory: OrderHistoryType[];
     services: OrderServiceType[];
+    attachedFiles: AttachedFilesType[];
+}
+
+export type AttachedFilesType = {
+    id: string;
+    name: string;
+    type: string;
+    data: string;
 }
 
 export type OrderProductType = {

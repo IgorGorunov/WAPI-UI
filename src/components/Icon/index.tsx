@@ -40,6 +40,7 @@ import Analogues from '@/assets/icons/analogues.svg'
 import Files from '@/assets/icons/files.svg'
 import Delete from '@/assets/icons/delete.svg'
 import Goods from '@/assets/icons/goods.svg'
+import Receiver from '@/assets/icons/receiver.svg'
 
 
 export const icons = {
@@ -83,6 +84,7 @@ export const icons = {
   'files': Files,
   'delete': Delete,
   'goods': Goods,
+  'receiver': Receiver,
 };
 
 export type IconType = keyof typeof icons;

@@ -21,6 +21,12 @@ const Skeleton = ({ type, width, height }) => {
         );
     }
 
+    if (type === 'files-uploading') {
+        return (
+            <span className="files-uploading">Files uploading...</span>
+        );
+    }
+
 
 
     return null;

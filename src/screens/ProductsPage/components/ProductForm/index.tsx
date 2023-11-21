@@ -1,7 +1,7 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {FormFieldTypes, WidthType} from "@/types/forms";
-import {COUNRTIES} from "@/types/countries";
+import {COUNTRIES} from "@/types/countries";
 import "./styles.scss";
 import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
@@ -72,7 +72,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     const [isLoading, setIsLoading] = useState(false);
     const [sendStatus, setSendStatus] = useState(SendStatusType.DRAFT);
 
-    const countryArr = COUNRTIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
+    const countryArr = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
     type ApiResponse = {
         data?: any;
@@ -853,7 +853,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
         }
     }
 
-    const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr}), [COUNRTIES])
+    const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr}), [COUNTRIES])
     const skuFields = useMemo(()=>FormFieldsSKU(), []);
     const warehouseFields = useMemo(()=>FormFieldsWarehouse({typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial:createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements)}),[productParams])
     const additionalFields = useMemo(()=> FormFieldsAdditional1({whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking)}), [])

@@ -6,15 +6,21 @@ import useAuth from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
-import {COUNRTIES} from "@/types/countries";
+import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
-import {DetailsFields, GeneralFields, ReceiverFields} from "@/screens/OrdersPage/components/OrderForm/OrderFormFields";
+import {
+    DetailsFields,
+    GeneralFields,
+    PickUpPointFields,
+    ReceiverFields
+} from "@/screens/OrdersPage/components/OrderForm/OrderFormFields";
 import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {Table} from "antd";
+import DropZone from "@/components/Dropzone";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -34,8 +40,28 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     const [isLoading, setIsLoading] = useState(false);
 
     const { token, setToken } = useAuth();
-    const countries = COUNRTIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
-    const warehouses = useMemo( () => orderParams?.warehouses.map((item: WarehouseType) => {return {label: item.warehouse.trim(), value: item.warehouse.trim()} as OptionType}), []);
+
+    const countries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
+
+    const warehouses = useMemo(() => {
+        if (orderParams?.warehouses) {
+            const uniqueWarehouses = orderParams.warehouses.filter(
+                (warehouse, index, self) =>
+                    index === self.findIndex(w => w.warehouse.trim() === warehouse.warehouse.trim())
+            );
+
+            const sortedWarehouses = uniqueWarehouses
+                .map((item: WarehouseType) => ({
+                    label: item.warehouse.trim(),
+                    value: item.warehouse.trim()
+                } as OptionType))
+                .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
+
+            return sortedWarehouses;
+        }
+
+        return [];
+    }, [orderParams?.warehouses]);
 
     //form
     const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
@@ -49,7 +75,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             courierServiceTrackingNumber: orderData?.courierServiceTrackingNumber || '',
             courierServiceTrackingNumberCurrent: orderData?.courierServiceTrackingNumberCurrent || '',
             date: orderData?.date || '',
-            exportReason: orderData?.exportReason || '',
             incomingDate: orderData?.incomingDate || '',
             preferredCourierService: orderData?.preferredCourierService || '',
             preferredCourierServiceMandatory: orderData?.preferredCourierServiceMandatory || false,
@@ -70,7 +95,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             receiverPickUpID: orderData?.receiverPickUpID || '',
             receiverPickUpName: orderData?.receiverPickUpName || '',
             receiverZip: orderData?.receiverZip || '',
-            selfCollect: orderData?.selfCollect || '',
             status: orderData?.status || '',
             statusAdditionalInfo: orderData?.statusAdditionalInfo || '',
             trackingLink: orderData?.trackingLink || '',
@@ -114,7 +138,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     const { append: appendProduct, update: updateProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
-    //const [productOptions, setProductOptions] = useState<string[]>([]);
 
 
     //products
@@ -198,18 +221,23 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                     <Controller
                         name={`products[${index}].product`}
                         control={control}
-
+                        defaultValue={record.product}
                         render={({ field }) => (
-                            <div style={{width: '220px'}}>
+                            <div style={{ width: '220px' }}>
                                 <FieldBuilder
                                     name={`products[${index}].product`}
                                     fieldType={FormFieldTypes.SELECT}
                                     {...field}
                                     options={productOptions}
                                     disabled={isDisabled}
-                                    //onChange={(newValue: string) => {field.onChange(newValue); handleProductChange(newValue, index)}}
-
-                                /></div>
+                                    onChange={(selectedValue) => {
+                                        field.onChange(selectedValue);
+                                        //console.log("1111", record);
+                                        //record.sku = selectedValue.sku;
+                                        //console.log("222", selectedValue);
+                                    }}
+                                />
+                            </div>
                         )}
                     />
                 ),
@@ -224,13 +252,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         control={control}
 
                         render={({ field }) => (
-                            <div style={{width: '220px'}}>
+                            <div style={{width: '200px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].product`}
-                                    fieldType={FormFieldTypes.SELECT}
+                                    fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     options={productOptions}
-                                    disabled={isDisabled}
+                                    disabled={true}
                                 /></div>
                         )}
                     />
@@ -342,7 +370,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 ),
             },
             {
-                title: 'COD (EUR)',
+                title: 'COD',
                 dataIndex: 'cod',
                 key: 'cod',
                 render: (text, record, index) => (
@@ -350,7 +378,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         name={`products[${index}].cod`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '50px'}}>
+                            <div style={{width: '70px'}}>
                                 <FieldBuilder
                                     name={`products[${index}]cod`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -370,19 +398,55 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         setSelectAllProducts(false);
     }
 
-
     //form fields
-    const warehouse = watch('warehouse');
+    const warehouse = watch('preferredWarehouse');
     const getCourierServices = (warehouse: string) => {
-        return orderParams.warehouses.filter((item:WarehouseType)=>item.warehouse.trim() || !warehouse).map((item:WarehouseType)=>{return {label: item.warehouse.trim(), value: item.warehouse.trim()} as OptionType})
-    }
+        if (orderParams?.warehouses) {
+            if (!warehouse.trim()) {
+                const uniqueCourierServices = Array.from(
+                    new Set(
+                        orderParams.warehouses
+                            .filter((item: WarehouseType) => item.courierService.trim() !== '')
+                            .map((item: WarehouseType) => item.courierService.trim())
+                    )
+                );
+
+                const sortedCourierServices = uniqueCourierServices
+                    .map((courierService: string) => ({
+                        label: courierService,
+                        value: courierService
+                    } as OptionType))
+                    .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
+
+                return sortedCourierServices;
+            } else {
+                const filteredWarehouses = orderParams.warehouses.filter(
+                    (item: WarehouseType) => item.warehouse.trim() === warehouse.trim()
+                );
+
+                const courierServicesForWarehouse = filteredWarehouses
+                    .map((item: WarehouseType) => ({
+                        label: item.courierService,
+                        value: item.courierService
+                    } as OptionType))
+                    .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
+
+                return courierServicesForWarehouse;
+            }
+        }
+
+        return [];
+    };
 
 
     const generalFields = useMemo(()=> GeneralFields(), [])
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse)}), [warehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries}),[])
-
-
+    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[])
+    const [selectedFiles, setSelectedFiles] = useState(orderData?.attachedFiles);
+    const handleFilesChange = (files) => {
+        setSelectedFiles(files);
+    };
 
     const onSubmitForm = (data) => {
         console.log("submit: ", data);
@@ -420,10 +484,10 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                     </div>
                     <div className='card order-info--details'>
                         <h3 className='order-info__block-title'>
-                            <Icon name='general' />
+                            <Icon name='additional' />
                             Details
                         </h3>
-                        <div className='grid-row'>
+                        <div className='grid-row check-box-bottom'>
                             <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors} isDisabled={isDisabled}/>
                         </div>
                     </div>
@@ -431,40 +495,31 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 <div className='delivery-tab'>
                     <div className='card order-info--receiver'>
                         <h3 className='order-info__block-title'>
-                            <Icon name='general' />
+                            <Icon name='receiver' />
                             Receiver
                         </h3>
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors} isDisabled={isDisabled}/>
                         </div>
                     </div>
-                    <div className='card order-info--receiver'>
+                    <div className='card order-info--pick-up-point'>
                         <h3 className='order-info__block-title'>
                             <Icon name='general' />
-                            Receiver
+                            Pick up point
                         </h3>
                         <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors} isDisabled={isDisabled}/>
-                        </div>
-                    </div>
-                    <div className='card order-info--receiver'>
-                        <h3 className='order-info__block-title'>
-                            <Icon name='general' />
-                            Receiver
-                        </h3>
-                        <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors} isDisabled={isDisabled}/>
+                            <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors} isDisabled={isDisabled}/>
                         </div>
                     </div>
                 </div>
                 <div className='product-tab'>
                     <div className="card min-height-600 order-info--products">
-                        <div className='  grid-row mb-md'>
-                            <h3 className='product-info__block-title width-50 '>
+                        <div className='grid-row mb-md'>
+                            <h3 className='order-info__block-title width-50 '>
                                 <Icon name='goods' />
                                 Products
                             </h3>
-                            <div className='product-info--products-btns width-50'>
+                            <div className='order-info--products-btns width-50'>
                                 <div className='grid-row'>
                                     <div className='order-info--table-btns small-paddings width-100'>
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
@@ -497,14 +552,23 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         <StatusHistory statusHistory={orderData?.statusHistory} />
                     </div>
                 </div>
-                <div className='files-tab'></div>
+                <div className='files-tab'>
+                    <div className="card min-height-600 order-info--files">
+                        <h3 className='order-info__block-title'>
+                            <Icon name='files' />
+                            Files
+                        </h3>
+                        <div className='dropzoneBlock'>
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} />
+                        </div>
+                    </div>
+                </div>
             </Tabs>
 
             <div className='form-submit-btn'>
                 <Button type="button" disabled={false} onClick={()=>setIsDisabled(false)} variant={ButtonVariant.SECONDARY}>Edit</Button>
                 <Button type="submit" disabled={isDisabled}>Save</Button>
             </div>
-
         </form>
 
 
