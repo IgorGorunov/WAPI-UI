@@ -1,4 +1,4 @@
-.order-status-history {
+.order-service {
   margin-top: 24px;
   margin-left: -28px;
   margin-right: -28px;
@@ -24,26 +24,43 @@
   }
 
   .date-column {
-    flex: 0 0 110px;
+    flex: 1 1 140px;
     padding: 8px 12px 8px 0;
     margin-left: 20px;
   }
-  .status-column {
-    flex: 0 0 200px;
+  .service-column {
+    flex: 1 1 140px;
+    padding: 10px 12px;
+  }
+  .quantity-column {
+    flex: 0 0 90px;
+    padding: 10px 12px;
+  }
+  .sale-price-column {
+    flex: 0 0 90px;
+    padding: 10px 12px;
+  }
+  .currency-column {
+    flex: 0 0 90px;
+    padding: 10px 12px;
+  }
+  .amount-column {
+    flex: 0 0 90px;
+    padding: 10px 12px;
+  }
+  .vol-weight-column {
+    flex: 0 0 90px;
     padding: 10px 12px;
   }
   .tracking-number-column {
     flex: 0 0 150px;
     padding: 10px 12px;
   }
-  .trouble-status-column {
-    flex: 1 1 100px;
-    padding: 8px 12px;
+  .sum-column {
+    flex: 0 0 90px;
+    padding: 10px 12px;
   }
-  .comment-column {
-    flex: 0 0 500px;
-    padding: 8px 12px;
-  }
+
 
 
   .highlight {

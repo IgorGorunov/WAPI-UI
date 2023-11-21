@@ -63,7 +63,7 @@ export const GeneralFields = () => [
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices}: { warehouses: OptionType[], courierServices: OptionType[] }) => [
+export const DetailsFields = ({warehouses, courierServices, handleCourierServiceChange}: { warehouses: OptionType[], courierServices: OptionType[] , handleCourierServiceChange: (a: string)=>void}) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -92,6 +92,7 @@ export const DetailsFields = ({warehouses, courierServices}: { warehouses: Optio
         options: courierServices,
         width: WidthType.w33,
         classNames: "",
+        onChange: handleCourierServiceChange,
     },
     {
         fieldType: FormFieldTypes.CHECKBOX,
@@ -268,15 +269,15 @@ export const PickUpPointFields = ({countries}: { countries: OptionType[] }) => [
         width: WidthType.w25,
         classNames: "",
     },
-    {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'receiverPickUpID',
-        label: 'ID',
-        placeholder: "",
-        width: WidthType.w25,
-        classNames: "",
-    },
+    // {
+    //     fieldType: FormFieldTypes.TEXT,
+    //     type: "text",
+    //     name: 'receiverPickUpID',
+    //     label: 'ID',
+    //     placeholder: "",
+    //     width: WidthType.w25,
+    //     classNames: "",
+    // },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",

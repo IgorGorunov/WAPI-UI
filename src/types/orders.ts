@@ -143,4 +143,14 @@ export type WarehouseType = {
 export type OrderParamsType = {
     products: OrderProductType[];
     warehouses: WarehouseType[];
+    currencies: string[];
+}
+
+export type PickupPointsType = {
+    address: string;
+    city: string;
+    country: string;
+    description: string;
+    id: string;
+    name: string;
 }
