@@ -24,10 +24,12 @@ const SelectField: React.FC<FieldPropsType> = ({
 
     const handleChange = useCallback((selectedOption: OptionType) => {
         console.log("is changed: ", selectedOption);
-        if (selectedOption) {
-            onChange(selectedOption.value);
-        } else {
-            onChange('');
+        if (onChange) {
+            if (selectedOption) {
+                onChange(selectedOption.value);
+            } else {
+                onChange('');
+            }
         }
 
         //return onChange(selectedOption.value);

@@ -25,6 +25,13 @@
     }
   }
 
+  &--order-btns {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-bottom: 8px;
+  }
+
   &--table {
     margin: 0 -28px;
 

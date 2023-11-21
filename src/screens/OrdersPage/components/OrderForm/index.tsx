@@ -1,6 +1,16 @@
-import React, {ChangeEvent, useEffect, useMemo, useState} from 'react';
-import {OrderParamsType, SingleOrderType, WarehouseType, OrderProductType} from "@/types/orders";
+import React, {ChangeEvent, useCallback, useMemo, useState} from 'react';
+import {
+    OrderParamsType,
+    OrderProductType,
+    SingleOrderType,
+    WarehouseType,
+    PickupPointsType,
+    SingleOrderProductType
+} from "@/types/orders";
 import "./styles.scss";
+import {useRouter} from "next/router";
+import {Routes} from "@/types/routes";
+import {verifyToken} from "@/services/auth";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import useAuth from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
@@ -8,19 +18,24 @@ import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
+import {getOrderPickupPoints, sendOrderData} from '@/services/orders';
 import {
     DetailsFields,
     GeneralFields,
     PickUpPointFields,
     ReceiverFields
 } from "@/screens/OrdersPage/components/OrderForm/OrderFormFields";
-import {FormFieldTypes, OptionType} from "@/types/forms";
+import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {Table} from "antd";
 import DropZone from "@/components/Dropzone";
+import {ApiResponseType} from '@/types/api';
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import Services from "./Services";
+
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -35,11 +50,24 @@ type OrderFormType = {
 
 const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderModal}) => {
     console.log('order data: ', orderData,'--', orderParams);
-
+    const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!orderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
+    const [isDraft, setIsDraft] = useState(false);
+    const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
 
     const { token, setToken } = useAuth();
+
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeSuccessModal = useCallback(()=>{
+        setShowStatusModal(false);
+        closeOrderModal();
+    }, []);
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
 
     const countries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
@@ -132,20 +160,62 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                             cod: '',
                         }
                     ],
-
         }
     })
 
     const { append: appendProduct, update: updateProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
+    const currencyOptions = useMemo(()=>{return orderParams && orderParams?.currencies.length ? createOptions(orderParams?.currencies) : []},[]);
+
+    //pickup points
+    const fetchPickupPoints = useCallback(async (courierService: string) => {
+        try {
+            setIsLoading(true);
+
+            if (!await verifyToken(token)) {
+                await Router.push(Routes.Login);
+            }
+
+            const res: ApiResponseType = await getOrderPickupPoints(
+                {token, courierService}
+            );
+
+            if (res && "data" in res) {
+                setCurPickupPoints(res.data)
+                console.log("pickup: ", res.data);
+            } else {
+                console.error("API did not return expected data");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    },[token]);
+    const createPickupOptions = () => {
+        if (curPickupPoints && curPickupPoints.length) {
+            return curPickupPoints.map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
+        }
+        return [];
+    }
+    const handlePickupPointData = (selectedOption: string) => {
+        const pickupPoints = curPickupPoints.filter((item:PickupPointsType)=>item.id===selectedOption);
+        if (pickupPoints.length) {
+            setValue('receiverPickUpName', pickupPoints[0].name );
+            setValue('receiverPickUpCountry', pickupPoints[0].country );
+            setValue('receiverPickUpCity', pickupPoints[0].city );
+            setValue('receiverPickUpAddress', pickupPoints[0].address );
+        }
+    }
 
 
     //products
+    const [curProducts, setCurProducts] = useState<SingleOrderProductType[]>(orderData?.products || [])
     const [selectAllProducts, setSelectAllProducts] = useState(false);
-    const handleProductChange=(product, index) => {
-        const productSKU = product ? '12345' : "";
-        updateProduct(index, {...products[index], sku: productSKU});
-        console.log('updated: ', products);
+
+    const getProductSku = (productUuid: string) => {
+        const product = orderParams.products.find(item => item.uuid === productUuid);
+        return product?.sku || '';
     }
     const productOptions = useMemo(() =>{
         return orderParams.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid}});
@@ -232,8 +302,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                     disabled={isDisabled}
                                     onChange={(selectedValue) => {
                                         field.onChange(selectedValue);
+                                        //handleProductChange(selectedValue,index)
                                         //console.log("1111", record);
-                                        //record.sku = selectedValue.sku;
+                                        const sku = getProductSku(selectedValue as string);
+                                        console.log("sku: ",getProductSku(selectedValue as string));
+                                        record.sku = getProductSku(selectedValue as string);
+                                        setValue(`products.${index}.sku`, sku)
                                         //console.log("222", selectedValue);
                                     }}
                                 />
@@ -434,22 +508,71 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 return courierServicesForWarehouse;
             }
         }
-
         return [];
     };
 
+    const handleCourierServiceChange = (selectedOption: string) => {
+        fetchPickupPoints(selectedOption);
+    }
 
     const generalFields = useMemo(()=> GeneralFields(), [])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse)}), [warehouse]);
+    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleCourierServiceChange: handleCourierServiceChange}), [warehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries}),[])
     const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[])
     const [selectedFiles, setSelectedFiles] = useState(orderData?.attachedFiles);
+
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
     };
 
-    const onSubmitForm = (data) => {
-        console.log("submit: ", data);
+    const onSubmitForm = async (data) => {
+        setIsLoading(true);
+        console.log("it is form submit ");
+        const isValid = await trigger();
+        if (isValid) console.log("form is valid!", data);
+
+        data.draft = isDraft;
+
+        try {
+            //verify token
+            if (!await verifyToken(token)) {
+                console.log("token is wrong");
+                await Router.push(Routes.Login);
+            }
+
+            const res: ApiResponseType = await sendOrderData(
+                {
+                    token: token,
+                    orderData: data
+                }
+            );
+
+            console.log("send response: ", res);
+
+            if (res && "status" in res) {
+                if (res?.status === 200) {
+                    //success
+                    setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Order is successfully ${ orderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setShowStatusModal(true);
+                }
+            } else if (res && 'response' in res ) {
+                const errResponse = res.response;
+                console.log('errorMessages1', errResponse)
+
+                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+                    const errorMessages = errResponse?.data.errorMessage;
+                    console.log('errorMessages', errorMessages)
+
+                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setShowStatusModal(true);
+                }
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return <div className='order-info'>
@@ -508,18 +631,62 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                             Pick up point
                         </h3>
                         <div className='grid-row'>
+                            <Controller
+                                key='receiverPickUpID'
+                                name='receiverPickUpID'
+                                control={control}
+                                render={(
+                                    {
+                                        field: { ...props},
+                                        fieldState: {error}
+                                    }) => (
+                                    <FieldBuilder
+                                        disabled={!!isDisabled}
+                                        {...props}
+                                        name='receiverPickUpID'
+                                        label='ID'
+                                        fieldType={curPickupPoints && curPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
+                                        options={createPickupOptions()}
+                                        placeholder={curPickupPoints && curPickupPoints.length ? 'Select' : ''}
+                                        errorMessage={error?.message}
+                                        errors={errors}
+                                        onChange={(selectedOption) => {
+                                            props.onChange(selectedOption);
+                                            curPickupPoints && curPickupPoints.length && handlePickupPointData(selectedOption as string);
+                                        }}
+                                        width={WidthType.w25}
+                                    /> )}
+                            />
                             <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors} isDisabled={isDisabled}/>
                         </div>
                     </div>
                 </div>
                 <div className='product-tab'>
                     <div className="card min-height-600 order-info--products">
+                        <h3 className='order-info__block-title '>
+                            <Icon name='goods' />
+                            Products
+                        </h3>
                         <div className='grid-row mb-md'>
-                            <h3 className='order-info__block-title width-50 '>
-                                <Icon name='goods' />
-                                Products
-                            </h3>
-                            <div className='order-info--products-btns width-50'>
+                            <div className='order-info--cod-currency width-25'>
+                                <Controller
+                                    name="codCurrency"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FieldBuilder
+                                            fieldType={FormFieldTypes.SELECT}
+                                            name='codCurrency'
+                                            label='Currency'
+                                            {...field}
+                                            options={currencyOptions}
+                                            placeholder="Select currency"
+                                            errors={errors}
+                                            disabled={isDisabled}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div className='order-info--order-btns width-75'>
                                 <div className='grid-row'>
                                     <div className='order-info--table-btns small-paddings width-100'>
                                         <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
@@ -535,14 +702,22 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         <div className='order-info--table table-form-fields'>
                             <Table
                                 columns={getProductColumns(control)}
-                                dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
+                                dataSource={curProducts?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
                             />
                         </div>
                     </div>
                 </div>
-                <div className='services-tab'></div>
+                <div className='services-tab'>
+                    <div className="card min-height-600 order-info--history">
+                        <h3 className='order-info__block-title'>
+                            <Icon name='bundle' />
+                            Services
+                        </h3>
+                        <Services services={orderData?.services} />
+                    </div>
+                </div>
                 <div className='status-history-tab'>
                     <div className="card min-height-600 order-info--history">
                         <h3 className='order-info__block-title'>
@@ -567,11 +742,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
             <div className='form-submit-btn'>
                 <Button type="button" disabled={false} onClick={()=>setIsDisabled(false)} variant={ButtonVariant.SECONDARY}>Edit</Button>
-                <Button type="submit" disabled={isDisabled}>Save</Button>
+                <Button type="submit" disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>
+                <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)} >Save</Button>
             </div>
         </form>
-
-
+        {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
     </div>
 }
 

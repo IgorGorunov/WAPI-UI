@@ -13,7 +13,9 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
     return <>
         {fieldsArray.map((curField) => (
             //<div key={curField.name}  className={`${curField.width ? 'width-'+curField.width : ''}`}>
+                curField.onChange ?
                 <Controller
+                    key={curField.name}
                     name={curField.name}
                     control={control}
                     render={(
@@ -34,9 +36,37 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
                             errors={errors}
                             isRequired={!!curField.rules || false}
                             classNames={curField.classNames}
+                            onChange={(selectedOption) => {
+                                props.onChange(selectedOption);
+                                curField.onChange(selectedOption);
+                            }}
                         /> )}
                     rules = {curField.rules}
-                />
+                /> : <Controller
+                        key={curField.name}
+                        name={curField.name}
+                        control={control}
+                        render={(
+                            {
+                                field: { ...props},
+                                fieldState: {error}
+                            }) => (
+                            <FieldBuilder
+                                disabled={!!isDisabled}
+                                {...curField}
+                                {...props}
+                                name={curField.name}
+                                label={curField.label}
+                                fieldType={curField.fieldType}
+                                options={curField.options}
+                                placeholder={curField.placeholder}
+                                errorMessage={error?.message}
+                                errors={errors}
+                                isRequired={!!curField.rules || false}
+                                classNames={curField.classNames}
+                            /> )}
+                        rules = {curField.rules}
+                    />
             //</div>
         ))}</>
 }

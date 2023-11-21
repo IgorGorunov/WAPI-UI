@@ -13,6 +13,13 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
         return StatusColors[statusText] || 'black';
     }, []);
 
+    const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        const hours = date.getHours().toString();
+        const mins = date.getMinutes().toString();
+        return `${date.toLocaleDateString()}  ${hours.length<2 ? '0':''}${hours}:${mins.length<2 ? '0':''}${mins}`;
+    }
+
     return (
         <div className="order-status-history">
             <div className="order-status-history__header">
@@ -32,7 +39,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                 index % 2 === 1 ? "highlight" : " "
                             }`}
                         >
-                            <div className='date-column'>{new Date(status.period).toLocaleDateString()}</div>
+                            <div className='date-column'>{formatDate(status.period)}</div>
                             <div className='status-column'>
                                 <span style={{
                                     borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,
