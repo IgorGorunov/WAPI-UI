@@ -702,7 +702,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         <div className='order-info--table table-form-fields'>
                             <Table
                                 columns={getProductColumns(control)}
-                                dataSource={curProducts?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
+                                dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
                             />
