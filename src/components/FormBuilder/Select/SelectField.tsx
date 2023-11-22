@@ -59,7 +59,6 @@ const SelectField: React.FC<FieldPropsType> = ({
                 onChange={handleChange} // Use the handleChange function to handle the change
                 isDisabled={!!disabled}
                 //required={!!isRequired}
-
                 classNamePrefix='select-field'
                 instanceId={`select-${name}`}
                 isClearable={isClearable}

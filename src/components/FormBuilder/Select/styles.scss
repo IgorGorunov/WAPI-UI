@@ -152,9 +152,13 @@
         background-color: transparent!important;
       }
 
-     .has-error & {
-       border: 2px solid var(--color-error) !important;
-     }
+
+    }
+  }
+
+  &.has-error {
+    .select-field__control {
+      border: 2px solid var(--color-error) !important;
     }
   }
 
