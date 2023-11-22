@@ -4,8 +4,7 @@ import {
     OrderProductType,
     SingleOrderType,
     WarehouseType,
-    PickupPointsType,
-    SingleOrderProductType
+    PickupPointsType
 } from "@/types/orders";
 import "./styles.scss";
 import {useRouter} from "next/router";
@@ -36,12 +35,6 @@ import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
 
-
-const enum SendStatusType {
-    DRAFT = 'draft',
-    PENDING = 'pending',
-}
-
 type OrderFormType = {
     orderData?: SingleOrderType;
     orderParams?: OrderParamsType;
@@ -56,7 +49,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     const [isDraft, setIsDraft] = useState(false);
     const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
 
-    const { token, setToken } = useAuth();
+    const { token } = useAuth();
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -78,14 +71,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                     index === self.findIndex(w => w.warehouse.trim() === warehouse.warehouse.trim())
             );
 
-            const sortedWarehouses = uniqueWarehouses
+            return uniqueWarehouses
                 .map((item: WarehouseType) => ({
                     label: item.warehouse.trim(),
                     value: item.warehouse.trim()
                 } as OptionType))
                 .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
-
-            return sortedWarehouses;
         }
 
         return [];
@@ -102,12 +93,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             courierService: orderData?.courierService || '',
             courierServiceTrackingNumber: orderData?.courierServiceTrackingNumber || '',
             courierServiceTrackingNumberCurrent: orderData?.courierServiceTrackingNumberCurrent || '',
-            date: orderData?.date || '',
+            date: orderData?.date || new Date().toISOString(),
             incomingDate: orderData?.incomingDate || '',
             preferredCourierService: orderData?.preferredCourierService || '',
             preferredCourierServiceMandatory: orderData?.preferredCourierServiceMandatory || false,
             preferredDeliveryDate: orderData?.preferredDeliveryDate || '',
-            preferredWarehouse: orderData?.preferredWarehouse || '',
+            preferredWarehouse: orderData?.preferredWarehouse || new Date().toISOString(),
             preferredWarehouseMandatory: orderData?.preferredWarehouseMandatory || '',
             receiverAddress: orderData?.receiverAddress || '',
             receiverCity: orderData?.receiverCity || '',
@@ -163,7 +154,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         }
     })
 
-    const { append: appendProduct, update: updateProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
+    const { append: appendProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
     const currencyOptions = useMemo(()=>{return orderParams && orderParams?.currencies.length ? createOptions(orderParams?.currencies) : []},[]);
 
@@ -210,7 +201,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
 
     //products
-    const [curProducts, setCurProducts] = useState<SingleOrderProductType[]>(orderData?.products || [])
     const [selectAllProducts, setSelectAllProducts] = useState(false);
 
     const getProductSku = (productUuid: string) => {
@@ -485,27 +475,23 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                     )
                 );
 
-                const sortedCourierServices = uniqueCourierServices
+                return uniqueCourierServices
                     .map((courierService: string) => ({
                         label: courierService,
                         value: courierService
                     } as OptionType))
                     .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
-
-                return sortedCourierServices;
             } else {
                 const filteredWarehouses = orderParams.warehouses.filter(
                     (item: WarehouseType) => item.warehouse.trim() === warehouse.trim()
                 );
 
-                const courierServicesForWarehouse = filteredWarehouses
+                return filteredWarehouses
                     .map((item: WarehouseType) => ({
                         label: item.courierService,
                         value: item.courierService
                     } as OptionType))
                     .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
-
-                return courierServicesForWarehouse;
             }
         }
         return [];
