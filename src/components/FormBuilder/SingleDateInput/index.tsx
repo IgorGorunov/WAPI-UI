@@ -1,9 +1,9 @@
-import React, {FormEvent, useCallback, useState} from "react";
+import React, { FormEvent, useCallback, useState } from "react";
+import { DateRangePicker } from "react-date-range";
+import "react-date-range/dist/styles.css"; // Импорт стилей
+import "react-date-range/dist/theme/default.css"; // Импорт темы по умолчанию
 import "./styles.scss";
-import {FieldPropsType} from "@/types/forms";
-import { Calendar } from "react-date-range";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
+import { FieldPropsType } from "@/types/forms";
 
 const SingleDateInput: React.FC<FieldPropsType> = ({
        classNames='',
