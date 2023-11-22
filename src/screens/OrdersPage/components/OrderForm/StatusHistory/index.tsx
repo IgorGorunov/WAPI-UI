@@ -25,7 +25,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
             <div className="order-status-history__header">
                 <div className='date-column'>Period</div>
                 <div className='status-column'>Status</div>
-                <div className='tracking-number-column'>Tracking number</div>
+                <div className='tracking-number-column'>Tracking #</div>
                 <div className='trouble-status-column'>Trouble status</div>
                 <div className='comment-column'>Additional information</div>
 

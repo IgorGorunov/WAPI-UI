@@ -67,7 +67,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
             type: "text",
             name: PRODUCT.countryOfOrigin,
             label: 'Country of origin',
-            placeholder: "Select country",
+            placeholder: "",
             rules: {
                 required: "Country of origin origin couldn't be empty!",
             },
@@ -81,6 +81,9 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
             type: "number",
             name: PRODUCT.purchaseValue,
             label: "Purchase value",
+            rules: {
+                required: "Purchase value of the product couldn't be empty!",
+            },
             placeholder: "0",
             width: WidthType.w25,
             classNames: "",

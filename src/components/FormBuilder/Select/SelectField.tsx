@@ -17,7 +17,7 @@ const SelectField: React.FC<FieldPropsType> = ({
     disabled = false,
     errors,
     errorMessage,
-    isSearchable=false,
+    isSearchable= true,
     isClearable = true,
     ...otherProps
 }) => {
