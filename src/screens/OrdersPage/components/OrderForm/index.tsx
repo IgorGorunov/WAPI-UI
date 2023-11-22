@@ -208,7 +208,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         return product?.sku || '';
     }
     const productOptions = useMemo(() =>{
-        return orderParams.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid}});
+        return orderParams.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
     },[]);
     const getProductColumns = (control: any) => {
         return [
