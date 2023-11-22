@@ -17,6 +17,7 @@ import {OrderParamsType, OrderType, SingleOrderType} from "@/types/orders";
 import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
 import OrderForm from "./components/OrderForm";
+import ImportFilesBlock from "@/components/ImportFilesBlock";
 
 type ApiResponse = {
     data: any;
@@ -34,6 +35,12 @@ const OrdersPage = () => {
     const [ordersData, setOrdersData,] = useState<any | null>(null);
     const [filteredOrders, setFilteredOrders] = useState<OrderType[]>(ordersData);
     const [isLoading, setIsLoading] = useState(true);
+
+    //import files modal
+    const [showImportModal, setShowImportModal] = useState(false);
+    const onImportModalClose = () => {
+        setShowImportModal(false);
+    }
 
     //single order data
     const [showOrderModal, setShowOrderModal] = useState(false);
@@ -138,7 +145,7 @@ const OrdersPage = () => {
         setShowOrderModal(true);
     }
     const handleImportXLS = () => {
-
+        setShowImportModal(true)
     }
 
     const handleExportXLS = () => {
@@ -187,6 +194,11 @@ const OrdersPage = () => {
             {showOrderModal &&
                 <Modal title={`Order`} onClose={onOrderModalClose} >
                     <OrderForm orderParams={orderParams} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>
+                </Modal>
+            }
+            {showImportModal &&
+                <Modal title={`Import xls`} onClose={onImportModalClose} >
+                    <ImportFilesBlock file='test.txt' isProducts={false} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }
         </Layout>

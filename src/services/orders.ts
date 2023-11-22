@@ -1,6 +1,6 @@
 import axios from "axios";
 import {SingleProductType} from "@/types/products";
-import {SingleOrderType} from "@/types/orders";
+import {SingleOrderType, AttachedFilesType} from "@/types/orders";
 
 const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
@@ -104,4 +104,24 @@ const sendOrderData = async (
     }
 };
 
-export { getOrders, getOrderData, getOrderParameters, getOrderPickupPoints, sendOrderData};
+const sendOrderFiles = async (
+    data: {
+        files: AttachedFilesType[],
+        token: string;
+    }
+) => {
+    try {
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/BulkOrdersCreate`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+
+export { getOrders, getOrderData, getOrderParameters, getOrderPickupPoints, sendOrderData, sendOrderFiles};

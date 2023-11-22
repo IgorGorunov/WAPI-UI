@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Calendar } from "react-date-range";
-import "react-date-range/dist/styles.css"; // Импорт стилей
-import "react-date-range/dist/theme/default.css"; // Импорт темы по умолчанию
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import "./styles.scss";
 import { FieldPropsType } from "@/types/forms";
 import {formatDateToDisplayString} from '@/utils/date'
