@@ -15,6 +15,7 @@ export type TextFieldType = string
 export type OptionType = {
   value: string
   label: string
+  extraInfo?: string;
 }
 
 export type SelectFieldType = {
