@@ -4,13 +4,13 @@ import { FormFieldTypes, FormBuilderType } from "@/types/forms";
 
 import TextField from "./TextInput/TextField";
 import SelectField from "./Select/SelectField";
-//import SelectField from "../S";
+import SingleDateInput from "./SingleDateInput";
 import Checkbox from "./Checkbox";
 
 const formComponentsMap = {
   [FormFieldTypes.TEXT]: TextField,
   [FormFieldTypes.NUMBER]: TextField,
-  [FormFieldTypes.DATE]: TextField,
+  [FormFieldTypes.DATE]: SingleDateInput,
   [FormFieldTypes.SELECT]: SelectField,
   [FormFieldTypes.CHECKBOX]: Checkbox,
 };
