@@ -328,7 +328,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         render={({ field }) => (
                             <div style={{width: '200px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].product`}
+                                    name={`products[${index}].analogue`}
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     options={productOptions}
@@ -365,7 +365,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 key: 'price',
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].width`}
+                        name={`products[${index}].price`}
                         control={control}
                         render={({ field }) => (
                             <div style={{width: '50px'}}>
@@ -433,7 +433,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         render={({ field }) => (
                             <div style={{width: '50px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].tax`}
+                                    name={`products[${index}].total`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
@@ -454,7 +454,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         render={({ field }) => (
                             <div style={{width: '70px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}]cod`}
+                                    name={`products[${index}].cod`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
