@@ -108,6 +108,7 @@ export type SingleOrderType = {
     statusHistory: OrderHistoryType[];
     services: OrderServiceType[];
     attachedFiles: AttachedFilesType[];
+    canEdit: boolean;
 }
 
 export type AttachedFilesType = {

@@ -43,7 +43,7 @@ const SelectField: React.FC<FieldPropsType> = ({
         option => option?.label
     ,[])
 
-    // console.log("select: ", value, options);
+    console.log("select: ", name, errorMessage);
 
     return (
         <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''} ${disabled ? 'is-disabled' : ''}`}>
@@ -58,17 +58,14 @@ const SelectField: React.FC<FieldPropsType> = ({
                 placeholder={placeholder}
                 onChange={handleChange} // Use the handleChange function to handle the change
                 isDisabled={!!disabled}
-                required={!!isRequired}
+                //required={!!isRequired}
+
                 classNamePrefix='select-field'
                 instanceId={`select-${name}`}
                 isClearable={isClearable}
             />
             {errorMessage && <p className="error">{errorMessage}</p>}
-            {errors && name in errors ? (
-                <p className="error">
-                    {(errors && errors[name]?.message) || errorMessage}
-                </p>
-            ) : null}
+
         </div>
     );
 };
