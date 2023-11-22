@@ -9,23 +9,29 @@
       margin-bottom: 8px;
     }
 
-  &.required {
-    label {
-      position: relative;
-      &::after {
-        content: ' *';
+    &.required {
+      label {
+        position: relative;
+        &::after {
+          content: ' *';
+        }
       }
     }
-  }
 
-  &.searchable {
-    .select-field {
+    &.searchable {
+      .select-field {
 
-      &__input {
-        opacity: 1 !important;
+        &__input {
+          opacity: 1 !important;
+        }
       }
     }
-  }
+
+    &.is-disabled {
+        svg {
+          display: none;
+        }
+    }
 
 
   .select-field {

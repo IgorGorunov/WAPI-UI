@@ -28,8 +28,12 @@ const TextField: React.FC<FieldPropsType> = ({
       if (onChange) onChange(value);
   } ,[] )
 
+  const getDate = (dateStr: string) => {
+      const date = !dateStr ? new Date() : new Date(dateStr);
+      return date.toISOString().substring(0,10);
+  }
 
-    const curVal = (type === 'number') ? value as number : type=== 'date' ? (value as string).substring(0,10) : value as string;
+  const curVal = (type === 'number') ? value as number : type=== 'date' ? (getDate(value as string)) : value as string;
 
   return (
     <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''}`}>
