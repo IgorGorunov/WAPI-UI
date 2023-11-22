@@ -43,7 +43,14 @@ const SelectField: React.FC<FieldPropsType> = ({
         option => option?.label
     ,[])
 
-    console.log("select: ", name, errorMessage);
+    const CustomValueContainer = ({ children, ...props }: any) => (
+        <div className="select-field-val">
+            {props.hasValue && (
+                    props.getValue()[0].extraInfo ||  props.getValue()[0].label
+            )}
+        </div>
+    );
+    // console.log("select: ", name, errorMessage);
 
     return (
         <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''} ${disabled ? 'is-disabled' : ''}`}>
@@ -53,6 +60,7 @@ const SelectField: React.FC<FieldPropsType> = ({
                 value={options.find((option) => option.value === value) || null}
                 getOptionLabel={getOptionLabel}
                 getOptionValue={getOptionValue}
+                components={{ ValueContainer: CustomValueContainer }}
                 name={name}
                 options={options}
                 placeholder={placeholder}

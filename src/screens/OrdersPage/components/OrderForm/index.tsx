@@ -727,7 +727,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             </Tabs>
 
             <div className='form-submit-btn'>
-                <Button type="button" disabled={false} onClick={()=>setIsDisabled(!orderData.canEdit || !!orderData?.uuid)} variant={ButtonVariant.SECONDARY}>Edit</Button>
+                <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData.canEdit || !orderData?.uuid))} variant={ButtonVariant.SECONDARY}>Edit</Button>
                 <Button type="submit" disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>
                 <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)} >Save</Button>
             </div>

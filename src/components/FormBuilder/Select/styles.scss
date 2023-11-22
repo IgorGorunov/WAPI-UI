@@ -45,6 +45,15 @@
     margin-bottom: 4px;
     margin-left: -2px;
 
+    &-val {
+      color: var(--color-gray-blue) !important;
+      font-feature-settings: 'clig' off, 'liga' off;
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 700;
+      padding: 10px 10px 10px 10px;
+    }
+
     &-container {
       width: 200px;
     }
