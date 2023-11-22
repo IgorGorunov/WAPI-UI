@@ -1,9 +1,11 @@
-import React, { FormEvent, useCallback, useState } from "react";
-import { DateRangePicker } from "react-date-range";
+import React, { useState } from "react";
+import { Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css"; // Импорт стилей
 import "react-date-range/dist/theme/default.css"; // Импорт темы по умолчанию
 import "./styles.scss";
 import { FieldPropsType } from "@/types/forms";
+import {formatDateToDisplayString} from '@/utils/date'
+import Icon from "@/components/Icon";
 
 const SingleDateInput: React.FC<FieldPropsType> = ({
        classNames='',
@@ -14,7 +16,7 @@ const SingleDateInput: React.FC<FieldPropsType> = ({
        isRequired = false,
        placeholder = '',
        errorMessage,
-       disabled = false,
+       disabled ,
        value='',
        rules,
        errors,
@@ -23,22 +25,58 @@ const SingleDateInput: React.FC<FieldPropsType> = ({
 }) => {
 
     const getDate = (dateStr: string) => {
-        const date = !dateStr ? new Date() : new Date(dateStr);
-        return date.toISOString().substring(0,10);
+        return !dateStr ? new Date() : new Date(dateStr);
     }
-    //date from props in Date type
-    const curDate = getDate(value as string);
 
-    const handleChange = useCallback((event: FormEvent) => {
-        const {value} = event.target as HTMLInputElement;
-        if (onChange) onChange(value);
-    } ,[] )
+    const [selectedDate, setSelectedDate] = useState(getDate(value as string));
+    const [showCalendar, setShowCalendar] = useState(false);
+
+    const handleDateSelect = (date) => {
+        setSelectedDate(date);
+        setShowCalendar(false);
+        if (onChange) onChange(date.toISOString());
+    };
+
+    const CustomDateInput = () => {
+        // Your custom date input JSX here
+        return (
+            <div className='date-input__wrapper'>
+                <input
+                    type="text"
+                    value={formatDateToDisplayString(selectedDate)} readOnly onClick={()=>setShowCalendar((prevState) => !prevState)}
+                    id={name}
+                    placeholder={placeholder}
+                    disabled={disabled}
+                    onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                    {...otherProps}
+                />
+                <div className='calendar-icon' onClick={()=>setShowCalendar((prevState) => !prevState)}>
+                    <Icon name='calendar'  />
+                </div>
+            </div>);
+    };
+    console.log("is disabled: ", name, disabled)
 
     return (
         <div className={`form-control-date ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${disabled ? 'is-disabled' : ''}`}>
             {label && <label htmlFor={name}>{label}</label>}
             <div className='date-input'>
-                {/*<Calendar />*/}
+                {showCalendar && !disabled &&
+                    <div className='custom-calendar-wrapper'>
+                        <a href="#" className='close-calendar' onClick={()=>setShowCalendar(false)}>
+                            <Icon name='close' />
+                        </a>
+                        <Calendar
+                            className='custom-calendar'
+                            date={selectedDate}
+                            onChange={handleDateSelect}
+                            showDateDisplay={false}
+                            showMonthAndYearPickers={false}
+                            color="#5380F5"
+                        />
+                    </div>}
+                <CustomDateInput  />
+
             </div>
         </div>)
 
