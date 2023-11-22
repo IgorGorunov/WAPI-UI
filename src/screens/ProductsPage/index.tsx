@@ -21,6 +21,7 @@ import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/components/Toast/styles.scss'
 import {router} from "next/client";
+import ImportFilesBlock from "@/components/ImportFilesBlock";
 
 const ProductsPage = () => {
     const Router = useRouter();
@@ -36,6 +37,12 @@ const ProductsPage = () => {
     const [showModal, setShowModal] = useState(false);
 
     const [productParams, setProductParams] = useState<ProductParamsType|null>(null);
+
+    //import files modal
+    const [showImportModal, setShowImportModal] = useState(false);
+    const onImportModalClose = () => {
+        setShowImportModal(false);
+    }
 
     type ApiResponse = {
         data: any;
@@ -136,21 +143,12 @@ const ProductsPage = () => {
     };
 
     const handleAddProduct = () => {
-        // toast.warn("Under construction", {
-        //     position: "top-right",
-        //     autoClose: 1000,
-        // });
-        //
-        // //temporary
-        setSingleProductData(null);
+         setSingleProductData(null);
         setUuid(null);
         setShowModal(true);
     }
     const handleImportXLS = () => {
-        toast.warn("Under construction", {
-            position: "top-right",
-            autoClose: 1000,
-        });
+        setShowImportModal(true)
     }
 
     const handleExportXLS = () => {
@@ -201,6 +199,11 @@ const ProductsPage = () => {
                 {showModal &&
                     <Modal title={`${singleProductData ? 'Product': 'Product'}`} onClose={onModalClose} >
                         <ProductForm productParams={productParams} productData={singleProductData} uuid={uuid} products={productsAsOptions} closeProductModal={()=>{setShowModal(false);fetchData();}}/>
+                    </Modal>
+                }
+                {showImportModal &&
+                    <Modal title={`Import xls`} onClose={onImportModalClose} >
+                        <ImportFilesBlock file='test.txt' isProducts={true} closeModal={()=>setShowImportModal(false)}/>
                     </Modal>
                 }
             </Layout>
