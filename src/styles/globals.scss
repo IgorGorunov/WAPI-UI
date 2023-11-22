@@ -292,3 +292,9 @@ input {
 .check-box-bottom {
   align-items: end;
 }
+
+
+input[type="date"]::before {
+  content: '📅';
+  margin-right: 0.5em;
+}

@@ -6,10 +6,6 @@ import Button from "@/components/Button/Button";
 import { DateRangeType} from "@/types/dashboard";
 import "./styles.scss";
 
-// type DateRangeType = {
-//   startDate: Date;
-//   endDate: Date;
-// };
 
 type DatepickerPropsType = {
   initialRange: DateRangeType;

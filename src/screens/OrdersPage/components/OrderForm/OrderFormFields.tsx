@@ -259,15 +259,6 @@ export const PickUpPointFields = ({countries}: { countries: OptionType[] }) => [
         width: WidthType.w25,
         classNames: "",
     },
-    // {
-    //     fieldType: FormFieldTypes.TEXT,
-    //     type: "text",
-    //     name: 'receiverPickUpID',
-    //     label: 'ID',
-    //     placeholder: "",
-    //     width: WidthType.w25,
-    //     classNames: "",
-    // },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
