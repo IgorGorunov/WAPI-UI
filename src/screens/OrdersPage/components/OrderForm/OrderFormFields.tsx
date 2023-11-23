@@ -237,7 +237,10 @@ export const ReceiverFields = ({countries}: { countries: OptionType[] }) => [
         label: 'E-mail',
         placeholder: "",
         rules: {
-            required: "E-mail couldn't be empty!",
+            pattern: {
+                value: "^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$",
+                message: "please. enter valid email",
+            },
         },
         errorMessage: "E-mail couldn't be empty!",
         width: WidthType.w25,

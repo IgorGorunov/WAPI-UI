@@ -158,8 +158,8 @@
       }
 
       &--is-disabled {
-        //background-color: var(--color-blue-5);
-        background-color: transparent;
+        background-color: var(--color-light-gray) !important;
+        color: var(--color-gray-blue) !important;
       }
 
 
