@@ -518,7 +518,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         if (isValid) console.log("form is valid!", data);
 
         data.draft = isDraft;
-
+        data.attachedFiles= selectedFiles;
         try {
             //verify token
             if (!await verifyToken(token)) {
