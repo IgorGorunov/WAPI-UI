@@ -24,7 +24,7 @@ import Tabs from "@/components/Tabs";
 import Icon from "@/components/Icon";
 import {verifyToken} from "@/services/auth";
 import {Routes} from "@/types/routes";
-import {getProductParameters, getProducts, sendProductInfo} from "@/services/products";
+import {sendProductInfo} from "@/services/products";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
@@ -44,7 +44,7 @@ type ProductPropsType = {
     closeProductModal: ()=>void;
     products: {name: string; uuid: string; quantity: number }[];
 }
-const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, products, productParams, productData, closeProductModal}) => {
+const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal}) => {
     //get parameters to setup form
 
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
@@ -83,9 +83,9 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
         }
     };
 
-    const bundleOptions = useMemo(()=>{
-        return products.filter(item=>item.quantity>0).map(item=>{return{value:item.uuid, label:item.name}})
-    }, [products]);
+    // const bundleOptions = useMemo(()=>{
+    //     return products.filter(item=>item.quantity>0).map(item=>{return{value:item.uuid, label:item.name}})
+    // }, [products]);
 
     const analogueOptions = useMemo(()=>{
         return products.map(item=>{return{value:item.uuid, label:item.name}})
@@ -95,6 +95,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
     console.log("product data: ", productData);
 
     const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
+        mode: 'onSubmit',
         defaultValues: {
             [PRODUCT.uuid]: productData?.uuid || uuid || '',
             [PRODUCT.name]: productData?.name || '',
@@ -226,11 +227,11 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
 
         }
     })
-    const { fields, append, update, remove } = useFieldArray({ control, name: 'unitOfMeasures' });
-    const { fields: fieldsBarcodes, append: appendBarcode,  remove: removeBarcode } = useFieldArray({ control, name: 'barcodes' });
-    const { fields: fieldsAliases, append: appendAlias, remove: removeAlias } = useFieldArray({ control, name: 'aliases' });
-    const { fields: fieldsBundles, append: appendBundle, remove: removeBandle } = useFieldArray({ control, name: 'bundleKit' });
-    const { fields: fieldsAnalogues, append: appendAnalogue, remove: removeAnalogue } = useFieldArray({ control, name: 'analogues' });
+    const { append } = useFieldArray({ control, name: 'unitOfMeasures' });
+    const { append: appendBarcode } = useFieldArray({ control, name: 'barcodes' });
+    const { append: appendAlias } = useFieldArray({ control, name: 'aliases' });
+    const { append: appendBundle } = useFieldArray({ control, name: 'bundleKit' });
+    const { append: appendAnalogue } = useFieldArray({ control, name: 'analogues' });
     const unitOfMeasures = watch('unitOfMeasures');
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState<string[]>([]);
 
@@ -918,7 +919,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         </div>
 
                         <div className='checkboxes grid-row'>
-                            {additionalCheckboxes.map((curField, index) => (
+                            {additionalCheckboxes.map((curField) => (
                                 <div key={curField.name} className={`${curField.width ? 'width-'+curField.width : ''}`}>
                                     <Controller name={curField.name} control={control} render={({field: {value, ...props}, fieldState: {error}}) => (
                                         <FieldBuilder
@@ -975,7 +976,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         <div className='product-info--table table-form-fields'>
                             <Table
                                 columns={getUnitsColumns(control)}
-                                dataSource={getValues('unitOfMeasures')?.map((field, index) => ({ key: field.name, ...field })) || []}
+                                dataSource={getValues('unitOfMeasures')?.map((field) => ({ key: field.name, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
                             />
@@ -1004,7 +1005,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         <div className='product-info--table table-form-fields'>
                             <Table
                                 columns={getBarcodesColumns(control)}
-                                dataSource={getValues('barcodes')?.map((field, index) => ({ key: field.barcode, ...field })) || []}
+                                dataSource={getValues('barcodes')?.map((field) => ({ key: field.barcode, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
                             />
@@ -1033,7 +1034,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         <div className='product-info--table table-form-fields'>
                             <Table
                                 columns={getAliasesColumns(control)}
-                                dataSource={getValues('aliases')?.map((field, index) => ({ key: field.alias, ...field })) || []}
+                                dataSource={getValues('aliases')?.map((field) => ({ key: field.alias, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
                             />
@@ -1062,7 +1063,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         <div className='product-info--table table-form-fields'>
                             <Table
                                 columns={getBundlesColumns(control)}
-                                dataSource={getValues('bundleKit')?.map((field, index) => ({ key: `field.uuid-${Date.now().toString()}`, ...field })) || []}
+                                dataSource={getValues('bundleKit')?.map((field) => ({ key: `field.uuid-${Date.now().toString()}`, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
                             />
@@ -1091,7 +1092,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                         <div className='product-info--table table-form-fields'>
                             <Table
                                 columns={getAnaloguesColumns(control)}
-                                dataSource={getValues('analogues')?.map((field, index) => ({ key: field.analogue, ...field })) || []}
+                                dataSource={getValues('analogues')?.map((field) => ({ key: field.analogue, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
                             />

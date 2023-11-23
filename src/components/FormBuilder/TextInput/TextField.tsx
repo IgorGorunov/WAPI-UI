@@ -16,6 +16,7 @@ const TextField: React.FC<FieldPropsType> = ({
   value='',
   rules,
   errors,
+    needToasts=true,
   width,
    ...otherProps
 }) => {
@@ -33,13 +34,15 @@ const TextField: React.FC<FieldPropsType> = ({
   const curVal = (type === 'number') ? value as number : type=== 'date' ? (getDate(value as string)) : value as string;
 
   useEffect (()=> {
-      if (errorMessage) {
+      if (errorMessage && needToasts) {
           toast.warn(errorMessage, {
               position: "top-right",
               autoClose: 1000,
           });
       }
   },);
+
+  console.log('rules: ',rules);
 
   return (
     <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>

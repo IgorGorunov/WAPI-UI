@@ -84,6 +84,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     //form
     const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
+        mode: 'onSubmit',
         defaultValues: {
             clientOrderID: orderData?.clientOrderID || '',
             codAmount: orderData?.codAmount || '',
