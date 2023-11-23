@@ -1,5 +1,6 @@
-import React, {FormEvent, useCallback} from "react";
+import React, {FormEvent, useCallback, useEffect } from "react";
 import { FieldPropsType } from "@/types/forms";
+import {toast, ToastContainer} from '@/components/Toast';
 import "./styles.scss";
 
 const TextField: React.FC<FieldPropsType> = ({
@@ -12,19 +13,15 @@ const TextField: React.FC<FieldPropsType> = ({
   placeholder = '',
   errorMessage,
   disabled = false,
-  //innerRef,
   value='',
-  //registerInput,
   rules,
   errors,
   width,
-  // isFullWidth = false,
    ...otherProps
 }) => {
 
   const handleChange = useCallback((event: FormEvent) => {
       const {value} = event.target as HTMLInputElement;
-      // return onChange(value);
       if (onChange) onChange(value);
   } ,[] )
 
@@ -35,8 +32,18 @@ const TextField: React.FC<FieldPropsType> = ({
 
   const curVal = (type === 'number') ? value as number : type=== 'date' ? (getDate(value as string)) : value as string;
 
+  useEffect (()=> {
+      if (errorMessage) {
+          toast.warn(errorMessage, {
+              position: "top-right",
+              autoClose: 1000,
+          });
+      }
+  },);
+
   return (
     <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
+        <ToastContainer />
         {label && <label htmlFor={name}>{label}</label>}
           <input
             id={name}
@@ -47,7 +54,6 @@ const TextField: React.FC<FieldPropsType> = ({
             disabled={disabled}
             onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
             {...otherProps}
-            //ref={innerRef}
           />
         {errorMessage && <p className="error">{errorMessage}</p>}
       {errors && name in errors ? (
