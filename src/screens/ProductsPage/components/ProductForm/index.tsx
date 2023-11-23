@@ -47,7 +47,7 @@ type ProductPropsType = {
 const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, products, productParams, productData, closeProductModal}) => {
     //get parameters to setup form
 
-    const [isDisabled, setIsDisabled] = useState((productData !== null))
+    const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
     console.log("uuid: ", uuid, products, productData)
@@ -1120,7 +1120,7 @@ const ProductForm:React.FC<ProductPropsType> = ({isEdit= false, isAdd, uuid, pro
                 </div>
             </Tabs>
             <div className='form-submit-btn'>
-                <Button type="button" disabled={false} onClick={()=>setIsDisabled(false)} variant={ButtonVariant.SECONDARY}>Edit</Button>
+                <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.SECONDARY}>Edit</Button>
                 <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.SECONDARY}>Save as draft</Button>
                 <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} >Send to approve</Button>
             </div>

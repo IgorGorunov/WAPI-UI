@@ -101,4 +101,5 @@ export type SingleProductType = {
     analogues: string[];
     attachedFiles: AttachedFilesType[];
     statusHistory: StatusHistoryType[];
+    canEdit: boolean;
 }
