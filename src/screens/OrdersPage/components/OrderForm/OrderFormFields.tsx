@@ -1,7 +1,4 @@
-import React from 'react';
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
-import {PRODUCT} from "@/screens/ProductsPage/components/ProductForm/FroductFormFields";
-
 
 export const GeneralFields = () => [
     {
@@ -232,14 +229,15 @@ export const ReceiverFields = ({countries}: { countries: OptionType[] }) => [
     },
     {
         fieldType: FormFieldTypes.TEXT,
-        type: "text",
+        type: "email",
         name: 'receiverEMail',
         label: 'E-mail',
         placeholder: "",
         rules: {
-            pattern: {
-                value: "^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$",
-                message: "please. enter valid email",
+            validate: {
+                matchPattern: (v) =>
+                    v==='' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
+                    "Please, enter valid email address",
             },
         },
         errorMessage: "E-mail couldn't be empty!",

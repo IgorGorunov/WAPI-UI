@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {Controller, useForm} from "react-hook-form";
-import { FormBuilderType, FormFieldTypes } from "@/types/forms";
-import { authenticate } from "@/services/auth";
+import {FormBuilderType, FormFieldTypes, WidthType} from "@/types/forms";
+import {authenticate} from "@/services/auth";
 import Router from "next/router";
-import { Routes } from "@/types/routes";
+import {Routes} from "@/types/routes";
 import useAuth from "@/context/authContext";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Cookie from 'js-cookie';
@@ -16,20 +16,26 @@ const LoginForm: React.FC = () => {
   const formFields: FormBuilderType[] = [
     {
       fieldType: FormFieldTypes.TEXT,
-      type: "email",
+      type: "text",
       name: "login",
       label: "Your email",
       placeholder: "laithoff@gmail.com",
       rules: {
         required: "Email is required!",
-        pattern: {
-          value: "^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$",
-          message: "please. enter valid email",
+        // pattern: {
+        //   value: "^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$",
+        //   message: "please. enter valid email",
+        // },
+        validate: {
+          matchPattern: (v) =>
+             /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
+              "Please, enter valid email address",
         },
       },
       errorMessage: "Email is required!",
-      isFullWidth: true,
+      width: WidthType.w100,
       classNames: 'big-version',
+      needToasts: false,
     },
     {
       fieldType: FormFieldTypes.TEXT,
@@ -39,11 +45,15 @@ const LoginForm: React.FC = () => {
       placeholder: "********",
       rules: {
         required:  "Please, enter valid password!",
-        min: 8,
+        minLength: {
+          value: 3,
+          message: "Password has to be at least 3 symbols!"
+        },
       },
       errorMessage: "Please, enter valid password!",
-      isFullWidth: true,
+      width: WidthType.w100,
       classNames: 'big-version',
+      needToasts: false,
     },
   ];
 
@@ -55,8 +65,10 @@ const LoginForm: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    formState,
+  } = useForm({ mode: "onSubmit" });
+
+  console.log("form", formState);
 
   const handleFormSubmit = async (data: any) => {
     const { login, password } = data;

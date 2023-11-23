@@ -83,6 +83,7 @@ export type FieldPropsType = {
   options?: OptionType[]
   errors?: any;
   isClearable?: boolean;
+  needToasts?: boolean;
 }
 
 export type FormBuilderType = FieldPropsType & {
