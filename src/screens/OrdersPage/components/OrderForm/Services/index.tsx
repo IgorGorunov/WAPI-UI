@@ -19,7 +19,7 @@ const Services: React.FC<PropsType> = ({ services }) => {
                 <div className='date-column'>Date</div>
                 <div className='service-column'>Service</div>
                 <div className='quantity-column'>Quantity</div>
-                <div className='sale-price-column'>Sale price</div>
+                <div className='sale-price-column'>Price</div>
                 <div className='currency-column'>Currency</div>
                 <div className='amount-column'>Amount</div>
                 <div className='vol-weight-column'>Vol.weight</div>
