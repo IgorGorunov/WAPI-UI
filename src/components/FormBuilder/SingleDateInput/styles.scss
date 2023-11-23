@@ -80,6 +80,12 @@
     }
   }
 
+  &.is-disabled {
+    input {
+      background-color: var(--color-blue-5);
+    }
+  }
+
   &.big-version {
     label {
       margin-bottom: 12px;

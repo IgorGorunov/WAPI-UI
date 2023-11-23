@@ -36,7 +36,7 @@ const TextField: React.FC<FieldPropsType> = ({
   const curVal = (type === 'number') ? value as number : type=== 'date' ? (getDate(value as string)) : value as string;
 
   return (
-    <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''}`}>
+    <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
         {label && <label htmlFor={name}>{label}</label>}
           <input
             id={name}
