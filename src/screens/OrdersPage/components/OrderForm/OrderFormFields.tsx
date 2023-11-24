@@ -229,7 +229,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[] }) => [
     },
     {
         fieldType: FormFieldTypes.TEXT,
-        type: "email",
+        type: "text",
         name: 'receiverEMail',
         label: 'E-mail',
         placeholder: "",
@@ -243,6 +243,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[] }) => [
         errorMessage: "E-mail couldn't be empty!",
         width: WidthType.w25,
         classNames: "",
+        needToasts: false,
     },
     {
         fieldType: FormFieldTypes.TEXT,
