@@ -1,5 +1,11 @@
+@import '@/constants/devices.scss';
+
 .login {
   &__bg-logo {
-    position: absolute;
+    display: none;
+    @media (min-width: $mobile) {
+      display: block;
+      position: absolute;
+    }
   }
 }
