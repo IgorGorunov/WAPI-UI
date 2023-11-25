@@ -1,3 +1,5 @@
+@import '@/constants/devices.scss';
+
 .main {
   position: relative;
   display: flex;
@@ -17,7 +19,7 @@
     align-items: center;
     padding: 38px 28px;
 
-    @media (min-width: 1200px) {
+    @media (min-width: $laptop) {
       width: 1200px;
     }
   }
