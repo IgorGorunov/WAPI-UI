@@ -42,8 +42,6 @@ const TextField: React.FC<FieldPropsType> = ({
       }
   },);
 
-  console.log('rules: ',rules);
-
   return (
     <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
         <ToastContainer />

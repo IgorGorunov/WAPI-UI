@@ -34,7 +34,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
     }
 
     return (
-        <div className='main-header'>
+        <div className={`main-header`}>
             <div className = 'main-header__wrapper card'>
                 <div className='main-header__menu-block' onClick={handleClick}>
                     <div className='main-header__icon'>

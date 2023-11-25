@@ -108,7 +108,7 @@ const LoginForm: React.FC = () => {
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         {formFields.map((curField: any ) => (
 
-          <div key={curField.name}>
+          <div key={curField.name} className='grid-row'>
             <Controller
                 name={curField.name}
                 control={control}
