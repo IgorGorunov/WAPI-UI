@@ -3,7 +3,7 @@
 .login {
   &__bg-logo {
     display: none;
-    @media (min-width: $mobile) {
+    @media (min-width: $tablet) {
       display: block;
       position: absolute;
     }
