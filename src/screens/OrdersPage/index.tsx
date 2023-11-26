@@ -91,7 +91,6 @@ const OrdersPage = () => {
 
             if (res && "data" in res) {
                 setOrderParams(res.data);
-                console.log("order params: ", res.data);
             } else {
                 console.error("API did not return expected data");
             }
@@ -135,7 +134,6 @@ const OrdersPage = () => {
     }, [token, curPeriod]);
 
     const handleEditOrder = (uuid: string) => {
-        console.log('uuid:', uuid);
         fetchSingleOrder(uuid);
     }
 

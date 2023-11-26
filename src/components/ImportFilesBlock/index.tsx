@@ -49,7 +49,6 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false
     const sendFunc = isProducts ? sendProductFiles : sendOrderFiles;
     const sendFiles = async () => {
         setIsLoading(true);
-        console.log('send files', selectedFiles);
         if (selectedFiles.length) {
             try {
                 const res: ApiResponseType = await sendFunc(
@@ -59,8 +58,6 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false
                     }
                 );
 
-                console.log("send response: ", res);
-
                 if (res && "status" in res) {
                     if (res?.status === 200) {
                         //success
@@ -69,11 +66,9 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false
                     }
                 } else if (res && 'response' in res ) {
                     const errResponse = res.response;
-                    console.log('errorMessages1', errResponse)
 
                     if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                         const errorMessages = errResponse?.data.errorMessage;
-                        console.log('errorMessages', errorMessages)
 
                         setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
                         setShowStatusModal(true);

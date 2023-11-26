@@ -24,7 +24,6 @@ const SelectField: React.FC<FieldPropsType> = ({
 }) => {
 
     const handleChange = useCallback((selectedOption: OptionType) => {
-        console.log("is changed: ", selectedOption);
         if (onChange) {
             if (selectedOption) {
                 onChange(selectedOption.value);

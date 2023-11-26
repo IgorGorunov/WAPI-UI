@@ -42,7 +42,6 @@ type OrderFormType = {
 }
 
 const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderModal}) => {
-    console.log('order data: ', orderData,'--', orderParams);
     const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!orderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
@@ -174,7 +173,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
             if (res && "data" in res) {
                 setCurPickupPoints(res.data)
-                console.log("pickup: ", res.data);
             } else {
                 console.error("API did not return expected data");
             }
@@ -514,16 +512,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     const onSubmitForm = async (data) => {
         setIsLoading(true);
-        console.log("it is form submit ");
         const isValid = await trigger();
-        if (isValid) console.log("form is valid!", data);
 
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
         try {
             //verify token
             if (!await verifyToken(token)) {
-                console.log("token is wrong");
                 await Router.push(Routes.Login);
             }
 
@@ -534,8 +529,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 }
             );
 
-            console.log("send response: ", res);
-
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
@@ -544,11 +537,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 }
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
-                console.log('errorMessages1', errResponse)
 
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
-                    console.log('errorMessages', errorMessages)
 
                     setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);

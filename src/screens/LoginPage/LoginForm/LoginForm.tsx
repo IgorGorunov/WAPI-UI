@@ -68,7 +68,6 @@ const LoginForm: React.FC = () => {
     formState,
   } = useForm({ mode: "onSubmit" });
 
-  console.log("form", formState);
 
   const handleFormSubmit = async (data: any) => {
     const { login, password } = data;

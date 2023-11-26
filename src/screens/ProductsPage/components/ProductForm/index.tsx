@@ -50,8 +50,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
-    console.log("uuid: ", uuid, products, productData)
-
     const Router = useRouter();
     const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
@@ -90,9 +88,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
     const analogueOptions = useMemo(()=>{
         return products.map(item=>{return{value:item.uuid, label:item.name}})
     }, [products]);
-
-    console.log("product params: ", productParams);
-    console.log("product data: ", productData);
 
     const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
         mode: 'onSubmit',
@@ -805,17 +800,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
     const onSubmitForm = async (data: any) => {
         setIsLoading(true);
-        console.log("it is form submit ");
         const isValid = await trigger();
-        if (isValid) console.log("form is valid!", data);
 
         data.status = sendStatus;
 
-        console.log("send: ", prepareProductDataForSending(data));
         try {
             //verify token
             if (!await verifyToken(token)) {
-                console.log("token is wrong");
                 await Router.push(Routes.Login);
             }
 
@@ -826,8 +817,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 }
             );
 
-            console.log("send response: ", res);
-
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
@@ -836,11 +825,9 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 }
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
-                console.log('errorMessages1', errResponse)
 
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
-                    console.log('errorMessages', errorMessages)
 
                     setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
