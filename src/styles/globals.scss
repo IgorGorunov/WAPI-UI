@@ -177,7 +177,10 @@ input {
 }
 
 .min-height-600 {
-  min-height: 600px;
+
+  @media (min-width: $laptop) {
+    min-height: 600px;
+  }
 }
 
 .grid-row {
@@ -195,38 +198,68 @@ input {
   flex: 0 0 75%;
   padding: 0 15px;
   max-width: 75%;
+
+  @media (max-width: $upToTablet) {
+    flex: 0 0 100%;
+    max-width: 100%;
+    //margin-bottom: 16px;
+  }
 }
 .width-67 {
   flex: 0 0 66.66%;
   padding: 0 15px;
   max-width: 66.66%;
+
+  @media (max-width: $upToTablet) {
+    flex: 0 0 100%;
+    max-width: 100%;
+    //margin-bottom: 16px;
+  }
 }
 .width-50 {
   flex: 0 0 50%;
   padding: 0 15px;
   max-width: 50%;
+
+  @media (max-width: $upToTablet) {
+    flex: 0 0 100%;
+    max-width: 100%;
+    //margin-bottom: 16px;
+  }
 }
 .width-33 {
   flex: 0 0 33.33%;
   padding: 0 15px;
   max-width: 33.33%;
 
-  @media (max-width: $tablet) {
+  @media (max-width: $upToTablet) {
     flex: 0 0 100%;
     max-width: 100%;
-    margin-bottom: 16px;
+    // margin-bottom: 16px;
   }
 }
 .width-25 {
   flex: 0 0 25%;
   padding: 0 15px;
   max-width: 25%;
+
+  @media (max-width: $upToTablet) {
+    flex: 0 0 50%;
+    max-width: 50%;
+    //margin-bottom: 16px;
+  }
 }
 
 .width-17 {
   flex: 0 0 16.66%;
   padding: 0 15px;
   max-width: 16.66%;
+
+  @media (max-width: $upToTablet) {
+    flex: 0 0 50%;
+    max-width: 50%;
+    //margin-bottom: 16px;
+  }
 }
 
 

@@ -1,7 +1,10 @@
+@import '@/constants/devices.scss';
+
 .status-history {
   margin-top: 24px;
   margin-left: -28px;
   margin-right: -28px;
+
   &__header {
     display: flex;
     align-items: center;
@@ -24,13 +27,21 @@
   }
 
   .date-column {
-    flex: 0 0 200px;
+    flex: 0 1 200px;
     padding: 8px 12px 8px 0;
     margin-left: 20px;
+
+    @media (max-width: $tablet) {
+      flex: 0 0 25%;
+    }
   }
   .status-column {
-    flex: 0 0 200px;
+    flex: 0 1 200px;
     padding: 10px 12px;
+
+    @media (max-width: $tablet) {
+      flex: 0 0 25%;
+    }
   }
   .comment-column {
     flex: 1 1 auto;

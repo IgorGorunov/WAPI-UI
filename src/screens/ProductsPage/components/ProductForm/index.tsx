@@ -29,6 +29,7 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
 import Skeleton from "@/components/Skeleton/Skeleton";
+import "@/styles/tables.scss";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -89,7 +90,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
         return products.map(item=>{return{value:item.uuid, label:item.name}})
     }, [products]);
 
-    const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
+    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
         mode: 'onSubmit',
         defaultValues: {
             [PRODUCT.uuid]: productData?.uuid || uuid || '',
@@ -800,7 +801,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
     const onSubmitForm = async (data: any) => {
         setIsLoading(true);
-        const isValid = await trigger();
 
         data.status = sendStatus;
 

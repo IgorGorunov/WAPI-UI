@@ -1,16 +1,18 @@
+@import "@/constants/devices.scss";
+
 .tabs-block {
-
-
-  &__wrapper {
-
-  }
-
   &__tablist {
     display: flex;
     justify-content: center;
     align-items: center;
     list-style: none;
     padding: 35px 30px;
+    overflow: auto;
+
+    @media (max-width: $laptop) {
+      justify-content: flex-start;
+      padding: 16px;
+    }
   }
 
   &__tab {
@@ -24,7 +26,7 @@
       display: inline-block;
       padding: 0 5px;
       color: var(--color-gray-blue);
-
+      white-space: nowrap;
 
       &.active {
         color: var(--color-blue);
@@ -53,9 +55,18 @@
   &.inside-modal {
     margin-top: -100px;
 
+    @media (max-width: $laptop) {
+      margin-top: 0;
+    }
+
     .tabs-block {
       &__tablist {
         margin-bottom: 32px;
+
+        @media (max-width: $laptop) {
+          margin-bottom: 0;
+        }
+
       }
     }
   }

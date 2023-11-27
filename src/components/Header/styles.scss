@@ -49,7 +49,7 @@
     border-radius: 20px;
     cursor: pointer;
 
-    @media (max-width: $mobile) {
+    @media (max-width: $tablet) {
       padding: 6px;
     }
 
@@ -64,7 +64,7 @@
     .user-name {
       display: none;
 
-      @media (min-width: $laptop) {
+      @media (min-width: $tablet) {
         display: block;
         font-size: 12px;
         font-weight: 900;
