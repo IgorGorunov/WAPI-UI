@@ -33,6 +33,10 @@
     align-items: center;
     gap: 20px;
 
+    @media (max-width: $mobile) {
+      gap: 12px;
+    }
+
     &.align-right {
       margin-left: auto;
     }
@@ -44,6 +48,10 @@
     padding: 6px 15px;
     border-radius: 20px;
     cursor: pointer;
+
+    @media (max-width: $mobile) {
+      padding: 6px;
+    }
 
     &:focus {
       background-color: var(--color-blue);
