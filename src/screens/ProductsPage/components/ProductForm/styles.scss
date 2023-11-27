@@ -38,6 +38,13 @@
 
     &-select {
       margin-bottom: 26px;
+
+      .input-select__container {
+        @media (max-width: $tablet) {
+          flex: 0 0 auto;
+        }
+      }
+
     }
 
     //.input-select__container {
