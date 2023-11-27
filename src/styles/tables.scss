@@ -1,3 +1,5 @@
+@import '@/constants/devices.scss';
+
 .table {
   width: 100%;
 
@@ -26,7 +28,6 @@
     .ant-pagination-prev,
     .ant-pagination-next {
       height: 40px !important;
-
       .ant-pagination-item-link {
         border-radius: 5px;
         box-shadow: 2px solid var(--color-blue);
