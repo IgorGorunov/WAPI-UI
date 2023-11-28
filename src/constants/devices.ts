@@ -1,9 +1,25 @@
-const device= {
-    mobile: '400px',
-    tablet: '700px',
-    laptop: '900px',
-    desktop: '1200px'
-}
+export const breakpoints = {
+    mobile: 600,
+    tablet: 900,
+    laptop: 1024,
+    desktop: 1200,
+};
 
-export default device;
+export const upTo = {
+    tablet: breakpoints.tablet - 1,
+    laptop: breakpoints.laptop - 1,
+    desktop: breakpoints.desktop - 1,
+};
 
+export const getScreenSize = () => {
+    const width = window.innerWidth;
+    if (width <= upTo.tablet) {
+        return 'mobile';
+    } else if (width <= upTo.laptop) {
+        return 'tablet';
+    } else if (width <= upTo.desktop) {
+        return 'laptop';
+    } else {
+        return 'desktop';
+    }
+};

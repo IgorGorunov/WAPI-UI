@@ -12,6 +12,8 @@ import StatusWarehouseSelector from "@/components/InputSelect";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
+import Icon from "@/components/Icon";
+import {responsiveArray} from "@/utils/responsiveObserve";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -110,7 +112,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
 
     const columns: ColumnType<ProductStockType>[] = useMemo(() => [
         {
-            title: <TitleColumn title="" width="30px" contentPosition="center"/>,
+            title: <TitleColumn title="" width="30px" contentPosition="center"
+            />,
             render: (text: string) => (
                <TableCell
                     width="20px"
@@ -120,11 +123,17 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             ),
             dataIndex: 'country',
             key: 'country',
+            responsive: ['sm'],
         },
         {
-            title: <TitleColumn title="Warehouse" width="70px" contentPosition="start"/>,
+            title: <TitleColumn
+                title=""
+                width="40px"
+                contentPosition="start"
+                childrenBefore={<Icon name={"warehouse"}/>}
+            />,
             render: (text: string) => (
-                <TableCell value={text} width="70px" contentPosition="start"/>
+                <TableCell value={text} width="40px" contentPosition="start"/>
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
@@ -134,9 +143,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
-            title: <TitleColumn title="SKU" width="80px" contentPosition="start"/>,
+            title: <TitleColumn title="SKU" width="50px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="80px" contentPosition="start"/>
+                <TableCell value={text} width="50px" contentPosition="start"/>
             ),
             dataIndex: 'warehouseSku',
             key: 'warehouseSku',
@@ -144,11 +153,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             onHeaderCell: (column: ColumnType<ProductStockType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
+            responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Name" width="90px" contentPosition="start"/>,
+            title: <TitleColumn title="Name" width="100px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="90px" contentPosition="start"/>
+                <TableCell value={text} width="100px" contentPosition="start"/>
             ),
             dataIndex: 'name',
             key: 'name',
@@ -158,9 +168,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
-            title: <TitleColumn title="Total" width="40px" contentPosition="center"/>,
+            title: <TitleColumn title="Total" width="20px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="40px" contentPosition="center"/>
+                <TableCell value={text} width="20px" contentPosition="center"/>
             ),
             dataIndex: 'total',
             key: 'total',
@@ -170,9 +180,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
-            title: <TitleColumn title="Available" width="60px" contentPosition="center"/>,
+            title: <TitleColumn title="Available" width="30px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="60px" contentPosition="center"/>
+                <TableCell value={text} width="30px" contentPosition="center"/>
             ),
             dataIndex: 'available',
             key: 'available',
@@ -182,9 +192,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
-            title: <TitleColumn title="Reserved" width="60px" contentPosition="center"/>,
+            title: <TitleColumn title="Reserve" width="30px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="60px" contentPosition="center"/>
+                <TableCell value={text} width="30px" contentPosition="center"/>
             ),
             dataIndex: 'reserved',
             key: 'reserved',
@@ -194,9 +204,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
-            title: <TitleColumn title="Damaged" width="60px" contentPosition="center"/>,
+            title: <TitleColumn title="Damaged" width="30px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="60px" contentPosition="center"/>
+                <TableCell value={text} width="30px" contentPosition="center"/>
             ),
             dataIndex: 'damaged',
             key: 'damaged',
@@ -204,11 +214,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             onHeaderCell: (column: ColumnType<ProductStockType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
+            responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Expired" width="50px" contentPosition="center"/>,
+            title: <TitleColumn title="Expired" width="30px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="50px" contentPosition="center"/>
+                <TableCell value={text} width="30px" contentPosition="center"/>
             ),
             dataIndex: 'expired',
             key: 'expired',
@@ -216,11 +227,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             onHeaderCell: (column: ColumnType<ProductStockType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
+            responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Undefined status" width="65px" contentPosition="center"/>,
+            title: <TitleColumn title="Undefined status" width="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="65px" contentPosition="center"/>
+                <TableCell value={text} width="40px" contentPosition="center"/>
             ),
             dataIndex: 'undefinedStatus',
             key: 'undefinedStatus',
@@ -228,11 +240,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             onHeaderCell: (column: ColumnType<ProductStockType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
+            responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Without box" width="50px" contentPosition="center"/>,
+            title: <TitleColumn title="Without box" width="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="50px" contentPosition="center"/>
+                <TableCell value={text} width="40px" contentPosition="center"/>
             ),
             dataIndex: 'withoutBox',
             key: 'withoutBox',
@@ -240,11 +253,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             onHeaderCell: (column: ColumnType<ProductStockType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
+            responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Returning" width="65px" contentPosition="center"/>,
+            title: <TitleColumn title="Returning" width="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="65px" contentPosition="center"/>
+                <TableCell value={text} width="40px" contentPosition="center"/>
             ),
             dataIndex: 'forPlacement',
             key: 'forPlacement',
@@ -252,18 +266,17 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             onHeaderCell: (column: ColumnType<ProductStockType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
+            responsive: ['lg'],
         },
         ], [handleHeaderCellClick]);
     return (
         <div className='table'>
             <div className="warehouse-filter-container">
-                <div>
-                    <StatusWarehouseSelector
-                        options={transformedWarehouses}
-                        value={filterWarehouse}
-                        onChange={(value: string) => handleFilterChange(undefined, value)}
-                    />
-                </div>
+                <StatusWarehouseSelector
+                    options={transformedWarehouses}
+                    value={filterWarehouse}
+                    onChange={(value: string) => handleFilterChange(undefined, value)}
+                />
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}

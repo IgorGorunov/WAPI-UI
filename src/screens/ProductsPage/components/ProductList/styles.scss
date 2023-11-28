@@ -1,3 +1,5 @@
+@import '@/constants/devices.scss';
+
 .stock-cell-style {
 	display: flex;
 	width: 100%;
@@ -19,4 +21,7 @@
 	align-items: center;
 	gap: 10px;
 	margin-bottom: 10px;
+	@media (max-width: $mobile) {
+		flex-wrap: wrap;
+	}
 }

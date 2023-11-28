@@ -73,14 +73,14 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                             }
                         </div>
                         <div className="submenu-items">
-                            <div className="submenu-item">
-                                <Link href="/products" >Products list </Link>
+                            <Link href="/products" className="submenu-item">
+                                Products list
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
-                            </div>
-                            <div className="submenu-item">
-                                <Link href="/productsStock" >Products stock</Link>
+                            </Link>
+                            <Link href="/productsStock" className="submenu-item">
+                                Products stock
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
-                            </div>
+                            </Link>
                         </div>
 
                     </div>
@@ -94,10 +94,10 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                             }
                         </div>
                         <div className="submenu-items">
-                            <div className="submenu-item">
-                                <Link href="/orders" >Fulfillment</Link>
+                            <Link href="/orders" className="submenu-item">
+                                Fulfillment
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
-                            </div>
+                            </Link>
                         </div>
                     </div>
 
