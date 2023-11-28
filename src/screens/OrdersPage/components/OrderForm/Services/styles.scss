@@ -1,3 +1,5 @@
+@import "@/constants/devices.scss";
+
 .order-service {
   margin-top: 24px;
   margin-left: -28px;
@@ -23,42 +25,75 @@
     }
   }
 
+  .column {
+    padding: 10px 12px;
+
+    @media (max-width: $upToTablet) {
+      padding: 10px 6px;
+    }
+  }
+
   .date-column {
-    flex: 1 1 140px;
-    padding: 8px 12px 8px 0;
+    flex: 0 0 110px;
+    padding: 10px 12px 10px 0;
     margin-left: 20px;
+
+    @media (max-width: $upToTablet) {
+      padding: 10px 6px 10px 0;
+      flex: 0 0 70px;
+    }
   }
   .service-column {
     flex: 1 1 140px;
-    padding: 10px 12px;
   }
   .quantity-column {
-    flex: 0 0 90px;
-    padding: 10px 12px;
+    flex: 0 0 80px;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
   }
   .sale-price-column {
-    flex: 0 0 90px;
-    padding: 10px 12px;
+    flex: 0 0 80px;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
   }
   .currency-column {
-    flex: 0 0 90px;
-    padding: 10px 12px;
+    flex: 0 0 80px;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
   }
   .amount-column {
-    flex: 0 0 90px;
-    padding: 10px 12px;
+    flex: 0 0 80px;
+
+    @media (max-width: $upToLaptop) {
+      display: none;
+    }
+
+    @media (max-width: $mobile) {
+      display: block;
+    }
   }
   .vol-weight-column {
-    flex: 0 0 90px;
-    padding: 10px 12px;
+    flex: 0 0 80px;
+
+    @media (max-width: $upToTablet) {
+      display: none;
+    }
   }
   .tracking-number-column {
     flex: 0 0 150px;
-    padding: 10px 12px;
   }
   .sum-column {
-    flex: 0 0 90px;
-    padding: 10px 12px;
+    flex: 0 0 80px;
+
+    @media (max-width: $upToTablet) {
+      display: none;
+    }
   }
 
 

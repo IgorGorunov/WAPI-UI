@@ -4,6 +4,10 @@
   position: absolute;
   top: 40px;
   max-width: 100%;
+
+  @media (max-width: $upToDesktop) {
+    width: 100%;
+  }
 }
 
 .modal {

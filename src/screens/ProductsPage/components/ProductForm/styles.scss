@@ -93,20 +93,7 @@
     }
   }
 
-
-
-
-
   .ant-table {
-
-    &-container {
-      //overflow-x: auto;
-    }
-
-    &-content {
-
-    }
-
     &-thead {
       .ant-table-cell {
         padding: 20px 10px !important;
@@ -119,13 +106,11 @@
           content: none !important;
         }
       }
-
     }
 
     &-cell {
       padding: 8px !important;
     }
-
   }
 
   .form-submit-btn {

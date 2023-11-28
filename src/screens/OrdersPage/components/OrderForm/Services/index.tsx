@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React from "react";
 import {OrderServiceType} from "@/types/orders";
 import "./styles.scss";
 
@@ -17,14 +17,14 @@ const Services: React.FC<PropsType> = ({ services }) => {
         <div className="order-service">
             <div className="order-service__header">
                 <div className='date-column'>Date</div>
-                <div className='service-column'>Service</div>
-                <div className='quantity-column'>Quantity</div>
-                <div className='sale-price-column'>Price</div>
-                <div className='currency-column'>Currency</div>
-                <div className='amount-column'>Amount</div>
-                <div className='vol-weight-column'>Vol.weight</div>
-                <div className='tracking-number-column'>Tracking #</div>
-                <div className='sum-column'>Σ EUR</div>
+                <div className='column service-column'>Service</div>
+                <div className='column quantity-column'>Quantity</div>
+                <div className='column sale-price-column'>Price</div>
+                <div className='column currency-column'>Currency</div>
+                <div className='column amount-column'>Amount</div>
+                <div className='column vol-weight-column'>Vol.weight</div>
+                <div className='column tracking-number-column'>Tracking #</div>
+                <div className='column sum-column'>Σ EUR</div>
             </div>
             <ul className="order-service-history__list">
                 {services &&
@@ -36,16 +36,16 @@ const Services: React.FC<PropsType> = ({ services }) => {
                             }`}
                         >
                             <div className='date-column'>{formatDate(service.period)}</div>
-                            <div className='service-column'>
+                            <div className='column service-column'>
                                 {service.service}
                             </div>
-                            <div className='quantity-column'>{service.quantity}</div>
-                            <div className='sale-price-column'>{service.price}</div>
-                            <div className='currency-column'>{service.currency}</div>
-                            <div className='amount-column'>{service.amount}</div>
-                            <div className='vol-weight-column'>{service.weight}</div>
-                            <div className='tracking-number-column'>{service.trackingNumber}</div>
-                            <div className='sum-column'>{service.amountEuro}</div>
+                            <div className='column quantity-column'>{service.quantity}</div>
+                            <div className='column sale-price-column'>{service.price}</div>
+                            <div className='column currency-column'>{service.currency}</div>
+                            <div className='column amount-column'>{service.amount}</div>
+                            <div className='column vol-weight-column'>{service.weight}</div>
+                            <div className='column tracking-number-column'>{service.trackingNumber}</div>
+                            <div className='column sum-column'>{service.amountEuro}</div>
                         </li>
                     ))}
             </ul>
