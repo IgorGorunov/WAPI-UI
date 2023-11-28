@@ -177,7 +177,7 @@ input {
 }
 
 .min-height-600 {
-
+  min-height: calc(100vh - 80px);
   @media (min-width: $laptop) {
     min-height: 600px;
   }
