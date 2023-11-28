@@ -302,6 +302,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Name',
                 dataIndex: 'name',
+                width: '100%',
                 key: 'name',
                 render: (text, record, index) => (
                     <Controller
@@ -495,6 +496,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 ),
                 dataIndex: 'selected',
                 key: 'selected',
+                width: '40px',
                 render: (text, record, index) => (
                     <Controller
                         name={`barcodes.${index}.selected`}
@@ -515,13 +517,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Barcode',
                 dataIndex: 'barcode',
+                width: '100%',
                 key: 'barcode',
                 render: (text, record, index) => (
                     <Controller
                         name={`barcodes[${index}].barcode`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '1000px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`barcodes.${index}.barcode`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -570,6 +573,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
                 ),
                 dataIndex: 'selected',
+                width: '40px',
                 key: 'selected',
                 render: (text, record, index) => (
                     <Controller
@@ -591,13 +595,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Alias',
                 dataIndex: 'alias',
+                width: '100%',
                 key: 'alias',
                 render: (text, record, index) => (
                     <Controller
                         name={`aliases[${index}].alias`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '1000px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`aliases.${index}.alias`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -645,6 +650,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
                 ),
                 dataIndex: 'selected',
+                width: '40px',
                 key: 'selected',
                 render: (text, record, index) => (
                     <Controller
@@ -666,13 +672,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Product',
                 dataIndex: 'uuid',
+                width: '100%',
                 key: 'uuid',
                 render: (text, record, index) => (
                     <Controller
                         name={`bundleKit[${index}].uuid`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '870px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`bundleKit.${index}.uuid`}
                                     fieldType={FormFieldTypes.SELECT}
@@ -694,7 +701,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         name={`bundleKit[${index}].quantity`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '120px'}}>
+                            <div style={{maxWidth: '80px'}}>
                                 <FieldBuilder
                                     name={`bundleKit.${index}.quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -743,6 +750,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
                 ),
                 dataIndex: 'selected',
+                width: '40px',
                 key: 'selected',
                 render: (text, record, index) => (
                     <Controller
@@ -764,13 +772,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Analogue',
                 dataIndex: 'analogue',
+                width: '100%',
                 key: 'analogue',
                 render: (text, record, index) => (
                     <Controller
                         name={`analogues[${index}].analogue`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '1000px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`analogues.${index}.analogue`}
                                     fieldType={FormFieldTypes.SELECT}
