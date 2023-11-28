@@ -43,9 +43,11 @@
       flex: 0 0 70px;
     }
   }
+
   .service-column {
     flex: 1 1 140px;
   }
+
   .quantity-column {
     flex: 0 0 80px;
 
@@ -53,6 +55,7 @@
       display: none;
     }
   }
+
   .sale-price-column {
     flex: 0 0 80px;
 
@@ -60,6 +63,7 @@
       display: none;
     }
   }
+
   .currency-column {
     flex: 0 0 80px;
 
@@ -67,6 +71,7 @@
       display: none;
     }
   }
+
   .amount-column {
     flex: 0 0 80px;
 
@@ -78,6 +83,7 @@
       display: block;
     }
   }
+
   .vol-weight-column {
     flex: 0 0 80px;
 
@@ -85,15 +91,17 @@
       display: none;
     }
   }
+
   .tracking-number-column {
     flex: 0 0 150px;
-  }
-  .sum-column {
-    flex: 0 0 80px;
 
     @media (max-width: $upToTablet) {
       display: none;
     }
+  }
+
+  .sum-column {
+    flex: 0 0 80px;
   }
 
 

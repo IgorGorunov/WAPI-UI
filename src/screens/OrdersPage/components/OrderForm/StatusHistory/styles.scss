@@ -42,10 +42,6 @@
       padding: 10px 6px;
       flex: 0 0 70px;
     }
-
-    //@media (max-width: $upToTablet) {
-    //  flex: 0 0 70px;
-    //}
   }
   .status-column {
     flex: 0 0 200px;
@@ -59,6 +55,10 @@
 
     @media (max-width: $upToTablet) {
       flex: 1 0 120px;
+    }
+
+    @media (max-width: $mobile) {
+      display: none;
     }
   }
   .trouble-status-column {
@@ -74,10 +74,6 @@
   }
   .comment-column {
     flex: 0 0 300px;
-
-    @media (max-width: $mobile) {
-      display: none;
-    }
 
     @media (max-width: $upToTablet) {
       flex: 1 1 300px;

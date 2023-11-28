@@ -40,6 +40,26 @@
         max-width: 100%;
       }
     }
+
+    .general-tab {
+      .width-17 {
+        padding-left: 0;
+      }
+    }
+  }
+
+  @media (max-width: $upToTablet) {
+    .general-tab {
+      .width-33 {
+        flex: 1 1 67%;
+        max-width: 67%;
+      }
+
+      .width-17 {
+        flex: 1 1 33%;
+        max-width: 33%;
+      }
+    }
   }
 
   &--order-btns {
@@ -55,6 +75,10 @@
 
   &--table {
     margin: 0 -28px;
+
+    @media (max-width: $mobile) {
+      margin: 0 -16px;
+    }
 
     &-btns {
       display: flex;

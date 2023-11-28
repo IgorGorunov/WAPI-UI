@@ -357,6 +357,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Price',
                 dataIndex: 'price',
                 key: 'price',
+                responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].price`}
@@ -444,7 +445,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'COD',
                 dataIndex: 'cod',
                 key: 'cod',
-                responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].cod`}
