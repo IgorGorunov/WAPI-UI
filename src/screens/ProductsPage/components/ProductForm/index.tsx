@@ -115,7 +115,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             [PRODUCT.fireproof]: productData?.fireproof,
             [PRODUCT.packingBox]: productData?.packingBox,
             [PRODUCT.hazmat]: productData?.hazmat,
-            unitOfMeasure: productData?.unitOfMeasure || '',
+            unitOfMeasure: productData?.unitOfMeasure || 'pcs',
             unitOfMeasures:
                 productData && productData.unitOfMeasures
                     ? productData.unitOfMeasures.map((unit, index) => (
@@ -134,8 +134,8 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         {
                             key: `unit-${Date.now().toString()}`,
                             selected: false,
-                            [PRODUCT.unitOfMeasuresFields.unitName]: '',
-                            [PRODUCT.unitOfMeasuresFields.unitCoefficient]: '',
+                            [PRODUCT.unitOfMeasuresFields.unitName]: 'pcs',
+                            [PRODUCT.unitOfMeasuresFields.unitCoefficient]: '1',
                             [PRODUCT.unitOfMeasuresFields.unitWidth]: '',
                             [PRODUCT.unitOfMeasuresFields.unitLength]: '',
                             [PRODUCT.unitOfMeasuresFields.unitHeight]:  '',
@@ -330,12 +330,12 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
-                        name={`unitOfMeasures[${index}].quantity`}
+                        name={`unitOfMeasures[${index}].coefficient`}
                         control={control}
                         render={({ field }) => (
                             <div style={{maxWidth: '110px'}}>
                                 <FieldBuilder
-                                    name={`unitOfMeasures[${index}].quantity`}
+                                    name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}

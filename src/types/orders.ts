@@ -1,4 +1,5 @@
 export type OrderType = {
+    mobileIcon: string,
     icon: string,
     uuid: string;
     status: string;

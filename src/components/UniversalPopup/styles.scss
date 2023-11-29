@@ -1,3 +1,5 @@
+@import '@/constants/devices.scss';
+
 .universal-popup {
   position: relative;
 
@@ -37,6 +39,12 @@
       border-bottom: 5px solid transparent;
       border-right:5px solid var(--color-dark-blue);
     }
+    @media (max-width: $tablet) {
+      max-width: 600px;
+    }
+    @media (max-width: $mobile) {
+      max-width: 250px;
+    }
   }
   &__wrapper--left{
     position: absolute;
@@ -60,6 +68,12 @@
       border-bottom: 5px solid transparent;
       border-left:5px solid var(--color-dark-blue);
     }
+    @media (max-width: $tablet) {
+      max-width: 600px;
+    }
+    @media (max-width: $mobile) {
+      max-width: 250px;
+    }
   }
 
 
@@ -67,6 +81,10 @@
     display: flex;
     justify-content: space-between;
     padding: 5px 10px;
+
+    @media (max-width: $mobile) {
+      display: block;
+    }
 
     &-list {
       list-style: none;
