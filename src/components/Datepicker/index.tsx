@@ -39,9 +39,9 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
 
   return (
       <div className="datepicker">
-        <a className="universal-popup__close" href="#" onClick={onClose}>
+        <a className="datepicker__close" href="#" onClick={onClose}>
           <Icon name='close' />
-        </a>)
+        </a>
         <div className="date-range-container">
           <DateRange
               ranges={dateRange}

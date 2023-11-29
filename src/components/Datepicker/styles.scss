@@ -1,4 +1,6 @@
 .datepicker {
+  position: relative;
+
   &__wrapper {
     background-color: aquamarine;
     z-index: 101;

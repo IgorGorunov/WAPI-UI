@@ -2,14 +2,17 @@
   position: relative;
 
   &.has-close-icon {
-    padding-top: 15px;
-    padding-right: 15px;
+    padding: 16px 16px 8px 2px;
   }
 
   &__close {
     position: absolute;
-    top: -3px;
-    right: -3px;
+    top: 0;
+    right: 0;
+  }
+  
+  &__list {
+    position: relative;
   }
 
   &__wrapper--right{
