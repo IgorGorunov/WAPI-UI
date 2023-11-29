@@ -221,6 +221,35 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const columns: TableColumnProps<OrderType>[]  = [
         {
             title: <TitleColumn
+                width="10px"
+                contentPosition="center">
+            </TitleColumn>,
+            render: (text: string, record) =>
+                <TableCell
+                    isBlock={true}
+                    width="10px"
+                    contentPosition="center"
+                    value={'➔'}
+                    childrenBefore={
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <span className={`fi fi-${record.warehouseCountry.toLowerCase()} flag-icon`}></span>
+                            <div style={{ fontSize: '8px' }}>{record.warehouseCountry}</div>
+                        </div>
+                    }
+                    childrenAfter={
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
+                            <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
+                        </div>
+                    }
+                >
+                </TableCell>,
+            dataIndex: 'mobileIcon',
+            key: 'mobileIcon',
+            responsive: ['xs'],
+        },
+        {
+            title: <TitleColumn
                     width="40px"
                     contentPosition="center"
                     childrenBefore={<Icon name={"car"}/>}>
@@ -246,14 +275,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 </TableCell>,
             dataIndex: 'icon',
             key: 'icon',
+            responsive: ['sm'],
         },
         {
-            title: <TitleColumn title="Status" width="80px" contentPosition="start"/>,
+            title: <TitleColumn title="Status" width="70px" contentPosition="start"/>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
                     <TableCell
-                        width="80px"
+                        width="70px"
                         contentPosition="start"
                         childrenBefore={
                             record.troubleStatusesExist && (

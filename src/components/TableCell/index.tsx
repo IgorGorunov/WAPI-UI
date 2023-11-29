@@ -9,11 +9,12 @@ interface TableCellProps {
     childrenBefore?: React.ReactNode;
     childrenAfter?: React.ReactNode;
     children?: never[];
+    isBlock?: boolean;
 }
 
-const TableCell: React.FC<TableCellProps> = ({ value, width, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children}) => {
+const TableCell: React.FC<TableCellProps> = ({ value, width, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children, isBlock = false}) => {
     const style: React.CSSProperties = {
-        display: 'flex',
+        display: isBlock ? 'block' : 'flex',
         minWidth: width,
         justifyContent: contentPosition,
         alignItems: contentPosition,
