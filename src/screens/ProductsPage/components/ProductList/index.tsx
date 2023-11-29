@@ -227,6 +227,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     contentPosition="start"
                     childrenAfter={<span
                         className="stock-cell-style"
+                        onClick={(e) => {
+                            setHoveredProduct(record);
+                            setMousePosition({ x: e.clientX, y: e.clientY });
+                            setIsDisplayedPopup(true);
+                        }}
                         onMouseEnter={(e) => {
                             setHoveredProduct(record);
                             setMousePosition({ x: e.clientX, y: e.clientY });
@@ -304,6 +309,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                         items={popupItems}
                         position='left'
                         width = {150}
+                        handleClose={()=>setIsDisplayedPopup(false)}
                     />
                 </div>
             )}

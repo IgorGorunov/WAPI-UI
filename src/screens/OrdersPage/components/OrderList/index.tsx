@@ -266,6 +266,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                         marginRight: '5px',
                                         alignSelf: 'center',
                                     }}
+                                         onClick={(e) => {
+                                             setHoveredOrder(record);
+                                             setHoveredColumn('status');
+                                             setMousePosition({ x: e.clientX, y: e.clientY });
+                                             setIsDisplayedPopup(true);
+
+                                         }}
                                          onMouseEnter={(e) => {
                                              setHoveredOrder(record);
                                              setHoveredColumn('status');
@@ -415,6 +422,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     childrenAfter ={
                     <span
                         className="products-cell-style"
+                        onClick={(e) => {
+                            setHoveredOrder(record);
+                            setHoveredColumn('productLines');
+                            setMousePosition({ x: e.clientX, y: e.clientY });
+                            setIsDisplayedPopup(true);
+                        }}
                         onMouseEnter={(e) => {
                             setHoveredOrder(record);
                             setHoveredColumn('productLines');
@@ -426,7 +439,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                             setHoveredColumn('');
                             setMousePosition(null);
                             setIsDisplayedPopup(false);
-
                         }}
                     >
                         {text} <Icon name="info" />
