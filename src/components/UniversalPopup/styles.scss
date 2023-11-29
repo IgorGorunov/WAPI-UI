@@ -1,4 +1,17 @@
 .universal-popup {
+  position: relative;
+
+  &.has-close-icon {
+    padding-top: 15px;
+    padding-right: 15px;
+  }
+
+  &__close {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+  }
+
   &__wrapper--right{
     position: absolute;
     top: calc(50% - 2px);

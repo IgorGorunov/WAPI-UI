@@ -5,16 +5,18 @@ import "react-date-range/dist/theme/default.css";
 import Button from "@/components/Button/Button";
 import { DateRangeType} from "@/types/dashboard";
 import "./styles.scss";
+import Icon from "@/components/Icon";
 
 
 type DatepickerPropsType = {
   initialRange: DateRangeType;
   onDateRangeSave: (dateRange: DateRangeType) => void;
+  onClose: ()=>void;
 };
 
 
 
-const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSave }) => {
+const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSave, onClose }) => {
 
   const [dateRange, setDateRange] = useState([
     {
@@ -37,6 +39,9 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
 
   return (
       <div className="datepicker">
+        <a className="universal-popup__close" href="#" onClick={onClose}>
+          <Icon name='close' />
+        </a>)
         <div className="date-range-container">
           <DateRange
               ranges={dateRange}
