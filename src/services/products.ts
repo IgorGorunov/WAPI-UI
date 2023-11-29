@@ -59,7 +59,6 @@ const getProductParameters = async (
     }
 ) => {
     try {
-        console.log("data: ", data)
         const response: any = await axios.post(
             `${API_ENDPOINT}/GetProductParameters`,
             data
@@ -111,7 +110,6 @@ const sendProductInfo = async (
             data
 
         );
-        console.log("edit product: ", response);
         return response;
     } catch (err) {
         console.error(err);

@@ -29,11 +29,14 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
 import Skeleton from "@/components/Skeleton/Skeleton";
+import "@/styles/tables.scss";
 
 const enum SendStatusType {
     DRAFT = 'draft',
     PENDING = 'pending',
 }
+
+type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 type ProductPropsType = {
     isEdit?: boolean;
@@ -49,8 +52,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
-
-    console.log("uuid: ", uuid, products, productData)
 
     const Router = useRouter();
     const { token, setToken } = useAuth();
@@ -91,10 +92,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
         return products.map(item=>{return{value:item.uuid, label:item.name}})
     }, [products]);
 
-    console.log("product params: ", productParams);
-    console.log("product data: ", productData);
-
-    const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
+    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
         mode: 'onSubmit',
         defaultValues: {
             [PRODUCT.uuid]: productData?.uuid || uuid || '',
@@ -282,6 +280,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
                 ),
                 dataIndex: 'selected',
+                width: '40px',
                 key: 'selected',
                 render: (text, record, index) => (
                     <Controller
@@ -303,6 +302,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Name',
                 dataIndex: 'name',
+                width: '100%',
                 key: 'name',
                 render: (text, record, index) => (
                     <Controller
@@ -310,7 +310,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         control={control}
 
                         render={({ field }) => (
-                            <div style={{width: '250px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].name`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -327,12 +327,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 title: 'Quantity',
                 dataIndex: 'coefficient',
                 key: 'coefficient',
+                responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].quantity`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '110px'}}>
+                            <div style={{maxWidth: '110px'}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -348,12 +349,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 title: 'Width | mm',
                 dataIndex: 'width',
                 key: 'width',
+                responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].width`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '110px'}}>
+                            <div style={{maxWidth: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].width`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -369,12 +371,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 title: 'Length | mm',
                 dataIndex: 'length',
                 key: 'length',
+                responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].length`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '110px'}}>
+                            <div style={{maxWidth: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].length`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -389,12 +392,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 title: 'Height | mm',
                 dataIndex: 'height',
                 key: 'height',
+                responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].height`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '110px'}}>
+                            <div style={{maxWidth: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].height`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -410,12 +414,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 title: 'Weight gross | kg',
                 dataIndex: 'weightGross',
                 key: 'weightGross',
+                responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].weightGross`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '110px'}}>
+                            <div style={{maxWidth: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].weightGross`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -431,12 +436,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 title: 'Weight net | kg',
                 dataIndex: 'Weight net',
                 key: 'weightNet',
+                responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].weightNet`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '110px'}}>
+                            <div style={{maxWidth: '110px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].weightNet`}
                                 fieldType={FormFieldTypes.NUMBER}
@@ -490,6 +496,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 ),
                 dataIndex: 'selected',
                 key: 'selected',
+                width: '40px',
                 render: (text, record, index) => (
                     <Controller
                         name={`barcodes.${index}.selected`}
@@ -510,13 +517,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Barcode',
                 dataIndex: 'barcode',
+                width: '100%',
                 key: 'barcode',
                 render: (text, record, index) => (
                     <Controller
                         name={`barcodes[${index}].barcode`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '1000px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`barcodes.${index}.barcode`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -565,6 +573,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
                 ),
                 dataIndex: 'selected',
+                width: '40px',
                 key: 'selected',
                 render: (text, record, index) => (
                     <Controller
@@ -586,13 +595,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Alias',
                 dataIndex: 'alias',
+                width: '100%',
                 key: 'alias',
                 render: (text, record, index) => (
                     <Controller
                         name={`aliases[${index}].alias`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '1000px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`aliases.${index}.alias`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -640,6 +650,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
                 ),
                 dataIndex: 'selected',
+                width: '40px',
                 key: 'selected',
                 render: (text, record, index) => (
                     <Controller
@@ -661,13 +672,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Product',
                 dataIndex: 'uuid',
+                width: '100%',
                 key: 'uuid',
                 render: (text, record, index) => (
                     <Controller
                         name={`bundleKit[${index}].uuid`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '870px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`bundleKit.${index}.uuid`}
                                     fieldType={FormFieldTypes.SELECT}
@@ -689,7 +701,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         name={`bundleKit[${index}].quantity`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '120px'}}>
+                            <div style={{maxWidth: '80px'}}>
                                 <FieldBuilder
                                     name={`bundleKit.${index}.quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -738,6 +750,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
                 ),
                 dataIndex: 'selected',
+                width: '40px',
                 key: 'selected',
                 render: (text, record, index) => (
                     <Controller
@@ -759,13 +772,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             {
                 title: 'Analogue',
                 dataIndex: 'analogue',
+                width: '100%',
                 key: 'analogue',
                 render: (text, record, index) => (
                     <Controller
                         name={`analogues[${index}].analogue`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '1000px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`analogues.${index}.analogue`}
                                     fieldType={FormFieldTypes.SELECT}
@@ -805,17 +819,12 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
     const onSubmitForm = async (data: any) => {
         setIsLoading(true);
-        console.log("it is form submit ");
-        const isValid = await trigger();
-        if (isValid) console.log("form is valid!", data);
 
         data.status = sendStatus;
 
-        console.log("send: ", prepareProductDataForSending(data));
         try {
             //verify token
             if (!await verifyToken(token)) {
-                console.log("token is wrong");
                 await Router.push(Routes.Login);
             }
 
@@ -826,8 +835,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 }
             );
 
-            console.log("send response: ", res);
-
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
@@ -836,11 +843,9 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 }
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
-                console.log('errorMessages1', errResponse)
 
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
-                    console.log('errorMessages', errorMessages)
 
                     setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);

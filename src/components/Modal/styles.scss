@@ -1,6 +1,13 @@
+@import '@/constants/devices.scss';
+
 .modal-wrapper {
   position: absolute;
   top: 40px;
+  max-width: 100%;
+
+  @media (max-width: $upToDesktop) {
+    width: 100%;
+  }
 }
 
 .modal {
@@ -8,11 +15,16 @@
   height:100%;
   width:100%;
   max-height: calc(100vh - 80px);
-  overflow-y: auto;
+  overflow: hidden auto;
   border-radius: 15px;
   padding: 30px;
   border: 2px solid var(--border-color);
   box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+
+  @media (max-width: $tablet) {
+    padding: 16px;
+  }
+
   &::-webkit-scrollbar {
     width: 10px;
     margin-right: 50px;
@@ -56,6 +68,11 @@
   padding: 0 30px 30px;
   margin: 0 -30px;
   border-bottom: 2px solid var(--border-color);
+
+  @media (max-width: $tablet) {
+    padding: 0 16px 16px;
+    margin: 0 -16px;
+  }
 
   &__title {
     font-size: 14px;

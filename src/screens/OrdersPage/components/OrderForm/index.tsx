@@ -35,6 +35,8 @@ import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
 
+type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
 type OrderFormType = {
     orderData?: SingleOrderType;
     orderParams?: OrderParamsType;
@@ -42,7 +44,6 @@ type OrderFormType = {
 }
 
 const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderModal}) => {
-    console.log('order data: ', orderData,'--', orderParams);
     const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!orderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
@@ -83,7 +84,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     }, [orderParams?.warehouses]);
 
     //form
-    const {control, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch} = useForm({
+    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
         mode: 'onSubmit',
         defaultValues: {
             clientOrderID: orderData?.clientOrderID || '',
@@ -174,7 +175,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
             if (res && "data" in res) {
                 setCurPickupPoints(res.data)
-                console.log("pickup: ", res.data);
             } else {
                 console.error("API did not return expected data");
             }
@@ -235,6 +235,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
                 ),
                 dataIndex: 'selected',
+                width: '40px',
                 key: 'selected',
                 render: (text, record, index) => (
                     <Controller
@@ -257,13 +258,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'SKU',
                 dataIndex: 'sku',
                 key: 'sku',
+                responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`sku[${index}].name`}
                         control={control}
-
                         render={({ field }) => (
-                            <div style={{width: '130px'}}>
+                            <div style={{maxWidth: '130px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].sku`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -277,6 +278,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             {
                 title: 'Product',
                 dataIndex: 'product',
+                width: '100%',
                 key: 'product',
                 render: (text, record, index) => (
                     <Controller
@@ -284,7 +286,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         control={control}
                         defaultValue={record.product}
                         render={({ field }) => (
-                            <div style={{ width: '220px' }}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`products[${index}].product`}
                                     fieldType={FormFieldTypes.SELECT}
@@ -311,13 +313,14 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Analogue',
                 dataIndex: 'analogue',
                 key: 'analogue',
+                responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].analogue`}
                         control={control}
 
                         render={({ field }) => (
-                            <div style={{width: '200px'}}>
+                            <div style={{maxWidth: '200px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].analogue`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -338,7 +341,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         name={`products[${index}].quantity`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '50px'}}>
+                            <div style={{maxWidth: '50px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -354,12 +357,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Price',
                 dataIndex: 'price',
                 key: 'price',
+                responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].price`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '50px'}}>
+                            <div style={{maxWidth: '50px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].price`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -375,12 +379,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Discount',
                 dataIndex: 'discount',
                 key: 'discount',
+                responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].discount`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '50px'}}>
+                            <div style={{maxWidth: '50px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].discount`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -396,12 +401,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Tax',
                 dataIndex: 'tax',
                 key: 'tax',
+                responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].tax`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '50px'}}>
+                            <div style={{maxWidth: '50px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].tax`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -417,12 +423,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Total',
                 dataIndex: 'total',
                 key: 'total',
+                responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].total`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '50px'}}>
+                            <div style={{maxWidth: '50px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].total`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -438,12 +445,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'COD',
                 dataIndex: 'cod',
                 key: 'cod',
+                responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].cod`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '70px'}}>
+                            <div style={{maxWidth: '70px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].cod`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -514,16 +522,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     const onSubmitForm = async (data) => {
         setIsLoading(true);
-        console.log("it is form submit ");
-        const isValid = await trigger();
-        if (isValid) console.log("form is valid!", data);
 
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
         try {
             //verify token
             if (!await verifyToken(token)) {
-                console.log("token is wrong");
                 await Router.push(Routes.Login);
             }
 
@@ -534,8 +538,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 }
             );
 
-            console.log("send response: ", res);
-
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
@@ -544,11 +546,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 }
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
-                console.log('errorMessages1', errResponse)
 
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
-                    console.log('errorMessages', errorMessages)
 
                     setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);

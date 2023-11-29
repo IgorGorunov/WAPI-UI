@@ -150,8 +150,8 @@ const DashboardPage: React.FC = () => {
                 clickedPeriod={clickedPeriod}
                 setClickedPeriod={setClickedPeriod} />
           </Header>
-          <div className="dashboard-animated-grid grid-row gap-md mb-md">
-            <div className="grid-col-3">
+          <div className="dashboard-animated-grid grid-row dashboard-grid-row">
+            <div className="width-33 dashboard-grid-col">
               <Forecast
                   type="GMV"
                   amountInPeriod={!gmv?.gmvInPeriod ? 0 : gmv?.gmvInPeriod}
@@ -161,10 +161,10 @@ const DashboardPage: React.FC = () => {
                   forecastByYear={!gmv?.gmvForecastByYear ? 0 : gmv?.gmvForecastByYear}
               />
             </div>
-            <div className="grid-col-3">
+            <div className="width-33 dashboard-grid-col">
               <OrderStatuses ordersByStatuses={ordersByStatuses}/>
             </div>
-            <div className="grid-col-3">
+            <div className="width-33 dashboard-grid-col">
               <Forecast
                   type="ORDERS"
                   amountInPeriod={!orders?.ordersInPeriod ? 0 : orders?.ordersInPeriod}

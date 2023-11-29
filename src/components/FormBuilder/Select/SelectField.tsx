@@ -24,7 +24,6 @@ const SelectField: React.FC<FieldPropsType> = ({
 }) => {
 
     const handleChange = useCallback((selectedOption: OptionType) => {
-        console.log("is changed: ", selectedOption);
         if (onChange) {
             if (selectedOption) {
                 onChange(selectedOption.value);
@@ -69,7 +68,7 @@ const SelectField: React.FC<FieldPropsType> = ({
                 value={options.find((option) => option.value === value) || null}
                 getOptionLabel={getOptionLabel}
                 getOptionValue={getOptionValue}
-                components={{ ValueContainer: CustomValueContainer }}
+                components={{ SingleValue: CustomValueContainer }}
                 name={name}
                 options={options}
                 placeholder={placeholder}
@@ -79,6 +78,7 @@ const SelectField: React.FC<FieldPropsType> = ({
                 classNamePrefix='select-field'
                 instanceId={`select-${name}`}
                 isClearable={isClearable}
+                //formatGroupLabel={ CustomValueContainer }
             />
             {errorMessage && <p className="error">{errorMessage}</p>}
 

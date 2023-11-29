@@ -1,7 +1,13 @@
+@import "@/constants/devices.scss";
+
 .order-status-history {
-  margin-top: 24px;
-  margin-left: -28px;
-  margin-right: -28px;
+  margin: 24px -28px 0 -28px;
+
+  @media (max-width: $mobile) {
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+
   &__header {
     display: flex;
     align-items: center;
@@ -23,28 +29,60 @@
     }
   }
 
+  .column {
+    padding: 10px 12px;
+
+    @media (max-width: $mobile) {
+      padding: 10px 6px;
+    }
+  }
+
   .date-column {
     flex: 0 0 110px;
-    padding: 8px 12px 8px 0;
+    padding: 10px 12px 10px 0;
     margin-left: 20px;
+
+    @media (max-width: $mobile) {
+      padding: 10px 6px;
+      flex: 0 0 70px;
+    }
   }
   .status-column {
     flex: 0 0 200px;
-    padding: 10px 12px;
+
+    @media (max-width: $upToTablet) {
+      flex: 1 1 150px;
+    }
   }
   .tracking-number-column {
     flex: 0 0 150px;
-    padding: 10px 12px;
+
+    @media (max-width: $upToTablet) {
+      flex: 1 0 120px;
+    }
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
   }
   .trouble-status-column {
     flex: 0 0 150px;
-    padding: 8px 12px;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
+
+    @media (max-width: $upToTablet) {
+      flex: 1 1 150px;
+    }
   }
   .comment-column {
     flex: 0 0 300px;
-    padding: 8px 12px;
-  }
 
+    @media (max-width: $upToTablet) {
+      flex: 1 1 300px;
+    }
+  }
 
   .highlight {
     background-color: #FAFBFC;

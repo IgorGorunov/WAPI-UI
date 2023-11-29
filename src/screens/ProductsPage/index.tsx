@@ -52,9 +52,7 @@ const ProductsPage = () => {
         try {
             setIsLoading(true);
             //verify token
-            console.log("token: ", token);
             if (!await verifyToken(token)) {
-                console.log("token is wrong");
                 await Router.push(Routes.Login);
             }
 
@@ -64,7 +62,6 @@ const ProductsPage = () => {
 
             if (res && "data" in res) {
                 setProductsData(res.data);
-                console.log("products: ", res.data);
                 setUuid(uuid);
                 setIsLoading(false);
             } else {
@@ -99,7 +96,6 @@ const ProductsPage = () => {
             const sum = item.stock.reduce((sum: number, cur)=> sum+cur.available, 0);
             return {...item, quantity: sum};
         }) : [];
-        console.log("options: ", prods)
         return prods;
     },[productsData])
 
@@ -117,7 +113,6 @@ const ProductsPage = () => {
             setIsLoading(true);
             //verify token
             if (!await verifyToken(token)) {
-                console.log("token is wrong");
                 await Router.push(Routes.Login);
             }
 
@@ -164,7 +159,6 @@ const ProductsPage = () => {
     }
 
     const onModalClose =() => {
-        console.log("it is closed");
         setShowModal(false);
     }
 

@@ -1,11 +1,16 @@
+@import '@/constants/devices.scss';
+
 .input-select {
 
-
-  z-index: 103;
-
   &-container {
-    width: 200px;
+    min-width: 150px;
 
+    @media (max-width: $upToTablet) {
+      width: 100%;
+    }
+   @media (min-width: $tablet) {
+      flex: 1 0 150px;
+    }
   }
 
   &__menu {
@@ -21,6 +26,7 @@
     transform-origin: top;
     transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
     padding: 10px 10px 10px 10px;
+    position: absolute;
   }
 
   &__dropdown-indicator svg {
@@ -54,6 +60,8 @@
     cursor: pointer !important;
     padding-left: 15px;
     padding-right: 15px;
+    display: flex;
+    justify-content: center;
   }
 
   &__indicator-separator {
@@ -65,6 +73,7 @@
     border-radius: 30px !important;
     box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03) !important;
     height: 50px !important;
+
     &:hover {
     }
 

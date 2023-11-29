@@ -66,7 +66,6 @@ const SingleDateInput: React.FC<FieldPropsType> = ({
                 </div>
             </div>);
     };
-    console.log("is disabled: ", name, disabled)
 
     return (
         <div className={`form-control-date ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${disabled ? 'is-disabled' : ''}`}>

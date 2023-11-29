@@ -29,7 +29,7 @@ const DateInput: React.FC<DateInputType> = ({currentRange = {startDate: new Date
                 <Icon name='calendar'/>
             </span>
         </div>
-        {showDateInput && (<div className="date-input__datepicker"><Datepicker initialRange={curRange} onDateRangeSave={handleDateState} /></div>)}
+        {showDateInput && (<div className="date-input__datepicker"><Datepicker initialRange={curRange} onDateRangeSave={handleDateState} onClose={()=>setShowDateInput(false)}/></div>)}
     </div>
 }
 

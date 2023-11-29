@@ -1,10 +1,13 @@
+@import '@/constants/devices.scss';
+
 .login {
   &-form {
-    margin-top: 44px;
-    padding: 16px 32px;
+    margin: 44px auto 0;
+    padding: 16px 16px;
 
-    @media (min-width: 500px) {
+    @media (min-width: $mobile) {
       width: 469px;
+      padding: 16px 32px;
     }
   }
 

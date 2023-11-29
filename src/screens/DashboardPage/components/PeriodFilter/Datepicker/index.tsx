@@ -5,6 +5,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import Button from "@/components/Button/Button";
 import "./styles.scss";
+import Icon from "@/components/Icon";
 
 
 
@@ -53,6 +54,9 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
 
   return (
       <div className="datepicker">
+        <a className="datepicker__close" href="#" onClick={()=>setShowCustom(false)}>
+          <Icon name='close' />
+        </a>
         <div className="date-range-container">
           <DateRange
               ranges={dateRange}

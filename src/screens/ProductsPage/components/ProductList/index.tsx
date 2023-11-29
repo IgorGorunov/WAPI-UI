@@ -13,6 +13,8 @@ import UniversalPopup from "@/components/UniversalPopup";
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
+import {responsiveArray} from "@/utils/responsiveObserve";
+
 
 type ProductListType = {
     products: ProductType[];
@@ -34,7 +36,7 @@ const statusFilter = [
     { value: 'Approved', label: 'Approved' , color: '#5380F5'},
     { value: 'Declined', label: 'Declined' , color: '#FF4000'},
     { value: 'Draft', label: 'Draft' , color: '#FEDB4F'},
-    { value: 'Pending', label: 'Pending' , color: '#FEDB4F'},
+    { value: 'Pending', label: 'Pending' , color: '#FFA500'},
     { value: 'Rejected', label: 'Rejected' , color: '#FF4000'},
     { value: 'Expired', label: 'Expired' , color: '#FF4000'},
 ];
@@ -78,6 +80,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
         );
         setSortColumn(columnDataIndex);
+        console.log('111');
     }, [sortColumn]);
 
     // Filter and searching
@@ -103,7 +106,15 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             return matchesSearch && matchesStatus;
         });
 
-        // Остальная логика сортировки...
+        if (sortColumn) {
+            filtered.sort((a, b) => {
+                if (sortDirection === 'ascend') {
+                    return a[sortColumn] > b[sortColumn] ? 1 : -1;
+                } else {
+                    return a[sortColumn] < b[sortColumn] ? 1 : -1;
+                }
+            });
+        }
 
         return filtered;
     }, [products, searchTerm, filterStatus, sortColumn, sortDirection]);
@@ -115,6 +126,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     // Table
     const columns: ColumnType<ProductType>[] = useMemo(() => [
         {
+            wight: "20px",
             title: <TitleColumn width="20px" contentPosition="center"/>,
             render: (status: string) => {
                 const statusObj = statusFilter.find(s => s.value === status);
@@ -139,10 +151,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             key: 'status',
         },
         {
-
-            title: <TitleColumn title="SKU" width="130px" contentPosition="start"/>,
+            title: <TitleColumn title="SKU" width="100px" contentPosition="start" />,
             render: (text: string) => (
-                <TableCell value={text} width="130px" contentPosition="start"/>
+                <TableCell value={text} width="100px" contentPosition="start"/>
             ),
             dataIndex: 'sku',
             key: 'sku',
@@ -150,11 +161,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             onHeaderCell: (column: ColumnType<ProductType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
             }),
+            responsive: ['sm'],
         },
         {
-            title: <TitleColumn title="Name" width="200px" contentPosition="start"/>,
+            title: <TitleColumn title="Name" width="150px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="200px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+                <TableCell value={text} width="150px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
             dataIndex: 'name',
             key: 'name',
@@ -167,12 +179,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     onClick: () => handleEditProduct(record.uuid)
                 };
             },
-
         },
         {
-            title: <TitleColumn title="Dimension | mm" width="100px" contentPosition="center"/>,
+            title: <TitleColumn title="Dimension | mm" width="130px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="100px" contentPosition="center"/>
+                <TableCell value={text} width="130px" contentPosition="center"/>
             ),
             dataIndex: 'dimension',
             key: 'dimension',
@@ -180,6 +191,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             onHeaderCell: (column: ColumnType<ProductType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
             }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn title="Weight | kg" width="100px" contentPosition="center"/>,
@@ -192,11 +204,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             onHeaderCell: (column: ColumnType<ProductType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
             }),
+            responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Aliases" width="150px" contentPosition="start"/>,
+            title: <TitleColumn title="Aliases" width="120px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="100px" contentPosition="start"/>
+                <TableCell value={text} width="120px" contentPosition="start"/>
             ),
             dataIndex: 'aliases',
             key: 'aliases',
@@ -204,12 +217,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             onHeaderCell: (column: ColumnType<ProductType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
             }),
+            responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Available" width="100px" contentPosition="center"/>,
+            title: <TitleColumn title="Available" width="90px" contentPosition="center"/>,
             render: (text: string, record: ProductType) => (
                 <TableCell
-                    width="100px"
+                    width="90px"
                     contentPosition="start"
                     childrenAfter={<span
                         className="stock-cell-style"
@@ -240,13 +254,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     return (
         <div className='table'>
             <div className="status-filter-container">
-                <div>
-                    <StatusFilterSelector
-                        options={statusFilter}
-                        value={filterStatus}
-                        onChange={(value: string) => handleFilterChange(undefined, value)}
-                    />
-                </div>
+                <StatusFilterSelector
+                    options={statusFilter}
+                    value={filterStatus}
+                    onChange={(value: string) => handleFilterChange(undefined, value)}
+                />
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}

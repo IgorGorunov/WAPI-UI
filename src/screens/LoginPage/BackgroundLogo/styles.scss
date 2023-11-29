@@ -1,5 +1,13 @@
+@import '@/constants/devices.scss';
+
 .login {
   &__bg-logo {
-    position: absolute;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    @media (min-width: $tablet) {
+      display: block;
+      position: absolute;
+    }
   }
 }

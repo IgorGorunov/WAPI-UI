@@ -14,9 +14,10 @@ interface TitleColumnProps {
 const TitleColumn: React.FC<TitleColumnProps> = ({ title, width, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children}) => {
     const style: React.CSSProperties = {
         display: 'flex',
-        width: width,
+        minWidth: width,
         justifyContent: contentPosition,
         alignItems: contentPosition,
+        textAlign: contentPosition as React.CSSProperties['textAlign'],
         color: textColor,
         cursor: cursor,
         gap: 5,

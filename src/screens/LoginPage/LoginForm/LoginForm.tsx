@@ -68,7 +68,6 @@ const LoginForm: React.FC = () => {
     formState,
   } = useForm({ mode: "onSubmit" });
 
-  console.log("form", formState);
 
   const handleFormSubmit = async (data: any) => {
     const { login, password } = data;
@@ -108,7 +107,7 @@ const LoginForm: React.FC = () => {
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         {formFields.map((curField: any ) => (
 
-          <div key={curField.name}>
+          <div key={curField.name} className='grid-row'>
             <Controller
                 name={curField.name}
                 control={control}

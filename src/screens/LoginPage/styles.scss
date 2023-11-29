@@ -1,7 +1,12 @@
 .login-page {
   &__container {
     position: relative;
+    width: 100%;
+
     padding-top: 30px;
+
+    background: no-repeat center 40px url('../../assets/icons/bg-logo.svg');
+    background-size: contain;
   }
 
   &__text-wrapper {

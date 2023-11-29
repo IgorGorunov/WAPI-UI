@@ -34,7 +34,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
     }
 
     return (
-        <div className='main-header'>
+        <div className={`main-header`}>
             <div className = 'main-header__wrapper card'>
                 <div className='main-header__menu-block' onClick={handleClick}>
                     <div className='main-header__icon'>
@@ -63,7 +63,6 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                             <span style={{marginLeft: "20px"}}>Dashboard</span>
                         </Link>
                     </div>
-
                     <div className={`submenu-container${isProductSubmenuOpen ? '-expanded' : ''}`}>
                         <div className="submenu-header" onClick={() => setProductSubmenuOpen(!isProductSubmenuOpen)}>
                             <Icon name="products" style={{width: "30px", height: "30px"}} />
@@ -72,17 +71,16 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-up"/></span> :
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
                             }
-
                         </div>
                         <div className="submenu-items">
-                            <div className="submenu-item">
-                                <Link href="/products" >Products list </Link>
+                            <Link href="/products" className="submenu-item">
+                                Products list
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
-                            </div>
-                            <div className="submenu-item">
-                                <Link href="/productsStock" >Products stock</Link>
+                            </Link>
+                            <Link href="/productsStock" className="submenu-item">
+                                Products stock
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
-                            </div>
+                            </Link>
                         </div>
 
                     </div>
@@ -96,14 +94,10 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                             }
                         </div>
                         <div className="submenu-items">
-                            <div className="submenu-item">
-                                <Link href="/orders" >Fulfillment</Link>
+                            <Link href="/orders" className="submenu-item">
+                                Fulfillment
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
-                            </div>
-                            {/*<div className="submenu-item">*/}
-                            {/*    <Link href="/orders" >Amazon prep/Link>*/}
-                            {/*    <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>*/}
-                            {/*</div>*/}
+                            </Link>
                         </div>
                     </div>
 

@@ -1,5 +1,5 @@
 import React, {useCallback} from "react";
-import {OrderHistoryType, SingleOrderType} from "@/types/orders";
+import {OrderHistoryType} from "@/types/orders";
 import "./styles.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 
@@ -24,10 +24,10 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
         <div className="order-status-history">
             <div className="order-status-history__header">
                 <div className='date-column'>Period</div>
-                <div className='status-column'>Status</div>
-                <div className='tracking-number-column'>Tracking #</div>
-                <div className='trouble-status-column'>Trouble status</div>
-                <div className='comment-column'>Additional information</div>
+                <div className='column status-column'>Status</div>
+                <div className='column tracking-number-column'>Tracking #</div>
+                <div className='column trouble-status-column'>Trouble status</div>
+                <div className='column comment-column'>Additional information</div>
 
             </div>
             <ul className="order-status-history__list">
@@ -40,7 +40,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                             }`}
                         >
                             <div className='date-column'>{formatDate(status.period)}</div>
-                            <div className='status-column'>
+                            <div className='column status-column'>
                                 <span style={{
                                     borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,
                                     display: 'inline-block',
@@ -48,9 +48,9 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                     {status.status}
                                 </span>
                             </div>
-                            <div className='tracking-number-column'>{status.trackingNumber}</div>
-                            <div className='trouble-status-column'>{status.troubleStatus}</div>
-                            <div className='comment-column'>{status.additionalInfo}</div>
+                            <div className='column tracking-number-column'>{status.trackingNumber}</div>
+                            <div className='column trouble-status-column'>{status.troubleStatus}</div>
+                            <div className='column comment-column'>{status.additionalInfo}</div>
                         </li>
                     ))}
             </ul>

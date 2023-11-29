@@ -4,8 +4,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 45px;
-    margin-bottom: 45px;
+    margin: 45px auto;
     padding: 46px 38px 42px;
 
     @media (min-width: 500px) {
@@ -15,5 +14,6 @@
 
   &-title {
     margin-bottom: 19px;
+    text-align: center;
   }
 }

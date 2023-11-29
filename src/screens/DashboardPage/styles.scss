@@ -1,7 +1,23 @@
+@import '@/constants/devices.scss';
+
 .dashboard-page__container {
   width: 100%;
   color: var(--color-gray-blue);
   position: relative;
+}
+
+.dashboard-grid {
+  &-col {
+    @media (max-width: $upToTablet) {
+      margin-bottom: 24px;
+    }
+  }
+
+  &-row {
+    @media (min-width: $tablet) {
+      margin-bottom: 28px;
+    }
+  }
 }
 
 .dashboard-animated-grid {
@@ -19,3 +35,4 @@
     transform: translateY(0);
   }
 }
+

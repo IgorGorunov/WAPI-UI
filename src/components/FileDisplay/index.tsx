@@ -21,7 +21,7 @@ const FileDisplay = ({ files, onFileDelete }) => {
     };
 
     const ShowFile = (file) => {
-        console.log(file.data);
+
     };
 
     return (

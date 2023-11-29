@@ -5,8 +5,8 @@ import "./styles.scss";
 const BackgroundLogo: React.FC = () => {
   return (
     <div className="login__bg-logo">
-      <div>
-        <Icon name="bg-logo" />
+      <div className="logo-icon">
+        <Icon name="bg-logo"/>
       </div>
     </div>
   );

@@ -1,5 +1,11 @@
+@import '@/constants/devices.scss';
+
 .table {
   width: 100%;
+
+  .ant-table-column-sorter {
+    display: none;
+  }
 
   .page-size-container {
     display: flex;
@@ -26,7 +32,6 @@
     .ant-pagination-prev,
     .ant-pagination-next {
       height: 40px !important;
-
       .ant-pagination-item-link {
         border-radius: 5px;
         box-shadow: 2px solid var(--color-blue);
@@ -87,7 +92,7 @@
     .ant-table-thead > tr > th {
       background-color: white !important;
       color: var(--color-gray-blue) !important;
-      Font-size: 12px !important;
+      font-size: 12px !important;
       font-style: normal !important;
       font-weight: 700 !important;
       border-bottom: 2px solid var(--color-light-gray) !important;
@@ -107,7 +112,7 @@
     .ant-table-cell {
       background-color: white !important;
       color: var(--color-gray-blue) !important;
-      Font-size: 12px !important;
+      font-size: 12px !important;
       font-style: normal !important;
       font-weight: 700 !important;
       text-align: start !important;

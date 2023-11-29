@@ -11,10 +11,11 @@ import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
 import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
 import DateInput from "@/components/DateInput";
-import {DateRangeType, PeriodType} from "@/types/dashboard";
+import {DateRangeType} from "@/types/dashboard";
 import {OrderType} from "@/types/orders";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
+import Button, {ButtonVariant} from "@/components/Button/Button";
 
 
 type OrderListType = {
@@ -61,7 +62,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
     const [filterStatus, setFilterStatus] = useState('-All statuses-');
-    const allStatuses = orders.map(order => order.status);
+    // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
         const statuses = orders.map(order => order.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
@@ -83,7 +84,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     ]), [uniqueStatuses]);
 
     const [filterWarehouse, setFilterWarehouse] = useState('-All warehouses-');
-    const allWarehouses = orders.map(order => order.warehouse);
+    // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
         const warehouses = orders.map(order => order.warehouse);
         return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
@@ -101,7 +102,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     ]), [uniqueWarehouses]);
 
     const [filterCourierService, setFilterCourierService] = useState('-All couriers-');
-    const allCourierServices = orders.map(order => order.courierService);
+    // const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = useMemo(() => {
         const courierServices = orders.map(order => order.courierService);
         return Array.from(new Set(courierServices)).filter(courier => courier).sort();
@@ -119,7 +120,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     ]), [uniqueCourierServices]);
 
     const [filterReceiverCountry, setFilterReceiverCountry] = useState('-All countries-');
-    const allReceiverCountries = orders.map(order => order.receiverCountry);
+    // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = orders.map(order => order.receiverCountry);
         return Array.from(new Set(receiverCountries)).filter(country => country).sort();
@@ -171,9 +172,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
         return orders.filter(order => {
-            const matchesSearch = !searchTerm || Object.keys(order).some(key => {
+            const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
-                return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
+                if (key !== 'uuid' && typeof value === 'string') {
+                    const searchTermsArray = searchTerm.trim().split(' ');
+                    const anyWordMatches = searchTermsArray.some(word => value.includes(word));
+                    return anyWordMatches;
+                }
+                return false;
             });
             const matchesStatus = filterStatus === '-All statuses-' ||
                 (filterStatus === '-Trouble statuses-' ? order.troubleStatusesExist : order.status === filterStatus);
@@ -201,6 +207,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setShowDatepicker(false);
     };
 
+    const [isFiltersVisible, setIsFiltersVisible] = useState(true);
+
+    const toggleFilters = () => {
+        setIsFiltersVisible(!isFiltersVisible);
+    };
+
     useEffect(() => {
         setFilteredOrders(filteredOrders);
 
@@ -209,13 +221,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const columns: TableColumnProps<OrderType>[]  = [
         {
             title: <TitleColumn
-                    width="60px"
+                    width="40px"
                     contentPosition="center"
                     childrenBefore={<Icon name={"car"}/>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
-                    width="60px"
+                    width="40px"
                     contentPosition="center"
                     value={'➔'}
                     childrenBefore={
@@ -299,7 +311,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
-
         },
         {
             title: <TitleColumn title="WH number" width="75px" contentPosition="start"/>,
@@ -312,7 +323,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
-            onCell: (record, rowIndex) => {
+            onCell: (record) => {
                 return {
                     onClick: () => handleEditOrder(record.uuid)
                 };
@@ -340,6 +351,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn title="Order ID" width="70px" contentPosition="start"/>,
@@ -353,6 +365,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn title="Warehouse" width="60px" contentPosition="start"/>,
@@ -365,6 +378,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn title="Courier" width="60px" contentPosition="start"/>,
@@ -377,6 +391,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn title="Tracking number" width="150px" contentPosition="start"/>,
@@ -389,6 +404,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn title="Products" width="50px" contentPosition="start"/>,
@@ -424,40 +440,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         ];
     return (
         <div className="table">
-            <div className="filter-container" >
-                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
-                <Selector
-                    options={transformedStatuses}
-                    value={filterStatus}
-                    onChange={(value: string) => setFilterStatus(value)}
-                />
-                <div>
-                    <Selector
-                        options={transformedWarehouses}
-                        value={filterWarehouse}
-                        onChange={(value: string) => setFilterWarehouse(value)}
-                    />
-                </div>
-                <div>
-                    <Selector
-                        options={transformedCourierServices}
-                        value={filterCourierService}
-                        onChange={(value: string) => setFilterCourierService(value)}
-                    />
-                </div>
-                <div>
-                    <Selector
-                        options={transformedReceiverCountries}
-                        value={filterReceiverCountry}
-                        onChange={(value: string) => setFilterReceiverCountry(value)}
-                    />
-                </div>
-            </div>
-            <div className="filter-container" >
+            <div className="search-container">
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}
@@ -465,6 +454,30 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     className="search-input"
                 />
             </div>
+            {isFiltersVisible && (
+            <div className="filter-container">
+                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
+                <Selector
+                    options={transformedStatuses}
+                    value={filterStatus}
+                    onChange={(value: string) => setFilterStatus(value)}
+                />
+                <Selector
+                    options={transformedWarehouses}
+                    value={filterWarehouse}
+                    onChange={(value: string) => setFilterWarehouse(value)}
+                />
+                <Selector
+                    options={transformedCourierServices}
+                    value={filterCourierService}
+                    onChange={(value: string) => setFilterCourierService(value)}
+                />
+                <Selector
+                    options={transformedReceiverCountries}
+                    value={filterReceiverCountry}
+                    onChange={(value: string) => setFilterReceiverCountry(value)}
+                />
+            </div>)}
             <div className="page-size-container">
                 <span className="page-size-text">Orders list</span>
                 <PageSizeSelector
@@ -536,6 +549,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                 }
                             })()
                         }
+                        handleClose={()=>setIsDisplayedPopup(false)}
                     />
                 </div>
             )}

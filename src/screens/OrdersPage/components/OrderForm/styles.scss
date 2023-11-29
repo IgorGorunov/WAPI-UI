@@ -1,10 +1,17 @@
-.order-info {
+@import '@/constants/devices.scss';
 
-  width: 1090px;
+.order-info {
+  @media (min-width: $desktop) {
+    width: 1090px;
+  }
 
   .card {
     padding: 28px;
     margin-bottom: 16px;
+
+    @media (max-width: $mobile) {
+      padding: 16px;
+    }
   }
 
   &__block-title {
@@ -25,22 +32,73 @@
     }
   }
 
+  @media (max-width: $mobile) {
+    .general-tab,
+    .delivery-tab {
+      .width-25 {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+
+    .general-tab {
+      .width-17 {
+        padding-left: 0;
+      }
+    }
+  }
+
+  @media (max-width: $upToTablet) {
+    .general-tab {
+      .width-33 {
+        flex: 1 1 67%;
+        max-width: 67%;
+      }
+
+      .width-17 {
+        flex: 1 1 33%;
+        max-width: 33%;
+      }
+    }
+  }
+
   &--order-btns {
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
     margin-bottom: 8px;
+
+    @media (max-width: $tablet) {
+      flex: 1 1 50%;
+    }
   }
 
   &--table {
     margin: 0 -28px;
 
+    @media (max-width: $mobile) {
+      margin: 0 -16px;
+    }
+
     &-btns {
       display: flex;
       justify-content: flex-end;
-      align-items: end;
+      align-items: flex-end;
       padding-bottom: 8px;
       gap: 30px;
+
+      @media (max-width: $tablet) {
+        gap: 12px;
+        width: auto;
+        flex: 0 0 auto;
+        margin-left: auto;
+
+        .btn {
+          font-size: 0;
+          padding: 5px 9px 5px 5px;
+          gap: 0;
+        }
+      }
 
       &.small-paddings {
         padding-bottom: 0;
@@ -48,20 +106,7 @@
     }
   }
 
-
-
-
-
   .ant-table {
-
-    &-container {
-
-    }
-
-    &-content {
-
-    }
-
     &-thead {
       .ant-table-cell {
         padding: 20px 10px !important;
@@ -74,20 +119,22 @@
           content: none !important;
         }
       }
-
     }
 
     &-cell {
       padding: 8px !important;
     }
-
   }
-
 
   .form-submit-btn {
     display: flex;
     justify-content: flex-end;
     gap: 22px;
     margin-top: 30px;
+
+    @media (max-width: $mobile) {
+      gap: 6px;
+      flex-wrap: wrap;
+    }
   }
 }

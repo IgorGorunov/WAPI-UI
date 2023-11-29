@@ -1,8 +1,12 @@
+@import "@/constants/devices.scss";
+
 .forecast {
   &__container {
     opacity: 1;
     height: 100%;
     padding: 26px;
+
+
   }
 
   &.gmv {
@@ -42,6 +46,8 @@
 
     .grid-col-2 {
       margin-bottom: 0;
+      padding-left: 15px;
+      padding-right: 15px;
     }
   }
 
