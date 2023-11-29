@@ -56,7 +56,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const troubleStatusesItems = orders.flatMap(order => {
         return order.troubleStatuses.map(orderItem => ({
             uuid: order.uuid,
-            title: orderItem.period +': '+ orderItem.status,
+            title: orderItem.period,
             description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
