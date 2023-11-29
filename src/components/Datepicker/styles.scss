@@ -1,5 +1,17 @@
 .datepicker {
   position: relative;
+  padding-top: 10px;
+
+  &__close {
+    position: absolute;
+    top: 0;
+    right: -7px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--color-light-blue-gray);
+    z-index: 2;
+  }
 
   &__wrapper {
     background-color: aquamarine;
