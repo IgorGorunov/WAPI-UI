@@ -168,18 +168,6 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
-            title: <TitleColumn title="Total" width="20px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} width="20px" contentPosition="center"/>
-            ),
-            dataIndex: 'total',
-            key: 'total',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
-            }),
-        },
-        {
             title: <TitleColumn title="Available" width="30px" contentPosition="center"/>,
             render: (text: string) => (
                 <TableCell value={text} width="30px" contentPosition="center"/>
@@ -191,6 +179,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
+
+
         {
             title: <TitleColumn title="Reserve" width="30px" contentPosition="center"/>,
             render: (text: string) => (
@@ -202,6 +192,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             onHeaderCell: (column: ColumnType<ProductStockType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn title="Damaged" width="30px" contentPosition="center"/>,
@@ -267,6 +258,19 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
             responsive: ['lg'],
+        },
+        {
+            title: <TitleColumn title="Total" width="20px" contentPosition="center"/>,
+            render: (text: string) => (
+                <TableCell value={text} width="20px" contentPosition="center"/>
+            ),
+            dataIndex: 'total',
+            key: 'total',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
+            }),
+            responsive: ['md'],
         },
         ], [handleHeaderCellClick]);
     return (

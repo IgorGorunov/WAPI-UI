@@ -41,6 +41,7 @@ import Files from '@/assets/icons/files.svg'
 import Delete from '@/assets/icons/delete.svg'
 import Goods from '@/assets/icons/goods.svg'
 import Receiver from '@/assets/icons/receiver.svg'
+import Filter from '@/assets/icons/filter.svg'
 
 
 export const icons = {
@@ -85,6 +86,7 @@ export const icons = {
   'delete': Delete,
   'goods': Goods,
   'receiver': Receiver,
+  'filter': Filter,
 };
 
 export type IconType = keyof typeof icons;

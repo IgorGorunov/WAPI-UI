@@ -1,3 +1,5 @@
+@import "@/constants/devices.scss";
+
 .btn {
   display: flex;
   align-items: center;
@@ -22,8 +24,6 @@
     cursor: pointer;
     color: var(--color-gray-blue);
   }
-
-
 
   &-size {
     &-sm {
@@ -79,6 +79,21 @@
     }
   }
 
+  &.mobile {
+    display: none;
+    background-color: transparent;
+    color: transparent;
+    margin-bottom: 0;
+    min-width: 32px;
+    &:hover {
+      background-color: transparent;
+    }
+    @media (max-width: $upToTablet) {
+      display: flex;
+    }
+  }
+
+
   &:disabled,
   &[disabled]{
     cursor: not-allowed;
@@ -90,4 +105,8 @@
       background-color: var(--color-blue-5);
     }
   }
+  @media (max-width: $mobile) {
+    min-width: 0;
+  }
+
 }

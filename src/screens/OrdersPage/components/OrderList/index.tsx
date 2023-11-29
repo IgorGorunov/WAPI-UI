@@ -15,6 +15,7 @@ import {DateRangeType, PeriodType} from "@/types/dashboard";
 import {OrderType} from "@/types/orders";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
+import Button, {ButtonVariant} from "@/components/Button/Button";
 
 
 type OrderListType = {
@@ -201,6 +202,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setShowDatepicker(false);
     };
 
+    const [isFiltersVisible, setIsFiltersVisible] = useState(true);
+
+    const toggleFilters = () => {
+        setIsFiltersVisible(!isFiltersVisible);
+    };
+
     useEffect(() => {
         setFilteredOrders(filteredOrders);
 
@@ -209,13 +216,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const columns: TableColumnProps<OrderType>[]  = [
         {
             title: <TitleColumn
-                    width="60px"
+                    width="40px"
                     contentPosition="center"
                     childrenBefore={<Icon name={"car"}/>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
-                    width="60px"
+                    width="40px"
                     contentPosition="center"
                     value={'➔'}
                     childrenBefore={
@@ -299,7 +306,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
-
         },
         {
             title: <TitleColumn title="WH number" width="75px" contentPosition="start"/>,
@@ -340,6 +346,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn title="Order ID" width="70px" contentPosition="start"/>,
@@ -353,6 +360,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn title="Warehouse" width="60px" contentPosition="start"/>,
@@ -365,6 +373,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn title="Courier" width="60px" contentPosition="start"/>,
@@ -377,6 +386,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn title="Tracking number" width="150px" contentPosition="start"/>,
@@ -389,6 +399,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn title="Products" width="50px" contentPosition="start"/>,
@@ -424,40 +435,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         ];
     return (
         <div className="table">
-            <div className="filter-container" >
-                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
-                <Selector
-                    options={transformedStatuses}
-                    value={filterStatus}
-                    onChange={(value: string) => setFilterStatus(value)}
-                />
-                <div>
-                    <Selector
-                        options={transformedWarehouses}
-                        value={filterWarehouse}
-                        onChange={(value: string) => setFilterWarehouse(value)}
-                    />
-                </div>
-                <div>
-                    <Selector
-                        options={transformedCourierServices}
-                        value={filterCourierService}
-                        onChange={(value: string) => setFilterCourierService(value)}
-                    />
-                </div>
-                <div>
-                    <Selector
-                        options={transformedReceiverCountries}
-                        value={filterReceiverCountry}
-                        onChange={(value: string) => setFilterReceiverCountry(value)}
-                    />
-                </div>
-            </div>
-            <div className="filter-container" >
+            <div className="search-container">
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}
@@ -465,6 +449,30 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     className="search-input"
                 />
             </div>
+            {isFiltersVisible && (
+            <div className="filter-container">
+                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
+                <Selector
+                    options={transformedStatuses}
+                    value={filterStatus}
+                    onChange={(value: string) => setFilterStatus(value)}
+                />
+                <Selector
+                    options={transformedWarehouses}
+                    value={filterWarehouse}
+                    onChange={(value: string) => setFilterWarehouse(value)}
+                />
+                <Selector
+                    options={transformedCourierServices}
+                    value={filterCourierService}
+                    onChange={(value: string) => setFilterCourierService(value)}
+                />
+                <Selector
+                    options={transformedReceiverCountries}
+                    value={filterReceiverCountry}
+                    onChange={(value: string) => setFilterReceiverCountry(value)}
+                />
+            </div>)}
             <div className="page-size-container">
                 <span className="page-size-text">Orders list</span>
                 <PageSizeSelector

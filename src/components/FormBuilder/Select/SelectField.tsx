@@ -68,7 +68,7 @@ const SelectField: React.FC<FieldPropsType> = ({
                 value={options.find((option) => option.value === value) || null}
                 getOptionLabel={getOptionLabel}
                 getOptionValue={getOptionValue}
-                components={{ ValueContainer: CustomValueContainer }}
+                //components={{ SelectContainer: CustomValueContainer }}
                 name={name}
                 options={options}
                 placeholder={placeholder}
@@ -78,6 +78,7 @@ const SelectField: React.FC<FieldPropsType> = ({
                 classNamePrefix='select-field'
                 instanceId={`select-${name}`}
                 isClearable={isClearable}
+                //formatGroupLabel={ CustomValueContainer }
             />
             {errorMessage && <p className="error">{errorMessage}</p>}
 

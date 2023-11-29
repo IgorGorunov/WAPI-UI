@@ -80,6 +80,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
         );
         setSortColumn(columnDataIndex);
+        console.log('111');
     }, [sortColumn]);
 
     // Filter and searching
@@ -105,7 +106,15 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             return matchesSearch && matchesStatus;
         });
 
-        // Остальная логика сортировки...
+        if (sortColumn) {
+            filtered.sort((a, b) => {
+                if (sortDirection === 'ascend') {
+                    return a[sortColumn] > b[sortColumn] ? 1 : -1;
+                } else {
+                    return a[sortColumn] < b[sortColumn] ? 1 : -1;
+                }
+            });
+        }
 
         return filtered;
     }, [products, searchTerm, filterStatus, sortColumn, sortDirection]);
