@@ -330,12 +330,12 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
-                        name={`unitOfMeasures[${index}].quantity`}
+                        name={`unitOfMeasures[${index}].coefficient`}
                         control={control}
                         render={({ field }) => (
                             <div style={{maxWidth: '110px'}}>
                                 <FieldBuilder
-                                    name={`unitOfMeasures[${index}].quantity`}
+                                    name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
