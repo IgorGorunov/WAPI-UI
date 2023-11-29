@@ -68,7 +68,7 @@ const SelectField: React.FC<FieldPropsType> = ({
                 value={options.find((option) => option.value === value) || null}
                 getOptionLabel={getOptionLabel}
                 getOptionValue={getOptionValue}
-                //components={{ SelectContainer: CustomValueContainer }}
+                components={{ SingleValue: CustomValueContainer }}
                 name={name}
                 options={options}
                 placeholder={placeholder}
