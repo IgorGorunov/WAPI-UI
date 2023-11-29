@@ -3,8 +3,8 @@
 .input-select {
 
   &-container {
-    // z-index: 103;
     min-width: 150px;
+
     @media (max-width: $upToTablet) {
       width: 100%;
     }

@@ -5,7 +5,11 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
+  justify-content: space-between;
   @media (max-width: $mobile) {
     flex-wrap: wrap;
+  }
+  .input-select-container {
+    flex: 1 0 200px;
   }
 }

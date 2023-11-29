@@ -276,11 +276,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
     return (
         <div className='table'>
             <div className="warehouse-filter-container">
-                <StatusWarehouseSelector
-                    options={transformedWarehouses}
-                    value={filterWarehouse}
-                    onChange={(value: string) => handleFilterChange(undefined, value)}
-                />
+                    <StatusWarehouseSelector
+                        options={transformedWarehouses}
+                        value={filterWarehouse}
+                        onChange={(value: string) => handleFilterChange(undefined, value)}
+                    />
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}

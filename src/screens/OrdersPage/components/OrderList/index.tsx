@@ -172,9 +172,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
         return orders.filter(order => {
-            const matchesSearch = !searchTerm || Object.keys(order).some(key => {
+            const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
-                return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
+                if (key !== 'uuid' && typeof value === 'string') {
+                    const searchTermsArray = searchTerm.trim().split(' ');
+                    const anyWordMatches = searchTermsArray.some(word => value.includes(word));
+                    return anyWordMatches;
+                }
+                return false;
             });
             const matchesStatus = filterStatus === '-All statuses-' ||
                 (filterStatus === '-Trouble statuses-' ? order.troubleStatusesExist : order.status === filterStatus);
