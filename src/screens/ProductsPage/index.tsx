@@ -197,7 +197,7 @@ const ProductsPage = () => {
                 }
                 {showImportModal &&
                     <Modal title={`Import xls`} onClose={onImportModalClose} >
-                        <ImportFilesBlock file='test.txt' isProducts={true} closeModal={()=>setShowImportModal(false)}/>
+                        <ImportFilesBlock file='Master data.xlsx' isProducts={true} closeModal={()=>setShowImportModal(false)}/>
                     </Modal>
                 }
             </Layout>
