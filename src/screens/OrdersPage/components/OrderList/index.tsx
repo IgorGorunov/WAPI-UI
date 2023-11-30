@@ -16,6 +16,7 @@ import {OrderType} from "@/types/orders";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, {ButtonVariant} from "@/components/Button/Button";
+import Head from "next/head";
 
 
 type OrderListType = {
@@ -501,6 +502,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         ];
     return (
         <div className="table">
+            <Head>
+                <title>Orders</title>
+                <meta name="orders" content="orders" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="icon" href="/logo.png" />
+            </Head>
             <div className="search-container">
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
                 <Input

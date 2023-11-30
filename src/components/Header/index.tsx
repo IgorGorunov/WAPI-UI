@@ -48,8 +48,8 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                 </div>
 
                 <div className='main-header__user card' onClick={handleLogOut}>
-                    <Icon name='user' />
                     <span className='user-name'>{curUserName}</span>
+                    <Icon name='exit' />
                 </div>
             </div>
             <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`}>

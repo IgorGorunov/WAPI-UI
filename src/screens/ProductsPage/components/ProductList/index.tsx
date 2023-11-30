@@ -14,6 +14,7 @@ import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
 import {responsiveArray} from "@/utils/responsiveObserve";
+import Head from "next/head";
 
 
 type ProductListType = {
@@ -260,6 +261,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         ], [handleHeaderCellClick, setHoveredProduct, setIsDisplayedPopup]);
     return (
         <div className='table'>
+            <Head>
+                <title>Products</title>
+                <meta name="products" content="products" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="icon" href="/logo.png" />
+            </Head>
             <div className="status-filter-container">
                 <StatusFilterSelector
                     options={statusFilter}

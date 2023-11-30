@@ -3,10 +3,15 @@ import Layout from "@/components/Layout/Layout";
 import LoginForm from "./LoginForm/LoginForm";
 import SignUpBlock from "./SignUpForm/SignUpBlock";
 import "./styles.scss";
+import Head from "next/head";
 
 const LoginPage = () => {
   return (
     <Layout hasFooter>
+      <Head>
+        <title>Login</title>
+        <link rel="icon" href="/logo.png" />
+      </Head>
       {/*<BackgroundLogo />*/}
       <div className="login-page__container">
         <div className="login-page__text-wrapper">

@@ -14,6 +14,7 @@ import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
 import {responsiveArray} from "@/utils/responsiveObserve";
+import Head from "next/head";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -124,7 +125,6 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             ),
             dataIndex: 'country',
             key: 'country',
-            responsive: ['sm'],
         },
         {
             title: <TitleColumn
@@ -277,6 +277,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
         ], [handleHeaderCellClick]);
     return (
         <div className='table'>
+            <Head>
+                <title>Products stock</title>
+                <meta name="stock" content="stock" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="icon" href="/logo.png" />
+            </Head>
             <div className="warehouse-filter-container">
                     <StatusWarehouseSelector
                         options={transformedWarehouses}
