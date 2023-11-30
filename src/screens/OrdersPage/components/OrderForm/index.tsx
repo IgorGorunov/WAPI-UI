@@ -295,13 +295,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                     disabled={isDisabled}
                                     onChange={(selectedValue) => {
                                         field.onChange(selectedValue);
-                                        //handleProductChange(selectedValue,index)
-                                        //console.log("1111", record);
                                         const sku = getProductSku(selectedValue as string);
                                         console.log("sku: ",getProductSku(selectedValue as string));
                                         record.sku = getProductSku(selectedValue as string);
                                         setValue(`products.${index}.sku`, sku)
-                                        //console.log("222", selectedValue);
+
                                     }}
                                 />
                             </div>
@@ -318,7 +316,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                     <Controller
                         name={`products[${index}].analogue`}
                         control={control}
-
                         render={({ field }) => (
                             <div style={{maxWidth: '200px'}}>
                                 <FieldBuilder

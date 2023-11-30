@@ -221,13 +221,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const columns: TableColumnProps<OrderType>[]  = [
         {
             title: <TitleColumn
-                width="10px"
+                minWidth="10px"
+                maxWidth="10px"
                 contentPosition="center">
             </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
                     isBlock={true}
-                    width="10px"
+                    minWidth="10px"
+                    maxWidth="10px"
                     contentPosition="center"
                     value={'↓'}
                     childrenBefore={
@@ -250,13 +252,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             title: <TitleColumn
-                    width="40px"
+                    minWidth="40px"
+                    maxWidth="40px"
                     contentPosition="center"
                     childrenBefore={<Icon name={"car"}/>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
-                    width="40px"
+                    minWidth="40px"
+                    maxWidth="40px"
                     contentPosition="center"
                     value={'➔'}
                     childrenBefore={
@@ -278,12 +282,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['sm'],
         },
         {
-            title: <TitleColumn title="Status" width="70px" contentPosition="start"/>,
+            title: <TitleColumn title="Status" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
                     <TableCell
-                        width="70px"
+                        minWidth="60px"
+                        maxWidth="60px"
                         contentPosition="start"
                         childrenBefore={
                             record.troubleStatusesExist && (
@@ -338,9 +343,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn title="Date" width="75px" contentPosition="start"/>,
+            title: <TitleColumn title="Date" minWidth="75px" maxWidth="75px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="75px" contentPosition="start"/>
+                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
             ),
             dataIndex: 'date',
             key: 'date',
@@ -350,9 +355,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn title="WH number" width="75px" contentPosition="start"/>,
+            title: <TitleColumn title="WH number" minWidth="75px" maxWidth="75px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="75px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
             dataIndex: 'wapiTrackingNumber',
             key: 'wapiTrackingNumber',
@@ -367,19 +372,27 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             },
         },
         {
-            title: <TitleColumn title="COD" width="60px" contentPosition="start"/>,
+            title: <TitleColumn title="COD" minWidth="75px" maxWidth="75px" contentPosition="center"/>,
             render: (text: string, record) => {
                 if (record.codCurrency) {
                     const currencySymbol = getSymbolFromCurrency(record.codCurrency);
                     return (
                         <TableCell
                             value={`${text} ${currencySymbol}`}
-                            width="75px"
-                            contentPosition="start">
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="center">
                         </TableCell>
                     );
                 } else {
-                    return null;
+                    return (
+                        <TableCell
+                            value={'-'}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="center">
+                        </TableCell>
+                    );
                 }
             },
             dataIndex: 'codAmount',
@@ -391,9 +404,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Order ID" width="70px" contentPosition="start"/>,
+            title: <TitleColumn title="Order ID" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="70px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
             ),
 
             dataIndex: 'clientOrderID',
@@ -405,9 +418,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Warehouse" width="60px" contentPosition="start"/>,
+            title: <TitleColumn title="Warehouse" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="60px" contentPosition="start"/>
+                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
@@ -415,12 +428,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
-            responsive: ['lg'],
+            responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Courier" width="60px" contentPosition="start"/>,
+            title: <TitleColumn title="Courier" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="60px" contentPosition="start"/>
+                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
             dataIndex: 'courierService',
             key: 'courierService',
@@ -428,12 +441,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
-            responsive: ['lg'],
+            responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Tracking number" width="150px" contentPosition="start"/>,
+            title: <TitleColumn title="Tracking number" minWidth="150px" maxWidth="150px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="150px" contentPosition="start"/>
+                <TableCell value={text} minWidth="150px" maxWidth="150px" contentPosition="start"/>
             ),
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
@@ -444,10 +457,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Products" width="50px" contentPosition="start"/>,
+            title: <TitleColumn title="Products" minWidth="50px" maxWidth="50px" contentPosition="start"/>,
             render: (text: string, record: OrderType) => (
                 <TableCell
-                    width="50px"
+                    minWidth="50px"
+                    maxWidth="50px"
                     contentPosition="center"
                     childrenAfter ={
                     <span

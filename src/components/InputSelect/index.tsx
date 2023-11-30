@@ -29,6 +29,7 @@ const CustomSelect = ({ options, value, onChange, name="", errors={}, errorMessa
                 className="input-select"
                 classNamePrefix="input-select"
                 formatOptionLabel={formatOptionLabel}
+                isSearchable={false}
             />
             {errors && name in errors ? (
                 <p className="error">

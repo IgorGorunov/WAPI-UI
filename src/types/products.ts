@@ -34,6 +34,9 @@ export type ProductStockType = {
     forPlacement: number,
     reserved: number,
     available: number,
+    volume: number,
+    weightGross: number,
+    weightNet: number,
 }
 
 export type ProductParamsType = {
