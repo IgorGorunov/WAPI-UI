@@ -56,9 +56,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     const { token } = useAuth();
 
-    //temporary
-    const [needErrorToast, setNeedsErrorToast] = useState(true);
-
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
@@ -237,6 +234,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     const productOptions = useMemo(() =>{
         return orderParams.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
     },[]);
+
+    // const productsHeaderWidth = [40, 130, 'auto', 200, 50, 50, 50, 50, 50, 50];
     const getProductColumns = (control: any) => {
         return [
             {
@@ -284,6 +283,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'SKU',
                 dataIndex: 'sku',
                 key: 'sku',
+                minWidth: 100,
                 responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -337,6 +337,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Analogue',
                 dataIndex: 'analogue',
                 key: 'analogue',
+                width: 200,
+                minWidth: 200,
                 responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -350,6 +352,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                     {...field}
                                     options={productOptions}
                                     disabled={true}
+
                                 /></div>
                         )}
                     />
@@ -359,6 +362,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Quantity',
                 dataIndex: 'quantity',
                 key: 'quantity',
+                minWidth: 50,
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].quantity`}
@@ -383,6 +387,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Price',
                 dataIndex: 'price',
                 key: 'price',
+                minWidth: 50,
                 responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -405,6 +410,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Discount',
                 dataIndex: 'discount',
                 key: 'discount',
+                minWidth: 50,
                 responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -427,6 +433,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Tax',
                 dataIndex: 'tax',
                 key: 'tax',
+                minWidth: 50,
                 responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -449,6 +456,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Total',
                 dataIndex: 'total',
                 key: 'total',
+                minWidth: 50,
                 responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -471,6 +479,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'COD',
                 dataIndex: 'cod',
                 key: 'cod',
+                minWidth: 50,
                 responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller

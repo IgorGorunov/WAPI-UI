@@ -29,6 +29,7 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
 import Skeleton from "@/components/Skeleton/Skeleton";
+import {toast, ToastContainer} from '@/components/Toast';
 import "@/styles/tables.scss";
 
 const enum SendStatusType {
@@ -827,6 +828,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
         }
     }
 
+    const onError = (props: any) => {
+        console.log('onError: ', props);
+        toast.warn("Validation error", {
+            position: "top-right",
+            autoClose: 1000,
+        });
+    }
+
     const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr}), [COUNTRIES])
     const skuFields = useMemo(()=>FormFieldsSKU(), []);
     const warehouseFields = useMemo(()=>FormFieldsWarehouse({typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial:createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements)}),[productParams])
@@ -851,7 +860,8 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 <Skeleton type="round" width="500px" height="300px" />
             </div>
         )}
-        <form onSubmit={handleSubmit(onSubmitForm)}>
+        <ToastContainer />
+        <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogues', 'Status history', 'Files']} classNames='inside-modal'>
                 <div className='primary-tab'>
                     <div className='card product-info--general'>
@@ -1094,8 +1104,8 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 </div>
             </Tabs>
             <div className='form-submit-btn'>
-                <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.SECONDARY}>Edit</Button>
-                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.SECONDARY}>Save as draft</Button>
+                {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>
                 <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} >Send to approve</Button>
             </div>
         </form>
