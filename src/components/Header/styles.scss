@@ -48,17 +48,18 @@
     padding: 6px 15px;
     border-radius: 20px;
     cursor: pointer;
-
+    transition: all .3s ease-in;
     @media (max-width: $tablet) {
       padding: 6px;
     }
-
+    box-shadow: 0 2px 5px 0 var(--color-gray2);
     &:focus {
       background-color: var(--color-blue);
+      box-shadow: 0 2px 5px 0 var(--color-blue);
     }
-
     &:hover {
-      background-color: var(--color-blue-15);
+      background-color: var(--color-gray2);
+      box-shadow: 0 2px 5px 0 var(--color-gray2);
     }
 
     .user-name {
@@ -151,7 +152,7 @@
   align-self: stretch;
   border-radius: 10px;
   background: #5380F5;
-  box-shadow: 0 10px 30px 0 rgba(136, 51, 255, 0.10);
+  box-shadow: 0 2px 5px 0 var(--color-blue);
   color: var(--white-white, #FFF);
   font-feature-settings: 'clig' off, 'liga' off;
   font-size: 13px;
@@ -167,6 +168,7 @@
 }
 .button-link:hover {
   background-color: var(--color-blue-15);
+  box-shadow: 0 2px 5px 0 var(--color-blue-15);
   font-size: 14px;
   color: var(--color-gray-blue);
   .icon-home path{

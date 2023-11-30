@@ -10,17 +10,20 @@
   font-weight: 900;
   line-height: 30px;
   background-color: var(--color-blue);
+  box-shadow: 0 2px 5px 0 var(--color-blue);
   color: white;
   border: none;
   transition: all .3s ease-in;
 
   &:focus {
     background-color: var(--color-blue);
+    box-shadow: 0 2px 5px 0 var(--color-blue);
     cursor: pointer;
   }
 
   &:hover {
     background-color: var(--color-blue-15);
+    box-shadow: 0 2px 5px 0 var(--color-blue-15);
     cursor: pointer;
     color: var(--color-gray-blue);
   }
@@ -70,12 +73,12 @@
 
   &.secondary {
     background-color: var(--color-gray2);
+    box-shadow: 0 2px 5px 0 var(--color-gray2);
     color: var(--color-gray-blue);
     border-radius: 20px;
-    border: 2px solid var(--color-gray2);
-
     &:hover {
-      background-color: var(--color-blue-15);
+      background-color: var(--color-light-blue-gray);
+      box-shadow: 0 2px 5px 0 var(--color-light-blue-gray);
     }
   }
 
@@ -85,6 +88,7 @@
     color: transparent;
     margin-bottom: 0;
     min-width: 32px;
+    box-shadow: 0 2px 5px 0 var(--color-light-blue-gray);
     &:hover {
       background-color: transparent;
     }
@@ -98,11 +102,13 @@
   &[disabled]{
     cursor: not-allowed;
     background-color: var(--color-blue-15);
+    box-shadow: 0 2px 5px 0 var(--color-blue-15);
     color: var(--color-gray-blue);
     border-radius: 20px;
     border: none;
     &:hover {
       background-color: var(--color-blue-5);
+      box-shadow: 0 2px 5px 0 var(--color-blue-5);
     }
   }
   @media (max-width: $mobile) {
