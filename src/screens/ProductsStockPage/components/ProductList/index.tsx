@@ -112,11 +112,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
 
     const columns: ColumnType<ProductStockType>[] = useMemo(() => [
         {
-            title: <TitleColumn title="" width="30px" contentPosition="center"
+            title: <TitleColumn title="" minWidth="15px" maxWidth="15px" contentPosition="center"
             />,
             render: (text: string) => (
                <TableCell
-                    width="20px"
+                    minWidth="15px"
+                    maxWidth="15px"
                     contentPosition="center"
                     childrenBefore={<span className={`fi fi-${text.toLowerCase()} "flag-icon"`}></span>}>
                </TableCell>
@@ -128,12 +129,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
         {
             title: <TitleColumn
                 title=""
-                width="40px"
+                minWidth="30px"
+                maxWidth="30px"
                 contentPosition="start"
                 childrenBefore={<Icon name={"warehouse"}/>}
             />,
             render: (text: string) => (
-                <TableCell value={text} width="40px" contentPosition="start"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="start"/>
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
@@ -143,9 +145,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
-            title: <TitleColumn title="SKU" width="50px" contentPosition="start"/>,
+            title: <TitleColumn title="SKU" minWidth="80px" maxWidth="120px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="50px" contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="120px"  contentPosition="start"/>
             ),
             dataIndex: 'warehouseSku',
             key: 'warehouseSku',
@@ -156,9 +158,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Name" width="100px" contentPosition="start"/>,
+            title: <TitleColumn title="Name" minWidth="150px" maxWidth="500px"  contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="100px" contentPosition="start"/>
+                <TableCell value={text} minWidth="150px" maxWidth="500px"  contentPosition="start"/>
             ),
             dataIndex: 'name',
             key: 'name',
@@ -168,9 +170,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             }),
         },
         {
-            title: <TitleColumn title="Available" width="30px" contentPosition="center"/>,
+            title: <TitleColumn title="Available" minWidth="40px" maxWidth="40px"  contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="30px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="center"/>
             ),
             dataIndex: 'available',
             key: 'available',
@@ -182,9 +184,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
 
 
         {
-            title: <TitleColumn title="Reserve" width="30px" contentPosition="center"/>,
+            title: <TitleColumn title="Reserve" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="30px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
             dataIndex: 'reserved',
             key: 'reserved',
@@ -195,9 +197,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Damaged" width="30px" contentPosition="center"/>,
+            title: <TitleColumn title="Damaged" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="30px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
             dataIndex: 'damaged',
             key: 'damaged',
@@ -208,9 +210,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Expired" width="30px" contentPosition="center"/>,
+            title: <TitleColumn title="Expired" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="30px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
             dataIndex: 'expired',
             key: 'expired',
@@ -221,9 +223,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Undefined status" width="40px" contentPosition="center"/>,
+            title: <TitleColumn title="Undefined status" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
             dataIndex: 'undefinedStatus',
             key: 'undefinedStatus',
@@ -234,9 +236,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Without box" width="40px" contentPosition="center"/>,
+            title: <TitleColumn title="Without box" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
             dataIndex: 'withoutBox',
             key: 'withoutBox',
@@ -247,9 +249,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Returning" width="40px" contentPosition="center"/>,
+            title: <TitleColumn title="Returning" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
             dataIndex: 'forPlacement',
             key: 'forPlacement',
@@ -260,9 +262,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Total" width="20px" contentPosition="center"/>,
+            title: <TitleColumn title="Total" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="20px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
             dataIndex: 'total',
             key: 'total',

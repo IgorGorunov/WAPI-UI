@@ -127,13 +127,14 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const columns: ColumnType<ProductType>[] = useMemo(() => [
         {
             wight: "20px",
-            title: <TitleColumn width="20px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="20px" maxWidth="20px" contentPosition="center"/>,
             render: (status: string) => {
                 const statusObj = statusFilter.find(s => s.value === status);
                 let color = statusObj ? statusObj.color : 'white';
                 return (
                     <TableCell
-                        width="20px"
+                        minWidth="20px"
+                        maxWidth="20px"
                         contentPosition="center"
                         childrenAfter={<div style={{
                                         display: 'flex',
@@ -151,9 +152,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             key: 'status',
         },
         {
-            title: <TitleColumn title="SKU" width="100px" contentPosition="start" />,
+            title: <TitleColumn title="SKU" minWidth="120px" maxWidth="200px" contentPosition="start" />,
             render: (text: string) => (
-                <TableCell value={text} width="100px" contentPosition="start"/>
+                <TableCell value={text} minWidth="120px" maxWidth="200px" contentPosition="start"/>
             ),
             dataIndex: 'sku',
             key: 'sku',
@@ -164,9 +165,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['sm'],
         },
         {
-            title: <TitleColumn title="Name" width="150px" contentPosition="start"/>,
+            title: <TitleColumn title="Name" minWidth="150px" maxWidth="500px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="150px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+                <TableCell value={text} minWidth="150px" maxWidth="500px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
             dataIndex: 'name',
             key: 'name',
@@ -181,9 +182,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             },
         },
         {
-            title: <TitleColumn title="Dimension | mm" width="130px" contentPosition="center"/>,
+            title: <TitleColumn title="Dimension | mm" minWidth="100px" maxWidth="100px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="130px" contentPosition="center"/>
+                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="center"/>
             ),
             dataIndex: 'dimension',
             key: 'dimension',
@@ -194,9 +195,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Weight | kg" width="100px" contentPosition="center"/>,
+            title: <TitleColumn title="Weight | kg" minWidth="80px" maxWidth="80px" contentPosition="center"/>,
             render: (text: string) => (
-                <TableCell value={text} width="100px" contentPosition="center"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center"/>
             ),
             dataIndex: 'weight',
             key: 'weight',
@@ -207,9 +208,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Aliases" width="120px" contentPosition="start"/>,
+            title: <TitleColumn title="Aliases" minWidth="100px" maxWidth="300px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} width="120px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
             dataIndex: 'aliases',
             key: 'aliases',
@@ -220,10 +221,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Available" width="90px" contentPosition="center"/>,
+            title: <TitleColumn title="Available" minWidth="90px" maxWidth="90px" contentPosition="center"/>,
             render: (text: string, record: ProductType) => (
                 <TableCell
-                    width="90px"
+                    minWidth="90px"
+                    maxWidth="90px"
                     contentPosition="start"
                     childrenAfter={<span
                         className="stock-cell-style"

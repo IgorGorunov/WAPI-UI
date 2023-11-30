@@ -15,6 +15,7 @@ const CustomSelect = ({ options, value , onChange }) => {
                 onChange={selected => onChange(selected.value)}
                 className="label-select"
                 classNamePrefix="label-select"
+                isSearchable={false}
             />
         </div>
     );
