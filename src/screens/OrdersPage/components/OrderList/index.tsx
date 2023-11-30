@@ -506,7 +506,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <title>Orders</title>
                 <meta name="orders" content="orders" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" />
+                <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
             <div className="search-container">
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>

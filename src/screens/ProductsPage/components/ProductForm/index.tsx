@@ -319,7 +319,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                     disabled={isDisabled}
                                 /></div>
                         )}
-                        rules={{required: "Name couldn't be empty!",}}
+                        rules={{required: "Required field",}}
                     />
                 ),
             },

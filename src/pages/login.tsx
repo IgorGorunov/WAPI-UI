@@ -8,7 +8,7 @@ export default function Login() {
         <title>Dashboard</title>
         <meta name="login" content="login" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" href="/logo.png" type="image/png"/>
       </Head>
       <LoginPage />
     </>
