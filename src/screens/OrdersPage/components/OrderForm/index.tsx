@@ -36,7 +36,6 @@ import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "@/screens/OrdersPage/components/OrderForm/ProductsTotal";
-import productsTotal from "@/screens/OrdersPage/components/OrderForm/ProductsTotal";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -188,10 +187,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             setValue('receiverPickUpAddress', pickupPoints[0].address );
         }
     }
-
-    const handleShowProductsTotalInfo= () => {
-        console.log(orderData);
-    };
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
