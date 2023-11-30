@@ -14,7 +14,7 @@ const Services: React.FC<PropsType> = ({ services }) => {
         return `${date.toLocaleDateString()}  ${hours.length<2 ? '0':''}${hours}:${mins.length<2 ? '0':''}${mins}`;
     }
 
-    const totalSum = services.reduce((acc, cur) => acc+cur.amountEuro, 0);
+    const totalSum = services && services.length ? services.reduce((acc, cur) => acc+cur.amountEuro, 0) : 0;
     return (
         <div className="order-service">
             <div className="order-service__header">
