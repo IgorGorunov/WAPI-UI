@@ -63,6 +63,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         setShowStatusModal(false);
     }, [])
 
+
     const countries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
     const warehouses = useMemo(() => {
@@ -200,6 +201,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         }
     }
 
+    const handleShowProductsTotalInfo= () => {
+        console.log(orderData);
+    };
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
@@ -298,8 +302,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                         const sku = getProductSku(selectedValue as string);
                                         console.log("sku: ",getProductSku(selectedValue as string));
                                         record.sku = getProductSku(selectedValue as string);
-                                        setValue(`products.${index}.sku`, sku)
-
+                                        setValue(`products.${index}.sku`, sku);
+                                        handleShowProductsTotalInfo();
                                     }}
                                 />
                             </div>
