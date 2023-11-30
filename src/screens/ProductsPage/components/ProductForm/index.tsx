@@ -300,7 +300,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 ),
             },
             {
-                title: 'Name',
+                title: 'Name *',
                 dataIndex: 'name',
                 width: '100%',
                 key: 'name',
@@ -324,7 +324,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 ),
             },
             {
-                title: 'Quantity',
+                title: 'Quantity *',
                 dataIndex: 'coefficient',
                 key: 'coefficient',
                 responsive: ['md'] as ResponsiveBreakpoint[],
@@ -346,7 +346,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 ),
             },
             {
-                title: 'Width | mm',
+                title: 'Width | mm *',
                 dataIndex: 'width',
                 key: 'width',
                 responsive: ['lg'] as ResponsiveBreakpoint[],
@@ -368,7 +368,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 ),
             },
             {
-                title: 'Length | mm',
+                title: 'Length | mm *',
                 dataIndex: 'length',
                 key: 'length',
                 responsive: ['lg'] as ResponsiveBreakpoint[],
@@ -389,7 +389,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 ),
             },
             {
-                title: 'Height | mm',
+                title: 'Height | mm *',
                 dataIndex: 'height',
                 key: 'height',
                 responsive: ['lg'] as ResponsiveBreakpoint[],
@@ -411,7 +411,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 ),
             },
             {
-                title: 'Weight gross | kg',
+                title: 'Weight gross | kg *',
                 dataIndex: 'weightGross',
                 key: 'weightGross',
                 responsive: ['sm'] as ResponsiveBreakpoint[],
@@ -420,7 +420,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         name={`unitOfMeasures[${index}].weightGross`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{maxWidth: '110px'}}>
+                            <div style={{maxWidth: '120px'}}>
                             <FieldBuilder
                                 name={`unitOfMeasures[${index}].weightGross`}
                                 fieldType={FormFieldTypes.NUMBER}
