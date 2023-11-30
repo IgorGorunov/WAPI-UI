@@ -265,7 +265,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 <title>Products</title>
                 <meta name="products" content="products" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" />
+                <link rel="icon" href="/logo.png"/>
             </Head>
             <div className="status-filter-container">
                 <StatusFilterSelector

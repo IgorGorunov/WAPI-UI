@@ -281,7 +281,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                 <title>Products stock</title>
                 <meta name="stock" content="stock" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" />
+                <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
             <div className="warehouse-filter-container">
                     <StatusWarehouseSelector
