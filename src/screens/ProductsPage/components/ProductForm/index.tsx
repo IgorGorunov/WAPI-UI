@@ -151,13 +151,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                             selected: false,
                             barcode: code || '',
                         }))
-                    : [
-                        {
-                            key: `barcode-${Date.now().toString()}`,
-                            selected: false,
-                            barcode: '',
-                        }
-                    ],
+                    : [],
             aliases:
                 productData && productData?.aliases && productData.aliases.length
                     ? productData.aliases.map((alias, index: number) => (
@@ -166,13 +160,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                             selected: false,
                             alias: alias || '',
                         }))
-                    : [
-                        {
-                            key: `alias-${Date.now().toString()}`,
-                            selected: false,
-                            alias: '',
-                        }
-                    ],
+                    : [],
             bundleKit:
                 productData && productData?.bundleKit && productData.bundleKit.length
                     ? productData.bundleKit.map((bundle, index: number) => (
@@ -182,14 +170,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                             uuid: bundle.uuid || '',
                             quantity: bundle.quantity || '',
                         }))
-                    : [
-                        {
-                            key: `bundle-${Date.now().toString()}`,
-                            selected: false,
-                            uuid: '',
-                            quantity: '',
-                        }
-                    ],
+                    : [],
             analogues:
                 productData && productData?.analogues && productData.analogues.length
                     ? productData.analogues.map((analogue, index: number) => (
@@ -198,13 +179,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                             selected: false,
                             analogue: analogue || '',
                         }))
-                    : [
-                        {
-                            key: `analogue-${Date.now().toString()}`,
-                            selected: false,
-                            analogue: '',
-                        }
-                    ],
+                    : [],
             statusHistory:
                 productData && productData?.statusHistory && productData.statusHistory.length
                     ? productData.statusHistory.map((status, index: number) => (
@@ -214,14 +189,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                             status: status.status || '',
                             comment: status.comment || '',
                         }))
-                    : [
-                        {
-                            key: `status-${Date.now().toString()}`,
-                            date: '',
-                            status: '',
-                            comment: '',
-                        }
-                    ],
+                    : [],
 
         }
     })

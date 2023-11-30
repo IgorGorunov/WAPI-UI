@@ -16,7 +16,7 @@ const TextField: React.FC<FieldPropsType> = ({
   value='',
   rules,
   errors,
-    needToasts=true,
+  needToasts=true,
   width,
    ...otherProps
 }) => {

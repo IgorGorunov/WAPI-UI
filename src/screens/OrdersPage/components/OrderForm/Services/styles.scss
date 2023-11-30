@@ -108,6 +108,33 @@
     flex: 0 0 80px;
   }
 
+  &-total {
+    padding: 20px 15px;
+    border-radius: 0 0 15px 15px;
+    background-color: var(--color-gray2);
+
+    &__list {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 30px;
+      list-style: none;
+
+      &-item {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--color-gray-blue);
+
+        &__value {
+          display: inline-block;
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+
 
 
   .highlight {

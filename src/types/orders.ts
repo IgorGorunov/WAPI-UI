@@ -44,8 +44,8 @@ export type SingleOrderProductType = {
     quantity: number;
     tax: number;
     total: number;
-    unfoldBundle: boolean;
-    unitOfMeasure: string;
+    unfoldBundle?: boolean;
+    unitOfMeasure?: string;
 }
 
 export type OrderHistoryType = {
@@ -135,6 +135,9 @@ export type OrderProductType = {
     warehouse: string;
     warehouseSku: string;
     withoutBox: number;
+    weightNet: number;
+    weightGross: number;
+    volume: number;
 }
 
 export type WarehouseType = {
@@ -155,4 +158,12 @@ export type PickupPointsType = {
     description: string;
     id: string;
     name: string;
+}
+
+export type OrderProductWithTotalInfoType = {
+    cod: number;
+    weightNet: number;
+    weightGross: number;
+    volume: number;
+    currency?: string;
 }
