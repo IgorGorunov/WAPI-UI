@@ -6,7 +6,6 @@ import "./styles.scss";
 import { FieldPropsType } from "@/types/forms";
 import {formatDateToDisplayString} from '@/utils/date'
 import Icon from "@/components/Icon";
-import {toast, ToastContainer} from "@/components/Toast";
 
 const SingleDateInput: React.FC<FieldPropsType> = ({
        classNames='',
@@ -38,20 +37,10 @@ const SingleDateInput: React.FC<FieldPropsType> = ({
         if (onChange) onChange(date.toISOString());
     };
 
-    useEffect (()=> {
-        if (errorMessage) {
-            toast.warn(errorMessage, {
-                position: "top-right",
-                autoClose: 1000,
-            });
-        }
-    },);
-
     const CustomDateInput = () => {
         // Your custom date input JSX here
         return (
             <div className='date-input__wrapper'>
-                <ToastContainer />
                 <input
                     type="text"
                     value={formatDateToDisplayString(selectedDate)} readOnly onClick={()=>setShowCalendar((prevState) => !prevState)}

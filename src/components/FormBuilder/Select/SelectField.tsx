@@ -2,8 +2,7 @@ import React, {useCallback, useEffect} from "react";
 import { FieldPropsType, OptionType } from '@/types/forms';
 import Select from 'react-select'
 import {GetOptionValue, GetOptionLabel} from "react-select";
-import "./styles.scss"
-import {toast, ToastContainer} from '@/components/Toast';
+import "./styles.scss";
 
 const SelectField: React.FC<FieldPropsType> = ({
     classNames,
@@ -50,18 +49,9 @@ const SelectField: React.FC<FieldPropsType> = ({
             )}
         </div>
     );
-    useEffect (()=> {
-        if (errorMessage) {
-            toast.warn(errorMessage, {
-                position: "top-right",
-                autoClose: 1000,
-            });
-        }
-    },);
 
     return (
         <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''} ${disabled ? 'is-disabled' : ''}`}>
-            <ToastContainer />
             {label && <label htmlFor={name}>{label}</label>}
             <Select
                 {...otherProps}

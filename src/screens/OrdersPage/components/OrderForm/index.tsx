@@ -36,6 +36,8 @@ import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "@/screens/OrdersPage/components/OrderForm/ProductsTotal";
+import {toast, ToastContainer} from '@/components/Toast';
+
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -53,6 +55,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
 
     const { token } = useAuth();
+
+    //temporary
+    const [needErrorToast, setNeedsErrorToast] = useState(true);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -142,7 +147,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         }))
                     : [],
         }
-    })
+    });
 
     const { append: appendProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
@@ -584,6 +589,14 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         }
     }
 
+    const onError = (props: any) => {
+        console.log('onError: ', props);
+        toast.warn("Validation error", {
+            position: "top-right",
+            autoClose: 1000,
+        });
+    }
+
     return <div className='order-info'>
 
         {isLoading && (
@@ -602,7 +615,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 <Skeleton type="round" width="500px" height="300px" />
             </div>
         )}
-        <form onSubmit={handleSubmit(onSubmitForm)}>
+        <ToastContainer />
+        <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='order-tabs' tabTitles={['General', 'Delivery info', 'Products', 'Services', 'Status history', 'Files']} classNames='inside-modal' >
                 <div className='general-tab'>
                     <div className='card order-info--general'>
