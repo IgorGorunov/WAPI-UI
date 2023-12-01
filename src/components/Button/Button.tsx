@@ -29,6 +29,7 @@ export type ButtonType = ComponentProps<"button"> & {
   size?: ButtonSize;
   variant?: ButtonVariant;
   isFullWidth?: boolean;
+  isVisible?: boolean;
 };
 
 const Button: React.FC<ButtonType> = (props) => {
@@ -40,6 +41,7 @@ const Button: React.FC<ButtonType> = (props) => {
     size = ButtonSize.MEDIUM,
     isFullWidth = false,
     variant= ButtonVariant.PRIMARY,
+    isVisible = true,
     children,
     ...otherProps
   } = props;
@@ -49,7 +51,7 @@ const Button: React.FC<ButtonType> = (props) => {
   return (
     <button
       type={type || "button"}
-      className={`btn ${sizeClassName} ${formClassName} ${isFullWidth ? "full-width" : ""} ${variant}`}
+      className={`btn ${sizeClassName} ${formClassName} ${isFullWidth ? "full-width" : ""} ${variant} ${isVisible ? 'fade-in' : 'fade-out'}`}
       {...otherProps}
     >
       {icon && !iconOnTheRight ? (

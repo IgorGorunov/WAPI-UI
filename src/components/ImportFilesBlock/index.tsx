@@ -70,7 +70,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false
                     if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                         const errorMessages = errResponse?.data.errorMessage;
 
-                        setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
+                        setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
                         setShowStatusModal(true);
                     }
                 }
@@ -81,7 +81,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false
                 setIsLoading(false);
             }
         } else {
-            setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: ["I haven't uploaded any files to send"], onClose: closeErrorModal})
+            setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: ["I haven't uploaded any files to send"], onClose: closeErrorModal})
             setShowStatusModal(true);
         }
     }

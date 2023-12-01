@@ -116,7 +116,7 @@
     margin-top: auto;
     padding: 20px 15px;
     border-radius: 0 0 15px 15px;
-    background-color: var(--color-gray2);
+    background-color: var(--color-light-gray);
 
     &__list {
       display: flex;
@@ -124,6 +124,10 @@
       align-items: center;
       gap: 30px;
       list-style: none;
+
+      @media (max-width: $mobile) {
+        display: none;
+      }
 
       &-item {
         display: flex;

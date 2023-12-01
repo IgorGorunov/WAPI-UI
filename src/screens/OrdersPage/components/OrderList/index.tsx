@@ -344,9 +344,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn title="Date" minWidth="75px" maxWidth="75px" contentPosition="start"/>,
+            title: <TitleColumn title="Date" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
             dataIndex: 'date',
             key: 'date',
@@ -356,9 +356,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn title="WH number" minWidth="75px" maxWidth="75px" contentPosition="start"/>,
+            title: <TitleColumn title="WH number" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
             dataIndex: 'wapiTrackingNumber',
             key: 'wapiTrackingNumber',

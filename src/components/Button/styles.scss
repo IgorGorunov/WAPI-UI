@@ -72,13 +72,13 @@
   }
 
   &.secondary {
-    background-color: var(--color-gray2);
-    box-shadow: 0 2px 5px 0 var(--color-gray2);
+    background-color: var(--color-light-blue-gray);
+    box-shadow: 0 2px 5px 0 var(--color-light-blue-gray);
     color: var(--color-gray-blue);
     border-radius: 20px;
     &:hover {
-      background-color: var(--color-light-blue-gray);
-      box-shadow: 0 2px 5px 0 var(--color-light-blue-gray);
+      background-color: var(--color-gray2);
+      box-shadow: 0 2px 5px 0 var(--color-gray2);
     }
   }
 
@@ -101,18 +101,44 @@
   &:disabled,
   &[disabled]{
     cursor: not-allowed;
-    background-color: var(--color-blue-15);
-    box-shadow: 0 2px 5px 0 var(--color-blue-15);
+    background-color: var(--color-gray2);
+    box-shadow: 0 2px 5px 0 var(--color-gray2);
     color: var(--color-gray-blue);
     border-radius: 20px;
     border: none;
     &:hover {
-      background-color: var(--color-blue-5);
-      box-shadow: 0 2px 5px 0 var(--color-blue-5);
+      background-color: var(--color-gray2);
+      box-shadow: 0 2px 5px 0 var(--color-gray2);
     }
   }
   @media (max-width: $mobile) {
     min-width: 0;
   }
 
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease-in-out forwards;
 }

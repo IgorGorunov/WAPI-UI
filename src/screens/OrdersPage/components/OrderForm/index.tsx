@@ -586,7 +586,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -721,11 +721,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                             <div className='order-info--order-btns width-75'>
                                 <div className='grid-row'>
                                     <div className='order-info--table-btns small-paddings width-100'>
-                                        <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                            Remove
-                                        </Button>
                                         <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, sku: '', product: '', analogue:'',quantity:'', price:'',discount:'',tax:'',total:'', cod:'' })}>
                                             Add
+                                        </Button>
+                                        <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
+                                            Remove
                                         </Button>
                                     </div>
                                 </div>
@@ -775,8 +775,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
             <div className='form-submit-btn'>
                 {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>
-                <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)} >Save</Button>
+                {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)} >Save</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
