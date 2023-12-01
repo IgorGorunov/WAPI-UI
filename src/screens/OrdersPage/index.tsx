@@ -192,9 +192,9 @@ const OrdersPage = () => {
 
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}
             </div>
-            {showOrderModal &&
+            {showOrderModal && orderParameters &&
                 <Modal title={`Order`} onClose={onOrderModalClose} >
-                    {orderParameters && <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>}
+                    <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>
                 </Modal>
             }
             {showImportModal &&
