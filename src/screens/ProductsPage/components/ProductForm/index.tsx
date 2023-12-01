@@ -947,10 +947,10 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 />
                                 {/*</div>*/}
                                 <div className='product-info--table-btns width-67'>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
+                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
                                         Add
                                     </Button>
-                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
+                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
                                         Remove
                                     </Button>
 
@@ -977,10 +977,10 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         <div className='product-info--barcodes-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
+                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
                                         Add
                                     </Button>
-                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
+                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
                                         Remove
                                     </Button>
 
@@ -1007,10 +1007,10 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
+                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
                                         Add
                                     </Button>
-                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
+                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
                                         Remove
                                     </Button>
 
@@ -1037,10 +1037,10 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:'' })}>
+                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:'' })}>
                                         Add
                                     </Button>
-                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
+                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
                                         Remove
                                     </Button>
 
@@ -1067,10 +1067,10 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY}  onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
+                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY}  onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
                                         Add
                                     </Button>
-                                    <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
+                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
                                         Remove
                                     </Button>
 
