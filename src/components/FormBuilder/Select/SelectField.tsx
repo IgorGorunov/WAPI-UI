@@ -2,8 +2,7 @@ import React, {useCallback, useEffect} from "react";
 import { FieldPropsType, OptionType } from '@/types/forms';
 import Select from 'react-select'
 import {GetOptionValue, GetOptionLabel} from "react-select";
-import "./styles.scss"
-import {toast, ToastContainer} from '@/components/Toast';
+import "./styles.scss";
 
 const SelectField: React.FC<FieldPropsType> = ({
     classNames,
@@ -23,6 +22,7 @@ const SelectField: React.FC<FieldPropsType> = ({
     ...otherProps
 }) => {
 
+
     const handleChange = useCallback((selectedOption: OptionType) => {
         if (onChange) {
             if (selectedOption) {
@@ -35,39 +35,25 @@ const SelectField: React.FC<FieldPropsType> = ({
         //return onChange(selectedOption.value);
     } ,[] )
 
-    const getOptionValue: GetOptionValue<OptionType> = useCallback(
-        option => option?.value, []
-    )
-
-    const getOptionLabel: GetOptionLabel<OptionType> = useCallback(
-        option => option?.label
-    ,[])
-
-    const CustomValueContainer = ({ children, ...props }: any) => (
-        <div className="select-field-val">
+    const CustomValueContainer = ({ children, ...props }: any) => {
+        console.log(name +' value',value);
+        console.log(name + 'option',options);
+        return (<div className="select-field-val">
             {props.hasValue && (
                     props.getValue()[0].extraInfo ||  props.getValue()[0].label
             )}
-        </div>
-    );
-    useEffect (()=> {
-        if (errorMessage) {
-            toast.warn(errorMessage, {
-                position: "top-right",
-                autoClose: 1000,
-            });
-        }
-    },);
+        </div>)
+    };
+
+    const filteredOptions = options.filter((option) => option.value === value);
+    const selectedOption = filteredOptions.length > 0 ? filteredOptions[0] : null;
 
     return (
         <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''} ${disabled ? 'is-disabled' : ''}`}>
-            <ToastContainer />
             {label && <label htmlFor={name}>{label}</label>}
             <Select
                 {...otherProps}
-                value={options.find((option) => option.value === value) || null}
-                getOptionLabel={getOptionLabel}
-                getOptionValue={getOptionValue}
+                value={selectedOption}
                 components={{ SingleValue: CustomValueContainer }}
                 name={name}
                 options={options}

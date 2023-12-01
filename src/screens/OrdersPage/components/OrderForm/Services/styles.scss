@@ -1,6 +1,10 @@
 @import "@/constants/devices.scss";
 
 .order-service {
+  flex: 1 0 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   margin: 24px -28px 0 -28px;
 
   @media (max-width: $mobile) {
@@ -106,6 +110,38 @@
 
   .sum-column {
     flex: 0 0 80px;
+  }
+
+  &-total {
+    margin-top: auto;
+    padding: 20px 15px;
+    border-radius: 0 0 15px 15px;
+    background-color: var(--color-light-gray);
+
+    &__list {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 30px;
+      list-style: none;
+
+      @media (max-width: $mobile) {
+        display: none;
+      }
+
+      &-item {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--color-gray-blue);
+
+        &__value {
+          display: inline-block;
+          margin-left: 10px;
+        }
+      }
+    }
   }
 
 

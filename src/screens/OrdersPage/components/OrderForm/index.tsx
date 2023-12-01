@@ -1,8 +1,9 @@
-import React, {ChangeEvent, useCallback, useMemo, useState} from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {
     OrderParamsType,
     OrderProductType,
     SingleOrderType,
+    OrderProductWithTotalInfoType,
     WarehouseType,
     PickupPointsType
 } from "@/types/orders";
@@ -34,6 +35,9 @@ import DropZone from "@/components/Dropzone";
 import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
+import ProductsTotal from "@/screens/OrdersPage/components/OrderForm/ProductsTotal";
+import {toast, ToastContainer} from '@/components/Toast';
+
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -62,7 +66,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     const closeErrorModal = useCallback(()=>{
         setShowStatusModal(false);
     }, [])
-
 
     const countries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
@@ -139,23 +142,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                             total: product.total || '',
                             cod: product.cod || '',
                         }))
-                    : [
-                        {
-                            key: `product-${Date.now().toString()}`,
-                            selected: false,
-                            sku: '',
-                            product: '',
-                            analogue: '',
-                            quantity: '',
-                            price: '',
-                            discount: '',
-                            tax: '',
-                            total: '',
-                            cod: '',
-                        }
-                    ],
+                    : [],
         }
-    })
+    });
 
     const { append: appendProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
@@ -201,12 +190,42 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         }
     }
 
-    const handleShowProductsTotalInfo= () => {
-        console.log(orderData);
-    };
-
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
+    const [productsTotalInfo, setProductsTotalInfo] = useState<OrderProductWithTotalInfoType>({
+        cod: 0,
+        weightNet: 0,
+        weightGross: 0,
+        volume:0,
+    });
+
+    const updateTotalProducts = () => {
+        console.log('update', products, getValues('products'));
+        const rez = {
+            cod: 0,
+            weightNet: 0,
+            weightGross: 0,
+            volume:0,
+            currency: getValues('codCurrency'),
+        };
+        getValues('products').forEach(item => {
+            const prodInfo = orderParams.products.filter(product=>product.uuid = item.product);
+            if (prodInfo?.length) {
+                rez.cod += Number(item.cod);
+                rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
+                rez.weightGross += prodInfo[0].weightGross * Number(item.quantity);
+                rez.volume += prodInfo[0].volume * Number(item.quantity);
+            }
+        })
+        console.log('rez:', rez)
+        setProductsTotalInfo(rez);
+    };
+
+    useEffect(()=>{
+        updateTotalProducts();
+    },[products]);
+
+
 
     const getProductSku = (productUuid: string) => {
         const product = orderParams.products.find(item => item.uuid === productUuid);
@@ -214,7 +233,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     }
     const productOptions = useMemo(() =>{
         return orderParams.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
-    },[]);
+    },[orderParams]);
+
+    // const productsHeaderWidth = [40, 130, 'auto', 200, 50, 50, 50, 50, 50, 50];
     const getProductColumns = (control: any) => {
         return [
             {
@@ -262,15 +283,16 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'SKU',
                 dataIndex: 'sku',
                 key: 'sku',
+                minWidth: 100,
                 responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
-                        name={`sku[${index}].name`}
+                        name={`products.${index}.sku`}
                         control={control}
                         render={({ field }) => (
                             <div style={{maxWidth: '130px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].sku`}
+                                    name={`products.${index}.sku`}
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     disabled={true}
@@ -303,7 +325,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                         console.log("sku: ",getProductSku(selectedValue as string));
                                         record.sku = getProductSku(selectedValue as string);
                                         setValue(`products.${index}.sku`, sku);
-                                        handleShowProductsTotalInfo();
+                                        updateTotalProducts();
                                     }}
                                 />
                             </div>
@@ -315,6 +337,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Analogue',
                 dataIndex: 'analogue',
                 key: 'analogue',
+                width: 200,
+                minWidth: 200,
                 responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -328,6 +352,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                     {...field}
                                     options={productOptions}
                                     disabled={true}
+
                                 /></div>
                         )}
                     />
@@ -337,6 +362,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Quantity',
                 dataIndex: 'quantity',
                 key: 'quantity',
+                minWidth: 50,
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].quantity`}
@@ -348,9 +374,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
+                                    onChange={(newValue: string) => {field.onChange(newValue);updateTotalProducts();
+                                    }}
                                 /></div>
 
                         )}
+
                     />
                 ),
             },
@@ -358,6 +387,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Price',
                 dataIndex: 'price',
                 key: 'price',
+                minWidth: 50,
                 responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -380,6 +410,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Discount',
                 dataIndex: 'discount',
                 key: 'discount',
+                minWidth: 50,
                 responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -402,6 +433,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Tax',
                 dataIndex: 'tax',
                 key: 'tax',
+                minWidth: 50,
                 responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -424,6 +456,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'Total',
                 dataIndex: 'total',
                 key: 'total',
+                minWidth: 50,
                 responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -446,6 +479,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 title: 'COD',
                 dataIndex: 'cod',
                 key: 'cod',
+                minWidth: 50,
                 responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -458,6 +492,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
+                                    onChange={(newValue: string) => {field.onChange(newValue); updateTotalProducts(); }}
                                 /></div>
 
                         )}
@@ -551,7 +586,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -561,6 +596,14 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         } finally {
             setIsLoading(false);
         }
+    }
+
+    const onError = (props: any) => {
+        console.log('onError: ', props);
+        toast.warn("Validation error", {
+            position: "top-right",
+            autoClose: 1000,
+        });
     }
 
     return <div className='order-info'>
@@ -581,7 +624,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 <Skeleton type="round" width="500px" height="300px" />
             </div>
         )}
-        <form onSubmit={handleSubmit(onSubmitForm)}>
+        <ToastContainer />
+        <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='order-tabs' tabTitles={['General', 'Delivery info', 'Products', 'Services', 'Status history', 'Files']} classNames='inside-modal' >
                 <div className='general-tab'>
                     <div className='card order-info--general'>
@@ -677,11 +721,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                             <div className='order-info--order-btns width-75'>
                                 <div className='grid-row'>
                                     <div className='order-info--table-btns small-paddings width-100'>
-                                        <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                            Remove
-                                        </Button>
-                                        <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, sku: '', product: '', analogue:'',quantity:'', price:'',discount:'',tax:'',total:'', cod:'' })}>
+                                        <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, sku: '', product: '', analogue:'',quantity:'', price:'',discount:'',tax:'',total:'', cod:'' })}>
                                             Add
+                                        </Button>
+                                        <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
+                                            Remove
                                         </Button>
                                     </div>
                                 </div>
@@ -694,6 +738,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                 pagination={false}
                                 rowKey="key"
                             />
+                            <ProductsTotal productsInfo={productsTotalInfo} />
                         </div>
                     </div>
                 </div>
@@ -729,9 +774,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             </Tabs>
 
             <div className='form-submit-btn'>
-                <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.SECONDARY}>Edit</Button>
-                <Button type="submit" disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>
-                <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)} >Save</Button>
+                {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Save</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

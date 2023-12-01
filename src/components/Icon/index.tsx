@@ -43,6 +43,9 @@ import Goods from '@/assets/icons/goods.svg'
 import Receiver from '@/assets/icons/receiver.svg'
 import Filter from '@/assets/icons/filter.svg'
 import Exit from '@/assets/icons/exit.svg'
+import AddTableRow from '@/assets/icons/add-table-row.svg'
+import RemoveTableRow from '@/assets/icons/remove-table-row.svg'
+
 
 
 
@@ -90,6 +93,8 @@ export const icons = {
   'receiver': Receiver,
   'filter': Filter,
   'exit': Exit,
+  'add-table-row': AddTableRow,
+  'remove-table-row': RemoveTableRow,
 };
 
 export type IconType = keyof typeof icons;

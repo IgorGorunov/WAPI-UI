@@ -127,7 +127,7 @@ const OrdersPage = () => {
             console.error("Error fetching data:", error);
             setIsLoading(false);
         }
-    }, [token]);
+    }, [token,curPeriod]);
 
     useEffect(() => {
         fetchData();
