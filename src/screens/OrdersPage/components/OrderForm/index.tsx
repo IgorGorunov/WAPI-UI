@@ -233,7 +233,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     }
     const productOptions = useMemo(() =>{
         return orderParams.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
-    },[]);
+    },[orderParams]);
 
     // const productsHeaderWidth = [40, 130, 'auto', 200, 50, 50, 50, 50, 50, 50];
     const getProductColumns = (control: any) => {
