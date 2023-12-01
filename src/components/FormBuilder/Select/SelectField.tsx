@@ -24,6 +24,7 @@ const SelectField: React.FC<FieldPropsType> = ({
 
 
     const handleChange = useCallback((selectedOption: OptionType) => {
+        console.log('selected option', selectedOption)
         if (onChange) {
             if (selectedOption) {
                 onChange(selectedOption.value);
@@ -37,7 +38,7 @@ const SelectField: React.FC<FieldPropsType> = ({
 
     const CustomValueContainer = ({ children, ...props }: any) => {
         console.log(name +' value',value);
-        console.log(name + 'option',options);
+        console.log(name + ' option',options, options.filter(item => item.value === value));
         return (<div className="select-field-val">
             {props.hasValue && (
                     props.getValue()[0].extraInfo ||  props.getValue()[0].label
@@ -47,6 +48,10 @@ const SelectField: React.FC<FieldPropsType> = ({
 
     const filteredOptions = options.filter((option) => option.value === value);
     const selectedOption = filteredOptions.length > 0 ? filteredOptions[0] : null;
+
+    console.log("value "+name,":", value, "-", options, '--',options.find((option) => option.value === value));
+
+    console.log("options inside: "+name, options)
 
     return (
         <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''} ${disabled ? 'is-disabled' : ''}`}>

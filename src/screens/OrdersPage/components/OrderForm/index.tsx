@@ -43,11 +43,12 @@ type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 type OrderFormType = {
     orderData?: SingleOrderType;
-    orderParams?: OrderParamsType;
+    orderParameters?: OrderParamsType;
     closeOrderModal: ()=>void;
+    order1: OrderParamsType;
 }
 
-const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderModal}) => {
+const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOrderModal, order1}) => {
     const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!orderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +56,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
 
     const { token } = useAuth();
+
+    console.log('params: ', orderParameters, "--", order1);
+    console.log('data: ', orderData);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -70,8 +74,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     const countries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
     const warehouses = useMemo(() => {
-        if (orderParams?.warehouses) {
-            const uniqueWarehouses = orderParams.warehouses.filter(
+        if (orderParameters?.warehouses) {
+            const uniqueWarehouses = orderParameters.warehouses.filter(
                 (warehouse, index, self) =>
                     index === self.findIndex(w => w.warehouse.trim() === warehouse.warehouse.trim())
             );
@@ -85,7 +89,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         }
 
         return [];
-    }, [orderParams?.warehouses]);
+    }, [orderParameters?.warehouses]);
 
     //form
     const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
@@ -148,7 +152,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     const { append: appendProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
-    const currencyOptions = useMemo(()=>{return orderParams && orderParams?.currencies.length ? createOptions(orderParams?.currencies) : []},[]);
+    const currencyOptions = useMemo(()=>{return orderParameters && orderParameters?.currencies.length ? createOptions(orderParameters?.currencies) : []},[]);
 
     //pickup points
     const fetchPickupPoints = useCallback(async (courierService: string) => {
@@ -209,7 +213,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             currency: getValues('codCurrency'),
         };
         getValues('products').forEach(item => {
-            const prodInfo = orderParams.products.filter(product=>product.uuid = item.product);
+            const prodInfo = orderParameters.products.filter(product=>product.uuid = item.product);
             if (prodInfo?.length) {
                 rez.cod += Number(item.cod);
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
@@ -228,12 +232,14 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
 
     const getProductSku = (productUuid: string) => {
-        const product = orderParams.products.find(item => item.uuid === productUuid);
+        const product = orderParameters.products.find(item => item.uuid === productUuid);
         return product?.sku || '';
     }
     const productOptions = useMemo(() =>{
-        return orderParams.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
-    },[orderParams]);
+        return orderParameters.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
+    },[orderParameters]);
+
+    console.log('options: ', productOptions)
 
     // const productsHeaderWidth = [40, 130, 'auto', 200, 50, 50, 50, 50, 50, 50];
     const getProductColumns = (control: any) => {
@@ -510,11 +516,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     //form fields
     const warehouse = watch('preferredWarehouse');
     const getCourierServices = (warehouse: string) => {
-        if (orderParams?.warehouses) {
+        if (orderParameters?.warehouses) {
             if (!warehouse.trim()) {
                 const uniqueCourierServices = Array.from(
                     new Set(
-                        orderParams.warehouses
+                        orderParameters.warehouses
                             .filter((item: WarehouseType) => item.courierService.trim() !== '')
                             .map((item: WarehouseType) => item.courierService.trim())
                     )
@@ -527,7 +533,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                     } as OptionType))
                     .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
             } else {
-                const filteredWarehouses = orderParams.warehouses.filter(
+                const filteredWarehouses = orderParameters.warehouses.filter(
                     (item: WarehouseType) => item.warehouse.trim() === warehouse.trim()
                 );
 
@@ -557,8 +563,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     };
 
     const onSubmitForm = async (data) => {
+        console.log('submit: ', data)
         setIsLoading(true);
-
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
         try {

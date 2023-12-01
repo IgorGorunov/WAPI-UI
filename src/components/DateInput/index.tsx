@@ -18,6 +18,7 @@ const DateInput: React.FC<DateInputType> = ({currentRange = {startDate: new Date
 
     const handleDateState = (periodRange: DateRangeType) => {
         setCurRange(periodRange);
+        console.log("preiod range: ", periodRange)
         handleRangeChange(periodRange);
         setShowDateInput(false);
     }

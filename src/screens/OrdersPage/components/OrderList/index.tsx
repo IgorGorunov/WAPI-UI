@@ -205,6 +205,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const handleDateRangeSave = (newRange) => {
         setCurrentRange(newRange);
+        console.log('range: ', newRange)
         setShowDatepicker(false);
     };
 
