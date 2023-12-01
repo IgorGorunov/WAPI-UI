@@ -44,11 +44,11 @@ const DashboardPage: React.FC = () => {
   const [currentPeriod, setCurrentPeriod] = useState<DashboardPeriodType>({
     startDate: new Date(),
     endDate: new Date(),
-    periodType: "DAY" as PeriodType,
+    periodType: "MONTH" as PeriodType,
   });
 
-  const [clickedPeriod, setClickedPeriod] = useState<PeriodType>("DAY");
-  const [diagramType, setDiagramType] = useState<PeriodType>("DAY");
+  const [clickedPeriod, setClickedPeriod] = useState<PeriodType>("MONTH");
+  const [diagramType, setDiagramType] = useState<PeriodType>("MONTH");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -136,13 +136,6 @@ const DashboardPage: React.FC = () => {
               </div>
           )}
 
-          {/*<Header*/}
-          {/*    currentPeriod={currentPeriod}*/}
-          {/*    setCurrentPeriod={setCurrentPeriod}*/}
-          {/*    setDiagramType={setDiagramType}*/}
-          {/*    clickedPeriod={clickedPeriod}*/}
-          {/*    setClickedPeriod={setClickedPeriod}*/}
-          {/*/>*/}
           <Header pageTitle="Dashboard">
             <PeriodFilter currentPeriod={currentPeriod}
                 setCurrentPeriod={setCurrentPeriod}

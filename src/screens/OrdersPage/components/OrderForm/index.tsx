@@ -53,6 +53,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
     const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
+    const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
+    const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
 
     const { token } = useAuth();
 
@@ -151,6 +153,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const currencyOptions = useMemo(()=>{return orderParameters && orderParameters?.currencies.length ? createOptions(orderParameters?.currencies) : []},[]);
 
     //pickup points
+    const createPickupOptions = () => {
+        if (curPickupPoints && curPickupPoints.length) {
+            return curPickupPoints.map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
+        }
+        return [];
+    }
+
     const fetchPickupPoints = useCallback(async (courierService: string) => {
         try {
             setIsLoading(true);
@@ -165,6 +174,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
             if (res && "data" in res) {
                 setCurPickupPoints(res.data)
+                setPickupOptions(createPickupOptions());
+
             } else {
                 console.error("API did not return expected data");
             }
@@ -174,21 +185,22 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             setIsLoading(false);
         }
     },[token]);
-    const createPickupOptions = () => {
-        if (curPickupPoints && curPickupPoints.length) {
-            return curPickupPoints.map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
-        }
-        return [];
-    }
-    const handlePickupPointData = (selectedOption: string) => {
-        const pickupPoints = curPickupPoints.filter((item:PickupPointsType)=>item.id===selectedOption);
+
+    useEffect(() => {
+        const pickupPoints = curPickupPoints && curPickupPoints.length ? curPickupPoints.filter((item:PickupPointsType)=>item.id===selectedPickupPoint) : [];
+
         if (pickupPoints.length) {
             setValue('receiverPickUpName', pickupPoints[0].name );
             setValue('receiverPickUpCountry', pickupPoints[0].country );
             setValue('receiverPickUpCity', pickupPoints[0].city );
             setValue('receiverPickUpAddress', pickupPoints[0].address );
+        } else {
+            setValue('receiverPickUpName', '' );
+            setValue('receiverPickUpCountry', '' );
+            setValue('receiverPickUpCity', '' );
+            setValue('receiverPickUpAddress', '' );
         }
-    }
+    }, [selectedPickupPoint, curPickupPoints]);
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
@@ -507,6 +519,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
     //form fields
     const warehouse = watch('preferredWarehouse');
+
     const getCourierServices = (warehouse: string) => {
         if (orderParameters?.warehouses) {
             if (!warehouse.trim()) {
@@ -546,7 +559,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
     const generalFields = useMemo(()=> GeneralFields(), [])
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleCourierServiceChange: handleCourierServiceChange}), [warehouse]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries}),[])
+    const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions])
     const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[])
     const [selectedFiles, setSelectedFiles] = useState(orderData?.attachedFiles);
 
@@ -680,8 +693,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                         errorMessage={error?.message}
                                         errors={errors}
                                         onChange={(selectedOption) => {
+                                            setSelectedPickupPoint(selectedOption as string);
                                             props.onChange(selectedOption);
-                                            curPickupPoints && curPickupPoints.length && handlePickupPointData(selectedOption as string);
                                         }}
                                         width={WidthType.w25}
                                     /> )}
