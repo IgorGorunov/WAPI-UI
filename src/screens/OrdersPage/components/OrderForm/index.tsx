@@ -776,7 +776,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             <div className='form-submit-btn'>
                 {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
-                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)} >Save</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Save</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

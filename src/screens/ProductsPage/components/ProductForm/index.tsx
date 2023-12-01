@@ -947,12 +947,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 />
                                 {/*</div>*/}
                                 <div className='product-info--table-btns width-67'>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
+                                        Add
+                                    </Button>
                                     <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
                                         Remove
                                     </Button>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
-                                        Add
-                                    </Button>
+
                                 </div>
                             </div>
                         </div>
@@ -976,12 +977,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         <div className='product-info--barcodes-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
+                                        Add
+                                    </Button>
                                     <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
                                         Remove
                                     </Button>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
-                                        Add
-                                    </Button>
+
                                 </div>
                             </div>
                         </div>
@@ -1005,12 +1007,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
+                                        Add
+                                    </Button>
                                     <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
                                         Remove
                                     </Button>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
-                                        Add
-                                    </Button>
+
                                 </div>
                             </div>
                         </div>
@@ -1034,12 +1037,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:'' })}>
+                                        Add
+                                    </Button>
                                     <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
                                         Remove
                                     </Button>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:'' })}>
-                                        Add
-                                    </Button>
+
                                 </div>
                             </div>
                         </div>
@@ -1063,12 +1067,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
+                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY}  onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
+                                        Add
+                                    </Button>
                                     <Button type="button" icon='remove' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
                                         Remove
                                     </Button>
-                                    <Button type="button" icon='add' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
-                                        Add
-                                    </Button>
+
                                 </div>
                             </div>
                         </div>
@@ -1104,9 +1109,9 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 </div>
             </Tabs>
             <div className='form-submit-btn'>
-                <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.SECONDARY}>Edit</Button>
-                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.SECONDARY}>Save as draft</Button>
-                <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} >Send to approve</Button>
+                {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {!isDisabled  && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
+                {!isDisabled  && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
             </div>
         </form>
 
