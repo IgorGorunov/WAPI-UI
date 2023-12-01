@@ -45,13 +45,12 @@ const OrdersPage = () => {
     //single order data
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [singleOrder, setSingleOrder] = useState<SingleOrderType|null>(null);
-    const [orderParametrs, setOrderParametrs] = useState<OrderParamsType|null>(null);
+    const [orderParameters, setOrderParameters] = useState<OrderParamsType|null>(null);
 
     const onOrderModalClose = () => {
         setShowOrderModal(false);
     }
     const fetchSingleOrder = async (uuid: string) => {
-        console.log('params 1:', orderParametrs)
         type ApiResponse = {
             data: any;
         };
@@ -69,8 +68,6 @@ const OrdersPage = () => {
 
             if (res && "data" in res) {
                 setSingleOrder(res.data);
-                setShowOrderModal(true);
-                console.log('params 2:', orderParametrs)
             } else {
                 console.error("API did not return expected data");
             }
@@ -92,8 +89,7 @@ const OrdersPage = () => {
             );
 
             if (resp && "data" in resp) {
-                setOrderParametrs(resp.data);
-                console.log("order data1", resp.data)
+                setOrderParameters(resp.data);
             } else {
                 console.error("API did not return expected data");
             }
@@ -103,9 +99,9 @@ const OrdersPage = () => {
         }
     },[token]);
 
-    useEffect(() => {
-        fetchOrderParams();
-    }, [token]);
+    // useEffect(() => {
+    //     fetchOrderParams();
+    // }, [token]);
 
     const fetchData = useCallback(async () => {
         try {
@@ -114,7 +110,6 @@ const OrdersPage = () => {
             if (!await verifyToken(token)) {
                 await Router.push(Routes.Login);
             }
-            console.log('range api', curPeriod);
 
             const res: ApiResponse = await getOrders(
                 {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
@@ -138,12 +133,15 @@ const OrdersPage = () => {
     }, [token, curPeriod]);
 
     const handleEditOrder = (uuid: string) => {
-        console.log("params on edit", uuid, orderParametrs)
+        fetchOrderParams();
         fetchSingleOrder(uuid);
+
+        setShowOrderModal(true);
     }
 
     const handleAddOrder= (
     ) => {
+        fetchOrderParams();
         setSingleOrder(null);
         setShowOrderModal(true);
     }
@@ -196,7 +194,7 @@ const OrdersPage = () => {
             </div>
             {showOrderModal &&
                 <Modal title={`Order`} onClose={onOrderModalClose} >
-                    <OrderForm orderParameters={orderParametrs} orderData={singleOrder} order1={orderParametrs} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>
+                    {orderParameters && <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>}
                 </Modal>
             }
             {showImportModal &&
