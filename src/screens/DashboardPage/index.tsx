@@ -42,7 +42,7 @@ const DashboardPage: React.FC = () => {
   const [pageData, setPageData] = useState<pageDataType | null>(null);
 
   const [currentPeriod, setCurrentPeriod] = useState<DashboardPeriodType>({
-    startDate: new Date(),
+    startDate: new Date(new Date().setDate(new Date().getDate() - 30 + 1)),
     endDate: new Date(),
     periodType: "MONTH" as PeriodType,
   });
