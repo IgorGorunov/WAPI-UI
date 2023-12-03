@@ -829,12 +829,16 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
     }
 
     const onError = (props: any) => {
-        console.log('onError: ', props);
-        toast.warn("Validation error", {
-            position: "top-right",
-            autoClose: 1000,
-        });
-    }
+        console.log(props)
+        const fieldNames = Object.keys(props);
+
+        if (fieldNames.length > 0) {
+            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+                position: "top-right",
+                autoClose: 1000,
+            });
+        }
+    };
 
     const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr}), [COUNTRIES])
     const skuFields = useMemo(()=>FormFieldsSKU(), []);
