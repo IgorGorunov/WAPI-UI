@@ -160,7 +160,18 @@ export const DetailsFields = ({warehouses, courierServices, handleCourierService
     },
 ];
 
-export const ReceiverFields = ({countries}: { countries: OptionType[] }) => [
+export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
+    // {
+    //     type: "text",
+    //     name: 'receiverPickUpID',
+    //     label: 'ID',
+    //     fieldType: curPickupPoints && curPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT,
+    //     options: pickupOptions,
+    //     placeholder: curPickupPoints && curPickupPoints.length ? 'Select' : '',
+    //     onChange: handlePickupPointData,
+    //     width: WidthType.w25,
+    //     classNames: "",
+    // },
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",

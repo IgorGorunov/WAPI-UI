@@ -14,13 +14,10 @@ import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {exportFileXLS} from "@/utils/files";
 import {ProductType, ProductParamsType, SingleProductType} from "@/types/products";
-import {OptionType} from "@/types/forms";
 import Modal from "@/components/Modal";
 import ProductForm from "@/screens/ProductsPage/components/ProductForm";
-import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/components/Toast/styles.scss'
-import {router} from "next/client";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 
 const ProductsPage = () => {
@@ -92,11 +89,11 @@ const ProductsPage = () => {
     const [filteredProducts, setFilteredProducts] = useState<ProductType[]>(productsData)
 
     const productsAsOptions = useMemo(()=>{
-        const prods = productsData ? productsData.map(item => {
+        return productsData ? productsData.map(item => {
             const sum = item.stock.reduce((sum: number, cur)=> sum+cur.available, 0);
             return {...item, quantity: sum};
         }) : [];
-        return prods;
+
     },[productsData])
 
     const handleEditProduct = (uuid: string) => {
@@ -138,7 +135,7 @@ const ProductsPage = () => {
     };
 
     const handleAddProduct = () => {
-         setSingleProductData(null);
+        setSingleProductData(null);
         setUuid(null);
         setShowModal(true);
     }
@@ -164,7 +161,6 @@ const ProductsPage = () => {
 
     return (
             <Layout hasFooter>
-                <ToastContainer/>
                 <div className="products-page__container">
                     {isLoading && (
                         <div style={{

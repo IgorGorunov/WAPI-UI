@@ -4,9 +4,7 @@
   &__container {
     opacity: 1;
     height: 100%;
-    padding: 26px;
-
-
+    padding: 26px 24px;
   }
 
   &.gmv {
@@ -43,6 +41,7 @@
 
   &__row {
     display: flex;
+    flex-wrap: nowrap;
 
     .grid-col-2 {
       margin-bottom: 0;

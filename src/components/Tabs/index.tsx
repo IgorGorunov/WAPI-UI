@@ -26,6 +26,7 @@ const Tabs: React.FC<TabsType> = ({id, classNames='', tabTitles, children}) => {
             <div className='tabs-block__content'>
                 {React.Children.toArray(children).map((tabCntent, index)=> (
                     <div
+                        key={`tab-block__content-panel_${index}`}
                         className={`tab-block__content-panel ${index===activeTab} ? 'active' : ''`}
                         role='tabpanel'
                         hidden={index!==activeTab}

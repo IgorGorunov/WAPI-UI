@@ -1,7 +1,6 @@
-import React, {useCallback, useEffect} from "react";
+import React, {useCallback} from "react";
 import { FieldPropsType, OptionType } from '@/types/forms';
 import Select from 'react-select'
-import {GetOptionValue, GetOptionLabel} from "react-select";
 import "./styles.scss";
 
 const SelectField: React.FC<FieldPropsType> = ({
@@ -36,8 +35,7 @@ const SelectField: React.FC<FieldPropsType> = ({
     } ,[] )
 
     const CustomValueContainer = ({ children, ...props }: any) => {
-        console.log(name +' value',value);
-        console.log(name + 'option',options);
+
         return (<div className="select-field-val">
             {props.hasValue && (
                     props.getValue()[0].extraInfo ||  props.getValue()[0].label

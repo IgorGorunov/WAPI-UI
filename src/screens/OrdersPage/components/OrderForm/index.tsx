@@ -43,16 +43,18 @@ type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 type OrderFormType = {
     orderData?: SingleOrderType;
-    orderParams?: OrderParamsType;
+    orderParameters?: OrderParamsType;
     closeOrderModal: ()=>void;
 }
 
-const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderModal}) => {
+const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOrderModal}) => {
     const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!orderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
     const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
+    const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
+    const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
 
     const { token } = useAuth();
 
@@ -70,8 +72,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     const countries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
     const warehouses = useMemo(() => {
-        if (orderParams?.warehouses) {
-            const uniqueWarehouses = orderParams.warehouses.filter(
+        if (orderParameters?.warehouses) {
+            const uniqueWarehouses = orderParameters.warehouses.filter(
                 (warehouse, index, self) =>
                     index === self.findIndex(w => w.warehouse.trim() === warehouse.warehouse.trim())
             );
@@ -85,7 +87,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         }
 
         return [];
-    }, [orderParams?.warehouses]);
+    }, [orderParameters?.warehouses]);
 
     //form
     const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
@@ -148,9 +150,16 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     const { append: appendProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
-    const currencyOptions = useMemo(()=>{return orderParams && orderParams?.currencies.length ? createOptions(orderParams?.currencies) : []},[]);
+    const currencyOptions = useMemo(()=>{return orderParameters && orderParameters?.currencies.length ? createOptions(orderParameters?.currencies) : []},[]);
 
     //pickup points
+    const createPickupOptions = () => {
+        if (curPickupPoints && curPickupPoints.length) {
+            return curPickupPoints.map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
+        }
+        return [];
+    }
+
     const fetchPickupPoints = useCallback(async (courierService: string) => {
         try {
             setIsLoading(true);
@@ -165,6 +174,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
             if (res && "data" in res) {
                 setCurPickupPoints(res.data)
+                setPickupOptions(createPickupOptions());
+
             } else {
                 console.error("API did not return expected data");
             }
@@ -174,21 +185,22 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             setIsLoading(false);
         }
     },[token]);
-    const createPickupOptions = () => {
-        if (curPickupPoints && curPickupPoints.length) {
-            return curPickupPoints.map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
-        }
-        return [];
-    }
-    const handlePickupPointData = (selectedOption: string) => {
-        const pickupPoints = curPickupPoints.filter((item:PickupPointsType)=>item.id===selectedOption);
+
+    useEffect(() => {
+        const pickupPoints = curPickupPoints && curPickupPoints.length ? curPickupPoints.filter((item:PickupPointsType)=>item.id===selectedPickupPoint) : [];
+
         if (pickupPoints.length) {
             setValue('receiverPickUpName', pickupPoints[0].name );
             setValue('receiverPickUpCountry', pickupPoints[0].country );
             setValue('receiverPickUpCity', pickupPoints[0].city );
             setValue('receiverPickUpAddress', pickupPoints[0].address );
+        } else {
+            setValue('receiverPickUpName', '' );
+            setValue('receiverPickUpCountry', '' );
+            setValue('receiverPickUpCity', '' );
+            setValue('receiverPickUpAddress', '' );
         }
-    }
+    }, [selectedPickupPoint, curPickupPoints]);
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
@@ -200,7 +212,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     });
 
     const updateTotalProducts = () => {
-        console.log('update', products, getValues('products'));
         const rez = {
             cod: 0,
             weightNet: 0,
@@ -209,7 +220,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
             currency: getValues('codCurrency'),
         };
         getValues('products').forEach(item => {
-            const prodInfo = orderParams.products.filter(product=>product.uuid = item.product);
+            const prodInfo = orderParameters.products.filter(product=>product.uuid = item.product);
             if (prodInfo?.length) {
                 rez.cod += Number(item.cod);
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
@@ -217,7 +228,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                 rez.volume += prodInfo[0].volume * Number(item.quantity);
             }
         })
-        console.log('rez:', rez)
+
         setProductsTotalInfo(rez);
     };
 
@@ -228,12 +239,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
 
     const getProductSku = (productUuid: string) => {
-        const product = orderParams.products.find(item => item.uuid === productUuid);
+        const product = orderParameters.products.find(item => item.uuid === productUuid);
         return product?.sku || '';
     }
     const productOptions = useMemo(() =>{
-        return orderParams.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
-    },[orderParams]);
+        return orderParameters.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
+    },[orderParameters]);
 
     // const productsHeaderWidth = [40, 130, 'auto', 200, 50, 50, 50, 50, 50, 50];
     const getProductColumns = (control: any) => {
@@ -322,7 +333,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                     onChange={(selectedValue) => {
                                         field.onChange(selectedValue);
                                         const sku = getProductSku(selectedValue as string);
-                                        console.log("sku: ",getProductSku(selectedValue as string));
                                         record.sku = getProductSku(selectedValue as string);
                                         setValue(`products.${index}.sku`, sku);
                                         updateTotalProducts();
@@ -509,12 +519,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     //form fields
     const warehouse = watch('preferredWarehouse');
+
     const getCourierServices = (warehouse: string) => {
-        if (orderParams?.warehouses) {
+        if (orderParameters?.warehouses) {
             if (!warehouse.trim()) {
                 const uniqueCourierServices = Array.from(
                     new Set(
-                        orderParams.warehouses
+                        orderParameters.warehouses
                             .filter((item: WarehouseType) => item.courierService.trim() !== '')
                             .map((item: WarehouseType) => item.courierService.trim())
                     )
@@ -527,7 +538,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                     } as OptionType))
                     .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
             } else {
-                const filteredWarehouses = orderParams.warehouses.filter(
+                const filteredWarehouses = orderParameters.warehouses.filter(
                     (item: WarehouseType) => item.warehouse.trim() === warehouse.trim()
                 );
 
@@ -548,7 +559,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     const generalFields = useMemo(()=> GeneralFields(), [])
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleCourierServiceChange: handleCourierServiceChange}), [warehouse]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries}),[])
+    const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions])
     const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[])
     const [selectedFiles, setSelectedFiles] = useState(orderData?.attachedFiles);
 
@@ -558,7 +569,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
 
     const onSubmitForm = async (data) => {
         setIsLoading(true);
-
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
         try {
@@ -599,12 +609,16 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
     }
 
     const onError = (props: any) => {
-        console.log('onError: ', props);
-        toast.warn("Validation error", {
-            position: "top-right",
-            autoClose: 1000,
-        });
-    }
+
+        const fieldNames = Object.keys(props);
+
+        if (fieldNames.length > 0) {
+            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+                position: "top-right",
+                autoClose: 1000,
+            });
+        }
+    };
 
     return <div className='order-info'>
 
@@ -627,7 +641,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='order-tabs' tabTitles={['General', 'Delivery info', 'Products', 'Services', 'Status history', 'Files']} classNames='inside-modal' >
-                <div className='general-tab'>
+                <div key='general-tab' className='general-tab'>
                     <div className='card order-info--general'>
                         <h3 className='order-info__block-title'>
                             <Icon name='general' />
@@ -647,7 +661,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         </div>
                     </div>
                 </div>
-                <div className='delivery-tab'>
+                <div key='delivery-tab' className='delivery-tab'>
                     <div className='card order-info--receiver'>
                         <h3 className='order-info__block-title'>
                             <Icon name='receiver' />
@@ -683,8 +697,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                                         errorMessage={error?.message}
                                         errors={errors}
                                         onChange={(selectedOption) => {
+                                            setSelectedPickupPoint(selectedOption as string);
                                             props.onChange(selectedOption);
-                                            curPickupPoints && curPickupPoints.length && handlePickupPointData(selectedOption as string);
                                         }}
                                         width={WidthType.w25}
                                     /> )}
@@ -693,7 +707,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         </div>
                     </div>
                 </div>
-                <div className='product-tab'>
+                <div key='product-tab' className='product-tab'>
                     <div className="card min-height-600 order-info--products">
                         <h3 className='order-info__block-title '>
                             <Icon name='goods' />
@@ -742,7 +756,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         </div>
                     </div>
                 </div>
-                <div className='services-tab'>
+                <div key='services-tab' className='services-tab'>
                     <div className="card min-height-600 order-info--history">
                         <h3 className='order-info__block-title'>
                             <Icon name='bundle' />
@@ -751,7 +765,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         <Services services={orderData?.services} />
                     </div>
                 </div>
-                <div className='status-history-tab'>
+                <div key='status-history-tab' className='status-history-tab'>
                     <div className="card min-height-600 order-info--history">
                         <h3 className='order-info__block-title'>
                             <Icon name='history' />
@@ -760,7 +774,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParams, closeOrderM
                         <StatusHistory statusHistory={orderData?.statusHistory} />
                     </div>
                 </div>
-                <div className='files-tab'>
+                <div key='files-tab' className='files-tab'>
                     <div className="card min-height-600 order-info--files">
                         <h3 className='order-info__block-title'>
                             <Icon name='files' />

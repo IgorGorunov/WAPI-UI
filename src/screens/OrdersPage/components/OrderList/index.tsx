@@ -171,14 +171,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const filteredOrders = useMemo(() => {
         setCurrent(1);
-        const searchTermLower = searchTerm.toLowerCase();
+
         return orders.filter(order => {
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
                 if (key !== 'uuid' && typeof value === 'string') {
                     const searchTermsArray = searchTerm.trim().split(' ');
-                    const anyWordMatches = searchTermsArray.some(word => value.includes(word));
-                    return anyWordMatches;
+                    return searchTermsArray.some(word => value.includes(word));
                 }
                 return false;
             });
@@ -368,7 +367,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             onCell: (record) => {
                 return {
-                    onClick: () => handleEditOrder(record.uuid)
+                    onClick: () => {handleEditOrder(record.uuid)}
                 };
             },
         },

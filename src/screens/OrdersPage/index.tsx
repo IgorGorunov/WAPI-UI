@@ -45,7 +45,7 @@ const OrdersPage = () => {
     //single order data
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [singleOrder, setSingleOrder] = useState<SingleOrderType|null>(null);
-    const [orderParams, setOrderParams] = useState<OrderParamsType|null>(null);
+    const [orderParameters, setOrderParameters] = useState<OrderParamsType|null>(null);
 
     const onOrderModalClose = () => {
         setShowOrderModal(false);
@@ -68,7 +68,6 @@ const OrdersPage = () => {
 
             if (res && "data" in res) {
                 setSingleOrder(res.data);
-                setShowOrderModal(true);
             } else {
                 console.error("API did not return expected data");
             }
@@ -85,12 +84,12 @@ const OrdersPage = () => {
                 await Router.push(Routes.Login);
             }
 
-            const res: ApiResponse = await getOrderParameters(
+            const resp: ApiResponse = await getOrderParameters(
                 {token: token}
             );
 
-            if (res && "data" in res) {
-                setOrderParams(res.data);
+            if (resp && "data" in resp) {
+                setOrderParameters(resp.data);
             } else {
                 console.error("API did not return expected data");
             }
@@ -100,9 +99,9 @@ const OrdersPage = () => {
         }
     },[token]);
 
-    useEffect(() => {
-        fetchOrderParams();
-    }, [token]);
+    // useEffect(() => {
+    //     fetchOrderParams();
+    // }, [token]);
 
     const fetchData = useCallback(async () => {
         try {
@@ -134,11 +133,15 @@ const OrdersPage = () => {
     }, [token, curPeriod]);
 
     const handleEditOrder = (uuid: string) => {
+        fetchOrderParams();
         fetchSingleOrder(uuid);
+
+        setShowOrderModal(true);
     }
 
     const handleAddOrder= (
     ) => {
+        fetchOrderParams();
         setSingleOrder(null);
         setShowOrderModal(true);
     }
@@ -189,9 +192,9 @@ const OrdersPage = () => {
 
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}
             </div>
-            {showOrderModal &&
+            {showOrderModal && orderParameters &&
                 <Modal title={`Order`} onClose={onOrderModalClose} >
-                    <OrderForm orderParams={orderParams} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>
+                    <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>
                 </Modal>
             }
             {showImportModal &&

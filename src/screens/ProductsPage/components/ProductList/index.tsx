@@ -13,7 +13,6 @@ import UniversalPopup from "@/components/UniversalPopup";
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import {responsiveArray} from "@/utils/responsiveObserve";
 import Head from "next/head";
 
 
@@ -81,7 +80,6 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
         );
         setSortColumn(columnDataIndex);
-        console.log('111');
     }, [sortColumn]);
 
     // Filter and searching
@@ -176,7 +174,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             onHeaderCell: (column: ColumnType<ProductType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
             }),
-            onCell: (record, rowIndex) => {
+            onCell: (record) => {
                 return {
                     onClick: () => handleEditProduct(record.uuid)
                 };
