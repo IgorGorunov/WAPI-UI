@@ -48,7 +48,7 @@ const DashboardPage: React.FC = () => {
   });
 
   const [clickedPeriod, setClickedPeriod] = useState<PeriodType>("MONTH");
-  const [diagramType, setDiagramType] = useState<PeriodType>("MONTH");
+  const [diagramType, setDiagramType] = useState<PeriodType>("DAY");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

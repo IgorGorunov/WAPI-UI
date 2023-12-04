@@ -609,12 +609,16 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     }
 
     const onError = (props: any) => {
-        console.log('onError: ', props);
-        toast.warn("Validation error", {
-            position: "top-right",
-            autoClose: 1000,
-        });
-    }
+
+        const fieldNames = Object.keys(props);
+
+        if (fieldNames.length > 0) {
+            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+                position: "top-right",
+                autoClose: 1000,
+            });
+        }
+    };
 
     return <div className='order-info'>
 
