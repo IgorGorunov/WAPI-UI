@@ -133,6 +133,7 @@ const OrdersPage = () => {
     }, [token, curPeriod]);
 
     const handleEditOrder = (uuid: string) => {
+        setSingleOrder(null);
         fetchOrderParams();
         fetchSingleOrder(uuid);
 
@@ -192,7 +193,7 @@ const OrdersPage = () => {
 
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}
             </div>
-            {showOrderModal && orderParameters &&
+            {showOrderModal && orderParameters && singleOrder &&
                 <Modal title={`Order`} onClose={onOrderModalClose} >
                     <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>
                 </Modal>
