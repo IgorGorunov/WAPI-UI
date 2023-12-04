@@ -46,6 +46,7 @@ const OrdersPage = () => {
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [singleOrder, setSingleOrder] = useState<SingleOrderType|null>(null);
     const [orderParameters, setOrderParameters] = useState<OrderParamsType|null>(null);
+    const [isOrderNew, setIsOrderNew] = useState(true);
 
     const onOrderModalClose = () => {
         setShowOrderModal(false);
@@ -133,6 +134,7 @@ const OrdersPage = () => {
     }, [token, curPeriod]);
 
     const handleEditOrder = (uuid: string) => {
+        setIsOrderNew(false);
         setSingleOrder(null);
         fetchOrderParams();
         fetchSingleOrder(uuid);
@@ -142,6 +144,7 @@ const OrdersPage = () => {
 
     const handleAddOrder= (
     ) => {
+        setIsOrderNew(true);
         fetchOrderParams();
         setSingleOrder(null);
         setShowOrderModal(true);
@@ -193,7 +196,7 @@ const OrdersPage = () => {
 
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}
             </div>
-            {showOrderModal && orderParameters && singleOrder &&
+            {showOrderModal && orderParameters && (singleOrder || isOrderNew) &&
                 <Modal title={`Order`} onClose={onOrderModalClose} >
                     <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>
                 </Modal>
