@@ -17,6 +17,8 @@ const formatDateToDisplayString = (date: Date) => {
         day = "" + d.getDate(),
         year = "" +d.getFullYear();
 
+    if (year==="1") return '';
+
     if (month.length < 2) month = "0" + month;
     if (day.length < 2) day = "0" + day;
     if (year.length === 1) year = "000"+year;
