@@ -104,6 +104,10 @@
       transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
       padding: 10px 10px 10px 10px;
       position: absolute;
+
+      &-list {
+        max-height: 120px;
+      }
     }
 
     &__dropdown-indicator svg {

@@ -55,8 +55,36 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
     const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
     const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
+    const [selectedWarehouse, setSelectedWarehouse] = useState('');
+    const [selectedCourierService, setSelectedCourierService] = useState('');
 
     const { token } = useAuth();
+
+    //countries
+    const allCountries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
+
+    const getCountryOptions = () =>  {
+        let filteredCountries = [...orderParameters.warehouses];
+
+        if (selectedWarehouse)  {
+            filteredCountries = filteredCountries.filter(item=>item.warehouse===warehouse);
+        }
+
+        if (selectedCourierService) {
+            filteredCountries = filteredCountries.filter(item=>item.courierService===selectedCourierService);
+        }
+
+        const countryArr =  filteredCountries.map(item => item.country);
+
+        return allCountries.filter(item=> countryArr.includes(item.value));
+    }
+
+    const [countries, setCountries] = useState<OptionType[]>(getCountryOptions);
+
+    useEffect(() =>  {
+        setCountries(getCountryOptions());
+    }, [selectedWarehouse, selectedCourierService]);
+
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -68,8 +96,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const closeErrorModal = useCallback(()=>{
         setShowStatusModal(false);
     }, [])
-
-    const countries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
     const warehouses = useMemo(() => {
         if (orderParameters?.warehouses) {
@@ -106,7 +132,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             preferredCourierService: orderData?.preferredCourierService || '',
             preferredCourierServiceMandatory: orderData?.preferredCourierServiceMandatory || false,
             preferredDeliveryDate: orderData?.preferredDeliveryDate || '',
-            preferredWarehouse: orderData?.preferredWarehouse || new Date().toISOString(),
+            preferredWarehouse: orderData?.preferredWarehouse || '',
             preferredWarehouseMandatory: orderData?.preferredWarehouseMandatory || '',
             receiverAddress: orderData?.receiverAddress || '',
             receiverCity: orderData?.receiverCity || '',
@@ -201,6 +227,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             setValue('receiverPickUpAddress', '' );
         }
     }, [selectedPickupPoint, curPickupPoints]);
+
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
@@ -542,25 +569,39 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                     (item: WarehouseType) => item.warehouse.trim() === warehouse.trim()
                 );
 
-                return filteredWarehouses
-                    .map((item: WarehouseType) => ({
-                        label: item.courierService,
-                        value: item.courierService
+                const uniqueCourierServices = Array.from(
+                    new Set(
+                        filteredWarehouses
+                            .filter((item: WarehouseType) => item.courierService.trim() !== '')
+                            .map((item: WarehouseType) => item.courierService.trim())
+                    )
+                );
+
+                return uniqueCourierServices
+                    .map((courierService: string) => ({
+                        label: courierService,
+                        value: courierService
                     } as OptionType))
-                    .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
+                    .sort((a, b) => a.label.localeCompare(b.label));
             }
         }
         return [];
     };
 
     const handleCourierServiceChange = (selectedOption: string) => {
+        setSelectedCourierService(selectedOption);
         fetchPickupPoints(selectedOption);
     }
 
+    const handleWarehouseChange = (selectedOption: string) => {
+        setSelectedWarehouse(selectedOption);
+        setSelectedCourierService('')
+    }
+
     const generalFields = useMemo(()=> GeneralFields(), [])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleCourierServiceChange: handleCourierServiceChange}), [warehouse]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions])
-    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[])
+    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange}), [warehouse]);
+    const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions, countries, selectedWarehouse,selectedCourierService ])
+    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[countries, selectedWarehouse,selectedCourierService])
     const [selectedFiles, setSelectedFiles] = useState(orderData?.attachedFiles);
 
     const handleFilesChange = (files) => {
@@ -788,7 +829,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             </Tabs>
 
             <div className='form-submit-btn'>
-                {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {isDisabled && orderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Save</Button>}
             </div>
