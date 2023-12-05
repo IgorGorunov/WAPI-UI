@@ -76,6 +76,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
         const countryArr =  filteredCountries.map(item => item.country);
 
+        console.log('cc', countryArr, orderParameters.warehouses)
+
         return allCountries.filter(item=> countryArr.includes(item.value));
     }
 
@@ -84,7 +86,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     useEffect(() =>  {
         setCountries(getCountryOptions());
     }, [selectedWarehouse, selectedCourierService]);
-
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
