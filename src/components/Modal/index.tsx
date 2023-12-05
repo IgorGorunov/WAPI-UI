@@ -27,6 +27,19 @@ const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" 
         }
     }, []);
 
+    // useEffect(() => {
+    //     if (document) {
+    //         console.log("doc:", document)
+    //         document.body.style.overflow = 'hidden';
+    //         document.body.style.height = '100vh';
+    //     }
+    //
+    //     return () => {
+    //         document.body.style.overflow = 'auto';
+    //         document.body.style.height = 'auto';
+    //     }
+    // }, [])
+
     const modalContent = (
         <div className={`modal-overlay ${classNames}`}>
             <div className="modal-wrapper" ref={modalWrapperRef}>

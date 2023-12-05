@@ -60,7 +60,7 @@ export const GeneralFields = () => [
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleCourierServiceChange}: { warehouses: OptionType[], courierServices: OptionType[] , handleCourierServiceChange: (a: string)=>void}) => [
+export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange, handleCourierServiceChange}: { warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void, handleCourierServiceChange: (a: string)=>void}) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -70,6 +70,7 @@ export const DetailsFields = ({warehouses, courierServices, handleCourierService
         options: warehouses,
         width: WidthType.w33,
         classNames: "",
+        onChange: handleWarehouseChange,
     },
     {
         fieldType: FormFieldTypes.CHECKBOX,

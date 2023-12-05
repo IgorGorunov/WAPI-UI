@@ -2,6 +2,8 @@
 
 .tabs-block {
   &__tablist {
+
+    //background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,7 +55,7 @@
 
 
   &.inside-modal {
-    margin-top: -100px;
+    margin-top: -90px;
 
     @media (max-width: $laptop) {
       margin-top: 0;
@@ -61,12 +63,45 @@
 
     .tabs-block {
       &__tablist {
-        margin-bottom: 32px;
+        margin-bottom: 8px;
 
-        @media (max-width: $laptop) {
+        @media (max-width: $upToLaptop) {
           margin-bottom: 0;
         }
 
+        @media (min-width: $laptop) {
+          //position: fixed;
+          //top: 24px;
+          //left: 50%;
+          //transform: translateX(-50%);
+          z-index: 10;
+        }
+      }
+
+      &__content {
+        max-height: calc(100vh - 245px);
+        overflow: hidden auto;
+        margin: 0 -24px;
+        padding: 24px 24px 0;
+
+        @media (max-width: $upToLaptop) {
+          margin: 0 -16px;
+          padding: 0 16px;
+        }
+
+        &::-webkit-scrollbar {
+          width: 10px;
+          margin-right: 50px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--color-light-blue-gray);
+          border-radius: 5px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+          background: var(--color-gray-blue);
+        }
       }
     }
   }

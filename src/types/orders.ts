@@ -143,6 +143,7 @@ export type OrderProductType = {
 export type WarehouseType = {
     warehouse: string;
     courierService: string;
+    country: string;
 }
 
 export type OrderParamsType = {

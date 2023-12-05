@@ -9,7 +9,6 @@
       margin-bottom: 8px;
     }
 
-
     input {
       margin-bottom: 4px;
       margin-left: -2px;
@@ -22,6 +21,10 @@
       &[type="number"]::-webkit-outer-spin-button {
         -webkit-appearance: none;
         margin: 0;
+      }
+
+      &[type=number] {
+        -moz-appearance:textfield;
       }
 
       &::placeholder {
