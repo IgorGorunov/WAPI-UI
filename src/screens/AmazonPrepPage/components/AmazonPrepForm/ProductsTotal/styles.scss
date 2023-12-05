@@ -1,0 +1,37 @@
+@import "@/constants/devices.scss";
+.amazon-prep-products-total {
+  margin-top: auto;
+  padding: 20px 15px;
+  border-radius: 0 0 15px 15px;
+  background-color: var(--color-light-gray);
+
+  &__list {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 30px;
+    list-style: none;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
+
+    &-item {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-gray-blue);
+
+      &__value {
+        display: inline-block;
+        margin-left: 10px;
+      }
+
+      .currency {
+        display: inline-block;
+        margin-left: 4px;
+      }
+    }
+  }
+}
