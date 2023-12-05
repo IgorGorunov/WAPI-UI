@@ -732,7 +732,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                         disabled={!!isDisabled}
                                         {...props}
                                         name='receiverPickUpID'
-                                        label='ID'
+                                        label='Code'
                                         fieldType={curPickupPoints && curPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
                                         options={createPickupOptions()}
                                         placeholder={curPickupPoints && curPickupPoints.length ? 'Select' : ''}

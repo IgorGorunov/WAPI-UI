@@ -221,46 +221,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const columns: TableColumnProps<OrderType>[]  = [
         {
             title: <TitleColumn
-                minWidth="10px"
-                maxWidth="10px"
-                contentPosition="center">
-            </TitleColumn>,
-            render: (text: string, record) =>
-                <TableCell
-                    isBlock={true}
-                    minWidth="10px"
-                    maxWidth="10px"
-                    contentPosition="center"
-                    value={'↓'}
-                    childrenBefore={
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <span className={`fi fi-${record.warehouseCountry.toLowerCase()} flag-icon`}></span>
-                            <div style={{ fontSize: '8px' }}>{record.warehouseCountry}</div>
-                        </div>
-                    }
-                    childrenAfter={
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
-                            <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
-                        </div>
-                    }
-                >
-                </TableCell>,
-            dataIndex: 'mobileIcon',
-            key: 'mobileIcon',
-            responsive: ['xs'],
-        },
-        {
-            title: <TitleColumn
-                    minWidth="40px"
-                    maxWidth="40px"
+                    minWidth="50px"
+                    maxWidth="50px"
                     contentPosition="center"
                     childrenBefore={<Icon name={"car"}/>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
-                    minWidth="40px"
-                    maxWidth="40px"
+                    minWidth="50px"
+                    maxWidth="50px"
                     contentPosition="center"
                     value={'➔'}
                     childrenBefore={
@@ -279,7 +248,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 </TableCell>,
             dataIndex: 'icon',
             key: 'icon',
-            responsive: ['sm'],
         },
         {
             title: <TitleColumn title="Status" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
@@ -355,9 +323,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn title="WH number" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
+            title: <TitleColumn title="WH number" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
             dataIndex: 'wapiTrackingNumber',
             key: 'wapiTrackingNumber',
@@ -431,9 +399,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Courier" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn title="Courier" minWidth="75px" maxWidth="75px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
+                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
             ),
             dataIndex: 'courierService',
             key: 'courierService',
