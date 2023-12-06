@@ -8,7 +8,7 @@ import Header from '@/components/Header';
 import AmazonPrepList from "./components/AmazonPrepList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
-import {getAmazonPrep, getAmazonPrepData, getAmazonPrepParameters} from "@/services/amazonePrep";
+import {getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters} from "@/services/amazonePrep";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
@@ -56,12 +56,13 @@ const AmazonPrepPage = () => {
                 await Router.push(Routes.Login);
             }
 
-            const res: ApiResponseType = await getAmazonPrepData(
+            const res: ApiResponseType = await getSingleAmazonPrepData(
                 {token, uuid}
             );
 
             if (res && "data" in res) {
                 setSingleAmazonPrepOrder(res.data);
+                console.log('single amazon prep data: ', res.data);
             } else {
                 console.error("API did not return expected data");
             }
@@ -84,6 +85,8 @@ const AmazonPrepPage = () => {
 
             if (resp && "data" in resp) {
                 setAmazonPrepOrderParameters(resp.data);
+
+                console.log('prep data: ', resp.data);
             } else {
                 console.error("API did not return expected data");
             }
@@ -127,6 +130,7 @@ const AmazonPrepPage = () => {
     }, [token, curPeriod]);
 
     const handleEditAmazonPrepOrder = (uuid: string) => {
+        console.log('uuid:', uuid);
         setIsAmazonPrepNew(false);
         setSingleAmazonPrepOrder(null);
         fetchAmazonPrepOrderParams();
@@ -191,7 +195,7 @@ const AmazonPrepPage = () => {
             </div>
             {showAmazonPrepOrderModal && amazonPrepOrderParameters && (singleAmazonPrepOrder || isAmazonPrepNew) &&
                 <Modal title={`Order`} onClose={onAmazonPrepOrderModalClose} >
-                    <AmazonPrepForm orderParameters={amazonPrepOrderParameters} orderData={singleAmazonPrepOrder} closeOrderModal={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
+                    <AmazonPrepForm amazonPrepOrderParameters={amazonPrepOrderParameters} amazonPrepOrderData={singleAmazonPrepOrder} closeAmazonPrepOrderModal={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
                 </Modal>
             }
             {showImportModal &&
@@ -199,6 +203,7 @@ const AmazonPrepPage = () => {
                     <ImportFilesBlock file='OrderTemplate.xlsx' isProducts={false} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }
+
         </Layout>
     )
 }

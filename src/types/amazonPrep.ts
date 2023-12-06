@@ -26,16 +26,9 @@ export type ProductInfoType = {
 };
 
 export type SingleAmazonPrepOrderProductType = {
-    analogue: ProductInfoType;
-    cod: number;
-    discount: number;
-    price: number;
     product: ProductInfoType;
     quantity: number;
-    tax: number;
-    total: number;
-    unfoldBundle?: boolean;
-    unitOfMeasure?: string;
+    unitOfMeasure: string;
 }
 
 export type AmazonPrepOrderHistoryType = {
@@ -43,7 +36,6 @@ export type AmazonPrepOrderHistoryType = {
     period: string;
     status: string;
     trackingNumber: string;
-    troubleStatus: string;
     statusGroup: string;
 }
 
@@ -55,26 +47,33 @@ export type AmazonPrepOrderServiceType = {
     price: number;
     quantity: number;
     service: string;
-    trackingNumber: string;
-    weight: number;
+    unit: string;
+}
+
+export type PalletType = {
+    palletName: string;
+    palletWidth: number;
+    palletLength: number;
+    palletHeight: number;
+    palletWeight: number;
+    palletVolume: number;
+    palletTrackingNumber: string;
 }
 
 export type SingleAmazonPrepOrderType = {
+    asnNumber: string;
+    attachedFiles: AttachedFilesType[];
+    canEdit: boolean;
     clientOrderID: string;
-    codAmount: number;
-    codCurrency: string;
     commentCourierService: string;
     commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
-    courierServiceTrackingNumberCurrent: string;
     date: string;
+    deliveryMethod: string;
     incomingDate: string;
-    preferredCourierService: string;
-    preferredCourierServiceMandatory: boolean;
+    pallets: PalletType[];
     preferredDeliveryDate: string;
-    preferredWarehouse: string;
-    preferredWarehouseMandatory: boolean;
     receiverAddress: string;
     receiverCity: string;
     receiverComment: string;
@@ -82,12 +81,6 @@ export type SingleAmazonPrepOrderType = {
     receiverEMail: string;
     receiverFullName: string;
     receiverPhone: string;
-    receiverPickUpAddress:string;
-    receiverPickUpCity:string;
-    receiverPickUpCountry: string;
-    receiverPickUpDescription: string;
-    receiverPickUpID: string;
-    receiverPickUpName: string;
     receiverZip: string;
     status: string;
     statusAdditionalInfo: string;
@@ -98,8 +91,7 @@ export type SingleAmazonPrepOrderType = {
     products: SingleAmazonPrepOrderProductType[];
     statusHistory: AmazonPrepOrderHistoryType[];
     services: AmazonPrepOrderServiceType[];
-    attachedFiles: AttachedFilesType[];
-    canEdit: boolean;
+
 }
 
 export type AttachedFilesType = {
@@ -133,13 +125,13 @@ export type AmazonPrepOrderProductType = {
 export type WarehouseType = {
     warehouse: string;
     courierService: string;
-    country: string;
+    country?: string;
 }
 
 export type AmazonPrepOrderParamsType = {
     products: AmazonPrepOrderProductType[];
     warehouses: WarehouseType[];
-    currencies: string[];
+    deliveryMethod: string[];
 }
 
 // export type PickupPointsType = {

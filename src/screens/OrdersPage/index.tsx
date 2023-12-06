@@ -197,7 +197,7 @@ const OrdersPage = () => {
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}
             </div>
             {showOrderModal && orderParameters && (singleOrder || isOrderNew) &&
-                <Modal title={`Order`} onClose={onOrderModalClose} >
+                <Modal title={`Amazon prep`} onClose={onOrderModalClose} >
                     <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>
                 </Modal>
             }

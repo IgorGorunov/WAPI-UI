@@ -1,11 +1,13 @@
 import React from "react";
 
-import { FormFieldTypes, FormBuilderType } from "@/types/forms";
+import {FormBuilderType, FormFieldTypes} from "@/types/forms";
 
 import TextField from "./TextInput/TextField";
 import SelectField from "./Select/SelectField";
 import SingleDateInput from "./SingleDateInput";
 import Checkbox from "./Checkbox";
+import RadioSwitch from "./RadioSwitch";
+import Other from './Other';
 
 const formComponentsMap = {
   [FormFieldTypes.TEXT]: TextField,
@@ -13,6 +15,8 @@ const formComponentsMap = {
   [FormFieldTypes.DATE]: SingleDateInput,
   [FormFieldTypes.SELECT]: SelectField,
   [FormFieldTypes.CHECKBOX]: Checkbox,
+  [FormFieldTypes.RADIO]: RadioSwitch,
+  [FormFieldTypes.OTHER]: Other,
 };
 
 const FieldBuilder: React.FC<FormBuilderType> = ({
@@ -23,6 +27,8 @@ const FieldBuilder: React.FC<FormBuilderType> = ({
     formComponentsMap[fieldType as keyof typeof formComponentsMap];
 
   if (!Component) return null;
+
+
 
   return <Component type={fieldType} {...otherProps} />;
 };

@@ -1,9 +1,9 @@
 import React from "react";
-import {OrderServiceType} from "@/types/orders";
+import {AmazonPrepOrderServiceType} from "@/types/amazonPrep";
 import "./styles.scss";
 
 type PropsType = {
-    services?: OrderServiceType[] ;
+    services?: AmazonPrepOrderServiceType[] ;
 };
 
 const Services: React.FC<PropsType> = ({ services }) => {
@@ -21,16 +21,15 @@ const Services: React.FC<PropsType> = ({ services }) => {
                 <div className='date-column'>Date</div>
                 <div className='column service-column'>Service</div>
                 <div className='column quantity-column'>Quantity</div>
+                <div className='column unit-column'>Unit</div>
                 <div className='column sale-price-column'>Price</div>
                 <div className='column currency-column'>Currency</div>
                 <div className='column amount-column'>Amount</div>
-                <div className='column vol-weight-column'>Vol.weight</div>
-                <div className='column tracking-number-column'>Tracking #</div>
                 <div className='column sum-column'>Σ EUR</div>
             </div>
             <ul className="order-service-history__list">
                 {services &&
-                    services.map((service: OrderServiceType, index: number) => (
+                    services.map((service: AmazonPrepOrderServiceType, index: number) => (
                         <li
                             key={service.service + "_" + index}
                             className={`order-service__list-item ${
@@ -42,11 +41,10 @@ const Services: React.FC<PropsType> = ({ services }) => {
                                 {service.service}
                             </div>
                             <div className='column quantity-column'>{service.quantity}</div>
+                            <div className='column unit-column'>{service.unit}</div>
                             <div className='column sale-price-column'>{service.price}</div>
                             <div className='column currency-column'>{service.currency}</div>
                             <div className='column amount-column'>{service.amount}</div>
-                            <div className='column vol-weight-column'>{service.weight}</div>
-                            <div className='column tracking-number-column'>{service.trackingNumber}</div>
                             <div className='column sum-column'>{service.amountEuro}</div>
                         </li>
                     ))}

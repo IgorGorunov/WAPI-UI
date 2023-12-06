@@ -1,10 +1,10 @@
 import React, {useCallback} from "react";
-import {OrderHistoryType} from "@/types/orders";
+import {AmazonPrepOrderHistoryType} from "@/types/amazonPrep";
 import "./styles.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 
 type PropsType = {
-    statusHistory?: OrderHistoryType[] ;
+    statusHistory?: AmazonPrepOrderHistoryType[] ;
 };
 
 const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
@@ -26,13 +26,12 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                 <div className='date-column'>Period</div>
                 <div className='column status-column'>Status</div>
                 <div className='column tracking-number-column'>Tracking #</div>
-                <div className='column trouble-status-column'>Trouble status</div>
                 <div className='column comment-column'>Additional information</div>
 
             </div>
             <ul className="order-status-history__list">
                 {statusHistory &&
-                    statusHistory.map((status: OrderHistoryType, index: number) => (
+                    statusHistory.map((status: AmazonPrepOrderHistoryType, index: number) => (
                         <li
                             key={status.status + "_" + index}
                             className={`order-status-history__list-item ${
@@ -49,7 +48,6 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                 </span>
                             </div>
                             <div className='column tracking-number-column'>{status.trackingNumber}</div>
-                            <div className='column trouble-status-column'>{status.troubleStatus}</div>
                             <div className='column comment-column'>{status.additionalInfo}</div>
                         </li>
                     ))}

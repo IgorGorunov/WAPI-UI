@@ -8,6 +8,8 @@ export const enum FormFieldTypes {
   TEXT = 'text',
   DATE = 'date',
   CHECKBOX = 'checkbox',
+  RADIO = 'radio-switch',
+  OTHER = 'other',
 }
 
 export type TextFieldType = string
@@ -84,6 +86,7 @@ export type FieldPropsType = {
   errors?: any;
   isClearable?: boolean;
   needToasts?: boolean;
+  otherComponent?: any;
 }
 
 export type FormBuilderType = FieldPropsType & {

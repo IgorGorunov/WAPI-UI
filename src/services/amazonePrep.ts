@@ -24,7 +24,7 @@ const getAmazonPrep = async (
         return err;
     }
 };
-const getAmazonPrepData= async (
+const getSingleAmazonPrepData = async (
     //token: string,
     data: {
         uuid: string;
@@ -104,4 +104,4 @@ const sendAmazonPrepFiles = async (
     }
 };
 
-export { getAmazonPrep, getAmazonPrepData, getAmazonPrepParameters, sendAmazonPrepData, sendAmazonPrepFiles};
+export { getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters, sendAmazonPrepData, sendAmazonPrepFiles};

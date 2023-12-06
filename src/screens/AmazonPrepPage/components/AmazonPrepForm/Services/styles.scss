@@ -64,6 +64,14 @@
     }
   }
 
+  .unit-column {
+    flex: 0 0 80px;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
+  }
+
   .sale-price-column {
     flex: 0 0 80px;
 
