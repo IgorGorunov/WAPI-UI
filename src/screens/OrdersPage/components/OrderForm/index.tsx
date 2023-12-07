@@ -122,7 +122,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         defaultValues: {
             clientOrderID: orderData?.clientOrderID || '',
             codAmount: orderData?.codAmount || '',
-            codCurrency: orderData?.codCurrency || '',
+            codCurrency: orderData?.codCurrency || 'EUR',
             commentCourierService: orderData?.commentWarehouse || '',
             commentWarehouse: orderData?.commentWarehouse || '',
             courierService: orderData?.courierService || '',
@@ -599,8 +599,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedCourierService('')
     }
 
+    const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
+
+
     const generalFields = useMemo(()=> GeneralFields(), [])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange}), [warehouse]);
+    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack}), [warehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions, countries, selectedWarehouse,selectedCourierService ])
     const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[countries, selectedWarehouse,selectedCourierService])
     const [selectedFiles, setSelectedFiles] = useState(orderData?.attachedFiles);
@@ -732,7 +735,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                         disabled={!!isDisabled}
                                         {...props}
                                         name='receiverPickUpID'
-                                        label='ID'
+                                        label='Code'
                                         fieldType={curPickupPoints && curPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
                                         options={createPickupOptions()}
                                         placeholder={curPickupPoints && curPickupPoints.length ? 'Select' : ''}

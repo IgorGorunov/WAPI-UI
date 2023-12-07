@@ -30,4 +30,8 @@ const getFirstDayOfMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
-export {formatDateToString, getFirstDayOfMonth,formatDateToDisplayString}
+const getFirstDayOfYear = (date: Date) => {
+    return new Date(date.getFullYear(), 0, 1);
+};
+
+export {formatDateToString, getFirstDayOfMonth,formatDateToDisplayString, getFirstDayOfYear}

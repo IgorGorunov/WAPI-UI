@@ -1,0 +1,19 @@
+.other-component {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+  padding-bottom: 8px;
+  align-self: flex-start;
+
+  label {
+    margin-bottom: 8px;
+  }
+
+  &__content {
+    display: flex;
+    padding-top: 10px;
+
+  }
+
+}

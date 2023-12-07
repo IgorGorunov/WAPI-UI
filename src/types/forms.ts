@@ -8,6 +8,8 @@ export const enum FormFieldTypes {
   TEXT = 'text',
   DATE = 'date',
   CHECKBOX = 'checkbox',
+  RADIO = 'radio-switch',
+  OTHER = 'other',
 }
 
 export type TextFieldType = string
@@ -49,6 +51,7 @@ export type CheckboxType = {
 }
 export const enum WidthType {
   w100 = "100",
+  w75 = '75',
   w50 = "50",
   w33 = '33',
   w67 = '67',
@@ -84,6 +87,7 @@ export type FieldPropsType = {
   errors?: any;
   isClearable?: boolean;
   needToasts?: boolean;
+  otherComponent?: any;
 }
 
 export type FormBuilderType = FieldPropsType & {

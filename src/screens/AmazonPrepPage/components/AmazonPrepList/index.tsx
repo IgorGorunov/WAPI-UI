@@ -6,25 +6,25 @@ import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
 import Selector from "@/components/InputSelect";
 import Icon from "@/components/Icon";
-import getSymbolFromCurrency from 'currency-symbol-map';
-import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
 import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
 import DateInput from "@/components/DateInput";
 import {DateRangeType} from "@/types/dashboard";
-import {OrderType} from "@/types/orders";
+import {AmazonPrepOrderType} from "@/types/amazonPrep";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import Head from "next/head";
+import {OrderType} from "@/types/orders";
+import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 
 
-type OrderListType = {
-    orders: OrderType[];
+type AmazonPrepListType = {
+    amazonPrepOrders: AmazonPrepOrderType[];
     currentRange: DateRangeType;
     setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
-    setFilteredOrders: React.Dispatch<React.SetStateAction<OrderType[]>>;
-    handleEditOrder(uuid: string): void;
+    setFilteredAmazonPrepOrders: React.Dispatch<React.SetStateAction<AmazonPrepOrderType[]>>;
+    handleEditAmazonPrepOrder(uuid: string): void;
 }
 
 const pageOptions = [
@@ -36,7 +36,7 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
-const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder}) => {
+const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, currentRange, setCurrentRange, setFilteredAmazonPrepOrders,handleEditAmazonPrepOrder}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -45,49 +45,28 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
     const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
-    const [hoveredOrder, setHoveredOrder] = useState<OrderType | null>(null);
+    const [hoveredOrder, setHoveredOrder] = useState<AmazonPrepOrderType | null>(null);
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
-    const productItems = orders.flatMap(order => {
+    const productItems = amazonPrepOrders.flatMap(order => {
         return order.products.map(orderItem => ({
             uuid: order.uuid,
             title: orderItem.product,
             description: orderItem.quantity
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
-    const troubleStatusesItems = orders.flatMap(order => {
-        return order.troubleStatuses.map(orderItem => ({
-            uuid: order.uuid,
-            title: orderItem.period,
-            description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
-        }));
-    }).filter(item => item.uuid === hoveredOrder?.uuid);
 
-    const receiverItem = orders.flatMap(order => [
-        { uuid: order.uuid, title: "Country", description: order.receiverCountry },
-        { uuid: order.uuid, title: "City", description: order.receiverCity },
-        { uuid: order.uuid, title: "Zip", description: order.receiverZip },
-        { uuid: order.uuid, title: "Address", description: order.receiverAddress },
-        { uuid: order.uuid, title: "Full name", description: order.receiverFullName },
-        { uuid: order.uuid, title: "Phone", description: order.receiverPhone },
-        { uuid: order.uuid, title: "E-mail", description: order.receiverEMail },
-        { uuid: order.uuid, title: "Comment", description: order.receiverComment },
-    ]).filter(item => item.uuid === hoveredOrder?.uuid);
 
     const [filterStatus, setFilterStatus] = useState('-All statuses-');
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
-        const statuses = orders.map(order => order.status);
+        const statuses = amazonPrepOrders.map(order => order.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [orders]);
+    }, [amazonPrepOrders]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
         {
             value: '-All statuses-',
             label: '-All statuses-',
-        },
-        {
-            value: '-Trouble statuses-',
-            label: '-Trouble statuses-',
         },
         ...uniqueStatuses.map(status => ({
             value: status,
@@ -98,9 +77,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [filterWarehouse, setFilterWarehouse] = useState('-All warehouses-');
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
-        const warehouses = orders.map(order => order.warehouse);
+        const warehouses = amazonPrepOrders.map(order => order.warehouse);
         return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
-    }, [orders]);
+    }, [amazonPrepOrders]);
     uniqueWarehouses.sort();
     const transformedWarehouses = useMemo(() => ([
         {
@@ -113,30 +92,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueWarehouses]);
 
-    const [filterCourierService, setFilterCourierService] = useState('-All couriers-');
-    // const allCourierServices = orders.map(order => order.courierService);
-    const uniqueCourierServices = useMemo(() => {
-        const courierServices = orders.map(order => order.courierService);
-        return Array.from(new Set(courierServices)).filter(courier => courier).sort();
-    }, [orders]);
-    uniqueCourierServices.sort();
-    const transformedCourierServices = useMemo(() => ([
-        {
-            value: '-All couriers-',
-            label: '-All couriers-',
-        },
-        ...uniqueCourierServices.map(courier => ({
-            value: courier,
-            label: courier,
-        }))
-    ]), [uniqueCourierServices]);
-
     const [filterReceiverCountry, setFilterReceiverCountry] = useState('-All countries-');
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
-        const receiverCountries = orders.map(order => order.receiverCountry);
+        const receiverCountries = amazonPrepOrders.map(order => order.receiverCountry);
         return Array.from(new Set(receiverCountries)).filter(country => country).sort();
-    }, [orders]);
+    }, [amazonPrepOrders]);
     uniqueReceiverCountries.sort();
     const transformedReceiverCountries = useMemo(() => ([
         {
@@ -170,9 +131,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setSearchTerm(newSearchTerm);
     };
 
-    const [sortColumn, setSortColumn] = useState<keyof OrderType | null>(null);
+    const [sortColumn, setSortColumn] = useState<keyof AmazonPrepOrderType | null>(null);
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
-    const handleHeaderCellClick = useCallback((columnDataIndex: keyof OrderType) => {
+    const handleHeaderCellClick = useCallback((columnDataIndex: keyof AmazonPrepOrderType) => {
         setSortDirection(currentDirection =>
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
         );
@@ -183,9 +144,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const filteredOrders = useMemo(() => {
         setCurrent(1);
 
-        console.log('filter');
-
-        return orders.filter(order => {
+        return amazonPrepOrders.filter(order => {
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
                 if (key !== 'uuid' && typeof value === 'string') {
@@ -194,15 +153,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 }
                 return false;
             });
-            const matchesStatus = filterStatus === '-All statuses-' ||
-                (filterStatus === '-Trouble statuses-' ? order.troubleStatusesExist : order.status === filterStatus);
             const matchesWarehouse = !filterWarehouse || filterWarehouse === '-All warehouses-' ||
                 order.warehouse.toLowerCase() === filterWarehouse.toLowerCase();
-            const matchesCourierService = !filterCourierService || filterCourierService === '-All couriers-' ||
-                order.courierService.toLowerCase() === filterCourierService.toLowerCase();
             const matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-All countries-' ||
                 order.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
-            return matchesSearch && matchesStatus && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
+            return matchesSearch && matchesWarehouse && matchesReceiverCountry;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -211,7 +166,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection]);
+    }, [amazonPrepOrders, searchTerm, filterStatus, filterWarehouse, filterReceiverCountry, sortColumn, sortDirection]);
 
     const [showDatepicker, setShowDatepicker] = useState(false);
 
@@ -227,11 +182,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     };
 
     useEffect(() => {
-        setFilteredOrders(filteredOrders);
+        setFilteredAmazonPrepOrders(filteredOrders);
 
     }, [filteredOrders]);
 
-    const columns: TableColumnProps<OrderType>[]  = [
+    const columns: TableColumnProps<AmazonPrepOrderType>[]  = [
         {
             title: <TitleColumn
                     minWidth="50px"
@@ -253,21 +208,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     }
                     childrenAfter={
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}
-                                  onMouseEnter={(e) => {
-                                      setHoveredOrder(record);
-                                      setHoveredColumn('receiver');
-                                      setMousePosition({ x: e.clientX, y: e.clientY });
-                                      setIsDisplayedPopup(true);
-
-                                  }}
-                                  onMouseLeave={() => {
-                                      setHoveredOrder(null);
-                                      setHoveredColumn('');
-                                      setMousePosition(null);
-                                      setIsDisplayedPopup(false);
-                                  }}
-                            />
+                            <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
                             <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
                         </div>
                 }
@@ -285,39 +226,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         minWidth="60px"
                         maxWidth="60px"
                         contentPosition="start"
-                        childrenBefore={
-                            record.troubleStatusesExist && (
-                                    <div style={{
-                                        minHeight: '8px',
-                                        minWidth: '8px',
-                                        backgroundColor: 'red',
-                                        borderRadius: '50%',
-                                        display: 'inline-block',
-                                        marginRight: '5px',
-                                        alignSelf: 'center',
-                                    }}
-                                         onClick={(e) => {
-                                             setHoveredOrder(record);
-                                             setHoveredColumn('status');
-                                             setMousePosition({ x: e.clientX, y: e.clientY });
-                                             setIsDisplayedPopup(true);
-
-                                         }}
-                                         onMouseEnter={(e) => {
-                                             setHoveredOrder(record);
-                                             setHoveredColumn('status');
-                                             setMousePosition({ x: e.clientX, y: e.clientY });
-                                             setIsDisplayedPopup(true);
-
-                                         }}
-                                         onMouseLeave={() => {
-                                             setHoveredOrder(null);
-                                             setHoveredColumn('');
-                                             setMousePosition(null);
-                                             setIsDisplayedPopup(false);
-                                         }}/>
-                                )
-                        }
                         childrenAfter={
                             <span style={{
                                 borderBottom: `2px solid ${underlineColor}`,
@@ -333,8 +241,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             dataIndex: 'status',
             key: 'status',
             sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            onHeaderCell: (column: ColumnType<AmazonPrepOrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof AmazonPrepOrderType),
             }),
         },
         {
@@ -345,79 +253,57 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             dataIndex: 'date',
             key: 'date',
             sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            onHeaderCell: (column: ColumnType<AmazonPrepOrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof AmazonPrepOrderType),
             }),
         },
         {
             title: <TitleColumn title="WH number" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell
-                    value={text}
-                    minWidth="80px"
-                    maxWidth="80px"
-                    contentPosition="start"
-                    textColor='var(--color-blue)'
-                    cursor='pointer'
-                />
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
             dataIndex: 'wapiTrackingNumber',
             key: 'wapiTrackingNumber',
             sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            onHeaderCell: (column: ColumnType<AmazonPrepOrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof AmazonPrepOrderType),
             }),
             onCell: (record) => {
                 return {
-                    onClick: () => {handleEditOrder(record.uuid)}
+                    onClick: () => {handleEditAmazonPrepOrder(record.uuid)}
                 };
             },
         },
         {
-            title: <TitleColumn title="COD" minWidth="75px" maxWidth="75px" contentPosition="center"/>,
-            render: (text: string, record) => {
-                if (record.codCurrency) {
-                    const currencySymbol = getSymbolFromCurrency(record.codCurrency);
-                    return (
-                        <TableCell
-                            value={`${text} ${currencySymbol}`}
-                            minWidth="75px"
-                            maxWidth="75px"
-                            contentPosition="center">
-                        </TableCell>
-                    );
-                } else {
-                    return (
-                        <TableCell
-                            value={'-'}
-                            minWidth="75px"
-                            maxWidth="75px"
-                            contentPosition="center">
-                        </TableCell>
-                    );
-                }
-            },
-            dataIndex: 'codAmount',
-            key: 'codAmount',
+            title: <TitleColumn title="ASN" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
+            render: (text: string) => (
+                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
+            ),
+            dataIndex: 'asnNumber',
+            key: 'asnNumber',
             sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            onHeaderCell: (column: ColumnType<AmazonPrepOrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof AmazonPrepOrderType),
             }),
+            onCell: (record) => {
+                return {
+                    onClick: () => {handleEditAmazonPrepOrder(record.uuid)}
+                };
+            },
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Order ID" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn title="Order ID" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
             ),
-
             dataIndex: 'clientOrderID',
             key: 'clientOrderID',
             sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            onHeaderCell: (column: ColumnType<AmazonPrepOrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof AmazonPrepOrderType),
             }),
-            responsive: ['md'],
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn title="Warehouse" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
@@ -427,49 +313,40 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             dataIndex: 'warehouse',
             key: 'warehouse',
             sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            onHeaderCell: (column: ColumnType<AmazonPrepOrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof AmazonPrepOrderType),
             }),
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Courier" minWidth="75px" maxWidth="75px" contentPosition="start"/>,
+            title: <TitleColumn title="Courier" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
+                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
             dataIndex: 'courierService',
             key: 'courierService',
             sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            onHeaderCell: (column: ColumnType<AmazonPrepOrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof AmazonPrepOrderType),
             }),
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Tracking number" minWidth="150px" maxWidth="150px" contentPosition="start"/>,
-            render: (text: string, record) => (
-               <TableCell value={text} minWidth="150px" maxWidth="150px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+            title: <TitleColumn title="Method" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+            render: (text: string) => (
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
-            dataIndex: 'trackingNumber',
-            key: 'trackingNumber',
+            dataIndex: 'deliveryMethod',
+            key: 'deliveryMethod',
             sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            onHeaderCell: (column: ColumnType<AmazonPrepOrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof AmazonPrepOrderType),
             }),
-            onCell: (record) => {
-                return {
-                    onClick: () => {
-                        if (record.trackingLink) {
-                            window.open(record.trackingLink, '_blank');
-                        }
-                    },
-                };
-            },
-            responsive: ['lg'],
+            responsive: ['md'],
         },
         {
             title: <TitleColumn title="Products" minWidth="50px" maxWidth="50px" contentPosition="start"/>,
-            render: (text: string, record: OrderType) => (
+            render: (text: string, record: AmazonPrepOrderType) => (
                 <TableCell
                     minWidth="50px"
                     maxWidth="50px"
@@ -504,8 +381,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             dataIndex: 'productLines',
             key: 'productLines',
             sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            onHeaderCell: (column: ColumnType<AmazonPrepOrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof AmazonPrepOrderType),
             }),
             responsive: ['lg'],
         },
@@ -539,11 +416,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     options={transformedWarehouses}
                     value={filterWarehouse}
                     onChange={(value: string) => setFilterWarehouse(value)}
-                />
-                <Selector
-                    options={transformedCourierServices}
-                    value={filterCourierService}
-                    onChange={(value: string) => setFilterCourierService(value)}
                 />
                 <Selector
                     options={transformedReceiverCountries}
@@ -586,46 +458,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     }}
                 >
                     <UniversalPopup
-                        width={
-                            (() => {
-                                switch (hoveredColumn) {
-                                    case 'productLines':
-                                        return null;
-                                    case 'status':
-                                        return 800;
-                                    case 'receiver':
-                                        return 300;
-                                    default:
-                                        return null;
-                                }
-                            })()
-                        }
-                        items={
-                            (() => {
-                                switch (hoveredColumn) {
-                                    case 'productLines':
-                                        return productItems;
-                                    case 'status':
-                                        return troubleStatusesItems;
-                                    case 'receiver':
-                                        return receiverItem;
-                                    default:
-                                        return [];
-                                }
-                            })()
-                        }
-                        position={
-                            (() => {
-                                switch (hoveredColumn) {
-                                    case 'productLines':
-                                        return 'left';
-                                    case 'status':
-                                        return 'right';
-                                    default:
-                                        return 'right';
-                                }
-                            })()
-                        }
+                        width={null}
+                        items={productItems}
+                        position={'left'}
                         handleClose={()=>setIsDisplayedPopup(false)}
                     />
                 </div>
@@ -634,4 +469,4 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     );
 };
 
-export default React.memo(OrderList);
+export default React.memo(AmazonPrepList);
