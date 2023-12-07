@@ -16,7 +16,7 @@ import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
-import {sendOrderData} from '@/services/orders';
+import {sendAmazonPrepData} from '@/services/amazonePrep';
 import {DetailsFields, GeneralFields, ReceiverFields} from "./AmazonPrepFormFields";
 import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
@@ -31,6 +31,8 @@ import Services from "./Services";
 import ProductsTotal from "./ProductsTotal";
 import {toast, ToastContainer} from '@/components/Toast';
 import Pallets from "@/screens/AmazonPrepPage/components/AmazonPrepForm/Pallets";
+import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
+import {useTabsState} from "@/hooks/useTabsState";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -93,6 +95,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
         mode: 'onSubmit',
         defaultValues: {
+            asnNumber: amazonPrepOrderData?.asnNumber || '',
             clientOrderID: amazonPrepOrderData?.clientOrderID || '',
             commentCourierService: amazonPrepOrderData?.commentWarehouse || '',
             commentWarehouse: amazonPrepOrderData?.commentWarehouse || '',
@@ -363,8 +366,12 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         setSelectedFiles(files);
     };
 
+    const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid);
+    const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
+
     const onSubmitForm = async (data) => {
         setIsLoading(true);
+        clearTabTitles();
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
         try {
@@ -373,7 +380,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 await Router.push(Routes.Login);
             }
 
-            const res: ApiResponseType = await sendOrderData(
+            const res: ApiResponseType = await sendAmazonPrepData(
                 {
                     token: token,
                     orderData: data
@@ -414,6 +421,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 autoClose: 1000,
             });
         }
+        updateTabTitles(fieldNames);
     };
 
     return <div className='amazon-prep-info'>
@@ -436,7 +444,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         )}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
-            <Tabs id='amazon-prep-tabs' tabTitles={['General', 'Delivery info', 'Products', 'Pallets', 'Services', 'Status history', 'Files']} classNames='inside-modal' >
+            <Tabs id='amazon-prep-tabs' tabTitles={tabTitles} classNames='inside-modal' >
                 <div key='general-tab' className='general-tab'>
                     <div className='card amazon-prep-info--general'>
                         <h3 className='amazon-prep-info__block-title'>

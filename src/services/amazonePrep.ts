@@ -74,7 +74,7 @@ const sendAmazonPrepData = async (
 ) => {
     try {
         const response: any = await axios.post(
-            `${API_ENDPOINT}/CreateUpdateOrder`,
+            `${API_ENDPOINT}/CreateUpdateAmazonPrep`,
             data
         );
 
