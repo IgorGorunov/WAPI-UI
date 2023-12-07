@@ -599,7 +599,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedCourierService('')
     }
 
-    const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink}>{orderData?.trackingLink}</a> : null;
+    const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
 
     const generalFields = useMemo(()=> GeneralFields(), [])
