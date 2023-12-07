@@ -43,6 +43,10 @@
           bottom: -4px;
         }
       }
+
+      &.has-error {
+        color: var(--color-error);
+      }
     }
   }
 

@@ -63,7 +63,6 @@ export const GeneralFields = (newObject: boolean) => [
     },
 ];
 
-
 export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange, handleCourierServiceChange, linkToTrack, newObject}: { warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void, handleCourierServiceChange: (a: string)=>void, linkToTrack:any, newObject: boolean}) => [
     {
         fieldType: FormFieldTypes.SELECT,

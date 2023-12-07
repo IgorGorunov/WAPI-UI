@@ -24,7 +24,8 @@ import {
     GeneralFields,
     PickUpPointFields,
     ReceiverFields
-} from "@/screens/OrdersPage/components/OrderForm/OrderFormFields";
+} from "./OrderFormFields";
+import {TabTitles, TabFields} from "./OrderFormTabs";
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
@@ -37,8 +38,7 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "@/screens/OrdersPage/components/OrderForm/ProductsTotal";
 import {toast, ToastContainer} from '@/components/Toast';
-import {bool} from "prop-types";
-import boolean from "async-validator/dist-types/validator/boolean";
+import {useTabsState} from "@/hooks/useTabsState";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -77,8 +77,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         }
 
         const countryArr =  filteredCountries.map(item => item.country);
-
-        console.log('cc', countryArr, orderParameters.warehouses)
 
         return allCountries.filter(item=> countryArr.includes(item.value));
     }
@@ -176,6 +174,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                     : [],
         }
     });
+
+
 
     const { append: appendProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
@@ -614,7 +614,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedFiles(files);
     };
 
+
+    const tabTitleArray =  TabTitles(!!orderData?.uuid);
+    const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
+
     const onSubmitForm = async (data) => {
+        clearTabTitles();
         setIsLoading(true);
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
@@ -655,7 +660,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         }
     }
 
+
+
     const onError = (props: any) => {
+
+        console.log('error props:', props);
 
         const fieldNames = Object.keys(props);
 
@@ -665,7 +674,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                 autoClose: 3000,
             });
         }
+
+        updateTabTitles(fieldNames);
     };
+
+
+
 
     return <div className='order-info'>
 
@@ -687,7 +701,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         )}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
-            <Tabs id='order-tabs' tabTitles={ orderData?.uuid ?  ['General', 'Delivery info', 'Products', 'Services', 'Status history', 'Files'] : ['General', 'Delivery info', 'Products', 'Files']} classNames='inside-modal' >
+            <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal' >
                 <div key='general-tab' className='general-tab'>
                     <div className='card order-info--general'>
                         <h3 className='order-info__block-title'>
