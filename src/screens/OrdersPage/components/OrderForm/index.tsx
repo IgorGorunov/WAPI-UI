@@ -37,6 +37,8 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "@/screens/OrdersPage/components/OrderForm/ProductsTotal";
 import {toast, ToastContainer} from '@/components/Toast';
+import {bool} from "prop-types";
+import boolean from "async-validator/dist-types/validator/boolean";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -602,8 +604,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
 
-    const generalFields = useMemo(()=> GeneralFields(), [])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack}), [warehouse]);
+    const generalFields = useMemo(()=> GeneralFields(!orderData?.uuid), [orderData])
+    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [warehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions, countries, selectedWarehouse,selectedCourierService ])
     const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[countries, selectedWarehouse,selectedCourierService])
     const [selectedFiles, setSelectedFiles] = useState(orderData?.attachedFiles);
@@ -660,7 +662,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         if (fieldNames.length > 0) {
             toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
                 position: "top-right",
-                autoClose: 1000,
+                autoClose: 3000,
             });
         }
     };
@@ -685,7 +687,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         )}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
-            <Tabs id='order-tabs' tabTitles={['General', 'Delivery info', 'Products', 'Services', 'Status history', 'Files']} classNames='inside-modal' >
+            <Tabs id='order-tabs' tabTitles={ orderData?.uuid ?  ['General', 'Delivery info', 'Products', 'Services', 'Status history', 'Files'] : ['General', 'Delivery info', 'Products', 'Files']} classNames='inside-modal' >
                 <div key='general-tab' className='general-tab'>
                     <div className='card order-info--general'>
                         <h3 className='order-info__block-title'>
@@ -801,7 +803,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                         </div>
                     </div>
                 </div>
-                <div key='services-tab' className='services-tab'>
+                {orderData?.uuid && <div key='services-tab' className='services-tab'>
                     <div className="card min-height-600 order-info--history">
                         <h3 className='order-info__block-title'>
                             <Icon name='bundle' />
@@ -809,8 +811,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                         </h3>
                         <Services services={orderData?.services} />
                     </div>
-                </div>
-                <div key='status-history-tab' className='status-history-tab'>
+                </div>}
+                {orderData?.uuid && <div key='status-history-tab' className='status-history-tab'>
                     <div className="card min-height-600 order-info--history">
                         <h3 className='order-info__block-title'>
                             <Icon name='history' />
@@ -818,7 +820,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                         </h3>
                         <StatusHistory statusHistory={orderData?.statusHistory} />
                     </div>
-                </div>
+                </div>}
                 <div key='files-tab' className='files-tab'>
                     <div className="card min-height-600 order-info--files">
                         <h3 className='order-info__block-title'>
