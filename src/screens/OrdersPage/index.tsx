@@ -161,6 +161,7 @@ const OrdersPage = () => {
             codAmount: item.codAmount,
             codCurrency: item.codCurrency,
             clientOrderID: item.clientOrderID,
+            productsByString: item.productsByString,
             warehouse: item.warehouse,
             courierService: item.courierService,
             trackingNumber: item.trackingNumber,
