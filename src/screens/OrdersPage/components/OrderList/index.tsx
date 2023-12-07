@@ -594,7 +594,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                     case 'status':
                                         return 800;
                                     case 'receiver':
-                                        return 300;
+                                        return null;
                                     default:
                                         return null;
                                 }
