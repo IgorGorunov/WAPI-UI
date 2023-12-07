@@ -71,14 +71,14 @@ const ProductsStockPage = () => {
             warehouse: item.warehouse,
             warehouseSku: item.warehouseSku,
             country: item.country,
-            total: item.total,
+            available: item.available,
+            reserved: item.reserved,
             damaged: item.damaged,
             expired: item.expired,
             undefinedStatus: item.undefinedStatus,
             withoutBox: item.withoutBox,
             forPlacement: item.forPlacement,
-            reserved: item.reserved,
-            available: item.available,
+            total: item.total,
         }));
         exportFileXLS(filteredData, "ProductsStock")
     }
