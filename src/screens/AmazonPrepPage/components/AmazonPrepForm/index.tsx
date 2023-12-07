@@ -30,6 +30,7 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "./ProductsTotal";
 import {toast, ToastContainer} from '@/components/Toast';
+import Pallets from "@/screens/AmazonPrepPage/components/AmazonPrepForm/Pallets";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -48,8 +49,8 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     // const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
     // const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
     // const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
-    const [selectedWarehouse, setSelectedWarehouse] = useState('');
-    const [selectedCourierService, setSelectedCourierService] = useState('');
+    // const [selectedWarehouse, setSelectedWarehouse] = useState('');
+    // const [selectedCourierService, setSelectedCourierService] = useState('');
 
     const { token } = useAuth();
 
@@ -136,7 +137,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
     const [productsTotalInfo, setProductsTotalInfo] = useState<AmazonPrepOrderProductWithTotalInfoType>({
-        cod: 0,
+        pallets: 0,
         weightNet: 0,
         weightGross: 0,
         volume:0,
@@ -144,7 +145,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
 
     const updateTotalProducts = () => {
         const rez = {
-            cod: 0,
+            pallets: amazonPrepOrderData?.pallets?.length || 0,
             weightNet: 0,
             weightGross: 0,
             volume:0,
@@ -345,10 +346,9 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         return [];
     };
 
-
     const handleWarehouseChange = (selectedOption: string) => {
-        setSelectedWarehouse(selectedOption);
-        setSelectedCourierService('');
+        // setSelectedWarehouse(selectedOption);
+        // setSelectedCourierService('');
         setValue('courierService', '');
     }
 
@@ -436,7 +436,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         )}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
-            <Tabs id='amazon-prep-tabs' tabTitles={['General', 'Delivery info', 'Products', 'Services', 'Status history', 'Files']} classNames='inside-modal' >
+            <Tabs id='amazon-prep-tabs' tabTitles={['General', 'Delivery info', 'Products', 'Pallets', 'Services', 'Status history', 'Files']} classNames='inside-modal' >
                 <div key='general-tab' className='general-tab'>
                     <div className='card amazon-prep-info--general'>
                         <h3 className='amazon-prep-info__block-title'>
@@ -501,8 +501,17 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                         </div>
                     </div>
                 </div>
+                <div key='pallets-tab' className='pallets-tab'>
+                    <div className="card min-height-600 amazon-prep-info--pallets">
+                        <h3 className='amazon-prep-info__block-title'>
+                            <Icon name='bundle' />
+                            Pallets
+                        </h3>
+                        <Pallets pallets={amazonPrepOrderData?.pallets} />
+                    </div>
+                </div>
                 <div key='services-tab' className='services-tab'>
-                    <div className="card min-height-600 amazon-prep-info--history">
+                    <div className="card min-height-600 amazon-prep-info--services">
                         <h3 className='amazon-prep-info__block-title'>
                             <Icon name='bundle' />
                             Services
