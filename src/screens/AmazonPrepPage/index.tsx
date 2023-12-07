@@ -194,7 +194,7 @@ const AmazonPrepPage = () => {
                 {amazonPrepOrdersData && <AmazonPrepList amazonPrepOrders={amazonPrepOrdersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredAmazonPrepOrders={setFilteredAmazonPrepOrders} handleEditAmazonPrepOrder={handleEditAmazonPrepOrder} />}
             </div>
             {showAmazonPrepOrderModal && amazonPrepOrderParameters && (singleAmazonPrepOrder || isAmazonPrepNew) &&
-                <Modal title={`Order`} onClose={onAmazonPrepOrderModalClose} >
+                <Modal title={`Amazon prep`} onClose={onAmazonPrepOrderModalClose} >
                     <AmazonPrepForm amazonPrepOrderParameters={amazonPrepOrderParameters} amazonPrepOrderData={singleAmazonPrepOrder} closeAmazonPrepOrderModal={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
                 </Modal>
             }
@@ -203,7 +203,6 @@ const AmazonPrepPage = () => {
                     <ImportFilesBlock file='OrderTemplate.xlsx' isProducts={false} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }
-
         </Layout>
     )
 }

@@ -60,7 +60,7 @@ export const GeneralFields = () => [
     },
 ];
 
-export const DetailsFields = () => [
+export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]}) => [
     // {
     //     fieldType: FormFieldTypes.SELECT,
     //     type: "text",
@@ -102,24 +102,31 @@ export const DetailsFields = () => [
     // },
 
     {
-        fieldType: FormFieldTypes.TEXT,
+        fieldType: FormFieldTypes.SELECT,
         type: "text",
         name: 'warehouse',
         label: 'Warehouse',
         placeholder: "",
-        disabled: true,
-        width: WidthType.w50,
+        options: warehouses,
+        width: WidthType.w33,
+        onChange: handleWarehouseChange,
         classNames: "",
     },
     {
-        fieldType: FormFieldTypes.TEXT,
+        fieldType: FormFieldTypes.SELECT,
         type: "text",
         name: 'courierService',
         label: 'Courier service',
         placeholder: "",
-        disabled: true,
+        options: courierServices,
         width: WidthType.w50,
         classNames: "",
+    },
+    {
+        fieldType:FormFieldTypes.RADIO,
+        name: 'deliveryMethod',
+        options: deliveryMethodOptions,
+        width: WidthType.w17,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -146,14 +153,15 @@ export const DetailsFields = () => [
         label: 'Tracking number',
         placeholder: "",
         disabled: true,
-        width: WidthType.w50,
+        width: WidthType.w25,
         classNames: "",
     },
     {
         fieldType: FormFieldTypes.OTHER,
-        name: 'linkkk',
-        otherComponent: <a href='https://www.google.com'>test link</a>,
-        width: WidthType.w50,
+        name: 'trackingLink',
+        label: 'Tracking link',
+        otherComponent: linkToTrack,
+        width: WidthType.w75,
         classNames: 'amazon-tracking-link',
     }
     // {

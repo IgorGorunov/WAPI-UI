@@ -5,6 +5,7 @@ import "./styles.scss"
 const Other: React.FC<FieldPropsType> = ({
         classNames= '',
         name,
+        label,
         otherComponent,
         width,
         ...otherProps
@@ -12,7 +13,10 @@ const Other: React.FC<FieldPropsType> = ({
 
     return (
         <div className={`other-component ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
-            {otherComponent}
+            {label && <label htmlFor={name}>{label}</label>}
+            <div className="other-component__content">
+                {otherComponent}
+            </div>
         </div>
     );
 };

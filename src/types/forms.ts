@@ -51,6 +51,7 @@ export type CheckboxType = {
 }
 export const enum WidthType {
   w100 = "100",
+  w75 = '75',
   w50 = "50",
   w33 = '33',
   w67 = '67',

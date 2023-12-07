@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useState} from "react";
 import {FieldPropsType, OptionType} from "@/types/forms";
 import "./styles.scss"
 
@@ -15,41 +15,38 @@ const RadioSwitch: React.FC<FieldPropsType> = ({
         ...otherProps
     }) => {
 
-    const handleChange = useCallback((selectedOption) => {
-        console.log('selected: ', selectedOption)
-        // if (onChange) {
-        //     if (selectedOption) {
-        //         onChange(selectedOption.value);
-        //     } else {
-        //         onChange('');
-        //     }
-        // }
+    const [curValue, setCurValue] = useState(value || options[0].value);
 
-        //return onChange(selectedOption.value);
+    const handleChange = useCallback((selectedOption) => {
+        console.log('selected: ', selectedOption);
+        setCurValue(selectedOption);
+
+        if (onChange) {
+            onChange(selectedOption);
+        }
     } ,[] )
 
-    return (
-        <div className={`radio-switch ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
-            {label ? <label className="radio-switch-label">{label}</label> : null}
-            {options && options.length && options.map((item, index) => (
-                <div className='radio-button-wrapper'>
-                    <input
-                    {...otherProps}
-                    type='radio'
-                    name={name}
-                    id={`${name}-radio_${index}`}
-                    onChange={handleChange}
-                    onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-                    />
-                </div>
-            ))}
+    console.log("valie", value)
 
+    if (!value) {
+        value = options && options.length ? options[0].value : '';
+    }
+
+    return (
+        <div className={`radio-switch__wrapper ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
+            {label ? <label className="radio-switch-label">{label}</label> : null}
+            {options && options.length && <div className={`radio-switch`}>
+                {options && options.length && options.map((item, index) => (
+                    <a href="#" key={`${name}_${index}`} className={`radio-switch__option ${curValue===item.value ? 'is-checked' : ''}`}
+                            onClick={()=>handleChange(item.value)}
+                            onKeyDown={(e) => { if (e.key !== 'Tab') { handleChange(item.value); e.preventDefault();} }}
+                    >
+                        <span>{item.label}</span>
+                    </a>
+                ))}
+            </div>}
             {errorMessage && <p className="error">{errorMessage}</p>}
-            {errors && name in errors ? (
-                <p className="error">
-                    {(errors && errors[name]?.message) || errorMessage}
-                </p>
-            ) : null}
+
         </div>
     );
 };

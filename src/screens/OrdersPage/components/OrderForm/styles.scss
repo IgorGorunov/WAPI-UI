@@ -120,6 +120,20 @@
     }
   }
 
+  .order-tracking-link {
+    a {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--color-blue);
+      text-decoration: underline;
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+    }
+  }
+
   .ant-table {
     &-thead {
       .ant-table-cell {

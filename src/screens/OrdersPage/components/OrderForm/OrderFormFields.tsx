@@ -60,7 +60,7 @@ export const GeneralFields = () => [
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange, handleCourierServiceChange}: { warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void, handleCourierServiceChange: (a: string)=>void}) => [
+export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange, handleCourierServiceChange, linkToTrack}: { warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void, handleCourierServiceChange: (a: string)=>void, linkToTrack:any}) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -156,17 +156,16 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         label: 'Current tracking number',
         placeholder: "",
         disabled: true,
-        width: WidthType.w50,
+        width: WidthType.w25,
         classNames: "",
     },
     {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
+        fieldType: FormFieldTypes.OTHER,
         name: 'trackingLink',
         label: 'Tracking link',
-        placeholder: "",
-        width: WidthType.w100,
-        classNames: "",
+        otherComponent: linkToTrack,
+        width: WidthType.w75,
+        classNames: 'order-tracking-link',
     },
 ];
 
