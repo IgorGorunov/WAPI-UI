@@ -146,7 +146,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         label: 'Tracking number',
         placeholder: "",
         disabled: true,
-        width: WidthType.w50,
+        width: WidthType.w25,
         classNames: "",
     },
     {
@@ -164,7 +164,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         name: 'trackingLink',
         label: 'Tracking link',
         otherComponent: linkToTrack,
-        width: WidthType.w75,
+        width: WidthType.w50,
         classNames: 'order-tracking-link',
     },
 ];

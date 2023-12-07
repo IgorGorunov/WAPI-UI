@@ -122,7 +122,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         defaultValues: {
             clientOrderID: orderData?.clientOrderID || '',
             codAmount: orderData?.codAmount || '',
-            codCurrency: orderData?.codCurrency || '',
+            codCurrency: orderData?.codCurrency || 'EUR',
             commentCourierService: orderData?.commentWarehouse || '',
             commentWarehouse: orderData?.commentWarehouse || '',
             courierService: orderData?.courierService || '',
