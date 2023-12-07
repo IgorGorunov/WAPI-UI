@@ -25,6 +25,7 @@ export type OrderType = {
     receiverIcon: string;
     productLines: number,
     trackingLink: string,
+    productsByString: string,
     products: {
         product: string,
         quantity: number,
