@@ -165,6 +165,12 @@ const OrdersPage = () => {
             courierService: item.courierService,
             trackingNumber: item.trackingNumber,
             receiverCountry: item.receiverCountry,
+            receiverCity: item.receiverCity,
+            receiverZip: item.receiverZip,
+            receiverAddress: item.receiverAddress,
+            receiverFullName: item.receiverFullName,
+            receiverEMail: item.receiverEMail,
+            receiverPhone: item.receiverPhone,
         }));
         exportFileXLS(filteredData, "Orders");
     }

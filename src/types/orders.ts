@@ -15,6 +15,14 @@ export type OrderType = {
     courierService: string,
     trackingNumber: string,
     receiverCountry: string,
+    receiverAddress: string;
+    receiverCity: string;
+    receiverZip: string;
+    receiverComment: string;
+    receiverEMail: string;
+    receiverFullName: string;
+    receiverPhone: string;
+    receiverIcon: string;
     productLines: number,
     products: {
         product: string,
@@ -27,6 +35,8 @@ export type OrderType = {
         troubleStatus: string,
         additionalInfo: string,
     }[],
+
+
 }
 
 export type ProductInfoType = {

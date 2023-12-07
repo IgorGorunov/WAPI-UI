@@ -62,6 +62,17 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
+    const receiverItem = orders.flatMap(order => [
+        { uuid: order.uuid, title: "Country", description: order.receiverCountry },
+        { uuid: order.uuid, title: "City", description: order.receiverCity },
+        { uuid: order.uuid, title: "Zip", description: order.receiverZip },
+        { uuid: order.uuid, title: "Address", description: order.receiverAddress },
+        { uuid: order.uuid, title: "Full name", description: order.receiverFullName },
+        { uuid: order.uuid, title: "Phone", description: order.receiverPhone },
+        { uuid: order.uuid, title: "E-mail", description: order.receiverEMail },
+        { uuid: order.uuid, title: "Comment", description: order.receiverComment },
+    ]).filter(item => item.uuid === hoveredOrder?.uuid);
+
     const [filterStatus, setFilterStatus] = useState('-All statuses-');
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
@@ -172,6 +183,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const filteredOrders = useMemo(() => {
         setCurrent(1);
 
+        console.log('filter');
+
         return orders.filter(order => {
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
@@ -240,7 +253,21 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     }
                     childrenAfter={
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
+                            <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}
+                                  onMouseEnter={(e) => {
+                                      setHoveredOrder(record);
+                                      setHoveredColumn('receiver');
+                                      setMousePosition({ x: e.clientX, y: e.clientY });
+                                      setIsDisplayedPopup(true);
+
+                                  }}
+                                  onMouseLeave={() => {
+                                      setHoveredOrder(null);
+                                      setHoveredColumn('');
+                                      setMousePosition(null);
+                                      setIsDisplayedPopup(false);
+                                  }}
+                            />
                             <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
                         </div>
                 }
@@ -325,7 +352,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             title: <TitleColumn title="WH number" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+                <TableCell
+                    value={text}
+                    minWidth="80px"
+                    maxWidth="80px"
+                    contentPosition="start"
+                    textColor='var(--color-blue)'
+                    cursor='pointer'
+                />
             ),
             dataIndex: 'wapiTrackingNumber',
             key: 'wapiTrackingNumber',
@@ -372,9 +406,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Order ID" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
+            title: <TitleColumn title="Order ID" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
 
             dataIndex: 'clientOrderID',
@@ -550,6 +584,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                         return null;
                                     case 'status':
                                         return 800;
+                                    case 'receiver':
+                                        return 300;
                                     default:
                                         return null;
                                 }
@@ -562,6 +598,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                         return productItems;
                                     case 'status':
                                         return troubleStatusesItems;
+                                    case 'receiver':
+                                        return receiverItem;
                                     default:
                                         return [];
                                 }
@@ -575,7 +613,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                     case 'status':
                                         return 'right';
                                     default:
-                                        return 'left';
+                                        return 'right';
                                 }
                             })()
                         }

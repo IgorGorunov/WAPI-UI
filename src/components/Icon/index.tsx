@@ -47,8 +47,6 @@ import AddTableRow from '@/assets/icons/add-table-row.svg'
 import RemoveTableRow from '@/assets/icons/remove-table-row.svg'
 
 
-
-
 export const icons = {
   "arrow-left": ArrowLeft,
   "arrow-right": ArrowRight,

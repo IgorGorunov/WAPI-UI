@@ -12,7 +12,7 @@ import {getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters} from "@
 import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getFirstDayOfMonth} from "@/utils/date";
+import {formatDateToString, getFirstDayOfMonth, getFirstDayOfYear} from "@/utils/date";
 import {AmazonPrepOrderParamsType, AmazonPrepOrderType, SingleAmazonPrepOrderType} from "@/types/amazonPrep";
 import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
@@ -22,7 +22,7 @@ import {ApiResponseType} from "@/types/api";
 
 const AmazonPrepPage = () => {
     const today = new Date();
-    const firstDay = getFirstDayOfMonth(today);
+    const firstDay = getFirstDayOfYear(today);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
     const Router = useRouter();
     const { token, setToken } = useAuth();
