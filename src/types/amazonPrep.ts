@@ -144,7 +144,7 @@ export type AmazonPrepOrderParamsType = {
 // }
 
 export type AmazonPrepOrderProductWithTotalInfoType = {
-    cod: number;
+    pallets: number;
     weightNet: number;
     weightGross: number;
     volume: number;

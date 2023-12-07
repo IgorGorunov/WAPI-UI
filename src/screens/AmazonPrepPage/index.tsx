@@ -12,7 +12,7 @@ import {getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters} from "@
 import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getFirstDayOfMonth, getFirstDayOfYear} from "@/utils/date";
+import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
 import {AmazonPrepOrderParamsType, AmazonPrepOrderType, SingleAmazonPrepOrderType} from "@/types/amazonPrep";
 import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
@@ -146,9 +146,6 @@ const AmazonPrepPage = () => {
         setSingleAmazonPrepOrder(null);
         setShowAmazonPrepOrderModal(true);
     }
-    const handleImportXLS = () => {
-        setShowImportModal(true)
-    }
 
     const handleExportXLS = () => {
         const filteredData = filteredAmazonPrepOrders.map(item => ({
@@ -187,7 +184,6 @@ const AmazonPrepPage = () => {
                 )}
                 <Header pageTitle='Amazon Prep' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddAmazonPrepOrder}>Add order</Button>
-                    <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
                 </Header>
 
