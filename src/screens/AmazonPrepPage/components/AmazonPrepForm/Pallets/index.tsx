@@ -34,7 +34,7 @@ const Pallets: React.FC<PropsType> = ({ pallets }) => {
                             <div className='column height-column'>{pallet.palletHeight}</div>
                             <div className='column weight-column'>{pallet.palletWeight}</div>
                             <div className='column volume-column'>{pallet.palletVolume}</div>
-                            <div className='column tracking0number-column'>{pallet.palletTrackingNumber}</div>
+                            <div className='column tracking-number-column'>{pallet.palletTrackingNumber}</div>
                         </li>
                     ))}
             </ul>
