@@ -98,10 +98,10 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                                 Fulfillment
                                 <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
                             </Link>
-                            {/*<Link href="/amazonPrep" className="submenu-item">*/}
-                            {/*    Amazon Prep*/}
-                            {/*    <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>*/}
-                            {/*</Link>*/}
+                            <Link href="/amazonPrep" className="submenu-item">
+                                Amazon Prep
+                                <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
+                            </Link>
                         </div>
                     </div>
 
