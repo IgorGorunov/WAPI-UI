@@ -26,6 +26,8 @@ export type OrderType = {
     productLines: number,
     trackingLink: string,
     productsByString: string,
+    statusAdditionalInfo: string,
+    lastUpdateDate: string,
     products: {
         product: string,
         quantity: number,

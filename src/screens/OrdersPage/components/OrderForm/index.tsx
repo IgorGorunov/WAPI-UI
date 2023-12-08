@@ -678,9 +678,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         updateTabTitles(fieldNames);
     };
 
-
-
-
     return <div className='order-info'>
 
         {isLoading && (
