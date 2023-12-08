@@ -1,5 +1,5 @@
-import React, {useCallback, useState} from "react";
-import {FieldPropsType, OptionType} from "@/types/forms";
+import React, {useCallback, useEffect, useState} from "react";
+import {FieldPropsType} from "@/types/forms";
 import "./styles.scss"
 
 const RadioSwitch: React.FC<FieldPropsType> = ({
@@ -9,35 +9,35 @@ const RadioSwitch: React.FC<FieldPropsType> = ({
         options,
         value,
         onChange,
-        errors,
+        disabled = false,
         errorMessage,
         width,
-        ...otherProps
     }) => {
 
     const [curValue, setCurValue] = useState(value || options[0].value);
 
     const handleChange = useCallback((selectedOption) => {
-        console.log('selected: ', selectedOption);
-        setCurValue(selectedOption);
+        if (!disabled) {
+            setCurValue(selectedOption);
 
-        if (onChange) {
-            onChange(selectedOption);
+            if (onChange) {
+                onChange(selectedOption);
+            }
         }
     } ,[] )
+    useEffect(() => {
+        if (!value && options && options.length) {
+            onChange(options[0].value);
+        }
+    }, []);
 
-    console.log("valie", value)
-
-    if (!value) {
-        value = options && options.length ? options[0].value : '';
-    }
 
     return (
-        <div className={`radio-switch__wrapper ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
+        <div className={`radio-switch__wrapper ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${disabled ? 'is-disabled' : 'is-active'}`}>
             {label ? <label className="radio-switch-label">{label}</label> : null}
             {options && options.length && <div className={`radio-switch`}>
                 {options && options.length && options.map((item, index) => (
-                    <a href="#" key={`${name}_${index}`} className={`radio-switch__option ${curValue===item.value ? 'is-checked' : ''}`}
+                    <a href="#" key={`${name}_${index}`} tabIndex={disabled ? -1 : 0} className={`radio-switch__option ${curValue===item.value ? 'is-checked' : ''}`}
                             onClick={()=>handleChange(item.value)}
                             onKeyDown={(e) => { if (e.key !== 'Tab') { handleChange(item.value); e.preventDefault();} }}
                     >

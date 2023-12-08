@@ -1,6 +1,6 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 
-export const GeneralFields = () => [
+export const GeneralFields = (newObject: boolean) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
@@ -10,6 +10,7 @@ export const GeneralFields = () => [
         disabled: true,
         width: WidthType.w25,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -20,6 +21,7 @@ export const GeneralFields = () => [
         disabled: true,
         width: WidthType.w25,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -30,6 +32,7 @@ export const GeneralFields = () => [
         disabled: true,
         width: WidthType.w50,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.DATE,
@@ -60,7 +63,7 @@ export const GeneralFields = () => [
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange, handleCourierServiceChange, linkToTrack}: { warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void, handleCourierServiceChange: (a: string)=>void, linkToTrack:any}) => [
+export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange, handleCourierServiceChange, linkToTrack, newObject}: { warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void, handleCourierServiceChange: (a: string)=>void, linkToTrack:any, newObject: boolean}) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -128,6 +131,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         disabled: true,
         width: WidthType.w50,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -138,6 +142,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         disabled: true,
         width: WidthType.w50,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -148,6 +153,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         disabled: true,
         width: WidthType.w25,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -158,6 +164,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         disabled: true,
         width: WidthType.w25,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.OTHER,
@@ -166,6 +173,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         otherComponent: linkToTrack,
         width: WidthType.w50,
         classNames: 'order-tracking-link',
+        isDisplayed: !newObject,
     },
 ];
 

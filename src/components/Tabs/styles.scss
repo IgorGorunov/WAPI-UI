@@ -43,6 +43,11 @@
           bottom: -4px;
         }
       }
+
+      &.has-error {
+        color: var(--color-error);
+        font-weight: 900;
+      }
     }
   }
 

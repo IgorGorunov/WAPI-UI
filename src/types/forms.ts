@@ -88,6 +88,7 @@ export type FieldPropsType = {
   isClearable?: boolean;
   needToasts?: boolean;
   otherComponent?: any;
+  isDisplayed?: boolean;
 }
 
 export type FormBuilderType = FieldPropsType & {

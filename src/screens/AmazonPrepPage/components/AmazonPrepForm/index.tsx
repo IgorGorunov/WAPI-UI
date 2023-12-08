@@ -16,7 +16,7 @@ import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
-import {sendOrderData} from '@/services/orders';
+import {sendAmazonPrepData} from '@/services/amazonePrep';
 import {DetailsFields, GeneralFields, ReceiverFields} from "./AmazonPrepFormFields";
 import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
@@ -30,6 +30,9 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "./ProductsTotal";
 import {toast, ToastContainer} from '@/components/Toast';
+import Pallets from "@/screens/AmazonPrepPage/components/AmazonPrepForm/Pallets";
+import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
+import {useTabsState} from "@/hooks/useTabsState";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -48,8 +51,8 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     // const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
     // const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
     // const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
-    const [selectedWarehouse, setSelectedWarehouse] = useState('');
-    const [selectedCourierService, setSelectedCourierService] = useState('');
+    // const [selectedWarehouse, setSelectedWarehouse] = useState('');
+    // const [selectedCourierService, setSelectedCourierService] = useState('');
 
     const { token } = useAuth();
 
@@ -92,6 +95,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
         mode: 'onSubmit',
         defaultValues: {
+            asnNumber: amazonPrepOrderData?.asnNumber || '',
             clientOrderID: amazonPrepOrderData?.clientOrderID || '',
             commentCourierService: amazonPrepOrderData?.commentWarehouse || '',
             commentWarehouse: amazonPrepOrderData?.commentWarehouse || '',
@@ -136,7 +140,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
     const [productsTotalInfo, setProductsTotalInfo] = useState<AmazonPrepOrderProductWithTotalInfoType>({
-        cod: 0,
+        pallets: 0,
         weightNet: 0,
         weightGross: 0,
         volume:0,
@@ -144,7 +148,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
 
     const updateTotalProducts = () => {
         const rez = {
-            cod: 0,
+            pallets: amazonPrepOrderData?.pallets?.length || 0,
             weightNet: 0,
             weightGross: 0,
             volume:0,
@@ -345,10 +349,9 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         return [];
     };
 
-
     const handleWarehouseChange = (selectedOption: string) => {
-        setSelectedWarehouse(selectedOption);
-        setSelectedCourierService('');
+        // setSelectedWarehouse(selectedOption);
+        // setSelectedCourierService('');
         setValue('courierService', '');
     }
 
@@ -363,8 +366,12 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         setSelectedFiles(files);
     };
 
+    const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid);
+    const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
+
     const onSubmitForm = async (data) => {
         setIsLoading(true);
+        clearTabTitles();
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
         try {
@@ -373,7 +380,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 await Router.push(Routes.Login);
             }
 
-            const res: ApiResponseType = await sendOrderData(
+            const res: ApiResponseType = await sendAmazonPrepData(
                 {
                     token: token,
                     orderData: data
@@ -414,6 +421,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 autoClose: 1000,
             });
         }
+        updateTabTitles(fieldNames);
     };
 
     return <div className='amazon-prep-info'>
@@ -436,7 +444,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         )}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
-            <Tabs id='amazon-prep-tabs' tabTitles={['General', 'Delivery info', 'Products', 'Services', 'Status history', 'Files']} classNames='inside-modal' >
+            <Tabs id='amazon-prep-tabs' tabTitles={tabTitles} classNames='inside-modal' >
                 <div key='general-tab' className='general-tab'>
                     <div className='card amazon-prep-info--general'>
                         <h3 className='amazon-prep-info__block-title'>
@@ -501,8 +509,17 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                         </div>
                     </div>
                 </div>
+                <div key='pallets-tab' className='pallets-tab'>
+                    <div className="card min-height-600 amazon-prep-info--pallets">
+                        <h3 className='amazon-prep-info__block-title'>
+                            <Icon name='bundle' />
+                            Pallets
+                        </h3>
+                        <Pallets pallets={amazonPrepOrderData?.pallets} />
+                    </div>
+                </div>
                 <div key='services-tab' className='services-tab'>
-                    <div className="card min-height-600 amazon-prep-info--history">
+                    <div className="card min-height-600 amazon-prep-info--services">
                         <h3 className='amazon-prep-info__block-title'>
                             <Icon name='bundle' />
                             Services

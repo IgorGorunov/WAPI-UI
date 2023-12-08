@@ -73,6 +73,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         { uuid: order.uuid, title: "Comment", description: order.receiverComment },
     ]).filter(item => item.uuid === hoveredOrder?.uuid);
 
+    const statusAdditionalInfoItem = orders.flatMap(order => [
+        { uuid: order.uuid, title: order.lastUpdateDate, description: order.statusAdditionalInfo },
+    ]).filter(item => item.uuid === hoveredOrder?.uuid);
+
+
     const [filterStatus, setFilterStatus] = useState('-All statuses-');
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
@@ -183,8 +188,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const filteredOrders = useMemo(() => {
         setCurrent(1);
 
-        console.log('filter');
-
         return orders.filter(order => {
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
@@ -254,6 +257,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     childrenAfter={
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}
+                                  onClick={(e) => {
+                                      setHoveredOrder(record);
+                                      setHoveredColumn('receiver');
+                                      setMousePosition({ x: e.clientX, y: e.clientY });
+                                      setIsDisplayedPopup(!isDisplayedPopup);
+                                  }}
                                   onMouseEnter={(e) => {
                                       setHoveredOrder(record);
                                       setHoveredColumn('receiver');
@@ -300,7 +309,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                              setHoveredOrder(record);
                                              setHoveredColumn('status');
                                              setMousePosition({ x: e.clientX, y: e.clientY });
-                                             setIsDisplayedPopup(true);
+                                             setIsDisplayedPopup(!isDisplayedPopup);
 
                                          }}
                                          onMouseEnter={(e) => {
@@ -322,7 +331,28 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                             <span style={{
                                 borderBottom: `2px solid ${underlineColor}`,
                                 display: 'inline-block',
-                            }}>
+                            }}
+                          onClick={(e) => {
+                              setHoveredOrder(record);
+                              setHoveredColumn('statusAdditionalInfo');
+                              setMousePosition({ x: e.clientX, y: e.clientY });
+                              setIsDisplayedPopup(!isDisplayedPopup);
+
+                          }}
+                          onMouseEnter={(e) => {
+                              setHoveredOrder(record);
+                              setHoveredColumn('statusAdditionalInfo');
+                              setMousePosition({ x: e.clientX, y: e.clientY });
+                              setIsDisplayedPopup(true);
+
+                          }}
+                          onMouseLeave={() => {
+                              setHoveredOrder(null);
+                              setHoveredColumn('');
+                              setMousePosition(null);
+                              setIsDisplayedPopup(false);
+                          }}
+                        >
                         {text}
                         </span>
                         }
@@ -481,7 +511,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                             setHoveredOrder(record);
                             setHoveredColumn('productLines');
                             setMousePosition({ x: e.clientX, y: e.clientY });
-                            setIsDisplayedPopup(true);
+                            setIsDisplayedPopup(!isDisplayedPopup);
                         }}
                         onMouseEnter={(e) => {
                             setHoveredOrder(record);
@@ -593,8 +623,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                         return null;
                                     case 'status':
                                         return 800;
+                                    case 'statusAdditionalInfo':
+                                        return 400;
                                     case 'receiver':
-                                        return 300;
+                                        return 350;
                                     default:
                                         return null;
                                 }
@@ -609,6 +641,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                         return troubleStatusesItems;
                                     case 'receiver':
                                         return receiverItem;
+                                    case 'statusAdditionalInfo':
+                                        return statusAdditionalInfoItem;
                                     default:
                                         return [];
                                 }

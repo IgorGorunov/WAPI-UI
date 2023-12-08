@@ -14,7 +14,7 @@ import {
     FormFieldsSKU,
     FormFieldsWarehouse,
     PRODUCT
-} from "./FroductFormFields";
+} from "./ProductFormFields";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {createOptions} from "@/utils/selectOptions";
@@ -31,6 +31,8 @@ import StatusHistory from "./StatusHistory";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import {toast, ToastContainer} from '@/components/Toast';
 import "@/styles/tables.scss";
+import {TabFields, TabTitles} from "./ProductFormTabs";
+import {useTabsState} from "@/hooks/useTabsState";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -786,9 +788,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
         setSelectedFiles(files);
     };
 
+    const tabTitleArray =  TabTitles(!!productData?.uuid);
+    const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
+
+
     const onSubmitForm = async (data: any) => {
         setIsLoading(true);
-
+        clearTabTitles();
         data.status = sendStatus;
 
         try {
@@ -838,6 +844,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 autoClose: 1000,
             });
         }
+        updateTabTitles(fieldNames);
     };
 
     const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr}), [COUNTRIES])
@@ -866,7 +873,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
         )}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
-            <Tabs id='tabs-iddd' tabTitles={['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogues', 'Status history', 'Files']} classNames='inside-modal'>
+            <Tabs id='tabs-iddd' tabTitles={tabTitles} classNames='inside-modal'>
                 <div className='primary-tab'>
                     <div className='card product-info--general'>
                         <h3 className='product-info__block-title'>

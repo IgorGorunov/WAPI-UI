@@ -21,8 +21,11 @@ const formComponentsMap = {
 
 const FieldBuilder: React.FC<FormBuilderType> = ({
   fieldType,
+    isDisplayed = true,
   ...otherProps
 }) => {
+
+  if (!isDisplayed) return null;
   const Component =
     formComponentsMap[fieldType as keyof typeof formComponentsMap];
 

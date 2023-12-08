@@ -61,45 +61,24 @@ export const GeneralFields = () => [
 ];
 
 export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]}) => [
-    // {
-    //     fieldType: FormFieldTypes.SELECT,
-    //     type: "text",
-    //     name: 'preferredWarehouse',
-    //     label: 'Preferred warehouse',
-    //     placeholder: "",
-    //     options: warehouses,
-    //     width: WidthType.w33,
-    //     classNames: "",
-    //     onChange: handleWarehouseChange,
-    // },
-    // {
-    //     fieldType: FormFieldTypes.CHECKBOX,
-    //     type: "text",
-    //     name: 'preferredWarehouseMandatory',
-    //     label: 'Mandatory',
-    //     placeholder: "",
-    //     width: WidthType.w17,
-    //     classNames: "",
-    // },
-    // {
-    //     fieldType: FormFieldTypes.SELECT,
-    //     type: "text",
-    //     name: 'preferredCourierService',
-    //     label: 'Preferred courier service',
-    //     placeholder: "",
-    //     options: courierServices,
-    //     width: WidthType.w33,
-    //     classNames: "",
-    // },
-    // {
-    //     fieldType: FormFieldTypes.CHECKBOX,
-    //     type: "text",
-    //     name: 'preferredCourierServiceMandatory',
-    //     label: 'Mandatory',
-    //     placeholder: "",
-    //     width: WidthType.w17,
-    //     classNames: "",
-    // },
+    {
+        fieldType: FormFieldTypes.TEXT,
+        type: "text",
+        name: 'asnNumber',
+        label: 'ASN',
+        placeholder: "",
+        rules: {
+            required: "Required field",
+        },
+        width: WidthType.w50,
+        classNames: "",
+    },
+    {
+        fieldType:FormFieldTypes.RADIO,
+        name: 'deliveryMethod',
+        options: deliveryMethodOptions,
+        width: WidthType.w17,
+    },
 
     {
         fieldType: FormFieldTypes.SELECT,
@@ -107,8 +86,11 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         name: 'warehouse',
         label: 'Warehouse',
         placeholder: "",
+        rules: {
+            required: "Required field",
+        },
         options: warehouses,
-        width: WidthType.w33,
+        width: WidthType.w50,
         onChange: handleWarehouseChange,
         classNames: "",
     },
@@ -121,12 +103,6 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         options: courierServices,
         width: WidthType.w50,
         classNames: "",
-    },
-    {
-        fieldType:FormFieldTypes.RADIO,
-        name: 'deliveryMethod',
-        options: deliveryMethodOptions,
-        width: WidthType.w17,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -163,31 +139,10 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         otherComponent: linkToTrack,
         width: WidthType.w75,
         classNames: 'amazon-tracking-link',
-    }
-    // {
-    //     fieldType: FormFieldTypes.TEXT,
-    //     type: "text",
-    //     name: 'courierServiceTrackingNumberCurrent',
-    //     label: 'Current tracking number',
-    //     placeholder: "",
-    //     disabled: true,
-    //     width: WidthType.w50,
-    //     classNames: "",
-    // },
+    },
 ];
 
 export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
-    // {
-    //     type: "text",
-    //     name: 'receiverPickUpID',
-    //     label: 'ID',
-    //     fieldType: curPickupPoints && curPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT,
-    //     options: pickupOptions,
-    //     placeholder: curPickupPoints && curPickupPoints.length ? 'Select' : '',
-    //     onChange: handlePickupPointData,
-    //     width: WidthType.w25,
-    //     classNames: "",
-    // },
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -294,46 +249,5 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         width: WidthType.w100,
         classNames: "",
     },
-];
-
-export const PickUpPointFields = ({countries}: { countries: OptionType[] }) => [
-    {
-        fieldType: FormFieldTypes.SELECT,
-        type: "text",
-        name: 'receiverPickUpCountry',
-        label: 'Country',
-        placeholder: "",
-        options: countries,
-        width: WidthType.w25,
-        classNames: "",
-    },
-    {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'receiverPickUpCity',
-        label: 'City',
-        placeholder: "",
-        width: WidthType.w25,
-        classNames: "",
-    },
-    {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'receiverPickUpName',
-        label: 'Name',
-        placeholder: "",
-        width: WidthType.w25,
-        classNames: "",
-    },
-    {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'receiverPickUpAddress',
-        label: 'Address',
-        placeholder: "",
-        width: WidthType.w100,
-        classNames: "",
-    },
-
 ];
 

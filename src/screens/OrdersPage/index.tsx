@@ -157,6 +157,7 @@ const OrdersPage = () => {
         const filteredData = filteredOrders.map(item => ({
             wapiTrackingNumber: item.wapiTrackingNumber,
             status: item.status,
+            statusAdditionalInfo: item.statusAdditionalInfo,
             date: item.date,
             codAmount: item.codAmount,
             codCurrency: item.codCurrency,
