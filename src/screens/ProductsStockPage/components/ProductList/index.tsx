@@ -1,34 +1,23 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
 import {Table, Pagination, Input} from 'antd';
 import {ColumnType} from "antd/es/table";
-
 import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-
 import {ProductStockType} from "@/types/products";
-
 import StatusWarehouseSelector from "@/components/InputSelect";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import {responsiveArray} from "@/utils/responsiveObserve";
 import Head from "next/head";
+import {PageOptions} from '@/constants/pagination';
+import {GetFilterArray} from '@/utils/common';
 
 type ProductListType = {
     products: ProductStockType[];
     setFilteredProducts: React.Dispatch<React.SetStateAction<ProductStockType[]>>;
 }
-
-const pageOptions = [
-    { value: '10', label: '10 per page' },
-    { value: '20', label: '20 per page' },
-    { value: '50', label: '50 per page' },
-    { value: '100', label: '100 per page' },
-    { value: '1000', label: '1000 per page' },
-    { value: '1000000', label: 'All' },
-];
 
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts}) => {
 
@@ -42,7 +31,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
         setTimeout(() => {
             setCurrent(page);
             setAnimating(false);
-        }, 500); // Это время должно совпадать с длительностью вашей CSS-анимации.
+        }, 500);
     };
     const handleChangePageSize = (size: number) => {
         setPageSize(size);
@@ -50,7 +39,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
     };
 
     // Sorting
-    const [sortColumn, setSortColumn] = useState<keyof ProductStockType | null>(null);
+    const [sortColumn, setSortColumn] = useState<keyof ProductStockType>('name');
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof ProductStockType) => {
         setSortDirection(currentDirection =>
@@ -63,18 +52,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
     const [filterWarehouse, setFilterWarehouse] = useState('');
-    const allWarehouses = products.map(product => product.warehouse);
-    const uniqueWarehouses = Array.from(new Set(allWarehouses));
-    const transformedWarehouses = [
-        {
-            value: '',
-            label: 'All warehouses',
-        },
-        ...uniqueWarehouses.map(warehouse => ({
-            value: warehouse,
-            label: warehouse,
-        }))
-    ];
+    const transformedWarehouses= GetFilterArray(products, 'warehouse', 'All warehouses');
+
     const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
         if (newSearchTerm !== undefined) {
             setSearchTerm(newSearchTerm);
@@ -299,7 +278,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             <div className="page-size-container">
                 <span className="page-size-text">Products list</span>
                 <PageSizeSelector
-                    options={pageOptions}
+                    options={PageOptions}
                     value={pageSize}
                     onChange={(value: number) => handleChangePageSize(value)}
                 />

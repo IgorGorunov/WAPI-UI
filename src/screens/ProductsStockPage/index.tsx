@@ -3,14 +3,11 @@ import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import { getProductsStock } from "@/services/products";
-
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
-//import Header from "./components/Header"
 import Header from '@/components/Header';
 import ProductList from "./components/ProductList";
 import {verifyToken} from "@/services/auth";
-
 import "./styles.scss";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
