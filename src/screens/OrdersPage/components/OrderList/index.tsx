@@ -192,8 +192,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
                 if (key !== 'uuid') {
-                    const stringValue = typeof value === 'string' ? value : String(value); // Преобразование к строке, если значение не является строкой
-                    const searchTermsArray = searchTerm.trim().split(' ');
+                    const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase(); // Приведение к нижнему регистру
+                    const searchTermsArray = searchTerm.trim().toLowerCase().split(' '); // Приведение к нижнему регистру
                     return searchTermsArray.some(word => stringValue.includes(word));
                 }
                 return false;
