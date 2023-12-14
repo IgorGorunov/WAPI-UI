@@ -2,27 +2,27 @@ import React, { useState, useEffect } from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
-import { getDeliveryReports } from "@/services/deliveryReports";
+import { getCodReports } from "@/services/codReports";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
-import DeliveryReportsList from "./components/DeliveryReportsList";
+import CodReportsList from "./components/CodReportsList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
-import {DeliveryReportType} from "@/types/deliveryReports";
+import {CodReportType} from "@/types/codReports";
 import {exportFileXLS} from "@/utils/files";
 
-const DeliveryReportsPage = () => {
+const CodReportsPage = () => {
 
     const Router = useRouter();
     const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
-    const [deliveryReportsData, setDeliveryReportsData] = useState<any | null>(null);
-    const [filteredDeliveryReports, setFilteredDeliveryReports] = useState<DeliveryReportType[] | null>(null);
+    const [codReportsData, setCodReportsData] = useState<any | null>(null);
+    const [filteredCodReports, setFilteredCodReports] = useState<CodReportType[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -37,13 +37,13 @@ const DeliveryReportsPage = () => {
                     await Router.push(Routes.Login);
                 }
 
-                const res: ApiResponse = await getDeliveryReports(
+                const res: ApiResponse = await getCodReports(
                     {token: token}
                 );
 
                 if (res && "data" in res) {
-                    setDeliveryReportsData(res.data);
-                    setFilteredDeliveryReports(res.data);
+                    setCodReportsData(res.data);
+                    setFilteredCodReports(res.data);
                     setIsLoading(false);
                 } else {
                     console.error("API did not return expected data");
@@ -62,7 +62,7 @@ const DeliveryReportsPage = () => {
 
     }
     const handleExportXLS = () => {
-        const filteredData = filteredDeliveryReports.map(item => ({
+        const filteredData = filteredCodReports.map(item => ({
             sku: item.sku,
             name: item.name,
             warehouse: item.warehouse,
@@ -77,12 +77,12 @@ const DeliveryReportsPage = () => {
             forPlacement: item.forPlacement,
             total: item.total,
         }));
-        exportFileXLS(filteredData, "Delivery reports")
+        exportFileXLS(filteredData, "Cod reports")
     }
 
     return (
         <Layout hasHeader hasFooter>
-            <div className="delivery-reports__container">
+            <div className="cod-reports__container">
                 {isLoading && (
                     <div style={{
                         position: 'fixed',
@@ -99,13 +99,13 @@ const DeliveryReportsPage = () => {
                         <Skeleton type="round" width="500px" height="300px" />
                     </div>
                 )}
-                <Header pageTitle='Delivery reports' toRight >
+                <Header pageTitle='Cod reports' toRight >
                     {/*<Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>*/}
                 </Header>
-                {deliveryReportsData && <DeliveryReportsList deliveryReports={deliveryReportsData} setFilteredDeliveryReports={setFilteredDeliveryReports}/>}
+                {codReportsData && <CodReportsList codReports={codReportsData} setFilteredCodReports={setFilteredCodReports}/>}
             </div>
         </Layout>
     )
 }
 
-export default DeliveryReportsPage;
+export default CodReportsPage;

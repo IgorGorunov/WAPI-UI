@@ -1,9 +1,9 @@
 import axios from "axios";
-import { DeliveryReportType } from "@/types/deliveryReports";
+import { CodReportType } from "@/types/codReports";
 
 const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
-const getDeliveryReports = async (
+const getCodReports = async (
     //token: string,
     data: {
         token: string;
@@ -23,4 +23,4 @@ const getDeliveryReports = async (
     }
 };
 
-export { getDeliveryReports };
+export { getCodReports };

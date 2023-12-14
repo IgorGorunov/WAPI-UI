@@ -1,7 +1,7 @@
 import React from "react";
 import Cookie from "js-cookie";
 import useAuth from "@/context/authContext";
-import DeliveryReportsPage from "@/screens/DeliveryReportsPage";
+import CodReportsPage from "@/screens/CodReportsPage";
 
 export default function Orders() {
     const { token, setToken } = useAuth();
@@ -10,6 +10,6 @@ export default function Orders() {
     if (!token && savedToken) setToken(savedToken);
 
     return (
-        <DeliveryReportsPage />
+        <CodReportsPage />
     );
 }

@@ -1,4 +1,4 @@
-export type DeliveryReportType = {
+export type CodReportType = {
     tableKey: string,
     name: string;
     sku: string;

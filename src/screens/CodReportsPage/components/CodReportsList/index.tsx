@@ -4,7 +4,7 @@ import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import { DeliveryReportType } from "@/types/deliveryReports";
+import { CodReportType } from "@/types/codReports";
 import StatusWarehouseSelector from "@/components/InputSelect";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
@@ -14,12 +14,12 @@ import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import {GetFilterArray} from '@/utils/common';
 
-type DeliveryReportsListType = {
-    deliveryReports: DeliveryReportType[];
-    setFilteredDeliveryReports: React.Dispatch<React.SetStateAction<DeliveryReportType[]>>;
+type CodReportsListType = {
+    codReports: CodReportType[];
+    setFilteredCodReports: React.Dispatch<React.SetStateAction<CodReportType[]>>;
 }
 
-const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFilteredDeliveryReports}) => {
+const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodReports}) => {
 
     const [animating, setAnimating] = useState(false);
 
@@ -39,9 +39,9 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
     };
 
     // Sorting
-    const [sortColumn, setSortColumn] = useState<keyof DeliveryReportType>('name');
+    const [sortColumn, setSortColumn] = useState<keyof CodReportType>('name');
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
-    const handleHeaderCellClick = useCallback((columnDataIndex: keyof DeliveryReportType) => {
+    const handleHeaderCellClick = useCallback((columnDataIndex: keyof CodReportType) => {
         setSortDirection(currentDirection =>
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
         );
@@ -52,7 +52,7 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
     const [filterWarehouse, setFilterWarehouse] = useState('');
-    const transformedWarehouses= GetFilterArray(deliveryReports, 'warehouse', 'All warehouses');
+    const transformedWarehouses= GetFilterArray(codReports, 'warehouse', 'All warehouses');
 
     const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
         if (newSearchTerm !== undefined) {
@@ -65,7 +65,7 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
     const filteredInvoices = useMemo(() => {
         setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
-        const filtered = deliveryReports.filter(product => {
+        const filtered = codReports.filter(product => {
             const matchesSearch = !searchTerm || Object.keys(product).some(key => {
                 const value = product[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
@@ -84,13 +84,13 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             });
         }
         return filtered;
-    }, [deliveryReports, searchTerm, filterWarehouse, sortColumn, sortDirection]);
+    }, [codReports, searchTerm, filterWarehouse, sortColumn, sortDirection]);
 
     // useEffect(() => {
     //     setFilteredInvoices(filteredInvoices)
     // }, [filteredInvoices]);
 
-    const columns: ColumnType<DeliveryReportType>[] = useMemo(() => [
+    const columns: ColumnType<CodReportType>[] = useMemo(() => [
         {
             title: <TitleColumn title="" minWidth="15px" maxWidth="15px" contentPosition="center"
             />,
@@ -119,8 +119,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'warehouse',
             key: 'warehouse',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
         },
         {
@@ -131,8 +131,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'warehouseSku',
             key: 'warehouseSku',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
             responsive: ['md'],
         },
@@ -144,8 +144,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'name',
             key: 'name',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
         },
         {
@@ -156,8 +156,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'available',
             key: 'available',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
         },
 
@@ -170,8 +170,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'reserved',
             key: 'reserved',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
             responsive: ['md'],
         },
@@ -183,8 +183,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'damaged',
             key: 'damaged',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
             responsive: ['lg'],
         },
@@ -196,8 +196,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'expired',
             key: 'expired',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
             responsive: ['lg'],
         },
@@ -209,8 +209,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'undefinedStatus',
             key: 'undefinedStatus',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
             responsive: ['lg'],
         },
@@ -222,8 +222,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'withoutBox',
             key: 'withoutBox',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
             responsive: ['lg'],
         },
@@ -235,8 +235,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'forPlacement',
             key: 'forPlacement',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
             responsive: ['lg'],
         },
@@ -248,8 +248,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
             dataIndex: 'total',
             key: 'total',
             sorter: true,
-            onHeaderCell: (column: ColumnType<DeliveryReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof DeliveryReportType),
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
             responsive: ['md'],
         },
@@ -257,8 +257,8 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
     return (
         <div className='table'>
             <Head>
-                <title>Delivery reports</title>
-                <meta name="delivery reports" content="delivery" />
+                <title>Cod reports</title>
+                <meta name="cod reports" content="cod" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
@@ -276,7 +276,7 @@ const InvoiceList: React.FC<DeliveryReportsListType> = ({deliveryReports, setFil
                 />
             </div>
             <div className="page-size-container">
-                <span className="page-size-text">Delivery reports</span>
+                <span className="page-size-text">Cod reports</span>
                 <PageSizeSelector
                     options={PageOptions}
                     value={pageSize}
