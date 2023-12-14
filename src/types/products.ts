@@ -20,6 +20,7 @@ export type ProductType = {
 }
 
 export type ProductStockType = {
+    tableKey: string,
     name: string;
     sku: string;
     uuid: string;

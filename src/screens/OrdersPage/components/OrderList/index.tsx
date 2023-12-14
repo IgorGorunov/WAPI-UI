@@ -191,9 +191,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         return orders.filter(order => {
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
-                if (key !== 'uuid' && typeof value === 'string') {
+                if (key !== 'uuid') {
+                    const stringValue = typeof value === 'string' ? value : String(value); // Преобразование к строке, если значение не является строкой
                     const searchTermsArray = searchTerm.trim().split(' ');
-                    return searchTermsArray.some(word => value.includes(word));
+                    return searchTermsArray.some(word => stringValue.includes(word));
                 }
                 return false;
             });
