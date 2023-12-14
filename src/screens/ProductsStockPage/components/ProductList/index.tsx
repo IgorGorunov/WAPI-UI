@@ -285,7 +285,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
             </div>
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '}`}>
                 <Table
-                    dataSource={filteredProducts.slice((current - 1) * pageSize, current * pageSize)}
+                    dataSource={filteredProducts.slice((current - 1) * pageSize, current * pageSize).map(item => ({
+                        ...item,
+                        key: item.tableKey,
+                    }))}
                     columns={columns}
                     pagination={false}
                     scroll={{y:700}}
