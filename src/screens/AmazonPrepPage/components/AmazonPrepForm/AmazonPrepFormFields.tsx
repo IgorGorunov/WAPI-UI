@@ -1,6 +1,7 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import {PRODUCT} from "@/screens/ProductsPage/components/ProductForm/ProductFormFields";
 
-export const GeneralFields = () => [
+export const GeneralFields = (newObject) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
@@ -10,6 +11,7 @@ export const GeneralFields = () => [
         disabled: true,
         width: WidthType.w25,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -20,6 +22,7 @@ export const GeneralFields = () => [
         disabled: true,
         width: WidthType.w25,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -30,6 +33,7 @@ export const GeneralFields = () => [
         disabled: true,
         width: WidthType.w50,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.DATE,
@@ -60,7 +64,7 @@ export const GeneralFields = () => [
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]}) => [
+export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions, carrierDisabled, carrierTypeOptions}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]; carrierDisabled: boolean; carrierTypeOptions: OptionType[]}) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
@@ -77,6 +81,12 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         fieldType:FormFieldTypes.RADIO,
         name: 'deliveryMethod',
         options: deliveryMethodOptions,
+        width: WidthType.w17,
+    },
+    {
+        fieldType:FormFieldTypes.RADIO,
+        name: 'carrierType',
+        options: carrierTypeOptions,
         width: WidthType.w17,
     },
 
@@ -103,6 +113,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         options: courierServices,
         width: WidthType.w50,
         classNames: "",
+        disabled: carrierDisabled,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -121,6 +132,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         placeholder: "",
         width: WidthType.w50,
         classNames: "",
+        disabled: carrierDisabled,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -142,7 +154,14 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
     },
 ];
 
-export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
+export const ReceiverFields = ({countries, multipleLocations=false}: { countries: OptionType[]; multipleLocations: boolean;}) => [
+    {
+        fieldType: FormFieldTypes.CHECKBOX,
+        name: 'multipleLocations',
+        label: "Multiple locations",
+        width: WidthType.w100,
+        classNames: "",
+    },
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -156,6 +175,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w25,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -169,6 +189,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w25,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -182,6 +203,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w17,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -195,6 +217,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w33,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -208,6 +231,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w25,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -226,6 +250,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         width: WidthType.w25,
         classNames: "",
         needToasts: false,
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -239,6 +264,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w50,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -248,6 +274,15 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         placeholder: "",
         width: WidthType.w100,
         classNames: "",
+        disabled: multipleLocations,
+    },
+    {
+        fieldType: FormFieldTypes.CHECKBOX,
+        name: 'prepackedMasterBox',
+        label: "Prepacked master box",
+        width: WidthType.w100,
+        classNames: "",
+        disabled: multipleLocations,
     },
 ];
 

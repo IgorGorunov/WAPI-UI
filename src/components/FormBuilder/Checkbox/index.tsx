@@ -7,7 +7,7 @@ const Checkbox: React.FC<FieldPropsType> = ({
   name,
   label = '',
   value,
-  // innerRef = null,
+  isRequired = false,
   checked = false,
   // label,
   // rules,

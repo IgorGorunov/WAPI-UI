@@ -24,7 +24,6 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
                             fieldState: {error}
                         }) => (
                         <FieldBuilder
-                            disabled={!!isDisabled}
                             {...curField}
                             {...props}
                             label={curField.label}
@@ -34,6 +33,7 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
                             errorMessage={error?.message}
                             errors={errors}
                             isRequired={!!curField?.rules?.required || false}
+                            disabled={!!isDisabled || curField.disabled}
                             classNames={curField.classNames}
                             onChange={(selectedOption) => {
                                 props.onChange(selectedOption);
@@ -51,7 +51,6 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
                                 fieldState: {error}
                             }) => (
                             <FieldBuilder
-                                disabled={!!isDisabled}
                                 {...curField}
                                 {...props}
                                 name={curField.name}
@@ -62,6 +61,7 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
                                 errorMessage={error?.message}
                                 errors={errors}
                                 isRequired={!!curField?.rules?.required || false}
+                                disabled={!!isDisabled || curField.disabled}
                                 classNames={curField.classNames}
                             /> )}
                         rules = {curField.rules}

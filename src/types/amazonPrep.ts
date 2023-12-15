@@ -100,6 +100,9 @@ export type SingleAmazonPrepOrderType = {
     statusHistory: AmazonPrepOrderHistoryType[];
     services: AmazonPrepOrderServiceType[];
     draft?: boolean;
+    carrierType?: string;
+    multipleLocations?: boolean;
+    prepackedMasterBox?: boolean;
 }
 
 
@@ -136,6 +139,7 @@ export type AmazonPrepOrderParamsType = {
     products: AmazonPrepOrderProductType[];
     warehouses: WarehouseType[];
     deliveryMethod: string[];
+    carrierTypes?: string[];
 }
 
 // export type PickupPointsType = {
@@ -155,31 +159,3 @@ export type AmazonPrepOrderProductWithTotalInfoType = {
     currency?: string;
 }
 
-export type AmazonPrepProcessedParamsType = {
-    orderProducts: AmazonPrepOrderProcessedProductType[];
-    warehouses: WarehouseType[];
-    deliveryMethod: string[];
-}
-
-export type AmazonPrepOrderProcessedProductType = {
-    available: number;
-    country: string;
-    damaged: number;
-    expired: number;
-    forPlacement: number;
-    name: string;
-    reserved: number;
-    sellable: number;
-    sku: string;
-    total: number;
-    undefinedStatus: number;
-    id: string;
-    uuid: string;
-    warehouse: string;
-    warehouseSku: string;
-    withoutBox: number;
-    weightNet: number;
-    weightGross: number;
-    volume: number;
-    unitOfMeasures: string[];
-}

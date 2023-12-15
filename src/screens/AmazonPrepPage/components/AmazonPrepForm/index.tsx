@@ -1,8 +1,8 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {
-    AmazonPrepOrderParamsType, AmazonPrepOrderProcessedProductType,
+    AmazonPrepOrderParamsType,
     AmazonPrepOrderProductType,
-    AmazonPrepOrderProductWithTotalInfoType, AmazonPrepOrderType, AmazonPrepProcessedParamsType,
+    AmazonPrepOrderProductWithTotalInfoType,
     SingleAmazonPrepOrderType,
     WarehouseType,
 } from "@/types/amazonPrep";
@@ -34,13 +34,9 @@ import Pallets from "@/screens/AmazonPrepPage/components/AmazonPrepForm/Pallets"
 import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 
-
-type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
     amazonPrepOrderParameters?: AmazonPrepOrderParamsType;
-    //amazonPrepOrderParameters?: AmazonPrepProcessedParamsType;
     closeAmazonPrepOrderModal: ()=>void;
 
 }
@@ -50,14 +46,6 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const [isDisabled, setIsDisabled] = useState(!!amazonPrepOrderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
-    // const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
-    // const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
-    // const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
-    // const [selectedWarehouse, setSelectedWarehouse] = useState('');
-    // const [selectedCourierService, setSelectedCourierService] = useState('');
-    // const [amazonPrepOrderParameters, setAmazonPrepOrderParameters] = useState<AmazonPrepOrderParamsType | null>(null);
-
-
 
     //countries
     const countries = useMemo(()=>COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()})),[]);
@@ -94,6 +82,9 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     //deliveryMethodOptions
     const deliveryMethodOptions = useMemo(()=>amazonPrepOrderParameters?.deliveryMethod.map(item => ({label: item, value: item})),[amazonPrepOrderParameters]);
 
+    //carrierTypeOptions
+    const carrierTypeOptions = useMemo(()=>amazonPrepOrderParameters?.carrierTypes ? amazonPrepOrderParameters?.carrierTypes.map(item => ({label: item, value: item})) : [{label: 'wapi carrier', value: 'wapi carrier'}, {label: 'customer carrier', value: 'customer carrier'}],[amazonPrepOrderParameters]);
+
     //form
     const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
         mode: 'onSubmit',
@@ -122,6 +113,9 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             uuid: amazonPrepOrderData?.uuid || '',
             wapiTrackingNumber: amazonPrepOrderData?.wapiTrackingNumber || '',
             warehouse: amazonPrepOrderData?.warehouse || '',
+            carrierType: amazonPrepOrderData?.carrierType || (amazonPrepOrderParameters?.carrierTypes && amazonPrepOrderParameters?.carrierTypes.length && amazonPrepOrderParameters?.carrierTypes[0]) || "",
+            multipleLocations: amazonPrepOrderData?.multipleLocations || false,
+            prepackedMasterBox: amazonPrepOrderData?.prepackedMasterBox || false,
             products:
                 amazonPrepOrderData && amazonPrepOrderData?.products && amazonPrepOrderData.products.length
                     ? amazonPrepOrderData.products.map((product, index: number) => (
@@ -183,10 +177,17 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     },[amazonPrepOrderParameters, products]);
 
     const productOptions = useMemo(() =>{
-        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
+        const prodOptions = amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
+        console.log('prodOptions', prodOptions)
+        return prodOptions;
     },[amazonPrepOrderParameters]);
 
-    // const productsHeaderWidth = [40, 130, 'auto', 200, 50, 50, 50, 50, 50, 50];
+    const carrierType = watch('carrierType');
+
+    useEffect(() => {
+        console.log("carrier type changed:", carrierType)
+    }, [carrierType]);
+
     const getProductColumns = (control: any) => {
         return [
             {
@@ -366,11 +367,13 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         setValue('courierService', '');
     }
 
+    const multipleLocations = watch('multipleLocations');
+
     const linkToTrack = amazonPrepOrderData && amazonPrepOrderData.trackingLink ? <a href={amazonPrepOrderData?.trackingLink} target='_blank'>{amazonPrepOrderData?.trackingLink}</a> : null;
 
-    const generalFields = useMemo(()=> GeneralFields(), [])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions}), [warehouse, amazonPrepOrderParameters]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries}),[countries ])
+    const generalFields = useMemo(()=> GeneralFields(!amazonPrepOrderData?.uuid), [])
+    const detailsFields = useMemo(()=>DetailsFields({warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions, carrierDisabled: (carrierType!=='wapi carrier'), carrierTypeOptions}), [warehouse, carrierType, amazonPrepOrderParameters]);
+    const receiverFields = useMemo(()=>ReceiverFields({countries, multipleLocations}),[countries,multipleLocations ])
     const [selectedFiles, setSelectedFiles] = useState(amazonPrepOrderData?.attachedFiles);
 
     const handleFilesChange = (files) => {

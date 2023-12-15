@@ -15,8 +15,7 @@ import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
 import {
     AmazonPrepOrderParamsType,
-    AmazonPrepOrderProductType,
-    AmazonPrepOrderType, AmazonPrepProcessedParamsType,
+    AmazonPrepOrderType,
     SingleAmazonPrepOrderType
 } from "@/types/amazonPrep";
 import {exportFileXLS} from "@/utils/files";
@@ -54,7 +53,7 @@ const AmazonPrepPage = () => {
     const onAmazonPrepOrderModalClose = () => {
         setShowAmazonPrepOrderModal(false);
     }
-    const fetchSingleAmazonPrepOrder = async (uuid: string) => {
+    const fetchSingleAmazonPrepOrder = useCallback(async (uuid: string) => {
         try {
             setIsLoading(true);
 
@@ -77,9 +76,9 @@ const AmazonPrepPage = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    },[token]);
 
-    const fetchAmazonPrepOrderParams = async() => {
+    const fetchAmazonPrepOrderParams = useCallback(async() => {
         try {
             if (!await verifyToken(token)) {
                 await Router.push(Routes.Login);
@@ -98,12 +97,7 @@ const AmazonPrepPage = () => {
         } catch (error) {
             console.error("Error fetching data:", error);
         }
-    };
-
-    // useEffect(() => {
-    //     fetchOrderParams();
-    // }, [token]);
-
+    },[token]);
 
     const fetchData = useCallback(async () => {
         try {
@@ -133,24 +127,6 @@ const AmazonPrepPage = () => {
     useEffect(() => {
         fetchData();
     }, [token, curPeriod]);
-
-    // useEffect(() => {
-    //     if (showAmazonPrepOrderModal) {
-    //         fetchAmazonPrepOrderParams();
-    //     }
-    // }, [showAmazonPrepOrderModal]);
-
-    // useEffect(() => {
-    //     if (showAmazonPrepOrderModal && amazonPrepUuid) {
-    //         fetchSingleAmazonPrepOrder(amazonPrepUuid);
-    //     }
-    // }, [amazonPrepUuid, showAmazonPrepOrderModal]);
-    //
-    // useEffect(() => {
-    //     if (singleAmazonPrepOrder && showAmazonPrepOrderModal) {
-    //         fetchAmazonPrepOrderParams();
-    //     }
-    // }, [singleAmazonPrepOrder]);
 
     useEffect(() => {
         if (showAmazonPrepOrderModal && amazonPrepUuid) {

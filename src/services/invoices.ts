@@ -24,4 +24,45 @@ const getInvoices = async (
     }
 };
 
-export { getInvoices };
+const getInvoiceForm = async (
+    data: {
+        token: string;
+        uuid: string;
+    }
+) => {
+    try {
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/GetInvoicePrintForm`,
+            data,
+            {responseType: 'blob',} // Important for handling binary data
+        );
+
+        // Create a Blob object from the binary data
+        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+        return blob;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+const getInvoicesDebts = async (
+    data: {
+        token: string;
+    }
+) => {
+    try {
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/GetInvoicesDebt`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+export { getInvoices, getInvoiceForm, getInvoicesDebts };

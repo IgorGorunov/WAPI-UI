@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
-import { getInvoices } from "@/services/invoices";
+import { getInvoices, getInvoicesDebts, getInvoiceForm } from "@/services/invoices";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
@@ -11,10 +11,11 @@ import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
-import {InvoiceType} from "@/types/invoices";
+import {InvoiceType, BalanceInfoType, InvoiceBalanceType} from "@/types/invoices";
 import {exportFileXLS} from "@/utils/files";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfMonth} from "@/utils/date";
+import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
 
 const InvoicesPage = () => {
 
@@ -22,6 +23,9 @@ const InvoicesPage = () => {
     const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
+
+    //balance/debt
+    const [invoiceBalance, setInvoiceBalance] = useState<InvoiceBalanceType|null>(null);
 
     const [invoicesData, setInvoicesData] = useState<any | null>(null);
     const [filteredInvoices, setFilteredInvoices] = useState<InvoiceType[] | null>(null);
@@ -66,9 +70,42 @@ const InvoicesPage = () => {
 
     }, [token, curPeriod]);
 
-    const handleAddInvoice = () => {
+    useEffect(() => {
+        type ApiResponse = {
+            data: any;
+        };
 
-    }
+        const fetchDebtData = async () => {
+            try {
+                setIsLoading(true);
+                if (!await verifyToken(token)) {
+                    await Router.push(Routes.Login);
+                }
+
+                const res: ApiResponse = await getInvoicesDebts(
+                    { token: token }
+                );
+
+                if (res && "data" in res) {
+                    console.log("debt:", res.data);
+                    setInvoiceBalance(res.data);
+
+                } else {
+                    console.error("API did not return expected data");
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchDebtData();
+
+    }, []);
+
+
     const handleExportXLS = () => {
         const filteredData = filteredInvoices.map(item => ({
             status: item.status,
@@ -106,6 +143,20 @@ const InvoicesPage = () => {
                 <Header pageTitle='Invoices' toRight >
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download invoices list</Button>
                 </Header>
+                {invoiceBalance ? (
+                    <div className="grid-row balance-info-block">
+                        {invoiceBalance.debt && invoiceBalance.debt.length ? (
+                            <div className='width-33 grid-col-33'>
+                                <BalanceInfoCard title={"Debt"} type="debt" balanceArray={invoiceBalance.debt} />
+                            </div>
+                        ) : null}
+                        {invoiceBalance.overdue && invoiceBalance.overdue.length ? (
+                            <div className='width-33  grid-col-33'>
+                                <BalanceInfoCard title={"Overdue"} type="overdue" balanceArray={invoiceBalance.overdue} />
+                            </div>
+                        ) : null}
+                    </div>
+                ) : null}
                 {invoicesData && <InvoiceList invoices={invoicesData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredInvoices={setFilteredInvoices}/>}
             </div>
         </Layout>

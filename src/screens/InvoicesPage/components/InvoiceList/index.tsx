@@ -17,6 +17,13 @@ import getSymbolFromCurrency from "currency-symbol-map";
 import {GroupStatuses} from "@/screens/DashboardPage/components/OrderStatuses";
 import {DateRangeType} from "@/types/dashboard";
 import DateInput from "@/components/DateInput";
+import {getInvoiceForm, getInvoicesDebts} from "@/services/invoices";
+import {verifyToken} from "@/services/auth";
+import {Routes} from "@/types/routes";
+import {ApiResponseType} from "@/types/api";
+import {useRouter} from "next/router";
+import useAuth from "@/context/authContext";
+import Cookie from "js-cookie";
 
 
 export const StatusColors = {
@@ -36,6 +43,11 @@ type InvoiceListType = {
 const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurrentRange, setFilteredInvoices}) => {
 
     const [animating, setAnimating] = useState(false);
+
+    const Router = useRouter();
+    const { token, setToken } = useAuth();
+    const savedToken = Cookie.get('token');
+    if (savedToken) setToken(savedToken);
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -67,6 +79,43 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
     const transformedStatuses= GetFilterArray(invoices, 'status', 'All statuses');
+
+    const handleDownloadInvoice = async (uuid) => {
+        try {
+            //setIsLoading(true);
+            // if (!await verifyToken(token)) {
+            //     await Router.push(Routes.Login);
+            // }
+
+            const blob: Blob = await getInvoiceForm(
+                { token: token, uuid: uuid }
+            );
+
+            if (blob) {
+                // Create a link element
+                const link = document.createElement('a');
+
+                // Set the download attribute and create a data URL
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "invoice";
+
+                // Append the link to the document and trigger a click event
+                document.body.appendChild(link);
+                link.click();
+
+                // Remove the link from the document
+                document.body.removeChild(link);
+
+            } else {
+                console.error("API did not return expected data");
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        // } finally {
+        //     setIsLoading(false);
+        }
+    };
 
     const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
         if (newSearchTerm !== undefined) {
@@ -364,6 +413,11 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
+            onCell: (record) => {
+                return {
+                    onClick: () => {handleDownloadInvoice(record.uuid)}
+                };
+            },
             responsive: ['lg'],
         },
 
