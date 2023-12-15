@@ -11,7 +11,7 @@ const getInvoices = async (
 ) => {
     try {
         const response: any = await axios.post(
-            `${API_ENDPOINT}/GetProductsStock`,
+            `${API_ENDPOINT}/GetInvoicesList`,
             data
 
         );

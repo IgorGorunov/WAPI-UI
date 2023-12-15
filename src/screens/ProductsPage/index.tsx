@@ -97,10 +97,6 @@ const ProductsPage = () => {
     },[productsData])
 
     const handleEditProduct = (uuid: string) => {
-        // toast.warn("Under construction", {
-        //     position: "top-right",
-        //     autoClose: 1000,
-        // });
         fetchProductData(uuid);
     }
 

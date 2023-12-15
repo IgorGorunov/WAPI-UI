@@ -13,6 +13,16 @@ import Icon from "@/components/Icon";
 import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import {GetFilterArray} from '@/utils/common';
+import getSymbolFromCurrency from "currency-symbol-map";
+import {GroupStatuses} from "@/screens/DashboardPage/components/OrderStatuses";
+
+
+export const StatusColors = {
+    "Payd": "#29CC39",
+    "Unpaid": "#FEDB4F",
+    "Partiallity paid": "#5380F5",
+    "Overdue": "#FF4000",
+};
 
 type InvoiceListType = {
     invoices:InvoiceType[];
@@ -39,7 +49,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, setFilteredInvoices})
     };
 
     // Sorting
-    const [sortColumn, setSortColumn] = useState<keyof InvoiceType>('name');
+    const [sortColumn, setSortColumn] = useState<keyof InvoiceType>('date');
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof InvoiceType) => {
         setSortDirection(currentDirection =>
@@ -51,26 +61,26 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, setFilteredInvoices})
 
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterWarehouse, setFilterWarehouse] = useState('');
-    const transformedWarehouses= GetFilterArray(invoices, 'warehouse', 'All warehouses');
+    const [filterStatus, setFilterStatus] = useState('');
+    const transformedStatuses= GetFilterArray(invoices, 'status', 'All statuses');
 
     const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
         if (newSearchTerm !== undefined) {
             setSearchTerm(newSearchTerm);
         }
         if (newStatusFilter !== undefined) {
-            setFilterWarehouse(newStatusFilter);
+            setFilterStatus(newStatusFilter);
         }
     };
     const filteredInvoices = useMemo(() => {
         setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
-        const filtered = invoices.filter(product => {
-            const matchesSearch = !searchTerm || Object.keys(product).some(key => {
-                const value = product[key];
+        const filtered = invoices.filter(invoice => {
+            const matchesSearch = !searchTerm || Object.keys(invoice).some(key => {
+                const value = invoice[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
-            const matchesStatus = !filterWarehouse || product.warehouse === filterWarehouse;
+            const matchesStatus = !filterStatus || invoice.status === filterStatus;
             return matchesSearch && matchesStatus;
         });
 
@@ -84,176 +94,215 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, setFilteredInvoices})
             });
         }
         return filtered;
-    }, [invoices, searchTerm, filterWarehouse, sortColumn, sortDirection]);
+    }, [invoices, searchTerm, filterStatus, sortColumn, sortDirection]);
 
     useEffect(() => {
         setFilteredInvoices(filteredInvoices)
     }, [filteredInvoices]);
 
+    const getUnderlineColor = useCallback((statusText: string) => {
+        return StatusColors[statusText] || 'black';
+    }, []);
 
     const columns: ColumnType<InvoiceType>[] = useMemo(() => [
         {
-            title: <TitleColumn title="" minWidth="15px" maxWidth="15px" contentPosition="center"
-            />,
-            render: (text: string) => (
-                <TableCell
-                    minWidth="15px"
-                    maxWidth="15px"
-                    contentPosition="center"
-                    childrenBefore={<span className={`fi fi-${text.toLowerCase()} "flag-icon"`}></span>}>
-                </TableCell>
-            ),
-            dataIndex: 'country',
-            key: 'country',
+            title: <TitleColumn title="Status" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
+            render: (text: string, record) => {
+                const underlineColor = getUnderlineColor(record.status);
+                return (
+                    <TableCell
+                        minWidth="100px"
+                        maxWidth="100px"
+                        contentPosition="start"
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'status',
+            key: 'status',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
         },
         {
             title: <TitleColumn
-                title=""
-                minWidth="30px"
-                maxWidth="30px"
+                title="Number"
+                minWidth="80px"
+                maxWidth="80px"
                 contentPosition="start"
-                childrenBefore={<Icon name={"warehouse"}/>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
             ),
-            dataIndex: 'warehouse',
-            key: 'warehouse',
+            dataIndex: 'number',
+            key: 'number',
             sorter: true,
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
         },
         {
-            title: <TitleColumn title="SKU" minWidth="80px" maxWidth="120px" contentPosition="start"/>,
+            title: <TitleColumn
+                title="Date"
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="start"
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="120px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
             ),
-            dataIndex: 'warehouseSku',
-            key: 'warehouseSku',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-            }),
-            responsive: ['md'],
-        },
-        {
-            title: <TitleColumn title="Name" minWidth="150px" maxWidth="500px"  contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="150px" maxWidth="500px"  contentPosition="start"/>
-            ),
-            dataIndex: 'name',
-            key: 'name',
+            dataIndex: 'date',
+            key: 'date',
             sorter: true,
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
         },
         {
-            title: <TitleColumn title="Available" minWidth="40px" maxWidth="40px"  contentPosition="center"/>,
+            title: <TitleColumn
+                title="Amount"
+                minWidth="75px"
+                maxWidth="75px"
+                contentPosition="center"
+            />,
+            render: (text: string, record) => {
+                if (record.currency) {
+                    const currencySymbol = getSymbolFromCurrency(record.currency);
+                    return (
+                        <TableCell
+                            value={`${text} ${currencySymbol}`}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="center">
+                        </TableCell>
+                    );
+                } else {
+                    return (
+                        <TableCell
+                            value={'-'}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="center">
+                        </TableCell>
+                    );
+                }
+            },
+            dataIndex: 'amount',
+            key: 'amount',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+        },
+        {
+            title: <TitleColumn
+                title="Due date"
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="start"
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="center"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
             ),
-            dataIndex: 'available',
-            key: 'available',
+            dataIndex: 'dueDate',
+            key: 'dueDate',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+        },
+        {
+            title: <TitleColumn
+                title="Overdue"
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="start"
+            />,
+            render: (text: string) => (
+                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
+            ),
+            dataIndex: 'overdue',
+            key: 'overdue',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+        },
+        {
+            title: <TitleColumn
+                title="Payd"
+                minWidth="75px"
+                maxWidth="75px"
+                contentPosition="center"
+            />,
+            render: (text: string, record) => {
+                if (record.currency) {
+                    const currencySymbol = getSymbolFromCurrency(record.currency);
+                    return (
+                        <TableCell
+                            value={`${text} ${currencySymbol}`}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="center">
+                        </TableCell>
+                    );
+                } else {
+                    return (
+                        <TableCell
+                            value={'-'}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="center">
+                        </TableCell>
+                    );
+                }
+            },
+            dataIndex: 'payd',
+            key: 'payd',
             sorter: true,
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
         },
 
+        {
+            title: <TitleColumn
+                title="Debt"
+                minWidth="75px"
+                maxWidth="75px"
+                contentPosition="center"
+            />,
+            render: (text: string, record) => {
+                if (record.currency) {
+                    const currencySymbol = getSymbolFromCurrency(record.currency);
+                    return (
+                        <TableCell
+                            value={`${text} ${currencySymbol}`}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="center">
+                        </TableCell>
+                    );
+                } else {
+                    return (
+                        <TableCell
+                            value={'-'}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="center">
+                        </TableCell>
+                    );
+                }
+            },
+            dataIndex: 'debt',
+            key: 'debt',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+        },
 
-        {
-            title: <TitleColumn title="Reserve" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'reserved',
-            key: 'reserved',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-            }),
-            responsive: ['md'],
-        },
-        {
-            title: <TitleColumn title="Damaged" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'damaged',
-            key: 'damaged',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Expired" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'expired',
-            key: 'expired',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Undefined status" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'undefinedStatus',
-            key: 'undefinedStatus',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Without box" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'withoutBox',
-            key: 'withoutBox',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Returning" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'forPlacement',
-            key: 'forPlacement',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Total" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'total',
-            key: 'total',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-            }),
-            responsive: ['md'],
-        },
     ], [handleHeaderCellClick]);
     return (
         <div className='table'>
@@ -265,8 +314,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, setFilteredInvoices})
             </Head>
             <div className="warehouse-filter-container">
                 <StatusWarehouseSelector
-                    options={transformedWarehouses}
-                    value={filterWarehouse}
+                    options={transformedStatuses}
+                    value={filterStatus}
                     onChange={(value: string) => handleFilterChange(undefined, value)}
                 />
                 <Input

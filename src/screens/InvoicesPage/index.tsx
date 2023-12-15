@@ -63,19 +63,15 @@ const InvoicesPage = () => {
     }
     const handleExportXLS = () => {
         const filteredData = filteredInvoices.map(item => ({
-            sku: item.sku,
-            name: item.name,
-            warehouse: item.warehouse,
-            warehouseSku: item.warehouseSku,
-            country: item.country,
-            available: item.available,
-            reserved: item.reserved,
-            damaged: item.damaged,
-            expired: item.expired,
-            undefinedStatus: item.undefinedStatus,
-            withoutBox: item.withoutBox,
-            forPlacement: item.forPlacement,
-            total: item.total,
+            status: item.status,
+            number: item.number,
+            date: item.date,
+            dueDate: item.dueDate,
+            amount: item.amount,
+            currency: item.currency,
+            payd: item.payd,
+            debt: item.debt,
+            overdue: item.overdue,
         }));
         exportFileXLS(filteredData, "Invoices")
     }
@@ -100,7 +96,7 @@ const InvoicesPage = () => {
                     </div>
                 )}
                 <Header pageTitle='Invoices' toRight >
-                    {/*<Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>*/}
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>
                 </Header>
                 {invoicesData && <InvoiceList invoices={invoicesData} setFilteredInvoices={setFilteredInvoices}/>}
             </div>

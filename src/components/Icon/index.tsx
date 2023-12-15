@@ -45,6 +45,7 @@ import Filter from '@/assets/icons/filter.svg'
 import Exit from '@/assets/icons/exit.svg'
 import AddTableRow from '@/assets/icons/add-table-row.svg'
 import RemoveTableRow from '@/assets/icons/remove-table-row.svg'
+import Finances from '@/assets/icons/finances.svg'
 
 
 export const icons = {
@@ -93,6 +94,7 @@ export const icons = {
   'exit': Exit,
   'add-table-row': AddTableRow,
   'remove-table-row': RemoveTableRow,
+  'finances': Finances,
 };
 
 export type IconType = keyof typeof icons;
