@@ -126,6 +126,20 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                         minWidth="100px"
                         maxWidth="100px"
                         contentPosition="start"
+                        value={text}
+                        childrenBefore={
+                            <span style={{
+                                borderBottom: `2px solid ${underlineColor}`,
+                                display: 'inline-block',
+                                borderRadius: '50%',
+                                width: '16px',
+                                height: '16px',
+                                backgroundColor: underlineColor,
+                                marginRight: '5px',
+                                justifyContent: 'center',}}
+                            >
+                        </span>
+                        }
                     >
                     </TableCell>
                 );
@@ -176,9 +190,11 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 title="Amount"
                 minWidth="75px"
                 maxWidth="75px"
-                contentPosition="center"
+                contentPosition="start"
             />,
             render: (text: string, record) => {
+                const isNegative = parseFloat(text) < 0;
+                const textColor = isNegative ? 'red' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
                     return (
@@ -186,7 +202,9 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                             value={`${text} ${currencySymbol}`}
                             minWidth="75px"
                             maxWidth="75px"
-                            contentPosition="center">
+                            contentPosition="start"
+                            textColor={textColor}
+                        >
                         </TableCell>
                     );
                 } else {
@@ -195,7 +213,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                             value={'-'}
                             minWidth="75px"
                             maxWidth="75px"
-                            contentPosition="center">
+                            contentPosition="start"
+                            textColor={textColor}>
                         </TableCell>
                     );
                 }
@@ -223,6 +242,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn
@@ -240,15 +260,18 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn
                 title="Payd"
                 minWidth="75px"
                 maxWidth="75px"
-                contentPosition="center"
+                contentPosition="start"
             />,
             render: (text: string, record) => {
+                const isNegative = parseFloat(text) < 0;
+                const textColor = isNegative ? 'red' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
                     return (
@@ -256,7 +279,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                             value={`${text} ${currencySymbol}`}
                             minWidth="75px"
                             maxWidth="75px"
-                            contentPosition="center">
+                            contentPosition="start"
+                            textColor={textColor}>
                         </TableCell>
                     );
                 } else {
@@ -265,7 +289,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                             value={'-'}
                             minWidth="75px"
                             maxWidth="75px"
-                            contentPosition="center">
+                            contentPosition="start"
+                            textColor={textColor}>
                         </TableCell>
                     );
                 }
@@ -276,6 +301,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
+            responsive: ['md'],
         },
 
         {
@@ -283,9 +309,11 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 title="Debt"
                 minWidth="75px"
                 maxWidth="75px"
-                contentPosition="center"
+                contentPosition="start"
             />,
             render: (text: string, record) => {
+                const isNegative = parseFloat(text) < 0;
+                const textColor = isNegative ? 'red' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
                     return (
@@ -293,7 +321,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                             value={`${text} ${currencySymbol}`}
                             minWidth="75px"
                             maxWidth="75px"
-                            contentPosition="center">
+                            contentPosition="start"
+                            textColor={textColor}>
                         </TableCell>
                     );
                 } else {
@@ -302,7 +331,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                             value={'-'}
                             minWidth="75px"
                             maxWidth="75px"
-                            contentPosition="center">
+                            contentPosition="start"
+                            textColor={textColor}>
                         </TableCell>
                     );
                 }
@@ -313,6 +343,28 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
+            responsive: ['md'],
+        },
+        {
+            title: <TitleColumn title="" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            render: (text: string, record: InvoiceType) => (
+                <TableCell
+                    minWidth="60px"
+                    maxWidth="60px"
+                    contentPosition="center"
+                    childrenBefore={
+                        <span className="services-cell-style">
+                        <Icon name="download-file" />
+                        </span>}>
+                </TableCell>
+            ),
+            dataIndex: 'uuid',
+            key: 'uuid',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+            responsive: ['lg'],
         },
 
     ], [handleHeaderCellClick]);
@@ -339,7 +391,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 />
             </div>
             <div className="page-size-container">
-                <span className="page-size-text">Invoices</span>
+                <span className="page-size-text">Invoices list</span>
                 <PageSizeSelector
                     options={PageOptions}
                     value={pageSize}

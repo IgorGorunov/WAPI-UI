@@ -104,7 +104,7 @@ const InvoicesPage = () => {
                     </div>
                 )}
                 <Header pageTitle='Invoices' toRight >
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download invoices list</Button>
                 </Header>
                 {invoicesData && <InvoiceList invoices={invoicesData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredInvoices={setFilteredInvoices}/>}
             </div>
