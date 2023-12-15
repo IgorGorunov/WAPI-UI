@@ -1,4 +1,5 @@
 export type AmazonPrepOrderType = {
+    key?: string;
     asnNumber: string;
     clientOrderID: string;
     courierService: string;
@@ -60,6 +61,13 @@ export type PalletType = {
     palletTrackingNumber: string;
 }
 
+export type AttachedFilesType = {
+    id: string;
+    name: string;
+    type: string;
+    data: string;
+}
+
 export type SingleAmazonPrepOrderType = {
     asnNumber: string;
     attachedFiles: AttachedFilesType[];
@@ -91,15 +99,10 @@ export type SingleAmazonPrepOrderType = {
     products: SingleAmazonPrepOrderProductType[];
     statusHistory: AmazonPrepOrderHistoryType[];
     services: AmazonPrepOrderServiceType[];
-
+    draft?: boolean;
 }
 
-export type AttachedFilesType = {
-    id: string;
-    name: string;
-    type: string;
-    data: string;
-}
+
 
 export type AmazonPrepOrderProductType = {
     available: number;
@@ -120,6 +123,7 @@ export type AmazonPrepOrderProductType = {
     weightNet: number;
     weightGross: number;
     volume: number;
+    unitOfMeasures: string[];
 }
 
 export type WarehouseType = {
@@ -149,4 +153,33 @@ export type AmazonPrepOrderProductWithTotalInfoType = {
     weightGross: number;
     volume: number;
     currency?: string;
+}
+
+export type AmazonPrepProcessedParamsType = {
+    orderProducts: AmazonPrepOrderProcessedProductType[];
+    warehouses: WarehouseType[];
+    deliveryMethod: string[];
+}
+
+export type AmazonPrepOrderProcessedProductType = {
+    available: number;
+    country: string;
+    damaged: number;
+    expired: number;
+    forPlacement: number;
+    name: string;
+    reserved: number;
+    sellable: number;
+    sku: string;
+    total: number;
+    undefinedStatus: number;
+    id: string;
+    uuid: string;
+    warehouse: string;
+    warehouseSku: string;
+    withoutBox: number;
+    weightNet: number;
+    weightGross: number;
+    volume: number;
+    unitOfMeasures: string[];
 }

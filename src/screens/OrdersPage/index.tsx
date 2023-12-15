@@ -91,6 +91,7 @@ const OrdersPage = () => {
 
             if (resp && "data" in resp) {
                 setOrderParameters(resp.data);
+                console.log('order params:', resp.data)
             } else {
                 console.error("API did not return expected data");
             }

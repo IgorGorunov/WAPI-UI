@@ -13,6 +13,8 @@ import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {InvoiceType} from "@/types/invoices";
 import {exportFileXLS} from "@/utils/files";
+import {DateRangeType} from "@/types/dashboard";
+import {formatDateToString, getFirstDayOfMonth} from "@/utils/date";
 
 const InvoicesPage = () => {
 
@@ -24,6 +26,11 @@ const InvoicesPage = () => {
     const [invoicesData, setInvoicesData] = useState<any | null>(null);
     const [filteredInvoices, setFilteredInvoices] = useState<InvoiceType[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    //period
+    const today = new Date();
+    const firstDay = getFirstDayOfMonth(today);
+    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 
     useEffect(() => {
         type ApiResponse = {
@@ -38,7 +45,7 @@ const InvoicesPage = () => {
                 }
 
                 const res: ApiResponse = await getInvoices(
-                    {token: token}
+                    {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
                 );
 
                 if (res && "data" in res) {
@@ -98,7 +105,7 @@ const InvoicesPage = () => {
                 <Header pageTitle='Invoices' toRight >
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>
                 </Header>
-                {invoicesData && <InvoiceList invoices={invoicesData} setFilteredInvoices={setFilteredInvoices}/>}
+                {invoicesData && <InvoiceList invoices={invoicesData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredInvoices={setFilteredInvoices}/>}
             </div>
         </Layout>
     )

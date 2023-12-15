@@ -15,6 +15,8 @@ import {PageOptions} from '@/constants/pagination';
 import {GetFilterArray} from '@/utils/common';
 import getSymbolFromCurrency from "currency-symbol-map";
 import {GroupStatuses} from "@/screens/DashboardPage/components/OrderStatuses";
+import {DateRangeType} from "@/types/dashboard";
+import DateInput from "@/components/DateInput";
 
 
 export const StatusColors = {
@@ -26,10 +28,12 @@ export const StatusColors = {
 
 type InvoiceListType = {
     invoices:InvoiceType[];
+    currentRange: DateRangeType;
+    setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
     setFilteredInvoices: React.Dispatch<React.SetStateAction<InvoiceType[]>>;
 }
 
-const InvoiceList: React.FC<InvoiceListType> = ({invoices, setFilteredInvoices}) => {
+const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurrentRange, setFilteredInvoices}) => {
 
     const [animating, setAnimating] = useState(false);
 
@@ -95,6 +99,13 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, setFilteredInvoices})
         }
         return filtered;
     }, [invoices, searchTerm, filterStatus, sortColumn, sortDirection]);
+
+    const [showDatepicker, setShowDatepicker] = useState(false);
+
+    const handleDateRangeSave = (newRange) => {
+        setCurrentRange(newRange);
+        setShowDatepicker(false);
+    };
 
     useEffect(() => {
         setFilteredInvoices(filteredInvoices)
@@ -313,6 +324,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, setFilteredInvoices})
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
             <div className="warehouse-filter-container">
+                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <StatusWarehouseSelector
                     options={transformedStatuses}
                     value={filterStatus}

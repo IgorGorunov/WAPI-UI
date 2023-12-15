@@ -13,7 +13,12 @@ import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
-import {AmazonPrepOrderParamsType, AmazonPrepOrderType, SingleAmazonPrepOrderType} from "@/types/amazonPrep";
+import {
+    AmazonPrepOrderParamsType,
+    AmazonPrepOrderProductType,
+    AmazonPrepOrderType, AmazonPrepProcessedParamsType,
+    SingleAmazonPrepOrderType
+} from "@/types/amazonPrep";
 import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
 import AmazonPrepForm from "./components/AmazonPrepForm";
@@ -44,6 +49,7 @@ const AmazonPrepPage = () => {
     const [singleAmazonPrepOrder, setSingleAmazonPrepOrder] = useState<SingleAmazonPrepOrderType|null>(null);
     const [amazonPrepOrderParameters, setAmazonPrepOrderParameters] = useState<AmazonPrepOrderParamsType|null>(null);
     const [isAmazonPrepNew, setIsAmazonPrepNew] = useState(true);
+    const [amazonPrepUuid, setAmazonPrepUuid] = useState<string|null>(null);
 
     const onAmazonPrepOrderModalClose = () => {
         setShowAmazonPrepOrderModal(false);
@@ -62,10 +68,10 @@ const AmazonPrepPage = () => {
 
             if (res && "data" in res) {
                 setSingleAmazonPrepOrder(res.data);
-                console.log('single amazon prep data: ', res.data);
             } else {
                 console.error("API did not return expected data");
             }
+
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -73,20 +79,18 @@ const AmazonPrepPage = () => {
         }
     };
 
-    const fetchAmazonPrepOrderParams = useCallback(async() => {
+    const fetchAmazonPrepOrderParams = async() => {
         try {
             if (!await verifyToken(token)) {
                 await Router.push(Routes.Login);
             }
 
-            const resp: ApiResponseType = await getAmazonPrepParameters(
+            const responseParams: ApiResponseType = await getAmazonPrepParameters(
                 {token: token}
             );
 
-            if (resp && "data" in resp) {
-                setAmazonPrepOrderParameters(resp.data);
-
-                console.log('prep data: ', resp.data);
+            if (responseParams?.data ) {
+                setAmazonPrepOrderParameters(responseParams.data);
             } else {
                 console.error("API did not return expected data");
             }
@@ -94,11 +98,12 @@ const AmazonPrepPage = () => {
         } catch (error) {
             console.error("Error fetching data:", error);
         }
-    },[token]);
+    };
 
     // useEffect(() => {
     //     fetchOrderParams();
     // }, [token]);
+
 
     const fetchData = useCallback(async () => {
         try {
@@ -129,21 +134,53 @@ const AmazonPrepPage = () => {
         fetchData();
     }, [token, curPeriod]);
 
-    const handleEditAmazonPrepOrder = (uuid: string) => {
+    // useEffect(() => {
+    //     if (showAmazonPrepOrderModal) {
+    //         fetchAmazonPrepOrderParams();
+    //     }
+    // }, [showAmazonPrepOrderModal]);
+
+    // useEffect(() => {
+    //     if (showAmazonPrepOrderModal && amazonPrepUuid) {
+    //         fetchSingleAmazonPrepOrder(amazonPrepUuid);
+    //     }
+    // }, [amazonPrepUuid, showAmazonPrepOrderModal]);
+    //
+    // useEffect(() => {
+    //     if (singleAmazonPrepOrder && showAmazonPrepOrderModal) {
+    //         fetchAmazonPrepOrderParams();
+    //     }
+    // }, [singleAmazonPrepOrder]);
+
+    useEffect(() => {
+        if (showAmazonPrepOrderModal && amazonPrepUuid) {
+            fetchSingleAmazonPrepOrder(amazonPrepUuid);
+        }
+    }, [amazonPrepOrderParameters]);
+
+    useEffect(() => {
+        if (showAmazonPrepOrderModal) {
+            fetchAmazonPrepOrderParams();
+        }
+    }, [showAmazonPrepOrderModal]);
+
+    const handleEditAmazonPrepOrder = async (uuid: string) => {
         console.log('uuid:', uuid);
+        //setAmazonPrepOrderParameters(null);
         setIsAmazonPrepNew(false);
         setSingleAmazonPrepOrder(null);
-        fetchAmazonPrepOrderParams();
-        fetchSingleAmazonPrepOrder(uuid);
-
+        setAmazonPrepUuid(uuid);
+        // fetchAmazonPrepOrderParams();
+        // fetchSingleAmazonPrepOrder(uuid);
         setShowAmazonPrepOrderModal(true);
+
     }
 
     const handleAddAmazonPrepOrder= (
     ) => {
         setIsAmazonPrepNew(true);
-        fetchAmazonPrepOrderParams();
         setSingleAmazonPrepOrder(null);
+        //fetchAmazonPrepOrderParams();
         setShowAmazonPrepOrderModal(true);
     }
 
@@ -161,7 +198,6 @@ const AmazonPrepPage = () => {
         exportFileXLS(filteredData, "Orders");
     }
 
-    console.log('amazon data:', amazonPrepOrdersData);
 
     return (
         <Layout hasHeader hasFooter>
@@ -191,7 +227,7 @@ const AmazonPrepPage = () => {
             </div>
             {showAmazonPrepOrderModal && amazonPrepOrderParameters && (singleAmazonPrepOrder || isAmazonPrepNew) &&
                 <Modal title={`Amazon prep`} onClose={onAmazonPrepOrderModalClose} >
-                    <AmazonPrepForm amazonPrepOrderParameters={amazonPrepOrderParameters} amazonPrepOrderData={singleAmazonPrepOrder} closeAmazonPrepOrderModal={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
+                    <AmazonPrepForm  amazonPrepOrderData={singleAmazonPrepOrder} amazonPrepOrderParameters={amazonPrepOrderParameters} closeAmazonPrepOrderModal={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
                 </Modal>
             }
             {showImportModal &&

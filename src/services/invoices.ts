@@ -7,13 +7,14 @@ const getInvoices = async (
     //token: string,
     data: {
         token: string;
+        startDate: string;
+        endDate: string;
     }
 ) => {
     try {
         const response: any = await axios.post(
             `${API_ENDPOINT}/GetInvoicesList`,
             data
-
         );
 
         return response;
