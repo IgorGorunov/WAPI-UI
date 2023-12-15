@@ -104,6 +104,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
     const handleDateRangeSave = (newRange) => {
         setCurrentRange(newRange);
+        console.log('range:', newRange)
         setShowDatepicker(false);
     };
 

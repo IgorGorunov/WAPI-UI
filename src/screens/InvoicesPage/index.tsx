@@ -63,7 +63,8 @@ const InvoicesPage = () => {
         };
 
         fetchData();
-    }, [token]);
+
+    }, [token, curPeriod]);
 
     const handleAddInvoice = () => {
 
