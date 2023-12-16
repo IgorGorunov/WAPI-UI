@@ -14,7 +14,7 @@ import Button from "@/components/Button/Button";
 import {InvoiceType, BalanceInfoType, InvoiceBalanceType} from "@/types/invoices";
 import {exportFileXLS} from "@/utils/files";
 import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getFirstDayOfMonth} from "@/utils/date";
+import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
 import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
 
 const InvoicesPage = () => {
@@ -33,7 +33,7 @@ const InvoicesPage = () => {
 
     //period
     const today = new Date();
-    const firstDay = getFirstDayOfMonth(today);
+    const firstDay = getFirstDayOfYear(today);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 
     useEffect(() => {
@@ -147,7 +147,7 @@ const InvoicesPage = () => {
                     <div className="grid-row balance-info-block">
                         {invoiceBalance.debt && invoiceBalance.debt.length ? (
                             <div className='width-33 grid-col-33'>
-                                <BalanceInfoCard title={"Debt"} type="debt" balanceArray={invoiceBalance.debt} />
+                                <BalanceInfoCard title={"Total debt"} type="debt" balanceArray={invoiceBalance.debt} />
                             </div>
                         ) : null}
                         {invoiceBalance.overdue && invoiceBalance.overdue.length ? (

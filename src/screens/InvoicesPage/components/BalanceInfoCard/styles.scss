@@ -1,14 +1,15 @@
 .balance-info-card {
-  margin-bottom: 26px;
+  margin-bottom: 12px;
   padding: 26px 42px;
-  color: var(--color-gray-blue);
-
+  border-color:  var(--color-green);
+  box-shadow: 0 1px 3px 0 var(--color-green);
   &.overdue {
-    color: var( --color-red-text);
+    border-color:  var(--color-red-text);
+    box-shadow: 0 1px 3px 0 var(--color-red-text);
   }
 
   .title {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
   }
 
@@ -18,7 +19,7 @@
 
     &-item {
       margin-top: 16px;
-      font-size: 40px;
+      font-size: 24px;
       font-weight: 700;
       line-height: 1;
     }
