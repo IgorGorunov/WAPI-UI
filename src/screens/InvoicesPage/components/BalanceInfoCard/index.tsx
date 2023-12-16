@@ -1,7 +1,7 @@
 import React from "react";
 import { BalanceInfoType } from "@/types/invoices";
-import {CURRENCY_SYMBOLS} from "@/constants/currency";
 import "./styles.scss";
+import getSymbolFromCurrency from "currency-symbol-map";
 
 type BalanceIfoCartPropsType = {
     title: string;
@@ -19,7 +19,7 @@ const BalanceInfoCard: React.FC<BalanceIfoCartPropsType> = (props) => {
     const isOverdue = type === "overdue";
     const Formatter = Intl.NumberFormat();
     const formatAmount = (amount: number, currency: string) => {
-        const currencySymbol = CURRENCY_SYMBOLS[currency.toUpperCase()] || '';
+        const currencySymbol = getSymbolFromCurrency(currency) || '';
         const debtAmount = Formatter.format(amount).replaceAll(",", " ");
 
         console.log("123", amount, currency);
