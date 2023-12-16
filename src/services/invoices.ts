@@ -34,13 +34,13 @@ const getInvoiceForm = async (
         const response: any = await axios.post(
             `${API_ENDPOINT}/GetInvoicePrintForm`,
             data,
-            {responseType: 'blob',} // Important for handling binary data
+            //{responseType: 'blob',} // Important for handling binary data
         );
 
-        // Create a Blob object from the binary data
-        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        //Create a Blob object from the binary data
+        //const blob = new Blob([response.data], { type: response.headers['content-type'] });
 
-        return blob;
+        return response;
     } catch (err) {
         console.error(err);
         return err;
