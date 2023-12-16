@@ -87,24 +87,41 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             //     await Router.push(Routes.Login);
             // }
 
-            const blob: Blob = await getInvoiceForm(
+            // const blob: Blob = await getInvoiceForm(
+            //     { token: token, uuid: uuid }
+            // );
+
+            const response = await getInvoiceForm(
                 { token: token, uuid: uuid }
             );
 
-            if (blob) {
-                // Create a link element
-                const link = document.createElement('a');
+            if (response && response.data) {
+                const files = response.data;
+                console.log("files", files)
+                if (files.length) {
+                    files.forEach(file => {
+                        // Convert base64 to Blob
+                        const byteCharacters = atob(file.data);
+                        const byteNumbers = new Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        const byteArray = new Uint8Array(byteNumbers);
+                        const blob = new Blob([byteArray], { type: 'application/pdf' });
 
-                // Set the download attribute and create a data URL
-                link.href = window.URL.createObjectURL(blob);
-                link.download = "invoice";
+                        // Create a download link
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = file.name;
 
-                // Append the link to the document and trigger a click event
-                document.body.appendChild(link);
-                link.click();
+                        // Append the link to the document and trigger a click event
+                        document.body.appendChild(link);
+                        link.click();
 
-                // Remove the link from the document
-                document.body.removeChild(link);
+                        // Remove the link from the document
+                        document.body.removeChild(link);
+                    });
+                }
 
             } else {
                 console.error("API did not return expected data");

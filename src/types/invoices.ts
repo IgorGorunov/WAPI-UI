@@ -22,9 +22,11 @@ export type InvoiceType = {
     currency: string;
     debt?: number;
     overdue?: number;
+    overdueLimit?: number;
  }
 
  export type InvoiceBalanceType = {
     debt?: BalanceInfoType[];
     overdue?: BalanceInfoType[];
+    overdueLimit?: BalanceInfoType[];
  }

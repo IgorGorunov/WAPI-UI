@@ -155,6 +155,11 @@ const InvoicesPage = () => {
                                 <BalanceInfoCard title={"Overdue"} type="overdue" balanceArray={invoiceBalance.overdue} />
                             </div>
                         ) : null}
+                        {invoiceBalance.overdueLimit ? (
+                            <div className='width-33 grid-col-33'>
+                                <BalanceInfoCard title={"Overdue limit"} type="overdueLimit" balanceArray={invoiceBalance.overdueLimit} />
+                            </div>
+                        ) : null}
                     </div>
                 ) : null}
                 {invoicesData && <InvoiceList invoices={invoicesData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredInvoices={setFilteredInvoices}/>}
