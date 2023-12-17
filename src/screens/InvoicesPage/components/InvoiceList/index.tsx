@@ -65,7 +65,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     };
 
     // Sorting
-    const [sortColumn, setSortColumn] = useState<keyof InvoiceType>('date');
+    const [sortColumn, setSortColumn] = useState<keyof InvoiceType>();
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof InvoiceType) => {
         setSortDirection(currentDirection =>
@@ -82,14 +82,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
     const handleDownloadInvoice = async (uuid) => {
         try {
-            //setIsLoading(true);
-            // if (!await verifyToken(token)) {
-            //     await Router.push(Routes.Login);
-            // }
-
-            // const blob: Blob = await getInvoiceForm(
-            //     { token: token, uuid: uuid }
-            // );
 
             const response = await getInvoiceForm(
                 { token: token, uuid: uuid }
@@ -111,7 +103,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                         // // Create a Blob
                         const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
 
-
                         // Create a download link
                         const link = document.createElement('a');
                         link.href = URL.createObjectURL(blob);
@@ -132,8 +123,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
         } catch (error) {
             console.error("Error fetching data:", error);
-        // } finally {
-        //     setIsLoading(false);
         }
     };
 
