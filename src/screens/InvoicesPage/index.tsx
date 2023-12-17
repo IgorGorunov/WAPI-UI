@@ -144,10 +144,10 @@ const InvoicesPage = () => {
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download invoices list</Button>
                 </Header>
                 {invoiceBalance ? (
-                    <div className="grid-row balance-info-block">
+                    <div className="grid-row balance-info-block has-cards-block">
                         {invoiceBalance.debt && invoiceBalance.debt.length ? (
                             <div className='width-33 grid-col-33'>
-                                <BalanceInfoCard title={"Total debt"} type="debt" balanceArray={invoiceBalance.debt} />
+                                <BalanceInfoCard title={"Total debt"} type="debt" balanceArray={invoiceBalance.debt} cardIcons />
                             </div>
                         ) : null}
                         {invoiceBalance.overdue && invoiceBalance.overdue.length ? (

@@ -46,6 +46,9 @@ import Exit from '@/assets/icons/exit.svg'
 import AddTableRow from '@/assets/icons/add-table-row.svg'
 import RemoveTableRow from '@/assets/icons/remove-table-row.svg'
 import Finances from '@/assets/icons/finances.svg'
+import Mastercard from '@/assets/icons/mastercard.svg'
+import Visa from '@/assets/icons/visa.svg'
+import Paypal from '@/assets/icons/paypal.svg'
 
 
 export const icons = {
@@ -95,6 +98,9 @@ export const icons = {
   'add-table-row': AddTableRow,
   'remove-table-row': RemoveTableRow,
   'finances': Finances,
+  'mastercard': Mastercard,
+  'visa': Visa,
+  'paypal': Paypal,
 };
 
 export type IconType = keyof typeof icons;

@@ -1,8 +1,17 @@
+@import "@/constants/devices.scss";
+
 .balance-info-card {
-  margin-bottom: 12px;
+  position: relative;
+  margin-bottom: 32px;
   padding: 26px 42px;
   border-color:  var(--color-green);
   box-shadow: 0 1px 3px 0 var(--color-green);
+
+  //&.has-cards {
+  //  @media (max-width: $upToTablet) {
+  //    margin-bottom: 32px;
+  //  }
+  //}
 
   &.overdue {
     border-color:  var(--color-red-text);
@@ -29,5 +38,16 @@
       font-weight: 700;
       line-height: 1;
     }
+  }
+
+  .payment-cards-icons__list {
+    position: absolute;
+    right: 30px;
+    bottom: -25px;
+
+    display: flex;
+    gap: 8px;
+
+    list-style: none;
   }
 }

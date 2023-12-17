@@ -100,14 +100,17 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 console.log("files", files)
                 if (files.length) {
                     files.forEach(file => {
-                        // Convert base64 to Blob
-                        const byteCharacters = atob(file.data);
-                        const byteNumbers = new Array(byteCharacters.length);
-                        for (let i = 0; i < byteCharacters.length; i++) {
-                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        const decodedData = atob(file.data);
+
+                        // Convert base64 to Uint8Array
+                        const arrayBuffer = new Uint8Array(decodedData.length);
+                        for (let i = 0; i < decodedData.length; i++) {
+                            arrayBuffer[i] = decodedData.charCodeAt(i);
                         }
-                        const byteArray = new Uint8Array(byteNumbers);
-                        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+                        // // Create a Blob
+                        const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+
 
                         // Create a download link
                         const link = document.createElement('a');
