@@ -13,6 +13,8 @@ import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {CodReportType} from "@/types/codReports";
 import {exportFileXLS} from "@/utils/files";
+import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
+import {DateRangeType} from "@/types/dashboard";
 
 const CodReportsPage = () => {
 
@@ -24,6 +26,11 @@ const CodReportsPage = () => {
     const [codReportsData, setCodReportsData] = useState<any | null>(null);
     const [filteredCodReports, setFilteredCodReports] = useState<CodReportType[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    //period
+    const today = new Date();
+    const firstDay = getFirstDayOfYear(today);
+    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 
     useEffect(() => {
         type ApiResponse = {
@@ -38,7 +45,7 @@ const CodReportsPage = () => {
                 }
 
                 const res: ApiResponse = await getCodReports(
-                    {token: token}
+                    {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
                 );
 
                 if (res && "data" in res) {
@@ -61,24 +68,24 @@ const CodReportsPage = () => {
     const handleAddInvoice = () => {
 
     }
-    const handleExportXLS = () => {
-        const filteredData = filteredCodReports.map(item => ({
-            sku: item.sku,
-            name: item.name,
-            warehouse: item.warehouse,
-            warehouseSku: item.warehouseSku,
-            country: item.country,
-            available: item.available,
-            reserved: item.reserved,
-            damaged: item.damaged,
-            expired: item.expired,
-            undefinedStatus: item.undefinedStatus,
-            withoutBox: item.withoutBox,
-            forPlacement: item.forPlacement,
-            total: item.total,
-        }));
-        exportFileXLS(filteredData, "Cod reports")
-    }
+    // const handleExportXLS = () => {
+    //     const filteredData = filteredCodReports.map(item => ({
+    //         sku: item.sku,
+    //         name: item.name,
+    //         warehouse: item.warehouse,
+    //         warehouseSku: item.warehouseSku,
+    //         country: item.country,
+    //         available: item.available,
+    //         reserved: item.reserved,
+    //         damaged: item.damaged,
+    //         expired: item.expired,
+    //         undefinedStatus: item.undefinedStatus,
+    //         withoutBox: item.withoutBox,
+    //         forPlacement: item.forPlacement,
+    //         total: item.total,
+    //     }));
+    //     exportFileXLS(filteredData, "Cod reports")
+    // }
 
     return (
         <Layout hasHeader hasFooter>
@@ -100,9 +107,9 @@ const CodReportsPage = () => {
                     </div>
                 )}
                 <Header pageTitle='Cod reports' toRight >
-                    {/*<Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>*/}
+                    {/*<Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download COD reports list</Button>*/}
                 </Header>
-                {codReportsData && <CodReportsList codReports={codReportsData} setFilteredCodReports={setFilteredCodReports}/>}
+                {codReportsData && <CodReportsList codReports={codReportsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod}  setFilteredCodReports={setFilteredCodReports}/>}
             </div>
         </Layout>
     )

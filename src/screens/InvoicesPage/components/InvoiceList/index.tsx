@@ -5,7 +5,7 @@ import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import {InvoiceType} from "@/types/invoices";
-import StatusWarehouseSelector from "@/components/InputSelect";
+import StatusSelector from "@/components/InputSelect";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
@@ -439,9 +439,9 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="warehouse-filter-container">
+            <div className="status-filter-container">
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
-                <StatusWarehouseSelector
+                <StatusSelector
                     options={transformedStatuses}
                     value={filterStatus}
                     onChange={(value: string) => handleFilterChange(undefined, value)}

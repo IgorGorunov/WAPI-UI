@@ -5,21 +5,24 @@ import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { CodReportType } from "@/types/codReports";
-import StatusWarehouseSelector from "@/components/InputSelect";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
 import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
-import {GetFilterArray} from '@/utils/common';
+import getSymbolFromCurrency from "currency-symbol-map";
+import {DateRangeType} from "@/types/dashboard";
+import DateInput from "@/components/DateInput";
 
 type CodReportsListType = {
     codReports: CodReportType[];
+    currentRange: DateRangeType;
+    setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
     setFilteredCodReports: React.Dispatch<React.SetStateAction<CodReportType[]>>;
 }
 
-const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodReports}) => {
+const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, setCurrentRange, setFilteredCodReports}) => {
 
     const [animating, setAnimating] = useState(false);
 
@@ -39,7 +42,7 @@ const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodRe
     };
 
     // Sorting
-    const [sortColumn, setSortColumn] = useState<keyof CodReportType>('name');
+    const [sortColumn, setSortColumn] = useState<keyof CodReportType>();
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof CodReportType) => {
         setSortDirection(currentDirection =>
@@ -51,18 +54,13 @@ const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodRe
 
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterWarehouse, setFilterWarehouse] = useState('');
-    const transformedWarehouses= GetFilterArray(codReports, 'warehouse', 'All warehouses');
 
     const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
         if (newSearchTerm !== undefined) {
             setSearchTerm(newSearchTerm);
         }
-        if (newStatusFilter !== undefined) {
-            setFilterWarehouse(newStatusFilter);
-        }
     };
-    const filteredInvoices = useMemo(() => {
+    const filteredCODReports = useMemo(() => {
         setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
         const filtered = codReports.filter(product => {
@@ -70,8 +68,7 @@ const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodRe
                 const value = product[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
-            const matchesStatus = !filterWarehouse || product.warehouse === filterWarehouse;
-            return matchesSearch && matchesStatus;
+            return matchesSearch;
         });
 
         if (sortColumn) {
@@ -84,52 +81,107 @@ const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodRe
             });
         }
         return filtered;
-    }, [codReports, searchTerm, filterWarehouse, sortColumn, sortDirection]);
+    }, [codReports, searchTerm, sortColumn, sortDirection]);
 
-    // useEffect(() => {
-    //     setFilteredInvoices(filteredInvoices)
-    // }, [filteredInvoices]);
+    const [showDatepicker, setShowDatepicker] = useState(false);
+
+    useEffect(() => {
+        setFilteredCodReports(filteredCODReports)
+    }, [filteredCODReports]);
+
+    const handleDateRangeSave = (newRange) => {
+        setCurrentRange(newRange);
+        setShowDatepicker(false);
+    };
 
     const columns: ColumnType<CodReportType>[] = useMemo(() => [
         {
-            title: <TitleColumn title="" minWidth="15px" maxWidth="15px" contentPosition="center"
+            title: <TitleColumn
+                title="Number"
+                minWidth="80px"
+                maxWidth="150px"
+                contentPosition="start"
             />,
             render: (text: string) => (
-                <TableCell
-                    minWidth="15px"
-                    maxWidth="15px"
-                    contentPosition="center"
-                    childrenBefore={<span className={`fi fi-${text.toLowerCase()} "flag-icon"`}></span>}>
-                </TableCell>
+                <TableCell value={text} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
             ),
-            dataIndex: 'country',
-            key: 'country',
+            dataIndex: 'number',
+            key: 'number',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
+            }),
         },
         {
             title: <TitleColumn
-                title=""
-                minWidth="30px"
-                maxWidth="30px"
+                title="Date"
+                minWidth="80px"
+                maxWidth="150px"
                 contentPosition="start"
-                childrenBefore={<Icon name={"warehouse"}/>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
             ),
-            dataIndex: 'warehouse',
-            key: 'warehouse',
+            dataIndex: 'date',
+            key: 'date',
             sorter: true,
             onHeaderCell: (column: ColumnType<CodReportType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
         },
         {
-            title: <TitleColumn title="SKU" minWidth="80px" maxWidth="120px" contentPosition="start"/>,
+            title: <TitleColumn
+                title="Amount"
+                minWidth="100px"
+                maxWidth="100px"
+                contentPosition="start"
+            />,
+            render: (text: string, record) => {
+                const isNegative = parseFloat(text) < 0;
+                const textColor = isNegative ? 'red' : undefined;
+                if (record.currency) {
+                    const currencySymbol = getSymbolFromCurrency(record.currency);
+                    return (
+                        <TableCell
+                            value={`${text} ${currencySymbol}`}
+                            minWidth="100px"
+                            maxWidth="200px"
+                            contentPosition="start"
+                            textColor={textColor}
+                        >
+                        </TableCell>
+                    );
+                } else {
+                    return (
+                        <TableCell
+                            value={'-'}
+                            minWidth="100px"
+                            maxWidth="200px"
+                            contentPosition="start"
+                            textColor={textColor}>
+                        </TableCell>
+                    );
+                }
+            },
+            dataIndex: 'amount',
+            key: 'amount',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
+            }),
+        },
+        {
+            title: <TitleColumn
+                title="Period"
+                minWidth="80px"
+                maxWidth="150px"
+                contentPosition="start"
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="120px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
             ),
-            dataIndex: 'warehouseSku',
-            key: 'warehouseSku',
+            dataIndex: 'period',
+            key: 'period',
             sorter: true,
             onHeaderCell: (column: ColumnType<CodReportType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
@@ -137,121 +189,30 @@ const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodRe
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Name" minWidth="150px" maxWidth="500px"  contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="150px" maxWidth="500px"  contentPosition="start"/>
+             title: <TitleColumn title="" minWidth="100px" maxWidth="800px" contentPosition="end"/>,
+            render: (text: string, record: CodReportType) => (
+                <TableCell
+                    minWidth="100px"
+                    maxWidth="800px"
+                    contentPosition="end"
+                    childrenBefore={
+                        <span className="lines-cell-style">
+                        <Icon name="download-file" />
+                        </span>}>
+                </TableCell>
             ),
-            dataIndex: 'name',
-            key: 'name',
+            dataIndex: 'uuid',
+            key: 'uuid',
             sorter: true,
             onHeaderCell: (column: ColumnType<CodReportType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
-        },
-        {
-            title: <TitleColumn title="Available" minWidth="40px" maxWidth="40px"  contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="center"/>
-            ),
-            dataIndex: 'available',
-            key: 'available',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<CodReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
-            }),
-        },
-
-
-        {
-            title: <TitleColumn title="Reserve" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'reserved',
-            key: 'reserved',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<CodReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
-            }),
-            responsive: ['md'],
-        },
-        {
-            title: <TitleColumn title="Damaged" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'damaged',
-            key: 'damaged',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<CodReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
-            }),
+            // onCell: (record) => {
+            //     // return {
+            //     //     onClick: () => {handleDownloadInvoice(record.uuid)}
+            //     // };
+            // },
             responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Expired" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'expired',
-            key: 'expired',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<CodReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Undefined status" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'undefinedStatus',
-            key: 'undefinedStatus',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<CodReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Without box" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'withoutBox',
-            key: 'withoutBox',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<CodReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Returning" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'forPlacement',
-            key: 'forPlacement',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<CodReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Total" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'total',
-            key: 'total',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<CodReportType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
-            }),
-            responsive: ['md'],
         },
     ], [handleHeaderCellClick]);
     return (
@@ -262,12 +223,8 @@ const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodRe
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="warehouse-filter-container">
-                <StatusWarehouseSelector
-                    options={transformedWarehouses}
-                    value={filterWarehouse}
-                    onChange={(value: string) => handleFilterChange(undefined, value)}
-                />
+            <div className="date-filter-container">
+                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}
@@ -285,7 +242,7 @@ const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodRe
             </div>
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '}`}>
                 <Table
-                    dataSource={filteredInvoices.slice((current - 1) * pageSize, current * pageSize).map(item => ({
+                    dataSource={filteredCODReports.slice((current - 1) * pageSize, current * pageSize).map(item => ({
                         ...item,
                         key: item.tableKey,
                     }))}
@@ -299,7 +256,7 @@ const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodRe
                     current={current}
                     pageSize={pageSize}
                     onChange={handleChangePage}
-                    total={filteredInvoices.length}
+                    total={filteredCODReports.length}
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
@@ -308,4 +265,4 @@ const InvoiceList: React.FC<CodReportsListType> = ({codReports, setFilteredCodRe
     );
 };
 
-export default React.memo(InvoiceList);
+export default React.memo(CODReportsList);
