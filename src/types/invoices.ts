@@ -22,7 +22,7 @@ export type InvoiceType = {
     currency: string;
     debt?: number;
     overdue?: number;
-    overdueLimit?: number;
+    limit?: number;
  }
 
  export type InvoiceBalanceType = {

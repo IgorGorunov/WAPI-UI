@@ -30,7 +30,7 @@ const BalanceInfoCard: React.FC<BalanceIfoCartPropsType> = (props) => {
 
     return (
         <div
-            className={`card balance-info-card ${isOverdue ? "overdue" : ""}`}
+            className={`card balance-info-card ${type}`}
         >
             <div className="balance-info-card__wrapper">
                 <h4 className="title">{title}</h4>

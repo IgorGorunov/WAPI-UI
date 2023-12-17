@@ -157,7 +157,7 @@ const InvoicesPage = () => {
                         ) : null}
                         {invoiceBalance.overdueLimit ? (
                             <div className='width-33 grid-col-33'>
-                                <BalanceInfoCard title={"Overdue limit"} type="overdueLimit" balanceArray={invoiceBalance.overdueLimit} />
+                                <BalanceInfoCard title={"Overdue limit"} type="limit" balanceArray={invoiceBalance.overdueLimit} />
                             </div>
                         ) : null}
                     </div>
