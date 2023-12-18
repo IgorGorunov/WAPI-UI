@@ -178,14 +178,13 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
 
     const productOptions = useMemo(() =>{
         const prodOptions = amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
-        console.log('prodOptions', prodOptions)
         return prodOptions;
     },[amazonPrepOrderParameters]);
 
     const carrierType = watch('carrierType');
 
     useEffect(() => {
-        console.log("carrier type changed:", carrierType)
+
     }, [carrierType]);
 
     const getProductColumns = (control: any) => {

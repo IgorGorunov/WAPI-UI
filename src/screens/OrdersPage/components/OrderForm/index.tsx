@@ -664,8 +664,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
     const onError = (props: any) => {
 
-        console.log('error props:', props);
-
         const fieldNames = Object.keys(props);
 
         if (fieldNames.length > 0) {

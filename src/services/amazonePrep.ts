@@ -45,31 +45,6 @@ const getSingleAmazonPrepData = async (
     }
 };
 
-// const getSingleAmazonPrepData = async (
-//     //token: string,
-//     data: {
-//         uuid: string;
-//         token: string;
-//     }
-// ) => {
-//     try {
-//         const response = await fetch('https://api.example.com/data');
-//
-//         // Check if the request was successful (status code 2xx)
-//         if (!response.ok) {
-//             throw new Error(`Error: ${response.status} - ${response.statusText}`);
-//         }
-//
-//         // Parse the JSON response
-//         const data: any = await response.json();
-//         console.log("data:", data)
-//         return data;
-//     } catch (error) {
-//         console.error('Error fetching data:', error);
-//         throw error; // Rethrow the error to handle it elsewhere if needed
-//     }
-// };
-
 
 const getAmazonPrepParameters = async (
 
@@ -82,46 +57,13 @@ const getAmazonPrepParameters = async (
             `${API_ENDPOINT}/GetAmazonPrepParameters`,
             data
         );
-        console.log("params:", ress);
+
         return ress
     } catch (err) {
         console.error(err);
         return err;
     }
 };
-
-// const getAmazonPrepParameters = async (
-//
-//     data: {
-//         token: string;
-//     }
-// ) => {
-//     const requestOptions = {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify(data)
-//     };
-//     try {
-//
-//         const response = await fetch(`${API_ENDPOINT}/GetAmazonPrepParameters`, requestOptions)
-//         if (!response.ok) {
-//             throw new Error(`Error: ${response.status} - ${response.statusText}`);
-//         }
-//         //console.log('data 0:', response);
-//         // Parse the JSON response
-//         const data: any = await response.json();
-//         //console.log("data:", data);
-//         return data;
-//         // return await axios.post(
-//         //     `${API_ENDPOINT}/GetAmazonPrepParameters`,
-//         //     data
-//         // );;
-//     } catch (err) {
-//         console.error(err);
-//         return err;
-//     }
-// };
-
 
 const sendAmazonPrepData = async (
     data: {

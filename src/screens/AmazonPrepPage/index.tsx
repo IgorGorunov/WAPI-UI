@@ -141,7 +141,7 @@ const AmazonPrepPage = () => {
     }, [showAmazonPrepOrderModal]);
 
     const handleEditAmazonPrepOrder = async (uuid: string) => {
-        console.log('uuid:', uuid);
+
         //setAmazonPrepOrderParameters(null);
         setIsAmazonPrepNew(false);
         setSingleAmazonPrepOrder(null);

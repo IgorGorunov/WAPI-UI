@@ -86,7 +86,6 @@ const CodReportsPage = () => {
                 );
 
                 if (res && "data" in res) {
-                    console.log("debt:", res.data);
                     setCODIndicators(res.data);
 
                 } else {

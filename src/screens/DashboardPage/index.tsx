@@ -116,8 +116,6 @@ const DashboardPage: React.FC = () => {
       ? pageData.orderByCountryDeparture
       : null;
 
-  console.log("dashboard: ", pageData);
-
   return (
       <Layout hasHeader hasFooter>
         <div className="dashboard-page__container">

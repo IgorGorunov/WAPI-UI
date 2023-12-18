@@ -96,7 +96,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
             if (response && response.data) {
                 const files = response.data;
-                console.log("files", files)
                 if (files.length) {
                     files.forEach(file => {
                         const decodedData = atob(file.data);

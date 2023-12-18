@@ -25,11 +25,10 @@ const BalanceInfoCard: React.FC<BalanceIfoCartPropsType> = (props) => {
         const currencySymbol = getSymbolFromCurrency(currency) || '';
         const debtAmount = Formatter.format(amount).replaceAll(",", ".");
 
-        console.log("123", amount, currency);
         return `${currencySymbol} ${debtAmount}`;
     }
 
-    console.log("props",props);
+
 
     return (
         <div

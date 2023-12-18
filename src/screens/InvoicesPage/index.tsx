@@ -87,7 +87,6 @@ const InvoicesPage = () => {
                 );
 
                 if (res && "data" in res) {
-                    console.log("debt:", res.data);
                     setInvoiceBalance(res.data);
 
                 } else {
