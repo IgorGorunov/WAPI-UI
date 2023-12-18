@@ -92,6 +92,7 @@ const InvoicesPage = () => {
 
                 } else {
                     console.error("API did not return expected data");
+                    setIsLoading(false);
                 }
 
             } catch (error) {
@@ -103,7 +104,7 @@ const InvoicesPage = () => {
 
         fetchDebtData();
 
-    }, []);
+    }, [token, curPeriod]);
 
 
     const handleExportXLS = () => {
@@ -147,7 +148,7 @@ const InvoicesPage = () => {
                     <div className="grid-row balance-info-block has-cards-block">
                         {invoiceBalance.debt && invoiceBalance.debt.length ? (
                             <div className='width-33 grid-col-33'>
-                                <BalanceInfoCard title={"Total debt"} type="debt" balanceArray={invoiceBalance.debt} cardIcons />
+                                <BalanceInfoCard title={"Total debt"} type="debt" balanceArray={invoiceBalance.debt} />
                             </div>
                         ) : null}
                         {invoiceBalance.overdue && invoiceBalance.overdue.length ? (

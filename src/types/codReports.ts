@@ -8,3 +8,15 @@ export type CodReportType = {
     currency: string;
     ordersCount:number,
 }
+
+
+export type CODIndicatorType = {
+    currency: string;
+    amount: number;
+}
+
+export type CODIndicatorsType = {
+    yearAmount?: CODIndicatorType[];
+    monthAmount?: CODIndicatorType[];
+    currentAmount?: CODIndicatorType[];
+}

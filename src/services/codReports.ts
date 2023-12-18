@@ -48,4 +48,24 @@ const getCODReportForm = async (
     }
 };
 
-export { getCodReports, getCODReportForm};
+const getCODIndicators = async (
+    data: {
+        token: string;
+        startDate: string;
+        endDate: string;
+    }
+) => {
+    try {
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/GetCODIndicators`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+export { getCodReports, getCODReportForm, getCODIndicators};

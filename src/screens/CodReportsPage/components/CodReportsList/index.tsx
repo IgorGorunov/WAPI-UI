@@ -160,11 +160,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             title: <TitleColumn
                 title="Number"
                 minWidth="80px"
-                maxWidth="150px"
+                maxWidth="80px"
                 contentPosition="start"
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
             dataIndex: 'number',
             key: 'number',
@@ -234,12 +234,12 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         {
             title: <TitleColumn
                 title="Period"
-                minWidth="80px"
-                maxWidth="150px"
+                minWidth="150px"
+                maxWidth="200px"
                 contentPosition="start"
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="150px" maxWidth="200px"  contentPosition="start"/>
             ),
             dataIndex: 'period',
             key: 'period',

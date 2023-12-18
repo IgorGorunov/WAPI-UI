@@ -33,6 +33,7 @@ export const StatusColors = {
     "Unpaid": "#FEDB4F",
     "Partiallity paid": "#5380F5",
     "Overdue": "#FF4000",
+    "Overpaid": "#29CC39",
 };
 
 type InvoiceListType = {
@@ -81,7 +82,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState('');
+    const [filterStatus, setFilterStatus] = useState('Active only');
     const transformedStatuses= GetFilterArray(invoices, 'status', 'All statuses');
     transformedStatuses.splice(1,0, {value:"Active only", label:"Active only"});
 
@@ -171,7 +172,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
     const handleDateRangeSave = (newRange) => {
         setCurrentRange(newRange);
-        console.log('range:', newRange)
         setShowDatepicker(false);
     };
 
@@ -261,7 +261,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
-                const textColor = isNegative && record.debt !== 0 ? 'green' : undefined;
+                const textColor = isNegative && record.debt !== 0 ? '#29CC39' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
                     return (
@@ -338,7 +338,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
-                const textColor = isNegative && record.debt !== 0 ? 'green' : undefined;
+                const textColor = isNegative && record.debt !== 0 ? '#29CC39' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
                     return (
@@ -380,7 +380,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
-                const textColor = isNegative && record.debt !== 0 ? 'green' : undefined;
+                const textColor = isNegative && record.debt !== 0 ? '#29CC39' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
                     return (

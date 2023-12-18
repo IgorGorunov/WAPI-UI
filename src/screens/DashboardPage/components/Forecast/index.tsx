@@ -32,14 +32,14 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
         ",",
         " "
     ),
-    beginOfYear: Formatter.format(Math.floor(beginOfYear)).replaceAll(",", " "),
+    beginOfYear: Formatter.format(Math.floor(beginOfYear)).replaceAll(",", "."),
     forecastByMonth: Formatter.format(Math.floor(forecastByMonth)).replaceAll(
         ",",
         " "
     ),
     forecastByYear: Formatter.format(Math.floor(forecastByYear)).replaceAll(
         ",",
-        " "
+        "."
     ),
   };
 
@@ -51,7 +51,7 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
             <h4 className="title">{isGMV ? "GMV" : "Orders"}</h4>
             <p className="forecast__main-amount">
               {amountPrefix}
-              {Formatter.format(Math.floor(amountInPeriod)).replaceAll(",", " ")}
+              {Formatter.format(Math.floor(amountInPeriod)).replaceAll(",", ".")}
             </p>
             <p className="mb">In period</p>
             <div className="">
