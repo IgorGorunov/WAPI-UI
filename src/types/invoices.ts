@@ -7,7 +7,7 @@ export type InvoiceType = {
     dueDate: string,
     amount: number,
     currency: string,
-    payd: number,
+    paid: number,
     debt: number,
     overdue: string,
     services: {

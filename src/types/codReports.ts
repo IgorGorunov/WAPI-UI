@@ -6,4 +6,5 @@ export type CodReportType = {
     amount: number,
     period: string,
     currency: string;
+    ordersCount:number,
 }

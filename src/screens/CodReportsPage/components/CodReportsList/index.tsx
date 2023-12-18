@@ -14,6 +14,11 @@ import {PageOptions} from '@/constants/pagination';
 import getSymbolFromCurrency from "currency-symbol-map";
 import {DateRangeType} from "@/types/dashboard";
 import DateInput from "@/components/DateInput";
+import {getCODReportForm} from "@/services/codReports";
+import {useRouter} from "next/router";
+import useAuth from "@/context/authContext";
+import Cookie from "js-cookie";
+import Skeleton from "@/components/Skeleton/Skeleton";
 
 type CodReportsListType = {
     codReports: CodReportType[];
@@ -25,6 +30,13 @@ type CodReportsListType = {
 const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, setCurrentRange, setFilteredCodReports}) => {
 
     const [animating, setAnimating] = useState(false);
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const Router = useRouter();
+    const { token, setToken } = useAuth();
+    const savedToken = Cookie.get('token');
+    if (savedToken) setToken(savedToken);
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -93,6 +105,55 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         setCurrentRange(newRange);
         setShowDatepicker(false);
     };
+
+    const handleDownloadCORReport = async (uuid) => {
+       setIsLoading(true);
+        try {
+
+            const response = await getCODReportForm(
+                { token: token, uuid: uuid }
+            );
+
+            if (response && response.data) {
+                const files = response.data;
+                if (files.length) {
+                    files.forEach(file => {
+                        const decodedData = atob(file.data);
+
+                        // Convert base64 to Uint8Array
+                        const arrayBuffer = new Uint8Array(decodedData.length);
+                        for (let i = 0; i < decodedData.length; i++) {
+                            arrayBuffer[i] = decodedData.charCodeAt(i);
+                        }
+
+                        // // Create a Blob
+                        const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+
+                        // Create a download link
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = file.name;
+
+                        // Append the link to the document and trigger a click event
+                        document.body.appendChild(link);
+                        link.click();
+
+                        // Remove the link from the document
+                        document.body.removeChild(link);
+                    });
+                }
+                setIsLoading(false);
+            } else {
+                console.error("API did not return expected data");
+                setIsLoading(false);
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setIsLoading(false);
+        }
+    };
+
 
     const columns: ColumnType<CodReportType>[] = useMemo(() => [
         {
@@ -189,6 +250,24 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             responsive: ['md'],
         },
         {
+            title: <TitleColumn
+                title="Orders count"
+                minWidth="80px"
+                maxWidth="150px"
+                contentPosition="start"
+            />,
+            render: (text: string) => (
+                <TableCell value={text} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
+            ),
+            dataIndex: 'ordersCount',
+            key: 'ordersCount',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
+            }),
+            responsive: ['md'],
+        },
+        {
              title: <TitleColumn title="" minWidth="100px" maxWidth="800px" contentPosition="end"/>,
             render: (text: string, record: CodReportType) => (
                 <TableCell
@@ -207,16 +286,32 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             onHeaderCell: (column: ColumnType<CodReportType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
-            // onCell: (record) => {
-            //     // return {
-            //     //     onClick: () => {handleDownloadInvoice(record.uuid)}
-            //     // };
-            // },
+            onCell: (record) => {
+                return {
+                    onClick: () => {handleDownloadCORReport(record.uuid)}
+                };
+            },
             responsive: ['lg'],
         },
     ], [handleHeaderCellClick]);
     return (
         <div className='table'>
+            {isLoading && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    zIndex: 1000
+                }}>
+                    <Skeleton type="round" width="500px" height="300px" />
+                </div>
+            )}
             <Head>
                 <title>Cod reports</title>
                 <meta name="cod reports" content="cod" />

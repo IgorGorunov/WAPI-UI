@@ -25,4 +25,27 @@ const getCodReports = async (
     }
 };
 
-export { getCodReports };
+const getCODReportForm = async (
+    data: {
+        token: string;
+        uuid: string;
+    }
+) => {
+    try {
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/GetCODReportPrintForm`,
+            data,
+            //{responseType: 'blob',} // Important for handling binary data
+        );
+
+        //Create a Blob object from the binary data
+        //const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+export { getCodReports, getCODReportForm};

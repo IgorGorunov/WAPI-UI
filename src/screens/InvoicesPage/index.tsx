@@ -114,7 +114,7 @@ const InvoicesPage = () => {
             dueDate: item.dueDate,
             amount: item.amount,
             currency: item.currency,
-            payd: item.payd,
+            paid: item.paid,
             debt: item.debt,
             overdue: item.overdue,
         }));

@@ -24,10 +24,12 @@ import {ApiResponseType} from "@/types/api";
 import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Cookie from "js-cookie";
+import Skeleton from "@/components/Skeleton/Skeleton";
 
 
 export const StatusColors = {
-    "Payd": "#29CC39",
+    "Paid": "#29CC39",
+    "Credit note": "#5380F5",
     "Unpaid": "#FEDB4F",
     "Partiallity paid": "#5380F5",
     "Overdue": "#FF4000",
@@ -43,6 +45,8 @@ type InvoiceListType = {
 const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurrentRange, setFilteredInvoices}) => {
 
     const [animating, setAnimating] = useState(false);
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const Router = useRouter();
     const { token, setToken } = useAuth();
@@ -79,8 +83,10 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
     const transformedStatuses= GetFilterArray(invoices, 'status', 'All statuses');
+    transformedStatuses.splice(1,0, {value:"Active only", label:"Active only"});
 
     const handleDownloadInvoice = async (uuid) => {
+        setIsLoading(true);
         try {
 
             const response = await getInvoiceForm(
@@ -116,13 +122,15 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                         document.body.removeChild(link);
                     });
                 }
-
+            setIsLoading(false);
             } else {
                 console.error("API did not return expected data");
+                setIsLoading(false);
             }
 
         } catch (error) {
             console.error("Error fetching data:", error);
+            setIsLoading(false);
         }
     };
 
@@ -142,7 +150,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 const value = invoice[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
-            const matchesStatus = !filterStatus || invoice.status === filterStatus;
+            const matchesStatus = (!filterStatus || invoice.status === filterStatus) || (filterStatus === 'Active only' && invoice.debt !== 0);
+
             return matchesSearch && matchesStatus;
         });
 
@@ -252,7 +261,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
-                const textColor = isNegative ? 'red' : undefined;
+                const textColor = isNegative && record.debt !== 0 ? 'green' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
                     return (
@@ -322,14 +331,14 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         },
         {
             title: <TitleColumn
-                title="Payd"
+                title="Paid"
                 minWidth="75px"
                 maxWidth="75px"
                 contentPosition="start"
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
-                const textColor = isNegative ? 'red' : undefined;
+                const textColor = isNegative && record.debt !== 0 ? 'green' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
                     return (
@@ -353,8 +362,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     );
                 }
             },
-            dataIndex: 'payd',
-            key: 'payd',
+            dataIndex: 'paid',
+            key: 'paid',
             sorter: true,
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
@@ -371,7 +380,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
-                const textColor = isNegative ? 'red' : undefined;
+                const textColor = isNegative && record.debt !== 0 ? 'green' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
                     return (
@@ -433,6 +442,22 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     ], [handleHeaderCellClick]);
     return (
         <div className='table'>
+            {isLoading && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    zIndex: 1000
+                }}>
+                    <Skeleton type="round" width="500px" height="300px" />
+                </div>
+            )}
             <Head>
                 <title>Invoices</title>
                 <meta name="invoices" content="invoices" />
