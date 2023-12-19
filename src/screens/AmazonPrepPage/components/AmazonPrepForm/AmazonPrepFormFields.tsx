@@ -65,7 +65,8 @@ export const GeneralFields = (newObject) => [
 
 export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions, carrierDisabled, carrierTypeOptions, multipleLocations=false}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]; carrierDisabled: boolean; carrierTypeOptions: OptionType[]; multipleLocations?: boolean;}) => [
     {
-        isGrid: true,
+        name: 'grid-1',
+        fieldType: FormFieldTypes.GRID,
         width: WidthType.w50,
         fields: [{
             fieldType: FormFieldTypes.TEXT,
@@ -87,6 +88,8 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         }]
     },
     {
+        fieldType: FormFieldTypes.GRID,
+        name: 'grid-2',
         isGrid: true,
         width: WidthType.w50,
         fields: [

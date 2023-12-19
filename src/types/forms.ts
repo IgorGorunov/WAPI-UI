@@ -11,6 +11,7 @@ export const enum FormFieldTypes {
   RADIO = 'radio-switch',
   OTHER = 'other',
   TOGGLE = 'toggle-switch',
+  GRID = 'grid',
 }
 
 export type TextFieldType = string
@@ -92,10 +93,9 @@ export type FieldPropsType = {
   needToasts?: boolean;
   otherComponent?: any;
   isDisplayed?: boolean;
-  isGrid?: boolean;
-  fields?: FormBuilderType[];
 }
 
 export type FormBuilderType = FieldPropsType & {
-  fieldType: FormFieldTypes
+  fieldType: FormFieldTypes;
+  fields?: FormBuilderType[];
 }
