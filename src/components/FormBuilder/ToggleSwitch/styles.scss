@@ -1,0 +1,116 @@
+.toggle-switch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  text-align: left;
+
+  &-checkbox {
+    display: none;
+  }
+
+  &-label {
+    position: relative;
+    display: block;
+    width: 40px;
+    height: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 0 solid var(--color-gray);
+    border-radius: 20px;
+    margin: 0;
+
+    &-text {
+      display: flex;
+      align-items: center;
+      margin-left: 16px;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--color-gray-blue);
+    }
+  }
+
+  &-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+
+    &:before,
+    &:after {
+      display: block;
+      float: left;
+      width: 50%;
+      height: 20px;
+      padding: 0;
+      line-height: 20px;
+      font-size: 14px;
+      color: white;
+      font-weight: bold;
+      box-sizing: border-box;
+    }
+
+    &:before {
+      content: attr(data-yes);
+      background-color: var(--color-blue);
+      color: var(--color-white);
+    }
+  }
+
+  &-disabled {
+    background-color: var(--color-light-gray);
+    cursor: not-allowed;
+
+    &:before {
+      background-color: var(--color-light-gray);
+      cursor: not-allowed;
+    }
+  }
+
+  &-inner:after {
+    content: attr(data-no);
+    background-color: var(--color-medium-gray);
+    color: #fff;
+    text-align: right;
+  }
+
+  &-switch {
+    display: block;
+    width: 14px;
+    margin: 3px;
+    background: var(--color-white);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 20px;
+    border: 0 solid #ccc;
+    border-radius: 50%;
+    transition: all 0.3s ease-in 0s;
+  }
+
+  &-checkbox:checked + &-label {
+    .toggle-switch-inner {
+      margin-left: 0;
+    }
+
+    .toggle-switch-switch {
+      right: 0;
+    }
+  }
+
+
+
+  //@media screen and (max-width: 991px) {
+  //  transform: scale(0.9);
+  //}
+  //
+  //@media screen and (max-width: 767px) {
+  //  transform: scale(0.825);
+  //}
+  //
+  //@media screen and (max-width: 575px) {
+  //  transform: scale(0.75);
+  //}
+}

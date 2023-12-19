@@ -1,5 +1,4 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
-import {PRODUCT} from "@/screens/ProductsPage/components/ProductForm/ProductFormFields";
 
 export const GeneralFields = (newObject) => [
     {
@@ -66,41 +65,50 @@ export const GeneralFields = (newObject) => [
 
 export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions, carrierDisabled, carrierTypeOptions, multipleLocations=false}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]; carrierDisabled: boolean; carrierTypeOptions: OptionType[]; multipleLocations?: boolean;}) => [
     {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'asnNumber',
-        label: 'ASN',
-        placeholder: "",
-        rules: {
-            required: "Required field",
+        isGrid: true,
+        width: WidthType.w50,
+        fields: [{
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: 'asnNumber',
+            label: 'ASN',
+            placeholder: "",
+            rules: {
+                required: "Required field",
+            },
+            width: WidthType.autoGrow,
+            classNames: "",
         },
-        width: WidthType.w33,
-        classNames: "",
+        {
+            fieldType:FormFieldTypes.RADIO,
+            name: 'deliveryMethod',
+            options: deliveryMethodOptions,
+            width: WidthType.autoNoGrow,
+        }]
     },
     {
-        fieldType:FormFieldTypes.RADIO,
-        name: 'deliveryMethod',
-        options: deliveryMethodOptions,
-        width: WidthType.w17,
-    },
+        isGrid: true,
+        width: WidthType.w50,
+        fields: [
 
             {
                 fieldType:FormFieldTypes.RADIO,
                 name: 'carrierType',
                 options: carrierTypeOptions,
-                width: WidthType.w33,
-                classNames: 'flex-auto',
+                width: WidthType.autoNoGrow,
+                //classNames: 'flex-auto',
             },
 
             {
-                fieldType: FormFieldTypes.CHECKBOX,
+                fieldType: FormFieldTypes.TOGGLE,
                 name: 'prepackedMasterBox',
                 label: "Prepacked master box",
-                width: WidthType.w17,
+                width: WidthType.autoGrow,
                 classNames: 'prepacked-checkbox',
             //disabled: multipleLocations,
-            },
-
+            }
+        ]
+    },
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",

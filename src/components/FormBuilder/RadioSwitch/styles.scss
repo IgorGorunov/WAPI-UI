@@ -3,6 +3,10 @@
   align-items: center;
   padding-bottom: 12px;
 
+  &__wrapper {
+    align-self: flex-end;
+  }
+
   &__option {
     //flex: 1 0 30px;
     margin: 0 1px;

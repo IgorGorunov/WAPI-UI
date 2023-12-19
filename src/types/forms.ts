@@ -10,6 +10,7 @@ export const enum FormFieldTypes {
   CHECKBOX = 'checkbox',
   RADIO = 'radio-switch',
   OTHER = 'other',
+  TOGGLE = 'toggle-switch',
 }
 
 export type TextFieldType = string
@@ -57,6 +58,8 @@ export const enum WidthType {
   w67 = '67',
   w25 = '25',
   w17 = '17',
+  autoGrow = 'auto-grow',
+  autoNoGrow = 'auto-no-grow',
 }
 
 export type FieldPropsType = {
@@ -89,6 +92,8 @@ export type FieldPropsType = {
   needToasts?: boolean;
   otherComponent?: any;
   isDisplayed?: boolean;
+  isGrid?: boolean;
+  fields?: FormBuilderType[];
 }
 
 export type FormBuilderType = FieldPropsType & {
