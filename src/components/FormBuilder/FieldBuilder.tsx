@@ -8,6 +8,7 @@ import SingleDateInput from "./SingleDateInput";
 import Checkbox from "./Checkbox";
 import RadioSwitch from "./RadioSwitch";
 import Other from './Other';
+import ToggleSwitch from './ToggleSwitch';
 
 const formComponentsMap = {
   [FormFieldTypes.TEXT]: TextField,
@@ -17,6 +18,7 @@ const formComponentsMap = {
   [FormFieldTypes.CHECKBOX]: Checkbox,
   [FormFieldTypes.RADIO]: RadioSwitch,
   [FormFieldTypes.OTHER]: Other,
+  [FormFieldTypes.TOGGLE]: ToggleSwitch,
 };
 
 const FieldBuilder: React.FC<FormBuilderType> = ({
@@ -26,12 +28,11 @@ const FieldBuilder: React.FC<FormBuilderType> = ({
 }) => {
 
   if (!isDisplayed) return null;
+
   const Component =
     formComponentsMap[fieldType as keyof typeof formComponentsMap];
 
   if (!Component) return null;
-
-
 
   return <Component type={fieldType} {...otherProps} />;
 };
