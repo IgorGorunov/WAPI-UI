@@ -107,7 +107,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
                 name: 'prepackedMasterBox',
                 label: "Prepacked master box",
                 width: WidthType.autoGrow,
-                classNames: 'prepacked-checkbox',
+                classNames: '',
             //disabled: multipleLocations,
             }
         ]

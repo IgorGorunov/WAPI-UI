@@ -69,17 +69,6 @@
     }
   }
 
-
-
-  .prepacked-checkbox {
-    max-width: calc(50% - 321px);
-    flex: 1 1 auto;
-
-    @media (max-width: $upToTablet) {
-      max-width: none;
-    }
-  }
-
   &--order-btns {
     display: flex;
     justify-content: flex-end;
