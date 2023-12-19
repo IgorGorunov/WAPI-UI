@@ -60,6 +60,24 @@
         max-width: 33%;
       }
     }
+
+    .delivery-tab {
+      .flex-auto {
+        flex: 1 1 100%;
+        max-width: none;
+      }
+    }
+  }
+
+
+
+  .prepacked-checkbox {
+    max-width: calc(50% - 321px);
+    flex: 1 1 auto;
+
+    @media (max-width: $upToTablet) {
+      max-width: none;
+    }
   }
 
   &--order-btns {

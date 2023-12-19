@@ -264,6 +264,11 @@ input {
   }
 }
 
+.flex-auto {
+  flex: 0 0 auto;
+  max-width: none;
+}
+
 .grid-col-2 {
   flex: 0 0 50%;
 

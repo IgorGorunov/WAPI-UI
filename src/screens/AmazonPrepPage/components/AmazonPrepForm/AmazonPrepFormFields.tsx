@@ -64,7 +64,7 @@ export const GeneralFields = (newObject) => [
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions, carrierDisabled, carrierTypeOptions}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]; carrierDisabled: boolean; carrierTypeOptions: OptionType[]}) => [
+export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions, carrierDisabled, carrierTypeOptions, multipleLocations=false}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]; carrierDisabled: boolean; carrierTypeOptions: OptionType[]; multipleLocations?: boolean;}) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
@@ -74,7 +74,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         rules: {
             required: "Required field",
         },
-        width: WidthType.w50,
+        width: WidthType.w33,
         classNames: "",
     },
     {
@@ -83,12 +83,23 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         options: deliveryMethodOptions,
         width: WidthType.w17,
     },
-    {
-        fieldType:FormFieldTypes.RADIO,
-        name: 'carrierType',
-        options: carrierTypeOptions,
-        width: WidthType.w17,
-    },
+
+            {
+                fieldType:FormFieldTypes.RADIO,
+                name: 'carrierType',
+                options: carrierTypeOptions,
+                width: WidthType.w33,
+                classNames: 'flex-auto',
+            },
+
+            {
+                fieldType: FormFieldTypes.CHECKBOX,
+                name: 'prepackedMasterBox',
+                label: "Prepacked master box",
+                width: WidthType.w17,
+                classNames: 'prepacked-checkbox',
+            //disabled: multipleLocations,
+            },
 
     {
         fieldType: FormFieldTypes.SELECT,
@@ -154,7 +165,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
     },
 ];
 
-export const ReceiverFields = ({countries, multipleLocations=false}: { countries: OptionType[]; multipleLocations: boolean;}) => [
+export const ReceiverFields = ({countries, multipleLocations=false}: { countries: OptionType[]; multipleLocations?: boolean;}) => [
     {
         fieldType: FormFieldTypes.CHECKBOX,
         name: 'multipleLocations',
@@ -272,14 +283,6 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         name: 'receiverComment',
         label: 'Comment',
         placeholder: "",
-        width: WidthType.w100,
-        classNames: "",
-        disabled: multipleLocations,
-    },
-    {
-        fieldType: FormFieldTypes.CHECKBOX,
-        name: 'prepackedMasterBox',
-        label: "Prepacked master box",
         width: WidthType.w100,
         classNames: "",
         disabled: multipleLocations,
