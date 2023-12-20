@@ -57,7 +57,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         label: 'full text search',
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
-        className: 'full-text-search-toggle',
+        classNames: 'full-text-search-toggle',
     }
 
     useEffect(() => {
