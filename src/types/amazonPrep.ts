@@ -29,6 +29,7 @@ export type ProductInfoType = {
 export type SingleAmazonPrepOrderProductType = {
     product: ProductInfoType;
     quantity: number;
+    boxesQuantity:number;
     unitOfMeasure: string;
 }
 

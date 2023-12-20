@@ -328,7 +328,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 />
             </div>
             <div className="page-size-container">
-                <span className="page-size-text">Cod reports</span>
+                <span className="page-size-text"></span>
                 <PageSizeSelector
                     options={PageOptions}
                     value={pageSize}
