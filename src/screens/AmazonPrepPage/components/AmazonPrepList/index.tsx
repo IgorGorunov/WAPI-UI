@@ -425,7 +425,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 />
             </div>)}
             <div className="page-size-container">
-                <span className="page-size-text">Orders list</span>
+                <span className="page-size-text"></span>
                 <PageSizeSelector
                     options={pageOptions}
                     value={pageSize}

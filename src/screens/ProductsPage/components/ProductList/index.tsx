@@ -270,7 +270,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 />
             </div>
             <div className="page-size-container">
-                <span className="page-size-text">Products list</span>
+                <span className="page-size-text"></span>
                 <PageSizeSelector
                     options={PageOptions}
                     value={pageSize}

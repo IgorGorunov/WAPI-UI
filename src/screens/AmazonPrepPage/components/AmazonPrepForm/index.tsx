@@ -124,6 +124,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                             selected: false,
                             product: product.product.uuid || '',
                             quantity: product.quantity || '',
+                            boxesQuantity: product.boxesQuantity || '',
                             unitOfMeasure: product.unitOfMeasure.toLowerCase() || '',
                         }))
                     : [],
@@ -264,15 +265,39 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 title: 'Quantity',
                 dataIndex: 'quantity',
                 key: 'quantity',
-                minWidth: '20%',
+                minWidth: '10%',
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].quantity`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{maxWidth: '120px'}}>
+                            <div style={{maxWidth: '60px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].quantity`}
+                                    fieldType={FormFieldTypes.NUMBER}
+                                    {...field}
+                                    disabled={isDisabled}
+                                    onChange={(newValue: string) => {field.onChange(newValue);updateTotalProducts();
+                                    }}
+                                />
+                            </div>
+                        )}
+                    />
+                ),
+            },
+            {
+                title: 'Boxes',
+                dataIndex: 'boxesQuantity',
+                key: 'boxesQuantity',
+                minWidth: '10%',
+                render: (text, record, index) => (
+                    <Controller
+                        name={`products[${index}].boxesQuantity`}
+                        control={control}
+                        render={({ field }) => (
+                            <div style={{maxWidth: '60px'}}>
+                                <FieldBuilder
+                                    name={`products[${index}].boxesQuantity`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
@@ -501,7 +526,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                             <div className='amazon-prep-info--order-btns  width-100'>
                                 <div className='grid-row'>
                                     <div className='amazon-prep-info--table-btns small-paddings width-100'>
-                                        <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:'', unitOfMeasure: ''})}>
+                                        <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:'', unitOfMeasure: '', boxesQuantity:''})}>
                                             Add
                                         </Button>
                                         <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
