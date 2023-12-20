@@ -1,0 +1,30 @@
+@import '@/constants/devices.scss';
+
+.status-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  @media (max-width: $mobile) {
+    flex-wrap: wrap;
+  }
+  .input-select-container {
+    flex: 1 0 200px;
+  }
+}
+
+.services-cell-style {
+  display: flex;
+  height: 30px;
+  padding: 3px 10px 3px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  top: 15px;
+  border-radius: 20px;
+  border: 2px solid #5380F5;
+  background: #5380F5;
+  color: white;
+  cursor: pointer;
+}

@@ -76,7 +76,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         onChange: handleWarehouseChange,
     },
     {
-        fieldType: FormFieldTypes.CHECKBOX,
+        fieldType: FormFieldTypes.TOGGLE,
         type: "text",
         name: 'preferredWarehouseMandatory',
         label: 'Mandatory',
@@ -96,7 +96,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         onChange: handleCourierServiceChange,
     },
     {
-        fieldType: FormFieldTypes.CHECKBOX,
+        fieldType: FormFieldTypes.TOGGLE,
         type: "text",
         name: 'preferredCourierServiceMandatory',
         label: 'Mandatory',

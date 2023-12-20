@@ -126,4 +126,4 @@ const DropZone = ({ files, onFilesChange , readOnly = false}) => {
     );
 };
 
-export default DropZone;
+export default React.memo(DropZone);

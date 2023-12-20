@@ -1,7 +1,6 @@
 import React from 'react';
-import {Controller} from "react-hook-form";
-import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {FormBuilderType} from "@/types/forms";
+import {FormBuilderType, FormFieldTypes} from "@/types/forms";
+import SingleField from "./SingleField";
 
 type FormFieldsBlockType = {
     control: any;
@@ -11,63 +10,17 @@ type FormFieldsBlockType = {
 }
 const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, errors, isDisabled=false}) => {
     return <>
-        {fieldsArray.map((curField) => (
-            //<div key={curField.name}  className={`${curField.width ? 'width-'+curField.width : ''}`}>
-                curField.onChange ?
-                <Controller
-                    key={curField.name}
-                    name={curField.name}
-                    control={control}
-                    render={(
-                        {
-                            field: { ...props},
-                            fieldState: {error}
-                        }) => (
-                        <FieldBuilder
-                            disabled={!!isDisabled}
-                            {...curField}
-                            {...props}
-                            label={curField.label}
-                            fieldType={curField.fieldType}
-                            options={curField.options}
-                            placeholder={curField.placeholder}
-                            errorMessage={error?.message}
-                            errors={errors}
-                            isRequired={!!curField?.rules?.required || false}
-                            classNames={curField.classNames}
-                            onChange={(selectedOption) => {
-                                props.onChange(selectedOption);
-                                curField.onChange(selectedOption);
-                            }}
-                        /> )}
-                    rules = {curField.rules}
-                /> : <Controller
-                        key={curField.name}
-                        name={curField.name}
-                        control={control}
-                        render={(
-                            {
-                                field: { ...props},
-                                fieldState: {error}
-                            }) => (
-                            <FieldBuilder
-                                disabled={!!isDisabled}
-                                {...curField}
-                                {...props}
-                                name={curField.name}
-                                label={curField.label}
-                                fieldType={curField.fieldType}
-                                options={curField.options}
-                                placeholder={curField.placeholder}
-                                errorMessage={error?.message}
-                                errors={errors}
-                                isRequired={!!curField?.rules?.required || false}
-                                classNames={curField.classNames}
-                            /> )}
-                        rules = {curField.rules}
-                    />
-            //</div>
-        ))}</>
+        {fieldsArray.map((curField) => {
+            if (curField.fieldType === FormFieldTypes.GRID) {
+                return <div className={`grid-inner-row ${curField.width ? "width-"+curField.width : ""} ${curField.classNames}`}>
+                    <div className='grid-row'>
+                        {curField.fields.map((field )=> <SingleField curField={field} control={control} errors={errors} isDisabled={isDisabled} />)}
+                    </div>
+                </div>
+            } else {
+                return <SingleField curField={curField} control={control} errors={errors} isDisabled={isDisabled} />
+            }
+        })}</>
 }
 
 export default FormFieldsBlock;

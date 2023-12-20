@@ -16,6 +16,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
     const [isMenuOpen, setMenuOpen] = useState(false);
     const [isProductSubmenuOpen, setProductSubmenuOpen] = useState(false);
     const [isOrderSubmenuOpen, setOrderSubmenuOpen] = useState(false);
+    const [isFinanceSubmenuOpen, setFinanceSubmenuOpen] = useState(false);
     const handleClick = () => {
         setMenuOpen(!isMenuOpen);
     }
@@ -104,6 +105,26 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                             {/*</Link>*/}
                         </div>
                     </div>
+                    {/*<div className={`submenu-container${isFinanceSubmenuOpen ? '-expanded' : ''}`}>*/}
+                    {/*    <div className="submenu-header" onClick={() => setFinanceSubmenuOpen(!isFinanceSubmenuOpen)}>*/}
+                    {/*        <Icon name="finances" style={{width: "30px", height: "30px"}} />*/}
+                    {/*        <span style={{marginLeft: "20px"}}>Finances</span>*/}
+                    {/*        {isFinanceSubmenuOpen ?*/}
+                    {/*            <span className="nav-arrow-icon"><Icon name="keyboard-arrow-up"/></span> :*/}
+                    {/*            <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>*/}
+                    {/*        }*/}
+                    {/*    </div>*/}
+                    {/*    <div className="submenu-items">*/}
+                    {/*        <Link href="/invoices" className="submenu-item">*/}
+                    {/*            Invoices*/}
+                    {/*            <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>*/}
+                    {/*        </Link>*/}
+                    {/*        <Link href="/codReports" className="submenu-item">*/}
+                    {/*            COD reports*/}
+                    {/*            <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>*/}
+                    {/*        </Link>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
 
                 </div>
             </div>

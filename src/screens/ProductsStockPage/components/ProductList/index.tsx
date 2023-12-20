@@ -108,8 +108,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
         {
             title: <TitleColumn
                 title=""
-                minWidth="30px"
-                maxWidth="30px"
+                minWidth="40px"
+                maxWidth="40px"
                 contentPosition="start"
                 childrenBefore={<Icon name={"warehouse"}/>}
             />,

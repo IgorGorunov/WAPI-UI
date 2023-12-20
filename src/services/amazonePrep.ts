@@ -45,6 +45,7 @@ const getSingleAmazonPrepData = async (
     }
 };
 
+
 const getAmazonPrepParameters = async (
 
     data: {
@@ -52,19 +53,17 @@ const getAmazonPrepParameters = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
+        const ress = await axios.post(
             `${API_ENDPOINT}/GetAmazonPrepParameters`,
             data
         );
 
-        return response;
+        return ress
     } catch (err) {
         console.error(err);
         return err;
     }
 };
-
-
 
 const sendAmazonPrepData = async (
     data: {

@@ -60,6 +60,13 @@
         max-width: 33%;
       }
     }
+
+    .delivery-tab {
+      .flex-auto {
+        flex: 1 1 100%;
+        max-width: none;
+      }
+    }
   }
 
   &--order-btns {
@@ -130,6 +137,34 @@
       &:hover,
       &:focus {
         text-decoration: none;
+      }
+    }
+  }
+
+  .product-tab {
+    .ant-table-wrapper {
+      max-height: calc(100vh - 464px);
+      min-height: 350px;
+      overflow: hidden scroll;
+
+      &::-webkit-scrollbar {
+        width: 10px;
+        margin-right: 50px;
+      }
+
+      &::-webkit-scrollbar-track {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--color-light-blue-gray);
+        border-radius: 5px;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background: var(--color-gray-blue);
       }
     }
   }

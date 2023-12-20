@@ -1,0 +1,19 @@
+.cod-reports__container {
+  width: 100%;
+  color: var(--color-gray-blue);
+  position: relative;
+
+  .indicator-info-block {
+    margin-bottom: 12px;
+  }
+
+  .indicator-info-card {
+    display: flex;
+    height: 100%;
+  }
+
+  .grid-col-33 {
+    display: flex;
+    flex-direction: column;
+  }
+}

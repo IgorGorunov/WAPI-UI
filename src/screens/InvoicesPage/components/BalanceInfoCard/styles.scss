@@ -1,0 +1,51 @@
+@import "@/constants/devices.scss";
+
+.balance-info-card {
+  position: relative;
+  margin-bottom: 32px;
+  padding: 26px 42px;
+  border-color:  var(--color-green);
+  box-shadow: 0 1px 3px 0 var(--color-green);
+
+  &.overdue {
+    border-color:  var(--color-red-text);
+    box-shadow: 0 1px 3px 0 var(--color-red-text);
+  }
+
+  &.limit {
+    border-color:  var(--color-blue-15);
+    box-shadow: 0 1px 3px 0 var(--color-blue);
+  }
+
+  .title {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  &__list {
+    padding-top: 10px;
+    list-style: none;
+
+    &-item {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1;
+    }
+  }
+
+  .payment-cards-icons__list {
+     display: none;
+    position: absolute;
+    right: 50px;
+    bottom: -25px;
+
+    display: flex;
+    gap: 8px;
+
+    list-style: none;
+    &-item {
+     width: 40px;
+    }
+  }
+}

@@ -188,6 +188,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
     const columns: TableColumnProps<AmazonPrepOrderType>[]  = [
         {
+            key: 'warehouseCountries',
             title: <TitleColumn
                     minWidth="50px"
                     maxWidth="50px"
@@ -215,7 +216,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 >
                 </TableCell>,
             dataIndex: 'icon',
-            key: 'icon',
+            // key: 'icon',
         },
         {
             title: <TitleColumn title="Status" minWidth="60px" maxWidth="60px" contentPosition="start"/>,

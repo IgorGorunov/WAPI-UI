@@ -16,7 +16,7 @@ import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
-import {sendAmazonPrepData} from '@/services/amazonePrep';
+import {getAmazonPrepParameters, sendAmazonPrepData} from '@/services/amazonePrep';
 import {DetailsFields, GeneralFields, ReceiverFields} from "./AmazonPrepFormFields";
 import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
@@ -34,13 +34,11 @@ import Pallets from "@/screens/AmazonPrepPage/components/AmazonPrepForm/Pallets"
 import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 
-
-type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
     amazonPrepOrderParameters?: AmazonPrepOrderParamsType;
     closeAmazonPrepOrderModal: ()=>void;
+
 }
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
@@ -48,16 +46,9 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const [isDisabled, setIsDisabled] = useState(!!amazonPrepOrderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
-    // const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
-    // const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
-    // const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
-    // const [selectedWarehouse, setSelectedWarehouse] = useState('');
-    // const [selectedCourierService, setSelectedCourierService] = useState('');
-
-    const { token } = useAuth();
 
     //countries
-    const countries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
+    const countries = useMemo(()=>COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()})),[]);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -86,10 +77,13 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         }
 
         return [];
-    }, [amazonPrepOrderParameters?.warehouses]);
+    }, [amazonPrepOrderParameters]);
 
     //deliveryMethodOptions
-    const deliveryMethodOptions = amazonPrepOrderParameters?.deliveryMethod.map(item => ({label: item, value: item}));
+    const deliveryMethodOptions = useMemo(()=>amazonPrepOrderParameters?.deliveryMethod.map(item => ({label: item, value: item})),[amazonPrepOrderParameters]);
+
+    //carrierTypeOptions
+    const carrierTypeOptions = useMemo(()=>amazonPrepOrderParameters?.carrierTypes ? amazonPrepOrderParameters?.carrierTypes.map(item => ({label: item, value: item})) : [{label: 'WAPI carrier', value: 'WAPI carrier'}, {label: 'Customer carrier', value: 'Customer carrier'}],[amazonPrepOrderParameters]);
 
     //form
     const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
@@ -119,6 +113,9 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             uuid: amazonPrepOrderData?.uuid || '',
             wapiTrackingNumber: amazonPrepOrderData?.wapiTrackingNumber || '',
             warehouse: amazonPrepOrderData?.warehouse || '',
+            carrierType: amazonPrepOrderData?.carrierType || (amazonPrepOrderParameters?.carrierTypes && amazonPrepOrderParameters?.carrierTypes.length && amazonPrepOrderParameters?.carrierTypes[0]) || "",
+            multipleLocations: amazonPrepOrderData?.multipleLocations || false,
+            prepackedMasterBox: amazonPrepOrderData?.prepackedMasterBox || false,
             products:
                 amazonPrepOrderData && amazonPrepOrderData?.products && amazonPrepOrderData.products.length
                     ? amazonPrepOrderData.products.map((product, index: number) => (
@@ -127,7 +124,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                             selected: false,
                             product: product.product.uuid || '',
                             quantity: product.quantity || '',
-                            unitOfMeasure: product.unitOfMeasure || '',
+                            unitOfMeasure: product.unitOfMeasure.toLowerCase() || '',
                         }))
                     : [],
         }
@@ -154,7 +151,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             volume:0,
         };
         getValues('products').forEach(item => {
-            const prodInfo = amazonPrepOrderParameters.products.filter(product=>product.uuid = item.product);
+            const prodInfo = amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter(product=>product.uuid === item.product) : [];
             if (prodInfo?.length) {
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
                 rez.weightGross += prodInfo[0].weightGross * Number(item.quantity);
@@ -169,12 +166,27 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         updateTotalProducts();
     },[products]);
 
+    const getProductUnit = useCallback((index:number) => {
+        const curProduct = products[index].product;
+
+        const productsParams = amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter(item => item.uuid===curProduct) : [];
+        if (curProduct && productsParams.length) {
+            return productsParams[0].unitOfMeasures.map(unit => ({label: unit.toLowerCase(), value: unit.toLowerCase()} as OptionType));
+        }
+        return [] as OptionType[];
+    },[amazonPrepOrderParameters, products]);
 
     const productOptions = useMemo(() =>{
-        return amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
+        const prodOptions = amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
+        return prodOptions;
     },[amazonPrepOrderParameters]);
 
-    // const productsHeaderWidth = [40, 130, 'auto', 200, 50, 50, 50, 50, 50, 50];
+    const carrierType = watch('carrierType');
+
+    useEffect(() => {
+
+    }, [carrierType]);
+
     const getProductColumns = (control: any) => {
         return [
             {
@@ -222,7 +234,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             {
                 title: 'Product',
                 dataIndex: 'product',
-                width: '100%',
+                width: '60%',
                 key: 'product',
                 render: (text, record, index) => (
                     <Controller
@@ -252,7 +264,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 title: 'Quantity',
                 dataIndex: 'quantity',
                 key: 'quantity',
-                minWidth: 100,
+                minWidth: '20%',
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].quantity`}
@@ -276,20 +288,20 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 title: 'Unit',
                 dataIndex: 'unitOfMeasure',
                 key: 'unitOfMeasure',
-                minWidth: 100,
-                responsive: ['sm'] as ResponsiveBreakpoint[],
+                width: '20%',
                 render: (text, record, index) => (
                     <Controller
                         name={`products[${index}].unitOfMeasure`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{maxWidth: '120px'}}>
+                            <div style={{}}>
                                 <FieldBuilder
                                     name={`products[${index}].unitOfMeasure`}
-                                    fieldType={FormFieldTypes.TEXT}
+                                    fieldType={FormFieldTypes.SELECT}
                                     {...field}
                                     disabled={isDisabled}
-                                    onChange={(newValue: string) => {field.onChange(newValue); updateTotalProducts(); }}
+                                    options={getProductUnit(index)}
+
                                 />
                             </div>
                         )}
@@ -307,7 +319,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     //form fields
     const warehouse = watch('warehouse');
 
-    const getCourierServices = (warehouse: string) => {
+    const getCourierServices = useCallback((warehouse: string) => {
         if (amazonPrepOrderParameters?.warehouses) {
             if (!warehouse.trim()) {
                 const uniqueCourierServices = Array.from(
@@ -317,7 +329,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                             .map((item: WarehouseType) => item.courierService.trim())
                     )
                 );
-                console.log("cc1: ", uniqueCourierServices);
+
                 return uniqueCourierServices
                     .map((courierService: string) => ({
                         label: courierService,
@@ -336,7 +348,6 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                             .map((item: WarehouseType) => item.courierService.trim())
                     )
                 );
-                console.log("cc2: ", uniqueCourierServices, filteredWarehouses);
 
                 return uniqueCourierServices
                     .map((courierService: string) => ({
@@ -347,7 +358,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             }
         }
         return [];
-    };
+    }, [amazonPrepOrderParameters]);
 
     const handleWarehouseChange = (selectedOption: string) => {
         // setSelectedWarehouse(selectedOption);
@@ -355,11 +366,13 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         setValue('courierService', '');
     }
 
+    const multipleLocations = watch('multipleLocations');
+
     const linkToTrack = amazonPrepOrderData && amazonPrepOrderData.trackingLink ? <a href={amazonPrepOrderData?.trackingLink} target='_blank'>{amazonPrepOrderData?.trackingLink}</a> : null;
 
-    const generalFields = useMemo(()=> GeneralFields(), [])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions}), [warehouse]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries}),[countries ])
+    const generalFields = useMemo(()=> GeneralFields(!amazonPrepOrderData?.uuid), [])
+    const detailsFields = useMemo(()=>DetailsFields({warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions, carrierDisabled: (carrierType!=='WAPI carrier'), carrierTypeOptions}), [warehouse, carrierType, amazonPrepOrderParameters]);
+    const receiverFields = useMemo(()=>ReceiverFields({countries, multipleLocations}),[countries,multipleLocations ])
     const [selectedFiles, setSelectedFiles] = useState(amazonPrepOrderData?.attachedFiles);
 
     const handleFilesChange = (files) => {
@@ -369,11 +382,12 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid);
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
 
-    const onSubmitForm = async (data) => {
+    const onSubmitForm = async (data: SingleAmazonPrepOrderType) => {
         setIsLoading(true);
         clearTabTitles();
         data.draft = isDraft;
-        data.attachedFiles= selectedFiles;
+        data.attachedFiles = selectedFiles;
+        const { token } = useAuth();
         try {
             //verify token
             if (!await verifyToken(token)) {
@@ -425,7 +439,6 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     };
 
     return <div className='amazon-prep-info'>
-
         {isLoading && (
             <div style={{
                 position: 'fixed',

@@ -1,0 +1,19 @@
+.invoices__container {
+  width: 100%;
+  color: var(--color-gray-blue);
+  position: relative;
+
+  .balance-info-block {
+    margin-bottom: 12px;
+  }
+
+  .balance-info-card {
+    display: flex;
+    height: 100%;
+  }
+
+  .grid-col-33 {
+    display: flex;
+    flex-direction: column;
+  }
+}

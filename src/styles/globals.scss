@@ -8,6 +8,7 @@
   --color-gray: #4D5E80;
   --color-white: white;
   --color-light-gray: #F7F8FA;
+  --color-medium-gray: #ccc;
   --color-gray2: #EDEFF2;
   --border-color: #F5F6F7;
   --background-gradient: linear-gradient(0deg, #EDEFF2, #EDEFF2), linear-gradient(0deg, #FFFFFF, #FFFFFF);
@@ -16,6 +17,7 @@
   --color-gray-blue: #7D8FB3;
   --color-green: #29CC39;
   --color-red: #E62E2E;
+  --color-red-text: #FF4000;
   --color-light-blue-gray: #C3CAD9;
   --color-modal-bg: #FAFBFC;
 
@@ -263,6 +265,24 @@ input {
   }
 }
 
+.width-auto {
+  &-grow {
+    flex: 1 1 auto;
+    max-width: none;
+    padding: 0 15px;
+  }
+
+  &-no-grow {
+    flex: 0 0 auto;
+    max-width: none;
+    padding: 0 15px;
+  }
+}
+
+.grid-inner-row {
+  width: 100%;
+}
+
 .grid-col-2 {
   flex: 0 0 50%;
 
@@ -320,7 +340,7 @@ input {
     left: 5px;
     top: 50%;
     transform: translateY(-50%);
-    background: url('/src/assets/icons/search.svg');
+    //background: url('/src/assets/icons/search.svg');
     width: 16px;
     height: 16px;
     background-size: cover;

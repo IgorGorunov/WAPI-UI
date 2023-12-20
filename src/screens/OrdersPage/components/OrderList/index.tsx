@@ -17,6 +17,8 @@ import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import Head from "next/head";
+import {FormFieldTypes} from "@/types/forms";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 
 
 type OrderListType = {
@@ -47,6 +49,17 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
     const [hoveredOrder, setHoveredOrder] = useState<OrderType | null>(null);
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
+
+    const [fullTextSearch, setFullTextSearch] = useState(true);
+    const fullTextSearchField = {
+        fieldType: FormFieldTypes.TOGGLE,
+        name: 'fullTextSearch',
+        label: 'Full text search',
+        checked: fullTextSearch,
+        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        classNames: 'full-text-search-toggle',
+    }
+
     const productItems = orders.flatMap(order => {
         return order.products.map(orderItem => ({
             uuid: order.uuid,
@@ -189,12 +202,18 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
 
         return orders.filter(order => {
+
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
                 if (key !== 'uuid') {
-                    const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase(); // Приведение к нижнему регистру
-                    const searchTermsArray = searchTerm.trim().toLowerCase().split(' '); // Приведение к нижнему регистру
-                    return searchTermsArray.some(word => stringValue.includes(word));
+                    const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
+                    const searchTermsArray = searchTerm.trim().toLowerCase().split(' ');
+
+                    if (fullTextSearch) {
+                        return searchTermsArray.every(word => stringValue.includes(word));
+                    } else {
+                        return searchTermsArray.some(word => stringValue.includes(word));
+                    }
                 }
                 return false;
             });
@@ -215,7 +234,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection]);
+    }, [orders, searchTerm, filterStatus, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
 
     const [showDatepicker, setShowDatepicker] = useState(false);
 
@@ -234,6 +253,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setFilteredOrders(filteredOrders);
 
     }, [filteredOrders]);
+
+
+    console.log('fullTextSearch', fullTextSearchField)
 
     const columns: TableColumnProps<OrderType>[]  = [
         {
@@ -557,6 +579,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     onChange={e => handleFilterChange(e.target.value)}
                     className="search-input"
                 />
+                <FieldBuilder {...fullTextSearchField} />
             </div>
             {isFiltersVisible && (
             <div className="filter-container">

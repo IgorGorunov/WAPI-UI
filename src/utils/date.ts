@@ -34,4 +34,8 @@ const getFirstDayOfYear = (date: Date) => {
     return new Date(date.getFullYear(), 0, 1);
 };
 
-export {formatDateToString, getFirstDayOfMonth,formatDateToDisplayString, getFirstDayOfYear}
+const getLastFewDays = (date: Date, days: number) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() - days);
+}
+
+export {formatDateToString, getFirstDayOfMonth,formatDateToDisplayString, getFirstDayOfYear, getLastFewDays}

@@ -14,22 +14,13 @@ import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
 import Head from "next/head";
-
+import {PageOptions} from '@/constants/pagination';
 
 type ProductListType = {
     products: ProductType[];
     setFilteredProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
     handleEditProduct(uuid: string): void;
 }
-
-const pageOptions = [
-    { value: '10', label: '10 per page' },
-    { value: '20', label: '20 per page' },
-    { value: '50', label: '50 per page' },
-    { value: '100', label: '100 per page' },
-    { value: '1000', label: '1000 per page' },
-    { value: '1000000', label: 'All' },
-];
 
 const statusFilter = [
     { value: 'All statuses', label: 'All statuses' , color: 'var(--color-light-blue-gray)'},
@@ -281,7 +272,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             <div className="page-size-container">
                 <span className="page-size-text">Products list</span>
                 <PageSizeSelector
-                    options={pageOptions}
+                    options={PageOptions}
                     value={pageSize}
                     onChange={(value: number) => handleChangePageSize(value)}
                 />

@@ -1,6 +1,6 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 
-export const GeneralFields = () => [
+export const GeneralFields = (newObject) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
@@ -10,6 +10,7 @@ export const GeneralFields = () => [
         disabled: true,
         width: WidthType.w25,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -20,6 +21,7 @@ export const GeneralFields = () => [
         disabled: true,
         width: WidthType.w25,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -30,6 +32,7 @@ export const GeneralFields = () => [
         disabled: true,
         width: WidthType.w50,
         classNames: "",
+        isDisplayed: !newObject,
     },
     {
         fieldType: FormFieldTypes.DATE,
@@ -60,26 +63,55 @@ export const GeneralFields = () => [
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]}) => [
+export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions, carrierDisabled, carrierTypeOptions, multipleLocations=false}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]; carrierDisabled: boolean; carrierTypeOptions: OptionType[]; multipleLocations?: boolean;}) => [
     {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'asnNumber',
-        label: 'ASN',
-        placeholder: "",
-        rules: {
-            required: "Required field",
-        },
+        name: 'grid-1',
+        fieldType: FormFieldTypes.GRID,
         width: WidthType.w50,
-        classNames: "",
+        fields: [{
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: 'asnNumber',
+            label: 'ASN',
+            placeholder: "",
+            rules: {
+                required: "Required field",
+            },
+            width: WidthType.autoGrow,
+            classNames: "",
+        },
+        {
+            fieldType:FormFieldTypes.RADIO,
+            name: 'deliveryMethod',
+            options: deliveryMethodOptions,
+            width: WidthType.autoNoGrow,
+        }]
     },
     {
-        fieldType:FormFieldTypes.RADIO,
-        name: 'deliveryMethod',
-        options: deliveryMethodOptions,
-        width: WidthType.w17,
-    },
+        fieldType: FormFieldTypes.GRID,
+        name: 'grid-2',
+        isGrid: true,
+        width: WidthType.w50,
+        fields: [
 
+            {
+                fieldType:FormFieldTypes.RADIO,
+                name: 'carrierType',
+                options: carrierTypeOptions,
+                width: WidthType.autoNoGrow,
+                //classNames: 'flex-auto',
+            },
+
+            {
+                fieldType: FormFieldTypes.TOGGLE,
+                name: 'prepackedMasterBox',
+                label: "Prepacked",
+                width: WidthType.autoGrow,
+                classNames: '',
+            //disabled: multipleLocations,
+            }
+        ]
+    },
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -103,6 +135,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         options: courierServices,
         width: WidthType.w50,
         classNames: "",
+        disabled: carrierDisabled,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -121,6 +154,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         placeholder: "",
         width: WidthType.w50,
         classNames: "",
+        disabled: carrierDisabled,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -142,7 +176,14 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
     },
 ];
 
-export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
+export const ReceiverFields = ({countries, multipleLocations=false}: { countries: OptionType[]; multipleLocations?: boolean;}) => [
+    {
+        fieldType: FormFieldTypes.TOGGLE,
+        name: 'multipleLocations',
+        label: "Multiple locations",
+        width: WidthType.w100,
+        classNames: "",
+    },
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -156,6 +197,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w25,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -169,6 +211,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w25,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -182,6 +225,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w17,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -195,6 +239,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w33,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -208,6 +253,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w25,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -226,6 +272,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         width: WidthType.w25,
         classNames: "",
         needToasts: false,
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -239,6 +286,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         errorMessage: "Required field",
         width: WidthType.w50,
         classNames: "",
+        disabled: multipleLocations,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -248,6 +296,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
         placeholder: "",
         width: WidthType.w100,
         classNames: "",
+        disabled: multipleLocations,
     },
 ];
 

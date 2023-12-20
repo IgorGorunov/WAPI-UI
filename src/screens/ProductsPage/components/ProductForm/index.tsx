@@ -835,7 +835,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
     }
 
     const onError = (props: any) => {
-        console.log(props)
         const fieldNames = Object.keys(props);
 
         if (fieldNames.length > 0) {

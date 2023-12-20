@@ -13,7 +13,7 @@ interface TableCellProps {
     isBlock?: boolean;
 }
 
-const TableCell: React.FC<TableCellProps> = ({ value, minWidth,maxWidth, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children, isBlock = false}) => {
+const TableCell: React.FC<TableCellProps> = ({ value, minWidth, maxWidth, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children, isBlock = false }) => {
     const style: React.CSSProperties = {
         display: isBlock ? 'block' : 'flex',
         minWidth: minWidth,
@@ -25,10 +25,15 @@ const TableCell: React.FC<TableCellProps> = ({ value, minWidth,maxWidth, content
         cursor: cursor,
         gap: 5,
     };
+
+    const textSpanStyle: React.CSSProperties = {
+        color: textColor, // применение цвета текста
+    };
+
     return (
         <div style={style}>
             {childrenBefore}
-            {value && <span>{value}</span>}
+            {value && <span style={textSpanStyle}>{value}</span>}
             {childrenAfter}
         </div>
     );

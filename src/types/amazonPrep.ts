@@ -1,4 +1,5 @@
 export type AmazonPrepOrderType = {
+    key?: string;
     asnNumber: string;
     clientOrderID: string;
     courierService: string;
@@ -60,6 +61,13 @@ export type PalletType = {
     palletTrackingNumber: string;
 }
 
+export type AttachedFilesType = {
+    id: string;
+    name: string;
+    type: string;
+    data: string;
+}
+
 export type SingleAmazonPrepOrderType = {
     asnNumber: string;
     attachedFiles: AttachedFilesType[];
@@ -91,15 +99,13 @@ export type SingleAmazonPrepOrderType = {
     products: SingleAmazonPrepOrderProductType[];
     statusHistory: AmazonPrepOrderHistoryType[];
     services: AmazonPrepOrderServiceType[];
-
+    draft?: boolean;
+    carrierType?: string;
+    multipleLocations?: boolean;
+    prepackedMasterBox?: boolean;
 }
 
-export type AttachedFilesType = {
-    id: string;
-    name: string;
-    type: string;
-    data: string;
-}
+
 
 export type AmazonPrepOrderProductType = {
     available: number;
@@ -120,6 +126,7 @@ export type AmazonPrepOrderProductType = {
     weightNet: number;
     weightGross: number;
     volume: number;
+    unitOfMeasures: string[];
 }
 
 export type WarehouseType = {
@@ -132,6 +139,7 @@ export type AmazonPrepOrderParamsType = {
     products: AmazonPrepOrderProductType[];
     warehouses: WarehouseType[];
     deliveryMethod: string[];
+    carrierTypes?: string[];
 }
 
 // export type PickupPointsType = {
@@ -150,3 +158,4 @@ export type AmazonPrepOrderProductWithTotalInfoType = {
     volume: number;
     currency?: string;
 }
+
