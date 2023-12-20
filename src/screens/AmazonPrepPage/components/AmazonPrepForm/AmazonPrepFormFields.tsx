@@ -105,7 +105,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
             {
                 fieldType: FormFieldTypes.TOGGLE,
                 name: 'prepackedMasterBox',
-                label: "Prepacked master box",
+                label: "Prepacked",
                 width: WidthType.autoGrow,
                 classNames: '',
             //disabled: multipleLocations,
@@ -178,7 +178,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
 
 export const ReceiverFields = ({countries, multipleLocations=false}: { countries: OptionType[]; multipleLocations?: boolean;}) => [
     {
-        fieldType: FormFieldTypes.CHECKBOX,
+        fieldType: FormFieldTypes.TOGGLE,
         name: 'multipleLocations',
         label: "Multiple locations",
         width: WidthType.w100,

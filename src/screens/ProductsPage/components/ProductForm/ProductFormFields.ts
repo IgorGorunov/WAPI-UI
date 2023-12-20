@@ -208,42 +208,42 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
     ];
 export const FormFieldsAdditional2 = () => [
         {
-            fieldType: FormFieldTypes.CHECKBOX,
+            fieldType: FormFieldTypes.TOGGLE,
             name: PRODUCT.fragile,
             label: "Fragile",
             width: WidthType.w17,
             classNames: "",
         },
         {
-            fieldType: FormFieldTypes.CHECKBOX,
+            fieldType: FormFieldTypes.TOGGLE,
             name: PRODUCT.hazmat,
             label: "Hazmat",
             width: WidthType.w17,
             classNames: "",
         },
         {
-            fieldType: FormFieldTypes.CHECKBOX,
+            fieldType: FormFieldTypes.TOGGLE,
             name: PRODUCT.glass,
             label: "Glass",
             width: WidthType.w17,
             classNames: "",
         },
         {
-            fieldType: FormFieldTypes.CHECKBOX,
+            fieldType: FormFieldTypes.TOGGLE,
             name: PRODUCT.fireproof,
             label: "Fireproof",
             width: WidthType.w17,
             classNames: "",
         },
         {
-            fieldType: FormFieldTypes.CHECKBOX,
+            fieldType: FormFieldTypes.TOGGLE,
             name: PRODUCT.liquid,
             label: "Liquid",
             width: WidthType.w17,
             classNames: "",
         },
         {
-            fieldType: FormFieldTypes.CHECKBOX,
+            fieldType: FormFieldTypes.TOGGLE,
             name: PRODUCT.packingBox,
             label: "Packing box",
             width: WidthType.w17,

@@ -2,6 +2,8 @@
   position: relative;
   display: flex;
   align-items: center;
+  margin-bottom: 8px;
+  margin-top: 8px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -33,10 +35,11 @@
   }
 
   &-inner {
+
     display: block;
     width: 200%;
     margin-left: -100%;
-    transition: margin 0.3s ease-in 0s;
+    transition: margin 0.2s ease-in 0s;
 
     &:before,
     &:after {
@@ -87,7 +90,7 @@
     right: 20px;
     border: 0 solid #ccc;
     border-radius: 50%;
-    transition: all 0.3s ease-in 0s;
+    transition: all 0.2s ease-in 0s;
   }
 
   &-checkbox:checked + &-label {
