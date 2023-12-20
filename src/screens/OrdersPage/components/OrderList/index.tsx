@@ -50,19 +50,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [hoveredOrder, setHoveredOrder] = useState<OrderType | null>(null);
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
 
-    const [fullTextSearch, setFullTextSearch] = useState(false);
+    const [fullTextSearch, setFullTextSearch] = useState(true);
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
-        label: 'full text search',
+        label: 'Full text search',
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
     }
-
-    useEffect(() => {
-        console.log('full', fullTextSearch)
-    }, [fullTextSearch]);
 
     const productItems = orders.flatMap(order => {
         return order.products.map(orderItem => ({
@@ -206,12 +202,18 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
 
         return orders.filter(order => {
+
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
                 if (key !== 'uuid') {
-                    const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase(); // Приведение к нижнему регистру
-                    const searchTermsArray = searchTerm.trim().toLowerCase().split(' '); // Приведение к нижнему регистру
-                    return searchTermsArray.some(word => stringValue.includes(word));
+                    const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
+                    const searchTermsArray = searchTerm.trim().toLowerCase().split(' ');
+
+                    if (fullTextSearch) {
+                        return searchTermsArray.every(word => stringValue.includes(word));
+                    } else {
+                        return searchTermsArray.some(word => stringValue.includes(word));
+                    }
                 }
                 return false;
             });
