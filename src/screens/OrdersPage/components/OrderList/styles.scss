@@ -30,4 +30,16 @@
   gap: 10px;
   margin-bottom: 10px;
   justify-content: space-between;
+
+  .full-text-search-toggle {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: $mobile) {
+    flex-wrap: wrap;
+
+    .search-input {
+      order: 1;
+    }
+  }
 }

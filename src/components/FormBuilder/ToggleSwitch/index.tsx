@@ -9,17 +9,12 @@ const ToggleSwitch: React.FC<FieldPropsType> = ({
         value,
         isRequired = false,
         checked = false,
-        // label,
-        // rules,
         onChange,
         errors,
         errorMessage,
-        // registerInput,
         width,
         ...otherProps
    }) => {
-
-
 
     return (
         <div className={`toggle-switch ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>

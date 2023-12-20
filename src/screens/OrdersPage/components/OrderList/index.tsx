@@ -17,6 +17,8 @@ import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import Head from "next/head";
+import {FormFieldTypes} from "@/types/forms";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 
 
 type OrderListType = {
@@ -47,6 +49,21 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
     const [hoveredOrder, setHoveredOrder] = useState<OrderType | null>(null);
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
+
+    const [fullTextSearch, setFullTextSearch] = useState(false);
+    const fullTextSearchField = {
+        fieldType: FormFieldTypes.TOGGLE,
+        name: 'fullTextSearch',
+        label: 'full text search',
+        checked: fullTextSearch,
+        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        className: 'full-text-search-toggle',
+    }
+
+    useEffect(() => {
+        console.log('full', fullTextSearch)
+    }, [fullTextSearch]);
+
     const productItems = orders.flatMap(order => {
         return order.products.map(orderItem => ({
             uuid: order.uuid,
@@ -215,7 +232,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection]);
+    }, [orders, searchTerm, filterStatus, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
 
     const [showDatepicker, setShowDatepicker] = useState(false);
 
@@ -234,6 +251,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setFilteredOrders(filteredOrders);
 
     }, [filteredOrders]);
+
+
+    console.log('fullTextSearch', fullTextSearchField)
 
     const columns: TableColumnProps<OrderType>[]  = [
         {
@@ -557,6 +577,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     onChange={e => handleFilterChange(e.target.value)}
                     className="search-input"
                 />
+                <FieldBuilder {...fullTextSearchField} />
             </div>
             {isFiltersVisible && (
             <div className="filter-container">
