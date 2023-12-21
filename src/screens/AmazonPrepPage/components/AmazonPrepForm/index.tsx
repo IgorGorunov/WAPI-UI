@@ -16,7 +16,7 @@ import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
-import {getAmazonPrepParameters, sendAmazonPrepData} from '@/services/amazonePrep';
+import {sendAmazonPrepData} from '@/services/amazonePrep';
 import {DetailsFields, GeneralFields, ReceiverFields} from "./AmazonPrepFormFields";
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import Icon from "@/components/Icon";
@@ -170,19 +170,18 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         updateTotalProducts();
     },[products]);
 
-    const getProductUnit = useCallback((index:number) => {
-        const curProduct = products[index].product;
-
-        const productsParams = amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter(item => item.uuid===curProduct) : [];
-        if (curProduct && productsParams.length) {
-            return productsParams[0].unitOfMeasures.map(unit => ({label: unit.toLowerCase(), value: unit.toLowerCase()} as OptionType));
-        }
-        return [] as OptionType[];
-    },[amazonPrepOrderParameters, products]);
+    // const getProductUnit = useCallback((index:number) => {
+    //     const curProduct = products[index].product;
+    //
+    //     const productsParams = amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter(item => item.uuid===curProduct) : [];
+    //     if (curProduct && productsParams.length) {
+    //         return productsParams[0].unitOfMeasures.map(unit => ({label: unit.toLowerCase(), value: unit.toLowerCase()} as OptionType));
+    //     }
+    //     return [] as OptionType[];
+    // },[amazonPrepOrderParameters, products]);
 
     const productOptions = useMemo(() =>{
-        const prodOptions = amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
-        return prodOptions;
+        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
     },[amazonPrepOrderParameters]);
 
     const carrierType = watch('carrierType');

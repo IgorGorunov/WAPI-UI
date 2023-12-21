@@ -123,7 +123,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         },
         options: warehouses,
         width: WidthType.w50,
-        onChange: handleWarehouseChange,
+        //onChange: handleWarehouseChange,
         classNames: "",
     },
     {
@@ -135,7 +135,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         options: courierServices,
         width: WidthType.w50,
         classNames: "",
-        disabled: carrierDisabled,
+        disabled: true, //carrierDisabled,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -154,7 +154,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         placeholder: "",
         width: WidthType.w50,
         classNames: "",
-        disabled: carrierDisabled,
+        disabled: true,//carrierDisabled,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -192,7 +192,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         placeholder: "",
         options: countries,
         rules: {
-            required: "Required field",
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w25,
@@ -206,7 +206,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         label: 'City',
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w25,
@@ -219,8 +219,8 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         name: 'receiverZip',
         label: 'Zip',
         placeholder: "",
-        rules: {
-            required: "Required field",
+        rules:  {
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w17,
@@ -234,7 +234,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         label: 'Address',
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w33,
@@ -281,7 +281,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         label: 'Full name',
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w50,
