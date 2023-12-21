@@ -574,33 +574,39 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                         </div>
                     </div>
                 </div>
-                {amazonPrepOrderData?.uuid && <div key='pallets-tab' className='pallets-tab'>
-                    <div className="card min-height-600 amazon-prep-info--pallets">
-                        <h3 className='amazon-prep-info__block-title'>
-                            <Icon name='bundle' />
-                            Pallets
-                        </h3>
-                        <Pallets pallets={amazonPrepOrderData?.pallets} />
+                {amazonPrepOrderData?.uuid &&
+                    <div key='pallets-tab' className='pallets-tab'>
+                        <div className="card min-height-600 amazon-prep-info--pallets">
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='bundle' />
+                                Pallets
+                            </h3>
+                            <Pallets pallets={amazonPrepOrderData?.pallets} />
+                        </div>
                     </div>
-                </div>}
-                {amazonPrepOrderData?.uuid && <div key='services-tab' className='services-tab'>
-                    <div className="card min-height-600 amazon-prep-info--services">
-                        <h3 className='amazon-prep-info__block-title'>
-                            <Icon name='bundle' />
-                            Services
-                        </h3>
-                        <Services services={amazonPrepOrderData?.services} />
+                }
+                {amazonPrepOrderData?.uuid &&
+                    <div key='services-tab' className='services-tab'>
+                        <div className="card min-height-600 amazon-prep-info--services">
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='bundle' />
+                                Services
+                            </h3>
+                            <Services services={amazonPrepOrderData?.services} />
+                        </div>
                     </div>
-                </div>}
-                {amazonPrepOrderData?.uuid && <div key='status-history-tab' className='status-history-tab'>
-                    <div className="card min-height-600 amazon-prep-info--history">
-                        <h3 className='amazon-prep-info__block-title'>
-                            <Icon name='history' />
-                            Status history
-                        </h3>
-                        <StatusHistory statusHistory={amazonPrepOrderData?.statusHistory} />
+                }
+                {amazonPrepOrderData?.uuid &&
+                    <div key='status-history-tab' className='status-history-tab'>
+                        <div className="card min-height-600 amazon-prep-info--history">
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='history' />
+                                Status history
+                            </h3>
+                            <StatusHistory statusHistory={amazonPrepOrderData?.statusHistory} />
+                        </div>
                     </div>
-                </div>}
+                }
                 <div key='files-tab' className='files-tab'>
                     <div className="card min-height-600 amazon-prep-info--files">
                         <h3 className='amazon-prep-info__block-title'>
