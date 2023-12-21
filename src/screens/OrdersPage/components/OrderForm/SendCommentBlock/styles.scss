@@ -1,6 +1,10 @@
 @import '@/constants/devices.scss';
 
 .send-comment {
+  @media (min-width: $desktop) {
+    width: 1090px;
+  }
+
   .form-submit-btn {
     display: flex;
     justify-content: flex-end;
