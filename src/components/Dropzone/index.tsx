@@ -5,7 +5,7 @@ import './styles.scss';
 import Icon from '@/components/Icon'
 import Skeleton from "@/components/Skeleton/Skeleton";
 
-const DropZone = ({ files, onFilesChange , readOnly = false}) => {
+const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -117,7 +117,10 @@ const DropZone = ({ files, onFilesChange , readOnly = false}) => {
                 {selectedFiles.length == 0 &&  (<div className="circle"  onClick={openFileDialog} >
                     <Icon name='upload'/>
                 </div>)}
-                <p onClick={openFileDialog}>Drop files here</p>
+                <div onClick={openFileDialog}>
+                    <p>Drop files here</p>
+                    {hint ? <p className='hint'>{hint}</p> : null}
+                </div>
                 {selectedFiles.length > 0 && (
                     <FileDisplay files={selectedFiles} onFileDelete={onFileDelete} />
                 )}

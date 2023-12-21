@@ -80,6 +80,36 @@
     }
   }
 
+  &--btns {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+
+    &__radio {
+      display: flex;
+      margin: 0 -15px;
+    }
+
+    &__table-btns {
+      display: flex;
+      margin-left: auto;
+      gap: 15px;
+
+      @media (max-width: $tablet) {
+        gap: 12px;
+        width: auto;
+        flex: 0 0 auto;
+        margin-left: auto;
+
+        .btn {
+          font-size: 0;
+          padding: 5px 9px 5px 5px;
+          gap: 0;
+        }
+      }
+    }
+  }
+
   &--products,
   &--history {
     display: flex;

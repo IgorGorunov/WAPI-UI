@@ -101,15 +101,15 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
                 width: WidthType.autoNoGrow,
                 //classNames: 'flex-auto',
             },
-
-            {
-                fieldType: FormFieldTypes.TOGGLE,
-                name: 'prepackedMasterBox',
-                label: "Prepacked",
-                width: WidthType.autoGrow,
-                classNames: '',
-            //disabled: multipleLocations,
-            }
+            //
+            // {
+            //     fieldType: FormFieldTypes.TOGGLE,
+            //     name: 'prepackedMasterBox',
+            //     label: "Prepacked",
+            //     width: WidthType.autoGrow,
+            //     classNames: '',
+            // //disabled: multipleLocations,
+            // }
         ]
     },
     {
@@ -247,9 +247,9 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         name: 'receiverPhone',
         label: 'Phone',
         placeholder: "",
-        rules: {
-            required: "Required field",
-        },
+        // rules: {
+        //     required: "Required field",
+        // },
         errorMessage: "Required field",
         width: WidthType.w25,
         classNames: "",

@@ -29,6 +29,7 @@ export type ProductInfoType = {
 export type SingleAmazonPrepOrderProductType = {
     product: ProductInfoType;
     quantity: number;
+    boxesQuantity: number;
     unitOfMeasure: string;
 }
 
@@ -102,7 +103,7 @@ export type SingleAmazonPrepOrderType = {
     draft?: boolean;
     carrierType?: string;
     multipleLocations?: boolean;
-    prepackedMasterBox?: boolean;
+    boxesType?: boolean;
 }
 
 
@@ -140,6 +141,7 @@ export type AmazonPrepOrderParamsType = {
     warehouses: WarehouseType[];
     deliveryMethod: string[];
     carrierTypes?: string[];
+    boxesTypes?: string[];
 }
 
 // export type PickupPointsType = {
