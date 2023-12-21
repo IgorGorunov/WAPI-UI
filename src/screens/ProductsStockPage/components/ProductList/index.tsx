@@ -283,7 +283,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                     onChange={(value: number) => handleChangePageSize(value)}
                 />
             </div>
-            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '}`}>
+            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredProducts?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredProducts.slice((current - 1) * pageSize, current * pageSize).map(item => ({
                         ...item,

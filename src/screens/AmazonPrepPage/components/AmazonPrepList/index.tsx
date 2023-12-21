@@ -432,7 +432,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     onChange={(value: number) => handleChangePageSize(value)}
                 />
             </div>
-            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '}`}>
+            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
