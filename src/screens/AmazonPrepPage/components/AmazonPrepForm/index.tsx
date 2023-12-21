@@ -43,6 +43,8 @@ type AmazonPrepFormType = {
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
     const Router = useRouter();
+    const { token } = useAuth();
+
     const [isDisabled, setIsDisabled] = useState(!!amazonPrepOrderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
@@ -412,7 +414,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         clearTabTitles();
         data.draft = isDraft;
         data.attachedFiles = selectedFiles;
-        const { token } = useAuth();
+
         try {
             //verify token
             if (!await verifyToken(token)) {

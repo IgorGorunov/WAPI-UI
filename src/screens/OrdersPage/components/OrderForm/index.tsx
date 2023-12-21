@@ -39,6 +39,9 @@ import Services from "./Services";
 import ProductsTotal from "@/screens/OrdersPage/components/OrderForm/ProductsTotal";
 import {toast, ToastContainer} from '@/components/Toast';
 import {useTabsState} from "@/hooks/useTabsState";
+import Modal from "@/components/Modal";
+import ImportFilesBlock from "@/components/ImportFilesBlock";
+import SendComment from "@/screens/OrdersPage/components/OrderForm/SendCommentBlock";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -57,8 +60,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
     const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
     const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
-    const [selectedWarehouse, setSelectedWarehouse] = useState('');
-    const [selectedCourierService, setSelectedCourierService] = useState('');
+    const [selectedWarehouse, setSelectedWarehouse] = useState(orderData?.preferredWarehouse || '');
+    const [selectedCourierService, setSelectedCourierService] = useState(orderData?.preferredCourierService || '');
 
     const { token } = useAuth();
 
@@ -69,7 +72,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         let filteredCountries = [...orderParameters.warehouses];
 
         if (selectedWarehouse)  {
-            filteredCountries = filteredCountries.filter(item=>item.warehouse===warehouse);
+            filteredCountries = filteredCountries.filter(item=>item.warehouse===selectedWarehouse);
         }
 
         if (selectedCourierService) {
@@ -77,6 +80,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         }
 
         const countryArr =  filteredCountries.map(item => item.country);
+
+        console.log("123", selectedWarehouse, selectedCourierService)
 
         return allCountries.filter(item=> countryArr.includes(item.value));
     }
@@ -97,6 +102,10 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const closeErrorModal = useCallback(()=>{
         setShowStatusModal(false);
     }, [])
+
+    //send comment modal
+    const [showSendCommentModal, setShowSendCommentModal] = useState(false);
+
 
     const warehouses = useMemo(() => {
         if (orderParameters?.warehouses) {
@@ -614,6 +623,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedFiles(files);
     };
 
+    const handleSendComment = () => {
+        console.log('click')
+    }
 
     const tabTitleArray =  TabTitles(!!orderData?.uuid);
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
@@ -845,11 +857,15 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
             <div className='form-submit-btn'>
                 {isDisabled && orderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {orderData?.uuid && <Button type="button" disabled={false} onClick={()=>setShowSendCommentModal(true)} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Save</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+        {showSendCommentModal && <Modal title={`Send comment for order ${orderData?.wapiTrackingNumber}`} onClose={()=>setShowSendCommentModal(false)} >
+            <SendComment orderData={orderData} countryOptions={countries} closeSendCommentModal={()=>setShowSendCommentModal(false)}/>
+        </Modal>}
     </div>
 }
 
