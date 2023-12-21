@@ -478,7 +478,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 />
             </div>
             <div className="page-size-container">
-                <span className="page-size-text">Invoices list</span>
+                <span className="page-size-text"></span>
                 <PageSizeSelector
                     options={PageOptions}
                     value={pageSize}
