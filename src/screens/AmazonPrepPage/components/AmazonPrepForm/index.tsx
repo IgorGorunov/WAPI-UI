@@ -273,7 +273,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                         name={`products[${index}].quantity`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{maxWidth: '120px'}}>
+                            <div style={{maxWidth: '80px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -296,7 +296,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                         name={`products[${index}].boxesQuantity`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{maxWidth: '120px'}}>
+                            <div style={{maxWidth: '80px'}}>
                                 <FieldBuilder
                                     name={`products[${index}].boxesQuantity`}
                                     fieldType={FormFieldTypes.NUMBER}
