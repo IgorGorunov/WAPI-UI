@@ -144,15 +144,6 @@ export type AmazonPrepOrderParamsType = {
     boxesTypes?: string[];
 }
 
-// export type PickupPointsType = {
-//     address: string;
-//     city: string;
-//     country: string;
-//     description: string;
-//     id: string;
-//     name: string;
-// }
-
 export type AmazonPrepOrderProductWithTotalInfoType = {
     pallets: number;
     weightNet: number;

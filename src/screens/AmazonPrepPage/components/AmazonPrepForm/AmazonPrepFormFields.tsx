@@ -93,7 +93,6 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         isGrid: true,
         width: WidthType.w50,
         fields: [
-
             {
                 fieldType:FormFieldTypes.RADIO,
                 name: 'carrierType',
