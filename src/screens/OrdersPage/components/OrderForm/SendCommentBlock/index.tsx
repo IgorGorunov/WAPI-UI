@@ -49,13 +49,6 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 hourFrom: '',
                 hourTo: '',
             }
-            // receiverAddress: orderData?.receiverAddress || '',
-            // receiverCity: orderData?.receiverCity || '',
-            // receiverComment: orderData?.receiverComment || '',
-            // receiverCountry: orderData?.receiverCountry || '',
-            // receiverEMail:orderData?.receiverEMail || '',
-            // receiverFullName: orderData?.receiverFullName || '',
-            // receiverPhone: orderData?.receiverPhone || '',
         }
     });
 
@@ -65,7 +58,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
         console.log('action', curAction)
     },[curAction])
 
-    const receiverFields = useMemo(()=>ReceiverFields({countries: countryOptions, prefix: 'receiver.'}),[countryOptions])
+    const receiverFields = useMemo(()=>ReceiverFields({countries: countryOptions}),[countryOptions])
     const mainFields = useMemo(()=>MainFields(),[])
     const dateFields = useMemo(()=>DateFields(),[])
 
@@ -124,7 +117,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                     setModalStatusInfo({ title: "Error", subtitle: `Something went wrong! Please, try later. `, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
-            }
+            }true
 
         } catch (error) {
             console.error("Error fetching data:", error);

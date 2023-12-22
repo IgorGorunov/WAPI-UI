@@ -1,10 +1,10 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 
-export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]; prefix?:string; }) => [
+export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
-        name: `${prefix}receiverCountry`,
+        name: `receiver.country`,
         label: 'Country',
         placeholder: "",
         options: countries,
@@ -18,7 +18,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: `${prefix}receiverCity`,
+        name: `receiver.city`,
         label: 'City',
         placeholder: "",
         rules: {
@@ -31,7 +31,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: `${prefix}receiverZip`,
+        name: `receiver.zip`,
         label: 'Zip',
         placeholder: "",
         rules: {
@@ -44,7 +44,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: `${prefix}receiverAddress`,
+        name: `receiver.address`,
         label: 'Address',
         placeholder: "",
         rules: {
@@ -57,7 +57,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: `${prefix}receiverPhone`,
+        name: `receiver.phone`,
         label: 'Phone',
         placeholder: "",
         rules: {
@@ -70,16 +70,16 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: `${prefix}receiverEMail`,
+        name: `receiver.email`,
         label: 'E-mail',
         placeholder: "",
-        rules: {
-            validate: {
-                matchPattern: (v) =>
-                    v==='' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
-                    "Please, enter valid email address",
-            },
-        },
+        // rules: {
+        //     validate: {
+        //         matchPattern: (v) =>
+        //             v==='' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
+        //             "Please, enter valid email address",
+        //     },
+        // },
         errorMessage: "Required field",
         width: WidthType.w25,
         classNames: "",
@@ -88,7 +88,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: `${prefix}receiverFullName`,
+        name: `receiver.fullName`,
         label: 'Full name',
         placeholder: "",
         rules: {
