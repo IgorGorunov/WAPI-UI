@@ -1,6 +1,6 @@
 import axios from "axios";
 import {SingleProductType} from "@/types/products";
-import {SingleOrderType, AttachedFilesType} from "@/types/orders";
+import {SingleOrderType, AttachedFilesType, OrderCommentType} from "@/types/orders";
 
 const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
@@ -104,6 +104,25 @@ const sendOrderData = async (
     }
 };
 
+const sendOrderComment = async (
+    data: {
+        comment: OrderCommentType,
+        token: string;
+    }
+) => {
+    try {
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/SendCommentToCourierService`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
 const sendOrderFiles = async (
     data: {
         files: AttachedFilesType[],
@@ -124,4 +143,4 @@ const sendOrderFiles = async (
 };
 
 
-export { getOrders, getOrderData, getOrderParameters, getOrderPickupPoints, sendOrderData, sendOrderFiles};
+export { getOrders, getOrderData, getOrderParameters, getOrderPickupPoints, sendOrderData, sendOrderFiles, sendOrderComment};

@@ -335,7 +335,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                     onChange={(value: number) => handleChangePageSize(value)}
                 />
             </div>
-            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '}`}>
+            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredCODReports?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredCODReports.slice((current - 1) * pageSize, current * pageSize).map(item => ({
                         ...item,

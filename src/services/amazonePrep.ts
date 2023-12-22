@@ -1,5 +1,5 @@
 import axios from "axios";
-import {AttachedFilesType, SingleAmazonPrepOrderType} from "@/types/amazonPrep";
+import {AttachedFilesType, SingleAmazonPrepOrderFormType} from "@/types/amazonPrep";
 
 const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
@@ -65,9 +65,11 @@ const getAmazonPrepParameters = async (
     }
 };
 
+
+
 const sendAmazonPrepData = async (
     data: {
-        orderData: SingleAmazonPrepOrderType,
+        orderData: SingleAmazonPrepOrderFormType,
         token: string;
     }
 ) => {

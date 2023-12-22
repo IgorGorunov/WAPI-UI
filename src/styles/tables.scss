@@ -3,6 +3,12 @@
 .table {
   width: 100%;
 
+  .is-empty {
+    .ant-table-thead {
+      display: none;
+    }
+  }
+
   .ant-table-column-sorter {
     display: none;
   }

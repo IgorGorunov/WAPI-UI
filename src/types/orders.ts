@@ -1,3 +1,5 @@
+import {SEND_COMMENT_TYPES} from "@/types/utility";
+
 export type OrderType = {
     mobileIcon: string,
     icon: string,
@@ -181,4 +183,26 @@ export type OrderProductWithTotalInfoType = {
     weightGross: number;
     volume: number;
     currency?: string;
+}
+
+export type OrderCommentType = {
+    order: {
+        uuid: string;
+    };
+    //clientOrderID: string;
+    action: SEND_COMMENT_TYPES,
+    comment: string;
+    receiver?: {
+        address: string;
+        city: string;
+        country: string;
+        email: string;
+        fullName: string;
+        phone: string;
+    }
+    deliveryDate?:{
+        date: string;
+        hourFrom: string;
+        hourTo: string;
+    }
 }

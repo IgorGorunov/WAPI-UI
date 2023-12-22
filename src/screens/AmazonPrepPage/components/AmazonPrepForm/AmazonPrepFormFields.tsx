@@ -63,7 +63,7 @@ export const GeneralFields = (newObject) => [
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions, carrierDisabled, carrierTypeOptions, multipleLocations=false}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[]; carrierDisabled: boolean; carrierTypeOptions: OptionType[]; multipleLocations?: boolean;}) => [
+export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions,  carrierTypeOptions, multipleLocations=false}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[];  carrierTypeOptions: OptionType[]; multipleLocations?: boolean;}) => [
     {
         name: 'grid-1',
         fieldType: FormFieldTypes.GRID,
@@ -93,7 +93,6 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         isGrid: true,
         width: WidthType.w50,
         fields: [
-
             {
                 fieldType:FormFieldTypes.RADIO,
                 name: 'carrierType',
@@ -101,15 +100,15 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
                 width: WidthType.autoNoGrow,
                 //classNames: 'flex-auto',
             },
-
-            {
-                fieldType: FormFieldTypes.TOGGLE,
-                name: 'prepackedMasterBox',
-                label: "Prepacked",
-                width: WidthType.autoGrow,
-                classNames: '',
-            //disabled: multipleLocations,
-            }
+            //
+            // {
+            //     fieldType: FormFieldTypes.TOGGLE,
+            //     name: 'prepackedMasterBox',
+            //     label: "Prepacked",
+            //     width: WidthType.autoGrow,
+            //     classNames: '',
+            // //disabled: multipleLocations,
+            // }
         ]
     },
     {
@@ -123,7 +122,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         },
         options: warehouses,
         width: WidthType.w50,
-        onChange: handleWarehouseChange,
+        //onChange: handleWarehouseChange,
         classNames: "",
     },
     {
@@ -135,7 +134,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         options: courierServices,
         width: WidthType.w50,
         classNames: "",
-        disabled: carrierDisabled,
+        disabled: true, //carrierDisabled,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -154,7 +153,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         placeholder: "",
         width: WidthType.w50,
         classNames: "",
-        disabled: carrierDisabled,
+        disabled: true,//carrierDisabled,
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -192,7 +191,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         placeholder: "",
         options: countries,
         rules: {
-            required: "Required field",
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w25,
@@ -206,7 +205,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         label: 'City',
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w25,
@@ -219,8 +218,8 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         name: 'receiverZip',
         label: 'Zip',
         placeholder: "",
-        rules: {
-            required: "Required field",
+        rules:  {
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w17,
@@ -234,7 +233,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         label: 'Address',
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w33,
@@ -247,9 +246,9 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         name: 'receiverPhone',
         label: 'Phone',
         placeholder: "",
-        rules: {
-            required: "Required field",
-        },
+        // rules: {
+        //     required: "Required field",
+        // },
         errorMessage: "Required field",
         width: WidthType.w25,
         classNames: "",
@@ -281,7 +280,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         label: 'Full name',
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: multipleLocations ? false : "Required field",
         },
         errorMessage: "Required field",
         width: WidthType.w50,

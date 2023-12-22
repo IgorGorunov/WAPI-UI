@@ -485,7 +485,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     onChange={(value: number) => handleChangePageSize(value)}
                 />
             </div>
-            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '}`}>
+            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredInvoices?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredInvoices.slice((current - 1) * pageSize, current * pageSize).map(item => ({
                         ...item,

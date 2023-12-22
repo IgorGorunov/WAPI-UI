@@ -2,15 +2,17 @@ import React, { useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Icon from "@/components/Icon";
 import "./styles.scss";
+import {ModalTypes} from "@/types/utility";
 
 type ModalType = {
     classNames?: string;
     title?: string;
     children?: React.ReactNode;
     onClose: () => void;
+    modalType?: ModalTypes;
 };
 
-const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" }) => {
+const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" , modalType= ModalTypes.MAIN}) => {
     const modalWrapperRef = useRef<HTMLDivElement>();
 
     const handleCloseClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -64,7 +66,7 @@ const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" 
 
     return ReactDOM.createPortal(
         modalContent,
-        document.getElementById("modal-root")
+        document.getElementById(`modal-root-${modalType}`)
     );
 };
 

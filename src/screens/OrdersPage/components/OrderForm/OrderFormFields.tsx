@@ -177,11 +177,11 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
     },
 ];
 
-export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
+export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]; prefix?:string; }) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
-        name: 'receiverCountry',
+        name: `${prefix}receiverCountry`,
         label: 'Country',
         placeholder: "",
         options: countries,
@@ -195,7 +195,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: 'receiverCity',
+        name: `${prefix}receiverCity`,
         label: 'City',
         placeholder: "",
         rules: {
@@ -208,7 +208,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: 'receiverZip',
+        name: `${prefix}receiverZip`,
         label: 'Zip',
         placeholder: "",
         rules: {
@@ -221,7 +221,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: 'receiverAddress',
+        name: `${prefix}receiverAddress`,
         label: 'Address',
         placeholder: "",
         rules: {
@@ -234,7 +234,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: 'receiverPhone',
+        name: `${prefix}receiverPhone`,
         label: 'Phone',
         placeholder: "",
         rules: {
@@ -247,7 +247,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: 'receiverEMail',
+        name: `${prefix}receiverEMail`,
         label: 'E-mail',
         placeholder: "",
         rules: {
@@ -265,7 +265,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: 'receiverFullName',
+        name: `${prefix}receiverFullName`,
         label: 'Full name',
         placeholder: "",
         rules: {
@@ -278,7 +278,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[]; }) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
-        name: 'receiverComment',
+        name: `${prefix}receiverComment`,
         label: 'Comment',
         placeholder: "",
         width: WidthType.w100,
