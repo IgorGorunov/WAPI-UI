@@ -202,6 +202,7 @@
   .ant-table {
     &-thead {
       .ant-table-cell {
+        min-width: 100px;
         padding: 20px 10px !important;
         font-size: 12px;
         font-weight: bold;

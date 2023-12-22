@@ -30,7 +30,7 @@ export type SingleAmazonPrepOrderProductType = {
     product: ProductInfoType;
     quantity: number;
     boxesQuantity: number;
-    unitOfMeasure: string;
+    unitOfMeasure?: string;
 }
 
 export type AmazonPrepOrderHistoryType = {
@@ -106,8 +106,6 @@ export type SingleAmazonPrepOrderType = {
     boxesType?: boolean;
 }
 
-
-
 export type AmazonPrepOrderProductType = {
     available: number;
     country: string;
@@ -152,3 +150,48 @@ export type AmazonPrepOrderProductWithTotalInfoType = {
     currency?: string;
 }
 
+//type of form data sent to server
+export type SingleAmazonPrepOrderFormType = {
+    asnNumber: string;
+    //attachedFiles: AttachedFilesType[];
+    //canEdit: boolean;
+    clientOrderID: string;
+    commentCourierService: string;
+    commentWarehouse: string;
+    courierService: string;
+    courierServiceTrackingNumber: string;
+    date: string;
+    deliveryMethod: string;
+    incomingDate: string;
+    //pallets: PalletType[];
+    preferredDeliveryDate: string;
+    receiverAddress: string;
+    receiverCity: string;
+    receiverComment: string;
+    receiverCountry: string;
+    receiverEMail: string;
+    receiverFullName: string;
+    receiverPhone: string;
+    receiverZip: string;
+    status: string;
+    statusAdditionalInfo: string;
+    trackingLink: string;
+    uuid: string;
+    wapiTrackingNumber: string;
+    warehouse: string;
+    products: {
+        key: string;
+        selected: boolean;
+        product: string;
+        quantity: string;
+        boxesQuantity: string;
+    }[];
+    //statusHistory: AmazonPrepOrderHistoryType[];
+    //services: AmazonPrepOrderServiceType[];
+    //draft?: boolean;
+    carrierType?: string;
+    multipleLocations?: boolean;
+    boxesType?: boolean;
+    draft?: boolean;
+    attachedFiles?: AttachedFilesType[];
+}

@@ -2,7 +2,7 @@ import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'rea
 import {
     AmazonPrepOrderParamsType,
     AmazonPrepOrderProductType,
-    AmazonPrepOrderProductWithTotalInfoType,
+    AmazonPrepOrderProductWithTotalInfoType, SingleAmazonPrepOrderFormType,
     SingleAmazonPrepOrderType,
     WarehouseType,
 } from "@/types/amazonPrep";
@@ -91,7 +91,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const boxesTypeOptions = useMemo(()=> amazonPrepOrderParameters.boxesTypes ? amazonPrepOrderParameters.boxesTypes.map(item => ({label: item as string, value: item as string})) : [],[amazonPrepOrderParameters]);
 
     //form
-    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
+    const {control, handleSubmit, formState: { errors }, clearErrors, getValues, setValue, watch} = useForm({
         mode: 'onSubmit',
         defaultValues: {
             asnNumber: amazonPrepOrderData?.asnNumber || '',
@@ -182,9 +182,79 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     //     return [] as OptionType[];
     // },[amazonPrepOrderParameters, products]);
 
+
+    //form fields
+    const warehouse = watch('warehouse');
+
+    const getCourierServices = useCallback((warehouse: string) => {
+        if (amazonPrepOrderParameters?.warehouses) {
+            if (!warehouse.trim()) {
+                const uniqueCourierServices = Array.from(
+                    new Set(
+                        amazonPrepOrderParameters.warehouses
+                            .filter((item: WarehouseType) => item.courierService.trim() !== '')
+                            .map((item: WarehouseType) => item.courierService.trim())
+                    )
+                );
+
+                return uniqueCourierServices
+                    .map((courierService: string) => ({
+                        label: courierService,
+                        value: courierService
+                    } as OptionType))
+                    .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
+            } else {
+                const filteredWarehouses = amazonPrepOrderParameters.warehouses.filter(
+                    (item: WarehouseType) => item.warehouse.trim() === warehouse.trim()
+                );
+
+                const uniqueCourierServices = Array.from(
+                    new Set(
+                        filteredWarehouses
+                            .filter((item: WarehouseType) => item.courierService.trim() !== '')
+                            .map((item: WarehouseType) => item.courierService.trim())
+                    )
+                );
+
+                return uniqueCourierServices
+                    .map((courierService: string) => ({
+                        label: courierService,
+                        value: courierService
+                    } as OptionType))
+                    .sort((a, b) => a.label.localeCompare(b.label));
+            }
+        }
+        return [];
+    }, [amazonPrepOrderParameters]);
+
+    const handleWarehouseChange = (selectedOption: string) => {
+        // setSelectedWarehouse(selectedOption);
+        // setSelectedCourierService('');
+        setValue('courierService', '');
+        setValue('products', []);
+    }
+
+    useEffect(() => {
+        setValue('products', []);
+    }, [warehouse]);
+
+    const multipleLocations = watch('multipleLocations');
+
+    const linkToTrack = amazonPrepOrderData && amazonPrepOrderData.trackingLink ? <a href={amazonPrepOrderData?.trackingLink} target='_blank'>{amazonPrepOrderData?.trackingLink}</a> : null;
+
+    const generalFields = useMemo(()=> GeneralFields(!amazonPrepOrderData?.uuid), [])
+    const detailsFields = useMemo(()=>DetailsFields({warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions, carrierTypeOptions}), [warehouse, amazonPrepOrderParameters]);
+    const receiverFields = useMemo(()=>ReceiverFields({countries, multipleLocations}),[countries,multipleLocations ])
+    const [selectedFiles, setSelectedFiles] = useState(amazonPrepOrderData?.attachedFiles);
+
+    const handleFilesChange = (files) => {
+        setSelectedFiles(files);
+    };
+
+
     const productOptions = useMemo(() =>{
-        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
-    },[amazonPrepOrderParameters]);
+        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter((item: AmazonPrepOrderProductType)=>item.warehouse===warehouse).map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
+    },[amazonPrepOrderParameters, warehouse]);
 
     const carrierType = watch('carrierType');
 
@@ -343,75 +413,15 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         setSelectAllProducts(false);
     }
 
-    //form fields
-    const warehouse = watch('warehouse');
 
-    const getCourierServices = useCallback((warehouse: string) => {
-        if (amazonPrepOrderParameters?.warehouses) {
-            if (!warehouse.trim()) {
-                const uniqueCourierServices = Array.from(
-                    new Set(
-                        amazonPrepOrderParameters.warehouses
-                            .filter((item: WarehouseType) => item.courierService.trim() !== '')
-                            .map((item: WarehouseType) => item.courierService.trim())
-                    )
-                );
-
-                return uniqueCourierServices
-                    .map((courierService: string) => ({
-                        label: courierService,
-                        value: courierService
-                    } as OptionType))
-                    .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
-            } else {
-                const filteredWarehouses = amazonPrepOrderParameters.warehouses.filter(
-                    (item: WarehouseType) => item.warehouse.trim() === warehouse.trim()
-                );
-
-                const uniqueCourierServices = Array.from(
-                    new Set(
-                        filteredWarehouses
-                            .filter((item: WarehouseType) => item.courierService.trim() !== '')
-                            .map((item: WarehouseType) => item.courierService.trim())
-                    )
-                );
-
-                return uniqueCourierServices
-                    .map((courierService: string) => ({
-                        label: courierService,
-                        value: courierService
-                    } as OptionType))
-                    .sort((a, b) => a.label.localeCompare(b.label));
-            }
-        }
-        return [];
-    }, [amazonPrepOrderParameters]);
-
-    const handleWarehouseChange = (selectedOption: string) => {
-        // setSelectedWarehouse(selectedOption);
-        // setSelectedCourierService('');
-        setValue('courierService', '');
-    }
-
-    const multipleLocations = watch('multipleLocations');
-
-    const linkToTrack = amazonPrepOrderData && amazonPrepOrderData.trackingLink ? <a href={amazonPrepOrderData?.trackingLink} target='_blank'>{amazonPrepOrderData?.trackingLink}</a> : null;
-
-    const generalFields = useMemo(()=> GeneralFields(!amazonPrepOrderData?.uuid), [])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions, carrierDisabled: (carrierType!=='WAPI carrier'), carrierTypeOptions}), [warehouse, carrierType, amazonPrepOrderParameters]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries, multipleLocations}),[countries,multipleLocations ])
-    const [selectedFiles, setSelectedFiles] = useState(amazonPrepOrderData?.attachedFiles);
-
-    const handleFilesChange = (files) => {
-        setSelectedFiles(files);
-    };
 
     const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid);
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
 
-    const onSubmitForm = async (data: SingleAmazonPrepOrderType) => {
+    const onSubmitForm = async (data: SingleAmazonPrepOrderFormType) => {
         setIsLoading(true);
         clearTabTitles();
+        //const sendData = {...data, draft: isDraft, selectedFiles: selectedFiles };
         data.draft = isDraft;
         data.attachedFiles = selectedFiles;
 
@@ -453,6 +463,15 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     }
 
     const onError = (props: any) => {
+
+        if (isDraft) {
+            clearErrors();
+            const formData = getValues();
+            //console.log('Form data on error:', formData);
+
+            return onSubmitForm(formData as SingleAmazonPrepOrderFormType);
+        }
+
 
         const fieldNames = Object.keys(props);
 
@@ -624,7 +643,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             <div className='form-submit-btn'>
                 {isDisabled && amazonPrepOrderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(amazonPrepOrderData?.canEdit || !amazonPrepOrderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
-                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Save</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY} >Save</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
