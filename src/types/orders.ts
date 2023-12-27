@@ -206,3 +206,56 @@ export type OrderCommentType = {
         hourTo: string;
     }
 }
+
+export type SingleOrderFormType = {
+    clientOrderID: string;
+    codAmount: number;
+    codCurrency: string;
+    commentCourierService: string;
+    commentWarehouse: string;
+    courierService: string;
+    courierServiceTrackingNumber: string;
+    courierServiceTrackingNumberCurrent: string;
+    date: string;
+    incomingDate: string;
+    preferredCourierService: string;
+    preferredCourierServiceMandatory: boolean;
+    preferredDeliveryDate: string;
+    preferredWarehouse: string;
+    preferredWarehouseMandatory: boolean;
+    receiverAddress: string;
+    receiverCity: string;
+    receiverComment: string;
+    receiverCountry: string;
+    receiverEMail: string;
+    receiverFullName: string;
+    receiverPhone: string;
+    receiverPickUpAddress:string;
+    receiverPickUpCity:string;
+    receiverPickUpCountry: string;
+    receiverPickUpDescription: string;
+    receiverPickUpID: string;
+    receiverPickUpName: string;
+    receiverZip: string;
+    status: string;
+    statusAdditionalInfo: string;
+    trackingLink: string;
+    uuid: string;
+    wapiTrackingNumber: string;
+    warehouse: string;
+    products: {
+        sku?: string;
+        product: string;
+        analogue: string;
+        quantity: string;
+        price: string;
+        discount: string;
+        tax: string;
+        total: string;
+        cod: string;
+    }[];
+    // statusHistory: OrderHistoryType[];
+    // services: OrderServiceType[];
+    // attachedFiles: AttachedFilesType[];
+    // canEdit: boolean;
+}

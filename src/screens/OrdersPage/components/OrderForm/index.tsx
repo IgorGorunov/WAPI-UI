@@ -5,7 +5,7 @@ import {
     SingleOrderType,
     OrderProductWithTotalInfoType,
     WarehouseType,
-    PickupPointsType
+    PickupPointsType, SingleOrderFormType
 } from "@/types/orders";
 import "./styles.scss";
 import {useRouter} from "next/router";
@@ -40,7 +40,6 @@ import ProductsTotal from "@/screens/OrdersPage/components/OrderForm/ProductsTot
 import {toast, ToastContainer} from '@/components/Toast';
 import {useTabsState} from "@/hooks/useTabsState";
 import Modal from "@/components/Modal";
-import ImportFilesBlock from "@/components/ImportFilesBlock";
 import SendComment from "@/screens/OrdersPage/components/OrderForm/SendCommentBlock";
 
 
@@ -126,7 +125,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     }, [orderParameters?.warehouses]);
 
     //form
-    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
+    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors} = useForm({
         mode: 'onSubmit',
         defaultValues: {
             clientOrderID: orderData?.clientOrderID || '',
@@ -623,9 +622,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedFiles(files);
     };
 
-    const handleSendComment = () => {
-        console.log('click')
-    }
+    // const handleSendComment = () => {
+    //     console.log('click')
+    // }
 
     const tabTitleArray =  TabTitles(!!orderData?.uuid);
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
@@ -675,6 +674,14 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
 
     const onError = (props: any) => {
+
+        if (isDraft) {
+            clearErrors();
+            const formData = getValues();
+            //console.log('Form data on error:', formData);
+
+            return onSubmitForm(formData as SingleOrderFormType);
+        }
 
         const fieldNames = Object.keys(props);
 

@@ -1,5 +1,4 @@
 import {TabFieldType} from '@/types/tabs';
-import {PRODUCT} from "./ProductFormFields";
 
 export const TabTitles = (objectExists: boolean) =>
     objectExists ? ['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogues', 'Status history', 'Files'] : ['Primary','Dimensions', 'Barcodes', 'Aliases', 'Bundle kit', 'Analogues', 'Status history', 'Files'];
@@ -7,23 +6,23 @@ export const TabTitles = (objectExists: boolean) =>
 export const TabFields: TabFieldType[] = [
     {
         tabName: 'Primary',
-        fieldName: PRODUCT.name,
+        fieldName: 'name',
     },
     {
         tabName: 'Primary',
-        fieldName:  PRODUCT.countryOfOrigin,
+        fieldName: 'countryOfOrigin',
     },
     {
         tabName: 'Primary',
-        fieldName: PRODUCT.fullName,
+        fieldName:'fullName',
     },
     {
         tabName: 'Primary',
-        fieldName: PRODUCT.SKU,
+        fieldName: 'sku',
     },
     {
         tabName: 'Primary',
-        fieldName: PRODUCT.typeOfStorage,
+        fieldName: 'typeOfStorage',
     },
 
 ]
