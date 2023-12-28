@@ -6,14 +6,13 @@ import "./styles.scss";
 import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Cookie from "js-cookie";
-import {ProductParamsType, SingleProductType} from "@/types/products";
+import {ProductParamsType, SingleProductFormType, SingleProductType} from "@/types/products";
 import {
     FormFieldsAdditional1,
     FormFieldsAdditional2,
     FormFieldsGeneral,
     FormFieldsSKU,
     FormFieldsWarehouse,
-    PRODUCT
 } from "./ProductFormFields";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
@@ -95,29 +94,29 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
         return products.map(item=>{return{value:item.uuid, label:item.name}})
     }, [products]);
 
-    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
+    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors} = useForm({
         mode: 'onSubmit',
         defaultValues: {
-            [PRODUCT.uuid]: productData?.uuid || uuid || '',
-            [PRODUCT.name]: productData?.name || '',
-            [PRODUCT.fullName]: productData?.fullName || '',
-            [PRODUCT.countryOfOrigin]: productData?.countryOfOrigin || '',
-            [PRODUCT.purchaseValue]: productData?.purchaseValue || '',
-            [PRODUCT.SKU]: productData?.sku || '',
-            [PRODUCT.AmazonSKU]: productData?.amazonSku || '',
-            [PRODUCT.hsCode]: productData?.hsCode || '',
-            [PRODUCT.typeOfStorage]: productData?.typeOfStorage || '',
-            [PRODUCT.salesPackingMaterial] : productData?.salesPackingMaterial || '',
-            [PRODUCT.specialTemperatureControl]: productData?.specialTemperatureControl || '',
-            [PRODUCT.specialDeliveryStorageRequest]: productData?.specialDeliveryOrStorageRequirements || '',
-            [PRODUCT.whoProvidesPackagingMaterial]: productData?.whoProvideExtraPacking || '',
-            [PRODUCT.expiringTerm]: '',
-            [PRODUCT.liquid]: productData?.liquid,
-            [PRODUCT.glass]: productData?.glass,
-            [PRODUCT.fragile]: productData?.fragile,
-            [PRODUCT.fireproof]: productData?.fireproof,
-            [PRODUCT.packingBox]: productData?.packingBox,
-            [PRODUCT.hazmat]: productData?.hazmat,
+            uuid: productData?.uuid || uuid || '',
+            name: productData?.name || '',
+            fullName: productData?.fullName || '',
+            countryOfOrigin: productData?.countryOfOrigin || '',
+            purchaseValue: productData?.purchaseValue || '',
+            sku: productData?.sku || '',
+            amazonSku: productData?.amazonSku || '',
+            hsCode: productData?.hsCode || '',
+            typeOfStorage: productData?.typeOfStorage || '',
+            salesPackingMaterial : productData?.salesPackingMaterial || '',
+            specialTemperatureControl: productData?.specialTemperatureControl || '',
+            specialDeliveryStorageRequest: productData?.specialDeliveryOrStorageRequirements || '',
+            whoProvidesPackagingMaterial: productData?.whoProvideExtraPacking || '',
+            expiringTerm: '',
+            liquid: productData?.liquid,
+            glass: productData?.glass,
+            fragile: productData?.fragile,
+            fireproof: productData?.fireproof,
+            packingBox: productData?.packingBox,
+            hazmat: productData?.hazmat,
             unitOfMeasure: productData?.unitOfMeasure || 'pcs',
             unitOfMeasures:
                 productData && productData.unitOfMeasures
@@ -125,25 +124,25 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         {
                             key: `unit-${unit.name}_${index}`,
                             selected: false,
-                            [PRODUCT.unitOfMeasuresFields.unitName]: unit.name || '',
-                            [PRODUCT.unitOfMeasuresFields.unitCoefficient]: unit.coefficient || '',
-                            [PRODUCT.unitOfMeasuresFields.unitWidth]: unit.width || '',
-                            [PRODUCT.unitOfMeasuresFields.unitLength]: unit.length || '',
-                            [PRODUCT.unitOfMeasuresFields.unitHeight]: unit.height || '',
-                            [PRODUCT.unitOfMeasuresFields.unitWeightGross]: unit.weightGross || '',
-                            [PRODUCT.unitOfMeasuresFields.unitWeightNet]: unit.weightNet || '',
+                            name: unit.name || '',
+                            coefficient: unit.coefficient || '',
+                            width: unit.width || '',
+                            length: unit.length || '',
+                            height: unit.height || '',
+                            weightGross: unit.weightGross || '',
+                            weightNet: unit.weightNet || '',
                         }))
                     : [
                         {
                             key: `unit-${Date.now().toString()}`,
                             selected: false,
-                            [PRODUCT.unitOfMeasuresFields.unitName]: 'pcs',
-                            [PRODUCT.unitOfMeasuresFields.unitCoefficient]: '1',
-                            [PRODUCT.unitOfMeasuresFields.unitWidth]: '',
-                            [PRODUCT.unitOfMeasuresFields.unitLength]: '',
-                            [PRODUCT.unitOfMeasuresFields.unitHeight]:  '',
-                            [PRODUCT.unitOfMeasuresFields.unitWeightGross]: '',
-                            [PRODUCT.unitOfMeasuresFields.unitWeightNet]: '',
+                            name: 'pcs',
+                            coefficient: '1',
+                            width: '',
+                            length: '',
+                            height:  '',
+                            weightGross: '',
+                            weightNet: '',
                         }
                     ],
             barcodes:
@@ -183,16 +182,16 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                             analogue: analogue || '',
                         }))
                     : [],
-            statusHistory:
-                productData && productData?.statusHistory && productData.statusHistory.length
-                    ? productData.statusHistory.map((status, index: number) => (
-                        {
-                            key: status || `status-${Date.now().toString()}_${index}`,
-                            date: status.date || '',
-                            status: status.status || '',
-                            comment: status.comment || '',
-                        }))
-                    : [],
+            // statusHistory:
+            //     productData && productData?.statusHistory && productData.statusHistory.length
+            //         ? productData.statusHistory.map((status, index: number) => (
+            //             {
+            //                 key: status || `status-${Date.now().toString()}_${index}`,
+            //                 date: status.date || '',
+            //                 status: status.status || '',
+            //                 comment: status.comment || '',
+            //             }))
+            //         : [],
 
         }
     })
@@ -835,6 +834,14 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
     }
 
     const onError = (props: any) => {
+        if (sendStatus === SendStatusType.DRAFT) {
+            clearErrors();
+            const formData = getValues();
+            //console.log('Form data on error:', formData);
+
+            return onSubmitForm(formData as SingleProductFormType);
+        }
+
         const fieldNames = Object.keys(props);
 
         if (fieldNames.length > 0) {
@@ -912,20 +919,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         </div>
 
                         <div className='checkboxes grid-row'>
-                            {additionalCheckboxes.map((curField) => (
-                                <div key={curField.name} className={`${curField.width ? 'width-'+curField.width : ''}`}>
-                                    <Controller name={curField.name} control={control} render={({field: {value, ...props}, fieldState: {error}}) => (
-                                        <FieldBuilder
-                                            {...props}
-                                            label={curField.label}
-                                            fieldType={curField.fieldType}
-                                            errorMessage={error?.message}
-                                            disabled={!!isDisabled}
-                                            checked={!!value}
-                                        /> )}
-                                    />
-                                </div>
-                            ))}
+                            <FormFieldsBlock control={control} fieldsArray={additionalCheckboxes} errors={errors} isDisabled={isDisabled} />
                         </div>
                     </div>
                 </div>

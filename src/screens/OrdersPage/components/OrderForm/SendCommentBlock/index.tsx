@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import "./styles.scss";
 import useAuth from "@/context/authContext";
-import {Controller, useFieldArray, useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import {OrderCommentType, SingleOrderType} from "@/types/orders";
 import {createOptions} from "@/utils/selectOptions";
 import {SEND_COMMENT_TYPES, SendCommentTypesArray} from "@/types/utility";
@@ -14,6 +14,7 @@ import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {ReceiverFields, MainFields, DateFields} from "./CommentFields";
 import {formatDateToString} from "@/utils/date";
+import Skeleton from "@/components/Skeleton/Skeleton";
 
 type SendCommentPropsType = {
     orderData: SingleOrderType;
@@ -26,7 +27,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
     const {token} = useAuth();
     const sendCommentTypeOptions = useMemo(()=> createOptions(SendCommentTypesArray), []);
 
-    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch} = useForm({
+    const {control, handleSubmit, formState: { errors }, watch} = useForm({
         mode: 'onSubmit',
         defaultValues: {
             order: {
@@ -37,12 +38,13 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
             action: sendCommentTypeOptions[0].value,
             comment: '',
             receiver: {
-                address: '',
-                city: '',
-                country: '',
-                email: '',
-                fullName: '',
-                phone: '',
+                address: orderData?.receiverAddress || '',
+                city: orderData?.receiverCity || '',
+                country: orderData?.receiverCountry || '',
+                email: orderData?.receiverEMail || '',
+                fullName: orderData?.receiverFullName || '',
+                phone: orderData?.receiverPhone || '',
+                zip: orderData?.receiverZip || '',
             },
             deliveryDate :{
                 date: new Date().toISOString(),
@@ -88,7 +90,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
             sendData.receiver = data.receiver;
         }
 
-        if (data.action === SEND_COMMENT_TYPES.REDELIVERY_SAME_ADDRESS) {
+        if (data.action === SEND_COMMENT_TYPES.REDELIVERY_SAME_ADDRESS || data.action === SEND_COMMENT_TYPES.REDELIVERY_ANOTHER_ADDRESS) {
             sendData.deliveryDate = {...data.deliveryDate, date: formatDateToString(new Date(data.deliveryDate.date))};
         }
 
@@ -129,6 +131,22 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
 
     return (
         <div className="send-comment">
+            {isLoading && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    zIndex: 1000
+                }}>
+                    <Skeleton type="round" width="500px" height="300px" />
+                </div>
+            )}
             <form onSubmit={handleSubmit(onSubmitForm)}>
                 <div className='grid-row'>
                     <Controller
@@ -161,7 +179,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 <div className='grid-row'>
                     <FormFieldsBlock control={control} fieldsArray={mainFields} errors={errors} isDisabled={false}/>
                 </div>
-                {curAction===SEND_COMMENT_TYPES.REDELIVERY_SAME_ADDRESS && <div className='grid-row'>
+                {(curAction===SEND_COMMENT_TYPES.REDELIVERY_SAME_ADDRESS || curAction === SEND_COMMENT_TYPES.REDELIVERY_ANOTHER_ADDRESS) && <div className='grid-row'>
                     <FormFieldsBlock control={control} fieldsArray={dateFields} errors={errors} isDisabled={false}/>
                 </div>}
                 <div className='form-submit-btn'>

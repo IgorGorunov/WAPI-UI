@@ -107,3 +107,62 @@ export type SingleProductType = {
     statusHistory: StatusHistoryType[];
     canEdit: boolean;
 }
+
+export type SingleProductFormType = {
+    uuid?: string;
+    amazonSku: string;
+    barcodes: {
+        key: string;
+        selected: boolean;
+        barcode:string;
+    }[];
+    countryOfOrigin: string;
+    fireproof: boolean;
+    fragile: boolean;
+    fullName: string;
+    glass: boolean;
+    hazmat: boolean;
+    hsCode: string;
+    liquid: boolean;
+    name: string;
+    packingBox: boolean;
+    purchaseValue: number;
+    salesPackingMaterial: string;
+    sku: string;
+    specialDeliveryStorageRequest: string;
+    specialTemperatureControl: string;
+    typeOfStorage: string;
+    unitOfMeasure: string;
+    unitOfMeasures: {
+        key: string;
+        selected: boolean;
+        name: string;
+        coefficient: string;
+        width: string;
+        length: string;
+        height:  string;
+        weightGross: string;
+        weightNet: string;
+    }[];
+    whoProvidesPackagingMaterial: string;
+    aliases: {
+        key: string;
+        selected: boolean;
+        alias:string;
+    }[];
+    //status: string;
+    bundleKit: {
+        key: string;
+        selected: boolean;
+        uuid: string;
+        quantity: string;
+    }[];
+    analogues: {
+        key: string;
+        selected: boolean;
+        analogue: string;
+    }[];
+    //attachedFiles: AttachedFilesType[];
+    // statusHistory: StatusHistoryType[];
+    // canEdit: boolean;
+}

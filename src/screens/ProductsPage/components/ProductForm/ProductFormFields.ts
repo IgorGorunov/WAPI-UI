@@ -52,7 +52,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
-            name: PRODUCT.name,
+            name: 'name',
             label: "Name",
             placeholder: "",
             rules: {
@@ -65,7 +65,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
         {
             fieldType: FormFieldTypes.SELECT,
             type: "text",
-            name: PRODUCT.countryOfOrigin,
+            name: 'countryOfOrigin',
             label: 'Country of origin',
             placeholder: "",
             rules: {
@@ -79,7 +79,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
         {
             fieldType: FormFieldTypes.NUMBER,
             type: "number",
-            name: PRODUCT.purchaseValue,
+            name: 'purchaseValue',
             label: "Purchase value",
             rules: {
                 required: "Required field",
@@ -91,7 +91,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
-            name: PRODUCT.fullName,
+            name: 'fullName',
             label: "Full name",
             placeholder: "",
             rules: {
@@ -109,7 +109,7 @@ export const FormFieldsSKU = () => [
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
-            name: PRODUCT.SKU,
+            name: 'sku',
             label: "SKU",
             placeholder: "",
             rules: {
@@ -122,7 +122,7 @@ export const FormFieldsSKU = () => [
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
-            name: PRODUCT.AmazonSKU,
+            name: 'amazonSku',
             label: "Amazon SKU",
             placeholder: "",
             width: WidthType.w33,
@@ -131,7 +131,7 @@ export const FormFieldsSKU = () => [
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
-            name: PRODUCT.hsCode,
+            name: 'hsCode',
             label: "HS code",
             placeholder: "",
             width: WidthType.w33,
@@ -144,7 +144,7 @@ export const FormFieldsWarehouse = ({typeOfStorage, salesPackingMaterial, specia
         {
             fieldType: FormFieldTypes.SELECT,
             type: "text",
-            name: PRODUCT.typeOfStorage,
+            name: 'typeOfStorage',
             label: "Type of storage",
             placeholder: '',
             options: typeOfStorage,
@@ -158,7 +158,7 @@ export const FormFieldsWarehouse = ({typeOfStorage, salesPackingMaterial, specia
         {
             fieldType: FormFieldTypes.SELECT,
             type: "text",
-            name: PRODUCT.salesPackingMaterial,
+            name: 'salesPackingMaterial',
             label: "Primary sales packing material",
             placeholder: '',
             options: salesPackingMaterial,
@@ -168,7 +168,7 @@ export const FormFieldsWarehouse = ({typeOfStorage, salesPackingMaterial, specia
         {
             fieldType: FormFieldTypes.SELECT,
             type: "text",
-            name: PRODUCT.specialDeliveryStorageRequest,
+            name: 'specialDeliveryStorageRequest',
             label: "Special delivery / storage request",
             placeholder: '',
             options: specialDeliveryOrStorageRequirements,
@@ -182,7 +182,7 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
         {
             fieldType: FormFieldTypes.SELECT,
             type: "text",
-            name: PRODUCT.whoProvidesPackagingMaterial,
+            name: 'whoProvidesPackagingMaterial',
             label: "Who provides packaging material",
             placeholder: "",
             options: whoProvidesPackagingMaterial,
@@ -192,7 +192,7 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
-            name: PRODUCT.specialTemperatureControl,
+            name: 'specialTemperatureControl',
             label: "Special temperature control",
             width: WidthType.w33,
             classNames: "",
@@ -200,7 +200,7 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
-            name: PRODUCT.expiringTerm,
+            name: 'expiringTerm',
             label: "Expiring term (month)",
             width: WidthType.w33,
             classNames: "",
@@ -209,42 +209,42 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
 export const FormFieldsAdditional2 = () => [
         {
             fieldType: FormFieldTypes.TOGGLE,
-            name: PRODUCT.fragile,
+            name: 'fragile',
             label: "Fragile",
             width: WidthType.w17,
             classNames: "",
         },
         {
             fieldType: FormFieldTypes.TOGGLE,
-            name: PRODUCT.hazmat,
+            name: 'hazmat',
             label: "Hazmat",
             width: WidthType.w17,
             classNames: "",
         },
         {
             fieldType: FormFieldTypes.TOGGLE,
-            name: PRODUCT.glass,
+            name: 'glass',
             label: "Glass",
             width: WidthType.w17,
             classNames: "",
         },
         {
             fieldType: FormFieldTypes.TOGGLE,
-            name: PRODUCT.fireproof,
+            name: 'fireproof',
             label: "Fireproof",
             width: WidthType.w17,
             classNames: "",
         },
         {
             fieldType: FormFieldTypes.TOGGLE,
-            name: PRODUCT.liquid,
+            name: 'liquid',
             label: "Liquid",
             width: WidthType.w17,
             classNames: "",
         },
         {
             fieldType: FormFieldTypes.TOGGLE,
-            name: PRODUCT.packingBox,
+            name: 'packingBox',
             label: "Packing box",
             width: WidthType.w17,
             classNames: "",
