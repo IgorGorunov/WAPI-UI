@@ -42,6 +42,7 @@ type AmazonPrepFormType = {
 }
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
+
     const Router = useRouter();
     const { token } = useAuth();
 
@@ -138,7 +139,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
 
     const { append: appendProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
-
+    console.log("products", products);
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
@@ -150,7 +151,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     });
 
     const updateTotalProducts = () => {
-        const rez = {
+     const rez = {
             pallets: amazonPrepOrderData?.pallets?.length || 0,
             weightNet: 0,
             weightGross: 0,
@@ -231,11 +232,11 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         // setSelectedWarehouse(selectedOption);
         // setSelectedCourierService('');
         setValue('courierService', '');
-        setValue('products', []);
+        //setValue('products', []);
     }
 
     useEffect(() => {
-        setValue('products', []);
+        //setValue('products', []);
     }, [warehouse]);
 
     const multipleLocations = watch('multipleLocations');
