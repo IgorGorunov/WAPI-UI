@@ -12,7 +12,7 @@ import {getOrders, getOrderData, getOrderParameters} from "@/services/orders";
 import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getFirstDayOfMonth} from "@/utils/date";
+import {formatDateToString, getFirstDayOfMonth, getLastFewDays} from "@/utils/date";
 import {OrderParamsType, OrderType, SingleOrderType} from "@/types/orders";
 import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
@@ -25,7 +25,7 @@ type ApiResponse = {
 
 const OrdersPage = () => {
     const today = new Date();
-    const firstDay = getFirstDayOfMonth(today);
+    const firstDay = getLastFewDays(today, 30);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
     const Router = useRouter();
     const { token, setToken } = useAuth();
