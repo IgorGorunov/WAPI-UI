@@ -41,6 +41,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 address: orderData?.receiverAddress || '',
                 city: orderData?.receiverCity || '',
                 country: orderData?.receiverCountry || '',
+                county: orderData?.receiverCounty || '',
                 email: orderData?.receiverEMail || '',
                 fullName: orderData?.receiverFullName || '',
                 phone: orderData?.receiverPhone || '',

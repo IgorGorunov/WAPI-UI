@@ -5,9 +5,10 @@ import {
     SingleOrderType,
     OrderProductWithTotalInfoType,
     WarehouseType,
-    PickupPointsType, SingleOrderFormType
+    PickupPointsType, SingleOrderFormType, SingleOrderProductFormType
 } from "@/types/orders";
 import "./styles.scss";
+import '@/styles/forms.scss';
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import {verifyToken} from "@/services/auth";
@@ -36,11 +37,12 @@ import DropZone from "@/components/Dropzone";
 import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
-import ProductsTotal from "@/screens/OrdersPage/components/OrderForm/ProductsTotal";
+import ProductsTotal from "./ProductsTotal";
 import {toast, ToastContainer} from '@/components/Toast';
 import {useTabsState} from "@/hooks/useTabsState";
 import Modal from "@/components/Modal";
-import SendComment from "@/screens/OrdersPage/components/OrderForm/SendCommentBlock";
+import SendComment from "./SendCommentBlock";
+import SmsHistory from "./SmsHistory";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -79,8 +81,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         }
 
         const countryArr =  filteredCountries.map(item => item.country);
-
-        console.log("123", selectedWarehouse, selectedCourierService)
 
         return allCountries.filter(item=> countryArr.includes(item.value));
     }
@@ -147,6 +147,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             receiverCity: orderData?.receiverCity || '',
             receiverComment: orderData?.receiverComment || '',
             receiverCountry: orderData?.receiverCountry || '',
+            receiverCounty: orderData?.receiverCounty || '',
             receiverEMail:orderData?.receiverEMail || '',
             receiverFullName: orderData?.receiverFullName || '',
             receiverPhone: orderData?.receiverPhone || '',
@@ -284,7 +285,15 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         return orderParameters.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
     },[orderParameters]);
 
-    // const productsHeaderWidth = [40, 130, 'auto', 200, 50, 50, 50, 50, 50, 50];
+    const calcProductTotal = (record: SingleOrderProductFormType, index: number) => {
+        const product = getValues('products')[index];
+        const total = (Math.floor(((+product.quantity) * (+product.price) - (+product.discount))*100)/100).toString();
+        setValue(`products.${index}.total`, total === '0' ? '' : total, { shouldValidate: true });
+
+        if (+product.quantity === 0) setValue(`products.${index}.quantity`, '', { shouldValidate: true });
+        if (+product.price === 0) setValue(`products.${index}.price`, '', { shouldValidate: true });
+    }
+
     const getProductColumns = (control: any) => {
         return [
             {
@@ -305,8 +314,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                     setValue(`products.${index}.selected`, e.target.checked);
                                 });
                             }}
-                        /></div>
-
+                        />
+                    </div>
                 ),
                 dataIndex: 'selected',
                 width: '40px',
@@ -318,7 +327,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                         render={({ field }) => (
                             <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
                                 <FieldBuilder
-                                    name={'products.${index}.selected'}
+                                    name={`products.${index}.selected`}
                                     fieldType={FormFieldTypes.CHECKBOX}
                                     {...field}
                                     disabled={isDisabled}
@@ -345,29 +354,33 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     disabled={true}
-                                /></div>
+                                />
+                            </div>
                         )}
                     />
                 ),
             },
             {
-                title: 'Product',
+                title: 'Product*',
                 dataIndex: 'product',
                 width: '100%',
                 key: 'product',
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].product`}
+                        name={`products.${index}.product`}
                         control={control}
                         defaultValue={record.product}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{}}>
                                 <FieldBuilder
-                                    name={`products[${index}].product`}
+                                    name={`products.${index}.product`}
                                     fieldType={FormFieldTypes.SELECT}
                                     {...field}
                                     options={productOptions}
                                     disabled={isDisabled}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
                                     onChange={(selectedValue) => {
                                         field.onChange(selectedValue);
                                         const sku = getProductSku(selectedValue as string);
@@ -378,6 +391,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                 />
                             </div>
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
@@ -390,67 +404,81 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                 responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].analogue`}
+                        name={`products.${index}.analogue`}
                         control={control}
                         render={({ field }) => (
                             <div style={{maxWidth: '200px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].analogue`}
+                                    name={`products.${index}.analogue`}
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     options={productOptions}
                                     disabled={true}
-
-                                /></div>
+                                />
+                            </div>
                         )}
                     />
                 ),
             },
             {
-                title: 'Quantity',
+                title: 'Quantity*',
                 dataIndex: 'quantity',
                 key: 'quantity',
                 minWidth: 50,
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].quantity`}
+                        name={`products.${index}.quantity`}
                         control={control}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{maxWidth: '50px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].quantity`}
+                                    name={`products.${index}.quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
-                                    onChange={(newValue: string) => {field.onChange(newValue);updateTotalProducts();
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
+                                    onChange={(newValue: string) => {
+                                        field.onChange(newValue);
+                                        updateTotalProducts();
+                                        calcProductTotal(record, index);
                                     }}
-                                /></div>
-
+                                />
+                            </div>
                         )}
-
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
             {
-                title: 'Price',
+                title: 'Price*',
                 dataIndex: 'price',
                 key: 'price',
                 minWidth: 50,
                 responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].price`}
+                        name={`products.${index}.price`}
                         control={control}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{maxWidth: '50px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].price`}
+                                    name={`products.${index}.price`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
-                                /></div>
-
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
+                                    onChange={(newValue: string) => {
+                                        field.onChange(newValue);
+                                        calcProductTotal(record, index);
+                                    }}
+                                />
+                            </div>
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
@@ -462,17 +490,21 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                 responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].discount`}
+                        name={`products.${index}.discount`}
                         control={control}
                         render={({ field }) => (
                             <div style={{maxWidth: '50px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].discount`}
+                                    name={`products.${index}.discount`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
-                                /></div>
-
+                                    onChange={(newValue: string) => {
+                                        field.onChange(newValue);
+                                        calcProductTotal(record, index);
+                                    }}
+                                />
+                            </div>
                         )}
                     />
                 ),
@@ -485,41 +517,45 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                 responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].tax`}
+                        name={`products.${index}.tax`}
                         control={control}
                         render={({ field }) => (
                             <div style={{maxWidth: '50px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].tax`}
+                                    name={`products.${index}.tax`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
-                                /></div>
-
+                                />
+                            </div>
                         )}
                     />
                 ),
             },
             {
-                title: 'Total',
+                title: 'Total*',
                 dataIndex: 'total',
                 key: 'total',
-                minWidth: 50,
+                minWidth: 60,
                 responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].total`}
+                        name={`products.${index}.total`}
                         control={control}
-                        render={({ field }) => (
-                            <div style={{maxWidth: '50px'}}>
+                        render={({ field , fieldState: {error}}) => (
+                            <div style={{maxWidth: '60px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].total`}
+                                    name={`products.${index}.total`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
-                                /></div>
-
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
+                                />
+                            </div>
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
@@ -531,18 +567,18 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                 responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].cod`}
+                        name={`products.${index}.cod`}
                         control={control}
                         render={({ field }) => (
                             <div style={{maxWidth: '70px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].cod`}
+                                    name={`products.${index}.cod`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
                                     onChange={(newValue: string) => {field.onChange(newValue); updateTotalProducts(); }}
-                                /></div>
-
+                                />
+                            </div>
                         )}
                     />
                 ),
@@ -622,10 +658,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedFiles(files);
     };
 
-    // const handleSendComment = () => {
-    //     console.log('click')
-    // }
-
     const tabTitleArray =  TabTitles(!!orderData?.uuid);
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
 
@@ -634,6 +666,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setIsLoading(true);
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
+
         try {
             //verify token
             if (!await verifyToken(token)) {
@@ -692,6 +725,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             });
         }
 
+        console.log("validation errors: ", fieldNames, props)
+
         updateTabTitles(fieldNames);
     };
 
@@ -714,7 +749,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             </div>
         )}
         <ToastContainer />
-        <form onSubmit={handleSubmit(onSubmitForm, onError)}>
+        <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
+            <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
             <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal' >
                 <div key='general-tab' className='general-tab'>
                     <div className='card order-info--general'>
@@ -793,7 +829,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                 <Controller
                                     name="codCurrency"
                                     control={control}
-                                    render={({ field }) => (
+                                    render={({ field , fieldState: {error}}) => (
                                         <FieldBuilder
                                             fieldType={FormFieldTypes.SELECT}
                                             name='codCurrency'
@@ -801,15 +837,17 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                             {...field}
                                             options={currencyOptions}
                                             placeholder=""
+                                            errorMessage={error?.message}
                                             errors={errors}
                                             disabled={isDisabled}
                                         />
                                     )}
+                                    rules={{ required: 'Field is required' }}
                                 />
                             </div>
                             <div className='order-info--order-btns width-75'>
                                 <div className='grid-row'>
-                                    <div className='order-info--table-btns small-paddings width-100'>
+                                    <div className='order-info--table-btns form-table--btns small-paddings width-100'>
                                         <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, sku: '', product: '', analogue:'',quantity:'', price:'',discount:'',tax:'',total:'', cod:'' })}>
                                             Add
                                         </Button>
@@ -820,7 +858,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                 </div>
                             </div>
                         </div>
-                        <div className='order-info--table table-form-fields'>
+                        <div className='order-info--table table-form-fields form-table'>
                             <Table
                                 columns={getProductColumns(control)}
                                 dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
@@ -849,6 +887,15 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                         <StatusHistory statusHistory={orderData?.statusHistory} />
                     </div>
                 </div>}
+                {orderData?.uuid && <div key='sms-history-tab' className='sms-history-tab'>
+                    <div className="card min-height-600 order-info--sms-history">
+                        <h3 className='order-info__block-title'>
+                            <Icon name='message' />
+                            SMS history
+                        </h3>
+                        <SmsHistory smsHistory={orderData?.smsHistory} />
+                    </div>
+                </div>}
                 <div key='files-tab' className='files-tab'>
                     <div className="card min-height-600 order-info--files">
                         <h3 className='order-info__block-title'>
@@ -866,7 +913,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                 {isDisabled && orderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {orderData?.uuid && <Button type="button" disabled={false} onClick={()=>setShowSendCommentModal(true)} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
-                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Save</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

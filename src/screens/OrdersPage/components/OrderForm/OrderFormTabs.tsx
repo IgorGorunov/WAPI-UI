@@ -1,7 +1,7 @@
 import {TabFieldType} from '@/types/tabs';
 
 export const TabTitles = (objectExists: boolean) =>
-    objectExists ? ['General', 'Delivery info', 'Products', 'Services', 'Status history', 'Files'] : ['General', 'Delivery info', 'Products', 'Files'];
+    objectExists ? ['General', 'Delivery info', 'Products', 'Services', 'Status history', 'SMS history','Files'] : ['General', 'Delivery info', 'Products', 'Files'];
 
 export const TabFields: TabFieldType[] = [
     {
@@ -35,6 +35,10 @@ export const TabFields: TabFieldType[] = [
     {
         tabName: 'Products',
         fieldName: 'codCurrency'
+    },
+    {
+        tabName: 'Products',
+        fieldName: 'products'
     },
 
 ]

@@ -195,6 +195,15 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
+        name: `${prefix}receiverCounty`,
+        label: 'County',
+        placeholder: "",
+        width: WidthType.w25,
+        classNames: "",
+    },
+    {
+        fieldType: FormFieldTypes.TEXT,
+        type: "text",
         name: `${prefix}receiverCity`,
         label: 'City',
         placeholder: "",
@@ -215,7 +224,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
             required: "Required field",
         },
         errorMessage: "Required field",
-        width: WidthType.w17,
+        width: WidthType.w25,
         classNames: "",
     },
     {
@@ -228,7 +237,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
             required: "Required field",
         },
         errorMessage: "Required field",
-        width: WidthType.w33,
+        width: WidthType.w50,
         classNames: "",
     },
     {
@@ -240,7 +249,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
         rules: {
             required: "Required field",
         },
-        errorMessage: "Required field",
+        errorMessage: "Required field123",
         width: WidthType.w25,
         classNames: "",
     },
@@ -272,7 +281,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
             required: "Required field",
         },
         errorMessage: "Required field",
-        width: WidthType.w50,
+        width: WidthType.w33,
         classNames: "",
     },
     {
@@ -281,7 +290,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
         name: `${prefix}receiverComment`,
         label: 'Comment',
         placeholder: "",
-        width: WidthType.w100,
+        width: WidthType.w67,
         classNames: "",
     },
 ];
