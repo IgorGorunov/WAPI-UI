@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Table, Pagination, Input} from 'antd';
+import {Table, Pagination} from 'antd';
 import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
@@ -13,6 +13,7 @@ import Icon from "@/components/Icon";
 import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import {GetFilterArray} from '@/utils/common';
+import SearchField from "@/components/SearchField";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -268,12 +269,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
                         value={filterWarehouse}
                         onChange={(value: string) => handleFilterChange(undefined, value)}
                     />
-                <Input
-                    placeholder="🔍 Search..."
-                    value={searchTerm}
-                    onChange={e => handleFilterChange(e.target.value, undefined)}
-                    className="search-input"
-                />
+                {/*<Input*/}
+                {/*    placeholder="🔍 Search..."*/}
+                {/*    value={searchTerm}*/}
+                {/*    onChange={e => handleFilterChange(e.target.value, undefined)}*/}
+                {/*    className="search-input"*/}
+                {/*/>*/}
+                <SearchField searchTerm={searchTerm} handleChange={str=>handleFilterChange(str, undefined)} handleClear={()=>{setSearchTerm(""); handleFilterChange("",undefined);}} />
             </div>
             <div className="page-size-container">
                 <span className="page-size-text"></span>

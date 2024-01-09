@@ -10,6 +10,10 @@
     flex-wrap: wrap;
   }
   .input-select-container {
-    flex: 1 0 200px;
+    flex: 0 0 200px;
+
+    @media (max-width: $mobile) {
+      flex: 1 0 100%;
+    }
   }
 }

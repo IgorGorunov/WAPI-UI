@@ -199,36 +199,36 @@
     }
   }
 
-  .ant-table {
-    &-thead {
-      .ant-table-cell {
-        min-width: 100px;
-        padding: 20px 10px !important;
-        font-size: 12px;
-        font-weight: bold;
-        color: var(--color-gray-blue) !important;
-        background-color: var(--color-white) !important;
+  //.ant-table {
+  //  &-thead {
+  //    .ant-table-cell {
+  //      min-width: 100px;
+  //      padding: 20px 10px !important;
+  //      font-size: 12px;
+  //      font-weight: bold;
+  //      color: var(--color-gray-blue) !important;
+  //      background-color: var(--color-white) !important;
+  //
+  //      &::before {
+  //        content: none !important;
+  //      }
+  //    }
+  //  }
+  //
+  //  &-cell {
+  //    padding: 8px !important;
+  //  }
+  //}
 
-        &::before {
-          content: none !important;
-        }
-      }
-    }
-
-    &-cell {
-      padding: 8px !important;
-    }
-  }
-
-  .form-submit-btn {
-    display: flex;
-    justify-content: flex-end;
-    gap: 22px;
-    margin-top: 30px;
-
-    @media (max-width: $mobile) {
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-  }
+  //.form-submit-btn {
+  //  display: flex;
+  //  justify-content: flex-end;
+  //  gap: 22px;
+  //  margin-top: 30px;
+  //
+  //  @media (max-width: $mobile) {
+  //    gap: 6px;
+  //    flex-wrap: wrap;
+  //  }
+  //}
 }

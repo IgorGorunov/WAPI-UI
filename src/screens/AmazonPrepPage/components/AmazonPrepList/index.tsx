@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Input, Pagination, Table, TableColumnProps} from 'antd';
+import {Pagination, Table, TableColumnProps} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
@@ -15,8 +15,8 @@ import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import Head from "next/head";
-import {OrderType} from "@/types/orders";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
+import SearchField from "@/components/SearchField";
 
 
 type AmazonPrepListType = {
@@ -398,12 +398,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             </Head>
             <div className="search-container">
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
-                <Input
-                    placeholder="🔍 Search..."
-                    value={searchTerm}
-                    onChange={e => handleFilterChange(e.target.value)}
-                    className="search-input"
-                />
+                <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
             </div>
             {isFiltersVisible && (
             <div className="filter-container">

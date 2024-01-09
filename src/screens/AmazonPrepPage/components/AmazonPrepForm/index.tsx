@@ -7,6 +7,7 @@ import {
     WarehouseType,
 } from "@/types/amazonPrep";
 import "./styles.scss";
+import '@/styles/forms.scss';
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import {verifyToken} from "@/services/auth";
@@ -232,7 +233,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         // setSelectedWarehouse(selectedOption);
         // setSelectedCourierService('');
         setValue('courierService', '');
-        //setValue('products', []);
+        // setValue('products', []);
     }
 
     useEffect(() => {
@@ -584,7 +585,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                                 {/*</div>*/}
                             </div>
                         </div>
-                        <div className='amazon-prep-info--table table-form-fields'>
+                        <div className='amazon-prep-info--table table-form-fields form-table'>
                             <Table
                                 columns={getProductColumns(control)}
                                 dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
