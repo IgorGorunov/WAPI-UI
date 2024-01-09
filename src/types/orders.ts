@@ -96,8 +96,8 @@ export type SingleOrderType = {
     clientOrderID: string;
     codAmount: number;
     codCurrency: string;
-    commentCourierService: string;
-    commentWarehouse: string;
+    // commentCourierService: string;
+    // commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
     courierServiceTrackingNumberCurrent: string;
@@ -233,8 +233,8 @@ export type SingleOrderProductFormType = {
     clientOrderID: string;
     codAmount: number;
     codCurrency: string;
-    commentCourierService: string;
-    commentWarehouse: string;
+    // commentCourierService: string;
+    // commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
     courierServiceTrackingNumberCurrent: string;
