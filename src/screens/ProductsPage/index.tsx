@@ -9,7 +9,6 @@ import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header";
 import ProductList from "./components/ProductList";
 import {verifyToken} from "@/services/auth";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {exportFileXLS} from "@/utils/files";
@@ -19,6 +18,7 @@ import ProductForm from "@/screens/ProductsPage/components/ProductForm";
 import 'react-toastify/dist/ReactToastify.css';
 import '@/components/Toast/styles.scss'
 import ImportFilesBlock from "@/components/ImportFilesBlock";
+import Loader from "@/components/Loader";
 
 const ProductsPage = () => {
     const Router = useRouter();
@@ -158,22 +158,7 @@ const ProductsPage = () => {
     return (
             <Layout hasFooter>
                 <div className="products-page__container">
-                    {isLoading && (
-                        <div style={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                            zIndex: 1000
-                        }}>
-                            <Skeleton type="round" width="500px" height="300px" />
-                        </div>
-                    )}
+                    {isLoading && <Loader />}
                     <Header pageTitle='Products' toRight >
                         {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
                         <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>

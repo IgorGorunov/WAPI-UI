@@ -9,13 +9,13 @@ import Header from '@/components/Header';
 import CodReportsList from "./components/CodReportsList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {CODIndicatorsType, CodReportType} from "@/types/codReports";
 import {exportFileXLS} from "@/utils/files";
 import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {DateRangeType} from "@/types/dashboard";
 import CODIndicatorsCard from "@/screens/CodReportsPage/components/CODIndicators";
+import Loader from "@/components/Loader";
 
 const CodReportsPage = () => {
 
@@ -120,22 +120,7 @@ const CodReportsPage = () => {
     return (
         <Layout hasHeader hasFooter>
             <div className="cod-reports__container">
-                {isLoading && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        zIndex: 1000
-                    }}>
-                        <Skeleton type="round" width="500px" height="300px" />
-                    </div>
-                )}
+                {isLoading && <Loader />}
                 <Header pageTitle='Cod reports' toRight >
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download COD reports list</Button>
                 </Header>

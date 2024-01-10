@@ -9,13 +9,13 @@ import Header from '@/components/Header';
 import InvoiceList from "./components/InvoiceList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {InvoiceType, BalanceInfoType, InvoiceBalanceType} from "@/types/invoices";
 import {exportFileXLS} from "@/utils/files";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
 import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
+import Loader from "@/components/Loader";
 
 const InvoicesPage = () => {
 
@@ -124,22 +124,7 @@ const InvoicesPage = () => {
     return (
         <Layout hasHeader hasFooter>
             <div className="invoices__container">
-                {isLoading && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        zIndex: 1000
-                    }}>
-                        <Skeleton type="round" width="500px" height="300px" />
-                    </div>
-                )}
+                {isLoading && <Loader />}
                 <Header pageTitle='Invoices' toRight >
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download invoices list</Button>
                 </Header>

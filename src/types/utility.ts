@@ -18,3 +18,16 @@ export const SendCommentTypesArray = [
     SEND_COMMENT_TYPES.BACK_TO_SENDER,
 ]
 
+export type AttachedFilesType = {
+    id: string;
+    name: string;
+    type: string;
+    data: string;
+}
+
+export type WarehouseType = {
+    warehouse: string;
+    courierService: string;
+    country: string;
+}
+

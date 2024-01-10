@@ -4,15 +4,15 @@ import {
     OrderProductType,
     SingleOrderType,
     OrderProductWithTotalInfoType,
-    WarehouseType,
+    //WarehouseType,
     PickupPointsType, SingleOrderFormType, SingleOrderProductFormType
 } from "@/types/orders";
+import {WarehouseType} from "@/types/utility";
 import "./styles.scss";
 import '@/styles/forms.scss';
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import {verifyToken} from "@/services/auth";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import useAuth from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
@@ -43,6 +43,7 @@ import {useTabsState} from "@/hooks/useTabsState";
 import Modal from "@/components/Modal";
 import SendComment from "./SendCommentBlock";
 import SmsHistory from "./SmsHistory";
+import Loader from "@/components/Loader";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -289,9 +290,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         const product = getValues('products')[index];
         const total = (Math.floor(((+product.quantity) * (+product.price) - (+product.discount))*100)/100).toString();
         setValue(`products.${index}.total`, total === '0' ? '' : total, { shouldValidate: true });
-
-        if (+product.quantity === 0) setValue(`products.${index}.quantity`, '', { shouldValidate: true });
-        if (+product.price === 0) setValue(`products.${index}.price`, '', { shouldValidate: true });
+        setValue(`products.${index}.quantity`, +product.quantity === 0 ?'': product.quantity, { shouldValidate: true });
+        setValue(`products.${index}.price`, +product.price === 0 ? '' : product.price, { shouldValidate: true });
     }
 
     const getProductColumns = (control: any) => {
@@ -533,7 +533,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                 ),
             },
             {
-                title: 'Total*',
+                title: 'Total',
                 dataIndex: 'total',
                 key: 'total',
                 minWidth: 60,
@@ -555,7 +555,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                 />
                             </div>
                         )}
-                        rules={{ required: 'filed is required' }}
+                        // rules={{ required: 'filed is required' }}
                     />
                 ),
             },
@@ -732,22 +732,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
     return <div className='order-info'>
 
-        {isLoading && (
-            <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                zIndex: 1000
-            }}>
-                <Skeleton type="round" width="500px" height="300px" />
-            </div>
-        )}
+        {isLoading && <Loader />}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
             <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />

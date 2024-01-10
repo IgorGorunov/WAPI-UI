@@ -17,9 +17,9 @@ import OrderStatuses from "./components/OrderStatuses";
 import OrdersByCountry from "./components/OrdersByCountry";
 import "./styles.scss";
 import {verifyToken} from "@/services/auth";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import PeriodFilter from "@/screens/DashboardPage/components/PeriodFilter";
 import {formatDateToString} from "@/utils/date";
+import Loader from "@/components/Loader";
 
 const DashboardPage: React.FC = () => {
 
@@ -119,22 +119,7 @@ const DashboardPage: React.FC = () => {
   return (
       <Layout hasHeader hasFooter>
         <div className="dashboard-page__container">
-          {isLoading && (
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                zIndex: 1000
-              }}>
-                <Skeleton type="round" width="500px" height="300px" />
-              </div>
-          )}
+          {isLoading && <Loader />}
 
           <Header pageTitle="Dashboard">
             <PeriodFilter currentPeriod={currentPeriod}

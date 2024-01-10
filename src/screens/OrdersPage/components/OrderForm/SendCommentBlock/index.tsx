@@ -14,7 +14,7 @@ import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {ReceiverFields, MainFields, DateFields} from "./CommentFields";
 import {formatDateToString} from "@/utils/date";
-import Skeleton from "@/components/Skeleton/Skeleton";
+import Loader from "@/components/Loader";
 
 type SendCommentPropsType = {
     orderData: SingleOrderType;
@@ -132,22 +132,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
 
     return (
         <div className="send-comment">
-            {isLoading && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                    zIndex: 1000
-                }}>
-                    <Skeleton type="round" width="500px" height="300px" />
-                </div>
-            )}
+            {isLoading && <Loader />}
             <form onSubmit={handleSubmit(onSubmitForm)}>
                 <div className='grid-row'>
                     <Controller

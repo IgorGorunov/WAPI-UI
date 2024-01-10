@@ -24,7 +24,7 @@ import {ApiResponseType} from "@/types/api";
 import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Cookie from "js-cookie";
-import Skeleton from "@/components/Skeleton/Skeleton";
+import Loader from "@/components/Loader";
 
 
 export const StatusColors = {
@@ -441,22 +441,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     ], [handleHeaderCellClick]);
     return (
         <div className='table'>
-            {isLoading && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                    zIndex: 1000
-                }}>
-                    <Skeleton type="round" width="500px" height="300px" />
-                </div>
-            )}
+            {isLoading && <Loader />}
             <Head>
                 <title>Invoices</title>
                 <meta name="invoices" content="invoices" />

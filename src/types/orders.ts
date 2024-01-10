@@ -1,4 +1,4 @@
-import {SEND_COMMENT_TYPES} from "@/types/utility";
+import {SEND_COMMENT_TYPES, AttachedFilesType, WarehouseType} from "@/types/utility";
 
 export type OrderType = {
     mobileIcon: string,
@@ -137,12 +137,12 @@ export type SingleOrderType = {
     canEdit: boolean;
 }
 
-export type AttachedFilesType = {
-    id: string;
-    name: string;
-    type: string;
-    data: string;
-}
+// export type AttachedFilesType = {
+//     id: string;
+//     name: string;
+//     type: string;
+//     data: string;
+// }
 
 export type OrderProductType = {
     available: number;
@@ -165,11 +165,11 @@ export type OrderProductType = {
     volume: number;
 }
 
-export type WarehouseType = {
-    warehouse: string;
-    courierService: string;
-    country: string;
-}
+// export type WarehouseType = {
+//     warehouse: string;
+//     courierService: string;
+//     country: string;
+// }
 
 export type OrderParamsType = {
     products: OrderProductType[];

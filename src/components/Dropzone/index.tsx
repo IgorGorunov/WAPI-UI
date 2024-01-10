@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import FileDisplay from '@/components/FileDisplay';
 import './styles.scss';
 import Icon from '@/components/Icon'
-import Skeleton from "@/components/Skeleton/Skeleton";
+import Loader from "@/components/Loader";
 
 const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -92,22 +92,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
 
     return (
         <div onClick={handleDivClick} className="dropzone-container">
-            {isDragging && (
-                <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                    zIndex: 1000,
-                }}>
-                    <Skeleton type="files-uploading" width="500px" height="300px" />
-                </div>
-            )}
+            {isDragging && <Loader />}
             <div
                 {...getRootProps()}
                 onClick={handleDivClick}

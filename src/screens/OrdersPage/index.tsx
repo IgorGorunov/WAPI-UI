@@ -9,7 +9,6 @@ import OrderList from "./components/OrderList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import {getOrders, getOrderData, getOrderParameters} from "@/services/orders";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfMonth, getLastFewDays} from "@/utils/date";
@@ -18,6 +17,7 @@ import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
 import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
+import Loader from "@/components/Loader";
 
 type ApiResponse = {
     data: any;
@@ -177,25 +177,12 @@ const OrdersPage = () => {
         exportFileXLS(filteredData, "Orders");
     }
 
+    console.log("orders", ordersData);
+
     return (
         <Layout hasHeader hasFooter>
             <div className="orders-page__container">
-                {isLoading && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        zIndex: 1000
-                    }}>
-                        <Skeleton type="round" width="500px" height="300px" />
-                    </div>
-                )}
+                {isLoading && (<Loader />)}
                 <Header pageTitle='Fulfillment' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
                     <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>

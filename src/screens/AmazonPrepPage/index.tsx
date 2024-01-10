@@ -9,7 +9,6 @@ import AmazonPrepList from "./components/AmazonPrepList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import {getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters} from "@/services/amazonePrep";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
@@ -23,6 +22,7 @@ import Modal from "@/components/Modal";
 import AmazonPrepForm from "./components/AmazonPrepForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ApiResponseType} from "@/types/api";
+import Loader from "@/components/Loader";
 
 const AmazonPrepPage = () => {
     const today = new Date();
@@ -178,22 +178,7 @@ const AmazonPrepPage = () => {
     return (
         <Layout hasHeader hasFooter>
             <div className="amazon-prep-page__container">
-                {isLoading && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        zIndex: 1000
-                    }}>
-                        <Skeleton type="round" width="500px" height="300px" />
-                    </div>
-                )}
+                {isLoading && <Loader />}
                 <Header pageTitle='Amazon Prep' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddAmazonPrepOrder}>Add order</Button>
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
