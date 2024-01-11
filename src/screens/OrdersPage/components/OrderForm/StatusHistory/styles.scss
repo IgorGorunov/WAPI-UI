@@ -35,6 +35,10 @@
     @media (max-width: $mobile) {
       padding: 10px 6px;
     }
+
+    .new-line {
+      display: block;
+    }
   }
 
   .date-column {
@@ -48,7 +52,7 @@
     }
   }
   .status-column {
-    flex: 0 0 200px;
+    flex: 0 0 150px;
 
     @media (max-width: $upToTablet) {
       flex: 1 1 150px;
