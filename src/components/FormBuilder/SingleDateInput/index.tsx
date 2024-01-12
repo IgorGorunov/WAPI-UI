@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import { Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -6,6 +6,7 @@ import "./styles.scss";
 import { FieldPropsType } from "@/types/forms";
 import {formatDateToDisplayString} from '@/utils/date'
 import Icon from "@/components/Icon";
+import useAuth from "@/context/authContext";
 
 const SingleDateInput: React.FC<FieldPropsType> = ({
        classNames='',
@@ -24,8 +25,10 @@ const SingleDateInput: React.FC<FieldPropsType> = ({
        ...otherProps
 }) => {
 
+    const {currentDate} = useAuth();
+
     const getDate = (dateStr: string) => {
-        return !dateStr ? new Date() : new Date(dateStr);
+        return !dateStr ? currentDate : new Date(dateStr);
     }
 
     const [selectedDate, setSelectedDate] = useState(getDate(value as string));

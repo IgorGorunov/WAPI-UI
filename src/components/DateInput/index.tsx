@@ -3,14 +3,16 @@ import { Icon } from "../Icon";
 import "./styles.scss";
 import {DateRangeType} from "@/types/dashboard";
 import Datepicker from "@/components/Datepicker"
+import useAuth from "@/context/authContext";
 
 
 type DateInputType = {
     currentRange?: DateRangeType;
     handleRangeChange: (periodRange: DateRangeType) => void
 }
-const DateInput: React.FC<DateInputType> = ({currentRange = {startDate: new Date(), endDate: new Date() }, handleRangeChange}) => {
-    const [curRange, setCurRange] = useState<DateRangeType>(currentRange);
+const DateInput: React.FC<DateInputType> = ({currentRange, handleRangeChange}) => {
+    const {currentDate} = useAuth();
+    const [curRange, setCurRange] = useState<DateRangeType>(currentRange ? currentRange : {startDate: currentDate, endDate: currentDate});
     const [showDateInput, setShowDateInput] = useState(false);
     const handleDateInputClick = () => {
         setShowDateInput(prevSate => !prevSate);

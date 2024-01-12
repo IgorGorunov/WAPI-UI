@@ -23,15 +23,17 @@ import AmazonPrepForm from "./components/AmazonPrepForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 const AmazonPrepPage = () => {
-    const today = new Date();
+    const {token, setToken, currentDate} = useAuth();
+    const savedToken = Cookie.get('token');
+    if (savedToken) setToken(savedToken);
+
+    const today = currentDate;
     const firstDay = getFirstDayOfYear(today);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
     const Router = useRouter();
-    const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
 
     const [amazonPrepOrdersData, setAmazonPrepOrdersData,] = useState<any | null>(null);
     const [filteredAmazonPrepOrders, setFilteredAmazonPrepOrders] = useState<AmazonPrepOrderType[]>(amazonPrepOrdersData);
@@ -57,7 +59,9 @@ const AmazonPrepPage = () => {
         try {
             setIsLoading(true);
 
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -80,7 +84,9 @@ const AmazonPrepPage = () => {
 
     const fetchAmazonPrepOrderParams = useCallback(async() => {
         try {
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -103,7 +109,9 @@ const AmazonPrepPage = () => {
         try {
             setIsLoading(true);
 
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 

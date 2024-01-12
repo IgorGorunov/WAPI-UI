@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
-import { getInvoices, getInvoicesDebts, getInvoiceForm } from "@/services/invoices";
+import { getInvoices, getInvoicesDebts } from "@/services/invoices";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
@@ -10,17 +10,18 @@ import InvoiceList from "./components/InvoiceList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
-import {InvoiceType, BalanceInfoType, InvoiceBalanceType} from "@/types/invoices";
+import {InvoiceType, InvoiceBalanceType} from "@/types/invoices";
 import {exportFileXLS} from "@/utils/files";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
 import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
 import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 const InvoicesPage = () => {
 
     const Router = useRouter();
-    const { token, setToken } = useAuth();
+    const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
@@ -32,7 +33,7 @@ const InvoicesPage = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     //period
-    const today = new Date();
+    const today = currentDate;
     const firstDay = getFirstDayOfYear(today);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 
@@ -44,7 +45,9 @@ const InvoicesPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                if (!await verifyToken(token)) {
+                //verify token
+                const responseVerification = await verifyToken(token);
+                if (!verifyUser(responseVerification, currentDate) ){
                     await Router.push(Routes.Login);
                 }
 
@@ -78,7 +81,10 @@ const InvoicesPage = () => {
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
-                if (!await verifyToken(token)) {
+
+                //verify token
+                const responseVerification = await verifyToken(token);
+                if (!verifyUser(responseVerification, currentDate) ){
                     await Router.push(Routes.Login);
                 }
 

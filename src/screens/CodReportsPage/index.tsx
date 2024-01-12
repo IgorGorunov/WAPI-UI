@@ -16,11 +16,12 @@ import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {DateRangeType} from "@/types/dashboard";
 import CODIndicatorsCard from "@/screens/CodReportsPage/components/CODIndicators";
 import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 const CodReportsPage = () => {
 
     const Router = useRouter();
-    const { token, setToken } = useAuth();
+    const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
@@ -31,7 +32,7 @@ const CodReportsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     //period
-    const today = new Date();
+    const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 
@@ -43,7 +44,10 @@ const CodReportsPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                if (!await verifyToken(token)) {
+
+                //verify token
+                const responseVerification = await verifyToken(token);
+                if (!verifyUser(responseVerification, currentDate) ){
                     await Router.push(Routes.Login);
                 }
 
@@ -77,7 +81,10 @@ const CodReportsPage = () => {
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
-                if (!await verifyToken(token)) {
+
+                //verify token
+                const responseVerification = await verifyToken(token);
+                if (!verifyUser(responseVerification, currentDate) ){
                     await Router.push(Routes.Login);
                 }
 

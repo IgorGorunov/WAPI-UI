@@ -24,7 +24,7 @@ type SendCommentPropsType = {
 
 const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const {token} = useAuth();
+    const {token, currentDate} = useAuth();
     const sendCommentTypeOptions = useMemo(()=> createOptions(SendCommentTypesArray), []);
 
     const {control, handleSubmit, formState: { errors }, watch} = useForm({
@@ -48,7 +48,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 zip: orderData?.receiverZip || '',
             },
             deliveryDate :{
-                date: new Date().toISOString(),
+                date: currentDate.toISOString(),
                 hourFrom: '',
                 hourTo: '',
             }

@@ -32,6 +32,7 @@ import "@/styles/tables.scss";
 import {TabFields, TabTitles} from "./ProductFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -56,7 +57,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
     const Router = useRouter();
-    const { token, setToken } = useAuth();
+    const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
@@ -798,7 +799,8 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
         try {
             //verify token
-            if (!await verifyToken(token)) {
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 

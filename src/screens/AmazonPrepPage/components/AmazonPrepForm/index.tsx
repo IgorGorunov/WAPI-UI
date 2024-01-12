@@ -34,6 +34,7 @@ import Pallets from "@/screens/AmazonPrepPage/components/AmazonPrepForm/Pallets"
 import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -45,7 +46,7 @@ type AmazonPrepFormType = {
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
 
     const Router = useRouter();
-    const { token } = useAuth();
+    const { token, currentDate } = useAuth();
 
     const [isDisabled, setIsDisabled] = useState(!!amazonPrepOrderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
@@ -102,7 +103,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             commentWarehouse: amazonPrepOrderData?.commentWarehouse || '',
             courierService: amazonPrepOrderData?.courierService || '',
             courierServiceTrackingNumber: amazonPrepOrderData?.courierServiceTrackingNumber || '',
-            date: amazonPrepOrderData?.date || new Date().toISOString(),
+            date: amazonPrepOrderData?.date || currentDate.toISOString(),
             deliveryMethod: amazonPrepOrderData?.deliveryMethod || amazonPrepOrderParameters.deliveryMethod[0] || "",
             incomingDate: amazonPrepOrderData?.incomingDate || '',
             preferredDeliveryDate: amazonPrepOrderData?.preferredDeliveryDate || '',
@@ -429,7 +430,8 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
 
         try {
             //verify token
-            if (!await verifyToken(token)) {
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 

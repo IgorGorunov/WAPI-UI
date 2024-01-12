@@ -57,7 +57,7 @@ const LoginForm: React.FC = () => {
     },
   ];
 
-  const { setToken, setUserName } = useAuth();
+  const { setToken, setUserName, setCurrentDate } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +65,6 @@ const LoginForm: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState,
   } = useForm({ mode: "onSubmit" });
 
 
@@ -85,11 +84,14 @@ const LoginForm: React.FC = () => {
       //const res = await authenticate("Test@Test.com", "Test");
       const res: ApiResponse = await authenticate(login, password);
 
+      console.log('auth: ', res)
+
       if (res?.status === 200) {
-        const { accessToken } = res?.data;
+        const { accessToken, userPresentation, currentDate } = res?.data;
         setToken(accessToken);
         Cookie.set('token', accessToken);
-        setUserName(login);
+        setUserName(userPresentation ? userPresentation : login);
+        setCurrentDate(currentDate);
         await Router.push(Routes.Dashboard);
         // } else if (res?.response.status === 401) {
       } else {

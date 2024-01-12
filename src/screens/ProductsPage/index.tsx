@@ -19,10 +19,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import '@/components/Toast/styles.scss'
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 const ProductsPage = () => {
     const Router = useRouter();
-    const { token, setToken } = useAuth();
+    const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
@@ -48,8 +49,10 @@ const ProductsPage = () => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
+
             //verify token
-            if (!await verifyToken(token)) {
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -105,7 +108,8 @@ const ProductsPage = () => {
         try {
             setIsLoading(true);
             //verify token
-            if (!await verifyToken(token)) {
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 

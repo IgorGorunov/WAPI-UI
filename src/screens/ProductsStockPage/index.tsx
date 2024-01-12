@@ -13,11 +13,12 @@ import Button from "@/components/Button/Button";
 import {ProductStockType} from "@/types/products";
 import {exportFileXLS} from "@/utils/files";
 import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 const ProductsStockPage = () => {
 
     const Router = useRouter();
-    const { token, setToken } = useAuth();
+    const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
@@ -33,7 +34,9 @@ const ProductsStockPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                if (!await verifyToken(token)) {
+                //verify token
+                const responseVerification = await verifyToken(token);
+                if (!verifyUser(responseVerification, currentDate) ){
                     await Router.push(Routes.Login);
                 }
 
@@ -58,9 +61,6 @@ const ProductsStockPage = () => {
         fetchData();
     }, [token]);
 
-    const handleAddProduct = () => {
-
-    }
     const handleExportXLS = () => {
         const filteredData = filteredProducts.map(item => ({
             sku: item.sku,

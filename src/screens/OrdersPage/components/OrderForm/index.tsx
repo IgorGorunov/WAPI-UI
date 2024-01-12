@@ -44,6 +44,7 @@ import Modal from "@/components/Modal";
 import SendComment from "./SendCommentBlock";
 import SmsHistory from "./SmsHistory";
 import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -65,7 +66,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const [selectedWarehouse, setSelectedWarehouse] = useState(orderData?.preferredWarehouse || '');
     const [selectedCourierService, setSelectedCourierService] = useState(orderData?.preferredCourierService || '');
 
-    const { token } = useAuth();
+    const { token, currentDate } = useAuth();
 
     //countries
     const allCountries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
@@ -137,11 +138,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             courierService: orderData?.courierService || '',
             courierServiceTrackingNumber: orderData?.courierServiceTrackingNumber || '',
             courierServiceTrackingNumberCurrent: orderData?.courierServiceTrackingNumberCurrent || '',
-            date: orderData?.date || new Date().toISOString(),
+            date: orderData?.date || currentDate.toISOString(),
             incomingDate: orderData?.incomingDate || '',
             preferredCourierService: orderData?.preferredCourierService || '',
             preferredCourierServiceMandatory: orderData?.preferredCourierServiceMandatory || false,
-            preferredDeliveryDate: orderData?.preferredDeliveryDate || '',
+            preferredDeliveryDate: orderData?.preferredDeliveryDate || currentDate.toISOString(),
             preferredWarehouse: orderData?.preferredWarehouse || '',
             preferredWarehouseMandatory: orderData?.preferredWarehouseMandatory || '',
             receiverAddress: orderData?.receiverAddress || '',
@@ -203,7 +204,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         try {
             setIsLoading(true);
 
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -668,8 +671,10 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         data.attachedFiles= selectedFiles;
 
         try {
+
             //verify token
-            if (!await verifyToken(token)) {
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
