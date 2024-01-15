@@ -237,7 +237,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
             required: "Required field",
         },
         errorMessage: "Required field",
-        width: WidthType.w50,
+        width: WidthType.w25,
         classNames: "",
     },
     {
@@ -281,7 +281,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
             required: "Required field",
         },
         errorMessage: "Required field",
-        width: WidthType.w33,
+        width: WidthType.w25,
         classNames: "",
     },
     {
@@ -290,7 +290,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
         name: `${prefix}receiverComment`,
         label: 'Shipment label comment',
         placeholder: "",
-        width: WidthType.w67,
+        width: WidthType.w100,
         classNames: "",
     },
 ];
