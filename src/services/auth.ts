@@ -1,4 +1,6 @@
 import axios from "axios";
+import {AuthApiResponseType} from "@/types/api";
+
 // import api from "./api";
 
 const API_ENDPOINT = 'https://api.wapi.com/WAPI/hs/v1/UI'; //"https://api.wapi.com/WAPI/hs/v1/UI";
@@ -26,7 +28,7 @@ const authenticate = async (login: string, password: string) => {
 
 const verifyToken = async (token: string) => {
   try {
-    const response = await axios.post(`${API_ENDPOINT}/TokenIsValid`,
+    const response: AuthApiResponseType = await axios.post(`${API_ENDPOINT}/TokenIsValid`,
       {
         token
       },
@@ -36,10 +38,10 @@ const verifyToken = async (token: string) => {
         },
       }
     );
-    return (response?.status === 200);
+    return response;
   } catch (err) {
     console.error(err);
-    return false;
+    return err;
   }
 }
 

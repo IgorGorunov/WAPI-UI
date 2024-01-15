@@ -1,0 +1,74 @@
+@import '@/constants/devices.scss';
+
+.form-table {
+  flex: 1 0 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0 -28px;
+
+  @media (max-width: $mobile) {
+    margin: 0 -16px;
+  }
+
+  &--btns {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding-bottom: 8px;
+    gap: 30px;
+
+    @media (max-width: $tablet) {
+      gap: 12px;
+      width: auto;
+      flex: 0 0 auto;
+      margin-left: auto;
+
+      .btn {
+        font-size: 0;
+        padding: 5px 9px 5px 5px;
+        gap: 0;
+      }
+    }
+
+    &.small-paddings {
+      padding-bottom: 0;
+    }
+  }
+
+  .ant-table {
+    &-thead {
+      .ant-table-cell {
+        padding: 20px 10px !important;
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--color-gray-blue) !important;
+        background-color: var(--color-white) !important;
+
+        &::before {
+          content: none !important;
+        }
+      }
+    }
+
+    &-cell {
+      padding: 8px !important;
+    }
+
+    .error {
+      font-size: 0;
+    }
+  }
+}
+
+.form-submit-btn {
+  display: flex;
+  justify-content: flex-end;
+  gap: 22px;
+  margin-top: 30px;
+
+  @media (max-width: $mobile) {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+}

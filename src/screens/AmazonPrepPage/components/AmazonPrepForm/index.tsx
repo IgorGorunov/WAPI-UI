@@ -7,10 +7,10 @@ import {
     WarehouseType,
 } from "@/types/amazonPrep";
 import "./styles.scss";
+import '@/styles/forms.scss';
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import {verifyToken} from "@/services/auth";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import useAuth from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
@@ -33,6 +33,8 @@ import {toast, ToastContainer} from '@/components/Toast';
 import Pallets from "@/screens/AmazonPrepPage/components/AmazonPrepForm/Pallets";
 import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
+import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -44,7 +46,7 @@ type AmazonPrepFormType = {
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
 
     const Router = useRouter();
-    const { token } = useAuth();
+    const { token, currentDate } = useAuth();
 
     const [isDisabled, setIsDisabled] = useState(!!amazonPrepOrderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
@@ -101,7 +103,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             commentWarehouse: amazonPrepOrderData?.commentWarehouse || '',
             courierService: amazonPrepOrderData?.courierService || '',
             courierServiceTrackingNumber: amazonPrepOrderData?.courierServiceTrackingNumber || '',
-            date: amazonPrepOrderData?.date || new Date().toISOString(),
+            date: amazonPrepOrderData?.date || currentDate.toISOString(),
             deliveryMethod: amazonPrepOrderData?.deliveryMethod || amazonPrepOrderParameters.deliveryMethod[0] || "",
             incomingDate: amazonPrepOrderData?.incomingDate || '',
             preferredDeliveryDate: amazonPrepOrderData?.preferredDeliveryDate || '',
@@ -232,7 +234,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         // setSelectedWarehouse(selectedOption);
         // setSelectedCourierService('');
         setValue('courierService', '');
-        //setValue('products', []);
+        // setValue('products', []);
     }
 
     useEffect(() => {
@@ -428,7 +430,8 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
 
         try {
             //verify token
-            if (!await verifyToken(token)) {
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -486,22 +489,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     };
 
     return <div className='amazon-prep-info'>
-        {isLoading && (
-            <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                zIndex: 1000
-            }}>
-                <Skeleton type="round" width="500px" height="300px" />
-            </div>
-        )}
+        {isLoading && <Loader />}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='amazon-prep-tabs' tabTitles={tabTitles} classNames='inside-modal' >
@@ -584,7 +572,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                                 {/*</div>*/}
                             </div>
                         </div>
-                        <div className='amazon-prep-info--table table-form-fields'>
+                        <div className='amazon-prep-info--table table-form-fields form-table'>
                             <Table
                                 columns={getProductColumns(control)}
                                 dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}

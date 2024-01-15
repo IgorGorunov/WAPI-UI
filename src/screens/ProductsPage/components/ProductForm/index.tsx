@@ -27,11 +27,12 @@ import {sendProductInfo} from "@/services/products";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import {toast, ToastContainer} from '@/components/Toast';
 import "@/styles/tables.scss";
 import {TabFields, TabTitles} from "./ProductFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
+import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -56,7 +57,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
     const Router = useRouter();
-    const { token, setToken } = useAuth();
+    const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
@@ -798,7 +799,8 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
         try {
             //verify token
-            if (!await verifyToken(token)) {
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -861,22 +863,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
 
     return <div className='product-info'>
-        {isLoading && (
-            <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                zIndex: 1000
-            }}>
-                <Skeleton type="round" width="500px" height="300px" />
-            </div>
-        )}
+        {isLoading && <Loader />}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='tabs-iddd' tabTitles={tabTitles} classNames='inside-modal'>

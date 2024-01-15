@@ -6,3 +6,17 @@ export type ApiResponseType = {
         }
     }
 };
+
+export type AuthApiResponseType = {
+    data?: {
+        token: string;
+        currentDate: string;
+        userPresentation: string;
+    };
+    response?: {
+        data?: {
+            errorMessage: string[];
+        }
+    };
+    status: number;
+}

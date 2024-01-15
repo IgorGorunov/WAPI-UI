@@ -62,6 +62,9 @@ const SelectField: React.FC<FieldPropsType> = ({
                 classNamePrefix='select-field'
                 instanceId={`select-${name}`}
                 isClearable={isClearable}
+                aria-autocomplete='none'
+
+                //inputProps={{autoComplete: 'off', autoCorrect: 'off', spellCheck: 'off' }}
                 //formatGroupLabel={ CustomValueContainer }
             />
             {errorMessage && <p className="error">{errorMessage}</p>}

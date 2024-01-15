@@ -49,7 +49,7 @@ import Finances from '@/assets/icons/finances.svg'
 import Mastercard from '@/assets/icons/mastercard.svg'
 import Visa from '@/assets/icons/visa.svg'
 import Paypal from '@/assets/icons/paypal.svg'
-
+import Message from '@/assets/icons/message.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -101,6 +101,7 @@ export const icons = {
   'mastercard': Mastercard,
   'visa': Visa,
   'paypal': Paypal,
+  'message': Message,
 };
 
 export type IconType = keyof typeof icons;

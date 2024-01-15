@@ -8,7 +8,7 @@ import {AttachedFilesType} from "@/types/products";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {ApiResponseType} from "@/types/api";
 import useAuth from "@/context/authContext";
-import Skeleton from "@/components/Skeleton/Skeleton";
+import Loader from "@/components/Loader";
 
 type ImportFilesBlockType = {
     file: string;
@@ -88,22 +88,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false
 
     return (
         <div className='import-files'>
-            {isLoading && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                    zIndex: 1000
-                }}>
-                    <Skeleton type="round" width="500px" height="300px" />
-                </div>
-            )}
+            {isLoading && <Loader />}
             <p className='import-files__title'>
                 {isProducts ?
                     'To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system' :

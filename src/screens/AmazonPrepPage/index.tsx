@@ -9,7 +9,6 @@ import AmazonPrepList from "./components/AmazonPrepList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import {getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters} from "@/services/amazonePrep";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
@@ -23,15 +22,18 @@ import Modal from "@/components/Modal";
 import AmazonPrepForm from "./components/AmazonPrepForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ApiResponseType} from "@/types/api";
+import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 const AmazonPrepPage = () => {
-    const today = new Date();
+    const {token, setToken, currentDate} = useAuth();
+    const savedToken = Cookie.get('token');
+    if (savedToken) setToken(savedToken);
+
+    const today = currentDate;
     const firstDay = getFirstDayOfYear(today);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
     const Router = useRouter();
-    const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
 
     const [amazonPrepOrdersData, setAmazonPrepOrdersData,] = useState<any | null>(null);
     const [filteredAmazonPrepOrders, setFilteredAmazonPrepOrders] = useState<AmazonPrepOrderType[]>(amazonPrepOrdersData);
@@ -57,7 +59,9 @@ const AmazonPrepPage = () => {
         try {
             setIsLoading(true);
 
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -80,7 +84,9 @@ const AmazonPrepPage = () => {
 
     const fetchAmazonPrepOrderParams = useCallback(async() => {
         try {
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -103,7 +109,9 @@ const AmazonPrepPage = () => {
         try {
             setIsLoading(true);
 
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -178,22 +186,7 @@ const AmazonPrepPage = () => {
     return (
         <Layout hasHeader hasFooter>
             <div className="amazon-prep-page__container">
-                {isLoading && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        zIndex: 1000
-                    }}>
-                        <Skeleton type="round" width="500px" height="300px" />
-                    </div>
-                )}
+                {isLoading && <Loader />}
                 <Header pageTitle='Amazon Prep' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddAmazonPrepOrder}>Add order</Button>
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>

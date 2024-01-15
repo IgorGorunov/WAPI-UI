@@ -93,6 +93,7 @@ export type FieldPropsType = {
   needToasts?: boolean;
   otherComponent?: any;
   isDisplayed?: boolean;
+  autoComplete?: string;
 }
 
 export type FormBuilderType = FieldPropsType & {

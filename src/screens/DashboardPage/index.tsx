@@ -17,9 +17,10 @@ import OrderStatuses from "./components/OrderStatuses";
 import OrdersByCountry from "./components/OrdersByCountry";
 import "./styles.scss";
 import {verifyToken} from "@/services/auth";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import PeriodFilter from "@/screens/DashboardPage/components/PeriodFilter";
 import {formatDateToString} from "@/utils/date";
+import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 const DashboardPage: React.FC = () => {
 
@@ -35,15 +36,15 @@ const DashboardPage: React.FC = () => {
 
 
   const Router = useRouter();
-  const { token, setToken } = useAuth();
+  const { token, setToken, currentDate } = useAuth();
   const savedToken = Cookie.get('token');
   if (savedToken) setToken(savedToken);
 
   const [pageData, setPageData] = useState<pageDataType | null>(null);
 
   const [currentPeriod, setCurrentPeriod] = useState<DashboardPeriodType>({
-    startDate: new Date(new Date().setDate(new Date().getDate() - 30 + 1)),
-    endDate: new Date(),
+    startDate: new Date(new Date().setDate(currentDate.getDate() - 30 + 1)),
+    endDate: currentDate,
     periodType: "MONTH" as PeriodType,
   });
 
@@ -71,9 +72,11 @@ const DashboardPage: React.FC = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
+
         //verify token
-        if (!await verifyToken(token)) {
-            await Router.push(Routes.Login);
+        const responseVerification = await verifyToken(token);
+        if (!verifyUser(responseVerification, currentDate) ){
+          await Router.push(Routes.Login);
         }
 
         const res: ApiResponse = await getDasboardData(
@@ -119,22 +122,7 @@ const DashboardPage: React.FC = () => {
   return (
       <Layout hasHeader hasFooter>
         <div className="dashboard-page__container">
-          {isLoading && (
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                zIndex: 1000
-              }}>
-                <Skeleton type="round" width="500px" height="300px" />
-              </div>
-          )}
+          {isLoading && <Loader />}
 
           <Header pageTitle="Dashboard">
             <PeriodFilter currentPeriod={currentPeriod}

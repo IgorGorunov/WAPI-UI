@@ -1,6 +1,6 @@
 import axios from "axios";
 import {SingleProductType} from '@/types/products';
-import {AttachedFilesType} from "@/types/orders";
+import {AttachedFilesType} from "@/types/utility";
 
 const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 

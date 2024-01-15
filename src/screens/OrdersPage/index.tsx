@@ -9,7 +9,6 @@ import OrderList from "./components/OrderList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import {getOrders, getOrderData, getOrderParameters} from "@/services/orders";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getFirstDayOfMonth, getLastFewDays} from "@/utils/date";
@@ -18,19 +17,23 @@ import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
 import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
+import Loader from "@/components/Loader";
+import {verifyUser} from "@/utils/userData";
 
 type ApiResponse = {
     data: any;
 };
 
 const OrdersPage = () => {
-    const today = new Date();
-    const firstDay = getLastFewDays(today, 30);
-    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
     const Router = useRouter();
-    const { token, setToken } = useAuth();
+    const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
+
+    const today = currentDate;
+    const firstDay = getLastFewDays(today, 30);
+    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
+
 
     const [ordersData, setOrdersData,] = useState<any | null>(null);
     const [filteredOrders, setFilteredOrders] = useState<OrderType[]>(ordersData);
@@ -59,7 +62,9 @@ const OrdersPage = () => {
         try {
             setIsLoading(true);
 
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -81,7 +86,9 @@ const OrdersPage = () => {
 
     const fetchOrderParams = useCallback(async() => {
         try {
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -108,7 +115,9 @@ const OrdersPage = () => {
         try {
             setIsLoading(true);
 
-            if (!await verifyToken(token)) {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
             }
 
@@ -177,25 +186,12 @@ const OrdersPage = () => {
         exportFileXLS(filteredData, "Orders");
     }
 
+    console.log("orders", ordersData);
+
     return (
         <Layout hasHeader hasFooter>
             <div className="orders-page__container">
-                {isLoading && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        zIndex: 1000
-                    }}>
-                        <Skeleton type="round" width="500px" height="300px" />
-                    </div>
-                )}
+                {isLoading && (<Loader />)}
                 <Header pageTitle='Fulfillment' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
                     <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>

@@ -1,4 +1,4 @@
-import React, {FormEvent, useCallback, useEffect } from "react";
+import React, {FormEvent, useCallback } from "react";
 import { FieldPropsType } from "@/types/forms";
 import "./styles.scss";
 
@@ -44,6 +44,8 @@ const TextField: React.FC<FieldPropsType> = ({
             disabled={disabled}
             onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
             {...otherProps}
+            autoComplete="new-user-email"
+            aria-autocomplete='none'
           />
         {errorMessage && <p className="error">{errorMessage}</p>}
       {errors && name in errors ? (

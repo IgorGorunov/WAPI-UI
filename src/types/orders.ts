@@ -1,4 +1,4 @@
-import {SEND_COMMENT_TYPES} from "@/types/utility";
+import {SEND_COMMENT_TYPES, AttachedFilesType, WarehouseType} from "@/types/utility";
 
 export type OrderType = {
     mobileIcon: string,
@@ -73,6 +73,13 @@ export type OrderHistoryType = {
     statusGroup: string;
 }
 
+export type OrderSmsHistoryType = {
+    smsPeriod: string;
+    smsStatus: string;
+    smsText: string;
+    smsRecipient: string;
+}
+
 export type OrderServiceType = {
     amount: number;
     amountEuro: number;
@@ -89,8 +96,8 @@ export type SingleOrderType = {
     clientOrderID: string;
     codAmount: number;
     codCurrency: string;
-    commentCourierService: string;
-    commentWarehouse: string;
+    // commentCourierService: string;
+    // commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
     courierServiceTrackingNumberCurrent: string;
@@ -105,6 +112,7 @@ export type SingleOrderType = {
     receiverCity: string;
     receiverComment: string;
     receiverCountry: string;
+    receiverCounty?: string;
     receiverEMail: string;
     receiverFullName: string;
     receiverPhone: string;
@@ -123,17 +131,18 @@ export type SingleOrderType = {
     warehouse: string;
     products: SingleOrderProductType[];
     statusHistory: OrderHistoryType[];
+    smsHistory?: OrderSmsHistoryType[];
     services: OrderServiceType[];
     attachedFiles: AttachedFilesType[];
     canEdit: boolean;
 }
 
-export type AttachedFilesType = {
-    id: string;
-    name: string;
-    type: string;
-    data: string;
-}
+// export type AttachedFilesType = {
+//     id: string;
+//     name: string;
+//     type: string;
+//     data: string;
+// }
 
 export type OrderProductType = {
     available: number;
@@ -156,11 +165,11 @@ export type OrderProductType = {
     volume: number;
 }
 
-export type WarehouseType = {
-    warehouse: string;
-    courierService: string;
-    country: string;
-}
+// export type WarehouseType = {
+//     warehouse: string;
+//     courierService: string;
+//     country: string;
+// }
 
 export type OrderParamsType = {
     products: OrderProductType[];
@@ -196,6 +205,7 @@ export type OrderCommentType = {
         address: string;
         city: string;
         country: string;
+        county?: string;
         email: string;
         fullName: string;
         phone: string;
@@ -207,12 +217,24 @@ export type OrderCommentType = {
     }
 }
 
-export type SingleOrderFormType = {
+export type SingleOrderProductFormType = {
+    sku?: string;
+    product: string;
+    analogue: string;
+    quantity: string;
+    price: string;
+    discount: string;
+    tax: string;
+    total: string;
+    cod: string;
+};
+
+    export type SingleOrderFormType = {
     clientOrderID: string;
     codAmount: number;
     codCurrency: string;
-    commentCourierService: string;
-    commentWarehouse: string;
+    // commentCourierService: string;
+    // commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
     courierServiceTrackingNumberCurrent: string;
@@ -227,6 +249,7 @@ export type SingleOrderFormType = {
     receiverCity: string;
     receiverComment: string;
     receiverCountry: string;
+    receiverCounty?: string;
     receiverEMail: string;
     receiverFullName: string;
     receiverPhone: string;
@@ -243,17 +266,7 @@ export type SingleOrderFormType = {
     uuid: string;
     wapiTrackingNumber: string;
     warehouse: string;
-    products: {
-        sku?: string;
-        product: string;
-        analogue: string;
-        quantity: string;
-        price: string;
-        discount: string;
-        tax: string;
-        total: string;
-        cod: string;
-    }[];
+    products: SingleOrderProductFormType[];
     // statusHistory: OrderHistoryType[];
     // services: OrderServiceType[];
     // attachedFiles: AttachedFilesType[];

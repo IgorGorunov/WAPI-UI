@@ -47,6 +47,10 @@
       &.has-error {
         color: var(--color-error);
         font-weight: 900;
+
+        &::after {
+          background-color: var(--color-error);
+        }
       }
     }
   }
