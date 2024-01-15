@@ -13,7 +13,7 @@ import Button from "@/components/Button/Button";
 import {InvoiceType, InvoiceBalanceType} from "@/types/invoices";
 import {exportFileXLS} from "@/utils/files";
 import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
+import {formatDateToString, getLastFewDays, } from "@/utils/date";
 import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
@@ -34,7 +34,7 @@ const InvoicesPage = () => {
 
     //period
     const today = currentDate;
-    const firstDay = getFirstDayOfYear(today);
+    const firstDay = getLastFewDays(today,30);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 
     useEffect(() => {

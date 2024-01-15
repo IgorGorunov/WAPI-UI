@@ -11,7 +11,7 @@ import "./styles.scss";
 import {getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters} from "@/services/amazonePrep";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getFirstDayOfYear} from "@/utils/date";
+import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {
     AmazonPrepOrderParamsType,
     AmazonPrepOrderType,
@@ -31,7 +31,7 @@ const AmazonPrepPage = () => {
     if (savedToken) setToken(savedToken);
 
     const today = currentDate;
-    const firstDay = getFirstDayOfYear(today);
+    const firstDay = getLastFewDays(today, 30);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
     const Router = useRouter();
 
