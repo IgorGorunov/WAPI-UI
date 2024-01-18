@@ -30,7 +30,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                         displayedMessage.push(`County: ${commentMessage.receiver?.county}`);
                     }
                     displayedMessage.push(`City: ${commentMessage.receiver.city}`);
-                    displayedMessage.push(`Zip: ${commentMessage.receiver.zipCode}`);
+                    displayedMessage.push(`Zip: ${commentMessage.receiver.zip || commentMessage.receiver.zipCode}`);
                     displayedMessage.push(`Address: ${commentMessage.receiver.address}`);
                     displayedMessage.push(`Phone: ${commentMessage.receiver.phone}`);
                     if (commentMessage?.receiver?.email) {
