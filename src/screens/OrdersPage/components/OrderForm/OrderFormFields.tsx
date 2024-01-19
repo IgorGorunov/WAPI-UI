@@ -290,6 +290,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
         name: `${prefix}receiverComment`,
         label: 'Shipment label comment',
         placeholder: "",
+        maxLength: 50,
         width: WidthType.w100,
         classNames: "",
     },

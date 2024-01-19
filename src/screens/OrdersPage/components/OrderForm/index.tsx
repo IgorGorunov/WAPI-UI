@@ -2,10 +2,11 @@ import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'rea
 import {
     OrderParamsType,
     OrderProductType,
-    SingleOrderType,
     OrderProductWithTotalInfoType,
-    //WarehouseType,
-    PickupPointsType, SingleOrderFormType, SingleOrderProductFormType
+    PickupPointsType,
+    SingleOrderFormType,
+    SingleOrderProductFormType,
+    SingleOrderType
 } from "@/types/orders";
 import {WarehouseType} from "@/types/utility";
 import "./styles.scss";
@@ -20,13 +21,8 @@ import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
 import {getOrderPickupPoints, sendOrderData} from '@/services/orders';
-import {
-    DetailsFields,
-    GeneralFields,
-    PickUpPointFields,
-    ReceiverFields
-} from "./OrderFormFields";
-import {TabTitles, TabFields} from "./OrderFormTabs";
+import {DetailsFields, GeneralFields, PickUpPointFields, ReceiverFields} from "./OrderFormFields";
+import {TabFields, TabTitles} from "./OrderFormTabs";
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
@@ -132,7 +128,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         defaultValues: {
             clientOrderID: orderData?.clientOrderID || '',
             codAmount: orderData?.codAmount || '',
-            codCurrency: orderData?.codCurrency || 'EUR',
+            codCurrency: orderData?.codCurrency || '',
             // commentCourierService: orderData?.commentWarehouse || '',
             // commentWarehouse: orderData?.commentWarehouse || '',
             courierService: orderData?.courierService || '',
@@ -146,6 +142,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             preferredWarehouse: orderData?.preferredWarehouse || '',
             preferredWarehouseMandatory: orderData?.preferredWarehouseMandatory || '',
             receiverAddress: orderData?.receiverAddress || '',
+            priceCurrency: orderData?.priceCurrency || '',
             receiverCity: orderData?.receiverCity || '',
             receiverComment: orderData?.receiverComment || '',
             receiverCountry: orderData?.receiverCountry || '',
@@ -735,6 +732,18 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         updateTabTitles(fieldNames);
     };
 
+    //validation function for codCurrency field
+    const checkOrderHasCod = useCallback((products: SingleOrderProductFormType[]) => {
+        if (products.length) {
+            let i = 0;
+            while (i<products.length) {
+                if (products[i].cod) return true;
+                i++;
+            }
+        }
+        return false;
+    }, []);
+
     return <div className='order-info'>
 
         {isLoading && <Loader />}
@@ -815,7 +824,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                             Products
                         </h3>
                         <div className='grid-row mb-md'>
-                            <div className='order-info--cod-currency width-25'>
+                            <div className='order-info--cod-currency width-33 grid-row'>
                                 <Controller
                                     name="codCurrency"
                                     control={control}
@@ -830,12 +839,39 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                             errorMessage={error?.message}
                                             errors={errors}
                                             disabled={isDisabled}
+                                            width={WidthType.w50}
+                                        />
+                                    )}
+                                    rules={{
+                                        validate: (value) => {
+                                            if (checkOrderHasCod(products)) {
+                                                return value ? true : 'This field is required';
+                                            }
+                                            return true;
+                                        },
+                                    }}
+                                />
+                                <Controller
+                                    name="priceCurrency"
+                                    control={control}
+                                    render={({ field , fieldState: {error}}) => (
+                                        <FieldBuilder
+                                            fieldType={FormFieldTypes.SELECT}
+                                            name='priceCurrency'
+                                            label='Price currency'
+                                            {...field}
+                                            options={currencyOptions}
+                                            placeholder=""
+                                            errorMessage={error?.message}
+                                            errors={errors}
+                                            disabled={isDisabled}
+                                            width={WidthType.w50}
                                         />
                                     )}
                                     rules={{ required: 'Field is required' }}
                                 />
                             </div>
-                            <div className='order-info--order-btns width-75'>
+                            <div className='order-info--order-btns width-67'>
                                 <div className='grid-row'>
                                     <div className='order-info--table-btns form-table--btns small-paddings width-100'>
                                         <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, sku: '', product: '', analogue:'',quantity:'', price:'',discount:'',tax:'',total:'', cod:'' })}>

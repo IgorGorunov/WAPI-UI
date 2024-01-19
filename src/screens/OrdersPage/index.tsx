@@ -11,7 +11,7 @@ import "./styles.scss";
 import {getOrders, getOrderData, getOrderParameters} from "@/services/orders";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getFirstDayOfMonth, getLastFewDays} from "@/utils/date";
+import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {OrderParamsType, OrderType, SingleOrderType} from "@/types/orders";
 import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
@@ -185,8 +185,6 @@ const OrdersPage = () => {
         }));
         exportFileXLS(filteredData, "Orders");
     }
-
-    console.log("orders", ordersData);
 
     return (
         <Layout hasHeader hasFooter>
