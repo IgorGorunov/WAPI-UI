@@ -108,6 +108,7 @@ export type SingleOrderType = {
     preferredDeliveryDate: string;
     preferredWarehouse: string;
     preferredWarehouseMandatory: boolean;
+    priceCurrency: string;
     receiverAddress: string;
     receiverCity: string;
     receiverComment: string;
@@ -221,12 +222,12 @@ export type SingleOrderProductFormType = {
     sku?: string;
     product: string;
     analogue: string;
-    quantity: string;
-    price: string;
-    discount: string;
-    tax: string;
-    total: string;
-    cod: string;
+    quantity: string | number;
+    price: string | number;
+    discount: string | number;
+    tax: string | number;
+    total: string | number;
+    cod: string | number;
 };
 
     export type SingleOrderFormType = {
@@ -245,6 +246,7 @@ export type SingleOrderProductFormType = {
     preferredDeliveryDate: string;
     preferredWarehouse: string;
     preferredWarehouseMandatory: boolean;
+    priceCurrency: string;
     receiverAddress: string;
     receiverCity: string;
     receiverComment: string;
