@@ -141,7 +141,7 @@ const DashboardPage: React.FC = () => {
                   forecastByMonth={!gmv?.gmvForecastByMonth ? 0 : gmv?.gmvForecastByMonth}
                   forecastByYear={!gmv?.gmvForecastByYear ? 0 : gmv?.gmvForecastByYear}
                   //temporary
-                  isError
+                  isError = {false}
                   errorMessage='This indicator is temporarily unavailable due to technical work until 22.01.2024'
               />
             </div>
