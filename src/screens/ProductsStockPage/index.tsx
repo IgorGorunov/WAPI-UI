@@ -25,6 +25,7 @@ const ProductsStockPage = () => {
     const [productsData, setProductsData] = useState<any | null>(null);
     const [filteredProducts, setFilteredProducts] = useState<ProductStockType[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [warehouseForReport, setWarehouseForReport] = useState('');
 
     useEffect(() => {
         type ApiResponse = {
@@ -77,7 +78,7 @@ const ProductsStockPage = () => {
             forPlacement: item.forPlacement,
             total: item.total,
         }));
-        exportFileXLS(filteredData, "ProductsStock")
+        exportFileXLS(filteredData, `ProductsStock${warehouseForReport ? "_"+warehouseForReport : ""}`)
     }
 
     return (
@@ -87,7 +88,7 @@ const ProductsStockPage = () => {
                 <Header pageTitle='Products stock' toRight >
                     <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>
                 </Header>
-                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts}/>}
+                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setWarehouseForExport={setWarehouseForReport}/>}
             </div>
         </Layout>
     )
