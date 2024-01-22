@@ -18,9 +18,10 @@ import SearchField from "@/components/SearchField";
 type ProductListType = {
     products: ProductStockType[];
     setFilteredProducts: React.Dispatch<React.SetStateAction<ProductStockType[]>>;
+    setWarehouseForExport: (warehouse: string)=>void
 }
 
-const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts}) => {
+const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setWarehouseForExport}) => {
 
     const [animating, setAnimating] = useState(false);
 
@@ -90,6 +91,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts})
     useEffect(() => {
         setFilteredProducts(filteredProducts)
     }, [filteredProducts]);
+
+    useEffect(()=> {
+        setWarehouseForExport(filterWarehouse)
+    },[filterWarehouse])
 
     const columns: ColumnType<ProductStockType>[] = useMemo(() => [
         {
