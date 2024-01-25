@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Pagination, Table, TableColumnProps} from 'antd';
+import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
@@ -363,7 +363,17 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             key: 'icon',
         },
         {
-            title: <TitleColumn  minWidth="24px" maxWidth="24px" contentPosition="center" childrenBefore={<Icon name={"complaint"}/>} />,
+            title: <TitleColumn
+                minWidth="24px"
+                maxWidth="24px"
+                contentPosition="center"
+
+                childrenBefore={
+                    <Tooltip title="This column displays if order has Claims">
+                        <span><Icon name={"complaint"}/></span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string, record) => {
                 return (
                     <TableCell
@@ -409,13 +419,22 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             },
             dataIndex: 'claimsExist',
             key: 'claimsExist',
-            sorter: true,
+            sorter: false,
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title: <TitleColumn  minWidth="24px" maxWidth="24px" contentPosition="center" childrenBefore={<Icon name={"trouble"}/>} />,
+            title: <TitleColumn
+                minWidth="24px"
+                maxWidth="24px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="This column displays if order has Trouble statuses">
+                        <span><Icon name={"trouble"}/></span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string, record) => {
                 return (
                     <TableCell
@@ -459,9 +478,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     </TableCell>
                 );
             },
-            dataIndex: 'status',
-            key: 'status',
-            sorter: true,
+            dataIndex: 'troubleStatus',
+            key: 'troubleStatus',
+            sorter: false,
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
@@ -475,39 +494,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         minWidth="60px"
                         maxWidth="60px"
                         contentPosition="start"
-                        // childrenBefore={
-                        //     record.troubleStatusesExist && (
-                        //             <div style={{
-                        //                 minHeight: '8px',
-                        //                 minWidth: '8px',
-                        //                 backgroundColor: 'red',
-                        //                 borderRadius: '50%',
-                        //                 display: 'inline-block',
-                        //                 marginRight: '5px',
-                        //                 alignSelf: 'center',
-                        //             }}
-                        //                  onClick={(e) => {
-                        //                      setHoveredOrder(record);
-                        //                      setHoveredColumn('status');
-                        //                      setMousePosition({ x: e.clientX, y: e.clientY });
-                        //                      setIsDisplayedPopup(!isDisplayedPopup);
-                        //
-                        //                  }}
-                        //                  onMouseEnter={(e) => {
-                        //                      setHoveredOrder(record);
-                        //                      setHoveredColumn('status');
-                        //                      setMousePosition({ x: e.clientX, y: e.clientY });
-                        //                      setIsDisplayedPopup(true);
-                        //
-                        //                  }}
-                        //                  onMouseLeave={() => {
-                        //                      setHoveredOrder(null);
-                        //                      setHoveredColumn('');
-                        //                      setMousePosition(null);
-                        //                      setIsDisplayedPopup(false);
-                        //                  }}/>
-                        //         )
-                        // }
                         childrenAfter={
                             <span style={{
                                 borderBottom: `2px solid ${underlineColor}`,
@@ -805,7 +791,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
-             </div>
+            </div>
             {hoveredOrder && isDisplayedPopup && (
                 <div
                     style={{
