@@ -1,8 +1,8 @@
-import React from "react";
+import React, {forwardRef} from "react";
 import { FieldPropsType } from "@/types/forms";
 import "./styles.scss"
 
-const Checkbox: React.FC<FieldPropsType> = ({
+const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
   classNames= '',
   name,
   label = '',
@@ -17,7 +17,7 @@ const Checkbox: React.FC<FieldPropsType> = ({
   // registerInput,
     width,
   ...otherProps
-}) => {
+},ref) => {
 
   return (
     <div className={`checkbox ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
@@ -27,6 +27,7 @@ const Checkbox: React.FC<FieldPropsType> = ({
           type='checkbox'
           name={name}
           id={`${name}-checkbox`}
+            ref={ref}
           checked={!!value || checked}
           onChange={onChange}
           onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
@@ -41,6 +42,6 @@ const Checkbox: React.FC<FieldPropsType> = ({
       ) : null}
     </div>
   );
-};
+});
 
 export default Checkbox;

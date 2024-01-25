@@ -1,8 +1,8 @@
-import React, {FormEvent, useCallback } from "react";
+import React, {FormEvent, useCallback, forwardRef } from "react";
 import { FieldPropsType } from "@/types/forms";
 import "./styles.scss";
 
-const TextField: React.FC<FieldPropsType> = ({
+const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
     classNames='',
   name,
   label='',
@@ -18,7 +18,7 @@ const TextField: React.FC<FieldPropsType> = ({
   needToasts=true,
   width,
    ...otherProps
-}) => {
+}, ref) => {
 
   const handleChange = useCallback((event: FormEvent) => {
       const {value} = event.target as HTMLInputElement;
@@ -36,6 +36,7 @@ const TextField: React.FC<FieldPropsType> = ({
     <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
         {label && <label htmlFor={name}>{label}</label>}
           <input
+            ref={ref}
             id={name}
             type={type}
             placeholder={placeholder}
@@ -55,6 +56,6 @@ const TextField: React.FC<FieldPropsType> = ({
       ) : null}
     </div>
   );
-};
+});
 
 export default TextField;

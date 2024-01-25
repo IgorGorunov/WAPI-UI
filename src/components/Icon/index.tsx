@@ -50,6 +50,15 @@ import Mastercard from '@/assets/icons/mastercard.svg'
 import Visa from '@/assets/icons/visa.svg'
 import Paypal from '@/assets/icons/paypal.svg'
 import Message from '@/assets/icons/message.svg'
+import StockMovement from '@/assets/icons/stock-movements.svg'
+import Plus from '@/assets/icons/plus.svg'
+import Minus from '@/assets/icons/minus.svg'
+import SortAsc from '@/assets/icons/sort_asc.svg'
+import SortDesc from '@/assets/icons/sort_desc.svg'
+import ShoppingCart from '@/assets/icons/shopping_cart.svg'
+import Track from '@/assets/icons/track_changes.svg'
+import Complaint from '@/assets/icons/complaint.svg'
+import Trouble from '@/assets/icons/trouble.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -102,6 +111,15 @@ export const icons = {
   'visa': Visa,
   'paypal': Paypal,
   'message': Message,
+  'stock-movement': StockMovement,
+  'plus': Plus,
+  'minus': Minus,
+  'sort-asc': SortAsc,
+  'sort-desc': SortDesc,
+  'shopping-cart': ShoppingCart,
+  'track': Track,
+  'complaint': Complaint,
+  'trouble': Trouble,
 };
 
 export type IconType = keyof typeof icons;

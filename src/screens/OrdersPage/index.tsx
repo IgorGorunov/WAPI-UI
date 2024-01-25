@@ -29,6 +29,13 @@ const OrdersPage = () => {
     const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
+    //if (!token) Router.push(Routes.Login);
+
+    useEffect(() => {
+        if (!token) Router.push(Routes.Login);
+    }, [token]);
+
+
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -126,7 +133,7 @@ const OrdersPage = () => {
             );
 
             if (res && "data" in res) {
-                setOrdersData(res.data);
+                setOrdersData(res.data.map(item=>({...item, key: item.uuid})));
                 setIsLoading(false);
             } else {
                 console.error("API did not return expected data");

@@ -2,7 +2,8 @@ import React from 'react';
 import Select from 'react-select';
 import './style.scss';
 
-const CustomSelect = ({ options, value, onChange, name="", errors={}, errorMessage="" }) => {
+
+const CustomSelect = ({ options, value, onChange, name="", errors={}, errorMessage="", label='', customFormat=false }) => {
     const selectedOption = options.find(option => option.value === value);
 
     const formatOptionLabel = (option) => (
@@ -20,16 +21,20 @@ const CustomSelect = ({ options, value, onChange, name="", errors={}, errorMessa
         </div>
     );
 
+    const customProperties = customFormat ? { formatOptionLabel: formatOptionLabel} : {};
+
     return (
-        <div className="input-select-container">
+        <div className="input-select-container filter-select">
+            {label ? <label>{label}</label> : null}
             <Select
                 options={options}
                 value={selectedOption}
                 onChange={selected => onChange(selected.value)}
                 className="input-select"
                 classNamePrefix="input-select"
-                formatOptionLabel={formatOptionLabel}
+                // formatOptionLabel={formatOptionLabel}
                 isSearchable={false}
+                {...customProperties}
             />
             {errors && name in errors ? (
                 <p className="error">

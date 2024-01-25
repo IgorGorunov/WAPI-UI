@@ -41,6 +41,7 @@ import SendComment from "./SendCommentBlock";
 import SmsHistory from "./SmsHistory";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
+import Claims from "@/screens/OrdersPage/components/OrderForm/Claims";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -658,7 +659,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedFiles(files);
     };
 
-    const tabTitleArray =  TabTitles(!!orderData?.uuid);
+    const tabTitleArray =  TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length));
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
 
     const onSubmitForm = async (data) => {
@@ -668,7 +669,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         data.attachedFiles= selectedFiles;
 
         try {
-
             //verify token
             const responseVerification = await verifyToken(token);
             if (!verifyUser(responseVerification, currentDate) ){
@@ -743,6 +743,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         }
         return false;
     }, []);
+
+    console.log('doc:', orderData)
 
     return <div className='order-info'>
 
@@ -922,6 +924,15 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                         <SmsHistory smsHistory={orderData?.smsHistory} />
                     </div>
                 </div>}
+                {orderData?.uuid && orderData?.claims.length ? <div key='claims-tab' className='claims-tab'>
+                    <div className="card min-height-600 order-info--claims">
+                        <h3 className='order-info__block-title'>
+                            <Icon name='complaint' />
+                            Claims
+                        </h3>
+                        <Claims claims={orderData.claims} />
+                    </div>
+                </div> : null}
                 <div key='files-tab' className='files-tab'>
                     <div className="card min-height-600 order-info--files">
                         <h3 className='order-info__block-title'>

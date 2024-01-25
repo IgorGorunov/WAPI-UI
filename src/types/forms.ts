@@ -12,6 +12,7 @@ export const enum FormFieldTypes {
   OTHER = 'other',
   TOGGLE = 'toggle-switch',
   GRID = 'grid',
+  TEXT_AREA = 'text-area',
 }
 
 export type TextFieldType = string
@@ -22,35 +23,6 @@ export type OptionType = {
   extraInfo?: string;
 }
 
-export type SelectFieldType = {
-  name: string;
-  label?: string;
-  options?: OptionType[];
-  value?: string | OptionType | undefined;
-  onChange?:  (value: OptionType) => void;
-  registerInput?: any;
-  width?: WidthType;
-  errors?: any;
-  errorMessage?: string;
-  classNames?: string;
-  placeholder?: string;
-  isRequired?: boolean;
-  innerRef?: RefType;
-  rules?: any;
-  checked?: boolean;
-  isSearchable?: boolean;
-  isClearable?: boolean;
-}
-
-export type CheckboxType = {
-  id: string | undefined;
-  name: string;
-  label: string;
-  checked: boolean | undefined;
-  innerRef: RefType;
-  onChange?: (event: ChangeEvent) => void;
-  classNames?: string;
-}
 export const enum WidthType {
   w100 = "100",
   w75 = '75',
@@ -94,6 +66,8 @@ export type FieldPropsType = {
   otherComponent?: any;
   isDisplayed?: boolean;
   autoComplete?: string;
+  ref?: any;
+  hideTextOnMobile?: boolean;
 }
 
 export type FormBuilderType = FieldPropsType & {

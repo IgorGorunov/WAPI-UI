@@ -262,6 +262,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     options={statusFilter}
                     value={filterStatus}
                     onChange={(value: string) => handleFilterChange(undefined, value)}
+                    customFormat={true}
                 />
                 <SearchField searchTerm={searchTerm} handleChange={str=>handleFilterChange(str, undefined)} handleClear={()=>{setSearchTerm(""); handleFilterChange("",undefined);}} />
             </div>
