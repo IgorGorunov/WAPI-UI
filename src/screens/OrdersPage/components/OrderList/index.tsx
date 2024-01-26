@@ -367,9 +367,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 minWidth="24px"
                 maxWidth="24px"
                 contentPosition="center"
-
                 childrenBefore={
-                    <Tooltip title="This column displays if order has Claims">
+                    <Tooltip title="This column displays if order has Claims" color='#5380F5'>
                         <span><Icon name={"complaint"}/></span>
                     </Tooltip>
                 }
@@ -388,7 +387,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                     backgroundColor: 'red',
                                     borderRadius: '50%',
                                     display: 'inline-block',
-                                    marginRight: '5px',
                                     alignSelf: 'center',
                                 }}
                                      onClick={(e) => {
@@ -430,7 +428,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="24px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="This column displays if order has Trouble statuses">
+                    <Tooltip title="This column displays if order has Trouble statuses" color='#5380F5'>
                         <span><Icon name={"trouble"}/></span>
                     </Tooltip>
                 }
@@ -449,7 +447,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                     backgroundColor: 'red',
                                     borderRadius: '50%',
                                     display: 'inline-block',
-                                    marginRight: '5px',
                                     alignSelf: 'center',
                                 }}
                                      onClick={(e) => {
@@ -665,7 +662,16 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn  minWidth="50px" maxWidth="50px" contentPosition="center" childrenBefore={<Icon name={"shopping-cart"}/>} />,
+            title: <TitleColumn
+                minWidth="50px"
+                maxWidth="50px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="This column displays Products" color='#5380F5'>
+                        <span><Icon name={"shopping-cart"}/></span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string, record: OrderType) => (
                 <TableCell
                     minWidth="50px"

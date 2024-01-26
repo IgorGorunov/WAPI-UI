@@ -2,7 +2,7 @@ import {TabFieldType} from '@/types/tabs';
 
 export const TabTitles = (objectExists: boolean, hasClaim=false) => {
 
-    const tabArray = objectExists ? ['General', 'Delivery info', 'Products', 'Services', 'Status history', 'SMS history'] : ['General', 'Delivery info', 'Products', 'Files'];
+    const tabArray = objectExists ? ['General', 'Delivery info', 'Products', 'Services', 'Status history', 'SMS history'] : ['General', 'Delivery info', 'Products'];
 
     if (hasClaim) {
         tabArray.push('Claims');

@@ -1,0 +1,107 @@
+
+
+.submenu {
+  &-container {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    padding: 0 15px;
+
+    .nav-arrow-icon {
+      margin-left: auto;
+    }
+
+    &-expanded {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+      border-radius: 10px;
+      background: var(--white-white, #FFF);
+      box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+      margin-bottom: 25px;
+      //margin-right: 10px;
+      //margin-left: 10px;
+      padding-bottom: 15px;
+
+      .submenu-header {
+        border-bottom: 2px solid var(--border-color);
+        padding: 10px 0 15px 0;
+        margin-bottom: 8px;
+
+        .nav-arrow-icon {
+          transform: rotate(0deg);
+        }
+      }
+
+      .submenu-items {
+        opacity: 1;
+        transform: translateY(0);
+        height: auto;
+        visibility: visible;
+      }
+    }
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    cursor: pointer;
+    color: var(--color-gray-blue);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-size: 13px;
+    font-weight: 700;
+    width: 100%;
+    transition: color 0.3s ease, font-size 0.3s ease;
+    &:hover {
+      color: var(--color-blue);
+      font-size: 14px;
+    }
+
+    .nav-arrow-icon {
+      transform: rotate(180deg);
+      transition: all 0.3s ease-in;
+    }
+  }
+
+  &-items {
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: var(--color-gray-blue);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-size: 13px;
+    font-weight: 700;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(-20px);
+    height: 0;
+    visibility: hidden;
+    transition:  all 0.5s ease-in-out, opacity 0.5s, transform 0.5s;
+
+    &.anim {
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+    }
+  }
+
+  &-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 10px;
+    height: 40px;
+    transition: color 0.3s ease, font-size 0.3s ease;
+
+    &:hover {
+      color: var(--color-blue);
+      font-size: 14px;
+    }
+  }
+
+
+}

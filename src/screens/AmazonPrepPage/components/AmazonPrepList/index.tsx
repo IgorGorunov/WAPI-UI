@@ -17,6 +17,8 @@ import Button, {ButtonVariant} from "@/components/Button/Button";
 import Head from "next/head";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import SearchField from "@/components/SearchField";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
+import {FormFieldTypes} from "@/types/forms";
 
 
 type AmazonPrepListType = {
@@ -55,8 +57,18 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
+    const [fullTextSearch, setFullTextSearch] = useState(true);
+    const fullTextSearchField = {
+        fieldType: FormFieldTypes.TOGGLE,
+        name: 'fullTextSearch',
+        label: 'Full text search',
+        checked: fullTextSearch,
+        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        classNames: 'full-text-search-toggle',
+        hideTextOnMobile: true,
+    }
 
-    const [filterStatus, setFilterStatus] = useState('-All statuses-');
+    const [filterStatus, setFilterStatus] = useState('-Off-');
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
         const statuses = amazonPrepOrders.map(order => order.status);
@@ -65,8 +77,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
         {
-            value: '-All statuses-',
-            label: '-All statuses-',
+            value: '-Off-',
+            label: '-Off-',
         },
         ...uniqueStatuses.map(status => ({
             value: status,
@@ -74,7 +86,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         }))
     ]), [uniqueStatuses]);
 
-    const [filterWarehouse, setFilterWarehouse] = useState('-All warehouses-');
+    const [filterWarehouse, setFilterWarehouse] = useState('-Off-');
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
         const warehouses = amazonPrepOrders.map(order => order.warehouse);
@@ -83,8 +95,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     uniqueWarehouses.sort();
     const transformedWarehouses = useMemo(() => ([
         {
-            value: '-All warehouses-',
-            label: '-All warehouses-',
+            value: '-Off-',
+            label: '-Off-',
         },
         ...uniqueWarehouses.map(warehouse => ({
             value: warehouse,
@@ -92,7 +104,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         }))
     ]), [uniqueWarehouses]);
 
-    const [filterReceiverCountry, setFilterReceiverCountry] = useState('-All countries-');
+    const [filterReceiverCountry, setFilterReceiverCountry] = useState('-Off-');
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = amazonPrepOrders.map(order => order.receiverCountry);
@@ -101,8 +113,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     uniqueReceiverCountries.sort();
     const transformedReceiverCountries = useMemo(() => ([
         {
-            value: '-All countries-',
-            label: '-All countries-',
+            value: '-Off-',
+            label: '-Off-',
         },
         ...uniqueReceiverCountries.map(country => ({
             value: country,
@@ -147,15 +159,20 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         return amazonPrepOrders.filter(order => {
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
-                if (key !== 'uuid' && typeof value === 'string') {
-                    const searchTermsArray = searchTerm.trim().split(' ');
-                    return searchTermsArray.some(word => value.includes(word));
+                if (key !== 'uuid') {
+                    const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
+                    const searchTermsArray = searchTerm.trim().toLowerCase().split(' ');
+
+                    if (fullTextSearch) {
+                        return searchTermsArray.every(word => stringValue.includes(word));
+                    } else {
+                        return searchTermsArray.some(word => stringValue.includes(word));
+                    }
                 }
-                return false;
             });
-            const matchesWarehouse = !filterWarehouse || filterWarehouse === '-All warehouses-' ||
+            const matchesWarehouse = !filterWarehouse || filterWarehouse === '-Off-' ||
                 order.warehouse.toLowerCase() === filterWarehouse.toLowerCase();
-            const matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-All countries-' ||
+            const matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-Off-' ||
                 order.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
             return matchesSearch && matchesWarehouse && matchesReceiverCountry;
         }).sort((a, b) => {
@@ -166,7 +183,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [amazonPrepOrders, searchTerm, filterStatus, filterWarehouse, filterReceiverCountry, sortColumn, sortDirection]);
+    }, [amazonPrepOrders, searchTerm, fullTextSearch, filterStatus, filterWarehouse, filterReceiverCountry, sortColumn, sortDirection]);
 
     const [showDatepicker, setShowDatepicker] = useState(false);
 
@@ -398,22 +415,29 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             </Head>
             <div className="search-container">
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
-                <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
+                <div className='search-block'>
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <FieldBuilder {...fullTextSearchField} />
+                </div>
             </div>
             {isFiltersVisible && (
             <div className="filter-container">
-                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
+                {/*<DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*/}
                 <Selector
+                    label='Status:'
                     options={transformedStatuses}
                     value={filterStatus}
                     onChange={(value: string) => setFilterStatus(value)}
                 />
                 <Selector
+                    label='Warehouse:'
                     options={transformedWarehouses}
                     value={filterWarehouse}
                     onChange={(value: string) => setFilterWarehouse(value)}
                 />
                 <Selector
+                    label='Country:'
                     options={transformedReceiverCountries}
                     value={filterReceiverCountry}
                     onChange={(value: string) => setFilterReceiverCountry(value)}
