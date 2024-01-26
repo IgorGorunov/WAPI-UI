@@ -21,6 +21,8 @@ import {FormFieldTypes} from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
 import {Countries} from "@/types/countries";
+import FiltersBlock from "@/components/FiltersBlock";
+import CurrentFilters from "@/components/CurrentFilters";
 
 
 type OrderListType = {
@@ -40,9 +42,9 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
-const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder}) => {
+const isFilterBurger = true;
 
-    console.log('has claims', orders.filter(item => item.claimsExist))
+const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -105,7 +107,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     ]).filter(item => item.uuid === hoveredOrder?.uuid);
 
 
-    const [filterStatus, setFilterStatus] = useState('-Off-');
+    const [filterStatus, setFilterStatus] = useState<string[]>([]);
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
         const statuses = orders.map(order => order.status);
@@ -113,21 +115,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
-        // {
-        //     value: '-Trouble statuses-',
-        //     label: '-Trouble statuses-',
-        // },
         ...uniqueStatuses.map(status => ({
             value: status,
             label: status,
         }))
     ]), [uniqueStatuses]);
 
-    const [filterTroubleStatus, setFilterTroubleStatus] = useState('-Off-');
+    const [filterTroubleStatus, setFilterTroubleStatus] = useState<string[]>([]);
 
     const uniqueTroubleStatuses = useMemo(() => {
         const statuses = orders.map(order => order.lastTroubleStatus);
@@ -135,10 +129,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueStatuses.sort();
     const transformedTroubleStatuses = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
         {
             value: '-All trouble statuses-',
             label: '-All trouble statuses-',
@@ -149,12 +139,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueTroubleStatuses]);
 
-    const [filterClaims, setFilterClaims] = useState('-Off-');
+    const [filterClaims, setFilterClaims] = useState<string[]>([]);
     const claimFilterOptions = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
         {
             value: 'With claims',
             label: 'With claims',
@@ -165,7 +151,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
     ]), []);
 
-    const [filterWarehouse, setFilterWarehouse] = useState('-Off-');
+    const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
         const warehouses = orders.map(order => order.warehouse);
@@ -173,17 +159,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueWarehouses.sort();
     const transformedWarehouses = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
         ...uniqueWarehouses.map(warehouse => ({
             value: warehouse,
             label: warehouse,
         }))
     ]), [uniqueWarehouses]);
 
-    const [filterCourierService, setFilterCourierService] = useState('-Off-');
+    const [filterCourierService, setFilterCourierService] = useState<string[]>([]);
     // const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = useMemo(() => {
         const courierServices = orders.map(order => order.courierService);
@@ -191,17 +173,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueCourierServices.sort();
     const transformedCourierServices = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
         ...uniqueCourierServices.map(courier => ({
             value: courier,
             label: courier,
         }))
     ]), [uniqueCourierServices]);
 
-    const [filterReceiverCountry, setFilterReceiverCountry] = useState('-Off-');
+    const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = orders.map(order => order.receiverCountry);
@@ -209,10 +187,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueReceiverCountries.sort();
     const transformedReceiverCountries = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
         ...uniqueReceiverCountries.map(country => ({
             value: country,
             label: Countries[country] as string || country
@@ -270,18 +244,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 }
                 return false;
             });
-            const matchesStatus = filterStatus === '-Off-' ||
-                (order.status === filterStatus);
-            const matchesTroubleStatus = filterTroubleStatus === '-Off-' || (filterTroubleStatus === '-All trouble statuses-' && order.lastTroubleStatus.length) ||
-                (order.lastTroubleStatus === filterTroubleStatus);
-            const matchesClaims = filterClaims === '-Off-' || (filterClaims === 'With claims' && order.claimsExist) ||
-                (filterClaims === 'Without claims' && !order.claimsExist);
-            const matchesWarehouse = !filterWarehouse || filterWarehouse === '-Off-' ||
-                order.warehouse.toLowerCase() === filterWarehouse.toLowerCase();
-            const matchesCourierService = !filterCourierService || filterCourierService === '-Off-' ||
-                order.courierService.toLowerCase() === filterCourierService.toLowerCase();
-            const matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-Off-' ||
-                order.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
+
+            const matchesStatus = !filterStatus.length ||
+                (filterStatus.includes(order.status));
+            const matchesTroubleStatus = !filterTroubleStatus.length || (filterTroubleStatus.includes('-All trouble statuses-') && order.lastTroubleStatus.length) ||
+                filterTroubleStatus.includes(order.lastTroubleStatus);
+            const matchesClaims = !filterClaims.length || (filterClaims.includes('With claims') && order.claimsExist) ||
+                (filterClaims.includes('Without claims') && !order.claimsExist);
+            const matchesWarehouse = !filterWarehouse.length ||
+                filterWarehouse.map(item=>item.toLowerCase()).includes(order.warehouse.toLowerCase());
+            const matchesCourierService = !filterCourierService.length ||
+                filterCourierService.map(item=>item.toLowerCase()).includes(order.courierService.toLowerCase());
+            const matchesReceiverCountry = !filterReceiverCountry.length ||
+                filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
             return matchesSearch && matchesStatus && matchesTroubleStatus && matchesClaims && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
@@ -300,11 +275,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setShowDatepicker(false);
     };
 
-    const [isFiltersVisible, setIsFiltersVisible] = useState(true);
+    //filters
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
     const toggleFilters = () => {
-        setIsFiltersVisible(!isFiltersVisible);
+        setIsFiltersVisible(prevState => !prevState);
     };
+    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+    const [isOpenFilterTroubleStatus, setIsOpenFilterTroubleStatus] = useState(false);
+    const [isOpenFilterClaim, setIsOpenFilterClaim] = useState(false);
+    const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
+    const [isOpenFilterCourierStatus, setIsOpenFilterCourierStatus] = useState(false);
+    const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
+
 
     useEffect(() => {
         setFilteredOrders(filteredOrders);
@@ -712,9 +695,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             responsive: ['lg'],
         },
-        ];
-
-    console.log('orders:',filteredOrders)
+    ];
 
     return (
         <div className="table">
@@ -731,55 +712,78 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
                 <FieldBuilder {...fullTextSearchField} /></div>
             </div>
-            {isFiltersVisible && (
-            <div className="filter-container">
-                {/*<DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*/}
-                <Selector
-                    label='Status:'
-                    options={transformedStatuses}
-                    value={filterStatus}
-                    onChange={(value: string) => setFilterStatus(value)}
-                />
-                <Selector
-                    label='Trouble status:'
-                    options={transformedTroubleStatuses}
-                    value={filterTroubleStatus}
-                    onChange={(value: string) => setFilterTroubleStatus(value)}
-                />
-                <Selector
-                    label='Claims:'
-                    options={claimFilterOptions}
-                    value={filterClaims}
-                    onChange={(value: string) => setFilterClaims(value)}
-                />
-                <Selector
-                    label='Warehouse:'
-                    options={transformedWarehouses}
-                    value={filterWarehouse}
-                    onChange={(value: string) => setFilterWarehouse(value)}
-                />
-                <Selector
-                    label='Courier service:'
-                    options={transformedCourierServices}
-                    value={filterCourierService}
-                    onChange={(value: string) => setFilterCourierService(value)}
-                />
-                <Selector
-                    label='Country:'
-                    options={transformedReceiverCountries}
-                    value={filterReceiverCountry}
-                    onChange={(value: string) => setFilterReceiverCountry(value)}
-                />
+            {/*{isFiltersVisible && (*/}
+            {/*<div className="filter-container">*/}
+            {/*    /!*<DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*!/*/}
+            {/*    <Selector*/}
+            {/*        label='Status:'*/}
+            {/*        options={transformedStatuses}*/}
+            {/*        value={filterStatus}*/}
+            {/*        onChange={(value: string) => setFilterStatus(value)}*/}
+            {/*    />*/}
+            {/*    <Selector*/}
+            {/*        label='Trouble status:'*/}
+            {/*        options={transformedTroubleStatuses}*/}
+            {/*        value={filterTroubleStatus}*/}
+            {/*        onChange={(value: string) => setFilterTroubleStatus(value)}*/}
+            {/*    />*/}
+            {/*    <Selector*/}
+            {/*        label='Claims:'*/}
+            {/*        options={claimFilterOptions}*/}
+            {/*        value={filterClaims}*/}
+            {/*        onChange={(value: string) => setFilterClaims(value)}*/}
+            {/*    />*/}
+            {/*    <Selector*/}
+            {/*        label='Warehouse:'*/}
+            {/*        options={transformedWarehouses}*/}
+            {/*        value={filterWarehouse}*/}
+            {/*        onChange={(value: string) => setFilterWarehouse(value)}*/}
+            {/*    />*/}
+            {/*    <Selector*/}
+            {/*        label='Courier service:'*/}
+            {/*        options={transformedCourierServices}*/}
+            {/*        value={filterCourierService}*/}
+            {/*        onChange={(value: string) => setFilterCourierService(value)}*/}
+            {/*    />*/}
+            {/*    <Selector*/}
+            {/*        label='Country:'*/}
+            {/*        options={transformedReceiverCountries}*/}
+            {/*        value={filterReceiverCountry}*/}
+            {/*        onChange={(value: string) => setFilterReceiverCountry(value)}*/}
+            {/*    />*/}
 
-                </div>)}
-            <div className="page-size-container">
-                <span className="page-size-text"></span>
-                <PageSizeSelector
-                    options={pageOptions}
-                    value={pageSize}
-                    onChange={(value: number) => handleChangePageSize(value)}
-                />
+            {/*    </div>)}*/}
+            <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} ${isFilterBurger ? 'is-fixed' : ""}`}>
+                <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>
+                    <Icon name='close' />
+                </div>
+                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} isMultiple={false} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
+                <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
+                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
+                <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </div>
+            <div className='filter-and-pagination-container'>
+                <div className='current-filter-container'>
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>setFilterTroubleStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
+                    <CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>setFilterClaims([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
+                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
+                    <CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>
+                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                </div>
+                <div className="page-size-container">
+                    <span className="page-size-text"></span>
+                    <PageSizeSelector
+                        options={pageOptions}
+                        value={pageSize}
+                        onChange={(value: number) => handleChangePageSize(value)}
+                    />
+                </div>
+
+            </div>
+
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}

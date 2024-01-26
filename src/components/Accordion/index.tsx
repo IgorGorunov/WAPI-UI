@@ -1,21 +1,43 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Icon from "@/components/Icon";
 import './styles.scss';
 
 type AccordionPropsType = {
     title: string;
     children?: React.ReactNode;
+    isOpen?: boolean;
+    setIsOpen?: (val: boolean)=> void;
 }
 
-const Accordion: React.FC<AccordionPropsType> = ({ title, children }) => {
-    const [isActive, setIsActive] = useState(false);
+const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= false, setIsOpen }) => {
+    const [isActive, setIsActive] = useState(isOpen);
     const [height, setHeight] = useState('0px');
 
-    const contentSpace = useRef<HTMLDivElement>(null)
+    const contentSpace = useRef<HTMLDivElement>(null);
+
+    useEffect(()=>{
+
+        if (isOpen && contentSpace?.current) {
+            setHeight(`${contentSpace.current.scrollHeight}px`);
+            console.log("123", isOpen)
+
+            if (!isActive) {
+                setIsActive(true);
+            }
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (!isActive && isOpen) {
+            setIsOpen(false);
+        }
+    }, [isActive]);
+
 
     const toggleAccordion = (e) => {
         e.preventDefault();
-        setIsActive((prevState) => !prevState)
+        setIsActive((prevState) => !prevState);
+        console.log('is active: ', isActive, isOpen)
         setHeight(isActive ? '0px' : `${contentSpace.current.scrollHeight}px`);
     }
 

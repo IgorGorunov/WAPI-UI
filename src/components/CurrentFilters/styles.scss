@@ -1,0 +1,28 @@
+.current-filters {
+  position: relative;
+  display: inline-block;
+  margin: 4px 8px 0 0;
+  font-size: 12px;
+  padding: 8px 28px 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+  background-color: var(--color-white);
+  cursor: pointer;
+
+  &__title {
+    margin-right: 8px;
+    font-weight: bold;
+  }
+
+  &__values {
+
+  }
+
+  &__close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    cursor: pointer;
+  }
+}
