@@ -85,9 +85,16 @@
 .doc-filters-block {
   position: relative;
   max-height: 0;
-  border-radius: 15px;
+
   transition: max-height 0.3s ease-in;
   overflow: hidden;
+
+  &__wrapper {
+    border-radius: 15px;
+    overflow: hidden;
+    padding: 10px 0;
+    background-color: white;
+  }
 
   &.is-visible {
     max-height: 1000px;
@@ -113,6 +120,7 @@
     box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
     padding: 40px 10px;
     z-index: 1000;
+    overflow-y: scroll;
     @media (max-width: $mobile) {
       width: 100%;
     }
