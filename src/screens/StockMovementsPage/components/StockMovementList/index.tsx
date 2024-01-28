@@ -328,9 +328,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn title="Date" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn title="Date" minWidth="75px" maxWidth="75px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
             ),
             dataIndex: 'incomingDate',
             key: 'incomingDate',
@@ -340,12 +340,12 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn title="Incoming #" minWidth="70px" maxWidth="150px" contentPosition="start"/>,
+            title: <TitleColumn title="Incoming #" minWidth="70px" maxWidth="70px" contentPosition="start"/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
                     minWidth="70px"
-                    maxWidth="150px"
+                    maxWidth="70px"
                     contentPosition="start"
                     textColor='var(--color-blue)'
                     cursor='pointer'
@@ -469,7 +469,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Products" minWidth="50px" maxWidth="50px" contentPosition="start"/>,
+            title: <TitleColumn title="Products" minWidth="70px" maxWidth="70px" contentPosition="start"/>,
             render: (text: string, record: StockMovementType) => {
                 const productCount = record.products.reduce(
                     (accumulator, currentValue) => accumulator + currentValue.quantity,
@@ -478,8 +478,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
                 return (
                     <TableCell
-                        minWidth="50px"
-                        maxWidth="50px"
+                        minWidth="70px"
+                        maxWidth="70px"
                         contentPosition="center"
                         childrenAfter ={
                         <span

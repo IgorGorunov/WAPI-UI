@@ -26,6 +26,7 @@ import CurrentFilters from "@/components/CurrentFilters";
 import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import {FILTER_TYPE} from "@/types/utility";
+import DateInput from "@/components/DateInput";
 
 
 export const StatusColors = {
@@ -480,6 +481,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
+                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
                     <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
                     <FieldBuilder {...fullTextSearchField} />
