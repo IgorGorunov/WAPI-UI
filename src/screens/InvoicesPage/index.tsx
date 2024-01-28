@@ -132,7 +132,7 @@ const InvoicesPage = () => {
             <div className="invoices__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Invoices' toRight >
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
                 {invoiceBalance ? (
                     <div className="grid-row balance-info-block has-cards-block">

@@ -200,7 +200,7 @@ const OrdersPage = () => {
                 <Header pageTitle='Fulfillment' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
                     <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}

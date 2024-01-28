@@ -189,7 +189,7 @@ const AmazonPrepPage = () => {
                 {isLoading && <Loader />}
                 <Header pageTitle='Amazon Prep' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddAmazonPrepOrder}>Add order</Button>
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
                 {amazonPrepOrdersData && <AmazonPrepList amazonPrepOrders={amazonPrepOrdersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredAmazonPrepOrders={setFilteredAmazonPrepOrders} handleEditAmazonPrepOrder={handleEditAmazonPrepOrder} />}
