@@ -129,7 +129,7 @@ const CodReportsPage = () => {
             <div className="cod-reports__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Cod reports' toRight >
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download COD reports list</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
                 </Header>
                 {CODIndicators ? (
                     <div className="grid-row indicator-info-block has-cards-block">

@@ -86,7 +86,7 @@ const ProductsStockPage = () => {
             <div className="products-stock__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Products stock' toRight >
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Download report</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
                 </Header>
                 {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setWarehouseForExport={setWarehouseForReport}/>}
             </div>

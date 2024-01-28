@@ -9,6 +9,7 @@
     @media (min-width: $tablet) {
       flex: 1 0 150px;
     }
+
   }
   &-btn {
     position: relative;
@@ -26,7 +27,6 @@
     font-style: normal;
     font-weight: 700;
     cursor: pointer;
-    display: flex;
     justify-content: center;
     @media (max-width: $mobile) {
       width: 100%;
