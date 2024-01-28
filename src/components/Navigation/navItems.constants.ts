@@ -45,7 +45,7 @@ export const navBlocks: SubmenuBlockType[] = [
         ]
     },
     {
-        submenuTitle: 'Stock',
+        submenuTitle: 'Stock management',
         submenuIcon: 'stock-movement',
         navItems: [
             {
@@ -53,7 +53,7 @@ export const navBlocks: SubmenuBlockType[] = [
                 link: '/inbounds',
             },
             {
-                title: 'Stock movements',
+                title: 'Movements between warehouses',
                 link: '/stockMovements',
             },
             {

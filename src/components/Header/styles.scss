@@ -88,6 +88,15 @@
 
 .main-header__icon {
   cursor: pointer;
+  padding: 10px;
+  background-color: var(--color-blue);
+  border-radius: 50%;
+  line-height: 0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--color-blue-15);
+  }
 }
 
 .main-header__icon svg rect:first-of-type {
@@ -95,7 +104,8 @@
 }
 
 .main-header__icon svg path {
-  transition: fill 0.3s ease;
+  fill: var(--color-white);
+  transition: all 0.3s ease;
 }
 
 
@@ -105,32 +115,15 @@
 
 .main-header__icon:hover svg path {
   fill: var(--color-gray-blue);
-}
-
-.burger-menu {
-  display: flex;
-  justify-content: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 300px;
-  height: 100%;
-  background: #EDEFF2;
-  transform: translateX(-100%);
-  transition: transform 0.5s ease;
-  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-  padding-top: 20px;
-  @media (max-width: $mobile) {
-    width: 100%;
-  }
+  stroke: transparent;
+  //fill: black;
+  //stroke: black;
 }
 
 .dashboard-menu-link {
   margin: 10px 10px 10px 10px;
 }
 
-.burger-menu-open {
-  transform: translateX(0);
-}
+
 
 

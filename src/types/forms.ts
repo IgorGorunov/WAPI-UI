@@ -21,6 +21,8 @@ export type OptionType = {
   value: string
   label: string
   extraInfo?: string;
+  amount?: number;
+  color?: string;
 }
 
 export const enum WidthType {
@@ -68,6 +70,9 @@ export type FieldPropsType = {
   autoComplete?: string;
   ref?: any;
   hideTextOnMobile?: boolean;
+  extraLabel?: string;
+  isCheckboxHidden?: boolean;
+  circleColor?: string;
 }
 
 export type FormBuilderType = FieldPropsType & {

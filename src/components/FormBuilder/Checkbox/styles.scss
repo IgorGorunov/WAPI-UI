@@ -36,6 +36,34 @@
         }
       }
     }
+
+    &-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+
+    .colored-circle {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    &.hide-checkbox {
+      input {
+        display: none;
+      }
+    }
+
+    &-text {
+      display: inline-block;
+    }
+
+    &-extra-text {
+      margin-left: 8px;
+    }
   }
 
   .table-form-fields & {

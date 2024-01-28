@@ -4,7 +4,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
-import Selector from "@/components/InputSelect";
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
@@ -23,6 +22,7 @@ import SearchField from "@/components/SearchField";
 import {Countries} from "@/types/countries";
 import FiltersBlock from "@/components/FiltersBlock";
 import CurrentFilters from "@/components/CurrentFilters";
+import SearchContainer from "@/components/SearchContainer";
 
 
 type OrderListType = {
@@ -41,8 +41,6 @@ const pageOptions = [
     { value: '1000', label: '1000 per page' },
     { value: '1000000', label: 'All' },
 ];
-
-const isFilterBurger = true;
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder}) => {
 
@@ -106,6 +104,17 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         { uuid: order.uuid, title: order.lastUpdateDate, description: order.statusAdditionalInfo },
     ]).filter(item => item.uuid === hoveredOrder?.uuid);
 
+    const calcOrderAmount = useCallback((property, value) => {
+        return orders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[orders]);
+
+    const calcOrderAllTroubleStatuses = useCallback(() => {
+        return orders.filter(order => order.lastTroubleStatus.length).length || 0;
+    },[orders]);
+
+    const calcOrderWithClaims = useCallback(() => {
+        return orders.filter(order => order.claimsExist).length || 0;
+    },[orders]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     // const allStatuses = orders.map(order => order.status);
@@ -118,6 +127,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         ...uniqueStatuses.map(status => ({
             value: status,
             label: status,
+            amount: calcOrderAmount('status', status),
         }))
     ]), [uniqueStatuses]);
 
@@ -132,10 +142,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: '-All trouble statuses-',
             label: '-All trouble statuses-',
+            amount: calcOrderAllTroubleStatuses(),
         },
         ...uniqueTroubleStatuses.map(status => ({
             value: status,
             label: status,
+            amount: calcOrderAmount('lastTroubleStatus', status),
         }))
     ]), [uniqueTroubleStatuses]);
 
@@ -144,12 +156,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'With claims',
             label: 'With claims',
+            amount:  calcOrderWithClaims(),
         },
         {
             value: 'Without claims',
             label: 'Without claims',
+            amount: (orders.length - calcOrderWithClaims()),
         },
-    ]), []);
+    ]), [orders]);
 
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     // const allWarehouses = orders.map(order => order.warehouse);
@@ -162,6 +176,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         ...uniqueWarehouses.map(warehouse => ({
             value: warehouse,
             label: warehouse,
+            amount: calcOrderAmount('warehouse', warehouse),
         }))
     ]), [uniqueWarehouses]);
 
@@ -176,6 +191,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         ...uniqueCourierServices.map(courier => ({
             value: courier,
             label: courier,
+            amount: calcOrderAmount('courierService', courier),
         }))
     ]), [uniqueCourierServices]);
 
@@ -189,7 +205,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const transformedReceiverCountries = useMemo(() => ([
         ...uniqueReceiverCountries.map(country => ({
             value: country,
-            label: Countries[country] as string || country
+            label: Countries[country] as string || country,
+            amount: calcOrderAmount('receiverCountry', country),
         }))
     ]), [uniqueReceiverCountries]);
 
@@ -705,67 +722,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="search-container">
-                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
+            <SearchContainer>
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
-                <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
-                <FieldBuilder {...fullTextSearchField} /></div>
-            </div>
-            {/*{isFiltersVisible && (*/}
-            {/*<div className="filter-container">*/}
-            {/*    /!*<DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*!/*/}
-            {/*    <Selector*/}
-            {/*        label='Status:'*/}
-            {/*        options={transformedStatuses}*/}
-            {/*        value={filterStatus}*/}
-            {/*        onChange={(value: string) => setFilterStatus(value)}*/}
-            {/*    />*/}
-            {/*    <Selector*/}
-            {/*        label='Trouble status:'*/}
-            {/*        options={transformedTroubleStatuses}*/}
-            {/*        value={filterTroubleStatus}*/}
-            {/*        onChange={(value: string) => setFilterTroubleStatus(value)}*/}
-            {/*    />*/}
-            {/*    <Selector*/}
-            {/*        label='Claims:'*/}
-            {/*        options={claimFilterOptions}*/}
-            {/*        value={filterClaims}*/}
-            {/*        onChange={(value: string) => setFilterClaims(value)}*/}
-            {/*    />*/}
-            {/*    <Selector*/}
-            {/*        label='Warehouse:'*/}
-            {/*        options={transformedWarehouses}*/}
-            {/*        value={filterWarehouse}*/}
-            {/*        onChange={(value: string) => setFilterWarehouse(value)}*/}
-            {/*    />*/}
-            {/*    <Selector*/}
-            {/*        label='Courier service:'*/}
-            {/*        options={transformedCourierServices}*/}
-            {/*        value={filterCourierService}*/}
-            {/*        onChange={(value: string) => setFilterCourierService(value)}*/}
-            {/*    />*/}
-            {/*    <Selector*/}
-            {/*        label='Country:'*/}
-            {/*        options={transformedReceiverCountries}*/}
-            {/*        value={filterReceiverCountry}*/}
-            {/*        onChange={(value: string) => setFilterReceiverCountry(value)}*/}
-            {/*    />*/}
-
-            {/*    </div>)}*/}
-            <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} ${isFilterBurger ? 'is-fixed' : ""}`}>
-                <div className='doc-filters-block__wrapper'>
-                    <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>
-                        <Icon name='close' />
-                    </div>
-                    <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                    <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} isMultiple={false} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
-                    <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
-                    <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                    <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
-                    <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <FieldBuilder {...fullTextSearchField} />
                 </div>
-            </div>
+            </SearchContainer>
+
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
                     <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
@@ -783,7 +748,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         onChange={(value: number) => handleChangePageSize(value)}
                     />
                 </div>
-
             </div>
 
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
@@ -803,6 +767,21 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
+            </div>
+            <div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >
+                <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>
+                    <div className='doc-filters-block__wrapper'>
+                        <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>
+                            <Icon name='close' />
+                        </div>
+                        <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                        <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
+                        <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
+                        <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                        <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
+                        <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                    </div>
+                </div>
             </div>
             {hoveredOrder && isDisplayedPopup && (
                 <div
@@ -863,6 +842,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     />
                 </div>
             )}
+
         </div>
     );
 };

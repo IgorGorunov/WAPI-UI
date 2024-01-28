@@ -4,7 +4,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
-import Selector from "@/components/InputSelect";
 import Icon from "@/components/Icon";
 import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
@@ -19,6 +18,10 @@ import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import SearchField from "@/components/SearchField";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
+import CurrentFilters from "@/components/CurrentFilters";
+import FiltersBlock from "@/components/FiltersBlock";
+import {Countries} from "@/types/countries";
+import SearchContainer from "@/components/SearchContainer";
 
 
 type AmazonPrepListType = {
@@ -68,7 +71,16 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         hideTextOnMobile: true,
     }
 
-    const [filterStatus, setFilterStatus] = useState('-Off-');
+
+    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+    const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
+    const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
+
+    const calcOrderAmount = useCallback((property, value) => {
+        return amazonPrepOrders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[amazonPrepOrders]);
+
+    const [filterStatus, setFilterStatus] = useState<string[]>([]);
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
         const statuses = amazonPrepOrders.map(order => order.status);
@@ -76,17 +88,14 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }, [amazonPrepOrders]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
         ...uniqueStatuses.map(status => ({
             value: status,
             label: status,
+            amount: calcOrderAmount('status', status),
         }))
     ]), [uniqueStatuses]);
 
-    const [filterWarehouse, setFilterWarehouse] = useState('-Off-');
+    const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
         const warehouses = amazonPrepOrders.map(order => order.warehouse);
@@ -94,17 +103,14 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }, [amazonPrepOrders]);
     uniqueWarehouses.sort();
     const transformedWarehouses = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
         ...uniqueWarehouses.map(warehouse => ({
             value: warehouse,
             label: warehouse,
+            amount: calcOrderAmount('warehouse', warehouse),
         }))
     ]), [uniqueWarehouses]);
 
-    const [filterReceiverCountry, setFilterReceiverCountry] = useState('-Off-');
+    const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = amazonPrepOrders.map(order => order.receiverCountry);
@@ -112,13 +118,10 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }, [amazonPrepOrders]);
     uniqueReceiverCountries.sort();
     const transformedReceiverCountries = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
         ...uniqueReceiverCountries.map(country => ({
             value: country,
-            label: country,
+            label: Countries[country] as string || country,
+            amount: calcOrderAmount('receiverCountry', country),
         }))
     ]), [uniqueReceiverCountries]);
 
@@ -170,11 +173,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     }
                 }
             });
-            const matchesWarehouse = !filterWarehouse || filterWarehouse === '-Off-' ||
-                order.warehouse.toLowerCase() === filterWarehouse.toLowerCase();
-            const matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-Off-' ||
-                order.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
-            return matchesSearch && matchesWarehouse && matchesReceiverCountry;
+            const matchesStatus = !filterStatus.length ||
+                (filterStatus.includes(order.status));
+            const matchesWarehouse = !filterWarehouse.length ||
+                filterWarehouse.map(item=>item.toLowerCase()).includes(order.warehouse.toLowerCase());
+            const matchesReceiverCountry = !filterReceiverCountry.length ||
+                filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
+            return matchesSearch && matchesStatus && matchesWarehouse && matchesReceiverCountry;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -192,7 +197,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         setShowDatepicker(false);
     };
 
-    const [isFiltersVisible, setIsFiltersVisible] = useState(true);
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
     const toggleFilters = () => {
         setIsFiltersVisible(!isFiltersVisible);
@@ -413,44 +418,31 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="search-container">
-                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
+            <SearchContainer>
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
                     <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
+            </SearchContainer>
+
+            <div className='filter-and-pagination-container'>
+                <div className='current-filter-container'>
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
+                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                </div>
+                <div className="page-size-container">
+                    <span className="page-size-text"></span>
+                    <PageSizeSelector
+                        options={pageOptions}
+                        value={pageSize}
+                        onChange={(value: number) => handleChangePageSize(value)}
+                    />
+                </div>
             </div>
-            {isFiltersVisible && (
-            <div className="filter-container">
-                {/*<DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*/}
-                <Selector
-                    label='Status:'
-                    options={transformedStatuses}
-                    value={filterStatus}
-                    onChange={(value: string) => setFilterStatus(value)}
-                />
-                <Selector
-                    label='Warehouse:'
-                    options={transformedWarehouses}
-                    value={filterWarehouse}
-                    onChange={(value: string) => setFilterWarehouse(value)}
-                />
-                <Selector
-                    label='Country:'
-                    options={transformedReceiverCountries}
-                    value={filterReceiverCountry}
-                    onChange={(value: string) => setFilterReceiverCountry(value)}
-                />
-            </div>)}
-            <div className="page-size-container">
-                <span className="page-size-text"></span>
-                <PageSizeSelector
-                    options={pageOptions}
-                    value={pageSize}
-                    onChange={(value: number) => handleChangePageSize(value)}
-                />
-            </div>
+
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}
@@ -469,6 +461,18 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     showSizeChanger={false}
                 />
              </div>
+            <div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >
+                <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>
+                    <div className='doc-filters-block__wrapper'>
+                        <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>
+                            <Icon name='close' />
+                        </div>
+                        <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                        <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                        <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                    </div>
+                </div>
+            </div>
             {hoveredOrder && isDisplayedPopup && (
                 <div
                     style={{

@@ -4,7 +4,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
-import Selector from "@/components/InputSelect";
 import Icon from "@/components/Icon";
 import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
@@ -19,6 +18,9 @@ import {FormFieldTypes} from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
 import {Countries} from "@/types/countries";
+import CurrentFilters from "@/components/CurrentFilters";
+import FiltersBlock from "@/components/FiltersBlock";
+import SearchContainer from "@/components/SearchContainer";
 
 
 type StockMovementsListType = {
@@ -61,6 +63,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
+        hideTextOnMobile: true,
     }
 
     const productItems = docs.flatMap(doc => {
@@ -71,92 +74,87 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         }));
     }).filter(item => item.uuid === hoveredDoc?.uuid);
 
+    //filters
+    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+    const [isOpenFilterSenderCountry, setIsOpenFilterSenderCountry] = useState(false);
+    const [isOpenFilterSender, setIsOpenFilterSender] = useState(false);
+    const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
+    const [isOpenFilterReceiver, setIsOpenFilterReceiver] = useState(false);
 
-    const [filterStatus, setFilterStatus] = useState('-Off-');
+    const calcOrderAmount = useCallback((property, value) => {
+        return docs.filter(doc => doc[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[docs]);
+
+    const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const uniqueStatuses = useMemo(() => {
         const statuses = docs.map(order => order.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
     }, [docs]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
-        {
-            value: '-Off-',
-            label: '-Off-',
-        },
         ...uniqueStatuses.map(status => ({
             value: status,
             label: status,
+            amount: calcOrderAmount('status', status),
         }))
     ]), [uniqueStatuses]);
 
     //SenderCountry
-    const [filterSenderCountry, setFilterSenderCountry] = useState('-Off-');
+    const [filterSenderCountry, setFilterSenderCountry] = useState<string[]>([]);
     const senderCountryOptions = useMemo(() => {
         const senderCountries = docs.map(doc => doc.senderCountry);
         const uniqueSenderCountries = Array.from(new Set(senderCountries)).filter(senderCountry => senderCountry);
 
         return [
-            {
-                value: '-Off-',
-                label: '-Off-',
-            },
             ...uniqueSenderCountries.map(senderCountry => ({
                 value: senderCountry,
-                label: Countries[senderCountry] as string || senderCountry
+                label: Countries[senderCountry] as string || senderCountry,
+                amount: calcOrderAmount('senderCountry', senderCountry)
             })),
         ].sort((option1, option2)=> {return option1.label > option2.label ? 1 : -1});
     }, [docs]);
 
     //Sender
-    const [filterSender, setFilterSender] = useState('-Off-');
+    const [filterSender, setFilterSender] = useState<string[]>([]);
     const senderOptions = useMemo(() => {
         const senders = docs.map(doc => doc.sender);
         const uniqueSenders = Array.from(new Set(senders)).filter(sender => sender).sort();
 
         return [
-            {
-                value: '-Off-',
-                label: '-Off-',
-            },
-            ...uniqueSenders.map(senderCountry => ({
-                value: senderCountry,
-                label: Countries[senderCountry] as string || senderCountry
+            ...uniqueSenders.map(sender => ({
+                value: sender,
+                label: sender,
+                amount: calcOrderAmount('sender', sender),
             })),
         ];
     }, [docs]);
 
     //ReceiverCountry
-    const [filterReceiverCountry, setFilterReceiverCountry] = useState('-Off-');
+    const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
     const receiverCountryOptions = useMemo(() => {
         const receiverCountries = docs.map(doc => doc.receiverCountry);
         const uniqueReceiverCountries = Array.from(new Set(receiverCountries)).filter(receiverCountry => receiverCountry);
 
         return [
-            {
-                value: '-Off-',
-                label: '-Off-',
-            },
             ...uniqueReceiverCountries.map(receiverCountry => ({
                 value: receiverCountry,
-                label: Countries[receiverCountry] as string || receiverCountry
+                label: Countries[receiverCountry] as string || receiverCountry,
+                amount: calcOrderAmount('receiverCountry', receiverCountry),
             })),
         ].sort((option1, option2)=> {return option1.label > option2.label ? 1 : -1});
     }, [docs]);
 
     //Receiver
-    const [filterReceiver, setFilterReceiver] = useState('-Off-');
+    const [filterReceiver, setFilterReceiver] = useState<string[]>([]);
     const receiverOptions = useMemo(() => {
         const receivers = docs.map(doc => doc.receiver);
         const uniqueReceivers = Array.from(new Set(receivers)).filter(receiver => receiver).sort();
 
         return [
-            {
-                value: '-Off-',
-                label: '-Off-',
-            },
-            ...uniqueReceivers.map(receiverCountry => ({
-                value: receiverCountry,
-                label: Countries[receiverCountry] as string || receiverCountry
+            ...uniqueReceivers.map(receiver => ({
+                value: receiver,
+                label: receiver,
+                amount: calcOrderAmount('receiver', receiver),
             })),
         ];
     }, [docs]);
@@ -207,16 +205,17 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 }
                 return false;
             });
-            const matchesStatus = filterStatus === '-Off-' ||
-                (doc.status === filterStatus);
-            const matchesSenderCountry = !filterSenderCountry || filterSenderCountry === '-Off-' ||
-                doc.senderCountry.toLowerCase() === filterSenderCountry.toLowerCase();
-            const matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-Off-' ||
-                doc.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
-            const matchesSender = docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || (!filterSender || filterSender === '-Off-' ||
-                doc.sender.toLowerCase() === filterSender.toLowerCase());
-            const matchesReceiver = docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || (!filterReceiver || filterReceiver === '-Off-' ||
-                doc.receiver.toLowerCase() === filterReceiver.toLowerCase());
+            const matchesStatus = !filterStatus.length ||
+                (filterStatus.includes(doc.status));
+
+            const matchesSenderCountry = !filterSenderCountry.length ||
+                filterSenderCountry.map(item=>item.toLowerCase()).includes(doc.senderCountry.toLowerCase());
+            const matchesReceiverCountry = !filterReceiverCountry.length ||
+                filterReceiverCountry.map(item => item.toLowerCase()).includes(doc.receiverCountry.toLowerCase());
+            const matchesSender = docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || !filterSender.length ||
+                filterSender.map(item=>item.toLowerCase()).includes(doc.sender.toLowerCase());
+            const matchesReceiver = docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || !filterReceiver.length ||
+                filterReceiver.map(item=>item.toLowerCase()).includes(doc.receiver.toLowerCase());
             return matchesSearch && matchesStatus && matchesSenderCountry && matchesReceiverCountry && matchesReceiver && matchesSender;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
@@ -235,7 +234,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         setShowDatepicker(false);
     };
 
-    const [isFiltersVisible, setIsFiltersVisible] = useState(true);
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
     const toggleFilters = () => {
         setIsFiltersVisible(!isFiltersVisible);
@@ -526,55 +525,31 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="search-container">
-                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
+            <SearchContainer>
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
                     <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
-            </div>
-            {isFiltersVisible && (
-            <div className="filter-container">
-                {/*<DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*/}
-                <Selector
-                    label='Status:'
-                    options={transformedStatuses}
-                    value={filterStatus}
-                    onChange={(value: string) => setFilterStatus(value)}
-                />
-                <Selector
-                    label='Sender country:'
-                    options={senderCountryOptions}
-                    value={filterSenderCountry}
-                    onChange={(value: string) => setFilterSenderCountry(value)}
-                />
-                {docType!==STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && <Selector
-                    label='Sender:'
-                    options={senderOptions}
-                    value={filterSender}
-                    onChange={(value: string) => setFilterSender(value)}
-                />}
-                <Selector
-                    label='Receiver country:'
-                    options={receiverCountryOptions}
-                    value={filterReceiverCountry}
-                    onChange={(value: string) => setFilterReceiverCountry(value)}
-                />
-                {docType!==STOCK_MOVEMENT_DOC_TYPE.OUTBOUND && <Selector
-                    label='Receiver:'
-                    options={receiverOptions}
-                    value={filterReceiver}
-                    onChange={(value: string) => setFilterReceiver(value)}
-                />}
-            </div>)}
-            <div className="page-size-container">
-                <span className="page-size-text"></span>
-                <PageSizeSelector
-                    options={pageOptions}
-                    value={pageSize}
-                    onChange={(value: number) => handleChangePageSize(value)}
-                />
+            </SearchContainer>
+
+            <div className='filter-and-pagination-container'>
+                <div className='current-filter-container'>
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Sender' filterState={filterSender} options={senderOptions} onClose={()=>setFilterSender([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)}}/>
+                    <CurrentFilters title='Sender country' filterState={filterSenderCountry} options={senderCountryOptions} onClose={()=>setFilterSenderCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)}}/>
+                    <CurrentFilters title='Receiver' filterState={filterReceiver} options={receiverOptions} onClose={()=>setFilterReceiver([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiver(true)}}/>
+                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                </div>
+                <div className="page-size-container">
+                    <span className="page-size-text"></span>
+                    <PageSizeSelector
+                        options={pageOptions}
+                        value={pageSize}
+                        onChange={(value: number) => handleChangePageSize(value)}
+                    />
+                </div>
             </div>
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredDocs?.length ? '' : 'is-empty'}`}>
                 <Table
@@ -593,7 +568,21 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
-             </div>
+            </div>
+            <div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >
+                <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>
+                    <div className='doc-filters-block__wrapper'>
+                        <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>
+                            <Icon name='close' />
+                        </div>
+                        <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                        <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
+                        <FiltersBlock filterTitle='Sender country' filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
+                        <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
+                        <FiltersBlock filterTitle='Receiver country' filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                    </div>
+                </div>
+            </div>
             {hoveredDoc && isDisplayedPopup && (
                 <div
                     style={{
@@ -603,33 +592,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     }}
                 >
                     <UniversalPopup
-                        // width={
-                        //     (() => {
-                        //         switch (hoveredColumn) {
-                        //             case 'productLines':
-                        //                 return null;
-                        //             case 'status':
-                        //                 return 800;
-                        //             case 'statusAdditionalInfo':
-                        //                 return 400;
-                        //             case 'receiver':
-                        //                 return 350;
-                        //             default:
-                        //                 return null;
-                        //         }
-                        //     })()
-                        // }
                         items={
                             (() => {
                                 switch (hoveredColumn) {
                                     case 'productLines':
                                         return productItems;
-                                    // case 'status':
-                                    //     return troubleStatusesItems;
-                                    // case 'receiver':
-                                    //     return receiverItem;
-                                    // case 'statusAdditionalInfo':
-                                    //     return statusAdditionalInfoItem;
                                     default:
                                         return [];
                                 }

@@ -16,12 +16,15 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
     errorMessage,
   // registerInput,
     width,
+    extraLabel,
+    isCheckboxHidden= false,
+    circleColor,
   ...otherProps
 },ref) => {
 
   return (
     <div className={`checkbox ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
-      <label htmlFor={`${name}-checkbox`} className="checkbox-label">
+      <label htmlFor={`${name}-checkbox`} className={`checkbox-label ${isCheckboxHidden ? 'hide-checkbox' : ''}`}>
         <input
             {...otherProps}
           type='checkbox'
@@ -32,7 +35,15 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
           onChange={onChange}
           onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
         />
-        {label && <span>{label}</span>}
+        {label && (
+            <span className='checkbox-label-wrapper'>
+              {circleColor ? <span className='colored-circle' style={{ backgroundColor: circleColor}}></span> : null}
+
+              <span className='checkbox-label-text' >
+                {label} {extraLabel ? <span className='checkbox-label-extra-text'>{extraLabel}</span> : null }
+              </span>
+            </span>
+        )}
       </label>
       {errorMessage && <p className="error">{errorMessage}</p>}
       {errors && name in errors ? (

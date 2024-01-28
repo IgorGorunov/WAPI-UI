@@ -1,9 +1,9 @@
 import React, {useEffect} from "react";
-import LogoWAPI from "@/assets/icons/LogoWAPI.svg";
 import "./styles.scss";
 import {OptionType} from "@/types/forms";
 import FilterOption from "@/components/FiltersBlock/FilterOption";
 import Accordion from "@/components/Accordion";
+import {FILTER_TYPE} from "@/types/utility";
 
 
 export type FiltersBlockType = {
@@ -11,14 +11,13 @@ export type FiltersBlockType = {
     filterOptions: OptionType[];
     filterState: string[];
     setFilterState: React.Dispatch<React.SetStateAction<string[]>>;
-    isMultiple?: boolean;
+    filterType?: FILTER_TYPE;
     isOpen?: boolean;
     setIsOpen: (val: boolean)=>void;
+
 }
 
-
-
-const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterOptions, filterState, setFilterState, isMultiple = false, isOpen=false, setIsOpen}) => {
+const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterOptions, filterState, setFilterState, filterType=FILTER_TYPE.CHECKBOX, isOpen=false, setIsOpen}) => {
 
     const handleOptionClick = (val: string) => {
         console.log('clicked val', val, getIsChecked(val, filterState))
@@ -44,7 +43,7 @@ const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterOptions, f
             <Accordion title={filterTitle} isOpen={isOpen} setIsOpen={setIsOpen}>
                 <div className='filter-block__options'>
                     <ul className='filter-block__options-list'>
-                        {filterOptions.map(option => (<li key={option.value} className='filter-block__options-list-item'><FilterOption option={option} isChecked={getIsChecked(option.value, filterState)} onClick={handleOptionClick} /></li>))}
+                        {filterOptions.map(option => (<li key={option.value} className='filter-block__options-list-item'><FilterOption option={option} filterType={filterType} isChecked={getIsChecked(option.value, filterState)} onClick={handleOptionClick} /></li>))}
                     </ul>
                 </div>
             </Accordion>

@@ -37,7 +37,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
             <div className = 'main-header__wrapper card'>
                 <div className='main-header__menu-block' onClick={handleClick}>
                     <div className='main-header__icon'>
-                        <Icon name={"menu-icon"} />
+                        <Icon name={"burger"} />
                     </div>
                     <div className="page-title"><h2>{pageTitle}</h2></div>
                 </div>
@@ -52,9 +52,9 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                 </div>
             </div>
 
-            <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`}>
-                <Navigation handleClose={()=>setMenuOpen(false)}/>
-            </div>
+            {/*<div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`}>*/}
+                <Navigation isMenuOpen={isMenuOpen} handleClose={()=>setMenuOpen(false)}/>
+            {/*</div>*/}
         </div>
     );
 };

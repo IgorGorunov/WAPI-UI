@@ -5,15 +5,20 @@ import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import {ProductStockType} from "@/types/products";
-import StatusWarehouseSelector from "@/components/InputSelect";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
 import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
-import {GetFilterArray} from '@/utils/common';
 import SearchField from "@/components/SearchField";
+import CurrentFilters from "@/components/CurrentFilters";
+import Button, {ButtonVariant} from "@/components/Button/Button";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
+import {FormFieldTypes} from "@/types/forms";
+import FiltersBlock from "@/components/FiltersBlock";
+import SearchContainer from "@/components/SearchContainer";
+import {Countries} from "@/types/countries";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -52,18 +57,65 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
 
     // Filter and searching
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterWarehouse, setFilterWarehouse] = useState('');
-    const transformedWarehouses= GetFilterArray(products, 'warehouse', 'All warehouses');
+    const calcOrderAmount = useCallback((property, value) => {
+        return products.filter(product => product[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[products]);
 
-    const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
-        if (newSearchTerm !== undefined) {
-            setSearchTerm(newSearchTerm);
-        }
-        if (newStatusFilter !== undefined) {
-            setFilterWarehouse(newStatusFilter);
-        }
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
+
+    const uniqueWarehouses = useMemo(() => {
+        const warehouses = products.map(product => product.warehouse);
+        return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
+    }, [products]);
+    uniqueWarehouses.sort();
+    const transformedWarehouses = useMemo(() => ([
+        ...uniqueWarehouses.map(warehouse => ({
+            value: warehouse,
+            label: warehouse,
+            amount: calcOrderAmount('warehouse', warehouse),
+        }))
+    ]), [uniqueWarehouses]);
+
+    const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
+
+    const [filterCountry, setFilterCountry] = useState<string[]>([]);
+
+    const uniqueCountries = useMemo(() => {
+        const countries = products.map(product => product.country);
+        return Array.from(new Set(countries)).filter(country => country).sort();
+    }, [products]);
+    uniqueCountries.sort();
+    const transformedCountries = useMemo(() => ([
+        ...uniqueCountries.map(country => ({
+            value: country,
+            label: Countries[country] || country,
+            amount: calcOrderAmount('country', country),
+        }))
+    ]), [uniqueWarehouses]);
+    const [isOpenFilterCountry, setIsOpenFilterCountry] = useState(false);
+
+    const [fullTextSearch, setFullTextSearch] = useState(true);
+    const fullTextSearchField = {
+        fieldType: FormFieldTypes.TOGGLE,
+        name: 'fullTextSearch',
+        label: 'Full text search',
+        checked: fullTextSearch,
+        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        classNames: 'full-text-search-toggle',
+        hideTextOnMobile: true,
+    }
+
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+
+    const toggleFilters = () => {
+        setIsFiltersVisible(!isFiltersVisible);
     };
+
+    const handleFilterChange = (newSearchTerm :string) => {
+        setSearchTerm(newSearchTerm);
+    };
+
     const filteredProducts = useMemo(() => {
         setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
@@ -72,8 +124,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 const value = product[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
-            const matchesStatus = !filterWarehouse || product.warehouse === filterWarehouse;
-            return matchesSearch && matchesStatus;
+            const matchesWarehouse = !filterWarehouse.length || filterWarehouse.map(item=>item.toLowerCase()).includes(product.warehouse.toLowerCase());
+            const matchesCountry = !filterCountry.length || filterCountry.map(item=>item.toLowerCase()).includes(product.country.toLowerCase());
+            return matchesSearch && matchesWarehouse && matchesCountry;
         });
 
         if (sortColumn) {
@@ -86,15 +139,15 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             });
         }
         return filtered;
-    }, [products, searchTerm, filterWarehouse, sortColumn, sortDirection]);
+    }, [products, searchTerm, filterWarehouse, filterCountry, sortColumn, sortDirection]);
 
     useEffect(() => {
         setFilteredProducts(filteredProducts)
     }, [filteredProducts]);
 
-    useEffect(()=> {
-        setWarehouseForExport(filterWarehouse)
-    },[filterWarehouse])
+    useEffect(() => {
+        setWarehouseForExport(filterWarehouse.join('_'))
+    }, [filterWarehouse]);
 
     const columns: ColumnType<ProductStockType>[] = useMemo(() => [
         {
@@ -259,7 +312,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
             responsive: ['md'],
         },
-        ], [handleHeaderCellClick]);
+    ], [handleHeaderCellClick]);
+
     return (
         <div className='table'>
             <Head>
@@ -268,27 +322,28 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="warehouse-filter-container">
-                    <StatusWarehouseSelector
-                        options={transformedWarehouses}
-                        value={filterWarehouse}
-                        onChange={(value: string) => handleFilterChange(undefined, value)}
+
+            <SearchContainer>
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
+                <div className='search-block'>
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <FieldBuilder {...fullTextSearchField} />
+                </div>
+            </SearchContainer>
+
+            <div className='filter-and-pagination-container'>
+                <div className='current-filter-container'>
+                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}} />
+                    <CurrentFilters title='Country' filterState={filterCountry} options={transformedCountries} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />
+                </div>
+                <div className="page-size-container">
+                    <span className="page-size-text"></span>
+                    <PageSizeSelector
+                        options={PageOptions}
+                        value={pageSize}
+                        onChange={(value: number) => handleChangePageSize(value)}
                     />
-                {/*<Input*/}
-                {/*    placeholder="🔍 Search..."*/}
-                {/*    value={searchTerm}*/}
-                {/*    onChange={e => handleFilterChange(e.target.value, undefined)}*/}
-                {/*    className="search-input"*/}
-                {/*/>*/}
-                <SearchField searchTerm={searchTerm} handleChange={str=>handleFilterChange(str, undefined)} handleClear={()=>{setSearchTerm(""); handleFilterChange("",undefined);}} />
-            </div>
-            <div className="page-size-container">
-                <span className="page-size-text"></span>
-                <PageSizeSelector
-                    options={PageOptions}
-                    value={pageSize}
-                    onChange={(value: number) => handleChangePageSize(value)}
-                />
+                </div>
             </div>
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredProducts?.length ? '' : 'is-empty'}`}>
                 <Table
@@ -310,7 +365,18 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
-             </div>
+            </div>
+            <div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >
+                <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>
+                    <div className='doc-filters-block__wrapper'>
+                        <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>
+                            <Icon name='close' />
+                        </div>
+                        <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                        <FiltersBlock filterTitle='Country' filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterCountry}/>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

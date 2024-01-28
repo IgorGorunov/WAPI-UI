@@ -25,40 +25,5 @@
     flex-direction: column;
   }
 }
-.search-container {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  justify-content: space-between;
 
-  .full-text-search-toggle {
-    flex: 0 0 auto;
-  }
-
-  .date-input-field {
-    max-width: 240px;
-
-    @media (max-width: $upToTablet) {
-      max-width: none;
-      flex: 1 1 100%;
-      order: 2
-    }
-  }
-
-  @media (max-width: $mobile) {
-    flex-wrap: wrap;
-
-    .search-input {
-      order: 1;
-    }
-  }
-
-  .search-block {
-    flex: 1 1 auto;
-    display: flex;
-    gap: 10px;
-  }
-}
 

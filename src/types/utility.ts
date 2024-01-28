@@ -31,3 +31,8 @@ export type WarehouseType = {
     country: string;
 }
 
+export const enum FILTER_TYPE {
+    CHECKBOX = 'checkbox',
+    COLORED_CIRCLE = 'colored-circle',
+}
+

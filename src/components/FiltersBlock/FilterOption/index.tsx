@@ -1,19 +1,31 @@
-import React, { memo } from "react";
+import React from "react";
 import "./styles.scss";
 import {OptionType} from "@/types/forms";
 import Checkbox from "@/components/FormBuilder/Checkbox";
+import {FILTER_TYPE} from "@/types/utility";
 
 export type FilterOptionType = {
     option: OptionType;
-    isMultiple?: boolean;
+    filterType?: FILTER_TYPE;
     isChecked?: boolean;
     onClick: (value: string)=>void;
 }
 
-const FilterOption: React.FC<FilterOptionType> = ({option, isChecked=false, isMultiple = false, onClick }) => {
+const FilterOption: React.FC<FilterOptionType> = ({option, isChecked=false, filterType = FILTER_TYPE.CHECKBOX, onClick }) => {
+
+    console.log()
     return (
-        <div className={`filter-option ${isChecked ? "checked" : ""} ${isMultiple ? "multiple-choice" : "single-choice"}`} >
-            <Checkbox name={option.value} label={option.label} value={isChecked} checked={isChecked} onChange={()=>onClick(option.value)}/>
+        <div className={`filter-option ${isChecked ? "checked" : ""} ${filterType}`} >
+            <Checkbox
+                name={option.value}
+                circleColor={filterType === FILTER_TYPE.COLORED_CIRCLE ? option.color : ''}
+                label={`${option.label}`}
+                extraLabel={`(${option.amount ? option.amount : '0'})`}
+                value={isChecked}
+                checked={isChecked}
+                onChange={()=>onClick(option.value)}
+                isCheckboxHidden={filterType !== FILTER_TYPE.CHECKBOX}
+            />
         </div>
     );
 };

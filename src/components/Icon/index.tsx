@@ -59,6 +59,7 @@ import ShoppingCart from '@/assets/icons/shopping_cart.svg'
 import Track from '@/assets/icons/track_changes.svg'
 import Complaint from '@/assets/icons/complaint.svg'
 import Trouble from '@/assets/icons/trouble.svg'
+import Burger from '@/assets/icons/burger.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -120,6 +121,7 @@ export const icons = {
   'track': Track,
   'complaint': Complaint,
   'trouble': Trouble,
+  'burger': Burger,
 };
 
 export type IconType = keyof typeof icons;
