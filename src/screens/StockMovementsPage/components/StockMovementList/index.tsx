@@ -403,32 +403,32 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
             responsive: ['md'],
         },
-        {
-            title: <TitleColumn title="Packa- ges" minWidth="30px" maxWidth="50px" contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="30px" maxWidth="50px" contentPosition="start"/>
-            ),
-            dataIndex: 'packages',
-            key: 'packages',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Pallet amount" minWidth="30px" maxWidth="50px" contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="30px" maxWidth="50px" contentPosition="start"/>
-            ),
-            dataIndex: 'palletAmount',
-            key: 'palletAmount',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-            }),
-            responsive: ['lg'],
-        },
+        // {
+        //     title: <TitleColumn title="Packa- ges" minWidth="30px" maxWidth="50px" contentPosition="start"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="30px" maxWidth="50px" contentPosition="start"/>
+        //     ),
+        //     dataIndex: 'packages',
+        //     key: 'packages',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
+        // {
+        //     title: <TitleColumn title="Pallet amount" minWidth="30px" maxWidth="50px" contentPosition="start"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="30px" maxWidth="50px" contentPosition="start"/>
+        //     ),
+        //     dataIndex: 'palletAmount',
+        //     key: 'palletAmount',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
         {
             title: <TitleColumn title="Volume" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
             render: (text: string) => (
