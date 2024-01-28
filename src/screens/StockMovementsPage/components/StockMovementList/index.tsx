@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Table, TableColumnProps} from 'antd';
+import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
@@ -328,9 +328,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn title="Date" minWidth="75px" maxWidth="75px" contentPosition="start"/>,
+            title: <TitleColumn title="Date" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
             dataIndex: 'incomingDate',
             key: 'incomingDate',
@@ -340,12 +340,12 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn title="Incoming #" minWidth="70px" maxWidth="70px" contentPosition="start"/>,
+            title: <TitleColumn title="Incoming #" minWidth="90px" maxWidth="120px" contentPosition="start"/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
-                    minWidth="70px"
-                    maxWidth="70px"
+                    minWidth="90px"
+                    maxWidth="120px"
                     contentPosition="start"
                     textColor='var(--color-blue)'
                     cursor='pointer'
@@ -469,7 +469,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Products" minWidth="70px" maxWidth="70px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="center" childrenBefore={
+                <Tooltip title="This column displays Products" color='#5380F5'>
+                    <span><Icon name={"shopping-cart"}/></span>
+                </Tooltip>
+            }/>,
             render: (text: string, record: StockMovementType) => {
                 const productCount = record.products.reduce(
                     (accumulator, currentValue) => accumulator + currentValue.quantity,

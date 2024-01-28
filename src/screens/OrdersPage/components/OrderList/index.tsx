@@ -642,7 +642,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             title: <TitleColumn title="Tracking" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
             render: (text: string, record) => (
-                <TableCell  minWidth="60px" maxWidth="60px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={text && <span  className='track-link' >Track<Icon name='track'/></span> }/>
+                <TableCell  minWidth="60px" maxWidth="60px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span  className='track-link' >Track<Icon name='track'/></span> }/>
             ),
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
@@ -653,7 +653,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onCell: (record) => {
                 return {
                     onClick: () => {
-                        if (record.trackingLink) {
+                        if (record.trackingNumber) {
                             window.open(record.trackingLink, '_blank');
                         }
                     },

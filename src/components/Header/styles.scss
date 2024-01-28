@@ -92,10 +92,12 @@
   background-color: var(--color-blue);
   border-radius: 50%;
   line-height: 0;
+  box-shadow: 0 2px 5px 0 var(--color-blue);
   transition: all 0.3s ease;
 
   &:hover {
     background-color: var(--color-blue-15);
+    box-shadow: 0 2px 5px 0 var(--color-blue-15);
   }
 }
 
