@@ -199,7 +199,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
                 {isLoading && <Loader />}
                 <Header pageTitle={docNamesPlural[docType]} toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add</Button>
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
                 {stockMovementData && <StockMovementList docType={docType} docs={stockMovementData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredDocs={setFilteredDocs} handleEditDoc={handleEditStockMovement} />}

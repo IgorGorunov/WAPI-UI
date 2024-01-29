@@ -167,7 +167,7 @@ const ProductsPage = () => {
                         {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
                         <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
                         <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                        <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
+                        <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                     </Header>
                     {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
                 </div>
