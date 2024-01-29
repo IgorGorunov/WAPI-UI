@@ -317,7 +317,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenBefore={<Icon name={"car"}/>}>
+                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country" color='#5380F5'> <Icon  name={"car"}/></Tooltip>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
