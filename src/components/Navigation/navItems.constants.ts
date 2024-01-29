@@ -53,7 +53,7 @@ export const navBlocks: SubmenuBlockType[] = [
                 link: '/inbounds',
             },
             {
-                title: 'Movements between warehouses',
+                title: 'Movements between WAPI warehouses',
                 link: '/stockMovements',
             },
             {
