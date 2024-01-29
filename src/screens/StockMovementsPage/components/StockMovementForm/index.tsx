@@ -34,6 +34,7 @@ import {Routes} from "@/types/routes";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {sendInboundData} from "@/services/inbounds";
 import {ApiResponseType} from "@/types/api";
+import {SingleOrderProductFormType} from "@/types/orders";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -86,7 +87,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
             wapiTrackingNumber: docData?.wapiTrackingNumber || '',
             warehouseTrackingNumber: docData?.warehouseTrackingNumber || '',
             comment: docData?.comment || '',
-            commentCargo: docData?.commentCargo || '',
             status: docData?.status || '',
             packages: docData?.packages || '',
             palletAmount: docData?.palletAmount || '',
@@ -151,6 +151,12 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     const productOptions = useMemo(() =>{
         return docParameters.products.map((item: ProductInfoType)=>{return {label: `${item.name}`, value:item.uuid}});
     },[docParameters]);
+
+    const setQuantityActual = (record: SingleOrderProductFormType, index: number) => {
+        const product = getValues('products')[index];
+        setValue(`products.${index}.quantity`, +product.quantityPlan === 0 ?'': product.quantityPlan, { shouldValidate: true });
+        setValue(`products.${index}.quantityPlan`, +product.quantityPlan === 0 ?'': product.quantityPlan, { shouldValidate: true });
+    }
 
     const getProductColumns = (control: any) => {
         return [
@@ -249,7 +255,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                                     onChange={(newValue: string) => {
                                         field.onChange(newValue);
                                         // updateTotalProducts();
-                                        // calcProductTotal(record, index);
+                                        setQuantityActual(record, index);
                                     }}
                                 />
                             </div>
@@ -273,7 +279,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                                     name={`products.${index}.quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled}
+                                    disabled={true}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -452,6 +458,8 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         updateTabTitles(fieldNames);
     };
 
+    console.log('doc:', docData)
+
     return <div className={`stock-movement is-${docType}`}>
         {isLoading && <Loader />}
         <ToastContainer />
@@ -547,7 +555,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
             </Tabs>
 
             <div className='form-submit-btn'>
-                {isDisabled && docData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(docData?.canEdit || !docData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {isDisabled && docData?.canEdit && docData?.status==='Draft' && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(docData?.canEdit || !docData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
             </div>

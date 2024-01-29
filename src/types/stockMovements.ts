@@ -81,7 +81,7 @@ export type SingleStockMovementType = {
     weightGross: number;
     weightNet: number;
     comment: string;
-    commentCargo: string;
+    //commentCargo: string;
     status: string;
     products: SingleStockMovementProductType[];
     statusHistory: StockMovementHistoryType[];
@@ -138,7 +138,7 @@ export type SingleStockMovementFormType = {
     weightGross: number;
     weightNet: number;
     comment: string;
-    commentCargo: string;
+    //commentCargo: string;
     status: string;
     products: SingleStockMovementProductFormType[];
     // statusHistory: StockMovementHistoryType[];

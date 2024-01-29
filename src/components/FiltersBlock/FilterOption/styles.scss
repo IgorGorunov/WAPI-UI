@@ -1,6 +1,6 @@
 .filter-option {
   margin-bottom: 0;
-  padding: 6px 12px;
+  padding: 0;
   border: 2px solid var(--border-color);
   border-radius: 30px;
 
@@ -14,6 +14,8 @@
 
     &-label {
       align-items: center;
+      padding: 6px 12px;
+      cursor: pointer;
 
       input {
         height: 18px;

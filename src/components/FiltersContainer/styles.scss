@@ -1,0 +1,78 @@
+@import '@/constants/devices.scss';
+
+.doc-filters-block {
+  position: relative;
+  overflow: hidden;
+  z-index: 1002;
+
+  &__overlay.is-visible-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.2);
+    z-index: 1001;
+    animation: fade 0.3s ease;
+  }
+
+  &__wrapper {
+    border-radius: 15px;
+    overflow: hidden;
+    padding: 10px 0;
+    background-color: white;
+  }
+
+  .filters-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: none;
+    cursor: pointer;
+  }
+
+  .filters-clear {
+    display: flex;
+    justify-content: flex-end;
+    margin: 24px 16px 16px;
+
+  }
+
+  &.is-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 350px;
+    height: 100%;
+    background: #EDEFF2;
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+    padding: 40px 10px;
+    z-index: 1000;
+    overflow-y: scroll;
+    @media (max-width: $mobile) {
+      width: 100%;
+    }
+
+    &.is-visible {
+      transform: translateX(0);
+
+      .filters-close {
+        display: block;
+      }
+
+    }
+
+
+  }
+}
+
+@keyframes fade {
+  0% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}

@@ -22,6 +22,7 @@ import CurrentFilters from "@/components/CurrentFilters";
 import FiltersBlock from "@/components/FiltersBlock";
 import {Countries} from "@/types/countries";
 import SearchContainer from "@/components/SearchContainer";
+import FiltersContainer from "@/components/FiltersContainer";
 
 
 type AmazonPrepListType = {
@@ -124,6 +125,15 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             amount: calcOrderAmount('receiverCountry', country),
         }))
     ]), [uniqueReceiverCountries]);
+
+    const handleClearAllFilters = () => {
+        setFilterStatus([]);
+        setFilterWarehouse([]);
+        setFilterReceiverCountry([]);
+
+        //close filter modal
+        //setIsFiltersVisible(false);
+    }
 
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
@@ -461,18 +471,23 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     showSizeChanger={false}
                 />
              </div>
-            <div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >
-                <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>
-                    <div className='doc-filters-block__wrapper'>
-                        <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>
-                            <Icon name='close' />
-                        </div>
-                        <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                        <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                        <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
-                    </div>
-                </div>
-            </div>
+            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
+            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
+            {/*        <div className='doc-filters-block__wrapper'>*/}
+            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
+            {/*                <Icon name='close' />*/}
+            {/*            </div>*/}
+            {/*            <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
+            {/*            <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
+            {/*            <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
+                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+            </FiltersContainer>
             {hoveredOrder && isDisplayedPopup && (
                 <div
                     style={{

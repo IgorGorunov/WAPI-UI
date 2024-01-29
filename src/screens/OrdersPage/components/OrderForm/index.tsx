@@ -744,8 +744,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         return false;
     }, []);
 
-    console.log('doc:', orderData)
-
     return <div className='order-info'>
 
         {isLoading && <Loader />}

@@ -183,8 +183,8 @@ export const DetailsFields = (
         {
             fieldType: FormFieldTypes.TEXT_AREA,
             type: "text",
-            name: 'commentCargo',
-            label: 'Comment cargo',
+            name: 'comment',
+            label: 'Comment',
             placeholder: "",
             //disabled: true,
             width: WidthType.w100,

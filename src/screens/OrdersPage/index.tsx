@@ -189,6 +189,7 @@ const OrdersPage = () => {
             receiverFullName: item.receiverFullName,
             receiverEMail: item.receiverEMail,
             receiverPhone: item.receiverPhone,
+            lastUpdateDate: item.lastUpdateDate.split("T").join(" "),
         }));
         exportFileXLS(filteredData, "Orders");
     }

@@ -19,6 +19,7 @@ import {FormFieldTypes} from "@/types/forms";
 import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import {Countries} from "@/types/countries";
+import FiltersContainer from "@/components/FiltersContainer";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -111,6 +112,14 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const toggleFilters = () => {
         setIsFiltersVisible(!isFiltersVisible);
     };
+
+    const handleClearAllFilters = () => {
+        setFilterWarehouse([]);
+        setFilterCountry([]);
+
+        //close filter modal
+        //setIsFiltersVisible(false);
+    }
 
     const handleFilterChange = (newSearchTerm :string) => {
         setSearchTerm(newSearchTerm);
@@ -366,17 +375,21 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     showSizeChanger={false}
                 />
             </div>
-            <div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >
-                <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>
-                    <div className='doc-filters-block__wrapper'>
-                        <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>
-                            <Icon name='close' />
-                        </div>
-                        <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                        <FiltersBlock filterTitle='Country' filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterCountry}/>
-                    </div>
-                </div>
-            </div>
+            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
+            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
+            {/*        <div className='doc-filters-block__wrapper'>*/}
+            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
+            {/*                <Icon name='close' />*/}
+            {/*            </div>*/}
+            {/*            <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
+            {/*            <FiltersBlock filterTitle='Country' filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterCountry}/>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
+                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle='Country' filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>
+            </FiltersContainer>
         </div>
     );
 };

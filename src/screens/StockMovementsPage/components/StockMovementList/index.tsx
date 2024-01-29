@@ -21,6 +21,7 @@ import {Countries} from "@/types/countries";
 import CurrentFilters from "@/components/CurrentFilters";
 import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
+import FiltersContainer from "@/components/FiltersContainer";
 
 
 type StockMovementsListType = {
@@ -212,9 +213,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 filterSenderCountry.map(item=>item.toLowerCase()).includes(doc.senderCountry.toLowerCase());
             const matchesReceiverCountry = !filterReceiverCountry.length ||
                 filterReceiverCountry.map(item => item.toLowerCase()).includes(doc.receiverCountry.toLowerCase());
-            const matchesSender = docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || !filterSender.length ||
+            const matchesSender =  !filterSender.length ||
                 filterSender.map(item=>item.toLowerCase()).includes(doc.sender.toLowerCase());
-            const matchesReceiver = docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || !filterReceiver.length ||
+            const matchesReceiver =  !filterReceiver.length ||
                 filterReceiver.map(item=>item.toLowerCase()).includes(doc.receiver.toLowerCase());
             return matchesSearch && matchesStatus && matchesSenderCountry && matchesReceiverCountry && matchesReceiver && matchesSender;
         }).sort((a, b) => {
@@ -239,6 +240,17 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     const toggleFilters = () => {
         setIsFiltersVisible(!isFiltersVisible);
     };
+
+    const handleClearAllFilters = () => {
+        setFilterStatus([]);
+        setFilterSender([]);
+        setFilterSenderCountry([]);
+        setFilterReceiver([]);
+        setFilterReceiverCountry([]);
+
+        //close filter modal
+        //setIsFiltersVisible(false);
+    }
 
     useEffect(() => {
         setFilteredDocs(filteredDocs);
@@ -573,20 +585,27 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     showSizeChanger={false}
                 />
             </div>
-            <div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >
-                <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>
-                    <div className='doc-filters-block__wrapper'>
-                        <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>
-                            <Icon name='close' />
-                        </div>
-                        <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                        <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
-                        <FiltersBlock filterTitle='Sender country' filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
-                        <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
-                        <FiltersBlock filterTitle='Receiver country' filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
-                    </div>
-                </div>
-            </div>
+            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
+            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
+            {/*        <div className='doc-filters-block__wrapper'>*/}
+            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
+            {/*                <Icon name='close' />*/}
+            {/*            </div>*/}
+            {/*            <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
+            {/*            <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>*/}
+            {/*            <FiltersBlock filterTitle='Sender country' filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>*/}
+            {/*            <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />*/}
+            {/*            <FiltersBlock filterTitle='Receiver country' filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
+                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
+                <FiltersBlock filterTitle='Sender country' filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
+                <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
+                <FiltersBlock filterTitle='Receiver country' filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+            </FiltersContainer>
             {hoveredDoc && isDisplayedPopup && (
                 <div
                     style={{
