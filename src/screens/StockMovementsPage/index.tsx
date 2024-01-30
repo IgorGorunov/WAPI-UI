@@ -33,7 +33,7 @@ type StockMovementPageType = {
 
 const docNamesPlural = {
     [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbounds',
-    [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Movements between WAPI warehouses',
+    [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movements',
     [STOCK_MOVEMENT_DOC_TYPE.OUTBOUND]: 'Outbounds',
 }
 const docNamesSingle = {

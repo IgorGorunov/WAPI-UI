@@ -51,8 +51,8 @@
       cursor: not-allowed;
 
       &.is-checked {
-        background-color: var(--color-blue-15);
-        color: var(-color-gray-blue);
+        background-color: var(--color-blue);
+        color: var(--color-white);
         box-shadow: 0 2px 5px 0 var(--color-light-blue-gray);
       }
 
