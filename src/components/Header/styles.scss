@@ -88,6 +88,17 @@
 
 .main-header__icon {
   cursor: pointer;
+  padding: 10px;
+  background-color: var(--color-blue);
+  border-radius: 50%;
+  line-height: 0;
+  box-shadow: 0 2px 5px 0 var(--color-blue);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--color-blue-15);
+    box-shadow: 0 2px 5px 0 var(--color-blue-15);
+  }
 }
 
 .main-header__icon svg rect:first-of-type {
@@ -95,7 +106,8 @@
 }
 
 .main-header__icon svg path {
-  transition: fill 0.3s ease;
+  fill: var(--color-white);
+  transition: all 0.3s ease;
 }
 
 
@@ -105,172 +117,15 @@
 
 .main-header__icon:hover svg path {
   fill: var(--color-gray-blue);
-}
-
-.burger-menu {
-  display: flex;
-  justify-content: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 300px;
-  height: 100%;
-  background: #EDEFF2;
-  transform: translateX(-100%);
-  transition: transform 0.5s ease;
-  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-  padding-top: 20px;
-  @media (max-width: $mobile) {
-    width: 100%;
-  }
+  stroke: transparent;
+  //fill: black;
+  //stroke: black;
 }
 
 .dashboard-menu-link {
   margin: 10px 10px 10px 10px;
 }
 
-.burger-menu-open {
-  transform: translateX(0);
-}
 
-.burger-menu-child {
-  box-sizing: border-box;
-  display: flex;
-  padding: 25px 15px;
-  flex-direction: column;
-  border-radius: 20px;
-  border: 2px solid var(--gray-blue-grey-blue-95, #EDEFF2);
-  background: #EDEFF2;
-}
-
-.button-link {
-  width: 250px;
-  display: flex;
-  height: 60px;
-  padding: 15px;
-  align-items: center;
-  align-self: stretch;
-  border-radius: 10px;
-  background: #5380F5;
-  box-shadow: 0 2px 5px 0 var(--color-blue);
-  color: var(--white-white, #FFF);
-  font-feature-settings: 'clig' off, 'liga' off;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 900;
-  line-height: 25px;
-  transition: background-color 0.3s ease, color 0.3s ease, font-size 0.3s ease;
-  margin-bottom: 10px;
-}
-
-.icon-home path {
-  transition: all 0.3s ease, color 0.3s ease;
-}
-.button-link:hover {
-  background-color: var(--color-blue-15);
-  box-shadow: 0 2px 5px 0 var(--color-blue-15);
-  font-size: 14px;
-  color: var(--color-gray-blue);
-  .icon-home path{
-      fill: var(--color-gray-blue);;
-  }
-}
-
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  outline: none;
-}
-
-.submenu-container {
-
-}
-
-.submenu-container-expanded{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-  border-radius: 10px;
-  background: var(--white-white, #FFF);
-  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-  margin-bottom: 25px;
-  margin-right: 10px;
-  margin-left: 10px;
-  padding: 15px;
-  .submenu-header {
-    border-bottom: 2px solid var(--border-color);
-    padding: 0 0 15px 0;
-  }
-}
-
-.submenu-header {
-  display: flex;
-  align-items: center;
-  padding: 10px 10px 10px 10px;
-  cursor: pointer;
-  color: var(--color-gray-blue);
-  font-feature-settings: 'clig' off, 'liga' off;
-  font-size: 13px;
-  font-weight: 700;
-  width: 100%;
-  transition: color 0.3s ease, font-size 0.3s ease;
-  &:hover {
-    color: var(--color-blue);
-    font-size: 14px;
-  }
-}
-
-.submenu-items {
-  cursor: pointer;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  color: var(--color-gray-blue);
-  font-feature-settings: 'clig' off, 'liga' off;
-  font-size: 13px;
-  font-weight: 700;
-  width: 100%;
-  opacity: 0;
-  transform: translateY(-20px);
-  height: 0;
-  visibility: hidden;
-  transition:  all 0.5s ease-in-out, opacity 0.5s, transform 0.5s;
-}
-
-.submenu-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0 10px 0 10px;
-  height: 40px;
-  transition: color 0.3s ease, font-size 0.3s ease;
-  &:hover {
-    color: var(--color-blue);
-    font-size: 14px;
-  }
-}
-
-.submenu-container-expanded .submenu-items {
-  opacity: 1;
-  transform: translateY(0);
-  height: auto;
-  visibility: visible;
-}
-
-.submenu-items.anim {
-  opacity: 1;
-  transform: translateY(0);
-  visibility: visible;
-}
-
-.nav-arrow-icon {
-  margin-left: auto;
-}
 
 

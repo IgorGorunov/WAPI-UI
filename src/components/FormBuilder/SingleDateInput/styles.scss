@@ -50,6 +50,12 @@
     }
   }
 
+  &.calendar-to-right {
+    .custom-calendar-wrapper {
+      right: 0;
+    }
+  }
+
   .rdrMonthAndYearPickers {
     font-weight: 600;
 

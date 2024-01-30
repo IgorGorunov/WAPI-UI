@@ -3,18 +3,34 @@
 .products-cell-style {
   display: flex;
   height: 30px;
-  padding: 3px 10px 3px 15px;
+  padding: 3px 6px 3px 10px;
   justify-content: center;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
   top: 15px;
   border-radius: 20px;
-  border: 2px solid #5380F5;
-  background: #5380F5;
+  border: 2px solid var(--color-blue);
+  background: var(--color-blue);
   color: white;
   cursor: pointer;
 }
 
+.track-link {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  gap: 0;
+  padding: 0 3px 0 10px;
+  border: 2px solid var(--color-blue);
+  background: var(--color-blue);
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+
+  svg {
+    transform: scale(0.75);
+  }
+}
 .filter-container {
   display: flex;
   align-items: center;
@@ -23,24 +39,5 @@
   justify-content: space-between;
   @media (max-width: $upToTablet) {
     flex-direction: column;
-  }
-}
-.search-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  justify-content: space-between;
-
-  .full-text-search-toggle {
-    flex: 0 0 auto;
-  }
-
-  @media (max-width: $mobile) {
-    flex-wrap: wrap;
-
-    .search-input {
-      order: 1;
-    }
   }
 }

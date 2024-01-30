@@ -331,6 +331,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total COD reports:<span className='order-products-total__list-item__value'>{filteredCODReports.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination

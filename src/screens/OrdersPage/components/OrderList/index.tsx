@@ -1,10 +1,9 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Pagination, Table, TableColumnProps} from 'antd';
+import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
-import Selector from "@/components/InputSelect";
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
@@ -20,6 +19,11 @@ import Head from "next/head";
 import {FormFieldTypes} from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
+import {Countries} from "@/types/countries";
+import FiltersBlock from "@/components/FiltersBlock";
+import CurrentFilters from "@/components/CurrentFilters";
+import SearchContainer from "@/components/SearchContainer";
+import FiltersContainer from "@/components/FiltersContainer";
 
 
 type OrderListType = {
@@ -59,6 +63,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
+        hideTextOnMobile: true,
     }
 
     const productItems = orders.flatMap(order => {
@@ -68,11 +73,20 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             description: orderItem.quantity
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
+
     const troubleStatusesItems = orders.flatMap(order => {
         return order.troubleStatuses.map(orderItem => ({
             uuid: order.uuid,
             title: orderItem.period,
             description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
+        }));
+    }).filter(item => item.uuid === hoveredOrder?.uuid);
+
+    const claimItems = orders.flatMap(order => {
+        return order.claims.map(orderItem => ({
+            uuid: order.uuid,
+            title: orderItem.date,
+            description: orderItem.status,
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
@@ -91,8 +105,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         { uuid: order.uuid, title: order.lastUpdateDate, description: order.statusAdditionalInfo },
     ]).filter(item => item.uuid === hoveredOrder?.uuid);
 
+    const calcOrderAmount = useCallback((property, value) => {
+        return orders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[orders]);
 
-    const [filterStatus, setFilterStatus] = useState('-All statuses-');
+    const calcOrderAllTroubleStatuses = useCallback(() => {
+        return orders.filter(order => order.lastTroubleStatus.length).length || 0;
+    },[orders]);
+
+    const calcOrderWithClaims = useCallback(() => {
+        return orders.filter(order => order.claimsExist).length || 0;
+    },[orders]);
+
+    const [filterStatus, setFilterStatus] = useState<string[]>([]);
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
         const statuses = orders.map(order => order.status);
@@ -100,21 +125,48 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
-        {
-            value: '-All statuses-',
-            label: '-All statuses-',
-        },
-        {
-            value: '-Trouble statuses-',
-            label: '-Trouble statuses-',
-        },
         ...uniqueStatuses.map(status => ({
             value: status,
             label: status,
+            amount: calcOrderAmount('status', status),
         }))
     ]), [uniqueStatuses]);
 
-    const [filterWarehouse, setFilterWarehouse] = useState('-All warehouses-');
+    const [filterTroubleStatus, setFilterTroubleStatus] = useState<string[]>([]);
+
+    const uniqueTroubleStatuses = useMemo(() => {
+        const statuses = orders.map(order => order.lastTroubleStatus);
+        return Array.from(new Set(statuses)).filter(status => status).sort();
+    }, [orders]);
+    uniqueStatuses.sort();
+    const transformedTroubleStatuses = useMemo(() => ([
+        {
+            value: '-All trouble statuses-',
+            label: '-All trouble statuses-',
+            amount: calcOrderAllTroubleStatuses(),
+        },
+        ...uniqueTroubleStatuses.map(status => ({
+            value: status,
+            label: status,
+            amount: calcOrderAmount('lastTroubleStatus', status),
+        }))
+    ]), [uniqueTroubleStatuses]);
+
+    const [filterClaims, setFilterClaims] = useState<string[]>([]);
+    const claimFilterOptions = useMemo(() => ([
+        {
+            value: 'With claims',
+            label: 'With claims',
+            amount:  calcOrderWithClaims(),
+        },
+        {
+            value: 'Without claims',
+            label: 'Without claims',
+            amount: (orders.length - calcOrderWithClaims()),
+        },
+    ]), [orders]);
+
+    const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
         const warehouses = orders.map(order => order.warehouse);
@@ -122,17 +174,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueWarehouses.sort();
     const transformedWarehouses = useMemo(() => ([
-        {
-            value: '-All warehouses-',
-            label: '-All warehouses-',
-        },
         ...uniqueWarehouses.map(warehouse => ({
             value: warehouse,
             label: warehouse,
+            amount: calcOrderAmount('warehouse', warehouse),
         }))
     ]), [uniqueWarehouses]);
 
-    const [filterCourierService, setFilterCourierService] = useState('-All couriers-');
+    const [filterCourierService, setFilterCourierService] = useState<string[]>([]);
     // const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = useMemo(() => {
         const courierServices = orders.map(order => order.courierService);
@@ -140,17 +189,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueCourierServices.sort();
     const transformedCourierServices = useMemo(() => ([
-        {
-            value: '-All couriers-',
-            label: '-All couriers-',
-        },
         ...uniqueCourierServices.map(courier => ({
             value: courier,
             label: courier,
+            amount: calcOrderAmount('courierService', courier),
         }))
     ]), [uniqueCourierServices]);
 
-    const [filterReceiverCountry, setFilterReceiverCountry] = useState('-All countries-');
+    const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = orders.map(order => order.receiverCountry);
@@ -158,15 +204,24 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueReceiverCountries.sort();
     const transformedReceiverCountries = useMemo(() => ([
-        {
-            value: '-All countries-',
-            label: '-All countries-',
-        },
         ...uniqueReceiverCountries.map(country => ({
             value: country,
-            label: country,
+            label: Countries[country] as string || country,
+            amount: calcOrderAmount('receiverCountry', country),
         }))
     ]), [uniqueReceiverCountries]);
+
+    const handleClearAllFilters = () => {
+        setFilterStatus([]);
+        setFilterTroubleStatus([]);
+        setFilterClaims([]);
+        setFilterWarehouse([]);
+        setFilterCourierService([]);
+        setFilterReceiverCountry([]);
+
+        //close filter modal
+        //setIsFiltersVisible(false);
+    }
 
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
@@ -218,15 +273,20 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 }
                 return false;
             });
-            const matchesStatus = filterStatus === '-All statuses-' ||
-                (filterStatus === '-Trouble statuses-' ? order.troubleStatusesExist : order.status === filterStatus);
-            const matchesWarehouse = !filterWarehouse || filterWarehouse === '-All warehouses-' ||
-                order.warehouse.toLowerCase() === filterWarehouse.toLowerCase();
-            const matchesCourierService = !filterCourierService || filterCourierService === '-All couriers-' ||
-                order.courierService.toLowerCase() === filterCourierService.toLowerCase();
-            const matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-All countries-' ||
-                order.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
-            return matchesSearch && matchesStatus && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
+
+            const matchesStatus = !filterStatus.length ||
+                (filterStatus.includes(order.status));
+            const matchesTroubleStatus = !filterTroubleStatus.length || (filterTroubleStatus.includes('-All trouble statuses-') && order.lastTroubleStatus.length) ||
+                filterTroubleStatus.includes(order.lastTroubleStatus);
+            const matchesClaims = !filterClaims.length || (filterClaims.includes('With claims') && order.claimsExist) ||
+                (filterClaims.includes('Without claims') && !order.claimsExist);
+            const matchesWarehouse = !filterWarehouse.length ||
+                filterWarehouse.map(item=>item.toLowerCase()).includes(order.warehouse.toLowerCase());
+            const matchesCourierService = !filterCourierService.length ||
+                filterCourierService.map(item=>item.toLowerCase()).includes(order.courierService.toLowerCase());
+            const matchesReceiverCountry = !filterReceiverCountry.length ||
+                filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
+            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesClaims && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -235,7 +295,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
+    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
 
     const [showDatepicker, setShowDatepicker] = useState(false);
 
@@ -244,11 +304,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setShowDatepicker(false);
     };
 
-    const [isFiltersVisible, setIsFiltersVisible] = useState(true);
+    //filters
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
     const toggleFilters = () => {
-        setIsFiltersVisible(!isFiltersVisible);
+        setIsFiltersVisible(prevState => !prevState);
     };
+    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+    const [isOpenFilterTroubleStatus, setIsOpenFilterTroubleStatus] = useState(false);
+    const [isOpenFilterClaim, setIsOpenFilterClaim] = useState(false);
+    const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
+    const [isOpenFilterCourierStatus, setIsOpenFilterCourierStatus] = useState(false);
+    const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
+
 
     useEffect(() => {
         setFilteredOrders(filteredOrders);
@@ -261,7 +329,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenBefore={<Icon name={"car"}/>}>
+                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon  name={"car"}/></Tooltip>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
@@ -307,6 +375,126 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             key: 'icon',
         },
         {
+            title: <TitleColumn
+                minWidth="24px"
+                maxWidth="24px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="This column displays if order has Claims" >
+                        <span><Icon name={"complaint"}/></span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        minWidth="24px"
+                        maxWidth="24px"
+                        contentPosition="center"
+                        childrenBefore={
+                            record.claimsExist && (
+                                <div style={{
+                                    minHeight: '8px',
+                                    minWidth: '8px',
+                                    backgroundColor: 'red',
+                                    borderRadius: '50%',
+                                    display: 'inline-block',
+                                    alignSelf: 'center',
+                                }}
+                                     onClick={(e) => {
+                                         setHoveredOrder(record);
+                                         setHoveredColumn('claims');
+                                         setMousePosition({ x: e.clientX, y: e.clientY });
+                                         setIsDisplayedPopup(!isDisplayedPopup);
+
+                                     }}
+                                     onMouseEnter={(e) => {
+                                         setHoveredOrder(record);
+                                         setHoveredColumn('claims');
+                                         setMousePosition({ x: e.clientX, y: e.clientY });
+                                         setIsDisplayedPopup(true);
+
+                                     }}
+                                     onMouseLeave={() => {
+                                         setHoveredOrder(null);
+                                         setHoveredColumn('');
+                                         setMousePosition(null);
+                                         setIsDisplayedPopup(false);
+                                     }}/>
+                            )
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'claimsExist',
+            key: 'claimsExist',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+        },
+        {
+            title: <TitleColumn
+                minWidth="24px"
+                maxWidth="24px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="This column displays if order has Trouble statuses">
+                        <span><Icon name={"trouble"}/></span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        minWidth="24px"
+                        maxWidth="24px"
+                        contentPosition="center"
+                        childrenBefore={
+                            record.troubleStatusesExist && (
+                                <div style={{
+                                    minHeight: '8px',
+                                    minWidth: '8px',
+                                    backgroundColor: 'red',
+                                    borderRadius: '50%',
+                                    display: 'inline-block',
+                                    alignSelf: 'center',
+                                }}
+                                     onClick={(e) => {
+                                         setHoveredOrder(record);
+                                         setHoveredColumn('troubleStatus');
+                                         setMousePosition({ x: e.clientX, y: e.clientY });
+                                         setIsDisplayedPopup(!isDisplayedPopup);
+
+                                     }}
+                                     onMouseEnter={(e) => {
+                                         setHoveredOrder(record);
+                                         setHoveredColumn('troubleStatus');
+                                         setMousePosition({ x: e.clientX, y: e.clientY });
+                                         setIsDisplayedPopup(true);
+
+                                     }}
+                                     onMouseLeave={() => {
+                                         setHoveredOrder(null);
+                                         setHoveredColumn('');
+                                         setMousePosition(null);
+                                         setIsDisplayedPopup(false);
+                                     }}/>
+                            )
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'troubleStatus',
+            key: 'troubleStatus',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+        },
+        {
             title: <TitleColumn title="Status" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
@@ -315,39 +503,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         minWidth="60px"
                         maxWidth="60px"
                         contentPosition="start"
-                        childrenBefore={
-                            record.troubleStatusesExist && (
-                                    <div style={{
-                                        minHeight: '8px',
-                                        minWidth: '8px',
-                                        backgroundColor: 'red',
-                                        borderRadius: '50%',
-                                        display: 'inline-block',
-                                        marginRight: '5px',
-                                        alignSelf: 'center',
-                                    }}
-                                         onClick={(e) => {
-                                             setHoveredOrder(record);
-                                             setHoveredColumn('status');
-                                             setMousePosition({ x: e.clientX, y: e.clientY });
-                                             setIsDisplayedPopup(!isDisplayedPopup);
-
-                                         }}
-                                         onMouseEnter={(e) => {
-                                             setHoveredOrder(record);
-                                             setHoveredColumn('status');
-                                             setMousePosition({ x: e.clientX, y: e.clientY });
-                                             setIsDisplayedPopup(true);
-
-                                         }}
-                                         onMouseLeave={() => {
-                                             setHoveredOrder(null);
-                                             setHoveredColumn('');
-                                             setMousePosition(null);
-                                             setIsDisplayedPopup(false);
-                                         }}/>
-                                )
-                        }
                         childrenAfter={
                             <span style={{
                                 borderBottom: `2px solid ${underlineColor}`,
@@ -497,9 +652,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Tracking number" minWidth="150px" maxWidth="150px" contentPosition="start"/>,
+            title: <TitleColumn title="Tracking" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
             render: (text: string, record) => (
-               <TableCell value={text} minWidth="150px" maxWidth="150px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+                <TableCell  minWidth="60px" maxWidth="60px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span  className='track-link' >Track<Icon name='track'/></span> }/>
             ),
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
@@ -510,7 +665,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onCell: (record) => {
                 return {
                     onClick: () => {
-                        if (record.trackingLink) {
+                        if (record.trackingNumber) {
                             window.open(record.trackingLink, '_blank');
                         }
                     },
@@ -519,7 +674,16 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Products" minWidth="50px" maxWidth="50px" contentPosition="start"/>,
+            title: <TitleColumn
+                minWidth="50px"
+                maxWidth="50px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="This column displays Products" >
+                        <span><Icon name={"shopping-cart"}/></span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string, record: OrderType) => (
                 <TableCell
                     minWidth="50px"
@@ -560,7 +724,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             responsive: ['lg'],
         },
-        ];
+    ];
+
     return (
         <div className="table">
             <Head>
@@ -569,43 +734,34 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="search-container">
-                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
-                <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
-                <FieldBuilder {...fullTextSearchField} />
-            </div>
-            {isFiltersVisible && (
-            <div className="filter-container">
+            <SearchContainer>
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
-                <Selector
-                    options={transformedStatuses}
-                    value={filterStatus}
-                    onChange={(value: string) => setFilterStatus(value)}
-                />
-                <Selector
-                    options={transformedWarehouses}
-                    value={filterWarehouse}
-                    onChange={(value: string) => setFilterWarehouse(value)}
-                />
-                <Selector
-                    options={transformedCourierServices}
-                    value={filterCourierService}
-                    onChange={(value: string) => setFilterCourierService(value)}
-                />
-                <Selector
-                    options={transformedReceiverCountries}
-                    value={filterReceiverCountry}
-                    onChange={(value: string) => setFilterReceiverCountry(value)}
-                />
-            </div>)}
-            <div className="page-size-container">
-                <span className="page-size-text"></span>
-                <PageSizeSelector
-                    options={pageOptions}
-                    value={pageSize}
-                    onChange={(value: number) => handleChangePageSize(value)}
-                />
+                <div className='search-block'>
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <FieldBuilder {...fullTextSearchField} />
+                </div>
+            </SearchContainer>
+
+            <div className='filter-and-pagination-container'>
+                <div className='current-filter-container'>
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>setFilterTroubleStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
+                    <CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>setFilterClaims([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
+                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
+                    <CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>
+                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                </div>
+                <div className="page-size-container">
+                    <span className="page-size-text"></span>
+                    <PageSizeSelector
+                        options={pageOptions}
+                        value={pageSize}
+                        onChange={(value: number) => handleChangePageSize(value)}
+                    />
+                </div>
             </div>
+
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}
@@ -613,6 +769,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total orders:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination
@@ -623,7 +784,30 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
-             </div>
+            </div>
+            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
+            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
+            {/*        <div className='doc-filters-block__wrapper'>*/}
+            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
+            {/*                <Icon name='close' />*/}
+            {/*            </div>*/}
+            {/*            <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
+            {/*            <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>*/}
+            {/*            <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>*/}
+            {/*            <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
+            {/*            <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>*/}
+            {/*            <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
+                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
+                <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
+                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
+                <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+            </FiltersContainer>
             {hoveredOrder && isDisplayedPopup && (
                 <div
                     style={{
@@ -654,7 +838,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                 switch (hoveredColumn) {
                                     case 'productLines':
                                         return productItems;
-                                    case 'status':
+                                    case 'claims':
+                                        return claimItems;
+                                    case 'troubleStatus':
                                         return troubleStatusesItems;
                                     case 'receiver':
                                         return receiverItem;
@@ -681,6 +867,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     />
                 </div>
             )}
+
         </div>
     );
 };

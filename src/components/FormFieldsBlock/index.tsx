@@ -12,13 +12,13 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
     return <>
         {fieldsArray.map((curField) => {
             if (curField.fieldType === FormFieldTypes.GRID) {
-                return <div className={`grid-inner-row ${curField.width ? "width-"+curField.width : ""} ${curField.classNames}`}>
+                return <div key={curField.name} className={`grid-inner-row ${curField.width ? "width-"+curField.width : ""} ${curField.classNames}`}>
                     <div className='grid-row'>
                         {curField.fields.map((field )=> <SingleField curField={field} control={control} errors={errors} isDisabled={isDisabled} />)}
                     </div>
                 </div>
             } else {
-                return <SingleField curField={curField} control={control} errors={errors} isDisabled={isDisabled} />
+                return <SingleField key={curField.name} curField={curField} control={control} errors={errors} isDisabled={isDisabled} />
             }
         })}</>
 }

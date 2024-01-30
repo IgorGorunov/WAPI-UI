@@ -1,0 +1,28 @@
+.filter-option {
+  margin-bottom: 0;
+  padding: 0;
+  border: 2px solid var(--border-color);
+  border-radius: 30px;
+
+  &.checked {
+    border: 2px solid var(--color-blue);
+  }
+
+  .checkbox {
+    margin: 0;
+    padding: 0;
+
+    &-label {
+      align-items: center;
+      padding: 6px 12px;
+      cursor: pointer;
+
+      input {
+        height: 18px;
+        margin-right: 4px;
+        padding: 7px;
+        border-radius: 50%;
+      }
+    }
+  }
+}

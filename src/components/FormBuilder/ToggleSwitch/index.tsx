@@ -1,8 +1,8 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {forwardRef} from "react";
 import {FieldPropsType} from "@/types/forms";
 import "./styles.scss"
 
-const ToggleSwitch: React.FC<FieldPropsType> = ({
+const ToggleSwitch =  forwardRef<HTMLInputElement, FieldPropsType>(({
         classNames= '',
         name,
         label = '',
@@ -13,17 +13,19 @@ const ToggleSwitch: React.FC<FieldPropsType> = ({
         errors,
         errorMessage,
         width,
+        hideTextOnMobile = false,
         ...otherProps
-   }) => {
+   },ref) => {
 
     return (
-        <div className={`toggle-switch ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
+        <div className={`toggle-switch ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${hideTextOnMobile ? 'hide-text-on-mobile' : ''}`}>
             <input
                {...otherProps}
                className='toggle-switch-checkbox'
                type='checkbox'
                name={name}
                id={`${name}-toggle`}
+               ref={ref}
                checked={!!value || checked}
                onChange={onChange}
                onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
@@ -35,6 +37,6 @@ const ToggleSwitch: React.FC<FieldPropsType> = ({
             <span className='toggle-switch-label-text'>{label}</span>
         </div>
     );
-};
+});
 
 export default ToggleSwitch;

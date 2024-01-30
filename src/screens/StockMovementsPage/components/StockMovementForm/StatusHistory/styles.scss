@@ -1,0 +1,86 @@
+@import "@/constants/devices.scss";
+
+.stock-movement-status-history {
+  margin: 24px -28px 0 -28px;
+
+  @media (max-width: $mobile) {
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--color-gray-blue);
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  &__list {
+    list-style: none;
+    &-item {
+      display: flex;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--color-gray-blue);
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  .column {
+    padding: 10px 12px;
+
+    @media (max-width: $mobile) {
+      padding: 10px 6px;
+    }
+
+    .new-line {
+      display: block;
+    }
+  }
+
+  .date-column {
+    flex: 0 0 110px;
+    padding: 10px 12px 10px 0;
+    margin-left: 20px;
+
+    @media (max-width: $mobile) {
+      padding: 10px 6px;
+      flex: 0 0 70px;
+    }
+  }
+  .status-column {
+    flex: 1 1 300px;
+
+    @media (max-width: $upToTablet) {
+      flex: 1 1 150px;
+    }
+  }
+  .etd-column,
+  .eta-column{
+    flex: 0 0 120px;
+
+    //@media (max-width: $upToTablet) {
+    //  flex: 1 0 120px;
+    //}
+    //
+    @media (max-width: $mobile) {
+      flex: 0 0 70px;
+    }
+  }
+
+
+  .freight-supplier-column {
+    flex: 0 0 150px;
+
+    @media (max-width: $upToTablet) {
+      flex: 0 1 120px;
+    }
+  }
+
+  .highlight {
+    background-color: #FAFBFC;
+  }
+}

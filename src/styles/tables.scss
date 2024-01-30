@@ -157,6 +157,128 @@
   }
 }
 
+.doc-filters-block {
+  position: relative;
+  //max-height: 0;
+  //
+  //transition: max-height 0.3s ease-in;
+  overflow: hidden;
+  z-index: 1002;
+
+  &__overlay.is-visible-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.2);
+    z-index: 1001;
+    animation: fade 0.3s ease;
+  }
+
+  &__wrapper {
+    border-radius: 15px;
+    overflow: hidden;
+    padding: 10px 0;
+    background-color: white;
+  }
+
+  //&.is-visible {
+  //  max-height: 1000px;
+  //}
+
+  .filters-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: none;
+    cursor: pointer;
+  }
+
+  &.is-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 350px;
+    height: 100%;
+    background: #EDEFF2;
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+    padding: 40px 10px;
+    z-index: 1000;
+    overflow-y: scroll;
+    @media (max-width: $mobile) {
+      width: 100%;
+    }
+
+    &.is-visible {
+      transform: translateX(0);
+
+      .filters-close {
+        display: block;
+      }
+
+    }
+
+
+  }
+}
+
+.filter-and-pagination-container {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+
+  .current-filter-container {
+    flex: 1 1 auto;
+  }
+
+  .page-size-container {
+    flex: 0 0 auto
+  }
+}
+
+
+.order-products-total {
+  margin-top: auto;
+  padding: 20px 15px;
+  border-radius: 0 0 15px 15px;
+  background-color: var(--color-light-gray);
+
+  &__list {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 30px;
+    list-style: none;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
+
+    &-item {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-gray-blue);
+
+      &__value {
+        display: inline-block;
+        margin-left: 10px;
+      }
+
+      .currency {
+        display: inline-block;
+        margin-left: 4px;
+      }
+    }
+  }
+}
+
+
+
 .fade-in-down {
   animation: fadeInDown 1s forwards;
 }
@@ -178,3 +300,13 @@
       table-layout: auto !important;
     }
 }
+
+@keyframes fade {
+  0% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}
+

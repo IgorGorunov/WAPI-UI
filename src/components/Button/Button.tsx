@@ -17,7 +17,7 @@ export const enum ButtonForm {
 export const enum ButtonVariant {
   PRIMARY = 'primary',
   SECONDARY = 'secondary',
-  MOBILE = 'mobile',
+  FILTER = 'filter',
 }
 
 export type ButtonType = ComponentProps<"button"> & {

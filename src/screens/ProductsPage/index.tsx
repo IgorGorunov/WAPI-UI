@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useMemo} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
@@ -12,7 +12,7 @@ import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {exportFileXLS} from "@/utils/files";
-import {ProductType, ProductParamsType, SingleProductType} from "@/types/products";
+import {ProductParamsType, ProductType, SingleProductType} from "@/types/products";
 import Modal from "@/components/Modal";
 import ProductForm from "@/screens/ProductsPage/components/ProductForm";
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,6 +20,7 @@ import '@/components/Toast/styles.scss'
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
+import {ImportFilesType} from "@/types/importFiles";
 
 const ProductsPage = () => {
     const Router = useRouter();
@@ -167,7 +168,7 @@ const ProductsPage = () => {
                         {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
                         <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
                         <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                        <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
+                        <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                     </Header>
                     {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
                 </div>
@@ -178,7 +179,7 @@ const ProductsPage = () => {
                 }
                 {showImportModal &&
                     <Modal title={`Import xls`} onClose={onImportModalClose} >
-                        <ImportFilesBlock file='Master data.xlsx' isProducts={true} closeModal={()=>setShowImportModal(false)}/>
+                        <ImportFilesBlock file='Master data.xlsx' importFilesType={ImportFilesType.PRODUCTS} closeModal={()=>setShowImportModal(false)}/>
                     </Modal>
                 }
             </Layout>

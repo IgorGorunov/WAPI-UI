@@ -1,9 +1,9 @@
-import React, {useCallback} from "react";
+import React, {useCallback, forwardRef} from "react";
 import { FieldPropsType, OptionType } from '@/types/forms';
 import Select from 'react-select'
 import "./styles.scss";
 
-const SelectField: React.FC<FieldPropsType> = ({
+const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
     classNames,
     name,
     label='',
@@ -19,7 +19,7 @@ const SelectField: React.FC<FieldPropsType> = ({
     isSearchable= true,
     isClearable = true,
     ...otherProps
-}) => {
+}, ref) => {
 
 
     const handleChange = useCallback((selectedOption: OptionType) => {
@@ -63,7 +63,7 @@ const SelectField: React.FC<FieldPropsType> = ({
                 instanceId={`select-${name}`}
                 isClearable={isClearable}
                 aria-autocomplete='none'
-
+                //ref={ref}
                 //inputProps={{autoComplete: 'off', autoCorrect: 'off', spellCheck: 'off' }}
                 //formatGroupLabel={ CustomValueContainer }
             />
@@ -71,6 +71,6 @@ const SelectField: React.FC<FieldPropsType> = ({
 
         </div>
     );
-};
+});
 
 export default SelectField;

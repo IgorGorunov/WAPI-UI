@@ -141,7 +141,6 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
 
     const { append: appendProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
-    console.log("products", products);
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
@@ -254,16 +253,11 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         setSelectedFiles(files);
     };
 
-
     const productOptions = useMemo(() =>{
         return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter((item: AmazonPrepOrderProductType)=>item.warehouse===warehouse).map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
     },[amazonPrepOrderParameters, warehouse]);
 
-    const carrierType = watch('carrierType');
-
-    useEffect(() => {
-
-    }, [carrierType]);
+    //const carrierType = watch('carrierType');
 
     const getProductColumns = (control: any) => {
         return [

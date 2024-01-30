@@ -1,8 +1,10 @@
 export type ApiResponseType = {
     data?: any;
+    status?: number;
     response?: {
         data?: {
             errorMessage: string[];
+            data?: any;
         }
     }
 };

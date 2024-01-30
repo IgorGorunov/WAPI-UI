@@ -1,0 +1,147 @@
+@import '@/constants/devices.scss';
+
+.stock-movement {
+  @media (min-width: $desktop) {
+    width: 1090px;
+  }
+
+  .card {
+    padding: 28px;
+    margin-bottom: 16px;
+
+    @media (max-width: $mobile) {
+      padding: 16px;
+    }
+  }
+
+  &__block-title {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 25px;
+    color: var(--color-gray-blue);
+    margin-bottom: 16px;
+
+    &.title-small {
+      margin-bottom: 0;
+    }
+
+    svg {
+      margin-right: 16px;
+    }
+  }
+
+  @media (max-width: $mobile) {
+    .general-tab,
+    .delivery-tab {
+      .width-25 {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+
+    //.general-tab {
+    //  .width-17 {
+    //    padding-left: 0;
+    //  }
+    //}
+  }
+
+  @media (max-width: $upToTablet) {
+    .general-tab {
+      .width-33 {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+
+      .width-17 {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+
+
+  &--order-btns {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-bottom: 8px;
+
+    @media (max-width: $tablet) {
+      flex: 1 1 50%;
+    }
+  }
+
+  &--products,
+  &--history {
+    display: flex;
+    flex-direction: column;
+
+    &.card {
+      padding-bottom: 0;
+    }
+  }
+
+  &--table  {
+    overflow-x: scroll;
+  }
+
+  &--products-total {
+    margin: auto -28px;
+    padding: 7px 12px 0 12px;
+    background-color: var(--color-light-gray);
+
+    @media (max-width: $mobile) {
+      margin: auto -16px;
+    }
+
+    .form-control {
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 0 16px;
+
+      label {
+        margin-bottom: 0;
+      }
+
+      input {
+        max-width: 60px;
+        margin-left: 12px;
+        padding: 6px 10px;
+        border-radius: 5px;
+      }
+    }
+  }
+
+  .order-tracking-link {
+    a {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--color-blue);
+      text-decoration: underline;
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+    }
+  }
+
+
+
+  .form-submit-btn {
+    display: flex;
+    justify-content: flex-end;
+    gap: 22px;
+    margin-top: 30px;
+
+    @media (max-width: $mobile) {
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+  }
+}

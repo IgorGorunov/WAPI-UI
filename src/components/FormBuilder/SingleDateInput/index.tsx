@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, forwardRef} from "react";
 import { Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -8,7 +8,12 @@ import {formatDateToDisplayString} from '@/utils/date'
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
 
-const SingleDateInput: React.FC<FieldPropsType> = ({
+// const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
+//     (props: CustomInputProps, ref: Ref<HTMLInputElement>) => {
+//         return <input ref={ref} {...props} />;
+//     }
+// );
+const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
        classNames='',
        name,
        label='',
@@ -23,7 +28,7 @@ const SingleDateInput: React.FC<FieldPropsType> = ({
        errors,
        width,
        ...otherProps
-}) => {
+}, ref) => {
 
     const {currentDate} = useAuth();
 
@@ -40,24 +45,25 @@ const SingleDateInput: React.FC<FieldPropsType> = ({
         if (onChange) onChange(date.toISOString());
     };
 
-    const CustomDateInput = () => {
-        // Your custom date input JSX here
-        return (
-            <div className='date-input__wrapper'>
-                <input
-                    type="text"
-                    value={formatDateToDisplayString(selectedDate)} readOnly onClick={()=>setShowCalendar((prevState) => !prevState)}
-                    id={name}
-                    placeholder={placeholder}
-                    disabled={disabled}
-                    onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-                    {...otherProps}
-                />
-                <div className='calendar-icon' onClick={()=>setShowCalendar((prevState) => !prevState)}>
-                    <Icon name='calendar'  />
-                </div>
-            </div>);
-    };
+    // const CustomDateInput = (ref) => {
+    //     // Your custom date input JSX here
+    //     return (
+    //         <div className='date-input__wrapper'>
+    //             <input
+    //                 type="text"
+    //                 value={formatDateToDisplayString(selectedDate)} readOnly onClick={()=>setShowCalendar((prevState) => !prevState)}
+    //                 id={name}
+    //                 placeholder={placeholder}
+    //                 disabled={disabled}
+    //                 onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+    //                 {...otherProps}
+    //                 ref={ref}
+    //             />
+    //             <div className='calendar-icon' onClick={()=>setShowCalendar((prevState) => !prevState)}>
+    //                 <Icon name='calendar'  />
+    //             </div>
+    //         </div>);
+    // };
 
     return (
         <div className={`form-control-date ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${disabled ? 'is-disabled' : ''}`}>
@@ -70,18 +76,31 @@ const SingleDateInput: React.FC<FieldPropsType> = ({
                         </a>
                         <Calendar
                             className='custom-calendar'
-                            date={selectedDate}
+                            date={selectedDate.getFullYear()<2000 ? currentDate : selectedDate }
                             onChange={handleDateSelect}
                             showDateDisplay={false}
                             showMonthAndYearPickers={false}
                             color="#5380F5"
                         />
                     </div>}
-                <CustomDateInput  />
-
+                <div className='date-input__wrapper'>
+                    <input
+                        type="text"
+                        value={formatDateToDisplayString(selectedDate)} readOnly onClick={()=>setShowCalendar((prevState) => !prevState)}
+                        id={name}
+                        placeholder={placeholder}
+                        disabled={disabled}
+                        onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                        {...otherProps}
+                        ref={ref}
+                    />
+                    <div className='calendar-icon' onClick={()=>setShowCalendar((prevState) => !prevState)}>
+                        <Icon name='calendar'  />
+                    </div>
+                </div>
             </div>
-        </div>)
-
-}
+        </div>
+    )
+});
 
 export default SingleDateInput;

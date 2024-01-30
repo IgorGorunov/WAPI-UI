@@ -19,6 +19,7 @@ import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
+import {ImportFilesType} from "@/types/importFiles";
 
 type ApiResponse = {
     data: any;
@@ -29,6 +30,13 @@ const OrdersPage = () => {
     const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
+    //if (!token) Router.push(Routes.Login);
+
+    useEffect(() => {
+        if (!token) Router.push(Routes.Login);
+    }, [token]);
+
+
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -126,7 +134,7 @@ const OrdersPage = () => {
             );
 
             if (res && "data" in res) {
-                setOrdersData(res.data);
+                setOrdersData(res.data.map(item=>({...item, key: item.uuid})));
                 setIsLoading(false);
             } else {
                 console.error("API did not return expected data");
@@ -182,6 +190,7 @@ const OrdersPage = () => {
             receiverFullName: item.receiverFullName,
             receiverEMail: item.receiverEMail,
             receiverPhone: item.receiverPhone,
+            lastUpdateDate: item.lastUpdateDate.split("T").join(" "),
         }));
         exportFileXLS(filteredData, "Orders");
     }
@@ -193,7 +202,7 @@ const OrdersPage = () => {
                 <Header pageTitle='Fulfillment' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
                     <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export xls</Button>
+                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}
@@ -205,7 +214,7 @@ const OrdersPage = () => {
             }
             {showImportModal &&
                 <Modal title={`Import xls`} onClose={onImportModalClose} >
-                    <ImportFilesBlock file='OrderTemplate.xlsx' isProducts={false} closeModal={()=>setShowImportModal(false)}/>
+                    <ImportFilesBlock file='OrderTemplate.xlsx' importFilesType={ImportFilesType.ORDERS} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }
         </Layout>

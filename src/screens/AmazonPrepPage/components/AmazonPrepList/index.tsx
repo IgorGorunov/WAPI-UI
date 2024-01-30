@@ -1,10 +1,9 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Pagination, Table, TableColumnProps} from 'antd';
+import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
-import Selector from "@/components/InputSelect";
 import Icon from "@/components/Icon";
 import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
@@ -17,6 +16,13 @@ import Button, {ButtonVariant} from "@/components/Button/Button";
 import Head from "next/head";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import SearchField from "@/components/SearchField";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
+import {FormFieldTypes} from "@/types/forms";
+import CurrentFilters from "@/components/CurrentFilters";
+import FiltersBlock from "@/components/FiltersBlock";
+import {Countries} from "@/types/countries";
+import SearchContainer from "@/components/SearchContainer";
+import FiltersContainer from "@/components/FiltersContainer";
 
 
 type AmazonPrepListType = {
@@ -55,8 +61,27 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
 
+    const [fullTextSearch, setFullTextSearch] = useState(true);
+    const fullTextSearchField = {
+        fieldType: FormFieldTypes.TOGGLE,
+        name: 'fullTextSearch',
+        label: 'Full text search',
+        checked: fullTextSearch,
+        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        classNames: 'full-text-search-toggle',
+        hideTextOnMobile: true,
+    }
 
-    const [filterStatus, setFilterStatus] = useState('-All statuses-');
+
+    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+    const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
+    const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
+
+    const calcOrderAmount = useCallback((property, value) => {
+        return amazonPrepOrders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[amazonPrepOrders]);
+
+    const [filterStatus, setFilterStatus] = useState<string[]>([]);
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
         const statuses = amazonPrepOrders.map(order => order.status);
@@ -64,17 +89,14 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }, [amazonPrepOrders]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
-        {
-            value: '-All statuses-',
-            label: '-All statuses-',
-        },
         ...uniqueStatuses.map(status => ({
             value: status,
             label: status,
+            amount: calcOrderAmount('status', status),
         }))
     ]), [uniqueStatuses]);
 
-    const [filterWarehouse, setFilterWarehouse] = useState('-All warehouses-');
+    const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
         const warehouses = amazonPrepOrders.map(order => order.warehouse);
@@ -82,17 +104,14 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }, [amazonPrepOrders]);
     uniqueWarehouses.sort();
     const transformedWarehouses = useMemo(() => ([
-        {
-            value: '-All warehouses-',
-            label: '-All warehouses-',
-        },
         ...uniqueWarehouses.map(warehouse => ({
             value: warehouse,
             label: warehouse,
+            amount: calcOrderAmount('warehouse', warehouse),
         }))
     ]), [uniqueWarehouses]);
 
-    const [filterReceiverCountry, setFilterReceiverCountry] = useState('-All countries-');
+    const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = amazonPrepOrders.map(order => order.receiverCountry);
@@ -100,15 +119,21 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }, [amazonPrepOrders]);
     uniqueReceiverCountries.sort();
     const transformedReceiverCountries = useMemo(() => ([
-        {
-            value: '-All countries-',
-            label: '-All countries-',
-        },
         ...uniqueReceiverCountries.map(country => ({
             value: country,
-            label: country,
+            label: Countries[country] as string || country,
+            amount: calcOrderAmount('receiverCountry', country),
         }))
     ]), [uniqueReceiverCountries]);
+
+    const handleClearAllFilters = () => {
+        setFilterStatus([]);
+        setFilterWarehouse([]);
+        setFilterReceiverCountry([]);
+
+        //close filter modal
+        //setIsFiltersVisible(false);
+    }
 
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
@@ -147,17 +172,24 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         return amazonPrepOrders.filter(order => {
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
-                if (key !== 'uuid' && typeof value === 'string') {
-                    const searchTermsArray = searchTerm.trim().split(' ');
-                    return searchTermsArray.some(word => value.includes(word));
+                if (key !== 'uuid') {
+                    const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
+                    const searchTermsArray = searchTerm.trim().toLowerCase().split(' ');
+
+                    if (fullTextSearch) {
+                        return searchTermsArray.every(word => stringValue.includes(word));
+                    } else {
+                        return searchTermsArray.some(word => stringValue.includes(word));
+                    }
                 }
-                return false;
             });
-            const matchesWarehouse = !filterWarehouse || filterWarehouse === '-All warehouses-' ||
-                order.warehouse.toLowerCase() === filterWarehouse.toLowerCase();
-            const matchesReceiverCountry = !filterReceiverCountry || filterReceiverCountry === '-All countries-' ||
-                order.receiverCountry.toLowerCase() === filterReceiverCountry.toLowerCase();
-            return matchesSearch && matchesWarehouse && matchesReceiverCountry;
+            const matchesStatus = !filterStatus.length ||
+                (filterStatus.includes(order.status));
+            const matchesWarehouse = !filterWarehouse.length ||
+                filterWarehouse.map(item=>item.toLowerCase()).includes(order.warehouse.toLowerCase());
+            const matchesReceiverCountry = !filterReceiverCountry.length ||
+                filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
+            return matchesSearch && matchesStatus && matchesWarehouse && matchesReceiverCountry;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -166,7 +198,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [amazonPrepOrders, searchTerm, filterStatus, filterWarehouse, filterReceiverCountry, sortColumn, sortDirection]);
+    }, [amazonPrepOrders, searchTerm, fullTextSearch, filterStatus, filterWarehouse, filterReceiverCountry, sortColumn, sortDirection]);
 
     const [showDatepicker, setShowDatepicker] = useState(false);
 
@@ -175,7 +207,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         setShowDatepicker(false);
     };
 
-    const [isFiltersVisible, setIsFiltersVisible] = useState(true);
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
     const toggleFilters = () => {
         setIsFiltersVisible(!isFiltersVisible);
@@ -193,7 +225,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenBefore={<Icon name={"car"}/>}>
+                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon  name={"car"}/></Tooltip>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
@@ -346,7 +378,16 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Products" minWidth="50px" maxWidth="50px" contentPosition="start"/>,
+            title: <TitleColumn
+                minWidth="50px"
+                maxWidth="50px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="This column displays Products" >
+                        <span><Icon name={"shopping-cart"}/></span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string, record: AmazonPrepOrderType) => (
                 <TableCell
                     minWidth="50px"
@@ -396,37 +437,31 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="search-container">
-                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.MOBILE} icon={'filter'}></Button>
-                <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
-            </div>
-            {isFiltersVisible && (
-            <div className="filter-container">
+            <SearchContainer>
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
-                <Selector
-                    options={transformedStatuses}
-                    value={filterStatus}
-                    onChange={(value: string) => setFilterStatus(value)}
-                />
-                <Selector
-                    options={transformedWarehouses}
-                    value={filterWarehouse}
-                    onChange={(value: string) => setFilterWarehouse(value)}
-                />
-                <Selector
-                    options={transformedReceiverCountries}
-                    value={filterReceiverCountry}
-                    onChange={(value: string) => setFilterReceiverCountry(value)}
-                />
-            </div>)}
-            <div className="page-size-container">
-                <span className="page-size-text"></span>
-                <PageSizeSelector
-                    options={pageOptions}
-                    value={pageSize}
-                    onChange={(value: number) => handleChangePageSize(value)}
-                />
+                <div className='search-block'>
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <FieldBuilder {...fullTextSearchField} />
+                </div>
+            </SearchContainer>
+
+            <div className='filter-and-pagination-container'>
+                <div className='current-filter-container'>
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
+                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                </div>
+                <div className="page-size-container">
+                    <span className="page-size-text"></span>
+                    <PageSizeSelector
+                        options={pageOptions}
+                        value={pageSize}
+                        onChange={(value: number) => handleChangePageSize(value)}
+                    />
+                </div>
             </div>
+
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}
@@ -434,6 +469,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total amazon preps:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination
@@ -445,6 +485,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     showSizeChanger={false}
                 />
              </div>
+
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
+                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+            </FiltersContainer>
+
             {hoveredOrder && isDisplayedPopup && (
                 <div
                     style={{

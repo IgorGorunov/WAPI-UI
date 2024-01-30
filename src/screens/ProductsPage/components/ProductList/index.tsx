@@ -1,5 +1,5 @@
-import React, { useState , useMemo, useCallback, useEffect } from "react";
-import {Table, Pagination} from 'antd';
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {Pagination, Table} from 'antd';
 import {ColumnType} from "antd/es/table";
 
 import "./styles.scss";
@@ -8,7 +8,6 @@ import "@/styles/tables.scss";
 import {ProductType} from "@/types/products";
 
 import PageSizeSelector from '@/components/LabelSelect';
-import StatusFilterSelector from '@/components/InputSelect';
 import UniversalPopup from "@/components/UniversalPopup";
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
@@ -16,6 +15,14 @@ import Icon from "@/components/Icon";
 import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import SearchField from "@/components/SearchField";
+import {FormFieldTypes} from "@/types/forms";
+import Button, {ButtonVariant} from "@/components/Button/Button";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
+import CurrentFilters from "@/components/CurrentFilters";
+import FiltersBlock from "@/components/FiltersBlock";
+import {FILTER_TYPE} from "@/types/utility";
+import SearchContainer from "@/components/SearchContainer";
+import FiltersContainer from "@/components/FiltersContainer";
 
 type ProductListType = {
     products: ProductType[];
@@ -76,15 +83,48 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState("All statuses");
-    const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
-        if (newSearchTerm !== undefined) {
-            setSearchTerm(newSearchTerm);
-        }
-        if (newStatusFilter !== undefined) {
-            setFilterStatus(newStatusFilter);
-        }
+
+    const [fullTextSearch, setFullTextSearch] = useState(true);
+    const fullTextSearchField = {
+        fieldType: FormFieldTypes.TOGGLE,
+        name: 'fullTextSearch',
+        label: 'Full text search',
+        checked: fullTextSearch,
+        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        classNames: 'full-text-search-toggle',
+        hideTextOnMobile: true,
+    }
+
+    const calcOrderAmount = useCallback((property, value) => {
+        return products.filter(product => product[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[products]);
+
+    const [filterStatus, setFilterStatus] = useState<string[]>([]);
+    const uniqueStatuses = useMemo(() => {
+        const statuses = products.map(invoice => invoice.status);
+        return Array.from(new Set(statuses)).filter(status => status).sort();
+    }, [products]);
+    uniqueStatuses.sort();
+    const transformedStatuses = useMemo(() => ([
+        ...uniqueStatuses.map(status => ({
+            value: status,
+            label: status,
+            amount: calcOrderAmount('status', status),
+            color: statusFilter.filter(item=>item.value===status)[0]?.color || 'white',
+        }))
+    ]), [uniqueStatuses]);
+    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+
+    const toggleFilters = () => {
+        setIsFiltersVisible(!isFiltersVisible);
     };
+
+    const handleFilterChange = (newSearchTerm :string) => {
+        setSearchTerm(newSearchTerm);
+    };
+
     const filteredProducts = useMemo(() => {
         setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
@@ -93,7 +133,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 const value = product[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
-            const matchesStatus = filterStatus === 'All statuses' || product.status === filterStatus;
+            const matchesStatus = !filterStatus.length || filterStatus.map(item=>item.toLowerCase()).includes(product.status.toLowerCase());
             return matchesSearch && matchesStatus;
         });
 
@@ -257,22 +297,28 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png"/>
             </Head>
-            <div className="status-filter-container">
-                <StatusFilterSelector
-                    options={statusFilter}
-                    value={filterStatus}
-                    onChange={(value: string) => handleFilterChange(undefined, value)}
-                />
-                <SearchField searchTerm={searchTerm} handleChange={str=>handleFilterChange(str, undefined)} handleClear={()=>{setSearchTerm(""); handleFilterChange("",undefined);}} />
+            <SearchContainer>
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
+                <div className='search-block'>
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <FieldBuilder {...fullTextSearchField} />
+                </div>
+            </SearchContainer>
+
+            <div className='filter-and-pagination-container'>
+                <div className='current-filter-container'>
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                </div>
+                <div className="page-size-container">
+                    <span className="page-size-text"></span>
+                    <PageSizeSelector
+                        options={PageOptions}
+                        value={pageSize}
+                        onChange={(value: number) => handleChangePageSize(value)}
+                    />
+                </div>
             </div>
-            <div className="page-size-container">
-                <span className="page-size-text"></span>
-                <PageSizeSelector
-                    options={PageOptions}
-                    value={pageSize}
-                    onChange={(value: number) => handleChangePageSize(value)}
-                />
-            </div>
+
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredProducts?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredProducts.slice((current - 1) * pageSize, current * pageSize)}
@@ -280,6 +326,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total products:<span className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination
@@ -291,6 +342,19 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     showSizeChanger={false}
                 />
              </div>
+            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
+            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
+            {/*        <div className='doc-filters-block__wrapper'>*/}
+            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
+            {/*                <Icon name='close' />*/}
+            {/*            </div>*/}
+            {/*            <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={()=>setFilterStatus([])}>
+                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+            </FiltersContainer>
             {hoveredProduct && isDisplayedPopup && (
                 <div
                     style={{

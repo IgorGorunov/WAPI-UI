@@ -1,30 +1,33 @@
-import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Table, Pagination, Input} from 'antd';
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {Pagination, Table} from 'antd';
 import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import {InvoiceType} from "@/types/invoices";
-import StatusSelector from "@/components/InputSelect";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
 import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
-import {GetFilterArray} from '@/utils/common';
 import getSymbolFromCurrency from "currency-symbol-map";
-import {GroupStatuses} from "@/screens/DashboardPage/components/OrderStatuses";
 import {DateRangeType} from "@/types/dashboard";
-import DateInput from "@/components/DateInput";
-import {getInvoiceForm, getInvoicesDebts} from "@/services/invoices";
-import {verifyToken} from "@/services/auth";
-import {Routes} from "@/types/routes";
-import {ApiResponseType} from "@/types/api";
+import {getInvoiceForm} from "@/services/invoices";
 import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Cookie from "js-cookie";
 import Loader from "@/components/Loader";
+import {FormFieldTypes} from "@/types/forms";
+import Button, {ButtonVariant} from "@/components/Button/Button";
+import SearchField from "@/components/SearchField";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
+import CurrentFilters from "@/components/CurrentFilters";
+import FiltersBlock from "@/components/FiltersBlock";
+import SearchContainer from "@/components/SearchContainer";
+import {FILTER_TYPE} from "@/types/utility";
+import DateInput from "@/components/DateInput";
+import FiltersContainer from "@/components/FiltersContainer";
 
 
 export const StatusColors = {
@@ -82,10 +85,47 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState('Active only');
-    const transformedStatuses= GetFilterArray(invoices, 'status', 'All statuses');
-    transformedStatuses.splice(1,0, {value:"Active only", label:"Active only"});
 
+    const [fullTextSearch, setFullTextSearch] = useState(true);
+    const fullTextSearchField = {
+        fieldType: FormFieldTypes.TOGGLE,
+        name: 'fullTextSearch',
+        label: 'Full text search',
+        checked: fullTextSearch,
+        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        classNames: 'full-text-search-toggle',
+        hideTextOnMobile: true,
+    }
+
+    const calcOrderAmount = useCallback((property, value) => {
+        return invoices.filter(invoice => invoice[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[invoices]);
+
+    const [filterStatus, setFilterStatus] = useState<string[]>([]);
+    const uniqueStatuses = useMemo(() => {
+        const statuses = invoices.map(invoice => invoice.status);
+        return Array.from(new Set(statuses)).filter(status => status).sort();
+    }, [invoices]);
+    uniqueStatuses.sort();
+    const transformedWarehouses = useMemo(() => ([
+        ...uniqueStatuses.map(status => ({
+            value: status,
+            label: status,
+            amount: calcOrderAmount('status', status),
+            color: StatusColors[status] || 'white',
+        }))
+    ]), [uniqueStatuses]);
+    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+
+    const toggleFilters = () => {
+        setIsFiltersVisible(!isFiltersVisible);
+    };
+
+    const handleFilterChange = (newSearchTerm :string) => {
+        setSearchTerm(newSearchTerm);
+    };
     const handleDownloadInvoice = async (uuid) => {
         setIsLoading(true);
         try {
@@ -134,14 +174,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         }
     };
 
-    const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
-        if (newSearchTerm !== undefined) {
-            setSearchTerm(newSearchTerm);
-        }
-        if (newStatusFilter !== undefined) {
-            setFilterStatus(newStatusFilter);
-        }
-    };
     const filteredInvoices = useMemo(() => {
         setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
@@ -150,8 +182,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 const value = invoice[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
-            const matchesStatus = (!filterStatus || invoice.status === filterStatus) || (filterStatus === 'Active only' && invoice.debt !== 0);
-
+            const matchesStatus = !filterStatus.length || filterStatus.map(item=>item.toLowerCase()).includes(invoice.status.toLowerCase());
             return matchesSearch && matchesStatus;
         });
 
@@ -448,28 +479,30 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="status-filter-container">
+
+            <SearchContainer>
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
-                <StatusSelector
-                    options={transformedStatuses}
-                    value={filterStatus}
-                    onChange={(value: string) => handleFilterChange(undefined, value)}
-                />
-                <Input
-                    placeholder="🔍 Search..."
-                    value={searchTerm}
-                    onChange={e => handleFilterChange(e.target.value, undefined)}
-                    className="search-input"
-                />
+                <div className='search-block'>
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <FieldBuilder {...fullTextSearchField} />
+                </div>
+            </SearchContainer>
+
+            <div className='filter-and-pagination-container'>
+                <div className='current-filter-container'>
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedWarehouses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                </div>
+                <div className="page-size-container">
+                    <span className="page-size-text"></span>
+                    <PageSizeSelector
+                        options={PageOptions}
+                        value={pageSize}
+                        onChange={(value: number) => handleChangePageSize(value)}
+                    />
+                </div>
             </div>
-            <div className="page-size-container">
-                <span className="page-size-text"></span>
-                <PageSizeSelector
-                    options={PageOptions}
-                    value={pageSize}
-                    onChange={(value: number) => handleChangePageSize(value)}
-                />
-            </div>
+
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredInvoices?.length ? '' : 'is-empty'}`}>
                 <Table
                     dataSource={filteredInvoices.slice((current - 1) * pageSize, current * pageSize).map(item => ({
@@ -480,6 +513,11 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total invoices:<span className='order-products-total__list-item__value'>{invoices.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination
@@ -491,6 +529,10 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     showSizeChanger={false}
                 />
             </div>
+
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={()=>setFilterStatus([])}>
+                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedWarehouses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+            </FiltersContainer>
         </div>
     );
 };

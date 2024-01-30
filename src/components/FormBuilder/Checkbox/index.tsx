@@ -1,8 +1,8 @@
-import React from "react";
+import React, {forwardRef} from "react";
 import { FieldPropsType } from "@/types/forms";
 import "./styles.scss"
 
-const Checkbox: React.FC<FieldPropsType> = ({
+const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
   classNames= '',
   name,
   label = '',
@@ -16,22 +16,34 @@ const Checkbox: React.FC<FieldPropsType> = ({
     errorMessage,
   // registerInput,
     width,
+    extraLabel,
+    isCheckboxHidden= false,
+    circleColor,
   ...otherProps
-}) => {
+},ref) => {
 
   return (
     <div className={`checkbox ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
-      <label htmlFor={`${name}-checkbox`} className="checkbox-label">
+      <label htmlFor={`${name}-checkbox`} className={`checkbox-label ${isCheckboxHidden ? 'hide-checkbox' : ''}`}>
         <input
             {...otherProps}
           type='checkbox'
           name={name}
           id={`${name}-checkbox`}
+            ref={ref}
           checked={!!value || checked}
           onChange={onChange}
           onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
         />
-        {label && <span>{label}</span>}
+        {label && (
+            <span className='checkbox-label-wrapper'>
+              {circleColor ? <span className='colored-circle' style={{ backgroundColor: circleColor}}></span> : null}
+
+              <span className='checkbox-label-text' >
+                {label} {extraLabel ? <span className='checkbox-label-extra-text'>{extraLabel}</span> : null }
+              </span>
+            </span>
+        )}
       </label>
       {errorMessage && <p className="error">{errorMessage}</p>}
       {errors && name in errors ? (
@@ -41,6 +53,6 @@ const Checkbox: React.FC<FieldPropsType> = ({
       ) : null}
     </div>
   );
-};
+});
 
 export default Checkbox;

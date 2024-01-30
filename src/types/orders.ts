@@ -1,5 +1,15 @@
 import {SEND_COMMENT_TYPES, AttachedFilesType, WarehouseType} from "@/types/utility";
 
+export type ClaimType = {
+    date: string;
+    number: string;
+    status: string;
+    statusHistory: {
+        date: string;
+        Status: string;
+    }[]
+}
+
 export type OrderType = {
     mobileIcon: string,
     icon: string,
@@ -25,21 +35,25 @@ export type OrderType = {
     receiverFullName: string;
     receiverPhone: string;
     receiverIcon: string;
-    productLines: number,
-    trackingLink: string,
-    productsByString: string,
-    statusAdditionalInfo: string,
-    lastUpdateDate: string,
+    productLines: number;
+    trackingLink: string;
+    productsByString: string;
+    statusAdditionalInfo: string;
+    lastUpdateDate: string;
+    lastTroubleStatus: string;
+    troubleStatusesByString: string;
+    claimsExist: boolean;
+    claims: ClaimType[];
     products: {
-        product: string,
-        quantity: number,
+        product: string;
+        quantity: number;
     } [],
-    troubleStatusesExist: boolean,
+    troubleStatusesExist: boolean;
     troubleStatuses: {
-        period: string,
-        status: string,
-        troubleStatus: string,
-        additionalInfo: string,
+        period: string;
+        status: string;
+        troubleStatus: string;
+        additionalInfo: string;
     }[],
 
 
@@ -130,6 +144,7 @@ export type SingleOrderType = {
     uuid: string;
     wapiTrackingNumber: string;
     warehouse: string;
+    claims: ClaimType[];
     products: SingleOrderProductType[];
     statusHistory: OrderHistoryType[];
     smsHistory?: OrderSmsHistoryType[];
