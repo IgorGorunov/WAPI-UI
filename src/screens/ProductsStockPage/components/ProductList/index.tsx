@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Table, Pagination} from 'antd';
+import {Table, Pagination, Tooltip} from 'antd';
 import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
@@ -175,11 +175,14 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         },
         {
             title: <TitleColumn
-                title=""
                 minWidth="40px"
                 maxWidth="40px"
                 contentPosition="start"
-                childrenBefore={<Icon name={"warehouse"}/>}
+                childrenBefore={
+                    <Tooltip title="This column displays Warehouse" >
+                        <span><Icon name={"warehouse"}/></span>
+                    </Tooltip>
+                }
             />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="start"/>
@@ -364,6 +367,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total products:<span className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination
@@ -375,17 +383,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     showSizeChanger={false}
                 />
             </div>
-            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
-            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
-            {/*        <div className='doc-filters-block__wrapper'>*/}
-            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
-            {/*                <Icon name='close' />*/}
-            {/*            </div>*/}
-            {/*            <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
-            {/*            <FiltersBlock filterTitle='Country' filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterCountry}/>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
+
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
                 <FiltersBlock filterTitle='Country' filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>

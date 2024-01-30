@@ -329,7 +329,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country" color='#5380F5'> <Icon  name={"car"}/></Tooltip>}>
+                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon  name={"car"}/></Tooltip>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
@@ -380,7 +380,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="24px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="This column displays if order has Claims" color='#5380F5'>
+                    <Tooltip title="This column displays if order has Claims" >
                         <span><Icon name={"complaint"}/></span>
                     </Tooltip>
                 }
@@ -440,7 +440,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="24px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="This column displays if order has Trouble statuses" color='#5380F5'>
+                    <Tooltip title="This column displays if order has Trouble statuses">
                         <span><Icon name={"trouble"}/></span>
                     </Tooltip>
                 }
@@ -679,7 +679,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="50px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="This column displays Products" color='#5380F5'>
+                    <Tooltip title="This column displays Products" >
                         <span><Icon name={"shopping-cart"}/></span>
                     </Tooltip>
                 }
@@ -769,6 +769,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total orders:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination

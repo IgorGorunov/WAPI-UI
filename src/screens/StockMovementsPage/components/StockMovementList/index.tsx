@@ -265,7 +265,12 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenBefore={<Icon name={"car"}/>}>
+                    childrenBefore={
+                        <Tooltip title="This column displays Products" >
+                            <span><Icon name={"car"}/></span>
+                        </Tooltip>
+                    }
+            >
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
@@ -482,7 +487,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         },
         {
             title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="center" childrenBefore={
-                <Tooltip title="This column displays Products" color='#5380F5'>
+                <Tooltip title="This column displays Products" >
                     <span><Icon name={"shopping-cart"}/></span>
                 </Tooltip>
             }/>,
@@ -574,6 +579,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total {docType}:<span className='order-products-total__list-item__value'>{filteredDocs.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination

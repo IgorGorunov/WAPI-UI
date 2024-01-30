@@ -1,9 +1,9 @@
 import {AttachedFilesType} from "@/types/utility";
 
 export const enum STOCK_MOVEMENT_DOC_TYPE {
-    INBOUNDS = 'inbound',
-    STOCK_MOVEMENT = 'stockMovement',
-    OUTBOUND = 'outbound',
+    INBOUNDS = 'inbounds',
+    STOCK_MOVEMENT = 'movements between warehouses',
+    OUTBOUND = 'outbounds',
 }
 
 export type StockMovementType = {

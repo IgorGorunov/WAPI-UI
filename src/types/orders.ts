@@ -4,6 +4,10 @@ export type ClaimType = {
     date: string;
     number: string;
     status: string;
+    statusHistory: {
+        date: string;
+        Status: string;
+    }[]
 }
 
 export type OrderType = {

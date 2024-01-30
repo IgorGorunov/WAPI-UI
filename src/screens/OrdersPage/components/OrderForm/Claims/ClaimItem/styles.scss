@@ -1,6 +1,79 @@
+@import '@/constants/devices.scss';
+
 .order-claim-item {
 
   span {
     font-weight: bold;
+  }
+
+  &__status-history {
+    margin-top: 24px;
+
+    @media (max-width: $mobile) {
+      margin-left: -16px;
+      margin-right: -16px;
+    }
+
+    &__title {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    &__table {
+
+      &-header {
+        display: flex;
+        align-items: center;
+        height: 60px;
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--color-gray-blue);
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      &-list {
+        list-style: none;
+        &-item {
+          display: flex;
+          font-size: 10px;
+          font-weight: 700;
+          color: var(--color-gray-blue);
+          border-bottom: 1px solid var(--border-color);
+        }
+      }
+
+      .column {
+        padding: 10px 12px;
+
+        @media (max-width: $mobile) {
+          padding: 10px 6px;
+        }
+
+        .new-line {
+          display: block;
+        }
+      }
+
+      .date-column {
+        flex: 0 0 110px;
+        padding: 10px 12px 10px 0;
+        margin-left: 20px;
+
+        @media (max-width: $mobile) {
+          padding: 10px 6px;
+          flex: 0 0 70px;
+        }
+      }
+      .status-column {
+        flex: 0 0 150px;
+
+        @media (max-width: $upToTablet) {
+          flex: 1 1 150px;
+        }
+      }
+      .highlight {
+        background-color: #FAFBFC;
+      }
+    }
   }
 }

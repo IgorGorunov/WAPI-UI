@@ -1,5 +1,6 @@
 import axios from "axios";
 import {SingleStockMovementType, STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
+import {AttachedFilesType} from "@/types/utility";
 
 const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
@@ -96,5 +97,24 @@ const sendInboundData = async (
     }
 };
 
+const sendInboundFiles = async (
+    data: {
+        files: AttachedFilesType[],
+        token: string;
+    }
+) => {
+    try {
+        const response: any = await axios.post(
+            `${API_ENDPOINT}/FillStockMovementFromFile`,
+            data
+        );
 
-export { getInbounds, getInboundData, getInboundParameters, sendInboundData};
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+
+export { getInbounds, getInboundData, getInboundParameters, sendInboundData, sendInboundFiles};

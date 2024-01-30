@@ -513,6 +513,11 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total invoices:<span className='order-products-total__list-item__value'>{invoices.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination
@@ -524,16 +529,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     showSizeChanger={false}
                 />
             </div>
-            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
-            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
-            {/*        <div className='doc-filters-block__wrapper'>*/}
-            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
-            {/*                <Icon name='close' />*/}
-            {/*            </div>*/}
-            {/*            <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedWarehouses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
+
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={()=>setFilterStatus([])}>
                 <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedWarehouses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
             </FiltersContainer>

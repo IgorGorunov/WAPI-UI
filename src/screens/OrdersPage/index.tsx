@@ -19,6 +19,7 @@ import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
+import {ImportFilesType} from "@/types/importFiles";
 
 type ApiResponse = {
     data: any;
@@ -213,7 +214,7 @@ const OrdersPage = () => {
             }
             {showImportModal &&
                 <Modal title={`Import xls`} onClose={onImportModalClose} >
-                    <ImportFilesBlock file='OrderTemplate.xlsx' isProducts={false} closeModal={()=>setShowImportModal(false)}/>
+                    <ImportFilesBlock file='OrderTemplate.xlsx' importFilesType={ImportFilesType.ORDERS} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }
         </Layout>

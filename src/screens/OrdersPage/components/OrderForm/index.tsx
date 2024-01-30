@@ -65,6 +65,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
     const { token, currentDate } = useAuth();
 
+    console.log('order: ', orderData)
+
     //countries
     const allCountries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 

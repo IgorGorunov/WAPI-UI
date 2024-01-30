@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useCallback, useMemo, useState} from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import "./styles.scss";
 import '@/styles/forms.scss';
 import {useRouter} from "next/router";
@@ -35,6 +35,9 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {sendInboundData} from "@/services/inbounds";
 import {ApiResponseType} from "@/types/api";
 import {SingleOrderProductFormType} from "@/types/orders";
+import Modal from "@/components/Modal";
+import ImportFilesBlock from "@/components/ImportFilesBlock";
+import {ImportFilesType} from "@/types/importFiles";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -61,9 +64,9 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeSuccessModal = useCallback(()=>{
+    const closeSuccessModal = useCallback((isImport=false)=>{
         setShowStatusModal(false);
-        closeDocModal();
+        !isImport && closeDocModal();
     }, []);
     const closeErrorModal = useCallback(()=>{
         setShowStatusModal(false);
@@ -378,6 +381,72 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         setSelectedFiles(files);
     };
 
+    //import files modal
+    // key: product.product.uuid || `product-${Date.now().toString()}_${index}`,
+    //     selected: false,
+    //     product: product.product.uuid || '',
+    //     quantityPlan: product.quantityPlan || '',
+    //     quantity: product.quantity || '',
+    //     unitOfMeasure: product.unitOfMeasure || '',
+    //     quality: product.quality || '',
+    const addImportedProducts = (importedProducts) => {
+        const existedRows = products.length;
+        console.log("ppppp", importedProducts)
+        for (let i=0; i < importedProducts.length; i++) {
+            appendProduct({
+                key: `product-${Date.now().toString()}_${existedRows+i}`,
+                selected: false,
+                product: importedProducts[i].product ? importedProducts[i].product.uuid || '' : '',
+                quantityPlan: importedProducts[i].quantityPlan || '',
+                quantity: importedProducts[i].quantity || '',
+                unitOfMeasure: importedProducts[i].unitOfMeasure || '',
+                quality: importedProducts[i].quality || '',
+            })
+        }
+
+        console.log('products:', products);
+    }
+
+    const [importResponse, setImportResponse] = useState<ApiResponseType|null>(null);
+    useEffect(() => {
+        console.log('we get import response: ', importResponse);
+
+        if (!importResponse) return;
+
+        //check if it is an error
+        if (importResponse?.status === 200) {
+            //imported successfully
+
+            //import data
+            addImportedProducts(importResponse?.data?.data || []);
+
+            //show success message
+            setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Products are successfully imported`, onClose: ()=>closeSuccessModal(true)})
+            setShowStatusModal(true);
+        } else {
+            //there are errors
+
+            //import what we can
+            addImportedProducts(importResponse?.response?.data?.data);
+
+            //show error message
+            const errorMessages = importResponse?.response?.data?.errorMessage || [];
+
+            setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+            setShowStatusModal(true);
+
+        }
+    }, [importResponse]);
+
+
+    const [showImportModal, setShowImportModal] = useState(false);
+    const onImportModalClose = () => {
+        setShowImportModal(false);
+    }
+    const handleImportXLS = () => {
+        setShowImportModal(true)
+    }
+
     const tabTitleArray =  TabTitles(!!docData?.uuid);
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
 
@@ -432,8 +501,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         }
     }
 
-
-
     const onError = (props: any) => {
 
         if (isDraft) {
@@ -458,7 +525,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         updateTabTitles(fieldNames);
     };
 
-    console.log('doc:', docData)
+    console.log('doc:', docData);
 
     return <div className={`stock-movement is-${docType}`}>
         {isLoading && <Loader />}
@@ -499,6 +566,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                             <div className='stock-movement--btns width-100'>
                                 <div className='grid-row'>
                                     <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
+                                        <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import from xls</Button>
                                         <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'', quality: '' })}>
                                             Add
                                         </Button>
@@ -561,6 +629,11 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+        {showImportModal &&
+            <Modal title={`Import xls`} onClose={onImportModalClose} >
+                <ImportFilesBlock file='Products import.xlsx' importFilesType={ImportFilesType.STOCK_MOVEMENTS_PRODUCTS} setResponseData={setImportResponse} closeModal={()=>setShowImportModal(false)}/>
+            </Modal>
+        }
     </div>
 }
 

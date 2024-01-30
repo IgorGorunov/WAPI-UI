@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Pagination, Table, TableColumnProps} from 'antd';
+import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
@@ -225,7 +225,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenBefore={<Icon name={"car"}/>}>
+                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon  name={"car"}/></Tooltip>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
@@ -378,7 +378,16 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Products" minWidth="50px" maxWidth="50px" contentPosition="start"/>,
+            title: <TitleColumn
+                minWidth="50px"
+                maxWidth="50px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="This column displays Products" >
+                        <span><Icon name={"shopping-cart"}/></span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string, record: AmazonPrepOrderType) => (
                 <TableCell
                     minWidth="50px"
@@ -460,6 +469,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     pagination={false}
                     scroll={{y:700}}
                 />
+                <div className="order-products-total">
+                    <ul className='order-products-total__list'>
+                        <li className='order-products-total__list-item'>Total amazon preps:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                    </ul>
+                </div>
             </div>
             <div className={'custom-pagination'}>
                 <Pagination
@@ -471,23 +485,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     showSizeChanger={false}
                 />
              </div>
-            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
-            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
-            {/*        <div className='doc-filters-block__wrapper'>*/}
-            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
-            {/*                <Icon name='close' />*/}
-            {/*            </div>*/}
-            {/*            <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
-            {/*            <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
-            {/*            <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
+
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
                 <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
+
             {hoveredOrder && isDisplayedPopup && (
                 <div
                     style={{

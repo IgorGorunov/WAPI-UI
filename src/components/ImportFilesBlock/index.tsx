@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from "react";
+import React, {useState, useCallback, useMemo} from "react";
 import {sendOrderFiles} from '@/services/orders';
 import {sendProductFiles} from "@/services/products";
 import Button from '@/components/Button/Button'
@@ -9,19 +9,54 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {ApiResponseType} from "@/types/api";
 import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
+import {sendInboundFiles} from "@/services/inbounds";
+import {ImportFilesType} from "@/types/importFiles";
+
+const getFileData = (importType: ImportFilesType) => {
+   switch (importType) {
+       case ImportFilesType.ORDERS:
+           return {
+               downloadFileName: 'Orders mass upload file.xlsx',
+               sendFileFunction: sendOrderFiles,
+               title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
+           }
+       case ImportFilesType.PRODUCTS:
+           return {
+               downloadFileName: 'Master data.xlsx',
+               sendFileFunction: sendProductFiles,
+               title: 'To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
+           }
+       case ImportFilesType.STOCK_MOVEMENTS_PRODUCTS:
+           return {
+               downloadFileName: 'Products import.xlsx',
+               sendFileFunction: sendInboundFiles,
+               title: 'To upload products in the document it is necessary to download the master data draft file, fill it with data and then upload back to system',
+           }
+
+       default:
+           return {
+               downloadFileName: 'Orders mass upload file.xlsx',
+               sendFileFunction: sendOrderFiles,
+               title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
+           }
+   }
+}
 
 type ImportFilesBlockType = {
     file: string;
-    isProducts: boolean;
+    importFilesType: ImportFilesType;
     closeModal: ()=>void;
+    setResponseData?: (res: ApiResponseType)=>void;
 }
-const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false, closeModal}) => {
+const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
     const { token } = useAuth();
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
     };
+
+    const fileData = useMemo(()=>getFileData(importFilesType),[]);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -40,13 +75,13 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false
         const url = window.URL.createObjectURL(new Blob([blob]));
         const a = document.createElement('a');
         a.href = url;
-        a.download = isProducts ? 'Master data.xlsx' : 'Orders mass upload file.xlsx';
+        a.download = fileData.downloadFileName;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
     };
 
-    const sendFunc = isProducts ? sendProductFiles : sendOrderFiles;
+    const sendFunc = fileData.sendFileFunction;
     const sendFiles = async () => {
         setIsLoading(true);
         if (selectedFiles.length) {
@@ -57,6 +92,11 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false
                         files: selectedFiles
                     }
                 );
+
+                if (setResponseData) {
+                    setResponseData(res);
+                    return;
+                }
 
                 if (res && "status" in res) {
                     if (res?.status === 200) {
@@ -90,10 +130,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, isProducts=false
         <div className='import-files'>
             {isLoading && <Loader />}
             <p className='import-files__title'>
-                {isProducts ?
-                    'To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system' :
-                    'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system'
-                }
+                {fileData.title}
             </p>
             <Button icon='download-file' iconOnTheRight onClick={downloadFile}>Download sample</Button>
             <DropZone readOnly={false} files={selectedFiles} onFilesChange={handleFilesChange} />
