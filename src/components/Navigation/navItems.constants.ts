@@ -44,22 +44,22 @@ export const navBlocks: SubmenuBlockType[] = [
             }
         ]
     },
-    {
-        submenuTitle: 'Stock management',
-        submenuIcon: 'stock-movement',
-        navItems: [
-            {
-                title: 'Inbounds',
-                link: '/inbounds',
-            },
-            {
-                title: 'Stock movements',
-                link: '/stockMovements',
-            },
-            {
-                title: 'Outbounds',
-                link: '/outbounds',
-            }
-        ]
-    },
+    // {
+    //     submenuTitle: 'Stock management',
+    //     submenuIcon: 'stock-movement',
+    //     navItems: [
+    //         {
+    //             title: 'Inbounds',
+    //             link: '/inbounds',
+    //         },
+    //         {
+    //             title: 'Stock movements',
+    //             link: '/stockMovements',
+    //         },
+    //         {
+    //             title: 'Outbounds',
+    //             link: '/outbounds',
+    //         }
+    //     ]
+    // },
 ];
