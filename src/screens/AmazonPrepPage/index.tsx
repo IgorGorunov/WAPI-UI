@@ -199,11 +199,11 @@ const AmazonPrepPage = () => {
                     <AmazonPrepForm  amazonPrepOrderData={singleAmazonPrepOrder} amazonPrepOrderParameters={amazonPrepOrderParameters} closeAmazonPrepOrderModal={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
                 </Modal>
             }
-            {showImportModal &&
-                <Modal title={`Import xls`} onClose={onImportModalClose} >
-                    <ImportFilesBlock file='OrderTemplate.xlsx' isProducts={false} closeModal={()=>setShowImportModal(false)}/>
-                </Modal>
-            }
+            {/*{showImportModal &&*/}
+            {/*    <Modal title={`Import xls`} onClose={onImportModalClose} >*/}
+            {/*        <ImportFilesBlock file='OrderTemplate.xlsx' isProducts={false} closeModal={()=>setShowImportModal(false)}/>*/}
+            {/*    </Modal>*/}
+            {/*}*/}
         </Layout>
     )
 }
