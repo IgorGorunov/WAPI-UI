@@ -2,7 +2,7 @@ import {AttachedFilesType} from "@/types/utility";
 
 export const enum STOCK_MOVEMENT_DOC_TYPE {
     INBOUNDS = 'inbounds',
-    STOCK_MOVEMENT = 'movements between warehouses',
+    STOCK_MOVEMENT = 'stock movements',
     OUTBOUND = 'outbounds',
 }
 
