@@ -33,6 +33,7 @@ import {TabFields, TabTitles} from "./ProductFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
+import {AttachedFilesType} from "@/types/utility";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -783,7 +784,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
         }
     }
 
-    const [selectedFiles, setSelectedFiles] = useState(productData?.attachedFiles);
+    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(productData?.attachedFiles || []);
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
     };

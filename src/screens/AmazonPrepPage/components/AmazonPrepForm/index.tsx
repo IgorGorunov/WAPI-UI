@@ -35,6 +35,7 @@ import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
+import {AttachedFilesType} from "@/types/utility";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -246,7 +247,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const generalFields = useMemo(()=> GeneralFields(!amazonPrepOrderData?.uuid), [])
     const detailsFields = useMemo(()=>DetailsFields({warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions, carrierTypeOptions}), [warehouse, amazonPrepOrderParameters]);
     const receiverFields = useMemo(()=>ReceiverFields({countries, multipleLocations}),[countries,multipleLocations ])
-    const [selectedFiles, setSelectedFiles] = useState(amazonPrepOrderData?.attachedFiles);
+    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(amazonPrepOrderData?.attachedFiles || []);
 
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
@@ -255,8 +256,6 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const productOptions = useMemo(() =>{
         return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter((item: AmazonPrepOrderProductType)=>item.warehouse===warehouse).map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
     },[amazonPrepOrderParameters, warehouse]);
-
-    //const carrierType = watch('carrierType');
 
     const getProductColumns = (control: any) => {
         return [
@@ -550,7 +549,8 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                                                         errors={errors}
 
                                                         width={WidthType.w50}
-                                                    /> )}
+                                                    />
+                                                )}
                                             />
                                         </div>
                                         <div className='amazon-prep-info--btns__table-btns'>

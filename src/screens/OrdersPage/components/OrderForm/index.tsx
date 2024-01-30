@@ -8,7 +8,7 @@ import {
     SingleOrderProductFormType,
     SingleOrderType
 } from "@/types/orders";
-import {WarehouseType} from "@/types/utility";
+import {AttachedFilesType, WarehouseType} from "@/types/utility";
 import "./styles.scss";
 import '@/styles/forms.scss';
 import {useRouter} from "next/router";
@@ -655,7 +655,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [warehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions, countries, selectedWarehouse,selectedCourierService ])
     const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[countries, selectedWarehouse,selectedCourierService])
-    const [selectedFiles, setSelectedFiles] = useState(orderData?.attachedFiles);
+    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
     const handleFilesChange = (files) => {
         setSelectedFiles(files);

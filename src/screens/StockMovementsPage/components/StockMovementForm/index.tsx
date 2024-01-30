@@ -39,6 +39,7 @@ import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ImportFilesType} from "@/types/importFiles";
 import ProductsTotal from "@/screens/StockMovementsPage/components/StockMovementForm/ProductsTotal";
+import {AttachedFilesType} from "@/types/utility";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -139,15 +140,16 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
 
-    const getUnitsOptions = (index) => {
-        const curProduct = products[index].product;
-        if (docParameters.products.length ) {
-            const units = docParameters.products.filter(item => item.uuid === curProduct);
+    // const getUnitsOptions = (index) => {
+    //     const curProduct = products[index].product;
+    //     if (docParameters.products.length ) {
+    //         const units = docParameters.products.filter(item => item.uuid === curProduct);
+    //
+    //         if (units.length) return createOptions(units[0].unitOfMeasures);
+    //     }
+    //     return [];
+    // }
 
-            if (units.length) return createOptions(units[0].unitOfMeasures);
-        }
-        return [];
-    }
     const productQualityOptions = createOptions(docParameters.quality);
     //temporarily
     if (!docParameters.quality.includes('Saleable')) {
@@ -308,14 +310,14 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                 title: 'Unit of measure*',
                 dataIndex: 'unitOfMeasure',
                 key: 'unitOfMeasure',
-                minWidth: 150,
+                minWidth: 70,
                 //responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products.${index}.unitOfMeasure`}
                         control={control}
                         render={({ field, fieldState: {error}}) => (
-                            <div style={{minWidth: '120px', maxWidth: '150px'}}>
+                            <div style={{minWidth: '70px', maxWidth: '70px'}}>
                                 <FieldBuilder
                                     name={`products.${index}.unitOfMeasure`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -377,13 +379,13 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     //form fields
     const generalFields = useMemo(()=> GeneralFields(!docData?.uuid), [docData])
     const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange }), [docData]);
-    const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
+    //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
 
 
-    const [selectedFiles, setSelectedFiles] = useState(docData?.attachedFiles);
+    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(docData?.attachedFiles || []);
 
     const handleFilesChange = (files) => {
-        console.log('files!')
+        console.log('files!', files)
         setSelectedFiles(files);
     };
 
