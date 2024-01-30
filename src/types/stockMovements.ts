@@ -21,11 +21,11 @@ export type StockMovementType = {
     status: string;
     tableKey: string;
     uuid: string;
-    packages: number;
-    palletAmount: number;
-    volume: number;
-    weightGross: number;
-    weightNet: number;
+    // packages: number;
+    // palletAmount: number;
+    // volume: number;
+    // weightGross: number;
+    // weightNet: number;
 }
 
 export type ProductInfoType = {
@@ -122,8 +122,8 @@ export type SingleStockMovementProductFormType = {
 export type SingleStockMovementFormType = {
     incomingDate: string;
     incomingNumber: string;
-    packages: number;
-    palletAmount: number;
+    // packages: number;
+    // palletAmount: number;
     sender: string;
     senderCountry: string;
     receiver: string;
@@ -134,9 +134,9 @@ export type SingleStockMovementFormType = {
     wapiTrackingNumber: string;
     warehouseTrackingNumber: string;
     uuid: string;
-    volume: number;
-    weightGross: number;
-    weightNet: number;
+    // volume: number;
+    // weightGross: number;
+    // weightNet: number;
     comment: string;
     //commentCargo: string;
     status: string;

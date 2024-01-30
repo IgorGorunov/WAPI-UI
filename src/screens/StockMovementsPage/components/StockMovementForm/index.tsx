@@ -38,6 +38,7 @@ import {SingleOrderProductFormType} from "@/types/orders";
 import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ImportFilesType} from "@/types/importFiles";
+import ProductsTotal from "@/screens/StockMovementsPage/components/StockMovementForm/ProductsTotal";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -58,8 +59,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     const [isDraft, setIsDraft] = useState(false);
 
     const { token, currentDate } = useAuth();
-
-    console.log("form:", docType, docData, docParameters);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -91,11 +90,11 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
             warehouseTrackingNumber: docData?.warehouseTrackingNumber || '',
             comment: docData?.comment || '',
             status: docData?.status || '',
-            packages: docData?.packages || '',
-            palletAmount: docData?.palletAmount || '',
-            volume: docData?.volume || '',
-            weightGross:docData?.weightGross || '',
-            weightNet: docData?.weightNet || '',
+            // packages: docData?.packages || '',
+            // palletAmount: docData?.palletAmount || '',
+            // volume: docData?.volume || '',
+            // weightGross:docData?.weightGross || '',
+            // weightNet: docData?.weightNet || '',
 
             products:
                 docData && docData?.products && docData.products.length
@@ -150,6 +149,10 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         return [];
     }
     const productQualityOptions = createOptions(docParameters.quality);
+    //temporarily
+    if (!docParameters.quality.includes('Saleable')) {
+        productQualityOptions.push({label: 'Saleable', value: 'Saleable'});
+    }
 
     const productOptions = useMemo(() =>{
         return docParameters.products.map((item: ProductInfoType)=>{return {label: `${item.name}`, value:item.uuid}});
@@ -160,6 +163,8 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         setValue(`products.${index}.quantity`, +product.quantityPlan === 0 ?'': product.quantityPlan, { shouldValidate: true });
         setValue(`products.${index}.quantityPlan`, +product.quantityPlan === 0 ?'': product.quantityPlan, { shouldValidate: true });
     }
+
+    const isQuantityActualHidden = !(docData?.status && docData?.status.toLowerCase() === 'finished');
 
     const getProductColumns = (control: any) => {
         return [
@@ -272,6 +277,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                 dataIndex: 'quantity',
                 key: 'quantity',
                 minWidth: 50,
+                className: `${isQuantityActualHidden ? 'hidden-column' : ''}`,
                 render: (text, record, index) => (
                     <Controller
                         name={`products.${index}.quantity`}
@@ -312,10 +318,10 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                             <div style={{minWidth: '120px', maxWidth: '150px'}}>
                                 <FieldBuilder
                                     name={`products.${index}.unitOfMeasure`}
-                                    fieldType={FormFieldTypes.SELECT}
+                                    fieldType={FormFieldTypes.TEXT}
                                     {...field}
-                                    options={getUnitsOptions(index)}
-                                    disabled={isDisabled}
+                                    //options={getUnitsOptions(index)}
+                                    disabled={true}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -382,34 +388,25 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     };
 
     //import files modal
-    // key: product.product.uuid || `product-${Date.now().toString()}_${index}`,
-    //     selected: false,
-    //     product: product.product.uuid || '',
-    //     quantityPlan: product.quantityPlan || '',
-    //     quantity: product.quantity || '',
-    //     unitOfMeasure: product.unitOfMeasure || '',
-    //     quality: product.quality || '',
     const addImportedProducts = (importedProducts) => {
+        if (!importedProducts || !Array.isArray(importResponse)) return;
         const existedRows = products.length;
-        console.log("ppppp", importedProducts)
+
         for (let i=0; i < importedProducts.length; i++) {
             appendProduct({
                 key: `product-${Date.now().toString()}_${existedRows+i}`,
                 selected: false,
                 product: importedProducts[i].product ? importedProducts[i].product.uuid || '' : '',
                 quantityPlan: importedProducts[i].quantityPlan || '',
-                quantity: importedProducts[i].quantity || '',
-                unitOfMeasure: importedProducts[i].unitOfMeasure || '',
-                quality: importedProducts[i].quality || '',
+                quantity: importedProducts[i].quantity || importedProducts[i].quantityPlan || '',
+                unitOfMeasure: importedProducts[i].unitOfMeasure || 'psc',
+                quality: importedProducts[i].quality || 'Saleable',
             })
         }
-
-        console.log('products:', products);
     }
 
     const [importResponse, setImportResponse] = useState<ApiResponseType|null>(null);
     useEffect(() => {
-        console.log('we get import response: ', importResponse);
 
         if (!importResponse) return;
 
@@ -456,8 +453,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
 
-        console.log('send', data)
-
         try {
 
             //verify token
@@ -474,8 +469,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                     documentData: data,
                 }
             );
-
-            console.log('res send', res)
 
             if (res && "status" in res) {
                 if (res?.status === 200) {
@@ -525,8 +518,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         updateTabTitles(fieldNames);
     };
 
-    console.log('doc:', docData);
-
     return <div className={`stock-movement is-${docType}`}>
         {isLoading && <Loader />}
         <ToastContainer />
@@ -566,8 +557,8 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                             <div className='stock-movement--btns width-100'>
                                 <div className='grid-row'>
                                     <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
-                                        <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import from xls</Button>
-                                        <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'', quality: '' })}>
+                                        <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
+                                        <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
                                             Add
                                         </Button>
                                         <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
@@ -586,7 +577,8 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                             />
                         </div>
                         <div className='grid-row stock-movement--products-total'>
-                            <FormFieldsBlock control={control} fieldsArray={productsTotalFields} errors={errors} isDisabled={isDisabled}/>
+                            {/*<FormFieldsBlock control={control} fieldsArray={productsTotalFields} errors={errors} isDisabled={isDisabled}/>*/}
+                            <ProductsTotal weightGross={docData?.weightGross || 0} weightNet={docData?.weightNet|| 0} volume={docData?.volume || 0} palletAmount={docData?.palletAmount || 0} packages={docData?.packages || 0} />
                         </div>
                     </div>
                 </div>

@@ -316,6 +316,10 @@ input {
   background-color: #7D8FB3;
 }
 
+.hidden-column {
+  display: none;
+}
+
 .search-input {
   flex: 1 1 auto !important;
   display: flex;

@@ -184,11 +184,11 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             receiver: item.receiver,
             receiverCountry: item.receiverCountry,
             products: item.productsByString,
-            packages: item.packages,
-            palletAmount: item.palletAmount,
-            volume: item.volume,
-            weightGross: item.weightGross,
-            weightNet: item.weightNet,
+            // packages: item.packages,
+            // palletAmount: item.palletAmount,
+            // volume: item.volume,
+            // weightGross: item.weightGross,
+            // weightNet: item.weightNet,
         }));
         exportFileXLS(filteredData, docNamesPlural[docType]);
     }

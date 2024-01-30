@@ -367,12 +367,12 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn title="Incoming #" minWidth="90px" maxWidth="120px" contentPosition="start"/>,
+            title: <TitleColumn title="Incoming #" minWidth="120px" maxWidth="200px" contentPosition="start"/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
-                    minWidth="90px"
-                    maxWidth="120px"
+                    minWidth="120px"
+                    maxWidth="200px"
                     contentPosition="start"
                     textColor='var(--color-blue)'
                     cursor='pointer'
@@ -391,9 +391,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             },
         },
         {
-            title: <TitleColumn title="Sender" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn title="Sender" minWidth="100px" maxWidth="120px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
             ),
 
             dataIndex: 'sender',
@@ -405,9 +405,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Receiver" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn title="Receiver" minWidth="100px" maxWidth="120px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
             ),
             dataIndex: 'receiver',
             key: 'receiver',
@@ -428,7 +428,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             onHeaderCell: (column: ColumnType<StockMovementType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
             }),
-            responsive: ['md'],
+            responsive: ['lg'],
         },
         // {
         //     title: <TitleColumn title="Packa- ges" minWidth="30px" maxWidth="50px" contentPosition="start"/>,
@@ -456,45 +456,45 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         //     }),
         //     responsive: ['lg'],
         // },
-        {
-            title: <TitleColumn title="Volume" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
-            ),
-            dataIndex: 'volume',
-            key: 'volume',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Weight gross" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
-            ),
-            dataIndex: 'weightGross',
-            key: 'weightGross',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Weight net" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
-            ),
-            dataIndex: 'weightNet',
-            key: 'weightNet',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-            }),
-            responsive: ['lg'],
-        },
+        // {
+        //     title: <TitleColumn title="Volume" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
+        //     ),
+        //     dataIndex: 'volume',
+        //     key: 'volume',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
+        // {
+        //     title: <TitleColumn title="Weight gross" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
+        //     ),
+        //     dataIndex: 'weightGross',
+        //     key: 'weightGross',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
+        // {
+        //     title: <TitleColumn title="Weight net" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
+        //     ),
+        //     dataIndex: 'weightNet',
+        //     key: 'weightNet',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
         {
             title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="center" childrenBefore={
                 <Tooltip title="This column displays Products" >
