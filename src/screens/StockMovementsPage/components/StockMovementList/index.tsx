@@ -42,6 +42,16 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
+const getDocType = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
+    if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS) {
+        return 'inbounds';
+    } else if (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND) {
+        return 'outbounds';
+    } else if (docType===STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT) {
+        return 'stock movements';
+    } else return 'documents'
+}
+
 const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, currentRange, setCurrentRange, setFilteredDocs, handleEditDoc }) => {
 
     console.log('docs:', docs);
@@ -581,7 +591,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total {docType}:<span className='order-products-total__list-item__value'>{filteredDocs.length}</span></li>
+                        <li className='order-products-total__list-item'>Total {getDocType(docType)}:<span className='order-products-total__list-item__value'>{filteredDocs.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -595,20 +605,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     showSizeChanger={false}
                 />
             </div>
-            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
-            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
-            {/*        <div className='doc-filters-block__wrapper'>*/}
-            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
-            {/*                <Icon name='close' />*/}
-            {/*            </div>*/}
-            {/*            <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
-            {/*            <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>*/}
-            {/*            <FiltersBlock filterTitle='Sender country' filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>*/}
-            {/*            <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />*/}
-            {/*            <FiltersBlock filterTitle='Receiver country' filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
+
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>

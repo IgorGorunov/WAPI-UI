@@ -44,7 +44,7 @@ type AmazonPrepFormType = {
 }
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
-
+console.log('amazon:', amazonPrepOrderData, amazonPrepOrderParameters.products.filter(item=>item.uuid === "21f35add-2cdb-11ec-b4a3-000d3adb828d"))
     const Router = useRouter();
     const { token, currentDate } = useAuth();
 
@@ -141,6 +141,8 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
 
     const { append: appendProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
+
+    console.log('products: ', products)
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
@@ -256,6 +258,8 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const productOptions = useMemo(() =>{
         return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter((item: AmazonPrepOrderProductType)=>item.warehouse===warehouse).map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
     },[amazonPrepOrderParameters, warehouse]);
+
+    console.log("product options: ", productOptions);
 
     //const carrierType = watch('carrierType');
 
