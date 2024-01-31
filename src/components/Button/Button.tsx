@@ -6,6 +6,7 @@ export const enum ButtonSize {
   SMALL = "sm",
   MEDIUM = "md",
   LARGE = "lg",
+  ONLY_ICON = 'icon-button',
 }
 
 export const enum ButtonForm {

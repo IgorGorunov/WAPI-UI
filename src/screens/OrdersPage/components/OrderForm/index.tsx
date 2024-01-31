@@ -8,7 +8,7 @@ import {
     SingleOrderProductFormType,
     SingleOrderType
 } from "@/types/orders";
-import {WarehouseType} from "@/types/utility";
+import {AttachedFilesType, WarehouseType} from "@/types/utility";
 import "./styles.scss";
 import '@/styles/forms.scss';
 import {useRouter} from "next/router";
@@ -188,7 +188,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
 
 
-    const { append: appendProduct } = useFieldArray({ control, name: 'products' });
+    const { append: appendProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
     const currencyOptions = useMemo(()=>{return orderParameters && orderParameters?.currencies.length ? createOptions(orderParameters?.currencies) : []},[]);
 
@@ -586,6 +586,16 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                     />
                 ),
             },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeProduct(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
+                ),
+            },
         ];
     }
 
@@ -655,7 +665,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [warehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions, countries, selectedWarehouse,selectedCourierService ])
     const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[countries, selectedWarehouse,selectedCourierService])
-    const [selectedFiles, setSelectedFiles] = useState(orderData?.attachedFiles);
+    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
@@ -880,7 +890,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                             Add
                                         </Button>
                                         <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                            Remove
+                                            Remove selected
                                         </Button>
                                     </div>
                                 </div>

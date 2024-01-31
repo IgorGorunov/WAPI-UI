@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import "./styles.scss";
 import {OptionType} from "@/types/forms";
 import FilterOption from "@/components/FiltersBlock/FilterOption";
@@ -34,9 +34,9 @@ const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterOptions, f
         return filterState.indexOf(filterValue) >= 0;
     }
 
-    useEffect(() => {
-        console.log('filter state:', filterState)
-    }, [filterState]);
+    // useEffect(() => {
+    //     console.log('filter state:', filterState)
+    // }, [filterState]);
 
     const filterTitleWithCheckedFilters = `${filterTitle} (${filterState.length})`
 

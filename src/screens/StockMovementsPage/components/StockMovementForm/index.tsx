@@ -8,9 +8,9 @@ import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
-import {DetailsFields, GeneralFields, ProductsTotalFields} from "./StockMovementFormFields";
+import {DetailsFields, GeneralFields} from "./StockMovementFormFields";
 import {TabFields, TabTitles} from "./StockMovementFormTabs";
-import {FormFieldTypes} from "@/types/forms";
+import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
@@ -25,7 +25,7 @@ import {
     ProductInfoType,
     SingleStockMovementFormType,
     SingleStockMovementType,
-    STOCK_MOVEMENT_DOC_TYPE,
+    STOCK_MOVEMENT_DOC_TYPE, StockMovementParamsProductType,
     StockMovementParamsType
 } from "@/types/stockMovements";
 import {verifyToken} from "@/services/auth";
@@ -34,10 +34,12 @@ import {Routes} from "@/types/routes";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {sendInboundData} from "@/services/inbounds";
 import {ApiResponseType} from "@/types/api";
-import {SingleOrderProductFormType} from "@/types/orders";
+import { SingleOrderProductFormType} from "@/types/orders";
 import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ImportFilesType} from "@/types/importFiles";
+import ProductsTotal from "@/screens/StockMovementsPage/components/StockMovementForm/ProductsTotal";
+import {AttachedFilesType} from "@/types/utility";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -59,7 +61,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
 
     const { token, currentDate } = useAuth();
 
-    console.log("form:", docType, docData, docParameters);
+    console.log('params: ', docParameters);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -77,25 +79,26 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         mode: 'onSubmit',
         defaultValues: {
             //date: docData?.date || currentDate.toISOString(),
+            number: docData?.number || '',
             incomingDate: docData?.incomingDate || currentDate.toISOString(),
             incomingNumber: docData?.incomingNumber || '',
             sender: docData?.sender || (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS ? 'Customer' : ''),
             senderCountry: docData?.senderCountry || '',
             receiver: docData?.receiver || (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND ? 'Customer' : ''),
             receiverCountry: docData?.receiverCountry || '',
-            freightSupplier: docData?.freightSupplier || '',
+            // freightSupplier: docData?.freightSupplier || '',
             estimatedTimeArrives: docData?.estimatedTimeArrives || '0001-01-01T00:00:00',
             uuid: docData?.uuid || '',
             courierServiceTrackingNumber: docData?.courierServiceTrackingNumber || '',
-            wapiTrackingNumber: docData?.wapiTrackingNumber || '',
-            warehouseTrackingNumber: docData?.warehouseTrackingNumber || '',
+            // wapiTrackingNumber: docData?.wapiTrackingNumber || '',
+            // warehouseTrackingNumber: docData?.warehouseTrackingNumber || '',
             comment: docData?.comment || '',
             status: docData?.status || '',
-            packages: docData?.packages || '',
-            palletAmount: docData?.palletAmount || '',
-            volume: docData?.volume || '',
-            weightGross:docData?.weightGross || '',
-            weightNet: docData?.weightNet || '',
+            // packages: docData?.packages || '',
+            // palletAmount: docData?.palletAmount || '',
+            // volume: docData?.volume || '',
+            // weightGross:docData?.weightGross || '',
+            // weightNet: docData?.weightNet || '',
 
             products:
                 docData && docData?.products && docData.products.length
@@ -114,7 +117,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     });
 
 
-    const { append: appendProduct } = useFieldArray({ control, name: 'products' });
+    const { append: appendProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
     //const currencyOptions = useMemo(()=>{return docParameters && docParameters?.currencies.length ? createOptions(docParameters?.currencies) : []},[]);
 
@@ -140,26 +143,38 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
 
-    const getUnitsOptions = (index) => {
-        const curProduct = products[index].product;
-        if (docParameters.products.length ) {
-            const units = docParameters.products.filter(item => item.uuid === curProduct);
+    // const getUnitsOptions = (index) => {
+    //     const curProduct = products[index].product;
+    //     if (docParameters.products.length ) {
+    //         const units = docParameters.products.filter(item => item.uuid === curProduct);
+    //
+    //         if (units.length) return createOptions(units[0].unitOfMeasures);
+    //     }
+    //     return [];
+    // }
 
-            if (units.length) return createOptions(units[0].unitOfMeasures);
-        }
-        return [];
-    }
     const productQualityOptions = createOptions(docParameters.quality);
+    //temporarily
+    if (!docParameters.quality.includes('Saleable')) {
+        productQualityOptions.push({label: 'Saleable', value: 'Saleable'});
+    }
 
     const productOptions = useMemo(() =>{
-        return docParameters.products.map((item: ProductInfoType)=>{return {label: `${item.name}`, value:item.uuid}});
+        return docParameters.products.map((item: StockMovementParamsProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name} });
     },[docParameters]);
+
+    const checkSelectedProductValue = (selectedValue) => {
+        //console.log('selected val:', selectedValue, productOptions.filter(item=>item.value===selectedValue))
+
+    }
 
     const setQuantityActual = (record: SingleOrderProductFormType, index: number) => {
         const product = getValues('products')[index];
         setValue(`products.${index}.quantity`, +product.quantityPlan === 0 ?'': product.quantityPlan, { shouldValidate: true });
         setValue(`products.${index}.quantityPlan`, +product.quantityPlan === 0 ?'': product.quantityPlan, { shouldValidate: true });
     }
+
+    const isQuantityActualHidden = !(docData?.status && docData?.status.toLowerCase() === 'finished');
 
     const getProductColumns = (control: any) => {
         return [
@@ -227,6 +242,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                                     isRequired={true}
                                     onChange={(selectedValue) => {
                                         field.onChange(selectedValue);
+                                        checkSelectedProductValue(selectedValue);
                                         //updateTotalProducts();
                                     }}
                                 />
@@ -272,6 +288,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                 dataIndex: 'quantity',
                 key: 'quantity',
                 minWidth: 50,
+                className: `${isQuantityActualHidden ? 'hidden-column' : ''}`,
                 render: (text, record, index) => (
                     <Controller
                         name={`products.${index}.quantity`}
@@ -299,23 +316,23 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                 ),
             },
             {
-                title: 'Unit of measure*',
+                title: 'Unit of measure',
                 dataIndex: 'unitOfMeasure',
                 key: 'unitOfMeasure',
-                minWidth: 150,
+                minWidth: 70,
                 //responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`products.${index}.unitOfMeasure`}
                         control={control}
                         render={({ field, fieldState: {error}}) => (
-                            <div style={{minWidth: '120px', maxWidth: '150px'}}>
+                            <div style={{minWidth: '70px', maxWidth: '70px'}}>
                                 <FieldBuilder
                                     name={`products.${index}.unitOfMeasure`}
-                                    fieldType={FormFieldTypes.SELECT}
+                                    fieldType={FormFieldTypes.TEXT}
                                     {...field}
-                                    options={getUnitsOptions(index)}
-                                    disabled={isDisabled}
+                                    //options={getUnitsOptions(index)}
+                                    disabled={true}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -359,6 +376,16 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                     />
                 ),
             },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeProduct(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
+                ),
+            },
         ];
     }
 
@@ -369,47 +396,37 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
 
 
     //form fields
-    const generalFields = useMemo(()=> GeneralFields(!docData?.uuid), [docData])
+    const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType), [docData])
     const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange }), [docData]);
-    const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
+    //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
 
 
-    const [selectedFiles, setSelectedFiles] = useState(docData?.attachedFiles);
+    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(docData?.attachedFiles || []);
 
     const handleFilesChange = (files) => {
-        console.log('files!')
         setSelectedFiles(files);
     };
 
     //import files modal
-    // key: product.product.uuid || `product-${Date.now().toString()}_${index}`,
-    //     selected: false,
-    //     product: product.product.uuid || '',
-    //     quantityPlan: product.quantityPlan || '',
-    //     quantity: product.quantity || '',
-    //     unitOfMeasure: product.unitOfMeasure || '',
-    //     quality: product.quality || '',
     const addImportedProducts = (importedProducts) => {
+        if (!importedProducts || !Array.isArray(importResponse)) return;
         const existedRows = products.length;
-        console.log("ppppp", importedProducts)
+
         for (let i=0; i < importedProducts.length; i++) {
             appendProduct({
                 key: `product-${Date.now().toString()}_${existedRows+i}`,
                 selected: false,
                 product: importedProducts[i].product ? importedProducts[i].product.uuid || '' : '',
                 quantityPlan: importedProducts[i].quantityPlan || '',
-                quantity: importedProducts[i].quantity || '',
-                unitOfMeasure: importedProducts[i].unitOfMeasure || '',
-                quality: importedProducts[i].quality || '',
+                quantity: importedProducts[i].quantity || importedProducts[i].quantityPlan || '',
+                unitOfMeasure: importedProducts[i].unitOfMeasure || 'psc',
+                quality: importedProducts[i].quality || 'Saleable',
             })
         }
-
-        console.log('products:', products);
     }
 
     const [importResponse, setImportResponse] = useState<ApiResponseType|null>(null);
     useEffect(() => {
-        console.log('we get import response: ', importResponse);
 
         if (!importResponse) return;
 
@@ -456,8 +473,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
 
-        console.log('send', data)
-
         try {
 
             //verify token
@@ -474,8 +489,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                     documentData: data,
                 }
             );
-
-            console.log('res send', res)
 
             if (res && "status" in res) {
                 if (res?.status === 200) {
@@ -525,8 +538,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         updateTabTitles(fieldNames);
     };
 
-    console.log('doc:', docData);
-
     return <div className={`stock-movement is-${docType}`}>
         {isLoading && <Loader />}
         <ToastContainer />
@@ -566,12 +577,12 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                             <div className='stock-movement--btns width-100'>
                                 <div className='grid-row'>
                                     <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
-                                        <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import from xls</Button>
-                                        <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'', quality: '' })}>
+                                        <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
+                                        <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
                                             Add
                                         </Button>
                                         <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                            Remove
+                                            Remove selected
                                         </Button>
                                     </div>
                                 </div>
@@ -586,7 +597,8 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                             />
                         </div>
                         <div className='grid-row stock-movement--products-total'>
-                            <FormFieldsBlock control={control} fieldsArray={productsTotalFields} errors={errors} isDisabled={isDisabled}/>
+                            {/*<FormFieldsBlock control={control} fieldsArray={productsTotalFields} errors={errors} isDisabled={isDisabled}/>*/}
+                            <ProductsTotal weightGross={docData?.weightGross || 0} weightNet={docData?.weightNet|| 0} volume={docData?.volume || 0} palletAmount={docData?.palletAmount || 0} packages={docData?.packages || 0} />
                         </div>
                     </div>
                 </div>

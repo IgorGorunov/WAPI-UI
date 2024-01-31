@@ -6,14 +6,15 @@ import Icon from '@/components/Icon'
 import Loader from "@/components/Loader";
 
 const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
-    const [selectedFiles, setSelectedFiles] = useState([]);
+    //const [selectedFilesInner, setSelectedFilesInner] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
 
-    useEffect(() => {
-        if (files) {
-            setSelectedFiles(files);
-        }
-    }, []);
+    const inputId = `file-input__${Date.now().toString()}`;
+    // useEffect(() => {
+    //     if (files) {
+    //         setSelectedFilesInner(files);
+    //     }
+    // }, []);
 
     const onDrop = useCallback(async (acceptedFiles) => {
         if (readOnly) {
@@ -36,7 +37,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
 
         setIsDragging(false);
 
-        setSelectedFiles((prevFiles) => [...prevFiles, ...updatedFiles]);
+        onFilesChange((prevFiles) => [...prevFiles, ...updatedFiles]);
     }, [readOnly]);
 
     const onFileDelete = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
@@ -45,8 +46,8 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
             return;
         }
 
-        const updatedFiles = selectedFiles.filter((_, i) => i !== index);
-        setSelectedFiles(updatedFiles);
+        const updatedFiles = files.filter((_, i) => i !== index);
+        onFilesChange(updatedFiles);
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -63,7 +64,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
         if (readOnly) {
             return;
         }
-        document.getElementById('file-input')?.click();
+        document.getElementById(inputId)?.click();
     };
 
     const readFileAsArrayBuffer = (file) => {
@@ -85,10 +86,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
     };
 
     useEffect(() => {
-        if (onFilesChange) {
-            onFilesChange(selectedFiles);
-        }
-    }, [selectedFiles, onFilesChange]);
+    }, [files, onFilesChange]);
 
     return (
         <div onClick={handleDivClick} className="dropzone-container">
@@ -98,16 +96,16 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
                 onClick={handleDivClick}
                 className={`dropzone ${isDragActive ? 'active' : ''}`}
             >
-                <input {...getInputProps()} id="file-input" />
-                {selectedFiles.length == 0 &&  (<div className="circle"  onClick={openFileDialog} >
+                <input {...getInputProps()} id={inputId} />
+                {files && files.length == 0 &&  (<div className="circle"  onClick={openFileDialog} >
                     <Icon name='upload'/>
                 </div>)}
                 <div onClick={openFileDialog}>
                     <p>Drop files here</p>
                     {hint ? <p className='hint'>{hint}</p> : null}
                 </div>
-                {selectedFiles.length > 0 && (
-                    <FileDisplay files={selectedFiles} onFileDelete={onFileDelete} />
+                {files && files.length > 0 && (
+                    <FileDisplay files={files} onFileDelete={onFileDelete} />
                 )}
             </div>
         </div>

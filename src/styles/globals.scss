@@ -316,6 +316,10 @@ input {
   background-color: #7D8FB3;
 }
 
+.hidden-column {
+  display: none;
+}
+
 .search-input {
   flex: 1 1 auto !important;
   display: flex;
@@ -340,7 +344,6 @@ input {
     left: 5px;
     top: 50%;
     transform: translateY(-50%);
-    //background: url('/src/assets/icons/search.svg');
     width: 16px;
     height: 16px;
     background-size: cover;
@@ -352,6 +355,12 @@ input {
 }
 .check-box-bottom {
   align-items: flex-end;
+}
+
+.page-container {
+  width: 100%;
+  color: var(--color-gray-blue);
+  position: relative;
 }
 
 

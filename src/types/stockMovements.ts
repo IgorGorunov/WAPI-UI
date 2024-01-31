@@ -1,14 +1,14 @@
 import {AttachedFilesType} from "@/types/utility";
 
 export const enum STOCK_MOVEMENT_DOC_TYPE {
-    INBOUNDS = 'inbounds',
-    STOCK_MOVEMENT = 'stock movements',
-    OUTBOUND = 'outbounds',
+    INBOUNDS = 'inbound',
+    STOCK_MOVEMENT = 'stockMovement',
+    OUTBOUND = 'outbound',
 }
 
 export type StockMovementType = {
     type?: STOCK_MOVEMENT_DOC_TYPE | string;
-
+    number: string;
     estimatedTimeArrives: string;
     incomingDate: string;
     incomingNumber: string;
@@ -21,11 +21,11 @@ export type StockMovementType = {
     status: string;
     tableKey: string;
     uuid: string;
-    packages: number;
-    palletAmount: number;
-    volume: number;
-    weightGross: number;
-    weightNet: number;
+    // packages: number;
+    // palletAmount: number;
+    // volume: number;
+    // weightGross: number;
+    // weightNet: number;
 }
 
 export type ProductInfoType = {
@@ -46,8 +46,8 @@ export type StockMovementHistoryType = {
     period: string;
     status: string;
     estimatedTimeArrives: string;
-    estimatedTimeDepartures: string;
-    freightSupplier: string;
+    // estimatedTimeDepartures: string;
+    // freightSupplier: string;
 }
 
 export type StockMovementServiceType = {
@@ -62,7 +62,7 @@ export type StockMovementServiceType = {
 
 export type SingleStockMovementType = {
     // date: string;
-    // number: string;
+    number: string;
     incomingDate: string;
     incomingNumber: string;
     packages: number;
@@ -71,11 +71,11 @@ export type SingleStockMovementType = {
     senderCountry: string;
     receiver: string;
     receiverCountry: string;
-    freightSupplier: string;
+    // freightSupplier: string;
     estimatedTimeArrives: string;
     courierServiceTrackingNumber: string;
-    wapiTrackingNumber: string;
-    warehouseTrackingNumber: string;
+    // wapiTrackingNumber: string;
+    // warehouseTrackingNumber: string;
     uuid: string;
     volume: number;
     weightGross: number;
@@ -92,10 +92,12 @@ export type SingleStockMovementType = {
 
 
 export type StockMovementParamsProductType = {
+    available: number;
     name: string;
     sku: string;
     uuid: string;
     unitOfMeasures: string[];
+    warehouse: string;
 }
 
 export type StockMovementWarehouseType = {
@@ -121,22 +123,23 @@ export type SingleStockMovementProductFormType = {
 
 export type SingleStockMovementFormType = {
     incomingDate: string;
+    number: string;
     incomingNumber: string;
-    packages: number;
-    palletAmount: number;
+    // packages: number;
+    // palletAmount: number;
     sender: string;
     senderCountry: string;
     receiver: string;
     receiverCountry: string;
-    freightSupplier: string;
+    // freightSupplier: string;
     estimatedTimeArrives: string;
     courierServiceTrackingNumber: string;
-    wapiTrackingNumber: string;
-    warehouseTrackingNumber: string;
+    // wapiTrackingNumber: string;
+    // warehouseTrackingNumber: string;
     uuid: string;
-    volume: number;
-    weightGross: number;
-    weightNet: number;
+    // volume: number;
+    // weightGross: number;
+    // weightNet: number;
     comment: string;
     //commentCargo: string;
     status: string;

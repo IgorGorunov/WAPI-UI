@@ -50,10 +50,11 @@ type ImportFilesBlockType = {
 }
 const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
     const { token } = useAuth();
-    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>([]);
+    const [selectedFilesImport, setSelectedFilesImport] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
     const handleFilesChange = (files) => {
-        setSelectedFiles(files);
+        console.log("files import:", files)
+        setSelectedFilesImport(files);
     };
 
     const fileData = useMemo(()=>getFileData(importFilesType),[]);
@@ -83,13 +84,14 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
 
     const sendFunc = fileData.sendFileFunction;
     const sendFiles = async () => {
-        setIsLoading(true);
-        if (selectedFiles.length) {
+
+        if (selectedFilesImport.length) {
+            setIsLoading(true);
             try {
                 const res: ApiResponseType = await sendFunc(
                     {
                         token: token,
-                        files: selectedFiles
+                        files: selectedFilesImport
                     }
                 );
 
@@ -126,6 +128,8 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
         }
     }
 
+    console.log('selectedFilesImport', selectedFilesImport)
+
     return (
         <div className='import-files'>
             {isLoading && <Loader />}
@@ -133,7 +137,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                 {fileData.title}
             </p>
             <Button icon='download-file' iconOnTheRight onClick={downloadFile}>Download sample</Button>
-            <DropZone readOnly={false} files={selectedFiles} onFilesChange={handleFilesChange} />
+            <DropZone readOnly={false} files={selectedFilesImport} onFilesChange={handleFilesChange} />
             <Button  onClick={sendFiles}>Send</Button>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </div>

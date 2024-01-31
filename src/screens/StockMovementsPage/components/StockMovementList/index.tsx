@@ -42,6 +42,16 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
+const getDocType = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
+    if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS) {
+        return 'inbounds';
+    } else if (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND) {
+        return 'outbounds';
+    } else if (docType===STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT) {
+        return 'stock movements';
+    } else return 'documents'
+}
+
 const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, currentRange, setCurrentRange, setFilteredDocs, handleEditDoc }) => {
 
     console.log('docs:', docs);
@@ -357,19 +367,19 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn title="Incoming #" minWidth="90px" maxWidth="120px" contentPosition="start"/>,
+            title: <TitleColumn title="Number" minWidth="70px" maxWidth="700px" contentPosition="start"/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
-                    minWidth="90px"
-                    maxWidth="120px"
+                    minWidth="70px"
+                    maxWidth="70px"
                     contentPosition="start"
                     textColor='var(--color-blue)'
                     cursor='pointer'
                 />
             ),
-            dataIndex: 'incomingNumber',
-            key: 'incomingNumber',
+            dataIndex: 'number',
+            key: 'number',
             sorter: true,
             onHeaderCell: (column: ColumnType<StockMovementType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
@@ -381,9 +391,27 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             },
         },
         {
-            title: <TitleColumn title="Sender" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn title="Incoming #" minWidth="120px" maxWidth="200px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell
+                    value={text}
+                    minWidth="120px"
+                    maxWidth="200px"
+                    contentPosition="start"
+                />
+            ),
+            dataIndex: 'incomingNumber',
+            key: 'incomingNumber',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+            }),
+            responsive: ['md'],
+        },
+        {
+            title: <TitleColumn title="Sender" minWidth="100px" maxWidth="120px" contentPosition="start"/>,
+            render: (text: string) => (
+                <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
             ),
 
             dataIndex: 'sender',
@@ -395,9 +423,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Receiver" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn title="Receiver" minWidth="100px" maxWidth="120px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
             ),
             dataIndex: 'receiver',
             key: 'receiver',
@@ -408,9 +436,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="ETA" minWidth="50px" maxWidth="50px" contentPosition="start"/>,
+            title: <TitleColumn title="ETA" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="50px" maxWidth="50px" contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
             dataIndex: 'estimatedTimeArrives',
             key: 'estimatedTimeArrives',
@@ -418,7 +446,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             onHeaderCell: (column: ColumnType<StockMovementType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
             }),
-            responsive: ['md'],
+            responsive: ['lg'],
         },
         // {
         //     title: <TitleColumn title="Packa- ges" minWidth="30px" maxWidth="50px" contentPosition="start"/>,
@@ -446,45 +474,45 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         //     }),
         //     responsive: ['lg'],
         // },
-        {
-            title: <TitleColumn title="Volume" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
-            ),
-            dataIndex: 'volume',
-            key: 'volume',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Weight gross" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
-            ),
-            dataIndex: 'weightGross',
-            key: 'weightGross',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Weight net" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
-            ),
-            dataIndex: 'weightNet',
-            key: 'weightNet',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-            }),
-            responsive: ['lg'],
-        },
+        // {
+        //     title: <TitleColumn title="Volume" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
+        //     ),
+        //     dataIndex: 'volume',
+        //     key: 'volume',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
+        // {
+        //     title: <TitleColumn title="Weight gross" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
+        //     ),
+        //     dataIndex: 'weightGross',
+        //     key: 'weightGross',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
+        // {
+        //     title: <TitleColumn title="Weight net" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
+        //     ),
+        //     dataIndex: 'weightNet',
+        //     key: 'weightNet',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
         {
             title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="center" childrenBefore={
                 <Tooltip title="This column displays Products" >
@@ -581,7 +609,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total {docType}:<span className='order-products-total__list-item__value'>{filteredDocs.length}</span></li>
+                        <li className='order-products-total__list-item'>Total {getDocType(docType)}:<span className='order-products-total__list-item__value'>{filteredDocs.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -595,20 +623,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     showSizeChanger={false}
                 />
             </div>
-            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
-            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
-            {/*        <div className='doc-filters-block__wrapper'>*/}
-            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
-            {/*                <Icon name='close' />*/}
-            {/*            </div>*/}
-            {/*            <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
-            {/*            <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>*/}
-            {/*            <FiltersBlock filterTitle='Sender country' filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>*/}
-            {/*            <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />*/}
-            {/*            <FiltersBlock filterTitle='Receiver country' filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
+
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>

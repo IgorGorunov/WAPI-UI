@@ -35,18 +35,20 @@ import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
+import {AttachedFilesType} from "@/types/utility";
+import {StockMovementParamsProductType} from "@/types/stockMovements";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
     amazonPrepOrderParameters?: AmazonPrepOrderParamsType;
     closeAmazonPrepOrderModal: ()=>void;
-
 }
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
-
     const Router = useRouter();
     const { token, currentDate } = useAuth();
+
+    console.log('amazon params:', amazonPrepOrderParameters);
 
     const [isDisabled, setIsDisabled] = useState(!!amazonPrepOrderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
@@ -139,7 +141,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         }
     });
 
-    const { append: appendProduct } = useFieldArray({ control, name: 'products' });
+    const { append: appendProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
 
     //products
@@ -247,17 +249,20 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const generalFields = useMemo(()=> GeneralFields(!amazonPrepOrderData?.uuid), [])
     const detailsFields = useMemo(()=>DetailsFields({warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions, carrierTypeOptions}), [warehouse, amazonPrepOrderParameters]);
     const receiverFields = useMemo(()=>ReceiverFields({countries, multipleLocations}),[countries,multipleLocations ])
-    const [selectedFiles, setSelectedFiles] = useState(amazonPrepOrderData?.attachedFiles);
+    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(amazonPrepOrderData?.attachedFiles || []);
 
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
     };
 
     const productOptions = useMemo(() =>{
-        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter((item: AmazonPrepOrderProductType)=>item.warehouse===warehouse).map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
+        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
     },[amazonPrepOrderParameters, warehouse]);
 
-    //const carrierType = watch('carrierType');
+    // const productOptions = useMemo(() =>{
+    //     return docParameters.products.map((item: StockMovementParamsProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name} });
+    // },[docParameters]);
+
 
     const getProductColumns = (control: any) => {
         return [
@@ -402,6 +407,16 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             //         />
             //     ),
             // },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeProduct(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
+                ),
+            },
         ];
     }
 
@@ -551,7 +566,8 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                                                         errors={errors}
 
                                                         width={WidthType.w50}
-                                                    /> )}
+                                                    />
+                                                )}
                                             />
                                         </div>
                                         <div className='amazon-prep-info--btns__table-btns'>
@@ -559,7 +575,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                                                 Add
                                             </Button>
                                             <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                                Remove
+                                                Remove selected
                                             </Button>
                                         </div>
                                     </div>

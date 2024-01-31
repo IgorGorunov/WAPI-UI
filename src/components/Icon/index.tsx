@@ -60,6 +60,8 @@ import Track from '@/assets/icons/track_changes.svg'
 import Complaint from '@/assets/icons/complaint.svg'
 import Trouble from '@/assets/icons/trouble.svg'
 import Burger from '@/assets/icons/burger.svg'
+import WasteBin from "@/assets/icons/waste-bin.svg"
+import Clear from '@/assets/icons/clear.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -122,6 +124,8 @@ export const icons = {
   'complaint': Complaint,
   'trouble': Trouble,
   'burger': Burger,
+  'waste-bin': WasteBin,
+  'clear': Clear,
 };
 
 export type IconType = keyof typeof icons;

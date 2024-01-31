@@ -19,7 +19,6 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= fals
 
         if (isOpen && contentSpace?.current) {
             setHeight(`${contentSpace.current.scrollHeight}px`);
-            console.log("123", isOpen)
 
             if (!isActive) {
                 setIsActive(true);
@@ -37,7 +36,6 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= fals
     const toggleAccordion = (e) => {
         e.preventDefault();
         setIsActive((prevState) => !prevState);
-        console.log('is active: ', isActive, isOpen)
         setHeight(isActive ? '0px' : `${contentSpace.current.scrollHeight}px`);
     }
 

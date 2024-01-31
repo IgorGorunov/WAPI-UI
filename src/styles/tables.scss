@@ -253,9 +253,9 @@
     gap: 30px;
     list-style: none;
 
-    @media (max-width: $mobile) {
-      display: none;
-    }
+    //@media (max-width: $mobile) {
+    //  display: none;
+    //}
 
     &-item {
       display: flex;
