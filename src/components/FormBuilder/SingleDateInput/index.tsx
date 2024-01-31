@@ -8,11 +8,9 @@ import {formatDateToDisplayString} from '@/utils/date'
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
 
-// const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-//     (props: CustomInputProps, ref: Ref<HTMLInputElement>) => {
-//         return <input ref={ref} {...props} />;
-//     }
-// );
+const EMPTY_DATE_AS_STRING = '0001-01-01T00:00:00';
+const EMPTY_DATE = new Date(EMPTY_DATE_AS_STRING);
+
 const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
        classNames='',
        name,
@@ -27,6 +25,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
        rules,
        errors,
        width,
+       isClearable = false,
        ...otherProps
 }, ref) => {
 
@@ -36,34 +35,24 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
         return !dateStr ? currentDate : new Date(dateStr);
     }
 
+    const isDateEmpty = (date) => {
+        return date.getFullYear() === 1;
+    }
+
     const [selectedDate, setSelectedDate] = useState(getDate(value as string));
     const [showCalendar, setShowCalendar] = useState(false);
 
     const handleDateSelect = (date) => {
         setSelectedDate(date);
         setShowCalendar(false);
+        console.log('selected date: ', date)
         if (onChange) onChange(date.toISOString());
     };
 
-    // const CustomDateInput = (ref) => {
-    //     // Your custom date input JSX here
-    //     return (
-    //         <div className='date-input__wrapper'>
-    //             <input
-    //                 type="text"
-    //                 value={formatDateToDisplayString(selectedDate)} readOnly onClick={()=>setShowCalendar((prevState) => !prevState)}
-    //                 id={name}
-    //                 placeholder={placeholder}
-    //                 disabled={disabled}
-    //                 onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-    //                 {...otherProps}
-    //                 ref={ref}
-    //             />
-    //             <div className='calendar-icon' onClick={()=>setShowCalendar((prevState) => !prevState)}>
-    //                 <Icon name='calendar'  />
-    //             </div>
-    //         </div>);
-    // };
+
+
+    console.log('date-input', name, value,'--', selectedDate, "---",EMPTY_DATE, "--3---3---3--", selectedDate.toISOString());
+    console.log("123", isClearable && selectedDate.toISOString() !== EMPTY_DATE_AS_STRING )
 
     return (
         <div className={`form-control-date ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${disabled ? 'is-disabled' : ''}`}>
@@ -94,11 +83,15 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                         {...otherProps}
                         ref={ref}
                     />
+                    {!disabled && isClearable && !isDateEmpty(selectedDate)  ? <div className='clear-icon' onClick={()=>handleDateSelect(EMPTY_DATE)}>
+                        <Icon name='clear'  />
+                    </div> : null}
                     <div className='calendar-icon' onClick={()=>setShowCalendar((prevState) => !prevState)}>
                         <Icon name='calendar'  />
                     </div>
                 </div>
             </div>
+            {errorMessage && <p className="error">{errorMessage}</p>}
         </div>
     )
 });
