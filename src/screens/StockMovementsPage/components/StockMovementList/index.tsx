@@ -367,19 +367,19 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn title="Incoming #" minWidth="120px" maxWidth="200px" contentPosition="start"/>,
+            title: <TitleColumn title="Number" minWidth="70px" maxWidth="700px" contentPosition="start"/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
-                    minWidth="120px"
-                    maxWidth="200px"
+                    minWidth="70px"
+                    maxWidth="70px"
                     contentPosition="start"
                     textColor='var(--color-blue)'
                     cursor='pointer'
                 />
             ),
-            dataIndex: 'incomingNumber',
-            key: 'incomingNumber',
+            dataIndex: 'number',
+            key: 'number',
             sorter: true,
             onHeaderCell: (column: ColumnType<StockMovementType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
@@ -389,6 +389,23 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     onClick: () => {handleEditDoc(record.uuid)}
                 };
             },
+        },
+        {
+            title: <TitleColumn title="Incoming #" minWidth="120px" maxWidth="200px" contentPosition="start"/>,
+            render: (text: string) => (
+                <TableCell
+                    value={text}
+                    minWidth="120px"
+                    maxWidth="200px"
+                    contentPosition="start"
+                />
+            ),
+            dataIndex: 'incomingNumber',
+            key: 'incomingNumber',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+            }),
         },
         {
             title: <TitleColumn title="Sender" minWidth="100px" maxWidth="120px" contentPosition="start"/>,

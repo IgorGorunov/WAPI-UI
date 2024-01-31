@@ -86,10 +86,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
     };
 
     useEffect(() => {
-        console.log(hint, files)
     }, [files, onFilesChange]);
-
-    console.log('files in dropzone:', files)
 
     return (
         <div onClick={handleDivClick} className="dropzone-container">

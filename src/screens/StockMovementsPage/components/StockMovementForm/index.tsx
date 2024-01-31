@@ -314,7 +314,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                 ),
             },
             {
-                title: 'Unit of measure*',
+                title: 'Unit of measure',
                 dataIndex: 'unitOfMeasure',
                 key: 'unitOfMeasure',
                 minWidth: 70,
