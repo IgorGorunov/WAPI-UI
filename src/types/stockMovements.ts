@@ -92,10 +92,12 @@ export type SingleStockMovementType = {
 
 
 export type StockMovementParamsProductType = {
+    available: number;
     name: string;
     sku: string;
     uuid: string;
     unitOfMeasures: string[];
+    warehouse: string;
 }
 
 export type StockMovementWarehouseType = {

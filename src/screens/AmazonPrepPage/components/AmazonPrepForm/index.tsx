@@ -36,17 +36,19 @@ import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
 import {AttachedFilesType} from "@/types/utility";
+import {StockMovementParamsProductType} from "@/types/stockMovements";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
     amazonPrepOrderParameters?: AmazonPrepOrderParamsType;
     closeAmazonPrepOrderModal: ()=>void;
-
 }
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
     const Router = useRouter();
     const { token, currentDate } = useAuth();
+
+    console.log('amazon params:', amazonPrepOrderParameters);
 
     const [isDisabled, setIsDisabled] = useState(!!amazonPrepOrderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
@@ -254,8 +256,13 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     };
 
     const productOptions = useMemo(() =>{
-        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter((item: AmazonPrepOrderProductType)=>item.warehouse===warehouse).map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
+        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
     },[amazonPrepOrderParameters, warehouse]);
+
+    // const productOptions = useMemo(() =>{
+    //     return docParameters.products.map((item: StockMovementParamsProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name} });
+    // },[docParameters]);
+
 
     const getProductColumns = (control: any) => {
         return [

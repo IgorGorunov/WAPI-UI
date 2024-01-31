@@ -10,7 +10,7 @@ import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
 import {DetailsFields, GeneralFields} from "./StockMovementFormFields";
 import {TabFields, TabTitles} from "./StockMovementFormTabs";
-import {FormFieldTypes} from "@/types/forms";
+import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
@@ -25,7 +25,7 @@ import {
     ProductInfoType,
     SingleStockMovementFormType,
     SingleStockMovementType,
-    STOCK_MOVEMENT_DOC_TYPE,
+    STOCK_MOVEMENT_DOC_TYPE, StockMovementParamsProductType,
     StockMovementParamsType
 } from "@/types/stockMovements";
 import {verifyToken} from "@/services/auth";
@@ -34,7 +34,7 @@ import {Routes} from "@/types/routes";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {sendInboundData} from "@/services/inbounds";
 import {ApiResponseType} from "@/types/api";
-import {SingleOrderProductFormType} from "@/types/orders";
+import { SingleOrderProductFormType} from "@/types/orders";
 import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ImportFilesType} from "@/types/importFiles";
@@ -60,6 +60,8 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     const [isDraft, setIsDraft] = useState(false);
 
     const { token, currentDate } = useAuth();
+
+    console.log('params: ', docParameters);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -158,7 +160,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     }
 
     const productOptions = useMemo(() =>{
-        return docParameters.products.map((item: ProductInfoType)=>{return {label: `${item.name}`, value:item.uuid}});
+        return docParameters.products.map((item: StockMovementParamsProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name} });
     },[docParameters]);
 
     const checkSelectedProductValue = (selectedValue) => {
