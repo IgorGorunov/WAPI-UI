@@ -139,7 +139,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         }
     });
 
-    const { append: appendProduct } = useFieldArray({ control, name: 'products' });
+    const { append: appendProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
 
     //products
@@ -400,6 +400,16 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             //         />
             //     ),
             // },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeProduct(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
+                ),
+            },
         ];
     }
 
@@ -558,7 +568,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                                                 Add
                                             </Button>
                                             <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                                Remove
+                                                Remove selected
                                             </Button>
                                         </div>
                                     </div>

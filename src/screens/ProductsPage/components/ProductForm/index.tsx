@@ -29,6 +29,7 @@ import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
 import {toast, ToastContainer} from '@/components/Toast';
 import "@/styles/tables.scss";
+import '@/styles/forms.scss';
 import {TabFields, TabTitles} from "./ProductFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
@@ -197,11 +198,11 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
 
         }
     })
-    const { append } = useFieldArray({ control, name: 'unitOfMeasures' });
-    const { append: appendBarcode } = useFieldArray({ control, name: 'barcodes' });
-    const { append: appendAlias } = useFieldArray({ control, name: 'aliases' });
-    const { append: appendBundle } = useFieldArray({ control, name: 'bundleKit' });
-    const { append: appendAnalogue } = useFieldArray({ control, name: 'analogues' });
+    const { append, remove: removeUnits } = useFieldArray({ control, name: 'unitOfMeasures' });
+    const { append: appendBarcode, remove: removeBarcode } = useFieldArray({ control, name: 'barcodes' });
+    const { append: appendAlias, remove: removeAlias } = useFieldArray({ control, name: 'aliases' });
+    const { append: appendBundle, remove: removeBundle } = useFieldArray({ control, name: 'bundleKit' });
+    const { append: appendAnalogue, remove: removeAnalogue } = useFieldArray({ control, name: 'analogues' });
     const unitOfMeasures = watch('unitOfMeasures');
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState<string[]>([]);
 
@@ -426,6 +427,16 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                     />
                 ),
             },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeUnits(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
+                ),
+            },
         ];
     }
 
@@ -507,6 +518,16 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                     />
                 ),
             },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeBarcode(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
+                ),
+            },
         ];
     }
 
@@ -583,6 +604,16 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 /></div>
                         )}
                     />
+                ),
+            },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeAlias(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
                 ),
             },
         ];
@@ -684,6 +715,16 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                     />
                 ),
             },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeBundle(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
+                ),
+            },
         ];
     }
 
@@ -763,6 +804,16 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 /></div>
                         )}
                     />
+                ),
+            },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeAnalogue(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
                 ),
             },
         ];
@@ -943,13 +994,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                         Add
                                     </Button>
                                     <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
-                                        Remove
+                                        Remove selected
                                     </Button>
 
                                 </div>
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields'>
+                        <div className='product-info--table table-form-fields form-table '>
                             <Table
                                 columns={getUnitsColumns(control)}
                                 dataSource={getValues('unitOfMeasures')?.map((field) => ({ key: field.name, ...field })) || []}
@@ -973,13 +1024,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                         Add
                                     </Button>
                                     <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
-                                        Remove
+                                        Remove selected
                                     </Button>
 
                                 </div>
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields'>
+                        <div className='product-info--table table-form-fields form-table '>
                             <Table
                                 columns={getBarcodesColumns(control)}
                                 dataSource={getValues('barcodes')?.map((field) => ({ key: field.barcode, ...field })) || []}
@@ -1003,13 +1054,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                         Add
                                     </Button>
                                     <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
-                                        Remove
+                                        Remove selected
                                     </Button>
 
                                 </div>
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields'>
+                        <div className='product-info--table table-form-fields form-table '>
                             <Table
                                 columns={getAliasesColumns(control)}
                                 dataSource={getValues('aliases')?.map((field) => ({ key: field.alias, ...field })) || []}
@@ -1033,13 +1084,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                         Add
                                     </Button>
                                     <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
-                                        Remove
+                                        Remove selected
                                     </Button>
 
                                 </div>
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields'>
+                        <div className='product-info--table table-form-fields form-table '>
                             <Table
                                 columns={getBundlesColumns(control)}
                                 dataSource={getValues('bundleKit')?.map((field) => ({ key: `field.uuid-${Date.now().toString()}`, ...field })) || []}
@@ -1063,13 +1114,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                         Add
                                     </Button>
                                     <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
-                                        Remove
+                                        Remove selected
                                     </Button>
 
                                 </div>
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields'>
+                        <div className='product-info--table table-form-fields form-table'>
                             <Table
                                 columns={getAnaloguesColumns(control)}
                                 dataSource={getValues('analogues')?.map((field) => ({ key: field.analogue, ...field })) || []}

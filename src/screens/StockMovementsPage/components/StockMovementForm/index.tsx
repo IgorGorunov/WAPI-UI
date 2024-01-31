@@ -8,7 +8,7 @@ import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
-import {DetailsFields, GeneralFields, ProductsTotalFields} from "./StockMovementFormFields";
+import {DetailsFields, GeneralFields} from "./StockMovementFormFields";
 import {TabFields, TabTitles} from "./StockMovementFormTabs";
 import {FormFieldTypes} from "@/types/forms";
 import Icon from "@/components/Icon";
@@ -114,7 +114,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     });
 
 
-    const { append: appendProduct } = useFieldArray({ control, name: 'products' });
+    const { append: appendProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
     //const currencyOptions = useMemo(()=>{return docParameters && docParameters?.currencies.length ? createOptions(docParameters?.currencies) : []},[]);
 
@@ -159,6 +159,11 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     const productOptions = useMemo(() =>{
         return docParameters.products.map((item: ProductInfoType)=>{return {label: `${item.name}`, value:item.uuid}});
     },[docParameters]);
+
+    const checkSelectedProductValue = (selectedValue) => {
+        //console.log('selected val:', selectedValue, productOptions.filter(item=>item.value===selectedValue))
+
+    }
 
     const setQuantityActual = (record: SingleOrderProductFormType, index: number) => {
         const product = getValues('products')[index];
@@ -234,6 +239,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                                     isRequired={true}
                                     onChange={(selectedValue) => {
                                         field.onChange(selectedValue);
+                                        checkSelectedProductValue(selectedValue);
                                         //updateTotalProducts();
                                     }}
                                 />
@@ -365,6 +371,16 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                             </div>
                         )}
                     />
+                ),
+            },
+            {
+                title: '',
+                key: 'action',
+                minWidth: 500,
+                render: (text, record, index) => (
+                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeProduct(index)}>
+                        <Icon name='waste-bin' />
+                    </button>
                 ),
             },
         ];
@@ -564,7 +580,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                                             Add
                                         </Button>
                                         <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                            Remove
+                                            Remove selected
                                         </Button>
                                     </div>
                                 </div>
