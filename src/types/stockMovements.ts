@@ -8,7 +8,7 @@ export const enum STOCK_MOVEMENT_DOC_TYPE {
 
 export type StockMovementType = {
     type?: STOCK_MOVEMENT_DOC_TYPE | string;
-
+    number: string;
     estimatedTimeArrives: string;
     incomingDate: string;
     incomingNumber: string;
