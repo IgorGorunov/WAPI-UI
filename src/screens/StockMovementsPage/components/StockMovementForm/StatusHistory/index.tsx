@@ -20,9 +20,9 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
             <div className="stock-movement-status-history__header">
                 <div className='date-column'>Period</div>
                 <div className='column status-column'>Status</div>
-                <div className='column etd-column'>ETD</div>
+                {/*<div className='column etd-column'>ETD</div>*/}
                 <div className='column eta-column'>ETA</div>
-                <div className='column freight-supplier-column'>Freight supplier</div>
+                {/*<div className='column freight-supplier-column'>Freight supplier</div>*/}
 
             </div>
             <ul className="stock-movement-status-history__list">
@@ -38,9 +38,9 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                             <div className='column status-column'>
                                 {status.status}
                             </div>
-                            <div className='column etd-column'>{status.estimatedTimeDepartures}</div>
+                            {/*<div className='column etd-column'>{status.estimatedTimeDepartures}</div>*/}
                             <div className='column eta-column'>{status.estimatedTimeArrives}</div>
-                            <div className='column freight-supplier-column'>{status.freightSupplier}</div>
+                            {/*<div className='column freight-supplier-column'>{status.freightSupplier}</div>*/}
                         </li>
                     ))}
             </ul>

@@ -46,8 +46,8 @@ export type StockMovementHistoryType = {
     period: string;
     status: string;
     estimatedTimeArrives: string;
-    estimatedTimeDepartures: string;
-    freightSupplier: string;
+    // estimatedTimeDepartures: string;
+    // freightSupplier: string;
 }
 
 export type StockMovementServiceType = {
@@ -62,7 +62,7 @@ export type StockMovementServiceType = {
 
 export type SingleStockMovementType = {
     // date: string;
-    // number: string;
+    number: string;
     incomingDate: string;
     incomingNumber: string;
     packages: number;
@@ -71,11 +71,11 @@ export type SingleStockMovementType = {
     senderCountry: string;
     receiver: string;
     receiverCountry: string;
-    freightSupplier: string;
+    // freightSupplier: string;
     estimatedTimeArrives: string;
     courierServiceTrackingNumber: string;
-    wapiTrackingNumber: string;
-    warehouseTrackingNumber: string;
+    // wapiTrackingNumber: string;
+    // warehouseTrackingNumber: string;
     uuid: string;
     volume: number;
     weightGross: number;
@@ -121,6 +121,7 @@ export type SingleStockMovementProductFormType = {
 
 export type SingleStockMovementFormType = {
     incomingDate: string;
+    number: string;
     incomingNumber: string;
     // packages: number;
     // palletAmount: number;
@@ -128,11 +129,11 @@ export type SingleStockMovementFormType = {
     senderCountry: string;
     receiver: string;
     receiverCountry: string;
-    freightSupplier: string;
+    // freightSupplier: string;
     estimatedTimeArrives: string;
     courierServiceTrackingNumber: string;
-    wapiTrackingNumber: string;
-    warehouseTrackingNumber: string;
+    // wapiTrackingNumber: string;
+    // warehouseTrackingNumber: string;
     uuid: string;
     // volume: number;
     // weightGross: number;

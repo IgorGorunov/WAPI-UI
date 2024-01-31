@@ -77,7 +77,6 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
         try {
             setIsLoading(true);
-            console.log('click')
 
             if (!await verifyToken(token)) {
                 await Router.push(Routes.Login);
@@ -88,7 +87,6 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             );
 
             if (res && "data" in res) {
-                console.log("inbound:", res.data)
                 setSingleStockMovement(res.data);
             } else {
                 console.error("API did not return expected data");
@@ -112,7 +110,6 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
             if (resp && "data" in resp) {
                 setDocParameters(resp.data);
-                console.log('inbound params:', resp.data)
             } else {
                 console.error("API did not return expected data");
             }
@@ -139,7 +136,6 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             );
 
             if (res && "data" in res) {
-                console.log("data:", res.data)
                 setStockMovementData(res.data.map(item=>({...item, key: item.uuid})));
                 setIsLoading(false);
             } else {

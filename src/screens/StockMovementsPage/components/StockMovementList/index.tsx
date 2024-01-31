@@ -418,9 +418,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="ETA" minWidth="50px" maxWidth="50px" contentPosition="start"/>,
+            title: <TitleColumn title="ETA" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="50px" maxWidth="50px" contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
             dataIndex: 'estimatedTimeArrives',
             key: 'estimatedTimeArrives',

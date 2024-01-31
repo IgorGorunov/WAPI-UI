@@ -1,66 +1,103 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 
-export const GeneralFields = (newObject: boolean) => [
-    {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'incomingNumber',
-        label: "Incoming number",
-        placeholder: "",
-        rules: {
-            required: "Required field",
-        },
-        errorMessage: "Required field",
-        width: WidthType.w33,
-        classNames: "",
-    },
-    {
-        fieldType: FormFieldTypes.DATE,
-        type: "date",
-        name: 'incomingDate',
-        label: "Incoming date",
-        placeholder: "",
-        rules: {
-            required: "Required field",
-        },
-        errorMessage: "Required field",
-        width: WidthType.w17,
-        classNames: "",
-    },
-    {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'status',
-        label: 'Status',
-        placeholder: "",
-        disabled: true,
-        width: WidthType.w50,
-        classNames: "",
-        isDisplayed: !newObject,
-    },
-    {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'freightSupplier',
-        label: 'Fright supplier',
-        placeholder: "",
-        disabled: true,
-        width: WidthType.w33,
-        classNames: "",
-        isDisplayed: !newObject,
-    },
-    {
-        fieldType: FormFieldTypes.DATE,
-        type: "date",
-        name: 'estimatedTimeArrives',
-        label: 'ETA',
-        placeholder: "",
-        width: WidthType.w17,
-        classNames: "calendar-to-right",
-    },
+export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TYPE) => {
+    const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
 
-];
+    return [
+            {
+                fieldType: FormFieldTypes.TEXT,
+                type: "text",
+                name: 'number',
+                label: "Number",
+                placeholder: "",
+                // rules: {
+                //     required: "Required field",
+                // },
+                // errorMessage: "Required field",
+                disabled: true,
+                width: WidthType.w17,
+                classNames: "",
+                isDisplayed: !newObject,
+            },
+            {
+                fieldType: FormFieldTypes.TEXT,
+                type: "text",
+                name: 'incomingNumber',
+                label: "Incoming number",
+                placeholder: "",
+                // rules: {
+                //     required: "Required field",
+                // },
+                // errorMessage: "Required field",
+                width: WidthType.w17,
+                classNames: "",
+            },
+            {
+                fieldType: FormFieldTypes.DATE,
+                type: "date",
+                name: 'incomingDate',
+                label: "Incoming date",
+                placeholder: "",
+                rules: {
+                    required: "Required field",
+                },
+                errorMessage: "Required field",
+                width: WidthType.w17,
+                classNames: "",
+            },
+
+            // {
+            //     fieldType: FormFieldTypes.TEXT,
+            //     type: "text",
+            //     name: 'freightSupplier',
+            //     label: 'Fright supplier',
+            //     placeholder: "",
+            //     disabled: true,
+            //     width: WidthType.w33,
+            //     classNames: "",
+            //     isDisplayed: !newObject,
+            // },
+            {
+                fieldType: FormFieldTypes.DATE,
+                type: "date",
+                name: 'estimatedTimeArrives',
+                label: 'ETA',
+                disabled: !isInbound,
+                placeholder: "",
+                width: WidthType.w17,
+                classNames: "calendar-to-right",
+                rules: {
+                    required: isInbound ? "Required field" : false,
+                    validate: value => {
+                        if (!isInbound) return true;
+
+                        const selectedDate = new Date(value);
+                        const year2000 = new Date('2000-01-01');
+
+                        if (selectedDate < year2000) {
+                            return 'Required field';
+                        }
+
+                        return true; // Validation passed
+                    }
+                },
+                errorMessage: "Required field",
+                isClearable: true,
+            },
+        {
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: 'status',
+            label: 'Status',
+            placeholder: "",
+            disabled: true,
+            width: WidthType.w33,
+            classNames: "",
+            isDisplayed: !newObject,
+        },
+    ];
+}
 
 export const DetailsFields = (
     {
@@ -154,32 +191,32 @@ export const DetailsFields = (
             label: 'Courier service tracking number',
             placeholder: "",
             disabled: true,
-            width: WidthType.w33,
+            width: WidthType.w50,
             classNames: "",
             isDisplayed: !newObject,
         },
-        {
-            fieldType: FormFieldTypes.TEXT,
-            type: "text",
-            name: 'warehouseTrackingNumberCurrent',
-            label: 'Warehouse tracking number',
-            placeholder: "",
-            disabled: true,
-            width: WidthType.w33,
-            classNames: "",
-            isDisplayed: !newObject,
-        },
-        {
-            fieldType: FormFieldTypes.TEXT,
-            type: "text",
-            name: 'wapiTrackingNumber',
-            label: 'Wapi tracking number',
-            placeholder: "",
-            disabled: true,
-            width: WidthType.w33,
-            classNames: "",
-            isDisplayed: !newObject,
-        },
+        // {
+        //     fieldType: FormFieldTypes.TEXT,
+        //     type: "text",
+        //     name: 'warehouseTrackingNumberCurrent',
+        //     label: 'Warehouse tracking number',
+        //     placeholder: "",
+        //     disabled: true,
+        //     width: WidthType.w33,
+        //     classNames: "",
+        //     isDisplayed: !newObject,
+        // },
+        // {
+        //     fieldType: FormFieldTypes.TEXT,
+        //     type: "text",
+        //     name: 'wapiTrackingNumber',
+        //     label: 'Wapi tracking number',
+        //     placeholder: "",
+        //     disabled: true,
+        //     width: WidthType.w33,
+        //     classNames: "",
+        //     isDisplayed: !newObject,
+        // },
         {
             fieldType: FormFieldTypes.TEXT_AREA,
             type: "text",

@@ -77,18 +77,19 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
         mode: 'onSubmit',
         defaultValues: {
             //date: docData?.date || currentDate.toISOString(),
+            number: docData?.number || '',
             incomingDate: docData?.incomingDate || currentDate.toISOString(),
             incomingNumber: docData?.incomingNumber || '',
             sender: docData?.sender || (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS ? 'Customer' : ''),
             senderCountry: docData?.senderCountry || '',
             receiver: docData?.receiver || (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND ? 'Customer' : ''),
             receiverCountry: docData?.receiverCountry || '',
-            freightSupplier: docData?.freightSupplier || '',
+            // freightSupplier: docData?.freightSupplier || '',
             estimatedTimeArrives: docData?.estimatedTimeArrives || '0001-01-01T00:00:00',
             uuid: docData?.uuid || '',
             courierServiceTrackingNumber: docData?.courierServiceTrackingNumber || '',
-            wapiTrackingNumber: docData?.wapiTrackingNumber || '',
-            warehouseTrackingNumber: docData?.warehouseTrackingNumber || '',
+            // wapiTrackingNumber: docData?.wapiTrackingNumber || '',
+            // warehouseTrackingNumber: docData?.warehouseTrackingNumber || '',
             comment: docData?.comment || '',
             status: docData?.status || '',
             // packages: docData?.packages || '',
@@ -393,7 +394,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
 
 
     //form fields
-    const generalFields = useMemo(()=> GeneralFields(!docData?.uuid), [docData])
+    const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType), [docData])
     const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange }), [docData]);
     //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
 
@@ -401,7 +402,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(docData?.attachedFiles || []);
 
     const handleFilesChange = (files) => {
-        console.log('files!', files)
         setSelectedFiles(files);
     };
 
