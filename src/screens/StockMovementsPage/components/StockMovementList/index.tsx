@@ -406,6 +406,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             onHeaderCell: (column: ColumnType<StockMovementType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
             }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn title="Sender" minWidth="100px" maxWidth="120px" contentPosition="start"/>,
