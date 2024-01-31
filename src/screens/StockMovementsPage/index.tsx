@@ -195,7 +195,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     return (
         <Layout hasHeader hasFooter>
-            <div className="orders-page__container">
+            <div className=".stock-movement-page__container-page__container">
                 {isLoading && <Loader />}
                 <Header pageTitle={docNamesPlural[docType]} toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add</Button>
