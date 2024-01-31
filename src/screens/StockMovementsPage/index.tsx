@@ -171,6 +171,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     const handleExportXLS = () => {
         const filteredData = filteredDocs.map(item => ({
+            number: item.number,
             incomingDate: item.incomingDate,
             incomingNumber: item.incomingNumber,
             status: item.status,
