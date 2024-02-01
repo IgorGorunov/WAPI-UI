@@ -78,6 +78,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         }))
     ]), [uniqueWarehouses]);
 
+    useEffect(() => {
+        setFilterWarehouse(prevState => {
+            return [...prevState.filter(selectedValue => uniqueWarehouses.includes(selectedValue))];
+        })
+    }, [uniqueWarehouses]);
+
     const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
 
     const [filterCountry, setFilterCountry] = useState<string[]>([]);
@@ -93,7 +99,14 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             label: Countries[country] || country,
             amount: calcOrderAmount('country', country),
         }))
-    ]), [uniqueWarehouses]);
+    ]), [uniqueCountries]);
+
+    useEffect(() => {
+        setFilterCountry(prevState => {
+            return [...prevState.filter(selectedValue => uniqueCountries.includes(selectedValue))];
+        })
+    }, [uniqueCountries]);
+
     const [isOpenFilterCountry, setIsOpenFilterCountry] = useState(false);
 
     const [fullTextSearch, setFullTextSearch] = useState(true);

@@ -16,7 +16,7 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= fals
     const contentSpace = useRef<HTMLDivElement>(null);
 
     useEffect(()=>{
-
+        console.log('check1')
         if (isOpen && contentSpace?.current) {
             setHeight(`${contentSpace.current.scrollHeight}px`);
 
@@ -25,6 +25,14 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= fals
             }
         }
     }, [isOpen]);
+
+    useEffect(() => {
+        if (isOpen || isActive) {
+            setHeight(`${contentSpace.current.scrollHeight}px`);
+        }
+    }, [children]);
+
+    console.log('check0', isOpen, isActive)
 
     useEffect(() => {
         if (!isActive && isOpen) {

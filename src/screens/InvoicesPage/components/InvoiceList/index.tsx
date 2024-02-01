@@ -115,6 +115,13 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             color: StatusColors[status] || 'white',
         }))
     ]), [uniqueStatuses]);
+
+    useEffect(() => {
+        setFilterStatus(prevState => {
+            return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
+        })
+    }, [uniqueStatuses]);
+
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
 
     const [isFiltersVisible, setIsFiltersVisible] = useState(false);

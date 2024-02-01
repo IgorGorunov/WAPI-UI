@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import "./styles.scss";
 import {OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
@@ -11,11 +11,11 @@ type CurrentFilterType = {
     onClick: ()=>void;
 }
 const CurrentFilters: React.FC<CurrentFilterType> = ({title, options, filterState, onClick, onClose}) => {
-    const valuesAsString = filterState.map(filterVal => options.filter(item=>item.value===filterVal)[0].label).join(', ');
+    const valuesAsString = filterState.map(filterVal => options.filter(item=>item.value===filterVal)).filter(filteredValues => filteredValues.length).map(item => item[0].label).join(', ');
 
     return (
         <>
-            {filterState.length ?
+            {valuesAsString ?
                 <div className="current-filters">
                     <div className="current-filters__wrapper" onClick={onClick}>
                         <span className='current-filters__title'>{title}:</span>
