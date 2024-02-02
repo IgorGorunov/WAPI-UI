@@ -110,12 +110,21 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         }))
     ]), [uniqueStatuses]);
 
+    useEffect(() => {
+        setFilterStatus(prevState => {
+            return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
+        })
+    }, [uniqueStatuses]);
+
     //SenderCountry
     const [filterSenderCountry, setFilterSenderCountry] = useState<string[]>([]);
-    const senderCountryOptions = useMemo(() => {
+    const uniqueSenderCountries = useMemo(() => {
         const senderCountries = docs.map(doc => doc.senderCountry);
-        const uniqueSenderCountries = Array.from(new Set(senderCountries)).filter(senderCountry => senderCountry);
+        return Array.from(new Set(senderCountries)).filter(senderCountry => senderCountry);
+    }, [docs]);
+    uniqueSenderCountries.sort();
 
+    const senderCountryOptions = useMemo(() => {
         return [
             ...uniqueSenderCountries.map(senderCountry => ({
                 value: senderCountry,
@@ -123,14 +132,23 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 amount: calcOrderAmount('senderCountry', senderCountry)
             })),
         ].sort((option1, option2)=> {return option1.label > option2.label ? 1 : -1});
-    }, [docs]);
+    }, [uniqueSenderCountries]);
+
+    useEffect(() => {
+        setFilterSenderCountry(prevState => {
+            return [...prevState.filter(selectedValue => uniqueSenderCountries.includes(selectedValue))];
+        })
+    }, [uniqueSenderCountries]);
 
     //Sender
     const [filterSender, setFilterSender] = useState<string[]>([]);
-    const senderOptions = useMemo(() => {
+    const uniqueSenders = useMemo(() => {
         const senders = docs.map(doc => doc.sender);
-        const uniqueSenders = Array.from(new Set(senders)).filter(sender => sender).sort();
+        return Array.from(new Set(senders)).filter(sender => sender).sort();
+    }, [docs]);
+    uniqueSenders.sort();
 
+    const senderOptions = useMemo(() => {
         return [
             ...uniqueSenders.map(sender => ({
                 value: sender,
@@ -138,14 +156,23 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 amount: calcOrderAmount('sender', sender),
             })),
         ];
-    }, [docs]);
+    }, [uniqueSenders]);
+
+    useEffect(() => {
+        setFilterSender(prevState => {
+            return [...prevState.filter(selectedValue => uniqueSenders.includes(selectedValue))];
+        })
+    }, [uniqueSenders]);
 
     //ReceiverCountry
     const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
-    const receiverCountryOptions = useMemo(() => {
+    const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = docs.map(doc => doc.receiverCountry);
-        const uniqueReceiverCountries = Array.from(new Set(receiverCountries)).filter(receiverCountry => receiverCountry);
+        return Array.from(new Set(receiverCountries)).filter(receiverCountry => receiverCountry);
+    }, [docs]);
+    uniqueReceiverCountries.sort();
 
+    const receiverCountryOptions = useMemo(() => {
         return [
             ...uniqueReceiverCountries.map(receiverCountry => ({
                 value: receiverCountry,
@@ -153,10 +180,22 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 amount: calcOrderAmount('receiverCountry', receiverCountry),
             })),
         ].sort((option1, option2)=> {return option1.label > option2.label ? 1 : -1});
-    }, [docs]);
+    }, [uniqueReceiverCountries]);
+
+    useEffect(() => {
+        setFilterReceiverCountry(prevState => {
+            return [...prevState.filter(selectedValue => uniqueReceiverCountries.includes(selectedValue))];
+        })
+    }, [uniqueReceiverCountries]);
 
     //Receiver
     const [filterReceiver, setFilterReceiver] = useState<string[]>([]);
+    const uniqueReceivers = useMemo(() => {
+        const receivers = docs.map(doc => doc.receiver);
+        return Array.from(new Set(receivers)).filter(receiver => receiver).sort();
+    }, [docs]);
+    uniqueReceivers.sort();
+
     const receiverOptions = useMemo(() => {
         const receivers = docs.map(doc => doc.receiver);
         const uniqueReceivers = Array.from(new Set(receivers)).filter(receiver => receiver).sort();
@@ -168,7 +207,13 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 amount: calcOrderAmount('receiver', receiver),
             })),
         ];
-    }, [docs]);
+    }, [uniqueReceivers]);
+
+    useEffect(() => {
+        setFilterReceiver(prevState => {
+            return [...prevState.filter(selectedValue => uniqueReceivers.includes(selectedValue))];
+        })
+    }, [uniqueReceivers]);
 
     const handleChangePage = (page: number) => {
         setAnimating(true);

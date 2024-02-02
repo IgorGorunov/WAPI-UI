@@ -96,6 +96,12 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         }))
     ]), [uniqueStatuses]);
 
+    useEffect(() => {
+        setFilterStatus(prevState => {
+            return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
+        })
+    }, [uniqueStatuses]);
+
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
@@ -111,6 +117,12 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         }))
     ]), [uniqueWarehouses]);
 
+    useEffect(() => {
+        setFilterWarehouse(prevState => {
+            return [...prevState.filter(selectedValue => uniqueWarehouses.includes(selectedValue))];
+        })
+    }, [uniqueWarehouses]);
+
     const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
@@ -125,6 +137,12 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             amount: calcOrderAmount('receiverCountry', country),
         }))
     ]), [uniqueReceiverCountries]);
+
+    useEffect(() => {
+        setFilterReceiverCountry(prevState => {
+            return [...prevState.filter(selectedValue => uniqueReceiverCountries.includes(selectedValue))];
+        })
+    }, [uniqueReceiverCountries]);
 
     const handleClearAllFilters = () => {
         setFilterStatus([]);

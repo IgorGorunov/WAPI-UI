@@ -132,6 +132,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueStatuses]);
 
+    useEffect(() => {
+        setFilterStatus(prevState => {
+            return [...prevState.filter(selectedStatus => uniqueStatuses.includes(selectedStatus))];
+        })
+    }, [uniqueStatuses]);
+
     const [filterTroubleStatus, setFilterTroubleStatus] = useState<string[]>([]);
 
     const uniqueTroubleStatuses = useMemo(() => {
@@ -151,6 +157,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             amount: calcOrderAmount('lastTroubleStatus', status),
         }))
     ]), [uniqueTroubleStatuses]);
+
+    useEffect(() => {
+        setFilterTroubleStatus(prevState => {
+            return [...prevState.filter(selectedStatus => uniqueTroubleStatuses.includes(selectedStatus))];
+        })
+    }, [uniqueTroubleStatuses]);
 
     const [filterClaims, setFilterClaims] = useState<string[]>([]);
     const claimFilterOptions = useMemo(() => ([
@@ -181,6 +193,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueWarehouses]);
 
+    useEffect(() => {
+        setFilterWarehouse(prevState => {
+            return [...prevState.filter(selectedWarehouse => uniqueWarehouses.includes(selectedWarehouse))];
+        })
+    }, [uniqueWarehouses]);
+
     const [filterCourierService, setFilterCourierService] = useState<string[]>([]);
     // const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = useMemo(() => {
@@ -196,6 +214,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueCourierServices]);
 
+    useEffect(() => {
+        setFilterCourierService(prevState => {
+            return [...prevState.filter(selectedCS => uniqueCourierServices.includes(selectedCS))];
+        })
+    }, [uniqueCourierServices]);
+
     const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
@@ -210,6 +234,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             amount: calcOrderAmount('receiverCountry', country),
         }))
     ]), [uniqueReceiverCountries]);
+
+    useEffect(() => {
+        setFilterReceiverCountry(prevState => {
+            return [...prevState.filter(selectedRC => uniqueReceiverCountries.includes(selectedRC))];
+        })
+    }, [uniqueReceiverCountries]);
 
     const handleClearAllFilters = () => {
         setFilterStatus([]);
@@ -785,21 +815,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     showSizeChanger={false}
                 />
             </div>
-            {/*<div  className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} `} onClick={()=>{setIsFiltersVisible(false); }} >*/}
-            {/*    <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e)=>e.stopPropagation()}>*/}
-            {/*        <div className='doc-filters-block__wrapper'>*/}
-            {/*            <div className='filters-close' onClick={()=>setIsFiltersVisible(false)}>*/}
-            {/*                <Icon name='close' />*/}
-            {/*            </div>*/}
-            {/*            <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
-            {/*            <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>*/}
-            {/*            <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>*/}
-            {/*            <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
-            {/*            <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>*/}
-            {/*            <FiltersBlock filterTitle='Receiver country' filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
