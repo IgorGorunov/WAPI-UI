@@ -30,22 +30,22 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 //     required: "Required field",
                 // },
                 // errorMessage: "Required field",
-                width: WidthType.w17,
+                width: newObject ? WidthType.w33 : WidthType.w17,
                 classNames: "",
             },
-            {
-                fieldType: FormFieldTypes.DATE,
-                type: "date",
-                name: 'incomingDate',
-                label: "Incoming date",
-                placeholder: "",
-                rules: {
-                    required: "Required field",
-                },
-                errorMessage: "Required field",
-                width: WidthType.w17,
-                classNames: "",
-            },
+            // {
+            //     fieldType: FormFieldTypes.DATE,
+            //     type: "date",
+            //     name: 'incomingDate',
+            //     label: "Incoming date",
+            //     placeholder: "",
+            //     rules: {
+            //         required: "Required field",
+            //     },
+            //     errorMessage: "Required field",
+            //     width: WidthType.w17,
+            //     classNames: "",
+            // },
 
             // {
             //     fieldType: FormFieldTypes.TEXT,

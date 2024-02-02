@@ -16,7 +16,6 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= fals
     const contentSpace = useRef<HTMLDivElement>(null);
 
     useEffect(()=>{
-        console.log('check1')
         if (isOpen && contentSpace?.current) {
             setHeight(`${contentSpace.current.scrollHeight}px`);
 
