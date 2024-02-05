@@ -26,7 +26,7 @@ const DateInput: React.FC<DateInputType> = ({currentRange, handleRangeChange}) =
 
     return <div className='date-input-field'>
         <div className='date-input-btn card' onClick={handleDateInputClick}>
-            <span className='date-input-btn__text'>{curRange.startDate.toLocaleDateString()} - {curRange.endDate.toLocaleDateString()}</span>
+            <span className='date-input-btn__text'>{curRange.startDate.toLocaleDateString('en-GB')} - {curRange.endDate.toLocaleDateString('en-GB')}</span>
             <span className="date-input-icon">
                 <Icon name='calendar'/>
             </span>

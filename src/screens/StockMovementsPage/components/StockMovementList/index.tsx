@@ -110,11 +110,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         }))
     ]), [uniqueStatuses]);
 
-    useEffect(() => {
-        setFilterStatus(prevState => {
-            return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
-        })
-    }, [uniqueStatuses]);
+    // useEffect(() => {
+    //     setFilterStatus(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
+    //     })
+    // }, [uniqueStatuses]);
 
     //SenderCountry
     const [filterSenderCountry, setFilterSenderCountry] = useState<string[]>([]);
@@ -134,11 +134,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         ].sort((option1, option2)=> {return option1.label > option2.label ? 1 : -1});
     }, [uniqueSenderCountries]);
 
-    useEffect(() => {
-        setFilterSenderCountry(prevState => {
-            return [...prevState.filter(selectedValue => uniqueSenderCountries.includes(selectedValue))];
-        })
-    }, [uniqueSenderCountries]);
+    // useEffect(() => {
+    //     setFilterSenderCountry(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueSenderCountries.includes(selectedValue))];
+    //     })
+    // }, [uniqueSenderCountries]);
 
     //Sender
     const [filterSender, setFilterSender] = useState<string[]>([]);
@@ -158,11 +158,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         ];
     }, [uniqueSenders]);
 
-    useEffect(() => {
-        setFilterSender(prevState => {
-            return [...prevState.filter(selectedValue => uniqueSenders.includes(selectedValue))];
-        })
-    }, [uniqueSenders]);
+    // useEffect(() => {
+    //     setFilterSender(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueSenders.includes(selectedValue))];
+    //     })
+    // }, [uniqueSenders]);
 
     //ReceiverCountry
     const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
@@ -182,11 +182,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         ].sort((option1, option2)=> {return option1.label > option2.label ? 1 : -1});
     }, [uniqueReceiverCountries]);
 
-    useEffect(() => {
-        setFilterReceiverCountry(prevState => {
-            return [...prevState.filter(selectedValue => uniqueReceiverCountries.includes(selectedValue))];
-        })
-    }, [uniqueReceiverCountries]);
+    // useEffect(() => {
+    //     setFilterReceiverCountry(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueReceiverCountries.includes(selectedValue))];
+    //     })
+    // }, [uniqueReceiverCountries]);
 
     //Receiver
     const [filterReceiver, setFilterReceiver] = useState<string[]>([]);
@@ -209,11 +209,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         ];
     }, [uniqueReceivers]);
 
-    useEffect(() => {
-        setFilterReceiver(prevState => {
-            return [...prevState.filter(selectedValue => uniqueReceivers.includes(selectedValue))];
-        })
-    }, [uniqueReceivers]);
+    // useEffect(() => {
+    //     setFilterReceiver(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueReceivers.includes(selectedValue))];
+    //     })
+    // }, [uniqueReceivers]);
 
     const handleChangePage = (page: number) => {
         setAnimating(true);

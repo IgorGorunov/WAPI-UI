@@ -3,7 +3,7 @@ import "./styles.scss";
 
 type PropsType = {
     classNames?: string;
-    children?: React.ReactNode[];
+    children?: React.ReactNode | React.ReactNode[];
 };
 
 const SearchContainer: React.FC<PropsType> = ({ classNames, children}) => {

@@ -114,11 +114,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         }))
     ]), [uniqueStatuses]);
 
-    useEffect(() => {
-        setFilterStatus(prevState => {
-            return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
-        })
-    }, [uniqueStatuses]);
+    // useEffect(() => {
+    //     setFilterStatus(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
+    //     })
+    // }, [uniqueStatuses]);
 
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
 

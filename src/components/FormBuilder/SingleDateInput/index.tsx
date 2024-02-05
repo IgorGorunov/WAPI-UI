@@ -45,14 +45,9 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
     const handleDateSelect = (date) => {
         setSelectedDate(date);
         setShowCalendar(false);
-        console.log('selected date: ', date)
+
         if (onChange) onChange(date.toISOString());
     };
-
-
-
-    console.log('date-input', name, value,'--', selectedDate, "---",EMPTY_DATE, "--3---3---3--", selectedDate.toISOString());
-    console.log("123", isClearable && selectedDate.toISOString() !== EMPTY_DATE_AS_STRING )
 
     return (
         <div className={`form-control-date ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${disabled ? 'is-disabled' : ''}`}>

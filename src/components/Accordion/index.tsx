@@ -31,8 +31,6 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= fals
         }
     }, [children]);
 
-    console.log('check0', isOpen, isActive)
-
     useEffect(() => {
         if (!isActive && isOpen) {
             setIsOpen(false);

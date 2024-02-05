@@ -1,15 +1,4 @@
 
-
-.dropzone-container {
-  border: 1px solid var(--color-gray2);
-  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-  border-radius: 30px;
-  height: 100%;
-  width: 100%;
-  padding: 20px 20px 20px 20px;
-  position: relative;
-  display: flex;
-}
 .dropzone {
   padding: 20px 20px 20px 20px;
   box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
@@ -25,15 +14,32 @@
   width: 100%;
   background-color: var(--color-light-gray);
 
+  &-container {
+    border: 1px solid var(--color-gray2);
+    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+    border-radius: 30px;
+    height: 100%;
+    width: 100%;
+    padding: 20px 20px 20px 20px;
+    position: relative;
+    display: flex;
+  }
+
+  .dropzone-title {
+    margin-bottom: 10px;
+  }
+
   .hint {
     font-size: 10px;
     margin-top: 12px;
   }
+
+  &.active {
+    border-color: var(--color-blue);
+  }
+
 }
 
-.dropzone.active {
-  border-color: var(--color-blue);
-}
 
 .file-details {
   word-wrap: anywhere;
