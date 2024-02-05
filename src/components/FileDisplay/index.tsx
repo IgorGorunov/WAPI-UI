@@ -50,18 +50,20 @@ const FileDisplay = ({ files, onFileDelete }) => {
 
     return (
         <div className="file-display">
-            {files.map((file, index) => (
-                <div key={index} className="file-item">
-                    <FontAwesomeIcon icon={getFileIcon(file.type)} className="file-icon" />
-                    <div className="file-details">
-                        <span onClick={() => ShowFile(file)}>{file.name}</span>
-                    </div>
-                    <div className='file-actions'>
-                        <div className='file-actions-btn download-file-button' onClick={() => handleDownload(file)}>
-                            <Icon name='download-file' />
+            {files.filter(file => file).map((file, index) => (
+                <div key={index} className="file-item__wrapper">
+                    <div key={index} className="file-item">
+                        <FontAwesomeIcon icon={getFileIcon(file.type)} className="file-icon" />
+                        <div className="file-details">
+                            <span onClick={() => ShowFile(file)}>{file.name}</span>
                         </div>
-                        <div className='file-actions-btn delete-button' onClick={() => onFileDelete(event, index)}>
-                            <Icon name="delete"/>
+                        <div className='file-actions'>
+                            <div className='file-actions-btn download-file-button' onClick={() => handleDownload(file)}>
+                                <Icon name='download-file' />
+                            </div>
+                            <div className='file-actions-btn delete-button' onClick={() => onFileDelete(event, index)}>
+                                <Icon name="delete"/>
+                            </div>
                         </div>
                     </div>
                 </div>

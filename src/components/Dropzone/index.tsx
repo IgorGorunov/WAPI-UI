@@ -5,7 +5,7 @@ import './styles.scss';
 import Icon from '@/components/Icon'
 import Loader from "@/components/Loader";
 
-const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
+const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=false}) => {
     //const [selectedFilesInner, setSelectedFilesInner] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -21,10 +21,15 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
             return;
         }
         setIsDragging(true);
+
         const updatedFiles = await Promise.all(
             acceptedFiles.map(async (file) => {
                 const arrayBuffer = await readFileAsArrayBuffer(file);
                 const base64String = arrayBufferToBase64(arrayBuffer);
+
+                if (banCSV && file.name.split('.').pop().toLowerCase() === 'csv') {
+                    return null;
+                }
 
                 return {
                     id: file.name,
@@ -37,7 +42,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
 
         setIsDragging(false);
 
-        onFilesChange((prevFiles) => [...prevFiles, ...updatedFiles]);
+        onFilesChange((prevFiles) => [...prevFiles, ...updatedFiles.filter(file => file)]);
     }, [readOnly]);
 
     const onFileDelete = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
@@ -100,7 +105,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint=''}) => {
                 {files && files.length == 0 &&  (<div className="circle"  onClick={openFileDialog} >
                     <Icon name='upload'/>
                 </div>)}
-                <div onClick={openFileDialog}>
+                <div onClick={openFileDialog} className='dropzone-title'>
                     <p>Drop files here</p>
                     {hint ? <p className='hint'>{hint}</p> : null}
                 </div>

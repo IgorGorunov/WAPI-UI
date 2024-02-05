@@ -132,11 +132,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueStatuses]);
 
-    useEffect(() => {
-        setFilterStatus(prevState => {
-            return [...prevState.filter(selectedStatus => uniqueStatuses.includes(selectedStatus))];
-        })
-    }, [uniqueStatuses]);
+    // useEffect(() => {
+    //     setFilterStatus(prevState => {
+    //         return [...prevState.filter(selectedStatus => uniqueStatuses.includes(selectedStatus))];
+    //     })
+    // }, [uniqueStatuses]);
 
     const [filterTroubleStatus, setFilterTroubleStatus] = useState<string[]>([]);
 
@@ -158,11 +158,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueTroubleStatuses]);
 
-    useEffect(() => {
-        setFilterTroubleStatus(prevState => {
-            return [...prevState.filter(selectedStatus => uniqueTroubleStatuses.includes(selectedStatus))];
-        })
-    }, [uniqueTroubleStatuses]);
+    // useEffect(() => {
+    //     setFilterTroubleStatus(prevState => {
+    //         return [...prevState.filter(selectedStatus => uniqueTroubleStatuses.includes(selectedStatus))];
+    //     })
+    // }, [uniqueTroubleStatuses]);
 
     const [filterClaims, setFilterClaims] = useState<string[]>([]);
     const claimFilterOptions = useMemo(() => ([
@@ -193,11 +193,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueWarehouses]);
 
-    useEffect(() => {
-        setFilterWarehouse(prevState => {
-            return [...prevState.filter(selectedWarehouse => uniqueWarehouses.includes(selectedWarehouse))];
-        })
-    }, [uniqueWarehouses]);
+    // useEffect(() => {
+    //     setFilterWarehouse(prevState => {
+    //         return [...prevState.filter(selectedWarehouse => uniqueWarehouses.includes(selectedWarehouse))];
+    //     })
+    // }, [uniqueWarehouses]);
 
     const [filterCourierService, setFilterCourierService] = useState<string[]>([]);
     // const allCourierServices = orders.map(order => order.courierService);
@@ -214,11 +214,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueCourierServices]);
 
-    useEffect(() => {
-        setFilterCourierService(prevState => {
-            return [...prevState.filter(selectedCS => uniqueCourierServices.includes(selectedCS))];
-        })
-    }, [uniqueCourierServices]);
+    // useEffect(() => {
+    //     setFilterCourierService(prevState => {
+    //         return [...prevState.filter(selectedCS => uniqueCourierServices.includes(selectedCS))];
+    //     })
+    // }, [uniqueCourierServices]);
 
     const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
@@ -235,11 +235,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         }))
     ]), [uniqueReceiverCountries]);
 
-    useEffect(() => {
-        setFilterReceiverCountry(prevState => {
-            return [...prevState.filter(selectedRC => uniqueReceiverCountries.includes(selectedRC))];
-        })
-    }, [uniqueReceiverCountries]);
+    // useEffect(() => {
+    //     setFilterReceiverCountry(prevState => {
+    //         return [...prevState.filter(selectedRC => uniqueReceiverCountries.includes(selectedRC))];
+    //     })
+    // }, [uniqueReceiverCountries]);
 
     const handleClearAllFilters = () => {
         setFilterStatus([]);

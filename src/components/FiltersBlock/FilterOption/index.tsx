@@ -15,12 +15,12 @@ const FilterOption: React.FC<FilterOptionType> = ({option, isChecked=false, filt
 
     console.log()
     return (
-        <div className={`filter-option ${isChecked ? "checked" : ""} ${filterType}`} >
+        <div className={`filter-option ${isChecked ? "checked" : ""} ${filterType}-type`} >
             <Checkbox
                 name={option.value}
                 circleColor={filterType === FILTER_TYPE.COLORED_CIRCLE ? option.color : ''}
                 label={`${option.label}`}
-                extraLabel={`(${option.amount ? option.amount : '0'})`}
+                extraLabel={`${option.amount ? "("+option.amount+")" : ''}`}
                 value={isChecked}
                 checked={isChecked}
                 onChange={()=>onClick(option.value)}

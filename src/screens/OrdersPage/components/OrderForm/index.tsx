@@ -254,6 +254,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         volume:0,
     });
 
+    console.log('params:', orderParameters)
+
     const updateTotalProducts = () => {
         const rez = {
             cod: 0,
@@ -263,7 +265,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             currency: getValues('codCurrency'),
         };
         getValues('products').forEach(item => {
-            const prodInfo = orderParameters.products.filter(product=>product.uuid = item.product);
+            const prodInfo = orderParameters.products.filter(product=>product.uuid === item.product);
             if (prodInfo?.length) {
                 rez.cod += Number(item.cod);
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
