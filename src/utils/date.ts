@@ -11,6 +11,11 @@ const formatDateToString = (date: Date) => {
     return [year, month, day].join("-");
 };
 
+const formatDateTimeToStringWithDot = (dateStr: string) => {
+    const curDate = new Date(dateStr);
+    return curDate.toLocaleDateString('en-GB').split('/').join('.')+' '+curDate.toLocaleTimeString('en-GB');
+}
+
 const formatDateToDisplayString = (date: Date) => {
     let d = new Date(date),
         month = "" + (d.getMonth() + 1),
@@ -26,6 +31,11 @@ const formatDateToDisplayString = (date: Date) => {
     return [day, month, year].join(".");
 };
 
+const formatDateStringToDisplayString = (dateString) => {
+    if (dateString === '0001-01-01T00:00:00') return "";
+    return formatDateToDisplayString(new Date(dateString));
+}
+
 const getFirstDayOfMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth(), 1)
 }
@@ -38,4 +48,4 @@ const getLastFewDays = (date: Date, days: number) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate() - days);
 }
 
-export {formatDateToString, getFirstDayOfMonth,formatDateToDisplayString, getFirstDayOfYear, getLastFewDays}
+export {formatDateToString,formatDateTimeToStringWithDot, formatDateStringToDisplayString, getFirstDayOfMonth,formatDateToDisplayString, getFirstDayOfYear, getLastFewDays}

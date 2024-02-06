@@ -1,6 +1,7 @@
 import React from "react";
 import {OrderServiceType} from "@/types/orders";
 import "./styles.scss";
+import {formatDateStringToDisplayString, formatDateTimeToStringWithDot} from "@/utils/date";
 
 type PropsType = {
     services?: OrderServiceType[] ;
@@ -37,7 +38,7 @@ const Services: React.FC<PropsType> = ({ services }) => {
                                 index % 2 === 1 ? "highlight" : " "
                             }`}
                         >
-                            <div className='date-column'>{formatDate(service.period)}</div>
+                            <div className='date-column'>{formatDateStringToDisplayString(service.period)}</div>
                             <div className='column service-column'>
                                 {service.service}
                             </div>

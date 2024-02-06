@@ -19,6 +19,7 @@ import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Cookie from "js-cookie";
 import Loader from "@/components/Loader";
+import {formatDateStringToDisplayString} from "@/utils/date";
 
 type CodReportsListType = {
     codReports: CodReportType[];
@@ -181,7 +182,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 contentPosition="start"
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
             ),
             dataIndex: 'date',
             key: 'date',

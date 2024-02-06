@@ -22,6 +22,7 @@ import CurrentFilters from "@/components/CurrentFilters";
 import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
+import {formatDateStringToDisplayString} from "@/utils/date";
 
 
 type StockMovementsListType = {
@@ -402,7 +403,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         {
             title: <TitleColumn title="Date" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
             dataIndex: 'incomingDate',
             key: 'incomingDate',
@@ -483,7 +484,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         {
             title: <TitleColumn title="ETA" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
             dataIndex: 'estimatedTimeArrives',
             key: 'estimatedTimeArrives',
