@@ -28,6 +28,7 @@ import SearchContainer from "@/components/SearchContainer";
 import {FILTER_TYPE} from "@/types/utility";
 import DateInput from "@/components/DateInput";
 import FiltersContainer from "@/components/FiltersContainer";
+import {formatDateStringToDisplayString} from "@/utils/date";
 
 
 export const StatusColors = {
@@ -280,7 +281,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 contentPosition="start"
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
             ),
             dataIndex: 'date',
             key: 'date',
@@ -338,7 +339,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 contentPosition="start"
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
             ),
             dataIndex: 'dueDate',
             key: 'dueDate',

@@ -23,6 +23,7 @@ import FiltersBlock from "@/components/FiltersBlock";
 import {Countries} from "@/types/countries";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
+import {formatDateStringToDisplayString} from "@/utils/date";
 
 
 type AmazonPrepListType = {
@@ -299,7 +300,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         {
             title: <TitleColumn title="Date" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
             dataIndex: 'date',
             key: 'date',

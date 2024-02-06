@@ -2,6 +2,7 @@ import React, {useCallback} from "react";
 import {OrderSmsHistoryType} from "@/types/orders";
 import "./styles.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
+import {formatDateTimeToStringWithDot} from "@/utils/date";
 
 type PropsType = {
     smsHistory?: OrderSmsHistoryType[] ;
@@ -38,7 +39,7 @@ const SmsHistory: React.FC<PropsType> = ({ smsHistory }) => {
                                 index % 2 === 1 ? "highlight" : " "
                             }`}
                         >
-                            <div className='date-column'>{formatDate(sms.smsPeriod)}</div>
+                            <div className='date-column'>{formatDateTimeToStringWithDot(sms.smsPeriod)}</div>
                             <div className='column status-column'>
                                 <span style={{
                                     borderBottom: `2px solid ${getUnderlineColor(sms.smsStatus)}`,

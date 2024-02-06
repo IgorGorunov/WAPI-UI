@@ -2,6 +2,7 @@ import React, {useCallback} from "react";
 import {AmazonPrepOrderHistoryType} from "@/types/amazonPrep";
 import "./styles.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
+import {formatDateTimeToStringWithDot} from "@/utils/date";
 
 type PropsType = {
     statusHistory?: AmazonPrepOrderHistoryType[] ;
@@ -38,7 +39,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                 index % 2 === 1 ? "highlight" : " "
                             }`}
                         >
-                            <div className='date-column'>{formatDate(status.period)}</div>
+                            <div className='date-column'>{formatDateTimeToStringWithDot(status.period)}</div>
                             <div className='column status-column'>
                                 <span style={{
                                     borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,

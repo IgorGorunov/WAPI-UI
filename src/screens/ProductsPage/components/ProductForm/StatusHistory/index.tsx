@@ -1,12 +1,14 @@
 import React from "react";
 import { StatusHistoryType} from "@/types/products";
 import "./styles.scss";
+import {formatDateTimeToStringWithDot} from "@/utils/date";
 type PropsType = {
     statusHistory?: StatusHistoryType[] ;
 };
 
 const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
 
+    console.log('statusHistory date:', statusHistory)
 
     return (
         <div className="status-history">
@@ -24,7 +26,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                 index % 2 === 1 ? "highlight" : " "
                             }`}
                         >
-                            <div className='date-column'>{new Date(status.date).toLocaleDateString()}</div>
+                            <div className='date-column'>{formatDateTimeToStringWithDot(status.date)}</div>
                             <div className='status-column'>{status.status}</div>
                             <div className='comment-column'>{status.comment}</div>
                         </li>

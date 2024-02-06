@@ -4,6 +4,7 @@ import "./styles.scss";
 import {DateRangeType} from "@/types/dashboard";
 import Datepicker from "@/components/Datepicker"
 import useAuth from "@/context/authContext";
+import {formatDateToDisplayString} from "@/utils/date";
 
 
 type DateInputType = {
@@ -26,7 +27,7 @@ const DateInput: React.FC<DateInputType> = ({currentRange, handleRangeChange}) =
 
     return <div className='date-input-field'>
         <div className='date-input-btn card' onClick={handleDateInputClick}>
-            <span className='date-input-btn__text'>{curRange.startDate.toLocaleDateString('en-GB')} - {curRange.endDate.toLocaleDateString('en-GB')}</span>
+            <span className='date-input-btn__text'>{formatDateToDisplayString(curRange.startDate)} - {formatDateToDisplayString(curRange.endDate)}</span>
             <span className="date-input-icon">
                 <Icon name='calendar'/>
             </span>
