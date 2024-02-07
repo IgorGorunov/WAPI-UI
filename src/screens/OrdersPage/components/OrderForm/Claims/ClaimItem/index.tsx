@@ -1,6 +1,7 @@
 import React from "react";
 import {ClaimType} from "@/types/orders";
 import "./styles.scss";
+import {formatDateStringToDisplayString, formatDateTimeToStringWithDot} from "@/utils/date";
 
 type PropsType = {
     claim?: ClaimType;
@@ -9,7 +10,7 @@ type PropsType = {
 const Claim: React.FC<PropsType> = ({ claim }) => {
     return (
         <div className="order-claim-item">
-            <p>Date: <span>{claim.date}</span></p>
+            <p>Date: <span>{formatDateTimeToStringWithDot(claim.date)}</span></p>
             <p>Claim #: <span>{claim.number}</span></p>
             <p>Status: <span>{claim.status}</span></p>
             <div className='order-claim-item__status-history'>
@@ -29,7 +30,7 @@ const Claim: React.FC<PropsType> = ({ claim }) => {
                                     }`}
                                 >
                                     {/*<div className='date-column'>{formatDate(status.date)}</div>*/}
-                                    <div className='date-column'>{status.date}</div>
+                                    <div className='date-column'>{formatDateStringToDisplayString(status.date)}</div>
                                     <div className='column status-column'>{status.Status}</div>
                                     </li>
                             ))}
