@@ -31,7 +31,7 @@ const formatDateToDisplayString = (date: Date) => {
     return [day, month, year].join(".");
 };
 
-const formatDateStringToDisplayString = (dateString) => {
+const formatDateStringToDisplayString = (dateString: string) => {
     if (dateString === '0001-01-01T00:00:00') return "";
     return formatDateToDisplayString(new Date(dateString));
 }
