@@ -1,21 +1,16 @@
 import React from "react";
 import {OrderServiceType} from "@/types/orders";
 import "./styles.scss";
-import {formatDateStringToDisplayString, formatDateTimeToStringWithDot} from "@/utils/date";
+import {formatDateStringToDisplayString} from "@/utils/date";
 
 type PropsType = {
     services?: OrderServiceType[] ;
 };
 
 const Services: React.FC<PropsType> = ({ services }) => {
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr);
-        const hours = date.getHours().toString();
-        const mins = date.getMinutes().toString();
-        return `${date.toLocaleDateString()}  ${hours.length<2 ? '0':''}${hours}:${mins.length<2 ? '0':''}${mins}`;
-    }
 
     const totalSum = services && services.length ? services.reduce((acc, cur) => acc+cur.amountEuro, 0) : 0;
+
     return (
         <div className="order-service">
             <div className="order-service__header">
@@ -54,7 +49,7 @@ const Services: React.FC<PropsType> = ({ services }) => {
             </ul>
             <div className="order-service-total">
                 <ul className='order-service-total__list'>
-                    <li className='order-service-total__list-item'>Total Σ EUR: <span className='order-service-total__list-item__value'>{totalSum}</span></li>
+                    <li className='order-service-total__list-item'>Total Σ EUR: <span className='order-service-total__list-item__value'>{Math.round(totalSum*100)/100}</span></li>
                 </ul>
             </div>
         </div>
