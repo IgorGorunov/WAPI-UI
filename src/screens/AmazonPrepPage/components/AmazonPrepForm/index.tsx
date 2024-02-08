@@ -101,8 +101,6 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         defaultValues: {
             asnNumber: amazonPrepOrderData?.asnNumber || '',
             clientOrderID: amazonPrepOrderData?.clientOrderID || '',
-            commentCourierService: amazonPrepOrderData?.commentWarehouse || '',
-            commentWarehouse: amazonPrepOrderData?.commentWarehouse || '',
             courierService: amazonPrepOrderData?.courierService || '',
             courierServiceTrackingNumber: amazonPrepOrderData?.courierServiceTrackingNumber || '',
             date: amazonPrepOrderData?.date || currentDate.toISOString(),
