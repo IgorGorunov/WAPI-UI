@@ -74,8 +74,8 @@ export type SingleAmazonPrepOrderType = {
     attachedFiles: AttachedFilesType[];
     canEdit: boolean;
     clientOrderID: string;
-    commentCourierService: string;
-    commentWarehouse: string;
+    // commentCourierService: string;
+    //commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
     date: string;
@@ -156,8 +156,8 @@ export type SingleAmazonPrepOrderFormType = {
     //attachedFiles: AttachedFilesType[];
     //canEdit: boolean;
     clientOrderID: string;
-    commentCourierService: string;
-    commentWarehouse: string;
+    // commentCourierService: string;
+    // commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
     date: string;
