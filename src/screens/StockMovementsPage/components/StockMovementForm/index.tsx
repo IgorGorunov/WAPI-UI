@@ -10,7 +10,7 @@ import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
 import {DetailsFields, GeneralFields} from "./StockMovementFormFields";
 import {TabFields, TabTitles} from "./StockMovementFormTabs";
-import {FormFieldTypes, OptionType} from "@/types/forms";
+import {FormFieldTypes} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
@@ -22,7 +22,6 @@ import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {toast, ToastContainer} from '@/components/Toast';
 import {
-    ProductInfoType,
     SingleStockMovementFormType,
     SingleStockMovementType,
     STOCK_MOVEMENT_DOC_TYPE, StockMovementParamsProductType,

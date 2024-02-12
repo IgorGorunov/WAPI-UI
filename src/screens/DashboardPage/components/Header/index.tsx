@@ -1,6 +1,5 @@
 import React from "react";
 import { DashboardPeriodType, PeriodType } from "@/types/dashboard";
-import Icon from "@/components/Icon";
 import PeriodFilter from "../PeriodFilter";
 import "./styles.scss";
 

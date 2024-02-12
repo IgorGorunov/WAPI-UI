@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React from "react";
 import {OrderProductWithTotalInfoType} from '@/types/orders';
 import "./styles.scss";
 

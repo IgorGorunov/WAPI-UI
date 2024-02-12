@@ -1,0 +1,42 @@
+@import "@/constants/devices.scss";
+
+.reports-block {
+  &-container {
+    padding: 24px;
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  &__items {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &-item {
+    display: flex;
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-blue);
+    border-radius: 15px;
+    //border: 1px solid var(--color-gray2);
+    //box-shadow: 0px 2px 5px 0px rgba(38, 51, 77, 0.03);
+
+    &__wrapper {
+      //flex: 0 0 33.33%;
+      padding: 12px;
+
+      @media (max-width: $upToTablet) {
+        padding: 0 12px;
+      }
+    }
+  }
+}

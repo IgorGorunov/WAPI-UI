@@ -19,7 +19,7 @@ const BalanceInfoCard: React.FC<BalanceIfoCartPropsType> = (props) => {
         cardIcons = false,
     } = props;
 
-    const isOverdue = type === "overdue";
+    //const isOverdue = type === "overdue";
     const Formatter = Intl.NumberFormat();
     const formatAmount = (amount: number, currency: string) => {
         const currencySymbol = getSymbolFromCurrency(currency) || '';

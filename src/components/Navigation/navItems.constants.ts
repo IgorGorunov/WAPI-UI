@@ -62,4 +62,14 @@ export const navBlocks: SubmenuBlockType[] = [
             }
         ]
     },
+    {
+        submenuTitle: 'Reports',
+        submenuIcon: 'reports-folder',
+        navItems: [
+            {
+                title: 'Reports',
+                link: '/reports',
+            },
+        ]
+    },
 ];

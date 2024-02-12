@@ -8,12 +8,6 @@ type PropsType = {
 };
 
 const Services: React.FC<PropsType> = ({ services }) => {
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr);
-        const hours = date.getHours().toString();
-        const mins = date.getMinutes().toString();
-        return `${date.toLocaleDateString()}  ${hours.length<2 ? '0':''}${hours}:${mins.length<2 ? '0':''}${mins}`;
-    }
 
     const totalSum = services && services.length ? services.reduce((acc, cur) => acc+cur.amountEuro, 0) : 0;
 

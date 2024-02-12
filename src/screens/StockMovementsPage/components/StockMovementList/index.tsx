@@ -284,11 +284,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         });
     }, [docs, searchTerm, filterStatus, filterSenderCountry, filterReceiverCountry, filterReceiver, filterSender, sortColumn, sortDirection, fullTextSearch]);
 
-    const [showDatepicker, setShowDatepicker] = useState(false);
+    //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange) => {
         setCurrentRange(newRange);
-        setShowDatepicker(false);
+        //setShowDatepicker(false);
     };
 
     const [isFiltersVisible, setIsFiltersVisible] = useState(false);

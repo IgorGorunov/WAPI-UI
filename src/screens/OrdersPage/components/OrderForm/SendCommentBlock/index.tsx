@@ -120,7 +120,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                     setModalStatusInfo({ title: "Error", subtitle: `Something went wrong! Please, try later. `, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
-            }true
+            }
 
         } catch (error) {
             console.error("Error fetching data:", error);
