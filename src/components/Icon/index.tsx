@@ -64,6 +64,7 @@ import WasteBin from "@/assets/icons/waste-bin.svg"
 import Clear from '@/assets/icons/clear.svg'
 import TrendingUp from '@/assets/icons/trending_up.svg'
 import ReportFolder from '@/assets/icons/reports-folder.svg'
+import ArrowUp from '@/assets/icons/arrow-up.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -130,6 +131,7 @@ export const icons = {
   'clear': Clear,
   'trending-up': TrendingUp,
   'reports-folder': ReportFolder,
+  'arrow-up': ArrowUp,
 };
 
 export type IconType = keyof typeof icons;

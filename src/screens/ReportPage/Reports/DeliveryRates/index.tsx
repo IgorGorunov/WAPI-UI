@@ -3,6 +3,7 @@ import {DELIVERY_RATES_VARIANTS, DeliveryRatesRowType,} from "@/types/reports";
 import {ColumnDef} from "@tanstack/react-table";
 import {Tooltip} from "antd";
 import {formatDateToShowMonthYear, formatDateToWeekRange} from "@/utils/date";
+import {formatNumbers, formatPercent} from "@/screens/ReportPage/utils";
 
 
 const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
@@ -12,23 +13,26 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             <span>Total</span>
         </Tooltip>,
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
-        //enableSorting: false,
-        // aggregatedCell: ({ getValue }) => getValue().toLocaleString(),
+
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'totalInTransit',
         header: () => <Tooltip title="Orders ever been in transit" >
             <span>Total in transit</span>
         </Tooltip>,
-        // cell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100 + '%',
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100 + '%',
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'delivered',
@@ -36,15 +40,23 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             <span>Delivered</span>
         </Tooltip>,
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'deliveredWithTroubleStatus',
         header: 'test',
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'deliveredWithFirstAttempt',
@@ -52,12 +64,12 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             <span>Delivered with first attempt</span>
         </Tooltip>,
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
-        cell: ({ row, getValue }) =>
-            row.getValue<number>('delivered') - row.getValue<number>('deliveredWithTroubleStatus'),
+        cell: ({ row }) =>
+            formatNumbers(row.getValue<number>('delivered') - row.getValue<number>('deliveredWithTroubleStatus')),
         aggregatedCell: ({ row }) =>
-            row.getValue<number>('delivered') - row.getValue<number>('deliveredWithTroubleStatus'),
+            formatNumbers(row.getValue<number>('delivered') - row.getValue<number>('deliveredWithTroubleStatus')),
     },
     {
         accessorKey: 'inTransit',
@@ -67,8 +79,12 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         // aggregatedCell: ({ getValue }) =>
         //     Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'returned',
@@ -78,8 +94,12 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         // aggregatedCell: ({getValue}) =>
         //     Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'otherStatuses',
@@ -87,25 +107,27 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             <span>Other statuses</span>
         </Tooltip>,
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'sale',
         header: () => <Tooltip title="Average cheque amount" >
-            <span>Average sale</span>
+            <span>Average sale (EUR)</span>
         </Tooltip>,
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
 
         cell: ({ row, getValue }) =>
-            Math.round(getValue<number>() / row.getValue<number>('totalOrders') * 100) / 100,
+            (Math.round(getValue<number>() / row.getValue<number>('totalOrders') * 100) / 100).toFixed(2),
         // Math.round(getValue<number>()  * 100) / 100,
         aggregatedCell: ({ getValue }) =>
-            Math.round(getValue<number>() * 100) / 100,
+            (Math.round(getValue<number>() * 100) / 100).toFixed(2),
     },
     {
         accessorKey: 'buyout',
@@ -113,14 +135,14 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             <span>Buyout</span>
         </Tooltip>,
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
 
-        cell: ({ row, getValue }) =>
-            row.getValue<number>('totalInTransit')===0 ? '0%' : Math.round(row.getValue<number>('delivered') / row.getValue<number>('totalInTransit') * 10000) / 100+'%',
+        cell: ({ row }) =>
+            row.getValue<number>('totalInTransit')===0 ? '0%' : formatPercent(row.getValue<number>('delivered') / row.getValue<number>('totalInTransit') * 100)+'%',
         // Math.round(getValue<number>()  * 100) / 100,
-        aggregatedCell: ({ row, getValue }) =>
-            row.getValue<number>('totalInTransit')===0 ? '0%' : Math.round(row.getValue<number>('delivered') / row.getValue<number>('totalInTransit') * 10000) / 100+'%',
+        aggregatedCell: ({ row }) =>
+            row.getValue<number>('totalInTransit')===0 ? '0%' : formatPercent(row.getValue<number>('delivered') / row.getValue<number>('totalInTransit') * 100)+'%',
     },
     {
         accessorKey: 'probableBuyout',
@@ -128,14 +150,15 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             <span>Probably buyout</span>
         </Tooltip>,
         aggregationFn: 'sum',
-        size: 70,
+        size: 80,
         maxSize: 400,
 
         cell: ({ row }) =>
-            row.getValue<number>('totalInTransit')===0 ? '0%' : Math.round((row.getValue<number>('delivered')+row.getValue<number>('inTransit'))/ row.getValue<number>('totalInTransit') * 10000) / 100+'%',
+            row.getValue<number>('totalInTransit')===0 ? '0.0%' : formatPercent((row.getValue<number>('delivered')+row.getValue<number>('inTransit')) / row.getValue<number>('totalInTransit')*100)+'%',
+            // row.getValue<number>('totalInTransit')===0 ? '0.0%' : Math.round((row.getValue<number>('delivered')+row.getValue<number>('inTransit'))/ row.getValue<number>('totalInTransit') * 10000) / 100+'%',
         // Math.round(getValue<number>()  * 100) / 100,
-        aggregatedCell: ({ row, getValue }) =>
-            row.getValue<number>('totalInTransit')===0 ? '0%' : Math.round((row.getValue<number>('delivered')+row.getValue<number>('inTransit')) / row.getValue<number>('totalInTransit') * 10000) / 100+'%',
+        aggregatedCell: ({ row }) =>
+            row.getValue<number>('totalInTransit')===0 ? '0.0%' :formatPercent((row.getValue<number>('delivered')+row.getValue<number>('inTransit')) / row.getValue<number>('totalInTransit')*100)+'%',
     },
 ];
 

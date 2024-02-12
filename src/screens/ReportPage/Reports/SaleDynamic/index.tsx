@@ -1,6 +1,7 @@
 import * as React from "react";
 import {SALE_DYNAMIC_VARIANTS, SaleDynamicRowType, AllReportsRowArrayType,} from "@/types/reports";
 import {ColumnDef} from "@tanstack/react-table";
+import Icon from "@/components/Icon";
 
 
 const formatDate = (colStr: string) => {
@@ -25,21 +26,16 @@ const getColor = (row: any, colName: string) => {
     if (row[prevColName] || row[prevColName]===0) {
         const prevValue = row[prevColName];
         const curValue = row[colName];
-        if (prevValue === 0) return curValue > prevValue ? 'green' : 'none';
+        if (prevValue === 0) return curValue > prevValue ? 'UP' : 'NONE';
         const difference = Math.round((curValue - prevValue)*100/prevValue);
-        if (difference < -50) {
-            return 'red';
-        } else if (difference < -25) {
-            return 'orange';
+        if (difference < -25) {
+            return 'DOWN';
         } else if (difference < 25) {
-            return 'none';
-        } else if (difference < 50) {
-            return 'light-green';
-        } else return 'green';
+            return 'NONE';
+        } else return 'UP';
     } else {
-        return 'green';
+        return 'NONE';
     }
-
 }
 
 export const columns_Country_Weeks: ColumnDef<SaleDynamicRowType>[] = [
@@ -47,7 +43,7 @@ export const columns_Country_Weeks: ColumnDef<SaleDynamicRowType>[] = [
         accessorKey: 'country',
         id: 'country',
         header: () => <span>Country</span>,
-        cell: info => <span>{info.row.original.country}<span className={`fi fi-${info.row.original.countryCode ? info.row.original?.countryCode.toLowerCase() : ''} flag-icon`}></span></span>,
+        cell: info => <span><span className={`fi fi-${info.row.original.countryCode ? info.row.original?.countryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.country}</span>,
         aggregationFn: 'count',
         size: 150,
         minSize: 150,
@@ -61,10 +57,10 @@ const createColumn = (colName: string) => {
         accessorKey: colName,
         id: colName,
         header: () => <span>{formatDate(colName)}</span>,
-        cell: info => <span className={`colored-cell color-${getColor(info.row.original, colName)}`}>{info.row.original[colName]}</span>,
+        cell: info => <span className={`arrow arrow-${getColor(info.row.original, colName)}`}>{info.row.original[colName]}<Icon name='arrow-up' /></span>,
         aggregationFn: 'count',
-        size: 80,
-        minSize: 80,
+        size: 90,
+        minSize: 90,
         maxSize: 500,
     }
 }

@@ -3,22 +3,40 @@ import {REPORT_SALES_VARIANTS, ReportSalesRowType,} from "@/types/reports";
 import {ColumnDef} from "@tanstack/react-table";
 import {formatDateToShowMonthYear, formatDateToWeekRange} from "@/utils/date";
 import getSymbolFromCurrency from "currency-symbol-map";
+import {formatNumbers} from "@/screens/ReportPage/utils";
 
 
-export const columns_Month_Country_Product_Order: ColumnDef<ReportSalesRowType>[] = [
+const resourceColumns: ColumnDef<ReportSalesRowType>[] = [
     {
-        accessorKey: 'month',
-        header: 'Period - month',
-        cell: info => formatDateToShowMonthYear(info.getValue() as string),
-        aggregationFn: 'count',
+        accessorKey: 'quantity',
+        header: () => <span>Product quantity</span>,
+        aggregationFn: 'sum',
         size: 80,
-        maxSize: 500,
+        maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
+    {
+        accessorKey: 'wapiTrackingNumber',
+        header: 'Orders count',
+        aggregationFn: 'sum',
+        size: 80,
+        maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
+    },
+];
+
+const dimensionColumns: ColumnDef<ReportSalesRowType>[] = [
     {
         accessorKey: 'receiverCountry',
         id: 'receiverCountry',
         header: () => <span>Country</span>,
-        cell: info => <span>{info.row.original.receiverCountry}<span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span></span>,
+        cell: info => <span><span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.receiverCountry}</span>,
         aggregationFn: 'count',
         size: 100,
         maxSize: 500,
@@ -38,26 +56,24 @@ export const columns_Month_Country_Product_Order: ColumnDef<ReportSalesRowType>[
     {
         accessorKey: 'price',
         header: 'Price',
-        cell: info => <><span>{`${info.row.original.price}`}</span><span className='currency'>{`${getSymbolFromCurrency(info.row.original.currency) || ''}`}</span></>,
+        cell: info => <span className='price-column'><span>{`${info.row.original.price}`}</span><span className='currency'>{`${getSymbolFromCurrency(info.row.original.currency) || ''}`}</span></span>,
         size: 50,
         maxSize: 90,
     },
+];
+
+
+export const columns_Month_Country_Product_Order: ColumnDef<ReportSalesRowType>[] = [
     {
-        accessorKey: 'quantity',
-        header: () => <span>Quantity</span>,
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        //enableSorting: false,
-        // aggregatedCell: ({ getValue }) => getValue().toLocaleString(),
+        accessorKey: 'month',
+        header: 'Period - month',
+        cell: info => formatDateToShowMonthYear(info.getValue() as string),
+        aggregationFn: 'count',
+        size: 80,
+        maxSize: 500,
     },
-    {
-        accessorKey: 'wapiTrackingNumber',
-        header: 'Orders count',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-    },
+    ...dimensionColumns,
+    ...resourceColumns,
 
 ];
 
@@ -70,97 +86,13 @@ export const columns_Week_Country_Product_Order: ColumnDef<ReportSalesRowType>[]
         size: 80,
         maxSize: 500,
     },
-    {
-        accessorKey: 'receiverCountry',
-        id: 'receiverCountry',
-        header: () => <span>Country</span>,
-        cell: info => <span>{info.row.original.receiverCountry}<span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span></span>,
-        aggregationFn: 'count',
-        size: 100,
-        maxSize: 500,
-    },
-    {
-        accessorKey: 'product',
-        header: 'Product [SKU]',
-        cell: info => <><span>{`${info.row.original.product}`}</span>{info.row.original.sku ? <span className='product-sku'>{` [${info.row.original.sku}] `}</span> : ''}</>,
-        size: 90,
-        maxSize: 500,
-    },
-    {
-        accessorKey: 'order',
-        header: 'Order',
-        size: 90,
-    },
-    {
-        accessorKey: 'price',
-        header: 'Price',
-        cell: info => <><span>{`${info.row.original.price}`}</span><span className='currency'>{`${getSymbolFromCurrency(info.row.original.currency) || ''}`}</span></>,
-        size: 50,
-        maxSize: 90,
-    },
-    {
-        accessorKey: 'quantity',
-        header: () => <span>Product quantity</span>,
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        //enableSorting: false,
-        // aggregatedCell: ({ getValue }) => getValue().toLocaleString(),
-    },
-    {
-        accessorKey: 'wapiTrackingNumber',
-        header: 'Orders count',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-    },
+    ...dimensionColumns,
+    ...resourceColumns,
 ];
 
 export const columns_Off_Country_Product_Order: ColumnDef<ReportSalesRowType>[] = [
-    {
-        accessorKey: 'receiverCountry',
-        id: 'receiverCountry',
-        header: () => <span>Country</span>,
-        cell: info => <span>{info.row.original.receiverCountry}<span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span></span>,
-        aggregationFn: 'count',
-        size: 100,
-        maxSize: 500,
-    },
-    {
-        accessorKey: 'product',
-        header: 'Product [SKU]',
-        cell: info => <><span>{`${info.row.original.product}`}</span>{info.row.original.sku ? <span className='product-sku'>{` [${info.row.original.sku}] `}</span> : ''}</>,
-        size: 90,
-        maxSize: 500,
-    },
-    {
-        accessorKey: 'order',
-        header: 'Order',
-        size: 90,
-    },
-    {
-        accessorKey: 'price',
-        header: 'Price',
-        cell: info => <><span>{`${info.row.original.price}`}</span><span className='currency'>{`${getSymbolFromCurrency(info.row.original.currency) || ''}`}</span></>,
-        size: 50,
-        maxSize: 90,
-    },
-    {
-        accessorKey: 'quantity',
-        header: () => <span>Quantity</span>,
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        //enableSorting: false,
-        // aggregatedCell: ({ getValue }) => getValue().toLocaleString(),
-    },
-    {
-        accessorKey: 'wapiTrackingNumber',
-        header: 'Orders count',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-    },
+    ...dimensionColumns,
+    ...resourceColumns,
 ];
 
 export const getReportSalesVariantColumns = (variant: REPORT_SALES_VARIANTS) => {

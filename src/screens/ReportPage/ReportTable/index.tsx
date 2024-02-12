@@ -131,7 +131,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
     return (
         <div className="report-container">
             <div className="h-2" />
-            <div className="t-container">
+            <div className={`t-container ${reportType} ${reportType===REPORT_TYPES.SALE_DYNAMIC ? 'is-sticky' : ''}`}>
                 {/*{reportData && !table.getRowModel().rows.length ? (<div>{reportData.length}</div>) : null}*/}
                 <table {...{
                     style: {
@@ -141,9 +141,9 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
                     <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
+                            {headerGroup.headers.map((header, index: number) => {
                                 return (
-                                    <th key={header.id} colSpan={header.colSpan} {...{
+                                    <th key={header.id} colSpan={header.colSpan} className={`col-${index}`} {...{
                                         style: {
                                             width: header.getSize()
                                         }
@@ -200,7 +200,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
                                     return (
                                         <td
                                             colSpan={Number(`${(cell.getIsGrouped() ? dimensionsCount : index<=groupedCols && !cell.getIsAggregated() ? groupedCols+1  : 1) }`)}
-                                            className={`${cell.id} ${index<dimensionsCount ? 'is-dimension': 'is-resource'} ${cell.getIsGrouped() ? 'is-grouped' : ''} ${cell.getIsAggregated() ? 'is-aggravated' : ''} ${cell.getIsPlaceholder() ? 'is-placeholder' : ''} ${row.depth}`}
+                                            className={`${cell.id} col-${index} ${index<dimensionsCount ? 'is-dimension': 'is-resource'} ${cell.getIsGrouped() ? 'is-grouped' : ''} ${cell.getIsAggregated() ? 'is-aggravated' : ''} ${cell.getIsPlaceholder() ? 'is-placeholder' : ''} ${row.depth}`}
                                             {...{
                                                 key: cell.id,
                                                 style: {

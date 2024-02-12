@@ -183,5 +183,11 @@ export const addColumnCopy = (arr: AllReportsRowType[], columnNew: string, colum
     return arr.map(row => row[columnNew]=row[columnToCopy]);
 }
 
+export const formatNumbers = (num: number) => {
+    return num.toLocaleString('en-GB').replace(',', ' ');
+}
 
+export const formatPercent = (num: number) => {
+    return (Math.round(num*10)/10).toFixed(1);
+}
 
