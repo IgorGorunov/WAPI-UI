@@ -19,6 +19,11 @@ export type ProductType = {
     }[]
 }
 
+export type ReservedRowType = {
+    document: string;
+    reserved: number;
+}
+
 export type ProductStockType = {
     tableKey: string,
     name: string;
@@ -38,6 +43,8 @@ export type ProductStockType = {
     volume: number,
     weightGross: number,
     weightNet: number,
+    onShipping: number;
+    reservedRows: ReservedRowType[];
 }
 
 export type ProductParamsType = {

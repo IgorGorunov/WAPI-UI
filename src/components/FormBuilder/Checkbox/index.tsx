@@ -19,6 +19,7 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
     extraLabel,
     isCheckboxHidden= false,
     circleColor,
+    isCountry = false,
   ...otherProps
 },ref) => {
 
@@ -40,7 +41,9 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
               {circleColor ? <span className='colored-circle' style={{ backgroundColor: circleColor}}></span> : null}
 
               <span className='checkbox-label-text' >
-                {label} {extraLabel ? <span className='checkbox-label-extra-text'>{extraLabel}</span> : null }
+                {label}
+                {isCountry && name ? <span className={`fi fi-${name.toLowerCase()} flag-icon`}></span> : null}
+                {extraLabel ? <span className='checkbox-label-extra-text'>{extraLabel}</span> : null }
               </span>
             </span>
         )}

@@ -48,4 +48,31 @@ const getLastFewDays = (date: Date, days: number) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate() - days);
 }
 
-export {formatDateToString,formatDateTimeToStringWithDot, formatDateStringToDisplayString, getFirstDayOfMonth,formatDateToDisplayString, getFirstDayOfYear, getLastFewDays}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const formatDateToShowMonthYear = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+const formatDateToWeekRange = (dateStr: string) => {
+    const startDate = new Date(dateStr);
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 6);
+    return `${startDate.getDate()} ${MONTHS[startDate.getMonth()]} ${startDate.getFullYear()} - ${endDate.getDate()} ${MONTHS[endDate.getMonth()]} ${endDate.getFullYear()}`;
+}
+
+
+
+export {
+    formatDateToString,
+    formatDateTimeToStringWithDot,
+    formatDateStringToDisplayString,
+    getFirstDayOfMonth,
+    formatDateToDisplayString,
+    getFirstDayOfYear,
+    getLastFewDays,
+    formatDateToShowMonthYear,
+    formatDateToWeekRange,
+}

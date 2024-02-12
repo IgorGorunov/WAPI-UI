@@ -14,10 +14,10 @@ export type FiltersBlockType = {
     filterType?: FILTER_TYPE;
     isOpen?: boolean;
     setIsOpen: (val: boolean)=>void;
-
+    isCountry?: boolean;
 }
 
-const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterOptions, filterState, setFilterState, filterType=FILTER_TYPE.CHECKBOX, isOpen=false, setIsOpen}) => {
+const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterOptions, filterState, setFilterState, filterType=FILTER_TYPE.CHECKBOX, isOpen=false, setIsOpen, isCountry=false}) => {
 
     const handleOptionClick = (val: string) => {
         console.log('clicked val', val, getIsChecked(val, filterState))
@@ -45,7 +45,7 @@ const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterOptions, f
             <Accordion title={filterTitleWithCheckedFilters} isOpen={isOpen} setIsOpen={setIsOpen}>
                 <div className='filter-block__options'>
                     <ul className='filter-block__options-list'>
-                        {filterOptions.map(option => (<li key={option.value} className='filter-block__options-list-item'><FilterOption option={option} filterType={filterType} isChecked={getIsChecked(option.value, filterState)} onClick={handleOptionClick} /></li>))}
+                        {filterOptions.map(option => (<li key={option.value} className='filter-block__options-list-item'><FilterOption option={option} filterType={filterType} isChecked={getIsChecked(option.value, filterState)} onClick={handleOptionClick} isCountry={isCountry}/></li>))}
                     </ul>
                 </div>
             </Accordion>

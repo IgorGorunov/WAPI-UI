@@ -4,7 +4,7 @@ import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import {ProductStockType} from "@/types/products";
+import {ProductStockType, ProductType} from "@/types/products";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
@@ -20,6 +20,7 @@ import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import {Countries} from "@/types/countries";
 import FiltersContainer from "@/components/FiltersContainer";
+import UniversalPopup from "@/components/UniversalPopup";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -30,6 +31,23 @@ type ProductListType = {
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setWarehouseForExport}) => {
 
     const [animating, setAnimating] = useState(false);
+
+    // Popup
+    const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
+    const [hoveredReserve, setHoveredReserve] = useState<ProductStockType | null>(null);
+    const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
+
+    const popupItems = useMemo(()=>{
+        if (!hoveredReserve) return [];
+
+        const curProducts = products.filter(item => item.uuid === hoveredReserve.uuid && item.warehouse === hoveredReserve.warehouse);
+        return curProducts.length ? curProducts[0].reservedRows.map(stockItem => ({
+                uuid: hoveredReserve.uuid,
+                title: stockItem.document,
+                description: stockItem.reserved,
+            })) : [];
+    },[hoveredReserve]);
+
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -248,8 +266,32 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
         {
             title: <TitleColumn title="Reserve" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+            render: (text: number, record: ProductStockType) => (
+                <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
+                    childrenAfter={<span
+                        className=""
+                        onClick={(e) => {
+                            setHoveredReserve(record);
+                            setMousePosition({ x: e.clientX, y: e.clientY });
+                            setIsDisplayedPopup(true);
+
+                        }}
+                        onMouseEnter={(e) => {
+                            setHoveredReserve(record);
+                            setMousePosition({ x: e.clientX, y: e.clientY });
+                            setIsDisplayedPopup(true);
+
+                        }}
+                        onMouseLeave={() => {
+                            setHoveredReserve(null);
+                            setMousePosition(null);
+                            setIsDisplayedPopup(false);
+                        }}
+                    >
+                        <span className='reserve'>{text}{text !== 0 ? <span className='info-icon'><Icon name="info" /></span> : ''}</span>
+                    </span>
+                    }>
+                </TableCell>
             ),
             dataIndex: 'reserved',
             key: 'reserved',
@@ -325,6 +367,19 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
+            title: <TitleColumn title="On shipping" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+            render: (text: string) => (
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+            ),
+            dataIndex: 'onShipping',
+            key: 'onShipping',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
+            }),
+            responsive: ['lg'],
+        },
+        {
             title: <TitleColumn title="Total" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
@@ -340,7 +395,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     ], [handleHeaderCellClick]);
 
     return (
-        <div className='table'>
+        <div className='product-stock-list table'>
             <Head>
                 <title>Products stock</title>
                 <meta name="stock" content="stock" />
@@ -396,10 +451,26 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     showSizeChanger={false}
                 />
             </div>
+            {hoveredReserve && isDisplayedPopup && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: mousePosition?.y || 0,
+                        left: mousePosition?.x || 0,
+                    }}
+                >
+                    <UniversalPopup
+                        items={popupItems}
+                        position='left'
+                        width = {200}
+                        handleClose={()=>setIsDisplayedPopup(false)}
+                    />
+                </div>
+            )}
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                <FiltersBlock filterTitle='Country' filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>
+                <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>
             </FiltersContainer>
         </div>
     );

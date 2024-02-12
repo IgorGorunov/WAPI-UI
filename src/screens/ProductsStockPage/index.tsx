@@ -76,6 +76,7 @@ const ProductsStockPage = () => {
             undefinedStatus: item.undefinedStatus,
             withoutBox: item.withoutBox,
             forPlacement: item.forPlacement,
+            onShipping: item.onShipping,
             total: item.total,
         }));
         exportFileXLS(filteredData, `ProductsStock${warehouseForReport ? "_"+warehouseForReport : ""}`)

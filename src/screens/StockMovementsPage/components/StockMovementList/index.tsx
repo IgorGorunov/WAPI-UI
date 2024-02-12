@@ -673,9 +673,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
-                <FiltersBlock filterTitle='Sender country' filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
+                <FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
                 <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
-                <FiltersBlock filterTitle='Receiver country' filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
             {hoveredDoc && isDisplayedPopup && (
                 <div

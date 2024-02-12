@@ -1,19 +1,37 @@
 @import '@/constants/devices.scss';
 
-.warehouse-filter-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  justify-content: space-between;
-  @media (max-width: $mobile) {
-    flex-wrap: wrap;
-  }
-  .input-select-container {
-    flex: 0 0 200px;
-
+.product-stock-list {
+  .warehouse-filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    justify-content: space-between;
     @media (max-width: $mobile) {
-      flex: 1 0 100%;
+      flex-wrap: wrap;
+    }
+
+    .input-select-container {
+      flex: 0 0 200px;
+
+      @media (max-width: $mobile) {
+        flex: 1 0 100%;
+      }
+    }
+  }
+
+  .reserve {
+    display: flex;
+    align-items: center;
+  }
+
+  .info-icon {
+    svg {
+      margin-top: 3px;
+      //stroke: var(--color-blue);
+    }
+    svg path {
+      fill: var(--color-blue);
     }
   }
 }
