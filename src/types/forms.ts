@@ -13,6 +13,7 @@ export const enum FormFieldTypes {
   TOGGLE = 'toggle-switch',
   GRID = 'grid',
   TEXT_AREA = 'text-area',
+  RADIO_BUTTON = 'radio-button',
 }
 
 export type TextFieldType = string
@@ -73,6 +74,7 @@ export type FieldPropsType = {
   extraLabel?: string;
   isCheckboxHidden?: boolean;
   circleColor?: string;
+  isCountry?: boolean;
 }
 
 export type FormBuilderType = FieldPropsType & {

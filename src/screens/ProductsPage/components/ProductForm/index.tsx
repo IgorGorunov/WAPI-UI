@@ -39,6 +39,7 @@ import {AttachedFilesType} from "@/types/utility";
 const enum SendStatusType {
     DRAFT = 'draft',
     PENDING = 'pending',
+    APPROVED = 'Approved',
 }
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -238,7 +239,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         name={'selectedAllUnits'}
                         fieldType={FormFieldTypes.CHECKBOX}
                         checked ={selectAllUnits}
-                        disabled={isDisabled}
+                        disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => {
                             setSelectAllUnits(e.target.checked);
                             // Update the values of all checkboxes in the form when "Select All" is clicked
@@ -265,7 +266,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                     name={'unitOfMeasures.${index}.selected'}
                                     fieldType={FormFieldTypes.CHECKBOX}
                                     {...field}
-                                    disabled={isDisabled}
+                                    disabled={isDisabled  || productData?.status.toLowerCase() === 'approved'}
                                 />
                             </div>
                         )}
@@ -289,7 +290,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     onChange={(newValue: string) => {field.onChange(newValue); handleUnitNameChange(newValue, index)}}
-                                    disabled={isDisabled}
+                                    disabled={isDisabled  || productData?.status.toLowerCase() === 'approved'}
                                 /></div>
                         )}
                         rules={{required: "Required field",}}
@@ -311,7 +312,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                     name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled}
+                                    disabled={isDisabled  || productData?.status.toLowerCase() === 'approved'}
                                 /></div>
 
                         )}
@@ -333,7 +334,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].width`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled}
+                                disabled={isDisabled  || productData?.status.toLowerCase() === 'approved'}
                             /></div>
 
                         )}
@@ -355,7 +356,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].length`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled}
+                                disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
                             /></div>
                         )}
                     />
@@ -376,7 +377,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].height`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled}
+                                disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
                             /></div>
 
                         )}
@@ -398,7 +399,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].weightGross`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled}
+                                disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
                             /></div>
 
                         )}
@@ -420,7 +421,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].weightNet`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled}
+                                disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
                             /></div>
 
                         )}
@@ -432,7 +433,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeUnits(index)}>
+                    <button disabled={isDisabled || productData?.status.toLowerCase() === 'approved'} className='remove-table-row' onClick={() => removeUnits(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -984,23 +985,23 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                             placeholder="Select Name"
                                             width={WidthType.w33}
                                             errors={errors}
-                                            disabled={isDisabled}
+                                            disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
                                         />
                                     )}
                                 />
                                 {/*</div>*/}
-                                <div className='product-info--table-btns width-67'>
-                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
+                                <div className='product-info--table-btns width-67' aria-disabled={productData?.status.toLowerCase() === 'approved'}>
+                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || productData?.status.toLowerCase() === 'approved'} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
                                         Add
                                     </Button>
-                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
+                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || productData?.status.toLowerCase() === 'approved'} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
                                         Remove selected
                                     </Button>
 
                                 </div>
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields form-table '>
+                        <div className='product-info--table table-form-fields form-table ' aria-disabled={productData?.status.toLowerCase() === 'approved'}>
                             <Table
                                 columns={getUnitsColumns(control)}
                                 dataSource={getValues('unitOfMeasures')?.map((field) => ({ key: field.name, ...field })) || []}
@@ -1153,8 +1154,10 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             </Tabs>
             <div className='form-submit-btn'>
                 {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                {!isDisabled  && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
-                {!isDisabled  && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
+                {!isDisabled && productData?.status.toLowerCase() !== 'approved' && <Button type="submit" disabled={isDisabled || productData?.status.toLowerCase() === 'approved'} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
+                {!isDisabled && productData?.status.toLowerCase() !== 'approved' && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
+                {!isDisabled && productData?.status.toLowerCase() === 'approved' && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
+
             </div>
         </form>
 
