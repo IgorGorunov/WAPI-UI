@@ -11,6 +11,7 @@ export type NavItemType = {
 export type SubmenuBlockType = {
     submenuTitle: string;
     submenuIcon: IconType;
+    submenuLink?: string;
     navItems: NavItemType[];
     handleClose?: ()=>void;
 }

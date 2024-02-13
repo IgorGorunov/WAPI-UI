@@ -1,0 +1,36 @@
+.submenu-single-item {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    padding: 0 15px;
+
+    .nav-arrow-icon {
+      margin-left: auto;
+    }
+
+
+
+
+  .submenu-header {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    cursor: pointer;
+    color: var(--color-gray-blue);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-size: 13px;
+    font-weight: 700;
+    width: 100%;
+    transition: color 0.3s ease, font-size 0.3s ease;
+
+    &:hover {
+      color: var(--color-blue);
+      font-size: 14px;
+    }
+
+    .nav-arrow-icon {
+      transform: rotate(0deg);
+      transition: all 0.3s ease-in;
+    }
+  }
+}
