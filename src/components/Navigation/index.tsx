@@ -4,6 +4,7 @@ import Link from "next/link";
 import SubmenuBlock from "@/components/Navigation/SubmenuBlock";
 import {navBlocks} from "@/components/Navigation/navItems.constants";
 import './styles.scss'
+import SubmenuSingleItem from "@/components/Navigation/SubmenuSingleItem";
 
 type NavigationType = {
     isMenuOpen: boolean;
@@ -26,7 +27,11 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                     </div>
                     {navBlocks && navBlocks.length ? navBlocks.map((navBlock, index)=> (
                         <div key={`${navBlock.submenuTitle}-${index}`}>
-                            <SubmenuBlock  submenuTitle={navBlock.submenuTitle} submenuIcon={navBlock.submenuIcon} navItems={navBlock.navItems} handleClose={handleClose} />
+                            {navBlock.submenuLink && !navBlock.navItems.length ?
+                                <SubmenuSingleItem {...navBlock}/>
+                                :
+                                <SubmenuBlock  submenuTitle={navBlock.submenuTitle} submenuIcon={navBlock.submenuIcon} navItems={navBlock.navItems} handleClose={handleClose} />
+                            }
                         </div>
                     ))  : null}
                 </div>

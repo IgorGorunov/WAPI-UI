@@ -9,13 +9,6 @@ type PropsType = {
 
 const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
 
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr);
-        const hours = date.getHours().toString();
-        const mins = date.getMinutes().toString();
-        return `${date.toLocaleDateString()}  ${hours.length<2 ? '0':''}${hours}:${mins.length<2 ? '0':''}${mins}`;
-    }
-
     return (
         <div className="stock-movement-status-history">
             <div className="stock-movement-status-history__header">

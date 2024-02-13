@@ -78,7 +78,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
     const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
 
-    const calcOrderAmount = useCallback((property, value) => {
+    const calcOrderAmount = useCallback((property: string, value: string) => {
         return amazonPrepOrders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
     },[amazonPrepOrders]);
 
@@ -219,11 +219,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         });
     }, [amazonPrepOrders, searchTerm, fullTextSearch, filterStatus, filterWarehouse, filterReceiverCountry, sortColumn, sortDirection]);
 
-    const [showDatepicker, setShowDatepicker] = useState(false);
+    //const [showDatepicker, setShowDatepicker] = useState(false);
 
-    const handleDateRangeSave = (newRange) => {
+    const handleDateRangeSave = (newRange: DateRangeType) => {
         setCurrentRange(newRange);
-        setShowDatepicker(false);
+        //setShowDatepicker(false);
     };
 
     const [isFiltersVisible, setIsFiltersVisible] = useState(false);

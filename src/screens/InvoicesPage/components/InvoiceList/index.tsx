@@ -14,7 +14,6 @@ import {PageOptions} from '@/constants/pagination';
 import getSymbolFromCurrency from "currency-symbol-map";
 import {DateRangeType} from "@/types/dashboard";
 import {getInvoiceForm} from "@/services/invoices";
-import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Cookie from "js-cookie";
 import Loader from "@/components/Loader";
@@ -53,7 +52,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const Router = useRouter();
+    //const Router = useRouter();
     const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
@@ -206,11 +205,11 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         return filtered;
     }, [invoices, searchTerm, filterStatus, sortColumn, sortDirection]);
 
-    const [showDatepicker, setShowDatepicker] = useState(false);
+    //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange) => {
         setCurrentRange(newRange);
-        setShowDatepicker(false);
+        //setShowDatepicker(false);
     };
 
     useEffect(() => {

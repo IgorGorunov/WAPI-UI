@@ -14,13 +14,6 @@ const SmsHistory: React.FC<PropsType> = ({ smsHistory }) => {
         return StatusColors[statusText] || 'black';
     }, []);
 
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr);
-        const hours = date.getHours().toString();
-        const mins = date.getMinutes().toString();
-        return `${date.toLocaleDateString()}  ${hours.length<2 ? '0':''}${hours}:${mins.length<2 ? '0':''}${mins}`;
-    }
-
     return (
         <div className="order-sms-history">
             <div className="order-sms-history__header">

@@ -1,6 +1,5 @@
 import React from "react";
 import StatusBar from "./StatusBar";
-import Skeleton from "@/components/Skeleton/Skeleton";
 import "./styles.scss";
 
 

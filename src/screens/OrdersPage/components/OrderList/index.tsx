@@ -106,7 +106,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         { uuid: order.uuid, title: order.lastUpdateDate, description: order.statusAdditionalInfo },
     ]).filter(item => item.uuid === hoveredOrder?.uuid);
 
-    const calcOrderAmount = useCallback((property, value) => {
+    const calcOrderAmount = useCallback((property: string, value: string) => {
         return orders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
     },[orders]);
 
@@ -328,11 +328,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         });
     }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
 
-    const [showDatepicker, setShowDatepicker] = useState(false);
+    //const [showDatepicker, setShowDatepicker] = useState(false);
 
-    const handleDateRangeSave = (newRange) => {
+    const handleDateRangeSave = (newRange: DateRangeType) => {
         setCurrentRange(newRange);
-        setShowDatepicker(false);
+        //setShowDatepicker(false);
     };
 
     //filters

@@ -20,7 +20,6 @@ import {
 import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
 import AmazonPrepForm from "./components/AmazonPrepForm";
-import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
@@ -38,12 +37,6 @@ const AmazonPrepPage = () => {
     const [amazonPrepOrdersData, setAmazonPrepOrdersData,] = useState<any | null>(null);
     const [filteredAmazonPrepOrders, setFilteredAmazonPrepOrders] = useState<AmazonPrepOrderType[]>(amazonPrepOrdersData);
     const [isLoading, setIsLoading] = useState(true);
-
-    //import files modal
-    const [showImportModal, setShowImportModal] = useState(false);
-    const onImportModalClose = () => {
-        setShowImportModal(false);
-    }
 
     //single order data
     const [showAmazonPrepOrderModal, setShowAmazonPrepOrderModal] = useState(false);

@@ -15,7 +15,6 @@ import getSymbolFromCurrency from "currency-symbol-map";
 import {DateRangeType} from "@/types/dashboard";
 import DateInput from "@/components/DateInput";
 import {getCODReportForm} from "@/services/codReports";
-import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Cookie from "js-cookie";
 import Loader from "@/components/Loader";
@@ -34,7 +33,6 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const Router = useRouter();
     const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
@@ -68,7 +66,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
 
-    const handleFilterChange = (newSearchTerm: string, newStatusFilter: string) => {
+    const handleFilterChange = (newSearchTerm: string) => {
         if (newSearchTerm !== undefined) {
             setSearchTerm(newSearchTerm);
         }
@@ -96,7 +94,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         return filtered;
     }, [codReports, searchTerm, sortColumn, sortDirection]);
 
-    const [showDatepicker, setShowDatepicker] = useState(false);
+    //const [showDatepicker, setShowDatepicker] = useState(false);
 
     useEffect(() => {
         setFilteredCodReports(filteredCODReports)
@@ -104,7 +102,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
 
     const handleDateRangeSave = (newRange) => {
         setCurrentRange(newRange);
-        setShowDatepicker(false);
+        //setShowDatepicker(false);
     };
 
     const handleDownloadCORReport = async (uuid) => {
@@ -310,7 +308,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 <Input
                     placeholder="🔍 Search..."
                     value={searchTerm}
-                    onChange={e => handleFilterChange(e.target.value, undefined)}
+                    onChange={e => handleFilterChange(e.target.value)}
                     className="search-input"
                 />
             </div>

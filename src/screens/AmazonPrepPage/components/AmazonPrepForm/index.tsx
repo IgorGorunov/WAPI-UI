@@ -36,7 +36,6 @@ import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
 import {AttachedFilesType} from "@/types/utility";
-import {StockMovementParamsProductType} from "@/types/stockMovements";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -229,16 +228,16 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         return [];
     }, [amazonPrepOrderParameters]);
 
-    const handleWarehouseChange = (selectedOption: string) => {
+    const handleWarehouseChange = () => {
         // setSelectedWarehouse(selectedOption);
         // setSelectedCourierService('');
         setValue('courierService', '');
         // setValue('products', []);
     }
 
-    useEffect(() => {
-        //setValue('products', []);
-    }, [warehouse]);
+    // useEffect(() => {
+    //     //setValue('products', []);
+    // }, [warehouse]);
 
     const multipleLocations = watch('multipleLocations');
 
@@ -249,7 +248,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const receiverFields = useMemo(()=>ReceiverFields({countries, multipleLocations}),[countries,multipleLocations ])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(amazonPrepOrderData?.attachedFiles || []);
 
-    const handleFilesChange = (files) => {
+    const handleFilesChange = (files: AttachedFilesType[]) => {
         setSelectedFiles(files);
     };
 

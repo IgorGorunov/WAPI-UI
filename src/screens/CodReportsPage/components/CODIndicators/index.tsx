@@ -2,7 +2,6 @@ import React from "react";
 import { CODIndicatorType } from "@/types/codReports";
 import "./styles.scss";
 import getSymbolFromCurrency from "currency-symbol-map";
-import Icon from "@/components/Icon";
 
 type IndicatorsIfoCartPropsType = {
     title: string;

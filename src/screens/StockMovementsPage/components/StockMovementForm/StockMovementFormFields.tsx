@@ -190,10 +190,10 @@ export const DetailsFields = (
             name: 'courierServiceTrackingNumber',
             label: 'Courier service tracking number',
             placeholder: "",
-            disabled: true,
+            //disabled: true,
             width: WidthType.w50,
             classNames: "",
-            isDisplayed: !newObject,
+            //isDisplayed: !newObject,
         },
         // {
         //     fieldType: FormFieldTypes.TEXT,

@@ -1,8 +1,5 @@
 import React from "react";
-import {OrderProductWithTotalInfoType} from '@/types/orders';
 import "./styles.scss";
-import {AmazonPrepOrderProductWithTotalInfoType} from "@/types/amazonPrep";
-import {FormFieldTypes} from "@/types/forms";
 
 type PropsType = {
     weightGross: number;

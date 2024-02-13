@@ -4,7 +4,7 @@ import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import {ProductStockType, ProductType} from "@/types/products";
+import {ProductStockType} from "@/types/products";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
@@ -76,7 +76,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
 
     // Filter and searching
-    const calcOrderAmount = useCallback((property, value) => {
+    const calcOrderAmount = useCallback((property: string, value: string) => {
         return products.filter(product => product[property].toLowerCase() === value.toLowerCase()).length || 0;
     },[products]);
 

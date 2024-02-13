@@ -6,4 +6,10 @@ export const enum Routes {
   Inbounds = "/inbounds",
   StockMovements = "/stockMovements",
   Outbounds = "/outbounds",
+
+  //reports
+  ProductsOnStocks = '/reports/productsOnStocks',
+  DeliveryRates = '/reports/buyoutDeliveryRates',
+  ReportSales = '/reports/reportSales',
+  SaleDynamic = '/reports/saleDynamic',
 }

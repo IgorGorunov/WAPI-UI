@@ -9,7 +9,6 @@ import {
 } from "@/types/dashboard";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
-//import Header from "./components/Header";
 import Header from "@/components/Header"
 import Diagram from "./components/Diagram";
 import Forecast from "./components/Forecast";
