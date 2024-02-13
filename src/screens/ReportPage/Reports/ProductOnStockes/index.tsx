@@ -2,182 +2,10 @@ import * as React from "react";
 import {ProductOnStockRowType, PRODUCTS_ON_STOCKS_VARIANTS} from "@/types/reports";
 import {ColumnDef} from "@tanstack/react-table";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
+import {formatNumbers} from "@/screens/ReportPage/utils";
 
 
-// export const columns: ColumnDef<ProductOnStockRowType>[] =  [
-// export const columns_Warehouse_Product_Doc: ColumnDef<ProductOnStockRowType>[] = [
-export const columns_Warehouse_Product_Doc: ColumnDef<ProductOnStockRowType>[] = [
-        {
-            accessorKey: 'product',
-            header: 'Product',
-            cell: info => info.getValue(),
-            /**
-             * override the value used for row grouping
-             * (otherwise, defaults to the value derived from accessorKey / accessorFn)
-             */
-            //getGroupingValue: row => `${row.Product} ${row.Warehouse}`,
-            aggregationFn: 'count',
-            size: 80,
-            maxSize: 500,
-        },
-
-        {
-            accessorKey: 'warehouse',
-            id: 'warehouse',
-            header: () => <span>Warehouse</span>,
-            cell: info => <span>{info.row.original.warehouse}<span className={`fi fi-${info.row.original?.country ? info.row.original?.country.toLowerCase() : ''} flag-icon`}></span></span>,
-
-
-            aggregationFn: 'count',
-            size: 100,
-            maxSize: 500,
-        },
-        {
-            accessorKey: 'document',
-            header: 'Document',
-            size: 90,
-            maxSize: 500,
-        },
-        {
-            accessorKey: 'period',
-            header: 'Period',
-            cell: info => <span>{formatDateTimeToStringWithDot(info.row.original?.period)}</span>,
-            size: 80,
-            maxSize: 500,
-        },
-        {
-            header: 'Quantity',
-            columns: [
-                {
-                    accessorKey: 'quantityOpeningBalance',
-                    header: () => <span>Opening Balance</span>,
-                    aggregationFn: 'sum',
-                    size: 70,
-                    maxSize: 400,
-                    //enableSorting: false,
-                    // aggregatedCell: ({ getValue }) => getValue().toLocaleString(),
-                },
-                {
-                    accessorKey: 'quantityReceipt',
-                    header: 'Receipt',
-                    // cell: ({ getValue }) =>
-                    //     Math.round(getValue<number>() * 100) / 100 + '%',
-                    aggregationFn: 'sum',
-                    size: 70,
-                    maxSize: 400,
-                    // aggregatedCell: ({ getValue }) =>
-                    //     Math.round(getValue<number>() * 100) / 100 + '%',
-                },
-                {
-                    accessorKey: 'quantityExpense',
-                    header: 'Expense',
-                    aggregationFn: 'sum',
-                    size: 70,
-                    maxSize: 400,
-                },
-                {
-                    accessorKey: 'quantityClosingBalance',
-                    header: () => 'Closing Balance',
-                    aggregatedCell: ({getValue}) =>
-                        Math.round(getValue<number>() * 100) / 100,
-                    aggregationFn: 'sum',
-                    size: 70,
-                    maxSize: 400,
-                },
-            ],
-        },
-        {
-            accessorKey: 'damagedClosingBalance',
-            header: () => 'Damaged',
-            // aggregatedCell: ({ getValue }) =>
-            //     Math.round(getValue<number>() * 100) / 100,
-            aggregationFn: 'sum',
-            size: 70,
-            maxSize: 400,
-        },
-        {
-            accessorKey: 'expiredClosingBalance',
-            header: () => 'Expired',
-            // aggregatedCell: ({ getValue }) =>
-            //     Math.round(getValue<number>() * 100) / 100,
-            aggregationFn: 'sum',
-            size: 70,
-            maxSize: 400,
-        },
-        {
-            accessorKey: 'undefinedStatusClosingBalance',
-            header: () => 'Undefined Status',
-            // aggregatedCell: ({ getValue }) =>
-            //     Math.round(getValue<number>() * 100) / 100,
-            aggregationFn: 'sum',
-            size: 70,
-            maxSize: 400,
-        },
-        {
-            accessorKey: 'withoutBoxClosingBalance',
-            header: () => 'Without Box',
-            // aggregatedCell: ({ getValue }) =>
-            //     Math.round(getValue<number>() * 100) / 100,
-            aggregationFn: 'sum',
-            size: 70,
-            maxSize: 400,
-        },
-        {
-            accessorKey: 'onShipping',
-            header: () => 'On shipping',
-            // aggregatedCell: ({ getValue }) =>
-            //     Math.round(getValue<number>() * 100) / 100,
-            aggregationFn: 'sum',
-            size: 70,
-            maxSize: 400,
-        },
-        {
-            accessorKey: 'reserveClosingBalance',
-            header: () => 'Reserve',
-            // aggregatedCell: ({ getValue }) =>
-            //     Math.round(getValue<number>() * 100) / 100,
-            aggregationFn: 'sum',
-            size: 70,
-            maxSize: 400,
-        },
-        {
-            accessorKey: 'available',
-            header: () => 'Available',
-            aggregatedCell: ({getValue}) =>
-                Math.round(getValue<number>() * 100) / 100,
-            aggregationFn: 'sum',
-            size: 70,
-            maxSize: 400,
-        },
-    ];
-
-export const columns_Warehouse_Product: ColumnDef<ProductOnStockRowType>[] = [
-        {
-                accessorKey: 'product',
-                header: 'Product',
-                cell: info => info.getValue(),
-                /**
-                 * override the value used for row grouping
-                 * (otherwise, defaults to the value derived from accessorKey / accessorFn)
-                 */
-                //getGroupingValue: row => `${row.Product} ${row.Warehouse}`,
-                aggregationFn: 'count',
-                size: 120,
-                maxSize: 800,
-            },
-
-            {
-                accessorKey: 'warehouse',
-                id: 'warehouse',
-                header: () => <span>Warehouse</span>,
-                cell: info => <span>{info.row.original.warehouse}<span className={`fi fi-${info.row.original?.country ? info.row.original?.country.toLowerCase() : ''} flag-icon`}></span></span>,
-
-                aggregationFn: 'count',
-
-                size: 100,
-                maxSize: 800,
-            },
-
+const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
     {
         header: 'Quantity',
         columns: [
@@ -187,19 +15,21 @@ export const columns_Warehouse_Product: ColumnDef<ProductOnStockRowType>[] = [
                 aggregationFn: 'sum',
                 size: 70,
                 maxSize: 400,
-                //enableSorting: false,
-                // aggregatedCell: ({ getValue }) => getValue().toLocaleString(),
+                cell: ({getValue }) =>
+                    formatNumbers(getValue<number>()),
+                aggregatedCell: ({ getValue }) =>
+                    formatNumbers(getValue<number>()),
             },
             {
                 accessorKey: 'quantityReceipt',
                 header: 'Receipt',
-                // cell: ({ getValue }) =>
-                //     Math.round(getValue<number>() * 100) / 100 + '%',
                 aggregationFn: 'sum',
                 size: 70,
                 maxSize: 400,
-                // aggregatedCell: ({ getValue }) =>
-                //     Math.round(getValue<number>() * 100) / 100 + '%',
+                cell: ({getValue }) =>
+                    formatNumbers(getValue<number>()),
+                aggregatedCell: ({ getValue }) =>
+                    formatNumbers(getValue<number>()),
             },
             {
                 accessorKey: 'quantityExpense',
@@ -207,12 +37,18 @@ export const columns_Warehouse_Product: ColumnDef<ProductOnStockRowType>[] = [
                 aggregationFn: 'sum',
                 size: 70,
                 maxSize: 400,
+                cell: ({getValue }) =>
+                    formatNumbers(getValue<number>()),
+                aggregatedCell: ({ getValue }) =>
+                    formatNumbers(getValue<number>()),
             },
             {
                 accessorKey: 'quantityClosingBalance',
                 header: () => 'Closing Balance',
+                cell: ({getValue }) =>
+                    formatNumbers(getValue<number>()),
                 aggregatedCell: ({getValue}) =>
-                    Math.round(getValue<number>() * 100) / 100,
+                    formatNumbers(Math.round(getValue<number>() * 100) / 100),
                 aggregationFn: 'sum',
                 size: 70,
                 maxSize: 400,
@@ -222,69 +58,97 @@ export const columns_Warehouse_Product: ColumnDef<ProductOnStockRowType>[] = [
     {
         accessorKey: 'damagedClosingBalance',
         header: () => 'Damaged',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'expiredClosingBalance',
         header: () => 'Expired',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'undefinedStatusClosingBalance',
         header: () => 'Undefined Status',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'withoutBoxClosingBalance',
         header: () => 'Without Box',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'onShipping',
         header: () => 'On shipping',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'reserveClosingBalance',
         header: () => 'Reserve',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
     },
     {
         accessorKey: 'available',
         header: () => 'Available',
-        aggregatedCell: ({getValue}) =>
-            Math.round(getValue<number>() * 100) / 100,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(Math.round(getValue<number>() * 100) / 100),
     },
 ];
 
-export const columns_Product: ColumnDef<ProductOnStockRowType>[] = [
+const warehouseColumn: ColumnDef<ProductOnStockRowType>[] = [
+    {
+        accessorKey: 'warehouse',
+        id: 'warehouse',
+        header: () => <span>Warehouse</span>,
+        cell: info => <span><span className={`fi fi-${info.row.original?.country ? info.row.original?.country.toLowerCase() : ''} flag-icon`}></span>{info.row.original.warehouse}</span>,
+
+        aggregationFn: 'count',
+        size: 110,
+        minSize: 100,
+        maxSize: 500,
+    },
+];
+
+const productColumn = (width: number) => [
     {
 
         accessorKey: 'product',
@@ -296,114 +160,44 @@ export const columns_Product: ColumnDef<ProductOnStockRowType>[] = [
          */
         //getGroupingValue: row => `${row.Product} ${row.Warehouse}`,
         aggregationFn: 'count',
-        size: 230,
+        size: width,
         maxSize: 1800,
 
+    } as ColumnDef<ProductOnStockRowType>,
+]
+
+const documentColumns: ColumnDef<ProductOnStockRowType>[] = [
+    {
+        accessorKey: 'document',
+        header: 'Document',
+        size: 90,
+        maxSize: 500,
     },
     {
-        header: 'Quantity',
-        columns: [
-            {
-                accessorKey: 'quantityOpeningBalance',
-                header: () => <span>Opening Balance</span>,
-                aggregationFn: 'sum',
-                size: 70,
-                maxSize: 400,
-                //enableSorting: false,
-                // aggregatedCell: ({ getValue }) => getValue().toLocaleString(),
-            },
-            {
-                accessorKey: 'quantityReceipt',
-                header: 'Receipt',
-                // cell: ({ getValue }) =>
-                //     Math.round(getValue<number>() * 100) / 100 + '%',
-                aggregationFn: 'sum',
-                size: 70,
-                maxSize: 400,
-                // aggregatedCell: ({ getValue }) =>
-                //     Math.round(getValue<number>() * 100) / 100 + '%',
-            },
-            {
-                accessorKey: 'quantityExpense',
-                header: 'Expense',
-                aggregationFn: 'sum',
-                size: 70,
-                maxSize: 400,
-            },
-            {
-                accessorKey: 'quantityClosingBalance',
-                header: () => 'Closing Balance',
-                aggregatedCell: ({getValue}) =>
-                    Math.round(getValue<number>() * 100) / 100,
-                aggregationFn: 'sum',
-                size: 70,
-                maxSize: 400,
-            },
-        ],
-    },
-    {
-        accessorKey: 'damagedClosingBalance',
-        header: () => 'Damaged',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
-        aggregationFn: 'sum',
+        accessorKey: 'period',
+        header: 'Period',
+        cell: info => <span>{formatDateTimeToStringWithDot(info.row.original?.period)}</span>,
         size: 70,
-        maxSize: 400,
+        maxSize: 500,
     },
-    {
-        accessorKey: 'expiredClosingBalance',
-        header: () => 'Expired',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-    },
-    {
-        accessorKey: 'undefinedStatusClosingBalance',
-        header: () => 'Undefined Status',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-    },
-    {
-        accessorKey: 'withoutBoxClosingBalance',
-        header: () => 'Without Box',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-    },
-    {
-        accessorKey: 'onShipping',
-        header: () => 'On shipping',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-    },
-    {
-        accessorKey: 'reserveClosingBalance',
-        header: () => 'Reserve',
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-    },
-    {
-        accessorKey: 'available',
-        header: () => 'Available',
-        aggregatedCell: ({getValue}) =>
-            Math.round(getValue<number>() * 100) / 100,
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-    },
+]
+
+export const columns_Warehouse_Product_Doc: ColumnDef<ProductOnStockRowType>[] = [
+    ...productColumn(80),
+    ...warehouseColumn,
+    ...documentColumns,
+    ...resourceColumns,
+];
+
+export const columns_Warehouse_Product: ColumnDef<ProductOnStockRowType>[] = [
+    ...productColumn(120),
+    ...warehouseColumn,
+    ...resourceColumns,
+];
+
+export const columns_Product: ColumnDef<ProductOnStockRowType>[] = [
+    ...productColumn(230),
+    ...resourceColumns,
 ];
 
 export const getProductsOnStocksVariantColumns = (variant: PRODUCTS_ON_STOCKS_VARIANTS) => {

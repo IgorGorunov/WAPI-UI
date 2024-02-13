@@ -6,7 +6,7 @@ import "/node_modules/flag-icons/css/flag-icons.min.css";
 import {getVariantColumnsByReportType} from '../utils';
 
 import {
-    ColumnFiltersState,
+    //ColumnFiltersState,
     ColumnResizeMode,
     ColumnSizingState,
     ColumnSort,
@@ -41,19 +41,15 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
     //resizing
     const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({});
     const [columnResizeMode, setColumnResizeMode] = React.useState<ColumnResizeMode>("onChange");
-    //
-    // useEffect(() => {
-    //     console.log("columnSizing", columnSizing);
-    // }, [columnSizing]);
 
     const initialSortingState: ColumnSort[] = useMemo(()=> {return sortingCols.map(item => ({id: item, desc: false}))},[sortingCols]);
 
     const [sorting, setSorting] = React.useState<SortingState>( initialSortingState);
     const [grouping, setGrouping] = React.useState<GroupingState>(reportGrouping);
     const [columnVisibility, setColumnVisibility] = React.useState({'deliveredWithTroubleStatus':false,});
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
+    // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    //     []
+    // )
     const [globalFilter, setGlobalFilter] = React.useState(searchText);
 
     useEffect(() => {
@@ -100,20 +96,9 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
-        onColumnFiltersChange: setColumnFilters,
+        //onColumnFiltersChange: setColumnFilters,
         onColumnSizingChange: setColumnSizing,
     })
-
-    // const columnSizeVars = React.useMemo(() => {
-    //     const headers = table.getFlatHeaders()
-    //     const colSizes: { [key: string]: number } = {}
-    //     for (let i = 0; i < headers.length; i++) {
-    //         const header = headers[i]!
-    //         colSizes[`--header-${header.id}-size`] = header.getSize()
-    //         colSizes[`--col-${header.column.id}-size`] = header.column.getSize()
-    //     }
-    //     return colSizes
-    // }, [table.getState().columnSizingInfo])
 
     const calcPadding = (index: number, isCellAggregated: boolean, hasSubRows:boolean, depth: number ) => {
         if (index<=groupedCols && !isCellAggregated) {

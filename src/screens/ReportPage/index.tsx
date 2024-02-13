@@ -9,7 +9,7 @@ import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import {verifyUser} from "@/utils/userData";
 import {getReportData, getReportParams} from "@/services/reports";
-import {ProductsOnStocksReportType, REPORT_TITLES, REPORT_TYPES, ReportParametersType} from "@/types/reports";
+import {REPORT_TITLES, REPORT_TYPES, ReportParametersType} from "@/types/reports";
 import Loader from "@/components/Loader";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import DateInput from "@/components/DateInput";
@@ -17,7 +17,6 @@ import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
 import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {DateRangeType} from "@/types/dashboard";
-import {FormFieldTypes} from "@/types/forms";
 import FiltersBlock from "@/components/FiltersBlock";
 import FiltersContainer from "@/components/FiltersContainer";
 import ReportTable from "./ReportTable";
@@ -145,16 +144,16 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
     // Search and filters
     const [searchTerm, setSearchTerm] = useState('');
-    const [fullTextSearch, setFullTextSearch] = useState(true);
-    const fullTextSearchField = {
-        fieldType: FormFieldTypes.TOGGLE,
-        name: 'fullTextSearch',
-        label: 'Full text search',
-        checked: fullTextSearch,
-        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
-        classNames: 'full-text-search-toggle',
-        hideTextOnMobile: true,
-    }
+    // const [fullTextSearch, setFullTextSearch] = useState(true);
+    // const fullTextSearchField = {
+    //     fieldType: FormFieldTypes.TOGGLE,
+    //     name: 'fullTextSearch',
+    //     label: 'Full text search',
+    //     checked: fullTextSearch,
+    //     onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+    //     classNames: 'full-text-search-toggle',
+    //     hideTextOnMobile: true,
+    // }
 
     const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
@@ -393,10 +392,10 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                 {reportType !== REPORT_TYPES.SALE_DYNAMIC ?<div className='variant-container'>
                     <p className='variant-container__period-type-title'>Variant:</p>
                     {reportType===REPORT_TYPES.DELIVERY_RATES || reportType === REPORT_TYPES.REPORT_SALES ? (
-                        <div className='variant-container__period-type-wrapper'>
-                            {/*<p className='variant-container__period-type-title'>Group by period:</p>*/}
-                            <RadioSwitch name='periodVariantType' value={periodVariantType} onChange={(val)=>setPeriodVariantType(val as string)} options={periodVariantOptions} />
-                        </div>)
+                            <div className='variant-container__period-type-wrapper'>
+                                {/*<p className='variant-container__period-type-title'>Group by period:</p>*/}
+                                <RadioSwitch name='periodVariantType' value={periodVariantType} onChange={(val)=>setPeriodVariantType(val as string)} options={periodVariantOptions} />
+                            </div>)
                         : null
                     }
                     <RadioButton name='reportvariants' options={reportVariants} value={curVariant.toString()} onChange={(val)=>{setIsCalculating(true);setCurVariant(val.toString());}}/>
