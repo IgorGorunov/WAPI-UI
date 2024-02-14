@@ -43,7 +43,7 @@ export const reportBlocks: ReportsListBlockType[] = [
             {
                 reportType: REPORT_TYPES.COD_REPORT,
                 reportPageLink: Routes.CodReport,
-                reportDescription: 'The report shows information about COD',
+                reportDescription: 'The report shows COD paid, reported and total balance for time frames set',
             },
 
         ]
