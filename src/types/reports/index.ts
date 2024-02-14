@@ -29,7 +29,7 @@ export const REPORT_TITLES = {
     [REPORT_TYPES.DELIVERY_RATES]: "Buyout / delivery rates",
     [REPORT_TYPES.REPORT_SALES]: "Sales report",
     [REPORT_TYPES.SALE_DYNAMIC]: "Sales dynamic report",
-    [REPORT_TYPES.COD_REPORT]: 'Customer report COD Check',
+    [REPORT_TYPES.COD_REPORT]: 'COD check report',
 }
 
 export type BlockReportsType = {
