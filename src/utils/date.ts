@@ -16,6 +16,11 @@ const formatDateTimeToStringWithDot = (dateStr: string) => {
     return curDate.toLocaleDateString('en-GB').split('/').join('.')+' '+curDate.toLocaleTimeString('en-GB');
 }
 
+const formatDateTimeToStringWithDotWithoutSeconds = (dateStr: string) => {
+    const curDate = new Date(dateStr);
+    return curDate.toLocaleDateString('en-GB').split('/').join('.')+' '+curDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute:'2-digit'});
+}
+
 const formatDateToDisplayString = (date: Date) => {
     let d = new Date(date),
         month = "" + (d.getMonth() + 1),
@@ -75,4 +80,5 @@ export {
     getLastFewDays,
     formatDateToShowMonthYear,
     formatDateToWeekRange,
+    formatDateTimeToStringWithDotWithoutSeconds
 }

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Icon from "@/components/Icon";
 import Link from "next/link";
 import './styles.scss'

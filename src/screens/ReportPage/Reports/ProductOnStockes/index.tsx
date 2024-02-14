@@ -1,8 +1,9 @@
 import * as React from "react";
 import {ProductOnStockRowType, PRODUCTS_ON_STOCKS_VARIANTS} from "@/types/reports";
 import {ColumnDef} from "@tanstack/react-table";
-import {formatDateTimeToStringWithDot} from "@/utils/date";
+import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 import {formatNumbers} from "@/screens/ReportPage/utils";
+import {Tooltip} from "antd";
 
 
 const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
@@ -21,8 +22,8 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
                     formatNumbers(getValue<number>()),
             },
             {
-                accessorKey: 'quantityReceipt',
-                header: 'Receipt',
+                accessorKey: 'quantityExpense',
+                header: ()=><Tooltip title="Outbound" ><span>Expense</span></Tooltip>,
                 aggregationFn: 'sum',
                 size: 70,
                 maxSize: 400,
@@ -32,8 +33,8 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
                     formatNumbers(getValue<number>()),
             },
             {
-                accessorKey: 'quantityExpense',
-                header: 'Expense',
+                accessorKey: 'quantityReceipt',
+                header: ()=><Tooltip title="Inbound" ><span>Receipt</span></Tooltip>,
                 aggregationFn: 'sum',
                 size: 70,
                 maxSize: 400,
@@ -53,84 +54,84 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
                 size: 70,
                 maxSize: 400,
             },
+        {
+            accessorKey: 'damagedClosingBalance',
+            header: () => 'Damaged',
+            aggregationFn: 'sum',
+            size: 70,
+            maxSize: 400,
+            cell: ({getValue }) =>
+                formatNumbers(getValue<number>()),
+            aggregatedCell: ({ getValue }) =>
+                formatNumbers(getValue<number>()),
+        },
+        {
+            accessorKey: 'expiredClosingBalance',
+            header: () => 'Expired',
+            aggregationFn: 'sum',
+            size: 70,
+            maxSize: 400,
+            cell: ({getValue }) =>
+                formatNumbers(getValue<number>()),
+            aggregatedCell: ({ getValue }) =>
+                formatNumbers(getValue<number>()),
+        },
+        // {
+        //     accessorKey: 'undefinedStatusClosingBalance',
+        //     header: () => 'Undefined Status',
+        //     aggregationFn: 'sum',
+        //     size: 70,
+        //     maxSize: 400,
+        //     cell: ({getValue }) =>
+        //         formatNumbers(getValue<number>()),
+        //     aggregatedCell: ({ getValue }) =>
+        //         formatNumbers(getValue<number>()),
+        // },
+        // {
+        //     accessorKey: 'withoutBoxClosingBalance',
+        //     header: () => 'Without Box',
+        //     aggregationFn: 'sum',
+        //     size: 70,
+        //     maxSize: 400,
+        //     cell: ({getValue }) =>
+        //         formatNumbers(getValue<number>()),
+        //     aggregatedCell: ({ getValue }) =>
+        //         formatNumbers(getValue<number>()),
+        // },
+        {
+            accessorKey: 'onShipping',
+            header: ()=><Tooltip title="In stock movements" ><span>On shipping</span></Tooltip>,
+            aggregationFn: 'sum',
+            size: 70,
+            maxSize: 400,
+            cell: ({getValue }) =>
+                formatNumbers(getValue<number>()),
+            aggregatedCell: ({ getValue }) =>
+                formatNumbers(getValue<number>()),
+        },
+        {
+            accessorKey: 'reserveClosingBalance',
+            header: () => <Tooltip title="For orders and stockmovements" ><span>Reserve</span></Tooltip>,
+            aggregationFn: 'sum',
+            size: 70,
+            maxSize: 400,
+            cell: ({getValue }) =>
+                formatNumbers(getValue<number>()),
+            aggregatedCell: ({ getValue }) =>
+                formatNumbers(getValue<number>()),
+        },
+        {
+            accessorKey: 'available',
+            header: () => <Tooltip title="For sale" ><span>Available</span></Tooltip>,
+            aggregationFn: 'sum',
+            size: 70,
+            maxSize: 400,
+            cell: ({getValue }) =>
+                formatNumbers(getValue<number>()),
+            aggregatedCell: ({ getValue }) =>
+                formatNumbers(Math.round(getValue<number>() * 100) / 100),
+        },
         ],
-    },
-    {
-        accessorKey: 'damagedClosingBalance',
-        header: () => 'Damaged',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        cell: ({getValue }) =>
-            formatNumbers(getValue<number>()),
-        aggregatedCell: ({ getValue }) =>
-            formatNumbers(getValue<number>()),
-    },
-    {
-        accessorKey: 'expiredClosingBalance',
-        header: () => 'Expired',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        cell: ({getValue }) =>
-            formatNumbers(getValue<number>()),
-        aggregatedCell: ({ getValue }) =>
-            formatNumbers(getValue<number>()),
-    },
-    {
-        accessorKey: 'undefinedStatusClosingBalance',
-        header: () => 'Undefined Status',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        cell: ({getValue }) =>
-            formatNumbers(getValue<number>()),
-        aggregatedCell: ({ getValue }) =>
-            formatNumbers(getValue<number>()),
-    },
-    {
-        accessorKey: 'withoutBoxClosingBalance',
-        header: () => 'Without Box',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        cell: ({getValue }) =>
-            formatNumbers(getValue<number>()),
-        aggregatedCell: ({ getValue }) =>
-            formatNumbers(getValue<number>()),
-    },
-    {
-        accessorKey: 'onShipping',
-        header: () => 'On shipping',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        cell: ({getValue }) =>
-            formatNumbers(getValue<number>()),
-        aggregatedCell: ({ getValue }) =>
-            formatNumbers(getValue<number>()),
-    },
-    {
-        accessorKey: 'reserveClosingBalance',
-        header: () => 'Reserve',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        cell: ({getValue }) =>
-            formatNumbers(getValue<number>()),
-        aggregatedCell: ({ getValue }) =>
-            formatNumbers(getValue<number>()),
-    },
-    {
-        accessorKey: 'available',
-        header: () => 'Available',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        cell: ({getValue }) =>
-            formatNumbers(getValue<number>()),
-        aggregatedCell: ({ getValue }) =>
-            formatNumbers(Math.round(getValue<number>() * 100) / 100),
     },
 ];
 
@@ -176,14 +177,15 @@ const documentColumns: ColumnDef<ProductOnStockRowType>[] = [
     {
         accessorKey: 'period',
         header: 'Period',
-        cell: info => <span>{formatDateTimeToStringWithDot(info.row.original?.period)}</span>,
-        size: 70,
+        cell: info => <span>{formatDateTimeToStringWithDotWithoutSeconds(info.row.original?.period)}</span>,
+        size: 80,
+        minSize: 80,
         maxSize: 500,
     },
 ]
 
 export const columns_Warehouse_Product_Doc: ColumnDef<ProductOnStockRowType>[] = [
-    ...productColumn(80),
+    ...productColumn(90),
     ...warehouseColumn,
     ...documentColumns,
     ...resourceColumns,

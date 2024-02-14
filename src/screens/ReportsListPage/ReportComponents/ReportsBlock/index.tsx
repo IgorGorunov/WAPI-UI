@@ -19,6 +19,9 @@ const ReportsBlock: React.FC<ReportsListBlockType> = ({blockTitle, blockIcon, bl
                         <Link  href={reportItem.reportPageLink} className="reports-block-item">
                             {REPORT_TITLES[reportItem.reportType]}
                         </Link>
+                        {reportItem.reportDescription ? <div className="reports-block-item__description">
+                            {reportItem.reportDescription}
+                        </div> : null}
                     </div>
                 )) }
             </div>

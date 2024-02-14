@@ -306,6 +306,15 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
         const filteredData = reportData ? reportData.filter(reportDataRow => {
 
+            const matchesSearch = !searchTerm.trim() || Object.keys(reportDataRow).some(key => {
+                const value = reportDataRow[key];
+                const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
+                const searchTermsArray = searchTerm.trim().toLowerCase().replace(',',' ').replace('\\n',' ').replace('  ', ' ').split(' ').filter(item=>item);
+
+                console.log('search', searchTerm, searchTermsArray);
+                return searchTermsArray.some(word => stringValue.includes(word));
+            });
+
             const matchesCountry = !filterCountry.length || filterCountry.includes(reportDataRow?.country) || filterCountry.includes(reportDataRow?.countryCode);
             const matchesReceiverCountry = !filterReceiverCountry.length || filterReceiverCountry.includes(reportDataRow?.receiverCountryCode);
             const matchesWarehouse = !filterWarehouse.length || filterWarehouse.includes(reportDataRow?.warehouse);
@@ -314,7 +323,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
             const matchesProductType = !filterProductType.length || filterProductType.includes(reportDataRow?.productType);
             const matchesStatus = !filterStatus.length || filterStatus.includes(reportDataRow?.status);
 
-            return matchesCountry && matchesReceiverCountry && matchesWarehouse && matchesCourierService && matchesProduct && matchesProductType && matchesStatus;
+            return matchesSearch && matchesCountry && matchesReceiverCountry && matchesWarehouse && matchesCourierService && matchesProduct && matchesProductType && matchesStatus;
         }) : [];
 
         const resourceColumns = getVariantResourceColsByReportType(reportType, curVariantAsType, reportData);
@@ -358,7 +367,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     useEffect(() => {
         setIsCalculating(true);
         handleReportChange();
-    }, [reportData, periodVariantType, curVariant, filterCountry, filterProduct, filterWarehouse, filterReceiverCountry, filterProductType, filterCourierService, filterStatus]);
+    }, [reportData, periodVariantType, curVariant, searchTerm, filterCountry, filterProduct, filterWarehouse, filterReceiverCountry, filterProductType, filterCourierService, filterStatus]);
 
     useEffect(() => {
         console.log('report data changed: ', reportData)
@@ -414,8 +423,8 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
                 </div>
                 {/* Report */}
-                <div className={`card report-results ${isCurrentRangeChanged ? 'need-rerender' : ''}`}>
-                    {isCurrentRangeChanged && <div className='need-rerender-overlay'><p className='need-rerender-text'>Please, run "Generate"!</p></div>}
+                <div className={`report-results ${isCurrentRangeChanged ? 'need-rerender' : ''}`}>
+                    {isCurrentRangeChanged && !noData && <div className='need-rerender-overlay'><p className='need-rerender-text'>Please, run "Generate"!</p></div>}
 
                     {!noData && collapsedData ?
                         <ReportTable
@@ -424,10 +433,14 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                             reportVariantAsString={reportType === REPORT_TYPES.DELIVERY_RATES || reportType === REPORT_TYPES.REPORT_SALES ? periodVariantType+'_'+curVariant : curVariant}
                             reportGrouping={groupedFields}
                             dimensionsCount={dimensionsCount}
-                            searchText={searchTerm}
+                            //searchText={searchTerm}
+                            searchText=''
                             sortingCols={sortingCols}
                             resourceColumnNames={resourceColumnNames}
-                        /> : null
+                        /> :
+                        <div className='report-generate-hint'>
+                            Please select a period, variant and click on the Generate button
+                        </div>
                     }
                 </div>
 

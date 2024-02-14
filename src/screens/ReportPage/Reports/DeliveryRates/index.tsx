@@ -36,7 +36,7 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'delivered',
-        header: () => <Tooltip title="Delivered to final customer" >
+        header: () => <Tooltip title="Delivered to the final customer" >
             <span>Delivered</span>
         </Tooltip>,
         aggregationFn: 'sum',
@@ -88,7 +88,7 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'returned',
-        header: () => <Tooltip title="Already confirmed by warehouse" >
+        header: () => <Tooltip title="Returns already confirmed by warehouse" >
             <span>Returned to sender</span>
         </Tooltip>,
         // aggregatedCell: ({getValue}) =>
@@ -103,7 +103,7 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'otherStatuses',
-        header: () => <Tooltip title="All except InTransit, Delivered, Returning, Returned" >
+        header: () => <Tooltip title="All orders except InTransit, Delivered, Returning, Returned" >
             <span>Other statuses</span>
         </Tooltip>,
         aggregationFn: 'sum',
@@ -131,7 +131,7 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'buyout',
-        header: () => <Tooltip title="Percentage of delivered among orders ever been in transit" >
+        header: () => <Tooltip title="Percentage of delivered orders among orders ever been in transit" >
             <span>Buyout</span>
         </Tooltip>,
         aggregationFn: 'sum',
@@ -146,8 +146,8 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'probableBuyout',
-        header: () => <Tooltip title="If all transit orders delivered" >
-            <span>Probably buyout</span>
+        header: () => <Tooltip title="Buyout of all transit orders will be delivered" >
+            <span>Expected buyout</span>
         </Tooltip>,
         aggregationFn: 'sum',
         size: 80,
@@ -188,7 +188,7 @@ const receiverCountryColumn: ColumnDef<DeliveryRatesRowType>[] = [
     {
         accessorKey: 'receiverCountry',
         id: 'receiverCountry',
-        header: () => <span>Country</span>,
+        header: () => <Tooltip title="Receiver country" ><span>Country</span></Tooltip>,
         cell: info => <span><span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.receiverCountry}</span>,
         aggregationFn: 'count',
         size: 100,

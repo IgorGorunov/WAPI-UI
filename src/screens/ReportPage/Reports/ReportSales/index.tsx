@@ -4,12 +4,13 @@ import {ColumnDef} from "@tanstack/react-table";
 import {formatDateToShowMonthYear, formatDateToWeekRange} from "@/utils/date";
 import getSymbolFromCurrency from "currency-symbol-map";
 import {formatNumbers} from "@/screens/ReportPage/utils";
+import {Tooltip} from "antd";
 
 
 const resourceColumns: ColumnDef<ReportSalesRowType>[] = [
     {
         accessorKey: 'quantity',
-        header: () => <span>Product quantity</span>,
+        header: () => <Tooltip title="Items sold" ><span>Product quantity</span></Tooltip>,
         aggregationFn: 'sum',
         size: 80,
         maxSize: 400,
@@ -20,7 +21,7 @@ const resourceColumns: ColumnDef<ReportSalesRowType>[] = [
     },
     {
         accessorKey: 'wapiTrackingNumber',
-        header: 'Orders count',
+        header: ()=> <Tooltip title="Quantity of orders" ><span>Orders count</span></Tooltip>,
         aggregationFn: 'sum',
         size: 80,
         maxSize: 400,
@@ -35,7 +36,7 @@ const dimensionColumns: ColumnDef<ReportSalesRowType>[] = [
     {
         accessorKey: 'receiverCountry',
         id: 'receiverCountry',
-        header: () => <span>Country</span>,
+        header: () => <Tooltip title="Receiver country" ><span>Country</span></Tooltip>,
         cell: info => <span><span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.receiverCountry}</span>,
         aggregationFn: 'count',
         size: 100,
@@ -43,19 +44,19 @@ const dimensionColumns: ColumnDef<ReportSalesRowType>[] = [
     },
     {
         accessorKey: 'product',
-        header: 'Product [SKU]',
+        header: () => <Tooltip title="Product name [SKU]" ><span>Product <span className='product-sku-header'>[SKU]</span> </span></Tooltip>,
         cell: info => <><span>{`${info.row.original.product}`}</span>{info.row.original.sku ? <span className='product-sku'>{` [${info.row.original.sku}] `}</span> : ''}</>,
         size: 90,
         maxSize: 500,
     },
     {
         accessorKey: 'order',
-        header: 'Order',
+        header: () => <Tooltip title="Wapi tracking number" ><span>Order</span></Tooltip>,
         size: 90,
     },
     {
         accessorKey: 'price',
-        header: 'Price',
+        header: () => <Tooltip title="Price of one product unit" ><span>Price</span></Tooltip>,
         cell: info => <span className='price-column'><span>{`${info.row.original.price}`}</span><span className='currency'>{`${getSymbolFromCurrency(info.row.original.currency) || ''}`}</span></span>,
         size: 50,
         maxSize: 90,

@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {useEffect, useMemo} from 'react';
+import {useEffect, useMemo, useRef} from 'react';
 import Icon from "@/components/Icon";
 import './styles.scss';
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import {getVariantColumnsByReportType} from '../utils';
+import {utils, writeFileXLSX} from "xlsx";
 
 import {
-    //ColumnFiltersState,
     ColumnResizeMode,
     ColumnSizingState,
     ColumnSort,
@@ -113,134 +113,152 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
         } else return '10px';
     }
 
+    const tbl = useRef(null);
+
+    const handleDownload = () => {
+        const wb = utils.table_to_book(tbl.current);
+        // write to XLSX
+        writeFileXLSX(wb, "SheetJSReactExport.xlsx");
+    }
+
+
     return (
-        <div className="report-container">
-            <div className="h-2" />
-            <div className={`t-container ${reportType} ${reportType===REPORT_TYPES.SALE_DYNAMIC ? 'is-sticky' : ''}`}>
-                {/*{reportData && !table.getRowModel().rows.length ? (<div>{reportData.length}</div>) : null}*/}
-                <table {...{
-                    style: {
-                        width: table.getCenterTotalSize()
-                    }
-                }}>
-                    <thead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header, index: number) => {
-                                return (
-                                    <th key={header.id} colSpan={header.colSpan} className={`col-${index}`} {...{
-                                        style: {
-                                            width: header.getSize()
-                                        }
-                                    }}>
-                                        {header.isPlaceholder ? null : (
+        <div className='report'>
+            {reportType===REPORT_TYPES.SALE_DYNAMIC ? <div className='sales-dynamic-legend'>
+                <div><Icon name='arrow-up-green' /> Your sales have increased by more than 25 percent</div>
+                <div><Icon name='arrow-down-red' /> Your sales have decreased by more than 25 percent</div>
+            </div> : null}
+
+            <div className="card report-container">
+                <div className="h-2" />
+                {/*<div className='Test'><Button onClick={handleDownload}>Export to Excel</Button></div>*/}
+
+                <div className={`t-container ${reportType} ${reportType===REPORT_TYPES.SALE_DYNAMIC ? 'is-sticky' : ''}`}>
+                    {/*{reportData && !table.getRowModel().rows.length ? (<div>{reportData.length}</div>) : null}*/}
+                    <table ref={tbl} {...{
+                        style: {
+                            width: table.getCenterTotalSize()
+                        }
+                    }}>
+                        <thead>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <tr key={headerGroup.id}>
+                                {headerGroup.headers.map((header, index: number) => {
+                                    return (
+                                        <th key={header.id} colSpan={header.colSpan} className={`col-${index}`} {...{
+                                            style: {
+                                                width: header.getSize()
+                                            }
+                                        }}>
+                                            {header.isPlaceholder ? null : (
+                                                <div
+                                                    {...{
+                                                        className: `${header.column.getCanSort()
+                                                            ? 'cursor-pointer select-none'
+                                                            : ''}`,
+                                                        onClick: header.column.getToggleSortingHandler(),
+                                                    }}
+                                                >
+                                                    {flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext()
+                                                    )}
+                                                    {{
+                                                        asc: <span className='sort-icon'><Icon name='sort-asc'/></span>,
+                                                        desc: <span className='sort-icon'><Icon name='sort-desc'/></span>,
+                                                    }[header.column.getIsSorted() as string] ?? null}
+                                                </div>
+                                            )}
                                             <div
                                                 {...{
-                                                    className: `${header.column.getCanSort()
-                                                        ? 'cursor-pointer select-none'
-                                                        : ''}`,
-                                                    onClick: header.column.getToggleSortingHandler(),
+                                                    onMouseDown: header.getResizeHandler(),
+                                                    onTouchStart: header.getResizeHandler(),
+                                                    className: `resizer ${
+                                                        header.column.getIsResizing() ? "isResizing" : ""
+                                                    }`,
+                                                    style: {
+                                                        transform:
+                                                            columnResizeMode === "onEnd" &&
+                                                            header.column.getIsResizing()
+                                                                ? `translateX(${
+                                                                    table.getState().columnSizingInfo.deltaOffset
+                                                                }px)`
+                                                                : ""
+                                                    }
                                                 }}
-                                            >
-                                                {flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                                {{
-                                                    asc: <span className='sort-icon'><Icon name='sort-asc'/></span>,
-                                                    desc: <span className='sort-icon'><Icon name='sort-desc'/></span>,
-                                                }[header.column.getIsSorted() as string] ?? null}
-                                            </div>
-                                        )}
-                                        <div
-                                            {...{
-                                                onMouseDown: header.getResizeHandler(),
-                                                onTouchStart: header.getResizeHandler(),
-                                                className: `resizer ${
-                                                    header.column.getIsResizing() ? "isResizing" : ""
-                                                }`,
-                                                style: {
-                                                    transform:
-                                                        columnResizeMode === "onEnd" &&
-                                                        header.column.getIsResizing()
-                                                            ? `translateX(${
-                                                                table.getState().columnSizingInfo.deltaOffset
-                                                            }px)`
-                                                            : ""
-                                                }
-                                            }}
-                                        />
-                                    </th>
-                                );
-                            })}
-                        </tr>
-                    ))}
-                    </thead>
-                    <tbody>
-                    {table.getRowModel().rows.map((row) => {
-                        return (
-                            <tr key={row.id} className={`${row.subRows.length ? 'is-group' : 'is-leaf'} ${row.getIsGrouped ? 'is-grouped' : 'not-grouped'} ${row.getIsExpanded ? 'is-expanded' : 'not-expanded'} depth-${groupedCols - row.depth}`}>
-
-                                {row.getVisibleCells().map((cell,index) => {
-                                    return (
-                                        <td
-                                            colSpan={Number(`${(cell.getIsGrouped() ? dimensionsCount : index<=groupedCols && !cell.getIsAggregated() ? groupedCols+1  : 1) }`)}
-                                            className={`${cell.id} col-${index} ${index<dimensionsCount ? 'is-dimension': 'is-resource'} ${cell.getIsGrouped() ? 'is-grouped' : ''} ${cell.getIsAggregated() ? 'is-aggravated' : ''} ${cell.getIsPlaceholder() ? 'is-placeholder' : ''} ${row.depth}`}
-                                            {...{
-                                                key: cell.id,
-                                                style: {
-                                                    // paddingLeft: index<=groupedCols && !cell.getIsAggregated() ? row.subRows.length ? `${row.depth * 16 +10}px` : `${row.depth * 16 + 30}px` : '10px',
-                                                    paddingLeft: calcPadding(index, cell.getIsAggregated(), row.subRows.length !==0, row.depth),
-                                                    color: cell.getIsGrouped()
-                                                        ? "rgb(29 78 216)"
-                                                        : "black",
-                                                    background: cell.getIsGrouped()
-                                                        ? "none"
-                                                        : cell.getIsAggregated()
-                                                            ? "none"
-                                                            : cell.getIsPlaceholder()
-                                                                ? "none"
-                                                                : "none",
-                                                },
-                                            }}
-                                        >
-                                            {cell.getIsGrouped() ? (
-                                                // If it's a grouped cell, add an expander and row count
-                                                <>
-                                                    <button
-                                                        {...{
-                                                            onClick: row.getToggleExpandedHandler(),
-                                                            className: "btn-expand",
-                                                            style: {
-                                                                cursor: row.getCanExpand()
-                                                                    ? "pointer"
-                                                                    : "normal",
-                                                            },
-                                                        }}
-                                                    >
-                                                        <Icon name={`${row.getIsExpanded() ? 'minus' : 'plus'}`} className='show-hide-btn' />
-                                                        {flexRender(
-                                                            cell.column.columnDef.cell,
-                                                            cell.getContext()
-                                                        )}{" "}
-                                                        ({row.subRows.length})
-                                                    </button>
-                                                </>
-                                            ) : cell.getIsPlaceholder() ? null : ( // For cells with repeated values, render null
-                                                // Otherwise, just render the regular cell
-                                                flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )
-                                            )}
-                                        </td>
+                                            />
+                                        </th>
                                     );
                                 })}
                             </tr>
-                        );
-                    })}
-                    </tbody>
-                </table>
+                        ))}
+                        </thead>
+                        <tbody>
+                        {table.getRowModel().rows.map((row) => {
+                            return (
+                                <tr key={row.id} className={`${row.subRows.length ? 'is-group' : 'is-leaf'} ${row.getIsGrouped ? 'is-grouped' : 'not-grouped'} ${row.getIsExpanded ? 'is-expanded' : 'not-expanded'} depth-${groupedCols - row.depth}`}>
+
+                                    {row.getVisibleCells().map((cell,index) => {
+                                        return (
+                                            <td
+                                                colSpan={Number(`${(cell.getIsGrouped() ? dimensionsCount : index<=groupedCols && !cell.getIsAggregated() ? groupedCols+1  : 1) }`)}
+                                                className={`${cell.id} col-${index} ${index<dimensionsCount ? 'is-dimension': 'is-resource'} ${cell.getIsGrouped() ? 'is-grouped' : ''} ${cell.getIsAggregated() ? 'is-aggravated' : ''} ${cell.getIsPlaceholder() ? 'is-placeholder' : ''} ${row.depth}`}
+                                                {...{
+                                                    key: cell.id,
+                                                    style: {
+                                                        // paddingLeft: index<=groupedCols && !cell.getIsAggregated() ? row.subRows.length ? `${row.depth * 16 +10}px` : `${row.depth * 16 + 30}px` : '10px',
+                                                        paddingLeft: calcPadding(index, cell.getIsAggregated(), row.subRows.length !==0, row.depth),
+                                                        color: cell.getIsGrouped()
+                                                            ? "rgb(29 78 216)"
+                                                            : "black",
+                                                        background: cell.getIsGrouped()
+                                                            ? "none"
+                                                            : cell.getIsAggregated()
+                                                                ? "none"
+                                                                : cell.getIsPlaceholder()
+                                                                    ? "none"
+                                                                    : "none",
+                                                    },
+                                                }}
+                                            >
+                                                {cell.getIsGrouped() ? (
+                                                    // If it's a grouped cell, add an expander and row count
+                                                    <>
+                                                        <button
+                                                            {...{
+                                                                onClick: row.getToggleExpandedHandler(),
+                                                                className: "btn-expand",
+                                                                style: {
+                                                                    cursor: row.getCanExpand()
+                                                                        ? "pointer"
+                                                                        : "normal",
+                                                                },
+                                                            }}
+                                                        >
+                                                            <Icon name={`${row.getIsExpanded() ? 'minus' : 'plus'}`} className='show-hide-btn' />
+                                                            {flexRender(
+                                                                cell.column.columnDef.cell,
+                                                                cell.getContext()
+                                                            )}{" "}
+                                                            ({row.subRows.length})
+                                                        </button>
+                                                    </>
+                                                ) : cell.getIsPlaceholder() ? null : ( // For cells with repeated values, render null
+                                                    // Otherwise, just render the regular cell
+                                                    flexRender(
+                                                        cell.column.columnDef.cell,
+                                                        cell.getContext()
+                                                    )
+                                                )}
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )

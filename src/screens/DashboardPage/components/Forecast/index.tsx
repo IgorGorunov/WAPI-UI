@@ -28,21 +28,21 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
   const isGMV = type === "GMV";
   const amountPrefix = isGMV ? "€" : "";
 
-  const Formatter = Intl.NumberFormat();
+  const Formatter = Intl.NumberFormat('en-GB');
 
   const amounts = {
     beginOfMonth: Formatter.format(Math.floor(beginOfMonth)).replaceAll(
         ",",
         " "
     ),
-    beginOfYear: Formatter.format(Math.floor(beginOfYear)).replaceAll(",", "."),
+    beginOfYear: Formatter.format(Math.floor(beginOfYear)).replaceAll(",", " "),
     forecastByMonth: Formatter.format(Math.floor(forecastByMonth)).replaceAll(
         ",",
         " "
     ),
     forecastByYear: Formatter.format(Math.floor(forecastByYear)).replaceAll(
         ",",
-        "."
+        " "
     ),
   };
 
@@ -55,7 +55,7 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
             {isError ? (<div className='forecast__error-message'>{errorMessage}</div>) : (<>
               <p className="forecast__main-amount">
                 {amountPrefix}
-                {Formatter.format(Math.floor(amountInPeriod)).replaceAll(",", ".")}
+                {Formatter.format(Math.floor(amountInPeriod)).replaceAll(",", " ")}
               </p>
               <p className="mb">In period</p>
               <div className="">
