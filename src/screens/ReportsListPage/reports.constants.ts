@@ -9,7 +9,7 @@ export const reportBlocks: ReportsListBlockType[] = [
             {
                 reportType: REPORT_TYPES.PRODUCTS_ON_STOCKS,
                 reportPageLink: Routes.ProductsOnStocks,
-                reportDescription: 'Report shows history of product movements',
+                reportDescription: 'The report shows history of product movements',
             },
 
         ]
@@ -26,12 +26,12 @@ export const reportBlocks: ReportsListBlockType[] = [
             {
                 reportType: REPORT_TYPES.REPORT_SALES,
                 reportPageLink: Routes.ReportSales,
-                // reportDescription: '',
+                reportDescription: 'The report shows the number of orders and items - by country of the customer, product and order.',
             },
             {
                 reportType: REPORT_TYPES.SALE_DYNAMIC,
                 reportPageLink: Routes.SaleDynamic,
-                // reportDescription: '',
+                reportDescription: 'This report shows dynamic of your sales',
             },
 
         ]
@@ -43,7 +43,7 @@ export const reportBlocks: ReportsListBlockType[] = [
             {
                 reportType: REPORT_TYPES.COD_REPORT,
                 reportPageLink: Routes.CodReport,
-                reportDescription: 'Report shows history of product movements',
+                reportDescription: 'The report shows information about COD',
             },
 
         ]

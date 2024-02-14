@@ -13,7 +13,7 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             <span>Total</span>
         </Tooltip>,
         aggregationFn: 'sum',
-        size: 80,
+        size: 75,
         maxSize: 400,
 
         cell: ({getValue }) =>
@@ -27,7 +27,7 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             <span>Total in transit</span>
         </Tooltip>,
         aggregationFn: 'sum',
-        size: 80,
+        size: 75,
         maxSize: 400,
         cell: ({getValue }) =>
             formatNumbers(getValue<number>()),
@@ -40,7 +40,7 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             <span>Delivered</span>
         </Tooltip>,
         aggregationFn: 'sum',
-        size: 80,
+        size: 75,
         maxSize: 400,
         cell: ({getValue }) =>
             formatNumbers(getValue<number>()),
@@ -146,7 +146,7 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'probableBuyout',
-        header: () => <Tooltip title="Buyout of all transit orders will be delivered" >
+        header: () => <Tooltip title="Buyout if all transit orders will be delivered" >
             <span>Expected buyout</span>
         </Tooltip>,
         aggregationFn: 'sum',
@@ -200,7 +200,8 @@ const productTypeColumn: ColumnDef<DeliveryRatesRowType>[] = [
     {
         accessorKey: 'productType',
         header: 'Product type',
-        size: 90,
+        size: 110,
+        minSize: 100,
         maxSize: 500,
     } as ColumnDef<DeliveryRatesRowType>,
 ];

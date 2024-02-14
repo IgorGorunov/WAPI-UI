@@ -327,32 +327,32 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
             responsive: ['lg'],
         },
-        {
-            title: <TitleColumn title="Undefined status" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'undefinedStatus',
-            key: 'undefinedStatus',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Without box" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'withoutBox',
-            key: 'withoutBox',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
-            }),
-            responsive: ['lg'],
-        },
+        // {
+        //     title: <TitleColumn title="Undefined status" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+        //     ),
+        //     dataIndex: 'undefinedStatus',
+        //     key: 'undefinedStatus',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
+        // {
+        //     title: <TitleColumn title="Without box" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+        //     ),
+        //     dataIndex: 'withoutBox',
+        //     key: 'withoutBox',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
         {
             title: <TitleColumn title="Returning" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (

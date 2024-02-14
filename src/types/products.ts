@@ -1,5 +1,6 @@
 export type ProductType = {
     aliases: string;
+    barcodes: string;
     dimension: string;
     name: string;
     sku: string;
