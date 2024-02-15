@@ -283,7 +283,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
                 <div className="h-2" />
                 <div className='interactive-block'>
                     <Button onClick={handleDownload} icon='download-file' iconOnTheRight variant={ButtonVariant.SECONDARY}>Export to Excel</Button>
-                    {reportGrouping.length ? <Button iconOnTheRight onClick={()=>{table.toggleAllRowsExpanded(!groupsAreOpen); setGroupsAreOpen(prev => !prev);}} icon={ !groupsAreOpen ? 'minus' : 'plus'} variant={ButtonVariant.SECONDARY} >{groupsAreOpen ? 'Collapse all' : 'Expand all'}</Button> : null}
+                    {reportGrouping.length ? <Button iconOnTheRight onClick={()=>{table.toggleAllRowsExpanded(!groupsAreOpen); setGroupsAreOpen(prev => !prev);}} icon={ groupsAreOpen ? 'minus' : 'plus'} variant={ButtonVariant.SECONDARY} >{groupsAreOpen ? 'Collapse all' : 'Expand all'}</Button> : null}
                 </div>
 
                 <div className={`t-container ${reportType} ${reportType===REPORT_TYPES.SALE_DYNAMIC ? 'is-sticky' : ''}`}>
