@@ -44,7 +44,7 @@ const dimensionColumns: ColumnDef<ReportSalesRowType>[] = [
     },
     {
         accessorKey: 'product',
-        header: () => <Tooltip title="Product name [SKU]" ><span>Product <span className='product-sku-header'>[SKU]</span> </span></Tooltip>,
+        header: () => <Tooltip title="Name of the product + [SKU]" ><span>Product <span className='product-sku-header'>[SKU]</span> </span></Tooltip>,
         cell: info => <><span>{`${info.row.original.product}`}</span>{info.row.original.sku ? <span className='product-sku'>{` [${info.row.original.sku}] `}</span> : ''}</>,
         size: 90,
         maxSize: 500,
@@ -67,7 +67,7 @@ const dimensionColumns: ColumnDef<ReportSalesRowType>[] = [
 export const columns_Month_Country_Product_Order: ColumnDef<ReportSalesRowType>[] = [
     {
         accessorKey: 'month',
-        header: 'Period - month',
+        header: () => <Tooltip title="Period - month">Period - month</Tooltip> ,
         cell: info => formatDateToShowMonthYear(info.getValue() as string),
         aggregationFn: 'count',
         size: 80,
@@ -81,7 +81,7 @@ export const columns_Month_Country_Product_Order: ColumnDef<ReportSalesRowType>[
 export const columns_Week_Country_Product_Order: ColumnDef<ReportSalesRowType>[] = [
     {
         accessorKey: 'week',
-        header: 'Period - week',
+        header: () => <Tooltip title="Period - week">Period - week</Tooltip>,
         cell: info => formatDateToWeekRange(info.getValue() as string),
         aggregationFn: 'count',
         size: 80,
@@ -197,4 +197,15 @@ export const getReportSalesVariantSortingCols = (variant: REPORT_SALES_VARIANTS)
         default:
             return ['month', 'receiverCountry', 'product', 'order'];
     }
+}
+
+export const ReportSalesHeaderNames = {
+    'month': "Period - month",
+    'week': "Period - week",
+    'receiverCountry': "Country",
+    'order': "Order",
+    'product': "Product name [SKU]",
+    'price': "Price",
+    'quantity': "Product quantity",
+    'wapiTrackingNumber': "Orders count",
 }

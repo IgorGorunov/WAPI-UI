@@ -136,3 +136,11 @@ export const getSaleDynamicResourceColumnNames = (arr: any, variant: SALE_DYNAMI
     } );
     return resourceCols;
 }
+
+export const getSaleDynamicHeaderNames = (headerId: string) => {
+    if (headerId === 'country' ) {
+        return 'Country';
+    }
+
+    return formatDate(headerId)
+}

@@ -1,10 +1,25 @@
 import * as React from "react";
 import {DELIVERY_RATES_VARIANTS, DeliveryRatesRowType,} from "@/types/reports";
-import {ColumnDef} from "@tanstack/react-table";
+import {ColumnDef, Row} from "@tanstack/react-table";
 import {Tooltip} from "antd";
 import {formatDateToShowMonthYear, formatDateToWeekRange} from "@/utils/date";
 import {formatNumbers, formatPercent} from "@/screens/ReportPage/utils";
 
+export const getDeliveredWithFirstAttemptValue = (row: Row<DeliveryRatesRowType>) => {
+    return row.getValue<number>('delivered') - row.getValue<number>('deliveredWithTroubleStatus');
+}
+
+export const getAverageSaleValue = (row: Row<DeliveryRatesRowType>) => {
+    return row.getValue<number>('totalOrders') === 0 ? 0 : Math.round(row.getValue<number>('sale') / row.getValue<number>('totalOrders') * 100) / 100;
+}
+
+export const getBuyoutValue = (row: Row<DeliveryRatesRowType>) => {
+    return row.getValue<number>('totalInTransit')===0 ? '0%' : formatPercent(row.getValue<number>('delivered') / row.getValue<number>('totalInTransit') * 100)+'%';
+}
+
+export const getProbableBuyoutValue = (row:Row<DeliveryRatesRowType>) => {
+    return row.getValue<number>('totalInTransit')===0 ? '0.0%' : formatPercent((row.getValue<number>('delivered')+row.getValue<number>('inTransit')) / row.getValue<number>('totalInTransit')*100)+'%';
+}
 
 const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     {
@@ -67,9 +82,9 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         size: 80,
         maxSize: 400,
         cell: ({ row }) =>
-            formatNumbers(row.getValue<number>('delivered') - row.getValue<number>('deliveredWithTroubleStatus')),
+            formatNumbers( getDeliveredWithFirstAttemptValue(row)),
         aggregatedCell: ({ row }) =>
-            formatNumbers(row.getValue<number>('delivered') - row.getValue<number>('deliveredWithTroubleStatus')),
+            formatNumbers( getDeliveredWithFirstAttemptValue(row)),
     },
     {
         accessorKey: 'inTransit',
@@ -123,11 +138,12 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         size: 80,
         maxSize: 400,
 
-        cell: ({ row, getValue }) =>
-            (Math.round(getValue<number>() / row.getValue<number>('totalOrders') * 100) / 100).toFixed(2),
+        cell: ({ row }) =>
+            getAverageSaleValue(row).toFixed(2),
         // Math.round(getValue<number>()  * 100) / 100,
-        aggregatedCell: ({ getValue }) =>
-            (Math.round(getValue<number>() * 100) / 100).toFixed(2),
+        aggregatedCell: ({ row }) =>
+            //(Math.round(getValue<number>() * 100) / 100).toFixed(2),
+            getAverageSaleValue(row).toFixed(2),
     },
     {
         accessorKey: 'buyout',
@@ -139,10 +155,10 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         maxSize: 400,
 
         cell: ({ row }) =>
-            row.getValue<number>('totalInTransit')===0 ? '0%' : formatPercent(row.getValue<number>('delivered') / row.getValue<number>('totalInTransit') * 100)+'%',
+            getBuyoutValue(row),
         // Math.round(getValue<number>()  * 100) / 100,
         aggregatedCell: ({ row }) =>
-            row.getValue<number>('totalInTransit')===0 ? '0%' : formatPercent(row.getValue<number>('delivered') / row.getValue<number>('totalInTransit') * 100)+'%',
+            getBuyoutValue(row),
     },
     {
         accessorKey: 'probableBuyout',
@@ -154,18 +170,18 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         maxSize: 400,
 
         cell: ({ row }) =>
-            row.getValue<number>('totalInTransit')===0 ? '0.0%' : formatPercent((row.getValue<number>('delivered')+row.getValue<number>('inTransit')) / row.getValue<number>('totalInTransit')*100)+'%',
+            getProbableBuyoutValue(row),
             // row.getValue<number>('totalInTransit')===0 ? '0.0%' : Math.round((row.getValue<number>('delivered')+row.getValue<number>('inTransit'))/ row.getValue<number>('totalInTransit') * 10000) / 100+'%',
         // Math.round(getValue<number>()  * 100) / 100,
         aggregatedCell: ({ row }) =>
-            row.getValue<number>('totalInTransit')===0 ? '0.0%' :formatPercent((row.getValue<number>('delivered')+row.getValue<number>('inTransit')) / row.getValue<number>('totalInTransit')*100)+'%',
+            getProbableBuyoutValue(row),
     },
 ];
 
 const monthColumn: ColumnDef<DeliveryRatesRowType>[] = [
     {
         accessorKey: 'month',
-        header: 'Period - month',
+        header: () => <Tooltip title="Period - month">Period - month</Tooltip>,
         cell: info => formatDateToShowMonthYear(info.getValue() as string),
         aggregationFn: 'count',
         size: 80,
@@ -176,7 +192,7 @@ const monthColumn: ColumnDef<DeliveryRatesRowType>[] = [
 const weekColumn: ColumnDef<DeliveryRatesRowType>[] = [
     {
         accessorKey: 'week',
-        header: 'Period - week',
+        header: () => <Tooltip title="Period - week">Period - week</Tooltip>,
         cell: info => formatDateToWeekRange(info.getValue() as string),
         aggregationFn: 'count',
         size: 80,
@@ -199,7 +215,7 @@ const receiverCountryColumn: ColumnDef<DeliveryRatesRowType>[] = [
 const productTypeColumn: ColumnDef<DeliveryRatesRowType>[] = [
     {
         accessorKey: 'productType',
-        header: 'Product type',
+        header: () => <Tooltip title="Name of the product type" >Product type</Tooltip>,
         size: 110,
         minSize: 100,
         maxSize: 500,
@@ -209,7 +225,7 @@ const productTypeColumn: ColumnDef<DeliveryRatesRowType>[] = [
 const productColumn = (width: number) => [
     {
         accessorKey: 'product',
-        header: 'Product',
+        header: () => <Tooltip title="Name of the product" >Product</Tooltip>,
         size: width,
         maxSize: 500,
     } as ColumnDef<DeliveryRatesRowType>,
@@ -386,4 +402,23 @@ export const getDeliveryRateVariantSortingCols = (variant: DELIVERY_RATES_VARIAN
         default:
             return ['month', 'receiverCountry', 'productType'];
     }
+}
+
+export const DeliveryRateHeaderNames = {
+    'month': "Period - month",
+    'week': "Period - week",
+    'receiverCountry': "Country",
+    'productType': "Product type",
+    'product': "Product",
+    'totalOrders': "Total",
+    'totalInTransit': "Total in transit",
+    'delivered': "Delivered",
+    'deliveredWithTroubleStatus': "Delivered with trouble status",
+    'deliveredWithFirstAttempt': "Delivered with first attempt",
+    'inTransit': "In transit",
+    'returned': "Returned to sender",
+    'otherStatuses': "Other statuses",
+    'sale': "Average sale (EUR)",
+    'buyout': "Buyout",
+    'probableBuyout': "Expected buyout",
 }

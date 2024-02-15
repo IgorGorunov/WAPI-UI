@@ -1,10 +1,14 @@
 import {
     AllReportsRowArrayType,
-    AllVariantsType, COD_REPORT_VARIANTS,
+    AllVariantsType,
+    COD_REPORT_VARIANTS,
     DELIVERY_RATES_PARTIAL_VARIANTS,
     DELIVERY_RATES_VARIANTS,
-    PRODUCTS_ON_STOCKS_VARIANTS, REPORT_SALES_PARTIAL_VARIANTS, REPORT_SALES_VARIANTS,
-    REPORT_TYPES, SALE_DYNAMIC_VARIANTS
+    PRODUCTS_ON_STOCKS_VARIANTS,
+    REPORT_SALES_PARTIAL_VARIANTS,
+    REPORT_SALES_VARIANTS,
+    REPORT_TYPES,
+    SALE_DYNAMIC_VARIANTS
 } from "@/types/reports";
 import {
     getProductsOnStocksVariantColumns,
@@ -12,9 +16,11 @@ import {
     getProductsOnStocksVariantDimensionNumber,
     getProductsOnStocksVariantGroupCols,
     getProductsOnStocksVariantResourceCols,
-    getProductsOnStocksVariantSortingCols
+    getProductsOnStocksVariantSortingCols,
+    ProductsOnStocksHeaderNames
 } from "./Reports/ProductOnStockes";
 import {
+    DeliveryRateHeaderNames,
     getDeliveryRateVariantColumns,
     getDeliveryRateVariantDimensionCols,
     getDeliveryRateVariantDimensionNumber,
@@ -28,9 +34,11 @@ import {
     getReportSalesVariantDimensionNumber,
     getReportSalesVariantGroupCols,
     getReportSalesVariantResourceCols,
-    getReportSalesVariantSortingCols
+    getReportSalesVariantSortingCols,
+    ReportSalesHeaderNames
 } from "@/screens/ReportPage/Reports/ReportSales";
 import {
+    getSaleDynamicHeaderNames,
     getSaleDynamicVariantColumns,
     getSaleDynamicVariantDimensionCols,
     getSaleDynamicVariantDimensionNumber,
@@ -39,6 +47,7 @@ import {
     getSaleDynamicVariantSortingCols
 } from "@/screens/ReportPage/Reports/SaleDynamic";
 import {
+    CodReportHeaderNames,
     getCodReportVariantColumns,
     getCodReportVariantDimensionCols,
     getCodReportVariantDimensionNumber,
@@ -217,5 +226,24 @@ export const formatNumbers = (num: number) => {
 
 export const formatPercent = (num: number) => {
     return (Math.round(num*10)/10).toFixed(1);
+}
+
+export const getHeaderNameById = (reportType: REPORT_TYPES, headerId: string) => {
+    switch (reportType) {
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS :
+            return ProductsOnStocksHeaderNames[headerId] || '';
+        case REPORT_TYPES.DELIVERY_RATES :
+            return DeliveryRateHeaderNames[headerId] || '';
+        case REPORT_TYPES.REPORT_SALES :
+            return ReportSalesHeaderNames[headerId] || '';
+        case REPORT_TYPES.SALE_DYNAMIC :
+            return getSaleDynamicHeaderNames(headerId) || '';
+        case REPORT_TYPES.COD_REPORT :
+            console.log('column name: ', headerId, CodReportHeaderNames[headerId])
+            return CodReportHeaderNames[headerId] || '';
+
+        default:
+            return '';
+    }
 }
 

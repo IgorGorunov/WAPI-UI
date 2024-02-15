@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {useEffect, useMemo, useRef} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import Icon from "@/components/Icon";
 import './styles.scss';
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import {formatPercent, getVariantColumnsByReportType} from '../utils';
+import {getHeaderNameById, getVariantColumnsByReportType} from '../utils';
 
 import {
     ColumnResizeMode,
@@ -21,13 +21,19 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 
-import {AllReportsRowType, REPORT_TYPES} from "@/types/reports";
+import {AllReportsRowType, AllVariantsType, DeliveryRatesRowType, REPORT_TITLES, REPORT_TYPES} from "@/types/reports";
 import {getVariantByReportType} from "@/screens/ReportPage/utils";
-//import Button from "@/components/Button/Button";
+import Button, {ButtonVariant} from "@/components/Button/Button";
 
 import {Workbook} from 'exceljs';
 import {formatDateStringToDisplayString, formatDateToShowMonthYear, formatDateToWeekRange} from "@/utils/date";
 import getSymbolFromCurrency from "currency-symbol-map";
+import {
+    getAverageSaleValue,
+    getBuyoutValue,
+    getDeliveredWithFirstAttemptValue,
+    getProbableBuyoutValue
+} from "@/screens/ReportPage/Reports/DeliveryRates";
 
 type ReportTablePropsType = {
     reportData: AllReportsRowType[];
@@ -57,6 +63,12 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
     // )
     const [globalFilter, setGlobalFilter] = React.useState(searchText);
 
+    const [groupsAreOpen, setGroupsAreOpen] = useState(false);
+
+    useEffect(() => {
+        setGroupsAreOpen(false);
+    }, [reportType, reportData, reportVariantAsString, reportGrouping]);
+
     useEffect(() => {
         setGlobalFilter(searchText);
     }, [searchText]);
@@ -76,8 +88,6 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
     const curVariantAsType = getVariantByReportType(reportType, reportVariantAsString);
 
     const columns = getVariantColumnsByReportType(reportType, curVariantAsType, resourceColumnNames);
-
-    //console.log('variant and columns: ', reportVariantAsString, curVariantAsType, typeof curVariantAsType, columns, )
 
     const table = useReactTable({
         data: reportData,
@@ -105,7 +115,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
         onColumnSizingChange: setColumnSizing,
     })
 
-    const calcPadding = (index: number, isCellAggregated: boolean, hasSubRows:boolean, depth: number ) => {
+    const calcPadding = useCallback((index: number, isCellAggregated: boolean, hasSubRows:boolean, depth: number ) => {
         if (index<=groupedCols && !isCellAggregated) {
             if (hasSubRows) {
                 return `${depth * 16 +10}px`;
@@ -116,79 +126,46 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
             }
 
         } else return '10px';
-    }
+    }, []);
 
-    const tbl = useRef(null);
+    const getFileName = useCallback((reportType:REPORT_TYPES, curVariant:AllVariantsType) => {
+        return `${REPORT_TITLES[reportType]} (${curVariant}).xlsx`
+    }, [reportType, curVariantAsType])
 
     const handleDownload = async () => {
         const workbook = new Workbook();
-        const worksheet = workbook.addWorksheet('Data');
-
-        const lastHeaderGroup = table.getHeaderGroups().at(-1);
-        if (!lastHeaderGroup) {
-            return;
-        }
+        const worksheet = workbook.addWorksheet('Report');
 
         worksheet.properties.outlineProperties = {
             summaryBelow: false,
             summaryRight: false,
         };
 
+        //get headers
+        const lastHeaderGroup = table.getHeaderGroups().at(-1);
+        if (!lastHeaderGroup) {
+            return;
+        }
         worksheet.columns = lastHeaderGroup.headers.filter((h)=>h.column.getIsVisible()).map(header=> {
-            //console.log('header: ', header, typeof header.column.columnDef.header === 'function' ? header.column.columnDef.header() as string : header.column.columnDef.header as string);
+
             return {
-                header: typeof header.column.columnDef.header === 'function' ? 'tbd' : header.column.columnDef.header as string,
+                header:  getHeaderNameById(reportType, header.id) as string,
                 key: header.id,
                 width: 20,
             }
         });
 
-
-
-
-
-
-        // const buf = await workbook.xlsx.writeBuffer();
-        // saveAs
-
-        // Recursive function to add grouped rows to the worksheet
-        // const addGroupedRows = (groupedData, level, startRow) => {
-        //     Object.keys(groupedData).forEach((group, index) => {
-        //         const groupRows = groupedData[group];
-        //         const groupRowStart = startRow + index;
-        //         const groupRowEnd = groupRowStart + groupRows.length - 1;
-        //
-        //         worksheet.addRow({ [level]: group });
-        //         worksheet.addRows(Array(groupRows.length - 1).fill({}));
-        //
-        //         groupRows.forEach((row, rowIndex) => {
-        //             worksheet.addRow({ ...row });
-        //         });
-        //
-        //         if (Array.isArray(groupRows[0])) {
-        //             addGroupedRows(groupRows, level + ' sub', groupRowStart + 1);
-        //         }
-        //
-        //         worksheet.getRow(groupRowStart).outlineLevel = level.split(' ').length;
-        //         worksheet.getRow(groupRowStart).groupOutlines = [{ startRow: groupRowStart + 1, endRow: groupRowEnd }];
-        //     });
-        // };
+        // create rows
         const addGroupedRows = (groupedData: Row<AllReportsRowType>[], level: number, startRow: number) => {
             groupedData.forEach((currentRow, index) => {
                 const isGroup = currentRow.subRows.length > 0;
-                if (!isGroup) {
 
-                }
                 const groupRows = currentRow.subRows;
                 const groupRowStart = startRow + index;
-                //const groupRowEnd = groupRowStart + groupRows.length - 1;
 
                 const cells = currentRow.getVisibleCells();
-                console.log('visible cells: ', cells)
-                const values = cells.map((cell, index)=> {
-                    // console.log('cell: ', cell, cell.getContext(), cell.renderValue(), flexRender(cell.column.columnDef.cell,
-                    //     cell.getContext()));
 
+                const values = cells.map((cell, index)=> {
                     //check grouping
                     if (cell.getIsPlaceholder()) {
                         return '';
@@ -197,7 +174,6 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
                     if (isGroup && !cell.getIsGrouped()  && index<dimensionsCount ) {
                         return ''
                     }
-
 
                     if (cell.column.id === 'month') {
                         return formatDateToShowMonthYear(cell.getValue() as string)
@@ -214,13 +190,13 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
 
                     if (reportType === REPORT_TYPES.DELIVERY_RATES) {
                         if (cell.column.id === 'deliveredWithFirstAttempt') {
-                            return (cell.row.getValue<number>('delivered') - cell.row.getValue<number>('deliveredWithTroubleStatus'))
+                            return getDeliveredWithFirstAttemptValue(cell.row as Row<DeliveryRatesRowType>);
                         } else if (cell.column.id === 'sale') {
-                            return (Math.round(cell.getValue<number>() / cell.row.getValue<number>('totalOrders') * 100) / 100).toFixed(2)
+                            return getAverageSaleValue(cell.row as Row<DeliveryRatesRowType>);
                         } else if (cell.column.id === 'buyout') {
-                            return (cell.row.getValue<number>('totalInTransit') === 0 ? '0%' : formatPercent(cell.row.getValue<number>('delivered') / cell.row.getValue<number>('totalInTransit') * 100) + '%')
+                            return getBuyoutValue(cell.row as Row<DeliveryRatesRowType>);
                         } else if (cell.column.id === 'probableBuyout') {
-                            return (cell.row.getValue<number>('totalInTransit')===0 ? '0.0%' : formatPercent((cell.row.getValue<number>('delivered')+cell.row.getValue<number>('inTransit')) / cell.row.getValue<number>('totalInTransit')*100)+'%')
+                            return getProbableBuyoutValue(cell.row as Row<DeliveryRatesRowType>);
                         }
                     }
 
@@ -231,8 +207,6 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
                     return  cell.getValue()
                 });
 
-                console.log('values: ', values);
-
                 const addedRow = worksheet.addRow(values);
                 addedRow.outlineLevel = level;
 
@@ -240,7 +214,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
                 const rowColor = isGroup ? colorLevel === 3 ? 'FFD4DFFE' : colorLevel === 2 ? 'FFE6ECFE' : colorLevel === 1 ? 'FFF7F8FF' : 'FFF7F8FF' : 'FFFFFFFF';
 
                 addedRow.eachCell(cell => {
-                    //console.log('cell - color', cell)
+
                     cell.fill = {
                         type: 'pattern',
                         pattern: 'solid',
@@ -252,7 +226,6 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
                         bottom: {style:'thin', color: {argb: 'FF7D8FB3'}},
                         right: {style:'thin', color: {argb: 'FF7D8FB3'}},
                     };
-
                 })
 
                 if (isGroup) {
@@ -264,14 +237,6 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
         const reportData = table.getRowModel().rows || [];
 
         addGroupedRows(reportData, 0, 1);
-
-
-        // table.getRowModel().rows.forEach(row=> {
-        //     const cells = row.getVisibleCells();
-        //     const values = cells.map(cell=> cell.getValue() ?? ' ');
-        //     console.log('values - row', row.index, values);
-        //     worksheet.addRow(values);
-        // });
 
         worksheet.getRow(1).eachCell(cell=> {
             cell.font = {bold: true};
@@ -291,21 +256,20 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
         worksheet.getRow(1).height=40;
 
 
+
+
         workbook.xlsx.writeBuffer().then((buffer) => {
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'exported_data.xlsx';
+            a.download = getFileName(reportType, curVariantAsType);
             a.click();
         });
-
     }
-
-
-    console.log('table experiments - table.getRowModel():', table.getRowModel());
-    console.log('table experiments - table.getRowModel()  visible cells:', table.getRowModel().rows.length ?  table.getRowModel().rows[0].getVisibleCells() : '-');
-
+    useEffect(() => {
+        console.log('groups are open', groupsAreOpen)
+    }, [groupsAreOpen]);
 
 
     return (
@@ -318,13 +282,12 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
             <div className="card report-container">
                 <div className="h-2" />
                 <div className='interactive-block'>
-                    {/*<Button onClick={handleDownload}>Export to Excel</Button>*/}
-                    {/*<Button onClick={()=>table.toggleAllRowsExpanded()}>Toggle</Button>*/}
+                    <Button onClick={handleDownload} icon='download-file' iconOnTheRight variant={ButtonVariant.SECONDARY}>Export to Excel</Button>
+                    {reportGrouping.length ? <Button iconOnTheRight onClick={()=>{table.toggleAllRowsExpanded(!groupsAreOpen); setGroupsAreOpen(prev => !prev);}} icon={ !groupsAreOpen ? 'minus' : 'plus'} variant={ButtonVariant.SECONDARY} >{groupsAreOpen ? 'Collapse all' : 'Expand all'}</Button> : null}
                 </div>
 
                 <div className={`t-container ${reportType} ${reportType===REPORT_TYPES.SALE_DYNAMIC ? 'is-sticky' : ''}`}>
-                    {/*{reportData && !table.getRowModel().rows.length ? (<div>{reportData.length}</div>) : null}*/}
-                    <table ref={tbl} {...{
+                    <table {...{
                         style: {
                             width: table.getCenterTotalSize()
                         }
@@ -428,8 +391,8 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
                                                             {flexRender(
                                                                 cell.column.columnDef.cell,
                                                                 cell.getContext()
-                                                            )}{" "}
-                                                            ({row.subRows.length})
+                                                            )} <span className='grouped-rows-count'>
+                                                            ({row.subRows.length})</span>
                                                         </button>
                                                     </>
                                                 ) : cell.getIsPlaceholder() ? null : ( // For cells with repeated values, render null

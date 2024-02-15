@@ -38,32 +38,32 @@ const resourceColumns: ColumnDef<CodReportRowType>[] = [
 const documentColumns: ColumnDef<CodReportRowType>[] = [
     {
         accessorKey: 'order',
-        header: 'Order',
+        header: () => <Tooltip title="Wapi tracking number">Order</Tooltip> ,
         size: 90,
         maxSize: 500,
     },
     {
         accessorKey: 'status',
-        header: 'Order status',
+        header: () => <Tooltip title="Order status">Order status</Tooltip>,
         size: 90,
         maxSize: 500,
     },
     {
         accessorKey: 'codReport',
-        header: 'COD report',
+        header: () => <Tooltip title="COD report name">COD report</Tooltip>,
         size: 80,
         maxSize: 500,
     },
     {
         accessorKey: 'deliveryDate',
-        header: 'Delivery date',
+        header: () => <Tooltip title="Delivery date">Delivery date</Tooltip>,
         size: 70,
         maxSize: 500,
         cell: ({getValue }) => getValue<string>() ? formatDateStringToDisplayString(getValue<string>()) : '',
     },
     {
         accessorKey: 'currency',
-        header: 'Currency',
+        header: () => <Tooltip title="COD currency">Currency</Tooltip>,
         size: 70,
         maxSize: 500,
         cell: ({getValue }) =><span className='centered-cell'>{getValue<string>()}</span>,
@@ -143,5 +143,18 @@ export const getCodReportVariantSortingCols = (variant: COD_REPORT_VARIANTS) => 
             return [];
     }
 }
+
+export const CodReportHeaderNames = {
+    'order': "Order",
+    'status': "Order status",
+    'codReport': "COD report",
+    'deliveryDate': "Delivery date",
+    'currency': "Currency",
+    'codAmount': "Total COD amount",
+    'reported': "COD reported",
+    'codBalance': "COD balance",
+}
+
+
 
 

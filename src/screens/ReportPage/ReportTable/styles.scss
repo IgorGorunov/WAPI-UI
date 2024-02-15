@@ -15,7 +15,25 @@
     overflow: hidden;
 
     .interactive-block {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      padding: 12px 36px 12px 12px;
       min-height: 36px;
+      border-bottom: 2px solid var(--color-gray2);
+
+      button {
+        gap: 2px;
+
+        svg {
+          transform: scale(0.85);
+
+          path {
+            fill: var(--color-blue);
+            //stroke: var(--color-blue)
+          }
+        }
+      }
     }
 
     table {
@@ -139,6 +157,10 @@
       background-color: transparent;
       border: none;
       font-family: var(--inter-font);
+
+      .grouped-rows-count {
+        margin-left: 6px;
+      }
     }
 
     .show-hide-btn {
