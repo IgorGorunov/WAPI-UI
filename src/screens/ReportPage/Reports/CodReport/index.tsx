@@ -3,34 +3,32 @@ import {COD_REPORT_VARIANTS, CodReportRowType,} from "@/types/reports";
 import {ColumnDef} from "@tanstack/react-table";
 import {formatNumbers} from "@/screens/ReportPage/utils";
 import {formatDateStringToDisplayString} from "@/utils/date";
+import {Tooltip} from "antd";
 
 
 const resourceColumns: ColumnDef<CodReportRowType>[] = [
     {
         accessorKey: 'codAmount',
-        header: () => <span>Total COD amount</span>,
+        header: () => <Tooltip title="Means all COD for selected orders" ><span>Total COD amount</span></Tooltip>,
         size: 80,
         maxSize: 400,
-
         cell: ({getValue }) =>
             <span className='centered-cell'>{formatNumbers(getValue<number>())}</span>,
 
     },
     {
         accessorKey: 'reported',
-        header: () => <span>COD reported</span>,
+        header: () => <Tooltip title="COD amount reported for payment to customer" ><span>COD reported</span></Tooltip>,
         size: 80,
         maxSize: 400,
-
         cell: ({getValue }) =>
             <span className='centered-cell'>{formatNumbers(getValue<number>())}</span>,
     },
     {
         accessorKey: 'codBalance',
-        header: () => <span>COD balance</span>,
+        header: () => <Tooltip title="Expected COD for orders in transit" ><span>COD balance</span></Tooltip>,
         size: 80,
         maxSize: 400,
-
         cell: ({getValue }) =>
             <span className='centered-cell'>{formatNumbers(getValue<number>())}</span>,
     },

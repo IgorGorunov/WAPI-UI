@@ -36,6 +36,8 @@ import {
 import {Countries} from "@/types/countries";
 import CurrentFilters from "@/components/CurrentFilters";
 import RadioSwitch from "@/components/FormBuilder/RadioSwitch";
+import Icon from "@/components/Icon";
+import {Tooltip} from "antd";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -90,7 +92,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                 {token: token}
             );
 
-            console.log("report params:", res );
+            //console.log("report params:", res );
             if (res.data) {
                 setReportParams(res.data);
             }
@@ -106,16 +108,12 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-            console.log('123')
 
             // //verify token
             // const responseVerification = await verifyToken(token);
             // if (!verifyUser(responseVerification, currentDate) ){
             //     await Router.push(Routes.Login);
             // }
-
-            console.log('456')
-
             const res: any = await getReportData(
                 {token: token, reportType: reportType, startDate: formatDateToString(currentRange.startDate), endDate: formatDateToString(currentRange.endDate)}
             );
@@ -298,7 +296,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
         const curVariantAsType = getVariantByReportType(reportType, curVariantAsString);
 
-        console.log('curVariantAsType 123', curVariantAsType, curVariantAsString);
+        //console.log('curVariantAsType 123', curVariantAsType, curVariantAsString);
 
         setGroupedFields(getVariantGroupColsByReportType(reportType, curVariantAsType));
         const dimensionCols = getVariantDimensionColsByReportType(reportType, curVariantAsType);
@@ -311,7 +309,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                 const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
                 const searchTermsArray = searchTerm.trim().toLowerCase().replace(',',' ').replace('\\n',' ').replace('  ', ' ').split(' ').filter(item=>item);
 
-                console.log('search', searchTerm, searchTermsArray);
                 return searchTermsArray.some(word => stringValue.includes(word));
             });
 
@@ -328,7 +325,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
         const resourceColumns = getVariantResourceColsByReportType(reportType, curVariantAsType, reportData);
         setResourceColumnNames([...resourceColumns.sumCols, ...resourceColumns.uniqueCols]);
-        console.log('resource cols:', resourceColumns);
+        //console.log('resource cols:', resourceColumns);
 
         const reportDataCollapsed = reportData ? collapseTable(dimensionCols, resourceColumns.sumCols, resourceColumns.uniqueCols)(filteredData, ()=>{setIsCalculating(false)}) : [];
 
@@ -376,7 +373,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     useEffect(() => {
         setIsCalculating(false);
 
-        console.log('collapsed data: ', collapsedData)
+        //console.log('collapsed data: ', collapsedData)
 
     }, [collapsedData]);
 
@@ -423,29 +420,43 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
                 </div>
                 {/* Report */}
-                <div className={`report-results ${isCurrentRangeChanged ? 'need-rerender' : ''}`}>
-                    {isCurrentRangeChanged && !noData && <div className='need-rerender-overlay'><p className='need-rerender-text'>Please, run "Generate"!</p></div>}
+                <div className = 'report-results__wrapper'>
+                    {/*{!noData && collapsedData ? <div className='report-hint'>*/}
+                    {/*    <Tooltip title={`To see what each column means, hover over its name. */}
+                    {/*            To sort the report by column, click on the column name. */}
+                    {/*            To sort by multiple columns, press Shift and click on the column names.`} >*/}
+                    {/*        <span className='hint-icon'>Hint<Icon name='question' /></span>*/}
+                    {/*    </Tooltip>*/}
+                    {/*</div> : null}*/}
+                    <div className={`report-results ${isCurrentRangeChanged ? 'need-rerender' : ''}`}>
+                        {isCurrentRangeChanged && !noData && <div className='need-rerender-overlay'><p className='need-rerender-text'>Please, run "Generate"!</p></div>}
 
-                    {!noData && collapsedData ?
-                        <ReportTable
-                            reportData={collapsedData}
-                            reportType={reportType}
-                            reportVariantAsString={reportType === REPORT_TYPES.DELIVERY_RATES || reportType === REPORT_TYPES.REPORT_SALES ? periodVariantType+'_'+curVariant : curVariant}
-                            reportGrouping={groupedFields}
-                            dimensionsCount={dimensionsCount}
-                            //searchText={searchTerm}
-                            searchText=''
-                            sortingCols={sortingCols}
-                            resourceColumnNames={resourceColumnNames}
-                        /> :
-                        <div className='report-generate-hint'>
-                            Please select a period, variant and click on the Generate button
-                        </div>
-                    }
+                        {!noData && collapsedData ? <>
+                            <div className='report-hint'>
+                                <Tooltip title={`To see what each column means, hover over its name. 
+                                    To sort the report by column, click on the column name. 
+                                    To sort by multiple columns, press Shift and click on the column names.`} >
+                                    <span className='hint-icon'>Hint<Icon name='question' /></span>
+                                </Tooltip>
+                                </div>
+                                <ReportTable
+                                    reportData={collapsedData}
+                                    reportType={reportType}
+                                    reportVariantAsString={reportType === REPORT_TYPES.DELIVERY_RATES || reportType === REPORT_TYPES.REPORT_SALES ? periodVariantType+'_'+curVariant : curVariant}
+                                    reportGrouping={groupedFields}
+                                    dimensionsCount={dimensionsCount}
+                                    //searchText={searchTerm}
+                                    searchText=''
+                                    sortingCols={sortingCols}
+                                    resourceColumnNames={resourceColumnNames}
+                                />
+                            </> :
+                            <div className='report-generate-hint'>
+                                Please select a period, variant and click on the Generate button
+                            </div>
+                        }
+                    </div>
                 </div>
-
-                <br />
-                <br />
 
                 <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                     {isFilterVisibleByReportType(reportType, 'country') && <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>}

@@ -66,6 +66,7 @@ import TrendingUp from '@/assets/icons/trending_up.svg'
 import ReportFolder from '@/assets/icons/reports-folder.svg'
 import ArrowUpGreen from '@/assets/icons/arrow-up-green.svg'
 import ArrowDownRed from '@/assets/icons/arrow-down-red.svg'
+import Question from '@/assets/icons/question.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -134,6 +135,7 @@ export const icons = {
   'reports-folder': ReportFolder,
   'arrow-up-green': ArrowUpGreen,
   'arrow-down-red': ArrowDownRed,
+  'question': Question,
 };
 
 export type IconType = keyof typeof icons;

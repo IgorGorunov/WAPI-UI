@@ -111,7 +111,7 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
         },
         {
             accessorKey: 'reserveClosingBalance',
-            header: () => <Tooltip title="For orders and stockmovements" ><span>Reserve</span></Tooltip>,
+            header: () => <Tooltip title="For orders and stock movements" ><span>Reserve</span></Tooltip>,
             aggregationFn: 'sum',
             size: 70,
             maxSize: 400,

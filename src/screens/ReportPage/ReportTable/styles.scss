@@ -14,6 +14,10 @@
     font-family: var(--inter-font);
     overflow: hidden;
 
+    .interactive-block {
+      min-height: 36px;
+    }
+
     table {
       border-spacing: 0;
       table-layout: fixed;
@@ -156,7 +160,7 @@
     }
 
     .product-sku {
-      font-weight: bold;
+      //font-weight: bold;
 
       &-header {
         font-size: 13px;
