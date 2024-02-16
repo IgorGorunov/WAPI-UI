@@ -56,6 +56,8 @@ type ProductPropsType = {
 const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal}) => {
     //get parameters to setup form
 
+    const orderIsApproved = false; //productData?.status.toLowerCase() === 'approved';
+
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
@@ -239,7 +241,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                         name={'selectedAllUnits'}
                         fieldType={FormFieldTypes.CHECKBOX}
                         checked ={selectAllUnits}
-                        disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
+                        disabled={isDisabled || orderIsApproved}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => {
                             setSelectAllUnits(e.target.checked);
                             // Update the values of all checkboxes in the form when "Select All" is clicked
@@ -266,7 +268,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                     name={'unitOfMeasures.${index}.selected'}
                                     fieldType={FormFieldTypes.CHECKBOX}
                                     {...field}
-                                    disabled={isDisabled  || productData?.status.toLowerCase() === 'approved'}
+                                    disabled={isDisabled  || orderIsApproved}
                                 />
                             </div>
                         )}
@@ -290,7 +292,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     onChange={(newValue: string) => {field.onChange(newValue); handleUnitNameChange(newValue, index)}}
-                                    disabled={isDisabled  || productData?.status.toLowerCase() === 'approved'}
+                                    disabled={isDisabled  || orderIsApproved}
                                 /></div>
                         )}
                         rules={{required: "Required field",}}
@@ -312,7 +314,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                     name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled  || productData?.status.toLowerCase() === 'approved'}
+                                    disabled={isDisabled  || orderIsApproved}
                                 /></div>
 
                         )}
@@ -334,7 +336,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].width`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled  || productData?.status.toLowerCase() === 'approved'}
+                                disabled={isDisabled  || orderIsApproved}
                             /></div>
 
                         )}
@@ -356,7 +358,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].length`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
+                                disabled={isDisabled || orderIsApproved}
                             /></div>
                         )}
                     />
@@ -377,7 +379,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].height`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
+                                disabled={isDisabled || orderIsApproved}
                             /></div>
 
                         )}
@@ -399,7 +401,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].weightGross`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
+                                disabled={isDisabled || orderIsApproved}
                             /></div>
 
                         )}
@@ -421,7 +423,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                 name={`unitOfMeasures[${index}].weightNet`}
                                 fieldType={FormFieldTypes.NUMBER}
                                 {...field}
-                                disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
+                                disabled={isDisabled || orderIsApproved}
                             /></div>
 
                         )}
@@ -433,7 +435,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled || productData?.status.toLowerCase() === 'approved'} className='remove-table-row' onClick={() => removeUnits(index)}>
+                    <button disabled={isDisabled || orderIsApproved} className='remove-table-row' onClick={() => removeUnits(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -985,23 +987,23 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                                             placeholder="Select Name"
                                             width={WidthType.w33}
                                             errors={errors}
-                                            disabled={isDisabled || productData?.status.toLowerCase() === 'approved'}
+                                            disabled={isDisabled || orderIsApproved}
                                         />
                                     )}
                                 />
                                 {/*</div>*/}
-                                <div className='product-info--table-btns width-67' aria-disabled={productData?.status.toLowerCase() === 'approved'}>
-                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || productData?.status.toLowerCase() === 'approved'} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
+                                <div className='product-info--table-btns width-67' aria-disabled={orderIsApproved}>
+                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
                                         Add
                                     </Button>
-                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || productData?.status.toLowerCase() === 'approved'} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
+                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
                                         Remove selected
                                     </Button>
 
                                 </div>
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields form-table ' aria-disabled={productData?.status.toLowerCase() === 'approved'}>
+                        <div className='product-info--table table-form-fields form-table ' aria-disabled={orderIsApproved}>
                             <Table
                                 columns={getUnitsColumns(control)}
                                 dataSource={getValues('unitOfMeasures')?.map((field) => ({ key: field.name, ...field })) || []}
@@ -1154,9 +1156,9 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             </Tabs>
             <div className='form-submit-btn'>
                 {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                {!isDisabled && productData?.status.toLowerCase() !== 'approved' && <Button type="submit" disabled={isDisabled || productData?.status.toLowerCase() === 'approved'} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
-                {!isDisabled && productData?.status.toLowerCase() !== 'approved' && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
-                {!isDisabled && productData?.status.toLowerCase() === 'approved' && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
+                {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
+                {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
+                {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
 
             </div>
         </form>
