@@ -52,14 +52,14 @@
     }
   }
   .status-column {
-    flex: 1 1 300px;
+    flex: 1 1 120px;
 
     @media (max-width: $upToTablet) {
-      flex: 1 1 150px;
+      flex: 1 1 100px;
     }
   }
   .etd-column,
-  .eta-column{
+  .eta-column {
     flex: 0 0 120px;
 
     //@media (max-width: $upToTablet) {
@@ -68,6 +68,14 @@
     //
     @media (max-width: $mobile) {
       flex: 0 0 70px;
+    }
+  }
+
+  .statusAdditionalInfo-column {
+    flex: 1 1 300px;
+
+    @media (max-width: $upToTablet) {
+      flex: 1 1 120px;
     }
   }
 

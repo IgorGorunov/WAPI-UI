@@ -526,13 +526,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn title="Status" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn title="Status" minWidth="70px" maxWidth="70px" contentPosition="start"/>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
                     <TableCell
-                        minWidth="60px"
-                        maxWidth="60px"
+                        minWidth="70px"
+                        maxWidth="70px"
                         contentPosition="start"
                         childrenAfter={
                             <span style={{
