@@ -53,6 +53,29 @@
   
   &__list {
     position: relative;
+    max-height: 300px;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      margin-right: 30px;
+    }
+
+    &::-webkit-scrollbar-track {
+      margin-top: 3px;
+      margin-bottom: 3px;
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-light-blue-gray);
+      border-radius: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--color-gray-blue);
+    }
   }
 
   &__wrapper--right{
