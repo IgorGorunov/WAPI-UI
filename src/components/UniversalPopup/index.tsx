@@ -14,14 +14,15 @@ type PopupPropsType = {
     width?: number | null;
     handleClose?: () => void;
     hasCopyBtn?: boolean;
+    changePositionOnMobile?: boolean;
 };
 
-const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, handleClose, hasCopyBtn=false }) => {
+const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, handleClose, hasCopyBtn=false, changePositionOnMobile=false }) => {
     if (items.length === 0) {
         return null;
     }
 
-    const positionClass = `universal-popup__wrapper--${position}`;
+    const positionClass = `universal-popup__wrapper universal-popup__wrapper--${position} ${changePositionOnMobile ? 'change-on-mobile' : ''}`;
     const wrapperStyle = width !== null ? { width: width + 'px' } : {};
 
     const copyToClipboard = useCallback((text: string) => {

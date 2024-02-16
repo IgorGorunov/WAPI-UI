@@ -78,39 +78,9 @@
     }
   }
 
-  &__wrapper--right{
+  &__wrapper {
     position: absolute;
     top: calc(50% - 2px);
-    left: 32px;
-    background-color: var(--color-dark-blue);
-    color: white;
-    border-radius: 5px;
-    transform: translateY(-50%);
-    opacity: 0;
-    animation: fadeIn 0.5s forwards;
-    z-index: 1000;
-    &::before {
-      content: '';
-      position: absolute;
-      left: -5px;
-      top: calc(50% - 3px);
-      width: 0;
-      height: 0;
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-      border-right:5px solid var(--color-dark-blue);
-    }
-    @media (max-width: $tablet) {
-      max-width: 400px;
-    }
-    @media (max-width: $mobile) {
-      max-width: 250px;
-    }
-  }
-  &__wrapper--left{
-    position: absolute;
-    top: calc(50% - 2px);
-    right: 32px;
     background-color: var(--color-dark-blue);
     color: white;
     border-radius: 5px;
@@ -121,19 +91,62 @@
     &::before {
       content: '';
       position: absolute;
-      right: -5px;
       top: calc(50% - 3px);
       width: 0;
       height: 0;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
-      border-left:5px solid var(--color-dark-blue);
     }
     @media (max-width: $tablet) {
       max-width: 400px;
     }
     @media (max-width: $mobile) {
       max-width: 250px;
+    }
+
+    &--right{
+      left: 32px;
+
+      &::before {
+        left: -5px;
+        border-right:5px solid var(--color-dark-blue);
+      }
+
+      &.change-on-mobile {
+        @media (max-width:  $upToLaptop) {
+          left: auto;
+          right: 32px;
+
+          &::before {
+            left: auto;
+            right: -5px;
+            border-left: 5px solid var(--color-dark-blue);
+            border-right: none;
+          }
+        }
+      }
+    }
+    &--left {
+      right: 32px;
+
+      &::before {
+        right: -5px;
+        border-left:5px solid var(--color-dark-blue);
+      }
+
+      &.change-on-mobile {
+        @media (max-width: $upToLaptop) {
+          left: 32px;
+          right: auto;
+
+          &::before {
+            left: -5px;
+            right: auto;
+            border-left: none;
+            border-right: 5px solid var(--color-dark-blue);
+          }
+        }
+      }
     }
   }
 
