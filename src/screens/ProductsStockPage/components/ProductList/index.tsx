@@ -461,10 +461,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 >
                     <UniversalPopup
                         items={popupItems}
-                        position='left'
+                        position='right'
                         width = {200}
                         handleClose={()=>setIsDisplayedPopup(false)}
                         hasCopyBtn={true}
+                        changePositionOnMobile={true}
                     />
                 </div>
             )}
