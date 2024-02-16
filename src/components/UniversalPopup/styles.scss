@@ -7,10 +7,48 @@
     padding: 25px 8px 8px 2px;
   }
 
+  &.has-copy-icon {
+    padding: 36px 8px 8px 2px;
+  }
+
   &__close {
     position: absolute;
     top: 0;
     right: 0;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 6px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    padding: 2px 2px 2px 6px;
+    color: var(--color-light-blue-gray);
+    background-color: transparent;
+    border: 1px solid var(--color-light-blue-gray);
+    border-radius: 5px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      margin-left: 4px;
+
+      path {
+        transition: all 0.3s ease;
+      }
+    }
+
+    &:hover {
+      color: var(--color-dark-blue);
+      background-color: var(--color-light-blue-gray);
+
+      svg path {
+        fill: var(--color-dark-blue);
+      }
+    }
   }
   
   &__list {

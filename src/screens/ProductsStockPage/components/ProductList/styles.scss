@@ -25,6 +25,19 @@
     align-items: center;
   }
 
+  .reserve-cell {
+    .is-link {
+      color: var(--color-blue);
+      transition: all .2s ease;
+    }
+    &:hover {
+      .is-link {
+        cursor: pointer;
+        transform: scale(1.1);
+      }
+    }
+  }
+
   .info-icon {
     svg {
       margin-top: 3px;
