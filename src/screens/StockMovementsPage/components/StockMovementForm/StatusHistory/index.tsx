@@ -17,6 +17,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                 {/*<div className='column etd-column'>ETD</div>*/}
                 <div className='column eta-column'>ETA</div>
                 {/*<div className='column freight-supplier-column'>Freight supplier</div>*/}
+                <div className='column statusAdditionalInfo-column'>Status additional info</div>
 
             </div>
             <ul className="stock-movement-status-history__list">
@@ -35,6 +36,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                             {/*<div className='column etd-column'>{status.estimatedTimeDepartures}</div>*/}
                             <div className='column eta-column'>{formatDateStringToDisplayString(status.estimatedTimeArrives)}</div>
                             {/*<div className='column freight-supplier-column'>{status.freightSupplier}</div>*/}
+                            <div className='column statusAdditionalInfo-column'>{status.statusAdditionalInfo}</div>
                         </li>
                     ))}
             </ul>

@@ -1,8 +1,8 @@
 
 export enum PRODUCTS_ON_STOCKS_VARIANTS  {
-    WAREHOUSE_PRODUCT_DOCUMENT = 'Warehouse/Product/Document',
-    WAREHOUSE_PRODUCT = 'Warehouse/Product',
     PRODUCT = 'Product',
+    WAREHOUSE_PRODUCT = 'Warehouse/Product',
+    WAREHOUSE_PRODUCT_DOCUMENT = 'Warehouse/Product/Document',
 }
 
 export type ProductOnStockRowType = {

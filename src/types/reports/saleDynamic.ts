@@ -5,9 +5,7 @@ export enum SALE_DYNAMIC_VARIANTS  {
 export type SaleDynamicRowType = {
     country: string;
     countryCode: string;
-
 }
-
 
 export type SaleDynamicReportType = {
     reportData: SaleDynamicRowType[];

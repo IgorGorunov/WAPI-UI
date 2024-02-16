@@ -2,6 +2,7 @@ import * as React from "react";
 import {SALE_DYNAMIC_VARIANTS, SaleDynamicRowType, AllReportsRowArrayType,} from "@/types/reports";
 import {ColumnDef} from "@tanstack/react-table";
 import Icon from "@/components/Icon";
+import {Tooltip} from "antd";
 
 
 const formatDate = (colStr: string) => {
@@ -30,7 +31,7 @@ const getColor = (row: any, colName: string) => {
         const difference = Math.round((curValue - prevValue)*100/prevValue);
         if (difference < -25) {
             return 'DOWN';
-        } else if (difference < 25) {
+        } else if (difference <= 25) {
             return 'NONE';
         } else return 'UP';
     } else {
@@ -42,7 +43,7 @@ export const columns_Country_Weeks: ColumnDef<SaleDynamicRowType>[] = [
     {
         accessorKey: 'country',
         id: 'country',
-        header: () => <span>Country</span>,
+        header: () => <Tooltip title="Receiver country" ><span>Country</span></Tooltip>,
         cell: info => <span><span className={`fi fi-${info.row.original.countryCode ? info.row.original?.countryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.country}</span>,
         aggregationFn: 'count',
         size: 150,
@@ -57,7 +58,7 @@ const createColumn = (colName: string) => {
         accessorKey: colName,
         id: colName,
         header: () => <span>{formatDate(colName)}</span>,
-        cell: info => <span className={`arrow arrow-${getColor(info.row.original, colName)}`}>{info.row.original[colName]}<Icon name='arrow-up' /></span>,
+        cell: info => <span className={`arrow`}>{info.row.original[colName]}{getColor(info.row.original, colName) === 'UP' ? <Icon name='arrow-up-green' /> : getColor(info.row.original, colName) === 'DOWN' ? <Icon name='arrow-down-red'/> : null}</span>,
         aggregationFn: 'count',
         size: 90,
         minSize: 90,
@@ -134,4 +135,12 @@ export const getSaleDynamicResourceColumnNames = (arr: any, variant: SALE_DYNAMI
         }
     } );
     return resourceCols;
+}
+
+export const getSaleDynamicHeaderNames = (headerId: string) => {
+    if (headerId === 'country' ) {
+        return 'Country';
+    }
+
+    return formatDate(headerId)
 }

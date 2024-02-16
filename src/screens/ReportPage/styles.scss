@@ -1,3 +1,5 @@
+@import "@/constants/devices.scss";
+
 .report-page {
 
   .variant-container {
@@ -34,6 +36,7 @@
   .report-results {
     position: relative;
     overflow: hidden;
+    border-radius: 15px;
 
     .need-rerender {
       &-overlay {
@@ -43,7 +46,7 @@
         bottom: 0;
         left: 0;
         background-color: rgba(0,0,0,0.2);
-        z-index: 2;
+        z-index: 10;
       }
 
       &-text {
@@ -57,5 +60,34 @@
         color: white;
       }
     }
+
+      .report-hint {
+        position: absolute;
+        height: 24px;
+        top: 6px;
+        right: 6px;
+        font-size: 0;
+
+        @media (max-width: $upToTablet) {
+          display: none;
+        }
+
+        .hint-icon {
+          display: inline-block;
+        }
+      }
+  }
+
+  .report-generate-hint {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100px;
+    font-weight: bold;
+    background-color: var(--color-white);
+    border-radius: 15px;
+    border: 2px solid var(--color-gray2);
+    box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
   }
 }

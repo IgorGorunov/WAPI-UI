@@ -1,63 +1,60 @@
 import * as React from "react";
 import {ProductOnStockRowType, PRODUCTS_ON_STOCKS_VARIANTS} from "@/types/reports";
 import {ColumnDef} from "@tanstack/react-table";
-import {formatDateTimeToStringWithDot} from "@/utils/date";
+import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 import {formatNumbers} from "@/screens/ReportPage/utils";
+import {Tooltip} from "antd";
 
 
 const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
+
     {
-        header: 'Quantity',
-        columns: [
-            {
-                accessorKey: 'quantityOpeningBalance',
-                header: () => <span>Opening Balance</span>,
-                aggregationFn: 'sum',
-                size: 70,
-                maxSize: 400,
-                cell: ({getValue }) =>
-                    formatNumbers(getValue<number>()),
-                aggregatedCell: ({ getValue }) =>
-                    formatNumbers(getValue<number>()),
-            },
-            {
-                accessorKey: 'quantityReceipt',
-                header: 'Receipt',
-                aggregationFn: 'sum',
-                size: 70,
-                maxSize: 400,
-                cell: ({getValue }) =>
-                    formatNumbers(getValue<number>()),
-                aggregatedCell: ({ getValue }) =>
-                    formatNumbers(getValue<number>()),
-            },
-            {
-                accessorKey: 'quantityExpense',
-                header: 'Expense',
-                aggregationFn: 'sum',
-                size: 70,
-                maxSize: 400,
-                cell: ({getValue }) =>
-                    formatNumbers(getValue<number>()),
-                aggregatedCell: ({ getValue }) =>
-                    formatNumbers(getValue<number>()),
-            },
-            {
-                accessorKey: 'quantityClosingBalance',
-                header: () => 'Closing Balance',
-                cell: ({getValue }) =>
-                    formatNumbers(getValue<number>()),
-                aggregatedCell: ({getValue}) =>
-                    formatNumbers(Math.round(getValue<number>() * 100) / 100),
-                aggregationFn: 'sum',
-                size: 70,
-                maxSize: 400,
-            },
-        ],
+        accessorKey: 'quantityOpeningBalance',
+        header: () => <Tooltip title="Opening Balance" ><span>Opening Balance</span></Tooltip>,
+        aggregationFn: 'sum',
+        size: 70,
+        maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
+    },
+    {
+        accessorKey: 'quantityExpense',
+        header: ()=><Tooltip title="Outbound" ><span>Expense</span></Tooltip>,
+        aggregationFn: 'sum',
+        size: 70,
+        maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
+    },
+    {
+        accessorKey: 'quantityReceipt',
+        header: ()=><Tooltip title="Inbound" ><span>Receipt</span></Tooltip>,
+        aggregationFn: 'sum',
+        size: 70,
+        maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
+    },
+    {
+        accessorKey: 'quantityClosingBalance',
+        header: () => <Tooltip title='Closing Balance'>Closing Balance</Tooltip>,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({getValue}) =>
+            formatNumbers(Math.round(getValue<number>() * 100) / 100),
+        aggregationFn: 'sum',
+        size: 70,
+        maxSize: 400,
     },
     {
         accessorKey: 'damagedClosingBalance',
-        header: () => 'Damaged',
+        header: () => <Tooltip title='Quantity of damaged products'>Damaged</Tooltip>,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
@@ -68,7 +65,7 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
     },
     {
         accessorKey: 'expiredClosingBalance',
-        header: () => 'Expired',
+        header: () => <Tooltip title='Quantity of expired products'>Expired</Tooltip>,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
@@ -77,31 +74,31 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
         aggregatedCell: ({ getValue }) =>
             formatNumbers(getValue<number>()),
     },
-    {
-        accessorKey: 'undefinedStatusClosingBalance',
-        header: () => 'Undefined Status',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        cell: ({getValue }) =>
-            formatNumbers(getValue<number>()),
-        aggregatedCell: ({ getValue }) =>
-            formatNumbers(getValue<number>()),
-    },
-    {
-        accessorKey: 'withoutBoxClosingBalance',
-        header: () => 'Without Box',
-        aggregationFn: 'sum',
-        size: 70,
-        maxSize: 400,
-        cell: ({getValue }) =>
-            formatNumbers(getValue<number>()),
-        aggregatedCell: ({ getValue }) =>
-            formatNumbers(getValue<number>()),
-    },
+    // {
+    //     accessorKey: 'undefinedStatusClosingBalance',
+    //     header: () => 'Undefined Status',
+    //     aggregationFn: 'sum',
+    //     size: 70,
+    //     maxSize: 400,
+    //     cell: ({getValue }) =>
+    //         formatNumbers(getValue<number>()),
+    //     aggregatedCell: ({ getValue }) =>
+    //         formatNumbers(getValue<number>()),
+    // },
+    // {
+    //     accessorKey: 'withoutBoxClosingBalance',
+    //     header: () => 'Without Box',
+    //     aggregationFn: 'sum',
+    //     size: 70,
+    //     maxSize: 400,
+    //     cell: ({getValue }) =>
+    //         formatNumbers(getValue<number>()),
+    //     aggregatedCell: ({ getValue }) =>
+    //         formatNumbers(getValue<number>()),
+    // },
     {
         accessorKey: 'onShipping',
-        header: () => 'On shipping',
+        header: ()=><Tooltip title="In stock movements" ><span>On shipping</span></Tooltip>,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
@@ -112,7 +109,7 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
     },
     {
         accessorKey: 'reserveClosingBalance',
-        header: () => 'Reserve',
+        header: () => <Tooltip title="For orders and stock movements" ><span>Reserve</span></Tooltip>,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
@@ -123,7 +120,7 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
     },
     {
         accessorKey: 'available',
-        header: () => 'Available',
+        header: () => <Tooltip title="For sale" ><span>Available</span></Tooltip>,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
@@ -138,7 +135,7 @@ const warehouseColumn: ColumnDef<ProductOnStockRowType>[] = [
     {
         accessorKey: 'warehouse',
         id: 'warehouse',
-        header: () => <span>Warehouse</span>,
+        header: () => <Tooltip title='Warehouse'> <span>Warehouse</span></Tooltip>,
         cell: info => <span><span className={`fi fi-${info.row.original?.country ? info.row.original?.country.toLowerCase() : ''} flag-icon`}></span>{info.row.original.warehouse}</span>,
 
         aggregationFn: 'count',
@@ -152,7 +149,7 @@ const productColumn = (width: number) => [
     {
 
         accessorKey: 'product',
-        header: 'Product',
+        header: () => <Tooltip title='Name of product'>Product</Tooltip>,
         cell: info => info.getValue(),
         /**
          * override the value used for row grouping
@@ -169,21 +166,22 @@ const productColumn = (width: number) => [
 const documentColumns: ColumnDef<ProductOnStockRowType>[] = [
     {
         accessorKey: 'document',
-        header: 'Document',
+        header: () => <Tooltip title='Movement document'>Document</Tooltip>,
         size: 90,
         maxSize: 500,
     },
     {
         accessorKey: 'period',
-        header: 'Period',
-        cell: info => <span>{formatDateTimeToStringWithDot(info.row.original?.period)}</span>,
-        size: 70,
+        header: () => <Tooltip title="Document's date">Period</Tooltip>,
+        cell: info => <span>{formatDateTimeToStringWithDotWithoutSeconds(info.row.original?.period)}</span>,
+        size: 80,
+        minSize: 80,
         maxSize: 500,
     },
 ]
 
 export const columns_Warehouse_Product_Doc: ColumnDef<ProductOnStockRowType>[] = [
-    ...productColumn(80),
+    ...productColumn(90),
     ...warehouseColumn,
     ...documentColumns,
     ...resourceColumns,
@@ -275,8 +273,18 @@ export const getProductsOnStocksVariantSortingCols = (variant: PRODUCTS_ON_STOCK
 }
 
 
-export type ProductOnStocksFilters = {
-    country: string[];
-    warehouse: string[];
-    product: string[];
+export const ProductsOnStocksHeaderNames = {
+    'warehouse': "Warehouse",
+    'product': "Product",
+    'document': "Document",
+    'period': "Period",
+    'quantityOpeningBalance': "Opening balance",
+    'quantityExpense': "Expense",
+    'quantityReceipt': "Receipt",
+    'quantityClosingBalance': "Closing balance",
+    'damagedClosingBalance': "Damaged",
+    'expiredClosingBalance': "Expired",
+    'onShipping': "On shipping",
+    'reserveClosingBalance': "Reserve",
+    'available': "Available",
 }

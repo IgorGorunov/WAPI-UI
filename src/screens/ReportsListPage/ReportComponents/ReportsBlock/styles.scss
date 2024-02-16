@@ -2,14 +2,14 @@
 
 .reports-block {
   &-container {
-    padding: 24px;
+    padding: 24px 24px 12px;
   }
 
   &-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 0;
     font-size: 20px;
     font-weight: bold;
   }
@@ -29,6 +29,19 @@
     border-radius: 15px;
     //border: 1px solid var(--color-gray2);
     //box-shadow: 0px 2px 5px 0px rgba(38, 51, 77, 0.03);
+    transition: all .3s ease-in;
+    transform-origin: center left;
+    transform: scale(1);
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &__description {
+      font-size: 12px;
+      line-height: normal;
+      padding: 0 16px 16px;
+    }
 
     &__wrapper {
       //flex: 0 0 33.33%;

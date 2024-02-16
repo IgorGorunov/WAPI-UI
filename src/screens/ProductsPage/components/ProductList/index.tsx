@@ -259,6 +259,19 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
+            title: <TitleColumn title="Barcodes" minWidth="100px" maxWidth="300px" contentPosition="start"/>,
+            render: (text: string) => (
+                <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="300px" contentPosition="start"/>
+            ),
+            dataIndex: 'barcodes',
+            key: 'barcodes',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<ProductType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
+            }),
+            responsive: ['lg'],
+        },
+        {
             title: <TitleColumn title="Available" minWidth="90px" maxWidth="90px" contentPosition="center"/>,
             render: (text: string, record: ProductType) => (
                 <TableCell

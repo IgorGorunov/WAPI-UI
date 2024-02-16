@@ -61,6 +61,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     const { token, currentDate } = useAuth();
 
     console.log('params: ', docParameters);
+    console.log('data: ', docData);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -85,19 +86,12 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
             senderCountry: docData?.senderCountry || '',
             receiver: docData?.receiver || (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND ? 'Customer' : ''),
             receiverCountry: docData?.receiverCountry || '',
-            // freightSupplier: docData?.freightSupplier || '',
             estimatedTimeArrives: docData?.estimatedTimeArrives || '0001-01-01T00:00:00',
             uuid: docData?.uuid || '',
             courierServiceTrackingNumber: docData?.courierServiceTrackingNumber || '',
-            // wapiTrackingNumber: docData?.wapiTrackingNumber || '',
-            // warehouseTrackingNumber: docData?.warehouseTrackingNumber || '',
             comment: docData?.comment || '',
             status: docData?.status || '',
-            // packages: docData?.packages || '',
-            // palletAmount: docData?.palletAmount || '',
-            // volume: docData?.volume || '',
-            // weightGross:docData?.weightGross || '',
-            // weightNet: docData?.weightNet || '',
+            statusAdditionalInfo: docData?.statusAdditionalInfo || '',
 
             products:
                 docData && docData?.products && docData.products.length
@@ -634,7 +628,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
             </Tabs>
 
             <div className='form-submit-btn'>
-                {isDisabled && docData?.canEdit && docData?.status==='Draft' && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(docData?.canEdit || !docData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {isDisabled && docData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(docData?.canEdit || !docData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
             </div>

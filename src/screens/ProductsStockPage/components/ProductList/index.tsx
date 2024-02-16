@@ -269,26 +269,26 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             render: (text: number, record: ProductStockType) => (
                 <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
                     childrenAfter={<span
-                        className=""
+                        className="reserve-cell"
                         onClick={(e) => {
                             setHoveredReserve(record);
                             setMousePosition({ x: e.clientX, y: e.clientY });
                             setIsDisplayedPopup(true);
 
                         }}
-                        onMouseEnter={(e) => {
-                            setHoveredReserve(record);
-                            setMousePosition({ x: e.clientX, y: e.clientY });
-                            setIsDisplayedPopup(true);
-
-                        }}
-                        onMouseLeave={() => {
-                            setHoveredReserve(null);
-                            setMousePosition(null);
-                            setIsDisplayedPopup(false);
-                        }}
+                        // onMouseEnter={(e) => {
+                        //     setHoveredReserve(record);
+                        //     setMousePosition({ x: e.clientX, y: e.clientY });
+                        //     setIsDisplayedPopup(true);
+                        //
+                        // }}
+                        // onMouseLeave={() => {
+                        //     setHoveredReserve(null);
+                        //     setMousePosition(null);
+                        //     setIsDisplayedPopup(false);
+                        // }}
                     >
-                        <span className='reserve'>{text}{text !== 0 ? <span className='info-icon'><Icon name="info" /></span> : ''}</span>
+                        <span className={`reserve ${text !== 0 ? 'is-link' : '' }`}>{text}</span>
                     </span>
                     }>
                 </TableCell>
@@ -327,32 +327,32 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
             responsive: ['lg'],
         },
-        {
-            title: <TitleColumn title="Undefined status" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'undefinedStatus',
-            key: 'undefinedStatus',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
-            }),
-            responsive: ['lg'],
-        },
-        {
-            title: <TitleColumn title="Without box" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-            ),
-            dataIndex: 'withoutBox',
-            key: 'withoutBox',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
-            }),
-            responsive: ['lg'],
-        },
+        // {
+        //     title: <TitleColumn title="Undefined status" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+        //     ),
+        //     dataIndex: 'undefinedStatus',
+        //     key: 'undefinedStatus',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
+        // {
+        //     title: <TitleColumn title="Without box" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+        //     render: (text: string) => (
+        //         <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+        //     ),
+        //     dataIndex: 'withoutBox',
+        //     key: 'withoutBox',
+        //     sorter: true,
+        //     onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
+        //     }),
+        //     responsive: ['lg'],
+        // },
         {
             title: <TitleColumn title="Returning" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
             render: (text: string) => (
@@ -464,6 +464,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                         position='left'
                         width = {200}
                         handleClose={()=>setIsDisplayedPopup(false)}
+                        hasCopyBtn={true}
                     />
                 </div>
             )}

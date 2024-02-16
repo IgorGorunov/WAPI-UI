@@ -46,6 +46,7 @@ export type StockMovementHistoryType = {
     period: string;
     status: string;
     estimatedTimeArrives: string;
+    statusAdditionalInfo?: string;
     // estimatedTimeDepartures: string;
     // freightSupplier: string;
 }
@@ -85,6 +86,7 @@ export type SingleStockMovementType = {
     status: string;
     products: SingleStockMovementProductType[];
     statusHistory: StockMovementHistoryType[];
+    statusAdditionalInfo?: string;
     services: StockMovementServiceType[];
     attachedFiles: AttachedFilesType[];
     canEdit?: boolean;

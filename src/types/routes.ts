@@ -12,4 +12,5 @@ export const enum Routes {
   DeliveryRates = '/reports/buyoutDeliveryRates',
   ReportSales = '/reports/reportSales',
   SaleDynamic = '/reports/saleDynamic',
+  CodReport = '/reports/codReport',
 }
