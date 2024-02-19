@@ -1,8 +1,8 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {FieldPropsType} from "@/types/forms";
+import {FieldPropsType, OptionType} from "@/types/forms";
 import "./styles.scss"
 
-const RadioSwitch: React.FC<FieldPropsType> = ({
+const RadioButton: React.FC<FieldPropsType> = ({
                                                    classNames= '',
                                                    name,
                                                    label = '',
@@ -12,6 +12,7 @@ const RadioSwitch: React.FC<FieldPropsType> = ({
                                                    disabled = false,
                                                    errorMessage,
                                                    width,
+                                                   isCountry = false,
                                                }) => {
 
     const [curValue, setCurValue] = useState(value || options.length && options[0].value || '');
@@ -31,6 +32,14 @@ const RadioSwitch: React.FC<FieldPropsType> = ({
         }
     }, []);
 
+    const getCountry = useCallback((options:OptionType[], value: string) => {
+        const foundOption = options.filter(item => item.value === value);
+        if (foundOption.length) {
+            return foundOption[0].extraInfo || '';
+        }
+        return '';
+    },[])
+
 
     return (
         <div className={`radio-button__wrapper ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${disabled ? 'is-disabled' : 'is-active'}`}>
@@ -41,7 +50,7 @@ const RadioSwitch: React.FC<FieldPropsType> = ({
                        onClick={()=>handleChange(item.value)}
                        onKeyDown={(e) => { if (e.key !== 'Tab') { handleChange(item.value); e.preventDefault();} }}
                     >
-                        <span className='radio-button__option-decor'/> <span>{item.label}</span>
+                        <span className='radio-button__option-decor'/> <span>{item.label}{isCountry && getCountry(options, item.value as string) ? <span className={`fi fi-${getCountry(options, item.value as string).toLowerCase()} flag-icon`}></span> : null}</span>
                     </a>
                 ))}
             </div>}
@@ -51,4 +60,4 @@ const RadioSwitch: React.FC<FieldPropsType> = ({
     );
 };
 
-export default RadioSwitch;
+export default RadioButton;

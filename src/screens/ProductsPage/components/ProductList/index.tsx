@@ -248,7 +248,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         {
             title: <TitleColumn title="Aliases" minWidth="100px" maxWidth="300px" contentPosition="start"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="100px" maxWidth="300px" contentPosition="start"/>
+                <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
             dataIndex: 'aliases',
             key: 'aliases',

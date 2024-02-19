@@ -1,4 +1,4 @@
-import {AttachedFilesType} from "@/types/utility";
+import {AttachedFilesType, ProductsSelectionType} from "@/types/utility";
 
 export const enum STOCK_MOVEMENT_DOC_TYPE {
     INBOUNDS = 'inbound',
@@ -92,7 +92,6 @@ export type SingleStockMovementType = {
     canEdit?: boolean;
 }
 
-
 export type StockMovementParamsProductType = {
     available: number;
     name: string;
@@ -108,10 +107,11 @@ export type StockMovementWarehouseType = {
 }
 
 export type StockMovementParamsType = {
-    products: StockMovementParamsProductType[];
+    products?: StockMovementParamsProductType[];
     sender: StockMovementWarehouseType[] | null;
     receiver: StockMovementWarehouseType[] | null;
     quality: string[];
+    productsSelection: ProductsSelectionType[];
 }
 
 //send form types

@@ -17,6 +17,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
   errors,
   needToasts=true,
   width,
+    noCounters = true,
    ...otherProps
 }, ref) => {
 
@@ -47,6 +48,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
             {...otherProps}
             autoComplete="new-user-email"
             aria-autocomplete='none'
+            className={noCounters ? 'no-counters' : ''}
           />
         {errorMessage && <p className="error">{errorMessage}</p>}
       {errors && name in errors ? (

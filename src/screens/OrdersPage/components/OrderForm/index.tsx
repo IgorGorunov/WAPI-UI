@@ -8,7 +8,7 @@ import {
     SingleOrderProductFormType,
     SingleOrderType
 } from "@/types/orders";
-import {AttachedFilesType, WarehouseType} from "@/types/utility";
+import {AttachedFilesType, ProductsSelectionType, WarehouseType} from "@/types/utility";
 import "./styles.scss";
 import '@/styles/forms.scss';
 import {useRouter} from "next/router";
@@ -42,7 +42,7 @@ import SmsHistory from "./SmsHistory";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
 import Claims from "@/screens/OrdersPage/components/OrderForm/Claims";
-
+import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -62,6 +62,8 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
     const [selectedWarehouse, setSelectedWarehouse] = useState(orderData?.preferredWarehouse || '');
     const [selectedCourierService, setSelectedCourierService] = useState(orderData?.preferredCourierService || '');
+
+    const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
     const { token, currentDate } = useAuth();
 
@@ -186,8 +188,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         }
     });
 
-
-
     const { append: appendProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
     const currencyOptions = useMemo(()=>{return orderParameters && orderParameters?.currencies.length ? createOptions(orderParameters?.currencies) : []},[]);
@@ -265,7 +265,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             currency: getValues('codCurrency'),
         };
         getValues('products').forEach(item => {
-            const prodInfo = orderParameters.products.filter(product=>product.uuid === item.product);
+            const prodInfo = orderParameters.productsSelection.filter(product=>product.uuid === item.product);
             if (prodInfo?.length) {
                 rez.cod += Number(item.cod);
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
@@ -284,14 +284,14 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
 
 
     const getProductSku = (productUuid: string) => {
-        const product = orderParameters.products.find(item => item.uuid === productUuid);
+        const product = orderParameters.productsSelection.find(item => item.uuid === productUuid);
         return product?.sku || '';
     }
     const productOptions = useMemo(() =>{
-        return orderParameters.products.map((item: OrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}});
+        return orderParameters.productsSelection.map((item:  ProductsSelectionType)=> ({label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value: item.uuid, extraInfo: item.name}));
     },[orderParameters]);
 
-    const calcProductTotal = (record: SingleOrderProductFormType, index: number) => {
+    const calcProductTotal = (index: number) => {
         const product = getValues('products')[index];
         const total = (Math.floor(((+product.quantity) * (+product.price) - (+product.discount))*100)/100).toString();
         setValue(`products.${index}.total`, total === '0' ? '' : total, { shouldValidate: true });
@@ -447,7 +447,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                     onChange={(newValue: string) => {
                                         field.onChange(newValue);
                                         updateTotalProducts();
-                                        calcProductTotal(record, index);
+                                        calcProductTotal(index);
                                     }}
                                 />
                             </div>
@@ -478,7 +478,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                     isRequired={true}
                                     onChange={(newValue: string) => {
                                         field.onChange(newValue);
-                                        calcProductTotal(record, index);
+                                        calcProductTotal(index);
                                     }}
                                 />
                             </div>
@@ -506,7 +506,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                                     disabled={isDisabled}
                                     onChange={(newValue: string) => {
                                         field.onChange(newValue);
-                                        calcProductTotal(record, index);
+                                        calcProductTotal(index);
                                     }}
                                 />
                             </div>
@@ -593,7 +593,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeProduct(index)}>
+                    <button disabled={isDisabled} className='action-btn' onClick={() => removeProduct(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -660,6 +660,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedCourierService('')
     }
 
+    //product selection
+    const handleProductSelection = () => {
+        setShowProductSelectionModal(true);
+    }
+
+
     const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
 
@@ -672,6 +678,57 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
     };
+
+
+    const handleAddSelection = (selectedProducts: SelectedProductType[]) => {
+        setShowProductSelectionModal(false);
+
+        //make copy of existing products
+        const productsBeforeSelection = [...products];
+        const fixedRows = [];
+        setValue('products', []);
+
+        const codCurrency = getValues('codCurrency');
+        //add selected products
+        selectedProducts.forEach((selectedProduct, index) => {
+            //check if product is already here (check key
+            const existingProducts = productsBeforeSelection.filter(item => item.product === selectedProduct.product);
+            if (existingProducts.length) {
+                const sourceRow = existingProducts.length===1 ? existingProducts : existingProducts.filter(item => item.key === selectedProduct.key) ;
+
+                if (sourceRow.length) {
+                    fixedRows.push(selectedProduct.key);
+                    appendProduct({...sourceRow[0], quantity: selectedProduct.quantity});
+                } else {
+                    //change what we have
+                    appendProduct({...existingProducts[0], quantity: selectedProduct.quantity});
+                }
+                calcProductTotal(index);
+                if (codCurrency && products[index].total) {
+                    setValue(`products.${index}.cod`, getValues(`products.${index}.total`));
+                }
+            } else {
+                //add new row
+                appendProduct(
+                    {
+                        key: selectedProduct.key,
+                        product: selectedProduct.product,
+                        quantity: selectedProduct.quantity,
+                        sku: getProductSku(selectedProduct.product),
+                        selected: false,
+                        analogue: '',
+                        price: 0,
+                        cod: 0,
+                        tax: 0,
+                        discount: 0,
+                        total: 0
+                    }
+                );
+            }
+
+        });
+        updateTotalProducts();
+    }
 
     const tabTitleArray =  TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length));
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
@@ -720,8 +777,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         }
     }
 
-
-
     const onError = (props: any) => {
 
         if (isDraft) {
@@ -759,7 +814,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
     }, []);
 
     return <div className='order-info'>
-
         {isLoading && <Loader />}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
@@ -888,6 +942,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                             <div className='order-info--order-btns width-67'>
                                 <div className='grid-row'>
                                     <div className='order-info--table-btns form-table--btns small-paddings width-100'>
+                                        <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
+                                            Selection
+                                        </Button>
                                         <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, sku: '', product: '', analogue:'',quantity:'', price:'',discount:'',tax:'',total:'', cod:'' })}>
                                             Add
                                         </Button>
@@ -968,6 +1025,9 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         {showSendCommentModal && <Modal title={`Send comment for order ${orderData?.wapiTrackingNumber}`} onClose={()=>setShowSendCommentModal(false)} >
             <SendComment orderData={orderData} countryOptions={countries} closeSendCommentModal={()=>setShowSendCommentModal(false)}/>
+        </Modal>}
+        {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} >
+            <ProductSelection productList={orderParameters.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
         </Modal>}
     </div>
 }

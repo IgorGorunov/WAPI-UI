@@ -38,7 +38,8 @@ import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ImportFilesType} from "@/types/importFiles";
 import ProductsTotal from "@/screens/StockMovementsPage/components/StockMovementForm/ProductsTotal";
-import {AttachedFilesType} from "@/types/utility";
+import {AttachedFilesType, ProductsSelectionType} from "@/types/utility";
+import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -57,6 +58,9 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     const [isDisabled, setIsDisabled] = useState(!!docData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
+
+    //product selection
+    const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
     const { token, currentDate } = useAuth();
 
@@ -153,7 +157,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     }
 
     const productOptions = useMemo(() =>{
-        return docParameters.products.map((item: StockMovementParamsProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name} });
+        return docParameters.productsSelection.map((item: ProductsSelectionType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name} });
     },[docParameters]);
 
     const checkSelectedProductValue = (selectedValue) => {
@@ -374,7 +378,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeProduct(index)}>
+                    <button disabled={isDisabled} className='action-btn' onClick={() => removeProduct(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -385,6 +389,53 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
     const removeProducts = () => {
         setValue('products', products.filter(item => !item.selected));
         setSelectAllProducts(false);
+    }
+
+    //product selection
+    const handleProductSelection = () => {
+        setShowProductSelectionModal(true);
+    }
+
+    const handleAddSelection = (selectedProducts: SelectedProductType[]) => {
+        setShowProductSelectionModal(false);
+
+        //make copy of existing products
+        const productsBeforeSelection = [...products];
+        const fixedRows = [];
+        setValue('products', []);
+
+        //add selected products
+        selectedProducts.forEach((selectedProduct, index) => {
+            //check if product is already here (check key
+            const existingProducts = productsBeforeSelection.filter(item => item.product === selectedProduct.product);
+            if (existingProducts.length) {
+                const sourceRow = existingProducts.length===1 ? existingProducts : existingProducts.filter(item => item.key === selectedProduct.key) ;
+
+                if (sourceRow.length) {
+                    fixedRows.push(selectedProduct.key);
+                    appendProduct({...sourceRow[0], quantity: selectedProduct.quantity});
+                } else {
+                    //change what we have
+                    appendProduct({...existingProducts[0], quantity: selectedProduct.quantity});
+                }
+                setValue(`products.${index}.quantity`, selectedProduct.quantity);
+                setValue(`products.${index}.quantityPlan`, selectedProduct.quantity);
+            } else {
+                //add new row
+                appendProduct(
+                    {
+                        key: selectedProduct.key,
+                        product: selectedProduct.product,
+                        quantity: selectedProduct.quantity,
+                        selected: false,
+                        quantityPlan: selectedProduct.quantity,
+                        unitOfMeasure:'pcs',
+                        quality: 'Saleable'
+                    }
+                );
+            }
+
+        });
     }
 
 
@@ -571,6 +622,9 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                                 <div className='grid-row'>
                                     <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
                                         <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
+                                        <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
+                                            Selection
+                                        </Button>
                                         <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
                                             Add
                                         </Button>
@@ -639,6 +693,9 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                 <ImportFilesBlock file='Products import.xlsx' importFilesType={ImportFilesType.STOCK_MOVEMENTS_PRODUCTS} setResponseData={setImportResponse} closeModal={()=>setShowImportModal(false)}/>
             </Modal>
         }
+        {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} >
+            <ProductSelection productList={docParameters.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
+        </Modal>}
     </div>
 }
 

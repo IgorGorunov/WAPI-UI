@@ -124,26 +124,30 @@ a {
   text-decoration: none;
 }
 
-h1 {
+h1,
+.title-h1 {
   font-size: 30px;
   font-weight: 700;
   line-height: 30px;
   margin-bottom: 10px;
 }
 
-h2 {
+h2,
+.title-h2 {
   font-size: 20px;
   font-weight: 700;
   line-height: 30px;
 }
 
-h3 {
+h3,
+.title-h3 {
   font-size: 20px;
   font-weight: 400;
   line-height: 30px;
 }
 
-h4 {
+h4,
+.title-h4 {
   font-size: 14px;
   font-weight: 700;
   line-height: 20px;

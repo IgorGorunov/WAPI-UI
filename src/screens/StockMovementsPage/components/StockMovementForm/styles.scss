@@ -131,7 +131,11 @@
     }
   }
 
-
+  .selection-btn {
+    svg path {
+      fill: var(--color-blue);
+    }
+  }
 
   .form-submit-btn {
     display: flex;

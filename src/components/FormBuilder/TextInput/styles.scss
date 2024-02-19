@@ -17,14 +17,16 @@
       outline: none;
       box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
 
-      &[type="number"]::-webkit-inner-spin-button,
-      &[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
+      &.no-counters {
+        &[type="number"]::-webkit-inner-spin-button,
+        &[type="number"]::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
 
-      &[type=number] {
-        -moz-appearance:textfield;
+        &[type=number] {
+          -moz-appearance: textfield;
+        }
       }
 
       &::placeholder {

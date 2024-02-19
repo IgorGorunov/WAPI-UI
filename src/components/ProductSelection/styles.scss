@@ -1,0 +1,126 @@
+@import "@/constants/devices.scss";
+
+.product-selection {
+
+  @media (min-width: $desktop) {
+    width: 1090px;
+  }
+
+  &__warehouses {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    @media (min-width: $laptop) {
+      padding: 0 33px 0 122px;
+      margin-top: -67px;
+      margin-bottom: 40px;
+    }
+  }
+
+  &__search {
+
+  }
+
+  &__table {
+    overflow: hidden;
+    margin: 0 0 24px 0;
+
+    table {
+      table-layout: auto !important;
+    }
+  }
+
+  //&__selected {
+  //  height: 250px;
+  //  overflow: auto;
+  //}
+
+  &__table-title {
+    //color: var(--color-gray-blue);
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+  }
+
+  .ant-table-cell {
+    font-size: 10px;
+    font-weight: bold !important;
+    color: var(--color-gray-blue)!important;
+    padding: 0 10px !important;
+
+    .flag-icon {
+      margin-right: 6px;
+    }
+  }
+
+  .ant-table-thead {
+    font-size: 12px!important;
+    font-weight: bold !important;
+    color: var(--color-gray-blue)!important;
+    min-height: 40px;
+    max-height: 40px;
+    .ant-table-cell {
+      padding: 10px !important;
+    }
+  }
+
+  .ant-table-body {
+    &::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      background-color: rgba(0,0,0,.5);
+      -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+    }
+  }
+
+  .product-field {
+    border: none;
+
+    .select-field {
+      &__container,
+      &__control {
+        border: none!important;
+      }
+
+      &__indicator {
+        display: none;
+      }
+    }
+
+  }
+
+  .quantity-field input {
+    padding: 4px 4px 4px 10px;
+
+    &[type=number]::-webkit-inner-spin-button {
+      opacity: 1;
+    }
+  }
+
+  .action-btn {
+    height: 32px;
+  }
+
+
+
+  .add-type {
+    &:hover {
+      svg path {
+        fill: var(--color-blue)
+      }
+    }
+  }
+
+
+}

@@ -75,6 +75,7 @@ export type FieldPropsType = {
   isCheckboxHidden?: boolean;
   circleColor?: string;
   isCountry?: boolean;
+  noCounters?: boolean;
 }
 
 export type FormBuilderType = FieldPropsType & {
