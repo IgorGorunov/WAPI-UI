@@ -24,7 +24,7 @@ import {toast, ToastContainer} from '@/components/Toast';
 import {
     SingleStockMovementFormType,
     SingleStockMovementType,
-    STOCK_MOVEMENT_DOC_TYPE, StockMovementParamsProductType,
+    STOCK_MOVEMENT_DOC_TYPE,
     StockMovementParamsType
 } from "@/types/stockMovements";
 import {verifyToken} from "@/services/auth";
@@ -273,6 +273,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                                         // updateTotalProducts();
                                         setQuantityActual(record, index);
                                     }}
+                                    classNames={!isQuantityActualHidden && record.quantity !==record.quantityPlan ? 'highlight-error' : ''}
                                 />
                             </div>
                         )}
@@ -305,6 +306,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                                         // updateTotalProducts();
                                         // calcProductTotal(record, index);
                                     }}
+                                    classNames={!isQuantityActualHidden && record.quantity !==record.quantityPlan ? 'highlight-error' : ''}
                                 />
                             </div>
                         )}

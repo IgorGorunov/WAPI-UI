@@ -1,7 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {
     AmazonPrepOrderParamsType,
-    AmazonPrepOrderProductType,
     AmazonPrepOrderProductWithTotalInfoType, SingleAmazonPrepOrderFormType,
     SingleAmazonPrepOrderType,
     WarehouseType,
@@ -43,6 +42,17 @@ type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
     amazonPrepOrderParameters?: AmazonPrepOrderParamsType;
     closeAmazonPrepOrderModal: ()=>void;
+}
+
+const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew: number) => {
+    const koefficient = quantityOld / quantityBoxOld;
+    if (koefficient === Math.round(koefficient)) {
+        const newQuantityBox = quantityNew / koefficient;
+        if (newQuantityBox === Math.round(newQuantityBox)) {
+            return newQuantityBox;
+        }
+    }
+    return 0;
 }
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
@@ -446,16 +456,19 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             const existingProducts = productsBeforeSelection.filter(item => item.product === selectedProduct.product);
             if (existingProducts.length) {
                 const sourceRow = existingProducts.length===1 ? existingProducts : existingProducts.filter(item => item.key === selectedProduct.key) ;
-
+                let boxQuantity;
                 if (sourceRow.length) {
                     fixedRows.push(selectedProduct.key);
-                    appendProduct({selected: false, key: sourceRow[0].key, product: sourceRow[0].product, quantity: Number(selectedProduct.quantity), boxesQuantity: Number(selectedProduct.quantity)});
+                    boxQuantity = sourceRow[0].boxesQuantity!==0 ? sourceRow[0].boxesQuantity === sourceRow[0].quantity ? Number(selectedProduct.quantity) : getBoxesAmount(Number(sourceRow[0].quantity), Number(sourceRow[0].boxesQuantity), selectedProduct.quantity) : 0;
+                    appendProduct({selected: false, key: sourceRow[0].key, product: sourceRow[0].product, quantity: Number(selectedProduct.quantity), boxesQuantity: boxQuantity});
+
                 } else {
                     //change what we have
-                    appendProduct({selected: false, key: existingProducts[0].key, product: existingProducts[0].product, quantity: selectedProduct.quantity, boxesQuantity: selectedProduct.quantity});
+                    boxQuantity = existingProducts[0].boxesQuantity ? existingProducts[0].boxesQuantity === existingProducts[0].quantity ? Number(selectedProduct.quantity) : getBoxesAmount(Number(existingProducts[0].quantity), Number(existingProducts[0].boxesQuantity), selectedProduct.quantity):  0;
+                    appendProduct({selected: false, key: existingProducts[0].key, product: existingProducts[0].product, quantity: selectedProduct.quantity, boxesQuantity: boxQuantity});
                 }
                 setValue(`products.${index}.quantity`, Number(selectedProduct.quantity));
-                setValue(`products.${index}.boxesQuantity`, Number(selectedProduct.quantity));
+                setValue(`products.${index}.boxesQuantity`, Number(boxQuantity));
 
             } else {
                 //add new row
@@ -465,7 +478,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                         product: selectedProduct.product,
                         quantity: selectedProduct.quantity,
                         selected: false,
-                        boxesQuantity: selectedProduct.quantity,
+                        boxesQuantity: 0,
                     }
                 );
             }

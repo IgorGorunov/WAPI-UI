@@ -137,6 +137,12 @@
     }
   }
 
+  .highlight-error {
+    input {
+      color: var(--color-error)!important;
+    }
+  }
+
   .form-submit-btn {
     display: flex;
     justify-content: flex-end;
