@@ -38,6 +38,12 @@ export const enum WidthType {
   autoNoGrow = 'auto-no-grow',
 }
 
+export enum ALIGN_FLEX {
+  CENTER ='center',
+  START = 'start',
+  END = 'end',
+}
+
 export type FieldPropsType = {
   classNames?: string
   name: string
@@ -76,6 +82,7 @@ export type FieldPropsType = {
   circleColor?: string;
   isCountry?: boolean;
   noCounters?: boolean;
+  alignFlexH?: ALIGN_FLEX;
 }
 
 export type FormBuilderType = FieldPropsType & {

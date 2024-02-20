@@ -699,7 +699,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
-        {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} >
+        {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
             <ProductSelection productList={amazonPrepOrderParameters.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
         </Modal>}
     </div>

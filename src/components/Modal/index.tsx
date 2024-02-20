@@ -10,9 +10,10 @@ type ModalType = {
     children?: React.ReactNode;
     onClose: () => void;
     modalType?: ModalTypes;
+    noHeaderDecor?: boolean;
 };
 
-const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" , modalType= ModalTypes.MAIN}) => {
+const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" , modalType= ModalTypes.MAIN, noHeaderDecor = false}) => {
     const modalWrapperRef = useRef<HTMLDivElement>();
 
     const handleCloseClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -46,7 +47,7 @@ const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" 
         <div className={`modal-overlay ${classNames}`}>
             <div className="modal-wrapper" ref={modalWrapperRef}>
                 <div className="modal">
-                    <div className="modal-header">
+                    <div className={`modal-header ${noHeaderDecor ? 'no-header-decor' : ''}`}>
                         {title && (
                             <div className="modal-header__title">
                                 {title}

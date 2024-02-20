@@ -1026,7 +1026,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         {showSendCommentModal && <Modal title={`Send comment for order ${orderData?.wapiTrackingNumber}`} onClose={()=>setShowSendCommentModal(false)} >
             <SendComment orderData={orderData} countryOptions={countries} closeSendCommentModal={()=>setShowSendCommentModal(false)}/>
         </Modal>}
-        {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} >
+        {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
             <ProductSelection productList={orderParameters.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
         </Modal>}
     </div>

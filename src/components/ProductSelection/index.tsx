@@ -6,7 +6,7 @@ import Button from "@/components/Button/Button";
 import {ProductsSelectionType} from "@/types/utility";
 import SearchContainer from "@/components/SearchContainer";
 import SearchField from "@/components/SearchField";
-import {FormFieldTypes} from "@/types/forms";
+import {ALIGN_FLEX, FormFieldTypes} from "@/types/forms";
 import {Table, TableColumnProps} from "antd";
 import TitleColumn from "@/components/TitleColumn";
 import Icon from "@/components/Icon";
@@ -321,7 +321,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({productList, alr
         <div className="product-selection">
             <div className="product-selection__container">
                 <div className='product-selection__warehouses'>
-                    <RadioButton name='warehouseSelection' isCountry={true} options={warehouseOptions} value={selectedWarehouse} onChange={(val)=>setSelectedWarehouse(val as string)}/>
+                    <RadioButton name='warehouseSelection' isCountry={true} options={warehouseOptions} value={selectedWarehouse} onChange={(val)=>setSelectedWarehouse(val as string)} alignFlexH={ALIGN_FLEX.CENTER}/>
                 </div>
                 <div className="product-selection__search">
 

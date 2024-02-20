@@ -126,7 +126,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
             }
 
         } else return '10px';
-    }, []);
+    }, [groupedCols]);
 
     const getFileName = useCallback((reportType:REPORT_TYPES, curVariant:AllVariantsType) => {
         return `${REPORT_TITLES[reportType]} (${curVariant}).xlsx`
@@ -267,6 +267,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
             a.click();
         });
     }
+
     useEffect(() => {
         console.log('groups are open', groupsAreOpen)
     }, [groupsAreOpen]);
@@ -274,16 +275,17 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
 
     return (
         <div className='report'>
-            {reportType===REPORT_TYPES.SALE_DYNAMIC ? <div className='sales-dynamic-legend'>
-                <div><Icon name='arrow-up-green' /> Your sales have increased by more than 25 percent</div>
-                <div><Icon name='arrow-down-red' /> Your sales have decreased by more than 25 percent</div>
-            </div> : null}
+
 
             <div className="card report-container">
                 <div className="h-2" />
                 <div className='interactive-block'>
                     <Button onClick={handleDownload} icon='download-file' iconOnTheRight variant={ButtonVariant.SECONDARY}>Export to Excel</Button>
                     {reportGrouping.length ? <Button iconOnTheRight onClick={()=>{table.toggleAllRowsExpanded(!groupsAreOpen); setGroupsAreOpen(prev => !prev);}} icon={ groupsAreOpen ? 'minus' : 'plus'} variant={ButtonVariant.SECONDARY} >{groupsAreOpen ? 'Collapse all' : 'Expand all'}</Button> : null}
+                    {reportType===REPORT_TYPES.SALE_DYNAMIC ? <div className='sales-dynamic-legend'>
+                        <div><Icon name='arrow-up-green' /> Your sales have increased by more than 25 percent</div>
+                        <div><Icon name='arrow-down-red' /> Your sales have decreased by more than 25 percent</div>
+                    </div> : null}
                 </div>
 
                 <div className={`t-container ${reportType} ${reportType===REPORT_TYPES.SALE_DYNAMIC ? 'is-sticky' : ''}`}>
