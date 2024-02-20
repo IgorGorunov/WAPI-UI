@@ -35,7 +35,9 @@ import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
-import {AttachedFilesType} from "@/types/utility";
+import {AttachedFilesType, ProductsSelectionType} from "@/types/utility";
+import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
+import Modal from "@/components/Modal";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -52,6 +54,9 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const [isDisabled, setIsDisabled] = useState(!!amazonPrepOrderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
+
+    //product selection modal
+    const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
     //countries
     const countries = useMemo(()=>COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()})),[]);
@@ -158,7 +163,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             volume:0,
         };
         getValues('products').forEach(item => {
-            const prodInfo = amazonPrepOrderParameters ? amazonPrepOrderParameters.products.filter(product=>product.uuid === item.product) : [];
+            const prodInfo = amazonPrepOrderParameters ? amazonPrepOrderParameters.productsSelection.filter(product=>product.uuid === item.product) : [];
             if (prodInfo?.length) {
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
                 rez.weightGross += prodInfo[0].weightGross * Number(item.quantity);
@@ -253,7 +258,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     };
 
     const productOptions = useMemo(() =>{
-        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item: AmazonPrepOrderProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
+        return amazonPrepOrderParameters ? amazonPrepOrderParameters.productsSelection.map((item: ProductsSelectionType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
     },[amazonPrepOrderParameters, warehouse]);
 
     // const productOptions = useMemo(() =>{
@@ -294,7 +299,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                         render={({ field }) => (
                             <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
                                 <FieldBuilder
-                                    name={'products.${index}.selected'}
+                                    name={`products.${index}.selected`}
                                     fieldType={FormFieldTypes.CHECKBOX}
                                     {...field}
                                     disabled={isDisabled}
@@ -312,13 +317,13 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 key: 'product',
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].product`}
+                        name={`products.${index}.product`}
                         control={control}
                         defaultValue={record.product}
                         render={({ field }) => (
                             <div style={{}}>
                                 <FieldBuilder
-                                    name={`products[${index}].product`}
+                                    name={`products.${index}.product`}
                                     fieldType={FormFieldTypes.SELECT}
                                     {...field}
                                     options={productOptions}
@@ -340,12 +345,12 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 key: 'quantity',
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].quantity`}
+                        name={`products.${index}.quantity`}
                         control={control}
                         render={({ field }) => (
                             <div style={{maxWidth: '80px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].quantity`}
+                                    name={`products.${index}.quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
@@ -363,12 +368,12 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 key: 'quantity',
                 render: (text, record, index) => (
                     <Controller
-                        name={`products[${index}].boxesQuantity`}
+                        name={`products.${index}.boxesQuantity`}
                         control={control}
                         render={({ field }) => (
                             <div style={{maxWidth: '80px'}}>
                                 <FieldBuilder
-                                    name={`products[${index}].boxesQuantity`}
+                                    name={`products.${index}.boxesQuantity`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
@@ -409,7 +414,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeProduct(index)}>
+                    <button disabled={isDisabled} className='action-btn' onClick={() => removeProduct(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -420,6 +425,54 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
     const removeProducts = () => {
         setValue('products', products.filter(item => !item.selected));
         setSelectAllProducts(false);
+    }
+
+    //product selection
+    const handleProductSelection = () => {
+        setShowProductSelectionModal(true);
+    }
+
+    const handleAddSelection = (selectedProducts: SelectedProductType[]) => {
+        setShowProductSelectionModal(false);
+
+        //make copy of existing products
+        const productsBeforeSelection = [...products];
+        const fixedRows = [];
+        setValue('products', []);
+
+        //add selected products
+        selectedProducts.forEach((selectedProduct, index) => {
+            //check if product is already here (check key
+            const existingProducts = productsBeforeSelection.filter(item => item.product === selectedProduct.product);
+            if (existingProducts.length) {
+                const sourceRow = existingProducts.length===1 ? existingProducts : existingProducts.filter(item => item.key === selectedProduct.key) ;
+
+                if (sourceRow.length) {
+                    fixedRows.push(selectedProduct.key);
+                    appendProduct({selected: false, key: sourceRow[0].key, product: sourceRow[0].product, quantity: Number(selectedProduct.quantity), boxesQuantity: Number(selectedProduct.quantity)});
+                } else {
+                    //change what we have
+                    appendProduct({selected: false, key: existingProducts[0].key, product: existingProducts[0].product, quantity: selectedProduct.quantity, boxesQuantity: selectedProduct.quantity});
+                }
+                setValue(`products.${index}.quantity`, Number(selectedProduct.quantity));
+                setValue(`products.${index}.boxesQuantity`, Number(selectedProduct.quantity));
+
+            } else {
+                //add new row
+                appendProduct(
+                    {
+                        key: selectedProduct.key,
+                        product: selectedProduct.product,
+                        quantity: selectedProduct.quantity,
+                        selected: false,
+                        boxesQuantity: selectedProduct.quantity,
+                    }
+                );
+            }
+
+        });
+
+        updateTotalProducts();
     }
 
 
@@ -568,6 +621,9 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                                             />
                                         </div>
                                         <div className='amazon-prep-info--btns__table-btns'>
+                                            <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
+                                                Selection
+                                            </Button>
                                             <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:'', boxesQuantity: ''})}>
                                                 Add
                                             </Button>
@@ -643,6 +699,9 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+        {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
+            <ProductSelection productList={amazonPrepOrderParameters.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
+        </Modal>}
     </div>
 }
 

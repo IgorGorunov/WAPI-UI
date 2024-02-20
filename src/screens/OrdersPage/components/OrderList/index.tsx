@@ -46,6 +46,8 @@ const pageOptions = [
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder}) => {
 
+    console.log('orders: ', orders);
+
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
@@ -526,13 +528,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn title="Status" minWidth="70px" maxWidth="70px" contentPosition="start"/>,
+            title: <TitleColumn title="Status" minWidth="80px" maxWidth="100px" contentPosition="start"/>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
                     <TableCell
-                        minWidth="70px"
-                        maxWidth="70px"
+                        minWidth="80px"
+                        maxWidth="100px"
                         contentPosition="start"
                         childrenAfter={
                             <span style={{

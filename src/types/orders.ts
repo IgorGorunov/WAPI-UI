@@ -1,4 +1,4 @@
-import {SEND_COMMENT_TYPES, AttachedFilesType, WarehouseType} from "@/types/utility";
+import {SEND_COMMENT_TYPES, AttachedFilesType, WarehouseType, ProductsSelectionType} from "@/types/utility";
 
 export type ClaimType = {
     date: string;
@@ -188,9 +188,10 @@ export type OrderProductType = {
 // }
 
 export type OrderParamsType = {
-    products: OrderProductType[];
+    products?: OrderProductType[];
     warehouses: WarehouseType[];
     currencies: string[];
+    productsSelection: ProductsSelectionType[];
 }
 
 export type PickupPointsType = {

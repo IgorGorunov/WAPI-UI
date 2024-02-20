@@ -197,6 +197,12 @@
         background: var(--color-gray-blue);
       }
     }
+
+    .selection-btn {
+      svg path {
+        fill: var(--color-blue);
+      }
+    }
   }
 
   //.ant-table {

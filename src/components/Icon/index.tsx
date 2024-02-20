@@ -69,6 +69,7 @@ import ArrowDownRed from '@/assets/icons/arrow-down-red.svg'
 import Question from '@/assets/icons/question.svg'
 import Copy from '@/assets/icons/copy.svg'
 import Selection from '@/assets/icons/selection.svg'
+import Select from '@/assets/icons/select.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -140,6 +141,7 @@ export const icons = {
   'question': Question,
   'copy': Copy,
   'selection': Selection,
+  'select': Select,
 };
 
 export type IconType = keyof typeof icons;

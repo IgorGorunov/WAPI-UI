@@ -62,10 +62,10 @@ export const navBlocks: SubmenuBlockType[] = [
             }
         ]
     },
-    // {
-    //     submenuTitle: 'Reports',
-    //     submenuIcon: 'reports-folder',
-    //     submenuLink: '/reports',
-    //     navItems: []
-    // },
+    {
+        submenuTitle: 'Reports',
+        submenuIcon: 'reports-folder',
+        submenuLink: '/reports',
+        navItems: []
+    },
 ];

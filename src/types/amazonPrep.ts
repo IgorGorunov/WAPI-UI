@@ -1,3 +1,5 @@
+import {ProductsSelectionType} from "@/types/utility";
+
 export type AmazonPrepOrderType = {
     key?: string;
     asnNumber: string;
@@ -135,11 +137,12 @@ export type WarehouseType = {
 }
 
 export type AmazonPrepOrderParamsType = {
-    products: AmazonPrepOrderProductType[];
+    products?: AmazonPrepOrderProductType[];
     warehouses: WarehouseType[];
     deliveryMethod: string[];
     carrierTypes?: string[];
     boxesTypes?: string[];
+    productsSelection: ProductsSelectionType[];
 }
 
 export type AmazonPrepOrderProductWithTotalInfoType = {

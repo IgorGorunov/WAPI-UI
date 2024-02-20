@@ -44,6 +44,7 @@ const Button: React.FC<ButtonType> = (props) => {
     variant= ButtonVariant.PRIMARY,
     isVisible = true,
     children,
+    classNames,
     ...otherProps
   } = props;
   const sizeClassName = `btn-size-${size}`;
@@ -52,7 +53,7 @@ const Button: React.FC<ButtonType> = (props) => {
   return (
     <button
       type={type || "button"}
-      className={`btn ${sizeClassName} ${formClassName} ${isFullWidth ? "full-width" : ""} ${variant} ${isVisible ? 'fade-in' : 'fade-out'}`}
+      className={`btn ${classNames} ${sizeClassName} ${formClassName} ${isFullWidth ? "full-width" : ""} ${variant} ${isVisible ? 'fade-in' : 'fade-out'}`}
       {...otherProps}
     >
       {icon && !iconOnTheRight ? (

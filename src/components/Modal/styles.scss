@@ -75,6 +75,10 @@
     margin: 0 -16px;
   }
 
+  &.no-header-decor {
+    border-bottom: none;
+  }
+
   &__title {
     font-size: 14px;
     font-weight: bold;

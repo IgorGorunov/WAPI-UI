@@ -207,7 +207,7 @@ const receiverCountryColumn: ColumnDef<DeliveryRatesRowType>[] = [
         header: () => <Tooltip title="Receiver country" ><span>Country</span></Tooltip>,
         cell: info => <span><span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.receiverCountry}</span>,
         aggregationFn: 'count',
-        size: 100,
+        size: 110,
         maxSize: 500,
     },
 ]
