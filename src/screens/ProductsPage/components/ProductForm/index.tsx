@@ -56,7 +56,7 @@ type ProductPropsType = {
 const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal}) => {
     //get parameters to setup form
 
-    const orderIsApproved = false; //productData?.status.toLowerCase() === 'approved';
+    const orderIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved') ;
 
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
