@@ -6,7 +6,7 @@ export const enum ModalTypes {
 
 export const enum SEND_COMMENT_TYPES {
     REDELIVERY_SAME_ADDRESS = "Redelivery to the same address",
-    BACK_TO_SENDER = "Delivery back to the sender",
+    BACK_TO_SENDER = "Return to the warehouse",
     STORAGE = "Storage at courier agency",
     REDELIVERY_ANOTHER_ADDRESS = "Redelivery to another address",
 }
