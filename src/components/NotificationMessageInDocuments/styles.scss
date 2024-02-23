@@ -1,0 +1,71 @@
+.document-notification-message {
+  position: relative;
+  //display: flex;
+  //width: 100%;
+  margin-bottom: 6px;
+  padding: 3px 25px 3px 26px;
+  border-radius: 5px;
+  //display: inline-block;
+
+  &__message {
+    font-size: 12px;
+    font-weight: bold;
+    word-break: break-all;
+  }
+
+  &__icon {
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    line-height: 1;
+    height: 20px;
+
+    svg {
+      width: 20px;
+
+      path {
+        fill: var(--color-blue);
+      }
+    }
+
+    .notification-Error & {
+      left: 6px;
+      height: 14px;
+    }
+  }
+
+  &.notification {
+    &-Info {
+      color: var(--color-blue);
+      //border: 1px solid var(--color-blue);
+    }
+
+    &-Error {
+      color: var(--color-error);
+      //border: 1px solid var(--color-error);
+
+      svg {
+        width: 13px;
+        path {
+          fill: var(--color-error);
+        }
+      }
+    }
+  }
+
+  &__close {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    left: auto;
+    cursor: pointer;
+
+    svg {
+      width: auto !important;
+      path {
+        fill: var(--color-gray-blue) !important;
+      }
+    }
+  }
+}

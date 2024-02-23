@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import "./styles.scss";
+import NotificationMessageInDocuments, {NotificationMessageInDocumentsType} from "@/components/NotificationMessageInDocuments";
 
 type TabTitle = {
     title: string;
@@ -11,8 +12,9 @@ type TabsType = {
     classNames?: string;
     tabTitles?: TabTitle[];
     children?: React.ReactNode[];
+    notifications?: NotificationMessageInDocumentsType[];
 }
-const Tabs: React.FC<TabsType> = ({id, curTab = 0, classNames='', tabTitles, children}) => {
+const Tabs: React.FC<TabsType> = ({id, curTab = 0, classNames='', tabTitles, children, notifications}) => {
     const [activeTab, setActiveTab] = useState<number>(curTab);
     return <div className={`tabs-block ${classNames ? classNames : ''}`} id={id}>
         <div className='tabs-block__wrapper'>
@@ -29,6 +31,16 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, classNames='', tabTitles, chi
                 </li> )}
             </ul>
             <div className='tabs-block__content'>
+                {notifications && notifications.length ?
+                    <div className='tabs-block__content-notifications'>
+                        {notifications.map(notification => (
+                            <div key={notification.uuid} className='tabs-block__content-notification'>
+                                <NotificationMessageInDocuments {...notification} />
+                            </div>
+                        ))}
+                    </div>
+                 : null}
+
                 {React.Children.toArray(children).map((tabCntent, index)=> (
                     <div
                         key={`tab-block__content-panel_${index}`}

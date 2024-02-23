@@ -20,6 +20,7 @@ export type AmazonPrepOrderType = {
         product: string,
         quantity: number,
     } [];
+    notifications: boolean,
 }
 
 export type ProductInfoType = {

@@ -62,6 +62,12 @@
       box-shadow: 0 2px 5px 0 var(--color-gray2);
     }
 
+    &-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
     .user-name {
       display: none;
 

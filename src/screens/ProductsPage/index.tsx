@@ -21,6 +21,7 @@ import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
 import {ImportFilesType} from "@/types/importFiles";
+import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 
 const ProductsPage = () => {
     const Router = useRouter();
@@ -102,7 +103,26 @@ const ProductsPage = () => {
 
     const handleEditProduct = (uuid: string) => {
         fetchProductData(uuid);
+        setProductsData(prevState => {
+            if (prevState && prevState.length) {
+                const el = prevState.filter(item => item.uuid === uuid);
+                if (el.length) {
+                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
+                }
+            }
+            return [...prevState];
+        });
+        setShowModal(true);
     }
+
+    useEffect(() => {
+        const { uuid } = Router.query;
+
+        if (uuid) {
+            handleEditProduct(Array.isArray(uuid) ? uuid[0] : uuid);
+            Router.replace('/products');
+        }
+    }, [Router.query]);
 
 
     const fetchProductData = async (uuid) => {
@@ -122,7 +142,7 @@ const ProductsPage = () => {
                 // res.data.uuid = uuid;
                 setSingleProductData(res.data);
                 setUuid(uuid);
-                setShowModal(true);
+                //setShowModal(true);
             } else {
                 console.error("API did not return expected data");
             }
@@ -156,8 +176,12 @@ const ProductsPage = () => {
         exportFileXLS(filteredData, "Products")
     }
 
+    const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
     const onModalClose =() => {
         setShowModal(false);
+        if (singleProductData && singleProductData.uuid) {
+            setDocNotificationsAsRead(singleProductData.uuid);
+        }
     }
 
     return (

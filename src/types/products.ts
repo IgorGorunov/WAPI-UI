@@ -18,6 +18,7 @@ export type ProductType = {
         reserved: number,
         available: number,
     }[]
+    notifications: boolean,
 }
 
 export type ReservedRowType = {

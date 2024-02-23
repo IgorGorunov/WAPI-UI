@@ -190,6 +190,27 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             key: 'status',
         },
         {
+            title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
+            />,
+            render: (text: string, record: ProductType) => (
+                <TableCell
+                    className='no-padding'
+                    minWidth="20px"
+                    maxWidth="20px"
+                    contentPosition="center"
+                    childrenAfter ={
+                        <span style={{marginTop:'3px'}}>{record.notifications ? <Icon name="notification" />: null}</span>}
+                >
+                </TableCell>
+
+            ),
+            dataIndex: 'notifications',
+            key: 'notifications',
+            sorter: true,
+            responsive: ['lg'],
+        },
+
+        {
             title: <TitleColumn title="SKU" minWidth="120px" maxWidth="200px" contentPosition="start" />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="120px" maxWidth="200px" contentPosition="start"/>

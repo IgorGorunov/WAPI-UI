@@ -55,7 +55,7 @@ export type OrderType = {
         troubleStatus: string;
         additionalInfo: string;
     }[],
-
+    notifications: boolean;
 
 }
 

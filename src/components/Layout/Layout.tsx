@@ -13,16 +13,17 @@ const Layout: React.FC<Props> = ({
   children,
 }) => {
   return (
-    <div className="main">
-      <div className="main-content">
-        {children}
-      </div>
-      {hasFooter && <Footer />}
-      <div id="modal-root-main"></div>
-      <div id="modal-root-status"></div>
-        <div id="modal-root-comment"></div>
-    </div
-    >
+      <div className="main">
+          <div className="main-content">
+              {children}
+          </div>
+          {hasFooter && <Footer/>}
+          <div id="modal-root-main"></div>
+          <div id="modal-root-status"></div>
+          <div id="modal-root-comment"></div>
+          <div id="modal-root-confirm"></div>
+      </div
+      >
   );
 };
 

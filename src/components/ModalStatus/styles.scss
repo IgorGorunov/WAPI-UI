@@ -4,6 +4,7 @@
   width: 100%;
   color: var(--color-white);
   max-height: calc(100vh - 80px);
+  max-width: 800px;
   overflow-y: scroll;
   border-radius: 15px;
   padding: 40px 40px 70px;
@@ -15,6 +16,14 @@
 
   &.error-modal {
     background-color: var(--color-red);
+  }
+
+  &.notification-modal {
+    background-color: var(--color-blue);
+  }
+
+  &.message-modal {
+    background-color: var(--color-blue);
   }
 
   &::-webkit-scrollbar {
@@ -61,7 +70,8 @@
     flex-direction: column;
     align-items: center;
     gap: 30px;
-
+    min-width: 250px;
+    max-width: 1090px;
     //.status-icon {
     //  margin-bottom: 30px;
     //}
@@ -71,7 +81,8 @@
     position: relative;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 30px;
+    align-items: center;
+    margin-bottom: 16px;
 
     &__title {
       font-size: 18px;
@@ -84,6 +95,12 @@
     font-size: 24px;
     font-weight: bold;
     line-height: 30px;
+
+    .notification-modal & {
+      font-size: 18px;
+      font-weight: normal;
+      line-height: normal;
+    }
   }
 
   &__text {
