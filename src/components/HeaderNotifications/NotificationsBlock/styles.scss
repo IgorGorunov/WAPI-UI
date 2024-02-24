@@ -60,15 +60,25 @@
       padding: 16px;
       font-size: 12px;
     }
+
+    .filter-and-clear-all {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+
+      .toggle-switch-label-text {
+        margin-left: 6px;
+      }
+    }
   }
 
   &__clear-all {
-      margin-bottom: 16px;
-      padding: 12px 16px 8px;
       font-size: 12px;
       font-weight: bold;
       color: var(--color-blue);
       width: 100%;
+      padding: 8px 0;
       text-align: end;
       text-decoration: underline;
 
@@ -190,6 +200,10 @@
                     fill: var(--color-error)
                   }
                 }
+              }
+
+              .read & {
+                opacity: 0.25;
               }
             }
           }

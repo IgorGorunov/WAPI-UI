@@ -8,6 +8,8 @@
 
   svg {
     margin-top: 2px;
+    width: 24px;
+    transition: transform 0.3s ease;
   }
 
   &__wrapper {
@@ -19,11 +21,14 @@
     &:hover,
     &:focus,
     &:active {
-      transform: scale(1.15);
+      svg {
+        transform: scale(1.15);
+      }
     }
 
     &.has-notifications {
       svg {
+
         path {
           fill: var(--color-blue);
         }
@@ -38,12 +43,24 @@
 
     .notifications-amount {
       position: absolute;
-      top: calc( 50% - 2px);
-      left: calc(50% - 1px);
-      font-size: 9px;
+      //top: calc( 50% - 2px);
+      //left: calc(50% - 1px);
+      font-size: 8px;
       font-weight: bold;
       color: var(--color-white);
       transform: translate(-50%, -50%);
+
+      background: red;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      top: 8px;
+      right: -15px;
+      border: 1px solid white;
+      transition: transform 0.3s ease;
     }
   }
 

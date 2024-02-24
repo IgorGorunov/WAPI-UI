@@ -103,7 +103,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
     const onlyUnreadField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'onlyUnread',
-        label: 'Only unread messages',
+        label: 'Unread',
         checked: onlyUnread,
         onChange: ()=>{setOnlyUnread(prevState => !prevState)},
         hideTextOnMobile: true,
@@ -158,16 +158,18 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                         <Icon name="close" style={{width: "30px", height: "30px"}}/>
                     </button>
                     {/*clear all*/}
-                    {notificationsList.length > 1 ?
+                    <div className='filter-and-clear-all'>
+                        <FieldBuilder {...onlyUnreadField} />
                         <button
-                            className='notifications-block__clear-all'
-                            onClick={()=>setShowConfirmModal(true)}
-                        >Set all notifications as read
-                        </button> : null
-                    }
+                                className='notifications-block__clear-all'
+                                onClick={()=>setShowConfirmModal(true)}
+                            >Set all notifications as read
+                        </button>
+
+                    </div>
                     {/* search */}
                     <div className='notifications-block__search'>
-                        <FieldBuilder {...onlyUnreadField} />
+
                         <SearchContainer>
                             <SearchField searchTerm={searchTermNotifications} handleChange={handleFilterChange} handleClear={()=>{setSearchTermNotifications(""); handleFilterChange("");}} />
                             {/*<FieldBuilder {...fullTextSearchField} />*/}
