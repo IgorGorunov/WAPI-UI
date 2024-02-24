@@ -84,8 +84,12 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
             setNotificationAsRead(item.uuid);
         })
     }
-    const handleMarkAsUnread = (uuid: string) => {
-        setNotificationAsUnread(uuid);
+    const handleToggleStatus = (notification: NotificationType) => {
+        if (notification.status === NOTIFICATION_STATUSES.READ) {
+            setNotificationAsUnread(notification.uuid);
+        } else {
+            setNotificationAsRead(notification.uuid)
+        }
     }
 
 
@@ -194,7 +198,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                                                         <Icon name={item.type === NOTIFICATION_TYPES.INFO ? 'info' : 'error'} />
                                                     </div>
                                                 </button>
-                                                {item.status === NOTIFICATION_STATUSES.READ ? <button className='notification-mark-unread-btn' onClick={()=>handleMarkAsUnread(item.uuid)} /> : null}
+                                                <button className={`notification-toggle-status-btn ${item.status === NOTIFICATION_STATUSES.READ ? 'is-read' : 'is-unread'} type-${item.type}`} onClick={()=>handleToggleStatus(item)} />
                                             </li>
                                         ))}
                                     </ul>

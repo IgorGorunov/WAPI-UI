@@ -138,25 +138,6 @@
         margin-bottom: 8px;
         padding: 6px 22px 8px;
 
-        &.unread {
-          &:before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 7px;
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: var(--color-blue);
-          }
-
-          &.type-Error {
-            &:before {
-              background-color: var(--color-error);
-            }
-          }
-        }
-
         &-btn {
           font-size: 10px;
           font-weight: bold;
@@ -214,7 +195,7 @@
         }
       }
 
-      .notification-mark-unread-btn {
+      .notification-toggle-status-btn {
         position: absolute;
         top: 15px;
         left: 7px;
@@ -222,6 +203,16 @@
         height: 7px;
         border-radius: 50%;
         background-color: var(--color-medium-gray);
+
+        &.is-unread {
+          &.type-Error {
+            background-color: var(--color-error);
+          }
+
+          &.type-Info {
+            background-color: var(--color-blue);
+          }
+        }
       }
     }
 
