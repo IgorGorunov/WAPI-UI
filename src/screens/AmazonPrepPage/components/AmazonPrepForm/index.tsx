@@ -34,9 +34,11 @@ import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
-import {AttachedFilesType, ProductsSelectionType} from "@/types/utility";
+import {AttachedFilesType, ProductsSelectionType, STATUS_MODAL_TYPES} from "@/types/utility";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import Modal from "@/components/Modal";
+import useNotifications from "@/context/notificationContext";
+import {NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -58,6 +60,7 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amazonPrepOrderParameters, closeAmazonPrepOrderModal}) => {
     const Router = useRouter();
     const { token, currentDate } = useAuth();
+    const {notifications} = useNotifications();
 
     console.log('amazon params:', amazonPrepOrderParameters);
 
@@ -488,7 +491,12 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         updateTotalProducts();
     }
 
-
+    //notifications
+    let amazonPrepNotifications: NotificationType[] = [];
+    if (amazonPrepOrderData && amazonPrepOrderData.uuid && notifications && notifications.length) {
+        amazonPrepNotifications = notifications.filter(item => item.objectUuid === amazonPrepOrderData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
+        // orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid)
+    }
 
     const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid);
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
@@ -517,7 +525,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Order is successfully ${ amazonPrepOrderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully ${ amazonPrepOrderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -526,7 +534,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -564,7 +572,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({amazonPrepOrderData, amaz
         {isLoading && <Loader />}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
-            <Tabs id='amazon-prep-tabs' tabTitles={tabTitles} classNames='inside-modal' >
+            <Tabs id='amazon-prep-tabs' tabTitles={tabTitles} classNames='inside-modal' notifications={amazonPrepNotifications} >
                 <div key='general-tab' className='general-tab'>
                     <div className='card amazon-prep-info--general'>
                         <h3 className='amazon-prep-info__block-title'>

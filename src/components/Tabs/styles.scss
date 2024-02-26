@@ -11,7 +11,7 @@
     padding: 35px 30px;
     overflow: auto;
 
-    @media (max-width: $laptop) {
+    @media (max-width: $upToLaptop) {
       justify-content: flex-start;
       padding: 16px;
     }
@@ -57,6 +57,19 @@
 
   &__content {
     min-height: 610px;
+
+    &-notifications {
+      width: 100%;
+      margin-top: 8px;
+
+      @media (min-width: $laptop) {
+        margin-top: -16px;
+      }
+    }
+
+    &-notification {
+      //display: inline-block;
+    }
 
     &-panel {
 

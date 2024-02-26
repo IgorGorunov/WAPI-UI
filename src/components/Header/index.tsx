@@ -5,6 +5,7 @@ import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import {Routes} from "@/types/routes";
 import Navigation from "@/components/Navigation";
+import HeaderNotifications from "@/components/HeaderNotifications";
 
 type HeaderType = {
     pageTitle?: string;
@@ -34,10 +35,10 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
 
     return (
         <div className={`main-header`}>
-            <div className = 'main-header__wrapper card'>
+            <div className='main-header__wrapper card'>
                 <div className='main-header__menu-block' onClick={handleClick}>
                     <div className='main-header__icon'>
-                        <Icon name={"burger"} />
+                        <Icon name={"burger"}/>
                     </div>
                     <div className="page-title"><h2>{pageTitle}</h2></div>
                 </div>
@@ -46,14 +47,19 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                     {children}
                 </div>
 
-                <div className='main-header__user card' onClick={handleLogOut}>
-                    <span className='user-name'>{curUserName}</span>
-                    <Icon name='exit' />
+                <div className='main-header__user-block'>
+                    <div className='main-header__user card' onClick={handleLogOut}>
+                        <span className='user-name'>{curUserName}</span>
+                        <Icon name='exit'/>
+                    </div>
+                    <div className='main-header__notifications'>
+                        <HeaderNotifications />
+                    </div>
                 </div>
             </div>
 
             {/*<div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`}>*/}
-                <Navigation isMenuOpen={isMenuOpen} handleClose={()=>setMenuOpen(false)}/>
+            <Navigation isMenuOpen={isMenuOpen} handleClose={()=>setMenuOpen(false)}/>
             {/*</div>*/}
         </div>
     );

@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/context/authContext";
 import "@/styles/globals.scss";
+import {NotificationsProvider} from "@/context/notificationContext";
 
 const roboto = Roboto({
   weight: ["400", "700", "900"],
@@ -30,7 +31,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
       {
         <AuthProvider>
-          <Component {...pageProps} />
+          <NotificationsProvider>
+            <Component {...pageProps} />
+          </NotificationsProvider>
         </AuthProvider>
       }
     </>

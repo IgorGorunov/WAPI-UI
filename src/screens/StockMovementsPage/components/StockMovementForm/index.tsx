@@ -38,7 +38,7 @@ import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ImportFilesType} from "@/types/importFiles";
 import ProductsTotal from "@/screens/StockMovementsPage/components/StockMovementForm/ProductsTotal";
-import {AttachedFilesType, ProductsSelectionType} from "@/types/utility";
+import {AttachedFilesType, ProductsSelectionType, STATUS_MODAL_TYPES} from "@/types/utility";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 
 
@@ -484,7 +484,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
             addImportedProducts(importResponse?.data?.data || []);
 
             //show success message
-            setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Products are successfully imported`, onClose: ()=>closeSuccessModal(true)})
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Products are successfully imported`, onClose: ()=>closeSuccessModal(true)})
             setShowStatusModal(true);
         } else {
             //there are errors
@@ -495,7 +495,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
             //show error message
             const errorMessages = importResponse?.response?.data?.errorMessage || [];
 
-            setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+            setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR,title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
             setShowStatusModal(true);
 
         }
@@ -539,7 +539,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Document is successfully ${ docData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Document is successfully ${ docData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -548,7 +548,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docData, d
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }

@@ -24,7 +24,7 @@ import FiltersBlock from "@/components/FiltersBlock";
 import CurrentFilters from "@/components/CurrentFilters";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString} from "@/utils/date";
+import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 
 
 type OrderListType = {
@@ -80,7 +80,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const troubleStatusesItems = orders.flatMap(order => {
         return order.troubleStatuses.map(orderItem => ({
             uuid: order.uuid,
-            title: orderItem.period,
+            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.period),
             description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
@@ -409,6 +409,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             title: <TitleColumn
+                className='no-padding'
                 minWidth="24px"
                 maxWidth="24px"
                 contentPosition="center"
@@ -421,6 +422,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             render: (text: string, record) => {
                 return (
                     <TableCell
+                        className='no-padding'
                         minWidth="24px"
                         maxWidth="24px"
                         contentPosition="center"
@@ -469,6 +471,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             title: <TitleColumn
+                className='no-padding'
                 minWidth="24px"
                 maxWidth="24px"
                 contentPosition="center"
@@ -481,6 +484,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             render: (text: string, record) => {
                 return (
                     <TableCell
+                        className='no-padding'
                         minWidth="24px"
                         maxWidth="24px"
                         contentPosition="center"
@@ -526,6 +530,29 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+        },
+        {
+            title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
+            />,
+            render: (text: string, record: OrderType) => (
+                <TableCell
+                    className='no-padding'
+                    minWidth="20px"
+                    maxWidth="20px"
+                    contentPosition="center"
+                    childrenAfter ={
+                        <span style={{marginTop:'3px'}}>{record.notifications ? <Icon name="notification" />: null}</span>}
+                >
+                </TableCell>
+
+            ),
+            dataIndex: 'notifications',
+            key: 'notifications',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn title="Status" minWidth="80px" maxWidth="100px" contentPosition="start"/>,
@@ -757,10 +784,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             responsive: ['lg'],
         },
+
     ];
 
     return (
-        <div className="table">
+        <div className="table order-list">
             <Head>
                 <title>Orders</title>
                 <meta name="orders" content="orders" />
@@ -844,6 +872,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                         return 800;
                                     case 'statusAdditionalInfo':
                                         return 400;
+                                    case 'troubleStatus':
+                                        return 500;
                                     case 'receiver':
                                         return 350;
                                     default:

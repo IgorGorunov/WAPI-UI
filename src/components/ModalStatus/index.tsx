@@ -1,33 +1,49 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect} from "react";
 import ReactDOM from "react-dom"
 import Icon from "@/components/Icon";
 import "./styles.scss";
+import {ModalTypes, STATUS_MODAL_TYPES} from "@/types/utility";
 
 export type ModalStatusType = {
     classNames?: string;
-    isSuccess?: boolean;
+    statusModalType?: STATUS_MODAL_TYPES;
     title?: string;
     subtitle?: string;
     text?: string[];
     onClose: ()=> void;
+    modalType?: ModalTypes;
 }
-const ModalStatus:React.FC<ModalStatusType> = ({isSuccess = false, title, subtitle, text, onClose, classNames=''}) => {
 
+const getStatusModalIconName = (statusModalType: STATUS_MODAL_TYPES) => {
+    switch (statusModalType) {
+        case STATUS_MODAL_TYPES.SUCCESS:
+            return 'success';
+        case STATUS_MODAL_TYPES.ERROR:
+            return 'error';
+        case STATUS_MODAL_TYPES.NOTIFICATION:
+            return 'notification';
+        default:
+            return 'info';
+    }
+}
+
+const ModalStatus:React.FC<ModalStatusType> = ({statusModalType=STATUS_MODAL_TYPES.ERROR, title, subtitle, text, onClose, classNames='', modalType=ModalTypes.STATUS}) => {
     const handleCloseClick = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         onClose();
     };
 
     useEffect(() => {
-        if (isSuccess) {
+        if (statusModalType===STATUS_MODAL_TYPES.SUCCESS) {
             setTimeout(()=>onClose(), 2000);
         }
     }, []);
 
+
     const modalContent = (
         <div className={`status-modal-overlay } ${classNames ? classNames : ''}`}>
             <div className="status-modal-wrapper" >
-                <div className={`status-modal ${isSuccess ? "success-modal" : "error-modal"}`}>
+                <div className={`status-modal ${statusModalType}-modal`}>
                     <div className="status-modal-header">
                         {title && <div className='status-modal-header__title'>
                             {title}
@@ -40,9 +56,9 @@ const ModalStatus:React.FC<ModalStatusType> = ({isSuccess = false, title, subtit
                     </div>
 
                     <div className="status-modal-body">
-                        <div className='status-icon'>
-                            {isSuccess ? <Icon name='success'/> : <Icon name='error' />}
-                        </div>
+                        {statusModalType!==STATUS_MODAL_TYPES.MESSAGE && (<div className={`status-icon ${statusModalType}`}>
+                            <Icon name={getStatusModalIconName(statusModalType)}/>
+                        </div>)}
                         {subtitle ? <div className='status-modal__subtitle'>
                             {subtitle}
                         </div> : null}
@@ -62,7 +78,7 @@ const ModalStatus:React.FC<ModalStatusType> = ({isSuccess = false, title, subtit
 
     return ReactDOM.createPortal(
         modalContent,
-        document.getElementById("modal-root-status")
+        document.getElementById(`modal-root-${modalType}`)
     );
 }
 

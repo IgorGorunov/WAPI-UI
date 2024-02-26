@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useMemo} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {sendOrderFiles} from '@/services/orders';
 import {sendProductFiles} from "@/services/products";
 import Button from '@/components/Button/Button'
@@ -11,6 +11,7 @@ import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {sendInboundFiles} from "@/services/inbounds";
 import {ImportFilesType} from "@/types/importFiles";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 const getFileData = (importType: ImportFilesType) => {
    switch (importType) {
@@ -103,7 +104,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                 if (res && "status" in res) {
                     if (res?.status === 200) {
                         //success
-                        setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Files are sent successfully!`, onClose: closeSuccessModal})
+                        setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Files are sent successfully!`, onClose: closeSuccessModal})
                         setShowStatusModal(true);
                     }
                 } else if (res && 'response' in res ) {
@@ -112,7 +113,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                     if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                         const errorMessages = errResponse?.data.errorMessage;
 
-                        setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                        setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
                         setShowStatusModal(true);
                     }
                 }

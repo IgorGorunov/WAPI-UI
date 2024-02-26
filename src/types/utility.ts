@@ -1,7 +1,15 @@
 export const enum ModalTypes {
     MAIN = 'main',
     STATUS = 'status',
-    COMMENT = 'comment'
+    COMMENT = 'comment',
+    CONFIRM = 'confirm',
+}
+
+export const enum STATUS_MODAL_TYPES {
+    SUCCESS = 'success',
+    ERROR = 'error',
+    NOTIFICATION = 'notification',
+    MESSAGE = 'message',
 }
 
 export const enum SEND_COMMENT_TYPES {

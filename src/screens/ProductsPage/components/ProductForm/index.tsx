@@ -34,7 +34,9 @@ import {TabFields, TabTitles} from "./ProductFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
-import {AttachedFilesType} from "@/types/utility";
+import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
+import useNotifications from "@/context/notificationContext";
+import {NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -54,7 +56,7 @@ type ProductPropsType = {
     products: {name: string; uuid: string; quantity: number }[];
 }
 const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal}) => {
-    //get parameters to setup form
+    const {notifications} = useNotifications();
 
     const orderIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved') ;
 
@@ -843,6 +845,12 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
         setSelectedFiles(files);
     };
 
+    //notifications
+    let productNotifications: NotificationType[] = [];
+    if (productData && productData.uuid && notifications && notifications.length) {
+        productNotifications = notifications.filter(item => item.objectUuid === productData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
+    }
+
     const tabTitleArray =  TabTitles(!!productData?.uuid);
     const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
 
@@ -869,7 +877,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Product is successfully ${ productData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Product is successfully ${ productData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -878,7 +886,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -921,7 +929,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products, productParams, 
         {isLoading && <Loader />}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
-            <Tabs id='tabs-iddd' tabTitles={tabTitles} classNames='inside-modal'>
+            <Tabs id='tabs-iddd' tabTitles={tabTitles} classNames='inside-modal' notifications={productNotifications}>
                 <div className='primary-tab'>
                     <div className='card product-info--general'>
                         <h3 className='product-info__block-title'>

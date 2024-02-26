@@ -11,9 +11,10 @@ interface TableCellProps {
     childrenAfter?: React.ReactNode;
     children?: never[];
     isBlock?: boolean;
+    className?: string;
 }
 
-const TableCell: React.FC<TableCellProps> = ({ value, minWidth, maxWidth, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children, isBlock = false }) => {
+const TableCell: React.FC<TableCellProps> = ({ value, minWidth, maxWidth, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children, isBlock = false , className=''}) => {
     const style: React.CSSProperties = {
         display: isBlock ? 'block' : 'flex',
         minWidth: minWidth,
@@ -31,7 +32,7 @@ const TableCell: React.FC<TableCellProps> = ({ value, minWidth, maxWidth, conten
     };
 
     return (
-        <div style={style}>
+        <div style={style} className={className}>
             {childrenBefore}
             {value && <span style={textSpanStyle}>{value}</span>}
             {childrenAfter}

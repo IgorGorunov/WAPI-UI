@@ -4,15 +4,15 @@ import useAuth from "@/context/authContext";
 import {Controller, useForm} from "react-hook-form";
 import {OrderCommentType, SingleOrderType} from "@/types/orders";
 import {createOptions} from "@/utils/selectOptions";
-import {SEND_COMMENT_TYPES, SendCommentTypesArray} from "@/types/utility";
+import {SEND_COMMENT_TYPES, SendCommentTypesArray, STATUS_MODAL_TYPES} from "@/types/utility";
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button, {ButtonVariant} from "@/components/Button/Button";
-import { sendOrderComment } from '@/services/orders';
+import {sendOrderComment} from '@/services/orders';
 import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {ReceiverFields, MainFields, DateFields} from "./CommentFields";
+import {DateFields, MainFields, ReceiverFields} from "./CommentFields";
 import {formatDateToString} from "@/utils/date";
 import Loader from "@/components/Loader";
 
@@ -108,7 +108,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Comment is sent successfully!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Comment is sent successfully!`, onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -117,7 +117,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ title: "Error", subtitle: `Something went wrong! Please, try later. `, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Something went wrong! Please, try later. `, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }

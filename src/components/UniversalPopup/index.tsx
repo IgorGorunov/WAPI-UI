@@ -15,9 +15,10 @@ type PopupPropsType = {
     handleClose?: () => void;
     hasCopyBtn?: boolean;
     changePositionOnMobile?: boolean;
+    needScroll?: boolean;
 };
 
-const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, handleClose, hasCopyBtn=false, changePositionOnMobile=false }) => {
+const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, handleClose, hasCopyBtn=false, changePositionOnMobile=false, needScroll=false }) => {
     if (items.length === 0) {
         return null;
     }
@@ -74,7 +75,7 @@ const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, hand
                 {!!handleClose ? (<a className="universal-popup__close" href="#" onClick={handleClose}>
                     <Icon name='close' />
                 </a>) : null }
-                <ul className="universal-popup__list">
+                <ul className={`universal-popup__list ${needScroll ? 'has-scroll' : ''}`}>
                     {items.map((item: PopupItem, index: number) => (
                         <li key={item.title + index} className="universal-popup__item">
                             <p className="universal-popup__item-text">{item.title}</p>

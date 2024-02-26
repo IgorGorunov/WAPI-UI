@@ -23,6 +23,7 @@ import AmazonPrepForm from "./components/AmazonPrepForm";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
+import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 
 const AmazonPrepPage = () => {
     const {token, setToken, currentDate} = useAuth();
@@ -45,8 +46,12 @@ const AmazonPrepPage = () => {
     const [isAmazonPrepNew, setIsAmazonPrepNew] = useState(true);
     const [amazonPrepUuid, setAmazonPrepUuid] = useState<string|null>(null);
 
+    const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
     const onAmazonPrepOrderModalClose = () => {
         setShowAmazonPrepOrderModal(false);
+        if (singleAmazonPrepOrder && singleAmazonPrepOrder.uuid) {
+            setDocNotificationsAsRead(singleAmazonPrepOrder.uuid);
+        }
     }
     const fetchSingleAmazonPrepOrder = useCallback(async (uuid: string) => {
         try {
@@ -149,9 +154,28 @@ const AmazonPrepPage = () => {
         setAmazonPrepUuid(uuid);
         // fetchAmazonPrepOrderParams();
         // fetchSingleAmazonPrepOrder(uuid);
+        setAmazonPrepOrdersData(prevState => {
+            if (prevState && prevState.length) {
+                const el = prevState.filter(item => item.uuid === uuid);
+                if (el.length) {
+                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
+                }
+            }
+            return [...prevState];
+        });
+
         setShowAmazonPrepOrderModal(true);
 
     }
+
+    useEffect(() => {
+        const { uuid } = Router.query;
+
+        if (uuid) {
+            handleEditAmazonPrepOrder(Array.isArray(uuid) ? uuid[0] : uuid);
+            Router.replace('/amazonPrep');
+        }
+    }, [Router.query]);
 
     const handleAddAmazonPrepOrder= (
     ) => {

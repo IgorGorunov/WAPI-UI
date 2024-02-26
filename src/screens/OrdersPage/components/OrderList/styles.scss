@@ -1,43 +1,58 @@
 @import '@/constants/devices.scss';
 
-.products-cell-style {
-  display: flex;
-  height: 30px;
-  padding: 3px 6px 3px 10px;
-  justify-content: center;
-  align-items: center;
-  gap: 3px;
-  top: 15px;
-  border-radius: 20px;
-  border: 2px solid var(--color-blue);
-  background: var(--color-blue);
-  color: white;
-  cursor: pointer;
-}
-
-.track-link {
-  display: flex;
-  align-items: center;
-  height: 30px;
-  gap: 0;
-  padding: 0 3px 0 10px;
-  border: 2px solid var(--color-blue);
-  background: var(--color-blue);
-  border-radius: 20px;
-  color: white;
-  cursor: pointer;
-
-  svg {
-    transform: scale(0.75);
+.order-list {
+  .products-cell-style {
+    display: flex;
+    height: 30px;
+    padding: 3px 6px 3px 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    top: 15px;
+    border-radius: 20px;
+    border: 2px solid var(--color-blue);
+    background: var(--color-blue);
+    color: white;
+    cursor: pointer;
   }
-}
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  justify-content: space-between;
-  @media (max-width: $upToTablet) {
-    flex-direction: column;
+
+  .track-link {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    gap: 0;
+    padding: 0 3px 0 10px;
+    border: 2px solid var(--color-blue);
+    background: var(--color-blue);
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+
+    svg {
+      transform: scale(0.75);
+    }
+  }
+
+  .filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    @media (max-width: $upToTablet) {
+      flex-direction: column;
+    }
+  }
+
+  .icon-notification {
+    width: 10px;
+
+    path {
+      fill: var(--color-blue);
+    }
+  }
+
+  .no-padding {
+    margin: 0 -10px;
   }
 }

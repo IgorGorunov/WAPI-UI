@@ -10,9 +10,10 @@ interface TitleColumnProps {
     childrenBefore?: React.ReactNode;
     childrenAfter?: React.ReactNode;
     children?: never[];
+    className?: string;
 }
 
-const TitleColumn: React.FC<TitleColumnProps> = ({ title, minWidth, maxWidth, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children}) => {
+const TitleColumn: React.FC<TitleColumnProps> = ({ title, minWidth, maxWidth, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children, className=''}) => {
     const style: React.CSSProperties = {
         display: 'flex',
         minWidth: minWidth,
@@ -26,7 +27,7 @@ const TitleColumn: React.FC<TitleColumnProps> = ({ title, minWidth, maxWidth, co
     };
 
     return (
-        <div style={style}>
+        <div style={style} className={className}>
             {childrenBefore}
             {title && <span>{title}</span>}
             {childrenAfter}

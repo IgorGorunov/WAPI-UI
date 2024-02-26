@@ -175,6 +175,12 @@ input {
   border-radius: 30px;
 }
 
+button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
 .card {
   // padding: 16px;
   background-color: white;
@@ -376,4 +382,22 @@ input[type="date"]::before {
 
 .ant-tooltip-inner {
   text-align: center !important;
+}
+
+.icon-info {
+  width: 24px;
+}
+
+.ant-table-cell {
+  .no-padding {
+    margin: 0 -10px;
+  }
+
+  .icon-notification {
+    width: 10px;
+
+    path {
+      fill: var(--color-blue);
+    }
+  }
 }

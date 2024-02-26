@@ -20,6 +20,7 @@ import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
 import {ImportFilesType} from "@/types/importFiles";
+import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 
 type ApiResponse = {
     data: any;
@@ -36,7 +37,14 @@ const OrdersPage = () => {
         if (!token) Router.push(Routes.Login);
     }, [token]);
 
+    useEffect(() => {
+        const { uuid } = Router.query;
 
+        if (uuid) {
+            handleEditOrder(Array.isArray(uuid) ? uuid[0] : uuid);
+            Router.replace('/orders');
+        }
+    }, [Router.query]);
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -59,9 +67,15 @@ const OrdersPage = () => {
     const [orderParameters, setOrderParameters] = useState<OrderParamsType|null>(null);
     const [isOrderNew, setIsOrderNew] = useState(true);
 
+    const {setDocNotificationsAsRead} = useMarkNotificationAsRead()
+
     const onOrderModalClose = () => {
         setShowOrderModal(false);
+        if (singleOrder && singleOrder.uuid) {
+            setDocNotificationsAsRead(singleOrder.uuid);
+        }
     }
+
     const fetchSingleOrder = async (uuid: string) => {
         type ApiResponse = {
             data: any;
@@ -72,9 +86,9 @@ const OrdersPage = () => {
 
             //verify token
             const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
+            // if (!verifyUser(responseVerification, currentDate) ){
+            //     await Router.push(Routes.Login);
+            // }
 
             const res: ApiResponse = await getOrderData(
                 {token, uuid}
@@ -115,10 +129,6 @@ const OrdersPage = () => {
         }
     },[token]);
 
-    // useEffect(() => {
-    //     fetchOrderParams();
-    // }, [token]);
-
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
@@ -155,6 +165,17 @@ const OrdersPage = () => {
         setSingleOrder(null);
         fetchOrderParams();
         fetchSingleOrder(uuid);
+
+        setOrdersData(prevState => {
+            if (prevState && prevState.length) {
+                const el = prevState.filter(item => item.uuid === uuid);
+
+                if (el.length) {
+                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
+                }
+            }
+            return [...prevState];
+        });
 
         setShowOrderModal(true);
     }
@@ -209,7 +230,7 @@ const OrdersPage = () => {
             </div>
             {showOrderModal && orderParameters && (singleOrder || isOrderNew) &&
                 <Modal title={`Order`} onClose={onOrderModalClose} >
-                    <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{setShowOrderModal(false);fetchData();}}/>
+                    <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{onOrderModalClose();fetchData();}}/>
                 </Modal>
             }
             {showImportModal &&

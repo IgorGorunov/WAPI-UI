@@ -1,14 +1,13 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {
     OrderParamsType,
-    OrderProductType,
     OrderProductWithTotalInfoType,
     PickupPointsType,
     SingleOrderFormType,
     SingleOrderProductFormType,
     SingleOrderType
 } from "@/types/orders";
-import {AttachedFilesType, ProductsSelectionType, WarehouseType} from "@/types/utility";
+import {AttachedFilesType, ProductsSelectionType, STATUS_MODAL_TYPES, WarehouseType} from "@/types/utility";
 import "./styles.scss";
 import '@/styles/forms.scss';
 import {useRouter} from "next/router";
@@ -43,6 +42,8 @@ import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
 import Claims from "@/screens/OrdersPage/components/OrderForm/Claims";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
+import useNotifications from "@/context/notificationContext";
+import {NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -53,6 +54,8 @@ type OrderFormType = {
 }
 
 const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOrderModal}) => {
+    const {notifications} = useNotifications();
+
     const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!orderData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
@@ -660,9 +663,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedCourierService('')
     }
 
-    //product selection
-    const handleProductSelection = () => {
-        setShowProductSelectionModal(true);
+
+
+    //notifications
+    let orderNotifications: NotificationType[] = [];
+    if (orderData && orderData.uuid && notifications && notifications.length) {
+        orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
+        // orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid)
     }
 
 
@@ -679,7 +686,10 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         setSelectedFiles(files);
     };
 
-
+    //product selection
+    const handleProductSelection = () => {
+        setShowProductSelectionModal(true);
+    }
     const handleAddSelection = (selectedProducts: SelectedProductType[]) => {
         setShowProductSelectionModal(false);
 
@@ -756,7 +766,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({isSuccess: true, title: "Success", subtitle: `Order is successfully ${ orderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully ${ orderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -765,7 +775,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -818,7 +828,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderData, orderParameters, closeOr
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
             <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
-            <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal' >
+            <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal' notifications={orderNotifications}>
                 <div key='general-tab' className='general-tab'>
                     <div className='card order-info--general'>
                         <h3 className='order-info__block-title'>
