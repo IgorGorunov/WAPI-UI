@@ -24,7 +24,7 @@ import FiltersBlock from "@/components/FiltersBlock";
 import CurrentFilters from "@/components/CurrentFilters";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString} from "@/utils/date";
+import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 
 
 type OrderListType = {
@@ -80,7 +80,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const troubleStatusesItems = orders.flatMap(order => {
         return order.troubleStatuses.map(orderItem => ({
             uuid: order.uuid,
-            title: orderItem.period,
+            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.period),
             description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
         }));
     }).filter(item => item.uuid === hoveredOrder?.uuid);
@@ -872,6 +872,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                         return 800;
                                     case 'statusAdditionalInfo':
                                         return 400;
+                                    case 'troubleStatus':
+                                        return 500;
                                     case 'receiver':
                                         return 350;
                                     default:

@@ -56,7 +56,7 @@ const ModalStatus:React.FC<ModalStatusType> = ({statusModalType=STATUS_MODAL_TYP
                     </div>
 
                     <div className="status-modal-body">
-                        {statusModalType!==STATUS_MODAL_TYPES.MESSAGE && (<div className='status-icon'>
+                        {statusModalType!==STATUS_MODAL_TYPES.MESSAGE && (<div className={`status-icon ${statusModalType}`}>
                             <Icon name={getStatusModalIconName(statusModalType)}/>
                         </div>)}
                         {subtitle ? <div className='status-modal__subtitle'>

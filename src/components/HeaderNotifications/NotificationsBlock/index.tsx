@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import {useRouter} from "next/router";
-import useAuth from "@/context/authContext";
 import {
     NOTIFICATION_OBJECT_TYPES,
     NOTIFICATION_STATUSES,
@@ -14,7 +13,6 @@ import {STATUS_MODAL_TYPES} from "@/types/utility";
 import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
 import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
-import {markNotificationAsRead} from "@/utils/notifications";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
@@ -36,7 +34,6 @@ type NotificationsBlockPropsType = {
 }
 
 const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notificationsList, isNotificationsBlockOpen, onClose}) => {
-    const { token } = useAuth();
     const {setNotificationAsRead, setNotificationAsUnread} = useMarkNotificationAsRead();
     const {newNotifications} = useNotifications();
 
@@ -60,9 +57,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
         if (notification.objectType && notification.objectUuid) {
             if (notification.objectType) {
                 const curDoc = NOTIFICATION_OBJECT_TYPES[notification.objectType];
-
                 Router.push(`${curDoc}?uuid=${notification.objectUuid}`);
-                //Router.push(`/orders?uuid=d52ff73e-cfd9-11ee-af7c-04421a1aac94`);
             }
 
         } else {
@@ -75,7 +70,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                 onClose: closeNotificationModal
             })
             setShowNotificationModal(true);
-            markNotificationAsRead(token, notification.uuid);
+            setNotificationAsRead(notification.uuid);
         }
     }
 
@@ -118,13 +113,11 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
     const handleConfirmAllToRead = () => {
         setShowConfirmModal(false);
         setAllNotificationsAsRead();
-
     }
 
     const handleCancelAllToRead = () => {
         setShowConfirmModal(false);
     }
-
 
     useEffect(() => {
         //search
@@ -134,11 +127,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                 if (key !== 'uuid' && key !== 'objectUuid') {
                     const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
                     const searchTermsArray = searchTermNotifications.trim().toLowerCase().split(' ');
-
-                    console.log('search', key, stringValue, searchTermsArray);
-
                     return searchTermsArray.every(word => stringValue.includes(word));
-
                 }
                 return false;
             });
@@ -217,7 +206,6 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                             }
                         </div>
                     </div>
-
                 </div>
             </div>
             {showNotificationModal && <ModalStatus {...modalStatusInfo} />}

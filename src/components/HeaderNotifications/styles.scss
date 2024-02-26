@@ -35,9 +35,11 @@
       }
 
       &.animated {
-        animation-name: bell-ring;
-        animation-duration: 2s;
-        animation-iteration-count: infinite;
+        svg {
+          animation-name: bell-ring;
+          animation-duration: 2s;
+          animation-iteration-count: infinite;
+        }
       }
     }
 
@@ -50,7 +52,7 @@
       color: var(--color-white);
       transform: translate(-50%, -50%);
 
-      background: red;
+      background: var(--color-red);
       width: 16px;
       height: 16px;
       border-radius: 50%;

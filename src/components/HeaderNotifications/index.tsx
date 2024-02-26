@@ -74,7 +74,7 @@ const HeaderNotifications: React.FC = () => {
             >
                 <Icon name='notification' />
                 {notifications && newNotifications > 0 ? (
-                    <div className='notifications-amount'>{newNotifications}</div>
+                    <div className='notifications-amount'>{newNotifications > 99 ? '99' : newNotifications}</div>
                 ): null}
             </button>
             {notifications ? <NotificationsBlock  notificationsList={notifications || []} isNotificationsBlockOpen={isNotificationsListOpen} onClose={()=>setIsNotificationsListOpen(false)} /> : null}

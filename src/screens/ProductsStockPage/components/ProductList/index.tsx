@@ -466,6 +466,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                         handleClose={()=>setIsDisplayedPopup(false)}
                         hasCopyBtn={true}
                         changePositionOnMobile={true}
+                        needScroll={true}
                     />
                 </div>
             )}

@@ -48,7 +48,6 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children}) =>
                 </div>
 
                 <div className='main-header__user-block'>
-
                     <div className='main-header__user card' onClick={handleLogOut}>
                         <span className='user-name'>{curUserName}</span>
                         <Icon name='exit'/>
