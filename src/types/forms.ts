@@ -83,6 +83,7 @@ export type FieldPropsType = {
   isCountry?: boolean;
   noCounters?: boolean;
   alignFlexH?: ALIGN_FLEX;
+  textAriaHeight?: number;
 }
 
 export type FormBuilderType = FieldPropsType & {

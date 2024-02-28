@@ -315,6 +315,16 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
     }, [filteredDocs]);
 
+    const curWidth = useMemo(()=>{
+        const displayedData = filteredDocs.slice((current - 1) * pageSize, current * pageSize);
+        const maxAmount = displayedData.reduce((acc,item)=> Math.max(acc, item.products.reduce(
+            (accumulator, currentValue) => accumulator + currentValue.quantity,
+            0,
+        )),0).toString().length;
+        const width = 47+maxAmount*9;
+        return width.toString()+'px';
+    },[current,pageSize, filteredDocs]);
+
     const columns: TableColumnProps<StockMovementType>[]  = [
         {
             title: <TitleColumn
@@ -578,6 +588,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                         contentPosition="center"
                         childrenAfter ={
                         <span
+                            style={{width: curWidth}}
                             className="products-cell-style"
                             onClick={(e) => {
                                 setHoveredDoc(record);

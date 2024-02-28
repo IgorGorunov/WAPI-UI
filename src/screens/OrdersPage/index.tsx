@@ -86,9 +86,9 @@ const OrdersPage = () => {
 
             //verify token
             const responseVerification = await verifyToken(token);
-            // if (!verifyUser(responseVerification, currentDate) ){
-            //     await Router.push(Routes.Login);
-            // }
+            if (!verifyUser(responseVerification, currentDate) ){
+                await Router.push(Routes.Login);
+            }
 
             const res: ApiResponse = await getOrderData(
                 {token, uuid}
@@ -218,7 +218,7 @@ const OrdersPage = () => {
 
     return (
         <Layout hasHeader hasFooter>
-            <div className="orders-page__container">
+            <div className="page-component orders-page__container">
                 {isLoading && (<Loader />)}
                 <Header pageTitle='Fulfillment' toRight >
                     <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>

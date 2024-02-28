@@ -70,7 +70,7 @@ const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, hand
 
     return (
         <>
-            <div className={`universal-popup ${positionClass} ${!!handleClose ? 'has-close-icon' : ''} ${hasCopyBtn ? 'has-copy-icon' : ''}`} style={wrapperStyle}>
+            <div className={`universal-popup ${positionClass} ${!!handleClose ? 'has-close-icon' : ''} ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle}>
                 {hasCopyBtn && <button className='copy-btn' onClick={handleCopy}>{items.length > 1 ? 'copy all' : 'copy'}<Icon name='copy' /></button> }
                 {!!handleClose ? (<a className="universal-popup__close" href="#" onClick={handleClose}>
                     <Icon name='close' />

@@ -3,6 +3,7 @@ export const enum ModalTypes {
     STATUS = 'status',
     COMMENT = 'comment',
     CONFIRM = 'confirm',
+    API_ERROR = 'api-error'
 }
 
 export const enum STATUS_MODAL_TYPES {
@@ -58,4 +59,11 @@ export type ProductsSelectionType = {
     weightGross: number;
     volume: number;
 }
+
+export const enum ChatMessageDirectionType {
+    ToUser = 'User-UI',
+    FromUser = 'UI-User',
+}
+
+
 

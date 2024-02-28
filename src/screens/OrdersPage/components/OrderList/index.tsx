@@ -356,6 +356,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     }, [filteredOrders]);
 
+    const curWidth = useMemo(()=>{
+        const displayedData = filteredOrders.slice((current - 1) * pageSize, current * pageSize);
+        const maxAmount = displayedData.reduce((acc,item)=> Math.max(acc, item.productLines),0).toString().length;
+        const width = 47+maxAmount*9;
+        return width.toString()+'px';
+    },[current, pageSize, filteredOrders]);
+
     const columns: TableColumnProps<OrderType>[]  = [
         {
             title: <TitleColumn
@@ -712,9 +719,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Tracking" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn title="Tracking" minWidth="70px" maxWidth="70px" contentPosition="start"/>,
             render: (text: string, record) => (
-                <TableCell  minWidth="60px" maxWidth="60px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span  className='track-link' >Track<Icon name='track'/></span> }/>
+                <TableCell  minWidth="70px" maxWidth="70px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span  className='track-link' >Track<Icon name='track'/></span> }/>
             ),
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
@@ -736,7 +743,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             title: <TitleColumn
                 minWidth="50px"
-                maxWidth="50px"
+                maxWidth="100px"
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="This column displays Products" >
@@ -747,10 +754,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             render: (text: string, record: OrderType) => (
                 <TableCell
                     minWidth="50px"
-                    maxWidth="50px"
+                    maxWidth="100px"
                     contentPosition="center"
                     childrenAfter ={
                     <span
+                        style={{width: curWidth}}
                         className="products-cell-style"
                         onClick={(e) => {
                             setHoveredOrder(record);
