@@ -4,18 +4,58 @@
 
   &__close {
     position: absolute;
-    top: 0;
-    right: -7px;
+    top: 12px;
+    right: -1px;
     width: 34px;
     height: 34px;
-    border-radius: 50%;
-    border: 2px solid var(--color-light-blue-gray);
+    //border-radius: 50%;
+    //border: 2px solid var(--color-light-blue-gray);
     z-index: 2;
   }
 
   &__wrapper {
     background-color: aquamarine;
     z-index: 101;
+  }
+
+  .range-preview {
+    display: flex;
+    padding-top: 24px;
+    background-color: #eff2f7;
+
+    &-date__wrapper {
+      flex: 0 0 50%;
+      padding: 4px 8px 10px;
+    }
+
+    input {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      padding: 4px 10px;
+      text-align: center;
+      border-radius: 4px;
+      background-color: var(--color-white);
+      box-shadow: 0 1px 2px 0 rgba(35,57,66,.21);
+      border: 1px solid transparent;
+
+      &:active,
+      &:focus {
+        outline: 1px solid var(--color-blue);
+      }
+
+    }
+
+
+    input[type="date"]::-webkit-inner-spin-button,
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      display: none;
+      -webkit-appearance: none;
+    }
+
+    input::before {
+      content: none;
+    }
   }
 
   .button-container {
@@ -29,6 +69,10 @@
     border-radius: 15px;
     overflow: hidden;
     border: 2px solid #F5F6F7;
+
+    .rdrDateDisplayWrapper {
+      display: none;
+    }
   }
 
   .rdrMonthName {

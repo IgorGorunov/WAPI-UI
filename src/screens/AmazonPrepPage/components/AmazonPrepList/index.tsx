@@ -237,6 +237,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
     }, [filteredOrders]);
 
+    const curWidth = useMemo(()=>{
+        const displayedData = filteredOrders.slice((current - 1) * pageSize, current * pageSize);
+        const maxAmount = displayedData.reduce((acc,item)=> Math.max(acc, item.productLines),0).toString().length;
+        const width = 47+maxAmount*9;
+        return width.toString()+'px';
+    },[current, pageSize, filteredOrders]);
+
     const columns: TableColumnProps<AmazonPrepOrderType>[]  = [
         {
             key: 'warehouseCountries',
@@ -434,6 +441,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     contentPosition="center"
                     childrenAfter ={
                     <span
+                        style={{width: curWidth}}
                         className="products-cell-style"
                         onClick={(e) => {
                             setHoveredOrder(record);

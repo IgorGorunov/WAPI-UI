@@ -13,8 +13,9 @@ type TabsType = {
     tabTitles?: TabTitle[];
     children?: React.ReactNode[];
     notifications?: NotificationMessageInDocumentsType[];
+    needMinHeight?: boolean;
 }
-const Tabs: React.FC<TabsType> = ({id, curTab = 0, classNames='', tabTitles, children, notifications}) => {
+const Tabs: React.FC<TabsType> = ({id, curTab = 0, classNames='', tabTitles, children, needMinHeight=true, notifications}) => {
     const [activeTab, setActiveTab] = useState<number>(curTab);
     return <div className={`tabs-block ${classNames ? classNames : ''}`} id={id}>
         <div className='tabs-block__wrapper'>
@@ -30,7 +31,7 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, classNames='', tabTitles, chi
                     >{tab.title}</a>
                 </li> )}
             </ul>
-            <div className='tabs-block__content'>
+            <div className={`tabs-block__content ${needMinHeight ? 'min-height' : ''}`}>
                 {notifications && notifications.length ?
                     <div className='tabs-block__content-notifications'>
                         {notifications.map(notification => (

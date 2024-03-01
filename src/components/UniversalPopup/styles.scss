@@ -15,6 +15,12 @@
     position: absolute;
     top: 0;
     right: 0;
+
+    .hide-close-btn & {
+      @media (hover: hover) {
+        display: none;
+      }
+    }
   }
 
   .copy-btn {

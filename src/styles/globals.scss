@@ -21,7 +21,8 @@
   --color-red-text: #FF4000;
   --color-light-blue-gray: #C3CAD9;
   --color-modal-bg: #FAFBFC;
-
+  --color-yellow: #FEDB4F;
+  --color-violet: #8a2be2;
 
 
 
@@ -208,6 +209,18 @@ button {
   padding: 0 15px;
   max-width: 100%;
 }
+.width-83 {
+  flex: 0 0 83%;
+  padding: 0 15px;
+  max-width: 83%;
+
+  @media (max-width: $upToTablet) {
+    flex: 0 0 100%;
+    max-width: 100%;
+    //margin-bottom: 16px;
+  }
+
+}
 .width-75 {
   flex: 0 0 75%;
   padding: 0 15px;
@@ -385,6 +398,7 @@ input[type="date"]::before {
 }
 
 .icon-info {
+  flex: 0 0 auto;
   width: 24px;
 }
 
@@ -400,4 +414,10 @@ input[type="date"]::before {
       fill: var(--color-blue);
     }
   }
+}
+
+.page-component {
+    width: 100%;
+    color: var(--color-gray-blue);
+    position: relative;
 }

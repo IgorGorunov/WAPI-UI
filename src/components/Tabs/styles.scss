@@ -56,7 +56,10 @@
   }
 
   &__content {
-    min-height: 610px;
+
+    &.min-height {
+      min-height: 610px;
+    }
 
     &-notifications {
       width: 100%;
