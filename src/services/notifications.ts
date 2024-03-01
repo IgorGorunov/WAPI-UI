@@ -1,9 +1,5 @@
-// import {AuthApiResponseType} from "@/types/api";
-// import {api} from "@/services/api";
 import {NOTIFICATION_STATUSES} from "@/types/notifications";
-import axios from "axios";
-
-const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
+import {api, noErrorApi} from "@/services/api";
 
 
 const getNotifications = async (data: {
@@ -11,8 +7,8 @@ const getNotifications = async (data: {
     limit?: number;
 }) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetNotifications`,
+        const response: any = await api.post(
+            `/GetNotifications`,
             data
         );
         return response;
@@ -27,8 +23,8 @@ const setNotificationStatus = async (data: {
     status: NOTIFICATION_STATUSES;
 }) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/SetNotificationStatus`,
+        const response: any = await api.post(
+            `/SetNotificationStatus`,
             data
         );
         return response;
@@ -41,8 +37,8 @@ const checkNewNotifications = async (data: {
     token: string;
 }) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/CheckNewNotifications`,
+        const response: any = await noErrorApi.post(
+            `/CheckNewNotifications`,
             data
         );
         return response;

@@ -41,7 +41,7 @@ const statusFilter = [
 ];
 
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, handleEditProduct}) => {
-
+console.log('products list:', products)
     const [animating, setAnimating] = useState(false);
 
     // Popup

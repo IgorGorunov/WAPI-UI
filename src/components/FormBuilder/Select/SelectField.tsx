@@ -21,7 +21,6 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
     ...otherProps
 }, ref) => {
 
-
     const handleChange = useCallback((selectedOption: OptionType) => {
         if (onChange) {
             if (selectedOption) {

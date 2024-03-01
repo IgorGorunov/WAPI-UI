@@ -70,6 +70,8 @@ import Question from '@/assets/icons/question.svg'
 import Copy from '@/assets/icons/copy.svg'
 import Selection from '@/assets/icons/selection.svg'
 import Select from '@/assets/icons/select.svg'
+import Send from '@/assets/icons/send.svg'
+import BigCheck from '@/assets/icons/big-check.svg'
 //import Notification from '@/assets/icons/notification.svg'
 
 export const icons = {
@@ -143,6 +145,8 @@ export const icons = {
   'copy': Copy,
   'selection': Selection,
   'select': Select,
+  'send': Send,
+  'big-check': BigCheck,
   //'notification': Notification,
 };
 

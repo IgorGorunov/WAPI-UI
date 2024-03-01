@@ -8,17 +8,16 @@ import Header from '@/components/Header';
 import OrderList from "./components/OrderList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
-import {getOrders, getOrderData, getOrderParameters} from "@/services/orders";
+import {getOrders} from "@/services/orders";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays} from "@/utils/date";
-import {OrderParamsType, OrderType, SingleOrderType} from "@/types/orders";
+import {OrderType} from "@/types/orders";
 import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
 import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 import {ImportFilesType} from "@/types/importFiles";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 
@@ -50,7 +49,6 @@ const OrdersPage = () => {
     const firstDay = getLastFewDays(today, 30);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 
-
     const [ordersData, setOrdersData,] = useState<any | null>(null);
     const [filteredOrders, setFilteredOrders] = useState<OrderType[]>(ordersData);
     const [isLoading, setIsLoading] = useState(true);
@@ -63,81 +61,27 @@ const OrdersPage = () => {
 
     //single order data
     const [showOrderModal, setShowOrderModal] = useState(false);
-    const [singleOrder, setSingleOrder] = useState<SingleOrderType|null>(null);
-    const [orderParameters, setOrderParameters] = useState<OrderParamsType|null>(null);
+    const [orderUuid, setOrderUuid] = useState('');
     const [isOrderNew, setIsOrderNew] = useState(true);
 
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead()
 
     const onOrderModalClose = () => {
         setShowOrderModal(false);
-        if (singleOrder && singleOrder.uuid) {
-            setDocNotificationsAsRead(singleOrder.uuid);
+        if (orderUuid) {
+            setDocNotificationsAsRead(orderUuid);
         }
     }
-
-    const fetchSingleOrder = async (uuid: string) => {
-        type ApiResponse = {
-            data: any;
-        };
-
-        try {
-            setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
-            const res: ApiResponse = await getOrderData(
-                {token, uuid}
-            );
-
-            if (res && "data" in res) {
-                setSingleOrder(res.data);
-            } else {
-                console.error("API did not return expected data");
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const fetchOrderParams = useCallback(async() => {
-        try {
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
-            const resp: ApiResponse = await getOrderParameters(
-                {token: token}
-            );
-
-            if (resp && "data" in resp) {
-                setOrderParameters(resp.data);
-            } else {
-                console.error("API did not return expected data");
-            }
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    },[token]);
 
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
 
             //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
+            await verifyToken(token);
+            // if (!verifyUser(responseVerification, currentDate) ){
+            //     await Router.push(Routes.Login);
+            // }
 
             const res: ApiResponse = await getOrders(
                 {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
@@ -162,9 +106,10 @@ const OrdersPage = () => {
 
     const handleEditOrder = (uuid: string) => {
         setIsOrderNew(false);
-        setSingleOrder(null);
-        fetchOrderParams();
-        fetchSingleOrder(uuid);
+        setOrderUuid(uuid);
+        // setSingleOrder(null);
+        // fetchOrderParams();
+        // fetchSingleOrder(uuid);
 
         setOrdersData(prevState => {
             if (prevState && prevState.length) {
@@ -183,8 +128,9 @@ const OrdersPage = () => {
     const handleAddOrder= (
     ) => {
         setIsOrderNew(true);
-        fetchOrderParams();
-        setSingleOrder(null);
+        setOrderUuid(null);
+        // fetchOrderParams();
+        // setSingleOrder(null);
         setShowOrderModal(true);
     }
     const handleImportXLS = () => {
@@ -228,10 +174,10 @@ const OrdersPage = () => {
 
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}
             </div>
-            {showOrderModal && orderParameters && (singleOrder || isOrderNew) &&
-                <Modal title={`Order`} onClose={onOrderModalClose} >
-                    <OrderForm orderParameters={orderParameters} orderData={singleOrder} closeOrderModal={()=>{onOrderModalClose();fetchData();}}/>
-                </Modal>
+            {showOrderModal && (orderUuid || isOrderNew) &&
+                // <Modal title={`Order`} onClose={onOrderModalClose} >
+                    <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={()=>{onOrderModalClose(); fetchData();}}/>
+                // </Modal>
             }
             {showImportModal &&
                 <Modal title={`Import xls`} onClose={onImportModalClose} >

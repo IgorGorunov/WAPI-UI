@@ -1,6 +1,5 @@
-import axios from "axios";
+import {api} from "@/services/api";
 
-const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
 const getReportData = async (
     //token: string,
@@ -12,14 +11,9 @@ const getReportData = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetReportData`,
+        const response: any = await api.post(
+            `/GetReportData`,
             data
-            //   {
-            //     headers: {
-            //       Authorization: token,
-            //     },
-            //   }
         );
 
         return response;
@@ -37,14 +31,9 @@ const getReportParams = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetReportParameters`,
+        const response: any = await api.post(
+            `/GetReportParameters`,
             data
-            //   {
-            //     headers: {
-            //       Authorization: token,
-            //     },
-            //   }
         );
 
         return response;

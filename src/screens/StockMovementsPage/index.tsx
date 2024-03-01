@@ -11,21 +11,15 @@ import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {exportFileXLS} from "@/utils/files";
-import Modal from "@/components/Modal";
-import {getInboundData, getInboundParameters, getInbounds} from "@/services/inbounds";
+import { getInbounds} from "@/services/inbounds";
 import {
-    SingleStockMovementType,
     STOCK_MOVEMENT_DOC_TYPE,
-    StockMovementParamsType,
     StockMovementType
 } from "@/types/stockMovements";
 import Loader from "@/components/Loader";
 import StockMovementList from "@/screens/StockMovementsPage/components/StockMovementList";
 import StockMovementForm from "@/screens/StockMovementsPage/components/StockMovementForm";
-
-type ApiResponse = {
-    data: any;
-};
+import {ApiResponseType} from "@/types/api";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
@@ -36,11 +30,11 @@ const docNamesPlural = {
     [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movements',
     [STOCK_MOVEMENT_DOC_TYPE.OUTBOUND]: 'Outbounds',
 }
-const docNamesSingle = {
-    [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbound',
-    [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movement',
-    [STOCK_MOVEMENT_DOC_TYPE.OUTBOUND]: 'Outbound',
-}
+// const docNamesSingle = {
+//     [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbound',
+//     [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movement',
+//     [STOCK_MOVEMENT_DOC_TYPE.OUTBOUND]: 'Outbound',
+// }
 
 const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
@@ -63,65 +57,12 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     //single document data
     const [showStockMovementModal, setShowStockMovementModal] = useState(false);
-    const [singleStockMovement, setSingleStockMovement] = useState<SingleStockMovementType|null>(null);
-    const [docParameters, setDocParameters] = useState<StockMovementParamsType|null>(null);
     const [isDocNew, setIsDocNew] = useState(true);
+    const [docUuid, setDocUuid] = useState<string|null>(null);
 
     const onShowStockMovementModalClose = () => {
         setShowStockMovementModal(false);
     }
-    const fetchSingleStockMovement = async (uuid: string) => {
-        type ApiResponse = {
-            data: any;
-        };
-
-        try {
-            setIsLoading(true);
-
-            if (!await verifyToken(token)) {
-                await Router.push(Routes.Login);
-            }
-
-            const res: ApiResponse = await getInboundData(docType,
-                {token, uuid}
-            );
-
-            if (res && "data" in res) {
-                setSingleStockMovement(res.data);
-            } else {
-                console.error("API did not return expected data");
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const fetchInboundParams = useCallback(async() => {
-        try {
-            if (!await verifyToken(token)) {
-                await Router.push(Routes.Login);
-            }
-
-            const resp: ApiResponse = await getInboundParameters(docType,
-                {token: token}
-            );
-
-            if (resp && "data" in resp) {
-                setDocParameters(resp.data);
-            } else {
-                console.error("API did not return expected data");
-            }
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    },[token]);
-
-    // useEffect(() => {
-    //     fetchOrderParams();
-    // }, [token]);
 
     const fetchData = useCallback(async () => {
         try {
@@ -131,7 +72,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
                 await Router.push(Routes.Login);
             }
 
-            const res: ApiResponse = await getInbounds(docType,
+            const res: ApiResponseType = await getInbounds(docType,
                 {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
             );
 
@@ -154,9 +95,10 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     const handleEditStockMovement = (uuid: string) => {
         setIsDocNew(false);
-        setSingleStockMovement(null);
-        fetchInboundParams();
-        fetchSingleStockMovement(uuid);
+        setDocUuid(uuid)
+        // setSingleStockMovement(null);
+        // fetchInboundParams();
+        // fetchSingleStockMovement(uuid);
 
         setShowStockMovementModal(true);
     }
@@ -164,8 +106,9 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
     const handleAddOrder= (
     ) => {
         setIsDocNew(true);
-        fetchInboundParams();
-        setSingleStockMovement(null);
+        setDocUuid(null);
+        // fetchInboundParams();
+        // setSingleStockMovement(null);
         setShowStockMovementModal(true);
     }
 
@@ -201,10 +144,11 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
                 {stockMovementData && <StockMovementList docType={docType} docs={stockMovementData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredDocs={setFilteredDocs} handleEditDoc={handleEditStockMovement} />}
             </div>
-            {showStockMovementModal && docParameters && (singleStockMovement|| isDocNew) &&
-                <Modal title={docNamesSingle[docType]} onClose={onShowStockMovementModalClose} >
-                    <StockMovementForm docType={docType} docParameters={docParameters} docData={singleStockMovement} closeDocModal={()=>{setShowStockMovementModal(false);fetchData();}}/>
-                </Modal>
+            {showStockMovementModal && (isDocNew && !docUuid || !isDocNew && docUuid) &&
+                <StockMovementForm docType={docType} docUuid={docUuid} closeDocModal={onShowStockMovementModalClose} closeModalOnSuccess={()=>{setShowStockMovementModal(false);fetchData();}} />
+                // <Modal title={docNamesSingle[docType]} onClose={onShowStockMovementModalClose} >
+                //     <StockMovementForm docType={docType} docParameters={docParameters} docData={singleStockMovement} closeDocModal={()=>{setShowStockMovementModal(false);fetchData();}}/>
+                // </Modal>
             }
         </Layout>
     )

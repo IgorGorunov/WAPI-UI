@@ -18,6 +18,7 @@ import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
+import SingleDocument from "@/components/SingleDocument";
 
 const formatMessage = (messageText: string, messageLength = 50) => {
     if (messageText.length > messageLength) {
@@ -43,8 +44,6 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
     }
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({statusModalType: STATUS_MODAL_TYPES.NOTIFICATION, onClose: ()=>setShowNotificationModal(false)})
 
-    const Router = useRouter();
-
     //load more notifications
     const notificationsPerLoad = 20;
     const [notificationsLoaded, setNotificationsLoaded] = useState(notificationsPerLoad);
@@ -52,12 +51,22 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
         setNotificationsLoaded(prevState => prevState + notificationsPerLoad);
     }
 
+    const [docUuid, setDocUuid] = useState<string|null>(null);
+    const [docType, setDocType] = useState<NOTIFICATION_OBJECT_TYPES|null>(null);
+
+
+    const onNotifiedDocClose = () => {
+        setDocType(null);
+        setDocUuid(null);
+    }
     const handleNotificationClick = (notification: NotificationType) => {
         onClose();
         if (notification.objectType && notification.objectUuid) {
             if (notification.objectType) {
-                const curDoc = NOTIFICATION_OBJECT_TYPES[notification.objectType];
-                Router.push(`${curDoc}?uuid=${notification.objectUuid}`);
+                // const curDoc = NOTIFICATION_OBJECT_TYPES[notification.objectType];
+                // Router.push(`${curDoc}?uuid=${notification.objectUuid}`);
+                setDocType(NOTIFICATION_OBJECT_TYPES[notification.objectType]);
+                setDocUuid(notification.objectUuid);
             }
 
         } else {
@@ -214,6 +223,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                 onOk={handleConfirmAllToRead}
                 onCancel={handleCancelAllToRead}
             />}
+            { docUuid && docType ? <SingleDocument type={docType} uuid={docUuid} onClose={onNotifiedDocClose} /> : null}
         </div>
     );
 };

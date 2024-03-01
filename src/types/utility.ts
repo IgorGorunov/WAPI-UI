@@ -1,7 +1,7 @@
 export const enum ModalTypes {
     MAIN = 'main',
     STATUS = 'status',
-    COMMENT = 'comment',
+    PREVIEW = 'preview',
     CONFIRM = 'confirm',
     API_ERROR = 'api-error'
 }

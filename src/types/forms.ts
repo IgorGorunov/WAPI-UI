@@ -1,4 +1,4 @@
-import {ChangeEvent } from 'react'
+import React, {ChangeEvent } from 'react'
 
 type RefType=any;
 
@@ -63,7 +63,10 @@ export type FieldPropsType = {
   innerRef?: RefType
   value?: string | number | boolean | Date;
   checked?: boolean;
-  onChange?: (event: ChangeEvent | ChangeEvent<HTMLInputElement> | string | OptionType) => void
+  onChange?: (event: ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType) => void;
+  onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement> | React.ClipboardEvent<HTMLInputElement> | ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType) => void
+  onDrop?: (event: React.DragEvent<HTMLDivElement> | React.DragEvent<HTMLTextAreaElement>)=>void;
+  onDragOver?: (event: React.DragEvent<HTMLDivElement> | React.DragEvent<HTMLTextAreaElement>)=>void;
   inputValue?: string
   registerInput?: any
   rules?: any

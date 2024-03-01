@@ -1,8 +1,7 @@
-import axios from "axios";
 import {SingleProductType} from '@/types/products';
 import {AttachedFilesType} from "@/types/utility";
+import {api} from "@/services/api";
 
-const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
 const getProducts = async (
     //token: string,
@@ -11,14 +10,9 @@ const getProducts = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetProductsList`,
+        const response: any = await api.post(
+            `/GetProductsList`,
             data
-            //   {
-            //     headers: {
-            //       Authorization: token,
-            //     },
-            //   }
         );
 
         return response;
@@ -35,14 +29,9 @@ const getProductByUID = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetProductData`,
+        const response: any = await api.post(
+            `/GetProductData`,
             data
-            //   {
-            //     headers: {
-            //       Authorization: token,
-            //     },
-            //   }
         );
 
         return response;
@@ -59,14 +48,9 @@ const getProductParameters = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetProductParameters`,
+        const response: any = await api.post(
+            `/GetProductParameters`,
             data
-            //   {
-            //     headers: {
-            //       Authorization: token,
-            //     },
-            //   }
         );
 
         return response;
@@ -83,8 +67,8 @@ const getProductsStock = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetProductsStock`,
+        const response: any = await api.post(
+            `/GetProductsStock`,
             data
 
         );
@@ -105,8 +89,8 @@ const sendProductInfo = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/CreateUpdateProduct`,
+        const response: any = await api.post(
+            `/CreateUpdateProduct`,
             data
 
         );
@@ -124,8 +108,8 @@ const sendProductFiles = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/BulkProductsCreate`,
+        const response: any = await api.post(
+            `/BulkProductsCreate`,
             data
         );
 

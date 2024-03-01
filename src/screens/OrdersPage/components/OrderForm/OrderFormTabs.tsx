@@ -9,8 +9,7 @@ export const TabTitles = (objectExists: boolean, hasClaim=false) => {
     }
     tabArray.push('Files');
 
-    return tabArray
-;
+    return tabArray;
 }
 
 export const TabFields: TabFieldType[] = [

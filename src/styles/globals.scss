@@ -118,6 +118,11 @@ body {
   letter-spacing: 0.1px;
   color: var(--color-gray);
   background: var(--color-light-gray);
+
+  &.modalOpen {
+    position: fixed;
+    overflow: hidden;
+  }
 }
 
 a {

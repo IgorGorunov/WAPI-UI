@@ -8,22 +8,16 @@ import Header from '@/components/Header';
 import AmazonPrepList from "./components/AmazonPrepList";
 import {verifyToken} from "@/services/auth";
 import "./styles.scss";
-import {getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters} from "@/services/amazonePrep";
+import {getAmazonPrep} from "@/services/amazonePrep";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays} from "@/utils/date";
-import {
-    AmazonPrepOrderParamsType,
-    AmazonPrepOrderType,
-    SingleAmazonPrepOrderType
-} from "@/types/amazonPrep";
+import {AmazonPrepOrderType} from "@/types/amazonPrep";
 import {exportFileXLS} from "@/utils/files";
-import Modal from "@/components/Modal";
 import AmazonPrepForm from "./components/AmazonPrepForm";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
-import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 
 const AmazonPrepPage = () => {
     const {token, setToken, currentDate} = useAuth();
@@ -41,68 +35,16 @@ const AmazonPrepPage = () => {
 
     //single order data
     const [showAmazonPrepOrderModal, setShowAmazonPrepOrderModal] = useState(false);
-    const [singleAmazonPrepOrder, setSingleAmazonPrepOrder] = useState<SingleAmazonPrepOrderType|null>(null);
-    const [amazonPrepOrderParameters, setAmazonPrepOrderParameters] = useState<AmazonPrepOrderParamsType|null>(null);
     const [isAmazonPrepNew, setIsAmazonPrepNew] = useState(true);
     const [amazonPrepUuid, setAmazonPrepUuid] = useState<string|null>(null);
 
-    const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
+    //const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
     const onAmazonPrepOrderModalClose = () => {
         setShowAmazonPrepOrderModal(false);
-        if (singleAmazonPrepOrder && singleAmazonPrepOrder.uuid) {
-            setDocNotificationsAsRead(singleAmazonPrepOrder.uuid);
-        }
+        // if (amazonPrepUuid) {
+        //     setDocNotificationsAsRead(amazonPrepUuid);
+        // }
     }
-    const fetchSingleAmazonPrepOrder = useCallback(async (uuid: string) => {
-        try {
-            setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
-            const res: ApiResponseType = await getSingleAmazonPrepData(
-                {token, uuid}
-            );
-
-            if (res && "data" in res) {
-                setSingleAmazonPrepOrder(res.data);
-            } else {
-                console.error("API did not return expected data");
-            }
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    },[token]);
-
-    const fetchAmazonPrepOrderParams = useCallback(async() => {
-        try {
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
-            const responseParams: ApiResponseType = await getAmazonPrepParameters(
-                {token: token}
-            );
-
-            if (responseParams?.data ) {
-                setAmazonPrepOrderParameters(responseParams.data);
-            } else {
-                console.error("API did not return expected data");
-            }
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    },[token]);
-
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
@@ -134,23 +76,11 @@ const AmazonPrepPage = () => {
         fetchData();
     }, [token, curPeriod]);
 
-    useEffect(() => {
-        if (showAmazonPrepOrderModal && amazonPrepUuid) {
-            fetchSingleAmazonPrepOrder(amazonPrepUuid);
-        }
-    }, [amazonPrepOrderParameters]);
-
-    useEffect(() => {
-        if (showAmazonPrepOrderModal) {
-            fetchAmazonPrepOrderParams();
-        }
-    }, [showAmazonPrepOrderModal]);
-
     const handleEditAmazonPrepOrder = async (uuid: string) => {
 
         //setAmazonPrepOrderParameters(null);
         setIsAmazonPrepNew(false);
-        setSingleAmazonPrepOrder(null);
+        //setSingleAmazonPrepOrder(null);
         setAmazonPrepUuid(uuid);
         // fetchAmazonPrepOrderParams();
         // fetchSingleAmazonPrepOrder(uuid);
@@ -180,7 +110,7 @@ const AmazonPrepPage = () => {
     const handleAddAmazonPrepOrder= (
     ) => {
         setIsAmazonPrepNew(true);
-        setSingleAmazonPrepOrder(null);
+        //setSingleAmazonPrepOrder(null);
         //fetchAmazonPrepOrderParams();
         setShowAmazonPrepOrderModal(true);
     }
@@ -211,16 +141,11 @@ const AmazonPrepPage = () => {
 
                 {amazonPrepOrdersData && <AmazonPrepList amazonPrepOrders={amazonPrepOrdersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredAmazonPrepOrders={setFilteredAmazonPrepOrders} handleEditAmazonPrepOrder={handleEditAmazonPrepOrder} />}
             </div>
-            {showAmazonPrepOrderModal && amazonPrepOrderParameters && (singleAmazonPrepOrder || isAmazonPrepNew) &&
-                <Modal title={`Amazon prep`} onClose={onAmazonPrepOrderModalClose} >
-                    <AmazonPrepForm  amazonPrepOrderData={singleAmazonPrepOrder} amazonPrepOrderParameters={amazonPrepOrderParameters} closeAmazonPrepOrderModal={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
-                </Modal>
+            {showAmazonPrepOrderModal && (amazonPrepUuid || isAmazonPrepNew) &&
+                // <Modal title={`Amazon prep`} onClose={onAmazonPrepOrderModalClose} >
+                    <AmazonPrepForm  docUuid={amazonPrepUuid} onCloseModal={onAmazonPrepOrderModalClose} onCloseModalWithSuccess={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
+                // </Modal>
             }
-            {/*{showImportModal &&*/}
-            {/*    <Modal title={`Import xls`} onClose={onImportModalClose} >*/}
-            {/*        <ImportFilesBlock file='OrderTemplate.xlsx' isProducts={false} closeModal={()=>setShowImportModal(false)}/>*/}
-            {/*    </Modal>*/}
-            {/*}*/}
         </Layout>
     )
 }

@@ -1,0 +1,27 @@
+.ticket-info {
+  &-block {
+
+  }
+
+  &--title {
+    padding: 2px 16px;
+
+  }
+
+  &--info {
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 2px;
+    padding: 2px 16px;
+
+    &.is-link {
+      color: var(--color-blue);
+      text-decoration: underline;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}
