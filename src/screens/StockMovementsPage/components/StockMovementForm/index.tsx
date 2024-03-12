@@ -16,6 +16,7 @@ import {ApiResponseType} from "@/types/api";
 import Modal from "@/components/Modal";
 import StockMovementFormComponent
     from "@/screens/StockMovementsPage/components/StockMovementForm/StockMovementFormComponent";
+import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 
 type StockMovementFormType = {
     docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -33,7 +34,8 @@ const docNamesSingle = {
 const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=null, closeDocModal, closeModalOnSuccess}) => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const { token } = useAuth();
+    const { token, currentDate } = useAuth();
+    const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
 
     const [docData, setDocData] = useState<SingleStockMovementType|null>(null);
@@ -49,9 +51,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
            await verifyToken(token);
 
-            const res: ApiResponse = await getInboundData(docType,
-                {token, uuid}
-            );
+            const res: ApiResponse = await getInboundData({token, uuid, documentType: docType});
 
             if (res && "data" in res) {
                 setDocData(res.data);
@@ -69,9 +69,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
         try {
             await verifyToken(token);
 
-            const resp: ApiResponseType = await getInboundParameters(docType,
-                {token: token}
-            );
+            const resp: ApiResponseType = await getInboundParameters({token: token, documentType: docType});
 
             if (resp && "data" in resp) {
                 setDocParameters(resp.data);
@@ -96,11 +94,17 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
     const onClose = () => {
         closeDocModal();
         //clear notifications
+        if (docUuid) {
+            setDocNotificationsAsRead(docUuid);
+        }
     }
 
-    const onCloseOnSeccess = () => {
+    const onCloseOnSuccess = () => {
         closeModalOnSuccess();
         //clear Notifications
+        if (docUuid) {
+            setDocNotificationsAsRead(docUuid);
+        }
     }
 
     return <div className={`stock-movement is-${docType}`}>
@@ -108,7 +112,13 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
         <ToastContainer />
         {docParameters && (docUuid && docData || !docUuid) ? (
             <Modal title={docNamesSingle[docType]} onClose={onClose} >
-                <StockMovementFormComponent docType={docType} docParameters={docParameters} docData={docData} closeDocModal={onCloseOnSeccess}/>
+                <StockMovementFormComponent
+                    docType={docType}
+                    docParameters={docParameters}
+                    docData={docData}
+                    closeDocModal={onCloseOnSuccess}
+                    refetchDoc={()=>fetchSingleStockMovement(docUuid)}
+                />
             </Modal>
         ) : null}
     </div>

@@ -46,8 +46,6 @@ const pageOptions = [
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder}) => {
 
-    console.log('orders: ', orders);
-
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
@@ -421,7 +419,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="24px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="This column displays if order has Claims" >
+                    <Tooltip title="If order has Claims" >
                         <span><Icon name={"complaint"}/></span>
                     </Tooltip>
                 }
@@ -483,7 +481,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="24px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="This column displays if order has Trouble statuses">
+                    <Tooltip title="If order has Trouble statuses">
                         <span><Icon name={"trouble"}/></span>
                     </Tooltip>
                 }
@@ -562,7 +560,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Status" minWidth="80px" maxWidth="100px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="80px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Current condition of an order"><span>Status</span></Tooltip>}/>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
@@ -611,7 +609,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn title="Date" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
@@ -623,7 +621,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn title="WH number" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Order identifier within the WAPI system"><span>WH number</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
@@ -647,7 +645,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             },
         },
         {
-            title: <TitleColumn title="COD" minWidth="75px" maxWidth="75px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="75px" maxWidth="75px" contentPosition="center" childrenBefore={<Tooltip title="The sum of cash on delivery"><span>COD</span></Tooltip>}/>,
             render: (text: string, record) => {
                 if (record.codCurrency) {
                     const currencySymbol = getSymbolFromCurrency(record.codCurrency);
@@ -679,7 +677,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Order ID" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Unique code for order identification in the seller's system"><span>Order ID</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
@@ -693,7 +691,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Warehouse" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Code of warehouse"><span>Warehouse</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
@@ -706,7 +704,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Courier" minWidth="75px" maxWidth="75px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="75px" maxWidth="75px" contentPosition="start" childrenBefore={<Tooltip title="Service responsible for transporting and delivering packages"><span>Courier</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
             ),
@@ -719,7 +717,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Tracking" minWidth="70px" maxWidth="70px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="start" childrenBefore={<Tooltip title="Number for monitoring the movement of products during transportation/delivery"><span>Tracking</span></Tooltip>}/>,
             render: (text: string, record) => (
                 <TableCell  minWidth="70px" maxWidth="70px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span  className='track-link' >Track<Icon name='track'/></span> }/>
             ),
@@ -746,7 +744,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="100px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="This column displays Products" >
+                    <Tooltip title="Products" >
                         <span><Icon name={"shopping-cart"}/></span>
                     </Tooltip>
                 }
@@ -833,10 +831,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table
-                    dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}
+                    dataSource={filteredOrders.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
                     scroll={{y:700}}
+                    showSorterTooltip={false}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>

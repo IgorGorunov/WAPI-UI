@@ -1,9 +1,15 @@
+@import "@/constants/devices.scss";
+
 .single-message {
   position: relative;
   padding: 8px 12px 26px;
-  max-width: 80%;
+  max-width: 70%;
   min-width: 150px;
   box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+
+  @media (max-width: $mobile) {
+    max-width: 90%;
+  }
 
   &-block {
     position: relative;
@@ -33,6 +39,10 @@
 
   &__text {
     font-size: 12px;
+
+    span {
+      font-size: 24px;
+    }
   }
 
   &__period {
@@ -44,6 +54,21 @@
     //.UI-User & {
     //  right: 40px;
     //}
+  }
+
+  &__files {
+    list-style: none;
+  }
+
+  &__file {
+    border-radius: 5px;
+    overflow: hidden;
+
+    &-wrapper {
+
+      margin-bottom: 16px;
+
+    }
   }
 
   &__checkmarks {

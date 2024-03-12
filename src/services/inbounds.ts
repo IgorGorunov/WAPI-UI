@@ -5,15 +5,16 @@ import {api} from "@/services/api";
 
 const getInbounds = async (
     //token: string,
-    type: STOCK_MOVEMENT_DOC_TYPE,
+    //type: STOCK_MOVEMENT_DOC_TYPE,
 
     data: {
         token: string;
+        documentType: STOCK_MOVEMENT_DOC_TYPE;
         startDate: string;
         endDate: string;
     }
 ) => {
-    const docEndpoint = type===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS ? 'GetInboundList' : type===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND ? 'GetOutboundList' : 'GetStockMovementList'
+    const docEndpoint = 'GetStockMovementList';
 
     try {
         const response: any = await api.post(
@@ -30,18 +31,18 @@ const getInbounds = async (
 };
 const getInboundData = async (
     //token: string,
-    type: STOCK_MOVEMENT_DOC_TYPE,
+    //type: STOCK_MOVEMENT_DOC_TYPE,
     data: {
         uuid: string;
+        documentType: STOCK_MOVEMENT_DOC_TYPE,
         token: string;
     }
 ) => {
-    const docEndpoint = type===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS ? 'GetInboundData' : type===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND ? 'GetOutboundData' : 'GetStockMovementData'
+    const docEndpoint = 'GetStockMovementData';
     try {
         const response: any = await api.post(
             `/${docEndpoint}`,
             data
-
         );
 
         return response;
@@ -52,13 +53,14 @@ const getInboundData = async (
 };
 
 const getInboundParameters = async (
-    type: STOCK_MOVEMENT_DOC_TYPE,
+    //type: STOCK_MOVEMENT_DOC_TYPE,
     data: {
+        documentType: STOCK_MOVEMENT_DOC_TYPE;
         token: string;
     }
 ) => {
     try {
-        const docEndpoint = type===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS ? 'GetInboundParameters' : type===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND ? 'GetOutboundParameters' : 'GetStockMovementParameters'
+        const docEndpoint = 'GetStockMovementParameters';
 
         const response: any = await api.post(
             `/${docEndpoint}`,
@@ -76,7 +78,6 @@ const getInboundParameters = async (
 
 
 const sendInboundData = async (
-    type: STOCK_MOVEMENT_DOC_TYPE,
     data: {
         documentType: STOCK_MOVEMENT_DOC_TYPE,
         documentData: SingleStockMovementType,
@@ -85,7 +86,7 @@ const sendInboundData = async (
 ) => {
     try {
         const response: any = await api.post(
-            `api/CreateStockMovement`,
+            `/CreateStockMovement`,
             data
         );
 

@@ -110,7 +110,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
         <ToastContainer />
         {orderParameters && (orderUuid && orderData || !orderUuid) ?
             <Modal title={`Order`} onClose={onClose} >
-                <OrderFormComponent orderData={orderData} orderParameters={orderParameters} orderUuid={orderUuid} closeOrderModal={onCloseWithSuccess}/>
+                <OrderFormComponent
+                    orderData={orderData}
+                    orderParameters={orderParameters}
+                    orderUuid={orderUuid}
+                    closeOrderModal={onCloseWithSuccess}
+                    refetchDoc={()=>{fetchSingleOrder(orderUuid);}}/>
             </Modal>
         : null}
     </div>

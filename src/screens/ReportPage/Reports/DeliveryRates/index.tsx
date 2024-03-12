@@ -238,7 +238,6 @@ export const getDeliveryRateVariantByString = (variant: string, extraInfo: strin
 }
 
 export const getDeliveryRateVariantColumns = (variant: DELIVERY_RATES_VARIANTS) => {
-console.log('check columns variant:', variant, typeof variant)
     switch (variant) {
         case DELIVERY_RATES_VARIANTS.MONTH_COUNTRY_PRODUCT_TYPE:
             return [...monthColumn, ...receiverCountryColumn, ...productTypeColumn, ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];

@@ -1,0 +1,101 @@
+@import "@/constants/devices.scss";
+
+.attached-file-block {
+  position: relative;
+  padding-top: 12px;
+
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  img, embed {
+
+  }
+
+  &__file {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    padding: 0 60px 6px 0;
+
+    &-wrapper {
+      max-width: 300px;
+      max-height: calc(100vh - 200px);
+      margin-left: auto;
+      border: 1px solid var(--color-gray2);
+      border-radius: 5px;
+      background-color: var(--color-gray2);
+      overflow: hidden;
+
+      .pdf-file {
+        display: none;
+      }
+
+      @media (max-width: $upToTablet) {
+        embed {
+          display: none;
+        }
+        .pdf-file {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 12px;
+          padding: 0 60px 6px 0;
+
+          svg {
+            width: 24px;
+            path {
+              fill: var(--color-gray-blue);
+            }
+          }
+        }
+      }
+    }
+
+    svg {
+      width: 30px;
+      path {
+        fill: var(--color-gray-blue);
+      }
+    }
+
+    &-name {
+      font-size: 14px;
+
+    }
+  }
+
+  .download-file,
+  .preview-file {
+    //scale: 1;
+    //transition: all 0.3s ease;
+    position: absolute;
+    bottom: -16px;
+    border: 2px solid var(--color-gray-blue);
+    border-radius: 5px;
+    background-color: rgb(255,255,255,0.7);
+
+    &:hover {
+
+    }
+
+
+    svg {
+      display: block;
+      width: 24px;
+      path {
+        fill: var(--color-gray-blue);
+      }
+    }
+  }
+
+  .download-file {
+    right: 0;
+  }
+
+  .preview-file {
+    right: 32px;
+  }
+}

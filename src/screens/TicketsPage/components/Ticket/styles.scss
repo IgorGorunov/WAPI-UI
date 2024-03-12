@@ -12,20 +12,27 @@
   }
 
   &-wrapper {
-    min-height: 400px;
-    min-width: 800px;
-    max-width: 800px;
+    max-width: 1084px;
 
-    @media (min-width: $upToTablet) {
+    @media (min-width: $tablet) {
       width: 100%;
-      max-width: 800px;
+      min-width: min(90vw, 1084px);
     }
 
-    &.new-ticket {
-      @media (min-width: $laptop) {
-        min-width: 550px;
+    @media (max-width: $upToTablet) {
+      .width-17,
+      .width-33,
+      .width-50 {
+        max-width: 100%;
+        flex: 0 0 100%;
       }
     }
+
+    //&.new-ticket {
+    //  @media (min-width: $laptop) {
+    //    min-width: 550px;
+    //  }
+    //}
   }
 
   &--info {
@@ -43,6 +50,10 @@
 
   &--files {
     padding: 24px;
+
+    .dropzone {
+      min-height: 200px;
+    }
   }
 
   &__block-title {
@@ -66,8 +77,8 @@
   }
 
   &--messages {
-    padding: 16px 24px 0;
-    overflow: hidden scroll;
+    padding: 16px 0 0;
+    overflow: hidden auto;
 
     &::-webkit-scrollbar {
       width: 6px;

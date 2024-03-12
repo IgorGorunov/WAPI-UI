@@ -18,7 +18,7 @@ const TextArea= forwardRef<HTMLTextAreaElement, FieldPropsType>(({
      errors,
      needToasts=true,
      width,
-     textAriaHeight = 4,
+     rows = 4,
      ...otherProps
  }, ref) => {
 
@@ -36,7 +36,7 @@ const TextArea= forwardRef<HTMLTextAreaElement, FieldPropsType>(({
                 onChange={handleChange}
                 value={value as string}
                 disabled={disabled}
-                rows={textAriaHeight}
+                rows={rows}
                 //onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                 {...otherProps}
                 ref={ref}

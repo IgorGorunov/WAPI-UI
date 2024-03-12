@@ -7,7 +7,7 @@ import {
     SingleOrderProductFormType,
     SingleOrderType
 } from "@/types/orders";
-import {AttachedFilesType, ProductsSelectionType, STATUS_MODAL_TYPES, WarehouseType} from "@/types/utility";
+import {AttachedFilesType, STATUS_MODAL_TYPES, WarehouseType} from "@/types/utility";
 import "./styles.scss";
 import '@/styles/forms.scss';
 import {useRouter} from "next/router";
@@ -43,7 +43,11 @@ import {verifyUser} from "@/utils/userData";
 import Claims from "@/screens/OrdersPage/components/OrderForm/Claims";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import useNotifications from "@/context/notificationContext";
-import {NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import SingleDocument from "@/components/SingleDocument";
+import DocumentTickets from "@/components/DocumentTickets";
+import {formatDateStringToDisplayString, formatDateToDisplayString, formatDateToString} from "@/utils/date";
+import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -52,9 +56,10 @@ type OrderFormType = {
     orderParameters: OrderParamsType;
     orderUuid?: string;
     closeOrderModal: ()=>void;
+    refetchDoc: ()=>void;
 }
 
-const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, closeOrderModal}) => {
+const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
     const {notifications} = useNotifications();
 
     const Router = useRouter();
@@ -71,12 +76,10 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const { token, currentDate } = useAuth();
 
-    console.log('order data: ', orderData)
+    //tickets
+    const [showTicketForm, setShowTicketForm] = useState(false);
 
-    // useEffect(() => {
-    //     setSelectedWarehouse(orderData?.preferredCourierService);
-    //     setSelectedCourierService(orderData?.preferredCourierService);
-    // }, [orderData]);
+    console.log('order data: ', orderData)
 
 
     //countries
@@ -204,10 +207,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const products = watch('products');
     const currencyOptions = useMemo(()=>{return orderParameters && orderParameters?.currencies.length ? createOptions(orderParameters?.currencies) : []},[]);
 
-    // useEffect(() => {
-    //     reset(defaultFormValues);
-    // }, [orderData]);
-
     //pickup points
     const createPickupOptions = () => {
         if (curPickupPoints && curPickupPoints.length) {
@@ -281,7 +280,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             currency: getValues('codCurrency'),
         };
         getValues('products').forEach(item => {
-            const prodInfo = orderParameters && orderParameters.productsSelection ? orderParameters.productsSelection.filter(product=>product.uuid === item.product) : [];
+            const prodInfo = orderParameters && orderParameters.products ? orderParameters.products.filter(product=>product.uuid === item.product) : [];
             if (prodInfo?.length) {
                 rez.cod += Number(item.cod);
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
@@ -300,11 +299,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
 
     const getProductSku = (productUuid: string) => {
-        const product = orderParameters.productsSelection.find(item => item.uuid === productUuid);
+        const product = orderParameters.products.find(item => item.uuid === productUuid);
         return product?.sku || '';
     }
     const productOptions = useMemo(() =>{
-        return orderParameters ? orderParameters.productsSelection.map((item:  ProductsSelectionType)=> ({label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value: item.uuid, extraInfo: item.name})) : [];
+        return orderParameters ? orderParameters.products.map((item)=> ({label: `${item.name}`, value: item.uuid})) : [];
     },[orderParameters]);
 
     const calcProductTotal = (index: number) => {
@@ -753,8 +752,17 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         updateTotalProducts();
     }
 
-    const tabTitleArray =  TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length));
-    const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
+    const tabTitleArray =  TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length), !!(orderData?.tickets && orderData.tickets.length));
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+
+    useEffect(() => {
+        resetTabTables(tabTitleArray);
+    }, [orderData]);
+
+    const handleCreateTicket = () => {
+        console.log('create ticket');
+        setShowTicketForm(true)
+    }
 
     const onSubmitForm = async (data) => {
         clearTabTitles();
@@ -1026,6 +1034,15 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             <Claims claims={orderData.claims} />
                         </div>
                     </div> : null}
+                    {orderData?.uuid && orderData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                        <div className="card min-height-600 order-info--tickets">
+                            <h3 className='order-info__block-title'>
+                                <Icon name='ticket' />
+                                Tickets
+                            </h3>
+                            <DocumentTickets tickets={orderData.tickets}/>
+                        </div>
+                    </div> : null}
                     <div key='files-tab' className='files-tab'>
                         <div className="card min-height-600 order-info--files">
                             <h3 className='order-info__block-title'>
@@ -1040,11 +1057,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 </Tabs>
 
                 <div className='form-submit-btn'>
+                    {/*{orderData && orderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}*/}
                     {isDisabled && orderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                     {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={()=>setShowSendCommentModal(true)} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
-                </div>
+                    </div>
             </form>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
             {showSendCommentModal && <Modal title={`Send comment for order ${orderData?.wapiTrackingNumber}`} onClose={()=>setShowSendCommentModal(false)} >
@@ -1053,6 +1071,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
                 <ProductSelection productList={orderParameters?.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
             </Modal>}
+
+            {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
         </> : null}
     </div>
 }

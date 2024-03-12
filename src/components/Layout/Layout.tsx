@@ -30,10 +30,6 @@ const Layout: React.FC<Props> = ({
 
     }, []);
 
-    useEffect(() => {
-        console.log('12311111111111', apiErrorText)
-    }, [apiErrorText]);
-
     const handleClose = () => {
         setApiErrorTitle('');
         setApiErrorText('');
@@ -50,12 +46,13 @@ const Layout: React.FC<Props> = ({
           <div id="modal-root-preview"></div>
           <div id="modal-root-confirm"></div>
           <div id="modal-root-api-error"></div>
+          <div id="modal-root-main-two"></div>
           {apiErrorText ? <ModalStatus
               statusModalType={STATUS_MODAL_TYPES.ERROR}
               modalType={ModalTypes.API_ERROR}
               title={apiErrorTitle || ''}
               subtitle={apiErrorText || ''}
-              onClose={handleClose} /> : null}
+              onClose={handleClose}/> : null}
       </div>
   );
 };

@@ -36,7 +36,11 @@ import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
 import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import useNotifications from "@/context/notificationContext";
-import {NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import DocumentTickets from "@/components/DocumentTickets";
+import SingleDocument from "@/components/SingleDocument";
+import {formatDateStringToDisplayString} from "@/utils/date";
+import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -54,8 +58,9 @@ type ProductPropsType = {
     productData?: SingleProductType | null;
     closeProductModal: ()=>void;
     products: {name: string; uuid: string; quantity: number }[];
+    refetchDoc: ()=>void;
 }
-const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal}) => {
+const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal, refetchDoc}) => {
     const {notifications} = useNotifications();
 
     const orderIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved') ;
@@ -82,6 +87,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
     const [isLoading, setIsLoading] = useState(false);
     const [sendStatus, setSendStatus] = useState(SendStatusType.DRAFT);
+
+    //tickets
+    const [showTicketForm, setShowTicketForm] = useState(false);
+    const handleCreateTicket = () => {
+        console.log('create ticket');
+        setShowTicketForm(true)
+    }
 
     const countryArr = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
@@ -286,8 +298,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].name`}
                         control={control}
-
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].name`}
@@ -295,6 +306,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     {...field}
                                     onChange={(newValue: string) => {field.onChange(newValue); handleUnitNameChange(newValue, index)}}
                                     disabled={isDisabled  || orderIsApproved}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
                                 /></div>
                         )}
                         rules={{required: "Required field",}}
@@ -310,16 +324,20 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].coefficient`}
                         control={control}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{maxWidth: '110px'}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled  || orderIsApproved}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
                                 /></div>
 
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
@@ -332,16 +350,19 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].width`}
                         control={control}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{maxWidth: '110px'}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].width`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled  || orderIsApproved}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
                                 /></div>
-
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
@@ -354,15 +375,19 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].length`}
                         control={control}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{maxWidth: '110px'}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].length`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled || orderIsApproved}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
                                 /></div>
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
@@ -375,16 +400,19 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].height`}
                         control={control}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{maxWidth: '110px'}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].height`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled || orderIsApproved}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
                                 /></div>
-
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
@@ -397,16 +425,19 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].weightGross`}
                         control={control}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{maxWidth: '120px'}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].weightGross`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled || orderIsApproved}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
                                 /></div>
-
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
@@ -437,7 +468,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled || orderIsApproved} className='remove-table-row' onClick={() => removeUnits(index)}>
+                    <button disabled={isDisabled || orderIsApproved} className='action-btn' onClick={() => removeUnits(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -528,7 +559,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeBarcode(index)}>
+                    <button disabled={isDisabled} className='action-btn' onClick={() => removeBarcode(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -616,7 +647,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeAlias(index)}>
+                    <button disabled={isDisabled} className='action-btn' onClick={() => removeAlias(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -725,7 +756,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeBundle(index)}>
+                    <button disabled={isDisabled} className='action-btn' onClick={() => removeBundle(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -816,7 +847,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 key: 'action',
                 minWidth: 500,
                 render: (text, record, index) => (
-                    <button disabled={isDisabled} className='remove-table-row' onClick={() => removeAnalogue(index)}>
+                    <button disabled={isDisabled} className='action-btn' onClick={() => removeAnalogue(index)}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -851,9 +882,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         productNotifications = notifications.filter(item => item.objectUuid === productData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
     }
 
-    const tabTitleArray =  TabTitles(!!productData?.uuid);
-    const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
+    const tabTitleArray =  TabTitles(!!productData?.uuid, !!(productData?.tickets && productData.tickets.length));
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
 
+    useEffect(() => {
+        resetTabTables(tabTitleArray);
+    }, [productData]);
 
     const onSubmitForm = async (data: any) => {
         setIsLoading(true);
@@ -985,7 +1019,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 <Controller
                                     name="unitOfMeasure"
                                     control={control}
-                                    render={({ field }) => (
+                                    render={({ field , fieldState: {error}}) => (
                                         <FieldBuilder
                                             fieldType={FormFieldTypes.SELECT}
                                             name='unitOfMeasure'
@@ -994,10 +1028,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                             options={getOptions() || []}
                                             placeholder="Select Name"
                                             width={WidthType.w33}
+                                            errorMessage={error?.message}
                                             errors={errors}
-                                            disabled={isDisabled || orderIsApproved}
+                                            isRequired={true}
                                         />
                                     )}
+                                    rules={{ required: 'Field is required' }}
                                 />
                                 {/*</div>*/}
                                 <div className='product-info--table-btns width-67' aria-disabled={orderIsApproved}>
@@ -1141,7 +1177,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         </div>
                     </div>
                 </div>
-                <div className="status-history-tab">
+                {productData?.statusHistory ? <div className="status-history-tab">
                     <div className="card min-height-600 product-info--analogues">
                         <h3 className='product-info__block-title'>
                             <Icon name='history' />
@@ -1149,7 +1185,16 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         </h3>
                         <StatusHistory statusHistory={productData?.statusHistory} />
                     </div>
-                </div>
+                </div> : null}
+                {productData?.uuid && productData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                    <div className="card min-height-600 product-info--tickets">
+                        <h3 className='product-info__block-title'>
+                            <Icon name='ticket' />
+                            Tickets
+                        </h3>
+                        <DocumentTickets tickets={productData.tickets}/>
+                    </div>
+                </div> : null}
                 <div className='files-tab'>
                     <div className="card min-height-600 product-info--files">
                         <h3 className='product-info__block-title'>
@@ -1163,6 +1208,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 </div>
             </Tabs>
             <div className='form-submit-btn'>
+                {/*{productData && productData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}*/}
                 {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
                 {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
@@ -1172,6 +1218,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         </form>
 
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
 
     </div>
 }

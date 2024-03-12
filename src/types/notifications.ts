@@ -18,6 +18,7 @@ export enum NOTIFICATION_OBJECT_TYPES {
     Outbound = '/outbounds',
     StockMovement = '/stockMovements',
     Product = '/products',
+    Ticket = '/tickets',
 }
 
 export type NotificationType = {

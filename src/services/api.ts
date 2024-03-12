@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const API_URL = "https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
+const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI"; //"https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
 
 let setError: (title:string, message: string) => void;
 
@@ -160,6 +160,9 @@ api.interceptors.response.use(response=> {
                 errorTitle = 'Maintenance';
                 errorMessage = maintenanceErrorText
             }
+        } else {
+            errorTitle = 'Error';
+            errorMessage = administratorErrorText;
         }
 
         setError(errorTitle, errorMessage);

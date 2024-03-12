@@ -27,4 +27,37 @@ const exportFileXLS = (data: any[], fileName: string) => {
     XLSX.writeFile(wb, `${fileName}.xlsx`);
 }
 
-export {exportFileXLS}
+
+// download / send files
+const readFileAsArrayBuffer = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+    });
+};
+
+const arrayBufferToBase64 = (arrayBuffer) => {
+    const bytes = new Uint8Array(arrayBuffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+};
+
+const base64ToBlob = (base64String, type) => {
+    const binaryString = window.atob(base64String);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+
+    for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    return new Blob([bytes], { type });
+};
+
+
+export {exportFileXLS, readFileAsArrayBuffer, arrayBufferToBase64, base64ToBlob}

@@ -72,8 +72,8 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
                 await Router.push(Routes.Login);
             }
 
-            const res: ApiResponseType = await getInbounds(docType,
-                {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
+            const res: ApiResponseType = await getInbounds(
+                {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate), documentType: docType}
             );
 
             if (res && "data" in res) {

@@ -93,15 +93,15 @@ const ProductsPage = () => {
         setIsNew(false);
         setShowModal(true);
         //fetchProductData(uuid);
-        setProductsData(prevState => {
-            if (prevState && prevState.length) {
-                const el = prevState.filter(item => item.uuid === uuid);
-                if (el.length) {
-                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
-                }
-            }
-            return prevState;
-        });
+        // setProductsData(prevState => {
+        //     if (prevState && prevState.length) {
+        //         const el = prevState.filter(item => item.uuid === uuid);
+        //         if (el.length) {
+        //             return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.date<b.date ? 1 : -1)
+        //         }
+        //     }
+        //     return prevState;
+        // });
     }
 
     useEffect(() => {

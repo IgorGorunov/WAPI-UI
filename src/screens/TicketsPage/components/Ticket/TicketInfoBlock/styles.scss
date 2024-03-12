@@ -6,6 +6,10 @@
   &--title {
     padding: 2px 16px;
 
+    &.width-17 {
+      max-width: 120px;
+    }
+
   }
 
   &--info {
@@ -13,6 +17,10 @@
     font-weight: bold;
     margin-top: 2px;
     padding: 2px 16px;
+
+    &.width-17 {
+      min-width: 160px;
+    }
 
     &.is-link {
       color: var(--color-blue);

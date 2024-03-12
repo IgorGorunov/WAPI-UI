@@ -1,7 +1,32 @@
 .send-message {
   &-block {
+    padding: 8px 24px;
     &__text-block {
       position: relative;
+
+      .emoji-btn {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        //transform: translateY(-50%);
+
+        svg {
+          width: 16px;
+
+          path {
+            fill: var(--color-light-blue-gray);
+            transition: all 0.3s ease;
+          }
+        }
+
+        &:hover {
+          svg path {
+            fill: var(--color-blue)
+          }
+        }
+      }
+
+
     }
     .image-preview {
       position: absolute;
@@ -44,38 +69,6 @@
     }
   }
 
-  //&__input {
-  //  textarea {
-  //    padding-right: 32px;
-  //  }
-  //
-  //  &-images {
-  //    display: flex;
-  //    flex-wrap: wrap;
-  //    gap: 4px 12px;
-  //  }
-  //
-  //  &-image {
-  //    position: relative;
-  //    border: 1px solid var(--color-blue);
-  //    border-radius: 8px;
-  //    overflow: hidden;
-  //
-  //    &__img {
-  //      display: block;
-  //      max-height: 80px;
-  //      width: auto;
-  //      cursor: pointer;
-  //    }
-  //
-  //    &__delete-icon {
-  //      position: absolute;
-  //      top: 0;
-  //      right: 0;
-  //    }
-  //  }
-  //}
-
   &__btn {
     position: absolute;
     top: 50%;
@@ -87,6 +80,25 @@
         fill: var(--color-light-blue-gray);
       }
     }
+  }
+
+  &__input {
+    //padding-left: 50px;
+    width: 100%;
+    font-family: var(--inter-font);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    color: var(--color-gray-blue)!important;
+    padding: 7px 40px 7px 16px;
+    background-color: white;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 4px;
+    margin-left: -2px;
+    outline: none;
+    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+
   }
 
   &__file-preview {
@@ -104,10 +116,10 @@
 
       &__remove-file {
         position: absolute;
-        bottom: 2px;
+        top: 2px;
         right: 0;
-        transform: scale(0);
-        opacity: 0;
+        //transform: scale(0);
+        //opacity: 0;
         transition: all 0.3s ease;
       }
 
@@ -136,6 +148,7 @@
       &__img {
         display: block;
         max-height: 100px;
+        max-width: 100%;
         width: auto;
         cursor: pointer;
       }
@@ -156,6 +169,10 @@
       color: var(--color-gray-blue);
       border: 2px solid var(--border-color);
       border-radius: 8px;
+
+      &.pdf {
+        cursor: pointer;
+      }
     }
   }
 }

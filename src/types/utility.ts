@@ -45,6 +45,19 @@ export const enum FILTER_TYPE {
     COLORED_CIRCLE = 'colored-circle',
 }
 
+export type DocProductParamsType = {
+    tableKey: string;
+    name: string;
+    sku: string;
+    uuid: string;
+    volume: number;
+    weightGross: number;
+    weightNet: number;
+    aliases: string;
+    barcodes: string;
+    //unitOfMeasures: string[];
+}
+
 export type ProductsSelectionType = {
     uuid: string;
     name: string;

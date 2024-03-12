@@ -3,7 +3,9 @@ import { useState } from 'react';
 import {TabFieldType, TabTitleType} from "@/types/tabs";
 
 export const useTabsState = (tabTitleArray: string[], tabFields: TabFieldType[]) => {
-    const initialState = tabTitleArray.map((item: string)=>({title: item, hasError: false} as TabTitleType));
+
+    const [initialState, setInitialState] = useState(tabTitleArray.map((item: string)=>({title: item, hasError: false} as TabTitleType)))
+    //const initialState = tabTitleArray.map((item: string)=>({title: item, hasError: false} as TabTitleType));
 
     const [tabTitles, setTabTitles] = useState(initialState);
 
@@ -26,5 +28,11 @@ export const useTabsState = (tabTitleArray: string[], tabFields: TabFieldType[])
         setTabTitles(initialState)
     }
 
-    return {tabTitles, updateTabTitles, clearTabTitles};
+    const resetTabTables = (newTabTitleArray: string[]) => {
+        const newInitState = newTabTitleArray.map((item: string)=>({title: item, hasError: false} as TabTitleType));
+        setInitialState(newInitState);
+        setTabTitles(newInitState);
+    }
+
+    return {tabTitles, updateTabTitles, clearTabTitles, resetTabTables};
 }

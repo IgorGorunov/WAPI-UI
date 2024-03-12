@@ -1,7 +1,6 @@
 import {TabFieldType} from '@/types/tabs';
 
 export const TabTitles = (isNew: boolean) => {
-
     return isNew ? ['Ticket info'] : ['Ticket info', 'Messages'];
 }
 

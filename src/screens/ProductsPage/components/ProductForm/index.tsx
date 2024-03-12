@@ -164,11 +164,18 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     return <div className='product-info'>
         {isLoading && <Loader />}
         <ToastContainer />
-        { productParams && (uuid && productData || !uuid) && (productsList !== null)?
-        <Modal title={`${productData ? 'Product': 'Product'}`} onClose={onCloseModal} >
-            <ProductFormComponent productParams={productParams} productData={productData} uuid={uuid} products={productsAsOptions} closeProductModal={onCloseModalOnSuccess}/>
-        </Modal> : null}
-
+        { productParams && (uuid && productData || !uuid) && (productsList !== null) ?
+            <Modal title={`${productData ? 'Product': 'Product'}`} onClose={onCloseModal} >
+                <ProductFormComponent
+                    productParams={productParams}
+                    productData={productData}
+                    uuid={uuid}
+                    products={productsAsOptions}
+                    closeProductModal={onCloseModalOnSuccess}
+                    refetchDoc={()=>{fetchProductData(uuid)}}
+                />
+            </Modal> : null
+        }
     </div>
 }
 

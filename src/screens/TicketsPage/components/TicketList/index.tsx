@@ -4,7 +4,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
-import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
 import {ColumnType} from "antd/es/table";
 import DateInput from "@/components/DateInput";
 import {DateRangeType} from "@/types/dashboard";
@@ -20,7 +19,7 @@ import CurrentFilters from "@/components/CurrentFilters";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
-import {TicketType} from "@/types/tickets";
+import {ticketStatusColors, TicketType} from "@/types/tickets";
 import {FILTER_TYPE} from "@/types/utility";
 
 
@@ -40,14 +39,14 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
-const statusColors = [
-    { value: 'All statuses', label: 'All statuses' , color: 'var(--color-light-blue-gray)'},
-    { value: 'New', label: 'New' , color: 'var(--color-yellow)'},
-    { value: 'Reopen', label: 'Reopen' , color: 'var(--color-yellow)'},
-    { value: 'In progress', label: 'In progress' , color: 'var(--color-blue)'},
-    { value: 'Resolved', label: 'Resolved' , color: 'var(--color-green)'},
-    { value: 'Need info from client', label: 'Need info from client', color: 'var(--color-violet)'}
-];
+// const statusColors = [
+//     { value: 'All statuses', label: 'All statuses' , color: 'var(--color-light-blue-gray)'},
+//     { value: 'New', label: 'New' , color: 'var(--color-yellow)'},
+//     { value: 'Reopen', label: 'Reopen' , color: 'var(--color-yellow)'},
+//     { value: 'In progress', label: 'In progress' , color: 'var(--color-blue)'},
+//     { value: 'Resolved', label: 'Resolved' , color: 'var(--color-green)'},
+//     { value: 'Need info from client', label: 'Need info from client', color: 'var(--color-violet)'}
+// ];
 
 const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrentRange, handleEditTicket}) => {
 
@@ -85,7 +84,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             value: status,
             label: status,
             amount: calcOrderAmount('status', status),
-            color: statusColors.filter(item=>item.value===status)[0]?.color || 'white',
+            color: ticketStatusColors.filter(item=>item.value===status)[0]?.color || 'white',
         }))
     ]), [uniqueStatuses]);
 
@@ -195,40 +194,15 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
 
     const columns: TableColumnProps<TicketType>[]  = [
-        // {
-        //     title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
-        //     />,
-        //     render: (text: string, record: TicketType) => (
-        //         <TableCell
-        //             className='no-padding'
-        //             minWidth="20px"
-        //             maxWidth="20px"
-        //             contentPosition="center"
-        //             childrenAfter ={
-        //                 // <span style={{marginTop:'3px'}}>{record.notifications ? <Icon name="notification" />: null}</span>
-        //                 <span></span>
-        //             }
-        //         >
-        //         </TableCell>
-        //
-        //     ),
-        //     dataIndex: 'notifications',
-        //     key: 'notifications',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<TicketType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof OTicketType),
-        //     }),
-        //     responsive: ['lg'],
-        // },
         {
-            title: <TitleColumn title="Status" minWidth="70px" maxWidth="100px" contentPosition="start"/>,
+            title: <TitleColumn title="" minWidth="5px" maxWidth="5px" contentPosition="start"/>,
             render: (status: string) => {
-                const statusObj = statusColors.find(s => s.value === status);
+                const statusObj = ticketStatusColors.find(s => s.value === status);
                 let color = statusObj ? statusObj.color : 'white';
                 return (
                     <TableCell
-                        minWidth="70px"
-                        maxWidth="100px"
+                        minWidth="5px"
+                        maxWidth="5px"
                         contentPosition="start"
                         childrenBefore={
                             <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
@@ -240,7 +214,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                                 height: '12px',
                                 borderRadius: '50%',
                                 backgroundColor: color,
-                            }}></div><div>{status}</div></div>
+                            }}></div></div>
                         }
                     >
                     </TableCell>
@@ -252,6 +226,21 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             onHeaderCell: (column: ColumnType<TicketType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof TicketType),
             }),
+        },
+        {
+            title: <TitleColumn title="Status" minWidth="50px" maxWidth="80px" contentPosition="start"/>,
+            render: (status: string) => {
+                return (
+                    <TableCell value={status} minWidth="50px" maxWidth="80px" contentPosition="start"/>
+                );
+            },
+            dataIndex: 'status',
+            key: 'status',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<TicketType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof TicketType),
+            }),
+            responsive: ['md'],
         },
         {
             title: <TitleColumn title="Ticket #" minWidth="70px" maxWidth="80px" contentPosition="start"/>,
@@ -304,7 +293,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Subject" minWidth="115px" maxWidth="500px" contentPosition="start"/>,
+            title: <TitleColumn title="Title" minWidth="115px" maxWidth="500px" contentPosition="start"/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="115px" maxWidth="500px" contentPosition="start"/>
             ),
@@ -363,7 +352,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total orders:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                        <li className='order-products-total__list-item'>Total tickets:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
                     </ul>
                 </div>
             </div>

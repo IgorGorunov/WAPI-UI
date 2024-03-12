@@ -15,14 +15,14 @@ const Modal: React.FC<ModalType> = ({ children, onClose, classNames = "" , modal
     const modalWrapperRef = useRef<HTMLDivElement>();
 
 
-    useEffect(() => {
-        document.body.classList.add('modalOpen');
-
-
-        return () => {
-            document.body.classList.remove('modalOpen');
-        };
-    }, []);
+    // useEffect(() => {
+    //     document.body.classList.add('modalOpen');
+    //
+    //
+    //     return () => {
+    //         document.body.classList.remove('modalOpen');
+    //     };
+    // }, []);
 
     const handleCloseClick = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();

@@ -1,8 +1,8 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {forwardRef, useCallback, useEffect, useState} from "react";
 import {FieldPropsType, OptionType} from "@/types/forms";
 import "./styles.scss"
 
-const RadioSwitch: React.FC<FieldPropsType> = ({
+const RadioSwitch = forwardRef<HTMLDivElement, FieldPropsType>(({
         classNames= '',
         name,
         label = '',
@@ -13,7 +13,7 @@ const RadioSwitch: React.FC<FieldPropsType> = ({
         errorMessage,
         width,
         isCountry = false,
-    }) => {
+    },ref) => {
 
     const [curValue, setCurValue] = useState(value || options.length ? options[0].value : '');
 
@@ -58,6 +58,6 @@ const RadioSwitch: React.FC<FieldPropsType> = ({
 
         </div>
     );
-};
+});
 
 export default RadioSwitch;

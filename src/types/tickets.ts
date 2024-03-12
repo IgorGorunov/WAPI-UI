@@ -1,14 +1,27 @@
 import {AttachedFilesType} from "@/types/utility";
 
+export const ticketStatusColors = [
+    { value: 'All statuses', label: 'All statuses' , color: 'var(--color-light-blue-gray)'},
+    { value: 'New', label: 'New' , color: 'var(--color-yellow)'},
+    { value: 'Reopen', label: 'Reopen' , color: 'var(--color-yellow)'},
+    { value: 'In progress', label: 'In progress' , color: 'var(--color-blue)'},
+    { value: 'Resolved', label: 'Resolved' , color: 'var(--color-green)'},
+    { value: 'Need info from client', label: 'Need info from client', color: 'var(--color-violet)'}
+];
+
 export type TicketType = {
+    date: string;
     status: string;
     topic: string;
     subject: string;
     description: string;
-    resolution: string;
+    result: string;
     subjectUuid: string | null;
+    subjectType: string | null;
     uuid: string;
     tableKey: string;
+    supportManager: string;
+    number: string;
 }
 
 export type TicketParamsType = {
@@ -37,4 +50,20 @@ export type ChatMessageType = {
     message: string;
     author: string;
     attachedFiles: AttachedFilesType[];
+}
+
+export const enum CHAT_FILE_TYPES {
+    PDF = 'application/pdf',
+    IMAGE = 'image',
+    OTHER = 'other',
+}
+
+export enum TICKET_OBJECT_TYPES {
+    Fullfilment = 'Fullfilment ',
+    AmazonPrep = 'AmazonPrep',
+    Inbound ='Inbound',
+    Outbound = 'Outbound',
+    StockMovement = 'StockMovement',
+    Product = 'Product',
+    Ticket = 'Ticket',
 }

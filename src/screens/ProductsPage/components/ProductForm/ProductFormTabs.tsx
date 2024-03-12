@@ -1,8 +1,14 @@
 import {TabFieldType} from '@/types/tabs';
 
-export const TabTitles = (objectExists: boolean) =>
-    objectExists ? ['Primary','Dimensions', 'Barcodes', 'Aliases', 'Virtual bundle kit', 'Analogues', 'Status history', 'Files'] : ['Primary','Dimensions', 'Barcodes', 'Aliases', 'Virtual bundle kit', 'Analogues', 'Status history', 'Files'];
+export const TabTitles = (objectExists: boolean, hasTickets=false) => {
+    const tabsArr = objectExists ? ['Primary', 'Dimensions', 'Barcodes', 'Aliases', 'Virtual bundle kit', 'Analogues', 'Status history'] : ['Primary', 'Dimensions', 'Barcodes', 'Aliases', 'Virtual bundle kit', 'Analogues'];
+    if (hasTickets) {
+        tabsArr.push('Tickets');
+    }
+    tabsArr.push('Files');
+    return tabsArr;
 
+};
 export const TabFields: TabFieldType[] = [
     {
         tabName: 'Primary',
@@ -23,6 +29,14 @@ export const TabFields: TabFieldType[] = [
     {
         tabName: 'Primary',
         fieldName: 'typeOfStorage',
+    },
+    {
+        tabName: 'Dimensions',
+        fieldName: 'unitOfMeasures',
+    },
+    {
+        tabName: 'Dimensions',
+        fieldName: 'unitOfMeasure',
     },
 
 ]

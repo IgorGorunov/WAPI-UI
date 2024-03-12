@@ -7,7 +7,6 @@ type ResultObjectType = {
 }
 
 const  rowDimensionsAreFilled =(row, dimensionColumns) => {
-    // console.log('row check: ', row, dimensionColumns)
     for( let i=0; i<dimensionColumns.length; i++) {
         if (!row[dimensionColumns[i]] ) {
             return false;

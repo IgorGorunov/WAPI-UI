@@ -185,7 +185,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                                 <>
                                     <ul className='notifications-block__notifications-list'>
                                         {filteredNotifications?.slice(0, notificationsLoaded)?.map(item => (
-                                            <li key={item.uuid} className={`card notifications-block__notifications-list-item ${item.status === NOTIFICATION_STATUSES.READ ? 'read' : 'unread'} type-${item.type}`}>
+                                            <li key={item.uuid} className={`card notifications-block__notifications-list-item ${item.status === NOTIFICATION_STATUSES.READ ? 'read' : 'unread'} type-${item.type || 'Info'}`}>
                                                 <button
                                                     className={`notifications-block__notifications-list-item-btn`}
                                                     onClick={() => handleNotificationClick(item)}>
@@ -193,7 +193,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                                                     <div className='notification-period'>{formatDateTimeToStringWithDotWithoutSeconds(item.period)}</div>
                                                     <div className='notification-message'> {formatMessage(item.message, 200)}</div>
                                                     <div className={`notification-icon type-${item.type}`}>
-                                                        <Icon name={item.type === NOTIFICATION_TYPES.INFO ? 'info' : 'error'} />
+                                                        <Icon name={item.type === NOTIFICATION_TYPES.ERROR ? 'error' : 'info'} />
                                                     </div>
                                                 </button>
                                                 <button className={`notification-toggle-status-btn ${item.status === NOTIFICATION_STATUSES.READ ? 'is-read' : 'is-unread'} type-${item.type}`} onClick={()=>handleToggleStatus(item)} />

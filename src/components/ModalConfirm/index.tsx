@@ -22,8 +22,6 @@ const ConfirmModal:React.FC<ConfirmModalType> = ({ actionText='', onOk, onCancel
     //     </Modal>
     // );
 
-    console.log('123445')
-
     const modalContent = (
         <div className={`confirm-modal-overlay ${classNames ? classNames : ''}`}>
             <div className="confirm-modal-wrapper">

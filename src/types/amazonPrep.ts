@@ -1,4 +1,5 @@
-import {ProductsSelectionType} from "@/types/utility";
+import {DocProductParamsType, ProductsSelectionType} from "@/types/utility";
+import {TicketType} from "@/types/tickets";
 
 export type AmazonPrepOrderType = {
     key?: string;
@@ -107,6 +108,7 @@ export type SingleAmazonPrepOrderType = {
     carrierType?: string;
     multipleLocations?: boolean;
     boxesType?: boolean;
+    tickets?: TicketType[];
 }
 
 export type AmazonPrepOrderProductType = {
@@ -138,7 +140,8 @@ export type WarehouseType = {
 }
 
 export type AmazonPrepOrderParamsType = {
-    products?: AmazonPrepOrderProductType[];
+    // products?: AmazonPrepOrderProductType[];
+    products?: DocProductParamsType[];
     warehouses: WarehouseType[];
     deliveryMethod: string[];
     carrierTypes?: string[];

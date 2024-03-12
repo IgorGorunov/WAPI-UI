@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import "./styles.scss";
 import useAuth from "@/context/authContext";
-import TextArea from "@/components/FormBuilder/TextArea";
 import {sendTicketMessage} from "@/services/tickets";
 import {verifyToken} from "@/services/auth";
 import {verifyUser} from "@/utils/userData";
@@ -11,17 +10,20 @@ import {useRouter} from "next/router";
 import Loader from "@/components/Loader";
 import Icon from "@/components/Icon";
 import ModalPreview from "@/components/ModalPreview";
+import {arrayBufferToBase64, readFileAsArrayBuffer} from "@/utils/files";
+import {CHAT_FILE_TYPES} from "@/types/tickets";
+import EmojiPicker from './EmojiPicker';
+import ModalStatus from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 type SendMessagePropsType = {
     objectUuid: string;
     onSendMessage: ()=>void;
+    showEmojiPicker: boolean;
+    setShowEmojiPicker: (val:boolean)=>void;
 }
 
-const enum CHAT_FILE_TYPES {
-    PDF = 'application/pdf',
-    IMAGE = 'image',
-    OTHER = 'other',
-}
+
 
 type ChatFileType = {
     file: File;
@@ -30,16 +32,30 @@ type ChatFileType = {
     name?: string;
 }
 
-const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage}) => {
+const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker}) => {
     const {token, currentDate} = useAuth();
     const Router = useRouter();
 
-    const inputRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
+    const dropRef = useRef<HTMLDivElement>(null);
 
     const [isLoading, setIsLoading] = useState(false)
     const [userInput, setUserInput] = useState('');
     const [files, setFiles] = useState<ChatFileType[]>(null);
     const [selectedFile, setSelectedFile] = useState<ChatFileType|null>(null);
+
+    const AllowedFileExtensions = ['txt', 'xls', 'xlsx', 'doc', 'docx'];
+    const isFileAllowed = (fileName: string) => {
+        const fileNameArray = fileName.split('.');
+        if (fileNameArray.length > 1) {
+            return AllowedFileExtensions.includes(fileNameArray[fileNameArray.length-1].toLowerCase());
+        }
+
+        return false;
+    }
+
+    const [showFileTypeError, setShowFileTypeError] = useState(false);
+    const handleCloseErrorModal = () => { setShowFileTypeError(false)};
 
     useEffect(() => {
         setFiles([]);
@@ -47,34 +63,16 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
     useEffect(() => {
         //setSendHeight(sendTicketBlockRef.current.clientHeight);
-        console.log('test - test', inputRef.current.clientHeight);
+        console.log('test - test', dropRef.current.clientHeight);
     }, [files]);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement> | string) => {
         if (typeof e === 'string' || e instanceof String) {
             setUserInput(e as string);
         }
-        else if (e && e?.target?.value) {
+        else if (e && (e?.target?.value || e?.target?.value==='')) {
             setUserInput(e.target.value);
         }
-    };
-
-    const readFileAsArrayBuffer = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsArrayBuffer(file);
-        });
-    };
-
-    const arrayBufferToBase64 = (arrayBuffer) => {
-        const bytes = new Uint8Array(arrayBuffer);
-        let binary = '';
-        for (let i = 0; i < bytes.length; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return btoa(binary);
     };
 
     const sendMessage = async(e) => {
@@ -93,8 +91,8 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
                 return {
                     id: file.file.name,
-                    name: file.file.name.toLowerCase() === 'image.png' ? `Screenshot ${index}` : file.file.name,
-                    type: file.file.type.split('/')[0],
+                    name: file.file.name.toLowerCase() === 'image.png' ? `Screenshot_${index}.png` : file.file.name,
+                    type: file.file.type,
                     data: base64String,
                 };
             }) : []
@@ -116,6 +114,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
             );
             if (res.status === 200) {
                 onSendMessage();
+                setFiles(null);
             }
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -125,6 +124,10 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         }
 
         setUserInput('');
+    }
+
+    const handleFiles = () => {
+
     }
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -149,6 +152,8 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
                     console.log('pdf preview',  pdfUrl);
                     newFiles.push({file: file, fileType: CHAT_FILE_TYPES.PDF, imgSrc: pdfUrl} as ChatFileType)
                 } else {
+                    console.log('just file: ', file);
+                    if (!isFileAllowed(file.name)) { setShowFileTypeError(true); continue;}
                     newFiles.push({file: file, fileType: CHAT_FILE_TYPES.OTHER} as ChatFileType)
                 }
             }
@@ -165,6 +170,8 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
         for (let i = 0; i < droppedFiles.length; i++) {
             const file = droppedFiles[i];
+            console.log('file...: ', file);
+
             if (file.type.startsWith('image')) {
                 const imageUrl = URL.createObjectURL(file);
                 console.log('image: ', file);
@@ -174,6 +181,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
                 console.log('pdf preview',  pdfUrl);
                 newFiles.push({file: file, fileType: CHAT_FILE_TYPES.PDF, imgSrc: pdfUrl} as ChatFileType)
             } else {
+                if (!isFileAllowed(file.name)) { setShowFileTypeError(true); continue;}
                 newFiles.push({file: file, fileType: CHAT_FILE_TYPES.OTHER} as ChatFileType)
             }
         }
@@ -195,24 +203,39 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         setSelectedFile(null);
     };
 
+    const onAddEmoji = (emoji: string) => {
+        const cursorPos = inputRef.current.selectionStart;
+        const textBeforeCursor = userInput.substring(0, cursorPos);
+        const textAfterCursor = userInput.substring(cursorPos);
+        setUserInput(textBeforeCursor + emoji + textAfterCursor);
+        inputRef.current.focus();
+        inputRef.current.selectionStart = cursorPos + emoji.length;
+    }
+
+    //const [showEmojiPicket, setShowEmojiPicker] = useState(false);
+
     return (
-        <div className="send-message-block" ref={inputRef}>
+        <div className="send-message-block" ref={dropRef} onDrop={handleDrop}>
             {isLoading && <Loader/>}
             <div className='send-message-block__text-block'>
-                <TextArea
-                    classNames={`send-message__input`}
+                <textarea
+                    className={`send-message__input`}
                     name={'chat-message-input'}
-                    textAriaHeight={3}
+                    rows={3}
                     value={userInput}
                     onChange={handleChange}
                     onPaste={handlePaste}
-                    onDrop={handleDrop}
                     onDragOver={(e) => e.preventDefault()}
+                    ref={inputRef}
                 />
-                <button className={`send-message__btn`} disabled={!userInput && (!files || !files.length)} onClick={sendMessage}><Icon
+                <button type='button' className={`send-message__btn`} disabled={!userInput && (!files || !files.length)} onClick={sendMessage}><Icon
                     name={'send'}/>
                 </button>
+                {/*<button type='button' className={'emoji-btn'} onClick={()=>setShowEmojiPicker(!showEmojiPicker)}>*/}
+                {/*    <Icon name='emoji' />*/}
+                {/*</button>*/}
             </div>
+            {/*{showEmojiPicker ? <EmojiPicker onEmojiClick={onAddEmoji} />: null}*/}
             <div className={`send-message__file-preview`} onDrop={handleDrop}
                  onDragOver={(e) => e.preventDefault()}>
                 {files ? files.map((file, index) => (
@@ -224,7 +247,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
                                 />
                             </div>
                             :
-                            <div className="send-message__file-preview-file" onClick={() => handleFileClick(index)}>
+                            <div className={`send-message__file-preview-file ${file.fileType === CHAT_FILE_TYPES.PDF ? 'pdf' : ''}`} onClick={() => handleFileClick(index)}>
                                 <Icon name='files'/>
                                 <div>{file.file.name}</div>
                                 {/*<div>{file.file.type}</div>*/}
@@ -253,6 +276,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
                 </ModalPreview>
 
             )}
+            {showFileTypeError && <ModalStatus statusModalType={STATUS_MODAL_TYPES.ERROR} title={'Error'} subtitle='File of this type is not allowed. You can add only images, PDF, .txt, .docx, .xlsx files.' onClose={handleCloseErrorModal} />}
 
         </div>
     );

@@ -23,7 +23,7 @@ import Loader from "@/components/Loader";
 import {toast, ToastContainer} from '@/components/Toast';
 import {
     SingleStockMovementFormType,
-    SingleStockMovementType,
+    SingleStockMovementType, STOCK_MOVEMENT_DOC_SUBJECT,
     STOCK_MOVEMENT_DOC_TYPE,
     StockMovementParamsType
 } from "@/types/stockMovements";
@@ -40,6 +40,11 @@ import {ImportFilesType} from "@/types/importFiles";
 import ProductsTotal from "@/screens/StockMovementsPage/components/StockMovementForm/ProductsTotal";
 import {AttachedFilesType, ProductsSelectionType, STATUS_MODAL_TYPES} from "@/types/utility";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
+import DocumentTickets from "@/components/DocumentTickets";
+import SingleDocument from "@/components/SingleDocument";
+import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
+import {TICKET_OBJECT_TYPES} from "@/types/tickets";
+import {formatDateStringToDisplayString} from "@/utils/date";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -51,9 +56,10 @@ type StockMovementFormType = {
     docData?: SingleStockMovementType;
     docParameters?: StockMovementParamsType;
     closeDocModal: ()=>void;
+    refetchDoc: ()=>void;
 }
 
-const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal}) => {
+const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc}) => {
     const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!docData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
@@ -77,6 +83,13 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const closeErrorModal = useCallback(()=>{
         setShowStatusModal(false);
     }, [])
+
+    //tickets
+    const [showTicketForm, setShowTicketForm] = useState(false);
+    const handleCreateTicket = () => {
+        console.log('create ticket');
+        setShowTicketForm(true)
+    }
 
     //form
     const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors} = useForm({
@@ -157,7 +170,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     const productOptions = useMemo(() =>{
-        return docParameters.productsSelection.map((item: ProductsSelectionType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name} });
+        return docParameters.products.map((item)=>{return {label: `${item.name}`, value:item.uuid} });
     },[docParameters]);
 
     const checkSelectedProductValue = (selectedValue) => {
@@ -510,8 +523,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         setShowImportModal(true)
     }
 
-    const tabTitleArray =  TabTitles(!!docData?.uuid);
-    const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
+    const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length));
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+
+    useEffect(() => {
+        resetTabTables(tabTitleArray);
+    }, [docData]);
 
     const onSubmitForm = async (data) => {
         clearTabTitles();
@@ -528,7 +545,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             }
 
             const res: ApiResponseType = await sendInboundData(
-                docType,
+                //docType,
                 {
                     token,
                     documentType: docType,
@@ -669,7 +686,15 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         <StatusHistory statusHistory={docData?.statusHistory} />
                     </div>
                 </div>}
-
+                {docData?.uuid && docData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                    <div className="card min-height-600 stock-movement--tickets">
+                        <h3 className='stock-movement__block-title'>
+                            <Icon name='ticket' />
+                            Tickets
+                        </h3>
+                        <DocumentTickets tickets={docData.tickets}/>
+                    </div>
+                </div> : null}
                 <div key='files-tab' className='files-tab'>
                     <div className="card min-height-600 stock-movement--files">
                         <h3 className='stock-movement__block-title'>
@@ -684,6 +709,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             </Tabs>
 
             <div className='form-submit-btn'>
+                {/*{docData && docData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}*/}
                 {isDisabled && docData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(docData?.canEdit || !docData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
@@ -698,6 +724,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
             <ProductSelection productList={docParameters.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
         </Modal>}
+        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
     </div>
 }
 

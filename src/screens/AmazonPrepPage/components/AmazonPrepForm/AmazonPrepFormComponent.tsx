@@ -38,13 +38,18 @@ import {AttachedFilesType, ProductsSelectionType, STATUS_MODAL_TYPES} from "@/ty
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import Modal from "@/components/Modal";
 import useNotifications from "@/context/notificationContext";
-import {NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import DocumentTickets from "@/components/DocumentTickets";
+import SingleDocument from "@/components/SingleDocument";
+import {formatDateStringToDisplayString} from "@/utils/date";
+import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
     amazonPrepOrderParameters: AmazonPrepOrderParamsType;
     docUuid?: string | null;
     closeAmazonPrepOrderModal: ()=>void;
+    refetchDoc: ()=>void;
 }
 
 const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew: number) => {
@@ -58,7 +63,7 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
     return 0;
 }
 
-const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal}) => {
+const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc}) => {
     const Router = useRouter();
     const { token, currentDate } = useAuth();
     const {notifications} = useNotifications();
@@ -84,6 +89,12 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         setShowStatusModal(false);
     }, [])
 
+    //tickets
+    const [showTicketForm, setShowTicketForm] = useState(false);
+    const handleCreateTicket = () => {
+        console.log('create ticket');
+        setShowTicketForm(true)
+    }
 
     const warehouses = useMemo(() => {
         if (amazonPrepOrderParameters?.warehouses) {
@@ -262,7 +273,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
     };
 
     const productOptions = useMemo(() =>{
-        return amazonPrepOrderParameters ? amazonPrepOrderParameters.productsSelection.map((item: ProductsSelectionType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name}}) : [];
+        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item)=>{return {label: `${item.name}`, value:item.uuid}}) : [];
     },[amazonPrepOrderParameters, warehouse]);
 
     // const productOptions = useMemo(() =>{
@@ -489,8 +500,12 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         // orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid)
     }
 
-    const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid);
-    const {tabTitles, updateTabTitles, clearTabTitles} = useTabsState(tabTitleArray, TabFields);
+    const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid, !!(amazonPrepOrderData?.tickets && amazonPrepOrderData?.tickets.length));
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+
+    useEffect(() => {
+        resetTabTables(tabTitleArray);
+    }, [amazonPrepOrderData]);
 
     const onSubmitForm = async (data: SingleAmazonPrepOrderFormType) => {
         setIsLoading(true);
@@ -691,6 +706,15 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                             </div>
                         </div>
                     }
+                    {amazonPrepOrderData?.uuid && amazonPrepOrderData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                        <div className="card min-height-600 amazon-prep-info--tickets">
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='ticket' />
+                                Tickets
+                            </h3>
+                            <DocumentTickets tickets={amazonPrepOrderData.tickets}/>
+                        </div>
+                    </div> : null}
                     <div key='files-tab' className='files-tab'>
                         <div className="card min-height-600 amazon-prep-info--files">
                             <h3 className='amazon-prep-info__block-title'>
@@ -705,6 +729,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                 </Tabs>
 
                 <div className='form-submit-btn'>
+                    {/*{amazonPrepOrderData && amazonPrepOrderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}*/}
                     {isDisabled && amazonPrepOrderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(amazonPrepOrderData?.canEdit || !amazonPrepOrderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY} >Save</Button>}
@@ -713,8 +738,10 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                 {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
                 {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
                     <ProductSelection productList={amazonPrepOrderParameters?.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
-                </Modal>}</>
-            :null}
+                </Modal>}
+                {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.AmazonPrep} subjectUuid={docUuid} subject={`AmazonPrep ${amazonPrepOrderData?.wapiTrackingNumber} ${amazonPrepOrderData?.date ? formatDateStringToDisplayString(amazonPrepOrderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+            </>
+        :null}
     </div>
 }
 

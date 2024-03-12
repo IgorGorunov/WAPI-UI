@@ -402,9 +402,14 @@ input[type="date"]::before {
   text-align: center !important;
 }
 
-.icon-info {
-  flex: 0 0 auto;
-  width: 24px;
+.icon {
+  &-info,
+  &-warehouse {
+    flex: 0 0 auto;
+    width: 24px;
+  }
+
+
 }
 
 .ant-table-cell {
@@ -422,7 +427,8 @@ input[type="date"]::before {
 }
 
 .page-component {
-    width: 100%;
-    color: var(--color-gray-blue);
-    position: relative;
+  width: 100%;
+  color: var(--color-gray-blue);
+  position: relative;
 }
+

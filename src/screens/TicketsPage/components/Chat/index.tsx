@@ -24,14 +24,25 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [chatMessages, setChatMessages] = useState<ChatMessageType[]>([]);
 
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [sendHeight, setSendHeight] = useState(0);
+
     const sendTicketBlockRef = useRef(null)
+
     useEffect(() => {
         setSendHeight(sendTicketBlockRef.current.clientHeight);
-        console.log('2222', sendTicketBlockRef.current.clientHeight);
     })
 
-    console.log('11111', sendHeight, sendTicketBlockRef?.current?.clientHeight);
+    useEffect(() => {
+        const scrollToBottom = () => {
+            if (sendTicketBlockRef.current) {
+                setSendHeight(sendTicketBlockRef.current.scrollHeight);
+            }
+        };
+
+        setTimeout( scrollToBottom, 200);
+
+    },[chatMessages, showEmojiPicker]);
 
     useEffect(() => {
         if (!chatMessages.length) {
@@ -44,35 +55,22 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid }) => {
     useEffect(() => {
         const scrollToBottom = () => {
             if (containerRef.current) {
-                console.log('aaaaa', containerRef.current.scrollHeight)
                 containerRef.current.scrollTop = containerRef.current.scrollHeight;
             }
         };
 
-        setTimeout( scrollToBottom, 2000);
-    },[chatMessages]);
+        setTimeout( scrollToBottom, 200);
+    },[chatMessages, showEmojiPicker]);
 
-    // useEffect(() => {
-    //     const scrollToBottom = () => {
-    //         if (bottomRef.current) {
-    //             bottomRef.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
-    //         }
-    //     };
-    //
-    //     setTimeout( scrollToBottom, 2000);
-    // } );
+
 
     const bottomRef = useRef(null);
-    //
-    // useEffect(() => {
-    //     // Scroll to the bottom when the component is rendered
-    //     bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    // } );
 
 
     const handleSendMessage = useCallback(async() => {
         //fetch messages
         try {
+            setIsLoading(true);
             const responseVerification = await verifyToken(token);
             if (!verifyUser(responseVerification, currentDate) ){
                 await Router.push(Routes.Login);
@@ -94,12 +92,19 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid }) => {
         }
     }, [token]);
 
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        if ( window && window.innerWidth) {
+            setIsMobile(window.innerWidth < 600);
+        }
+    });
+
     return (
         <>
-        {/*<div className="chat-block">*/}
             {isLoading && <Loader />}
             <div className='chat-block__message-history' >
-                <ul className='chat-block__messages' ref={containerRef} style={{maxHeight:`500px`, overflow: 'hidden scroll'}}>
+                <ul className='chat-block__messages' ref={containerRef} style={{maxHeight:`calc(100vh - ${isMobile ? '200' : '300'}px - ${sendHeight}px)`, overflow: 'hidden scroll'}}>
                     {chatMessages ?
                         chatMessages.sort((a, b) => a.date > b.date ? 1 : -1)
                             .map(message => <li key={Math.random()}><Message message={message}/></li>)
@@ -109,9 +114,8 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid }) => {
                 </ul>
             </div>
             <div className='chat-block__send' ref={sendTicketBlockRef}>
-                <SendMessageBlock objectUuid={objectUuid} onSendMessage={handleSendMessage}/>
+                <SendMessageBlock objectUuid={objectUuid} onSendMessage={handleSendMessage} showEmojiPicker={showEmojiPicker} setShowEmojiPicker={setShowEmojiPicker}/>
             </div>
-        {/*</div>*/}
         </>
     );
 };

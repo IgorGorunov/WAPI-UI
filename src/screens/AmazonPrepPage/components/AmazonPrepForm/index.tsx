@@ -112,7 +112,13 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
         <ToastContainer />
         {amazonPrepOrderParameters && (docUuid && amazonPrepOrderData || !docUuid) ?
             <Modal title={`Amazon prep`} onClose={onClose} >
-                <AmazonPrepFormComponent amazonPrepOrderData={amazonPrepOrderData} amazonPrepOrderParameters={amazonPrepOrderParameters} docUuid={docUuid} closeAmazonPrepOrderModal={onCloseWithSuccess} />
+                <AmazonPrepFormComponent
+                    amazonPrepOrderData={amazonPrepOrderData}
+                    amazonPrepOrderParameters={amazonPrepOrderParameters}
+                    docUuid={docUuid}
+                    closeAmazonPrepOrderModal={onCloseWithSuccess}
+                    refetchDoc={()=>{fetchSingleAmazonPrepOrder(docUuid); console.log('1111')}}
+                />
             </Modal>
         :null}
     </div>

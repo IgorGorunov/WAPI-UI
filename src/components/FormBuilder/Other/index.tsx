@@ -1,15 +1,15 @@
-import React from "react";
+import React, {forwardRef} from "react";
 import { FieldPropsType } from "@/types/forms";
 import "./styles.scss"
 
-const Other: React.FC<FieldPropsType> = ({
+const Other = forwardRef<HTMLDivElement, FieldPropsType>(({
         classNames= '',
         name,
         label,
         otherComponent,
         width,
         ...otherProps
-    }) => {
+    }, ref) => {
 
     return (
         <div className={`other-component ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
@@ -19,6 +19,6 @@ const Other: React.FC<FieldPropsType> = ({
             </div>
         </div>
     );
-};
+});
 
 export default Other;

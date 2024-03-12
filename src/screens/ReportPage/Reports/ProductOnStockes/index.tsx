@@ -199,7 +199,6 @@ export const columns_Product: ColumnDef<ProductOnStockRowType>[] = [
 ];
 
 export const getProductsOnStocksVariantColumns = (variant: PRODUCTS_ON_STOCKS_VARIANTS) => {
-    console.log('check: ', variant, variant === PRODUCTS_ON_STOCKS_VARIANTS.WAREHOUSE_PRODUCT_DOCUMENT)
     switch (variant) {
         case PRODUCTS_ON_STOCKS_VARIANTS.WAREHOUSE_PRODUCT_DOCUMENT:
             return columns_Warehouse_Product_Doc;

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Table} from 'antd';
+import {Pagination, Table, Tooltip} from 'antd';
 import {ColumnType} from "antd/es/table";
 
 import "./styles.scss";
@@ -211,7 +211,7 @@ console.log('products list:', products)
         },
 
         {
-            title: <TitleColumn title="SKU" minWidth="120px" maxWidth="200px" contentPosition="start" />,
+            title: <TitleColumn minWidth="120px" maxWidth="200px" contentPosition="start" childrenBefore={<Tooltip title="A unique code for tracking each product in inventory"><span>SKU</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="120px" maxWidth="200px" contentPosition="start"/>
             ),
@@ -224,7 +224,7 @@ console.log('products list:', products)
             responsive: ['sm'],
         },
         {
-            title: <TitleColumn title="Name" minWidth="150px" maxWidth="500px" contentPosition="start"/>,
+            title: <TitleColumn title="Name" minWidth="150px" maxWidth="500px" contentPosition="start" />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="150px" maxWidth="500px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
@@ -241,7 +241,7 @@ console.log('products list:', products)
             },
         },
         {
-            title: <TitleColumn title="Dimension | mm" minWidth="100px" maxWidth="100px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="center" childrenBefore={<Tooltip title="Length, width, and height in millimeters"><span>Dimension | mm</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="center"/>
             ),
@@ -267,7 +267,7 @@ console.log('products list:', products)
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Aliases" minWidth="100px" maxWidth="300px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="100px" maxWidth="300px" contentPosition="start" childrenBefore={<Tooltip title="Alternative names"><span>Aliases</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
@@ -293,7 +293,7 @@ console.log('products list:', products)
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Available" minWidth="90px" maxWidth="90px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="90px" maxWidth="90px" contentPosition="center" childrenBefore={<Tooltip title="Available products for new orders"><span>Available</span></Tooltip>} />,
             render: (text: string, record: ProductType) => (
                 <TableCell
                     minWidth="90px"
@@ -330,6 +330,7 @@ console.log('products list:', products)
             }),
         },
         ], [handleHeaderCellClick, setHoveredProduct, setIsDisplayedPopup]);
+
     return (
         <div className='table'>
             <Head>
@@ -362,10 +363,11 @@ console.log('products list:', products)
 
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredProducts?.length ? '' : 'is-empty'}`}>
                 <Table
-                    dataSource={filteredProducts.slice((current - 1) * pageSize, current * pageSize)}
+                    dataSource={filteredProducts.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
                     scroll={{y:700}}
+                    showSorterTooltip={false}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
