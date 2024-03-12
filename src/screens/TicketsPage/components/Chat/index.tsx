@@ -14,9 +14,10 @@ import {ChatMessageType} from "@/types/tickets";
 
 type ChatPropsType = {
     objectUuid: string;
+    canEdit?: boolean;
 };
 
-const ChatBlock: React.FC<ChatPropsType> = ({objectUuid }) => {
+const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
 
     const {token, currentDate} = useAuth();
     const Router = useRouter();
@@ -114,7 +115,7 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid }) => {
                 </ul>
             </div>
             <div className='chat-block__send' ref={sendTicketBlockRef}>
-                <SendMessageBlock objectUuid={objectUuid} onSendMessage={handleSendMessage} showEmojiPicker={showEmojiPicker} setShowEmojiPicker={setShowEmojiPicker}/>
+                <SendMessageBlock objectUuid={objectUuid} onSendMessage={handleSendMessage} canEdit={canEdit} showEmojiPicker={showEmojiPicker} setShowEmojiPicker={setShowEmojiPicker}/>
             </div>
         </>
     );

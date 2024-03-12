@@ -28,6 +28,7 @@ export type StockMovementType = {
     status: string;
     tableKey: string;
     uuid: string;
+    statusPeriod: string;
     // packages: number;
     // palletAmount: number;
     // volume: number;

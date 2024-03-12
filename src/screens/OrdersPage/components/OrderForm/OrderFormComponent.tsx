@@ -1057,7 +1057,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 </Tabs>
 
                 <div className='form-submit-btn'>
-                    {/*{orderData && orderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}*/}
+                    {orderData && orderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
                     {isDisabled && orderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                     {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={()=>setShowSendCommentModal(true)} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}

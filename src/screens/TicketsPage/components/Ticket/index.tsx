@@ -24,8 +24,6 @@ type TicketPropsType = {
 
 const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose}) => {
 
-    console.log('ticket 111', ticketUuid, subjectUuid, subject, subjectType)
-
     const {token, setToken, currentDate} = useAuth();
     const Router = useRouter();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
@@ -37,8 +35,6 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
     useEffect(() => {
         setIsTicketNew(!docUuid);
     }, [docUuid]);
-
-    console.log('it is a ticket: ', ticketUuid)
 
     const [isLoading, setIsLoading] = useState(false);
     const [ticketParams, setTicketParams] = useState<TicketParamsType | null>(null);
@@ -109,6 +105,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
 
     const onCloseModal = () => {
         onClose();
+        console.log('111222333', ticketUuid)
         if (ticketUuid) {
             setDocNotificationsAsRead(ticketUuid);
         }
@@ -120,8 +117,8 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
             {isLoading && <Loader/>}
             <ToastContainer/>
             {ticketParams && (ticketUuid && singleTicketData || !ticketUuid) ?
-                <Modal title={`Ticket`} onClose={onClose} >
-                    <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid} onClose={onCloseModal}/>
+                <Modal title={`Ticket`} onClose={onCloseModal} >
+                    <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid}  reFetchTicket={()=>{fetchSingleTicket(ticketUuid); console.log('refetch ticket')}} onClose={onCloseModal}/>
                 </Modal>
                 : null}
 

@@ -3,7 +3,7 @@ import {AttachedFilesType} from "@/types/utility";
 export const ticketStatusColors = [
     { value: 'All statuses', label: 'All statuses' , color: 'var(--color-light-blue-gray)'},
     { value: 'New', label: 'New' , color: 'var(--color-yellow)'},
-    { value: 'Reopen', label: 'Reopen' , color: 'var(--color-yellow)'},
+    { value: 'Reopened', label: 'Reopen' , color: 'var(--color-yellow)'},
     { value: 'In progress', label: 'In progress' , color: 'var(--color-blue)'},
     { value: 'Resolved', label: 'Resolved' , color: 'var(--color-green)'},
     { value: 'Need info from client', label: 'Need info from client', color: 'var(--color-violet)'}
