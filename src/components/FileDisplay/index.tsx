@@ -5,7 +5,7 @@ import './styles.scss';
 import Icon from '@/components/Icon';
 import {base64ToBlob} from "@/utils/files";
 
-const FileDisplay = ({ files, onFileDelete }) => {
+const FileDisplay = ({ files, onFileDelete, addedFiles }) => {
     const getFileIcon = (fileType) => {
         switch (fileType) {
             case 'image':
@@ -37,11 +37,16 @@ const FileDisplay = ({ files, onFileDelete }) => {
         window.URL.revokeObjectURL(url);
     };
 
+    const fileIsAdded = (file) => {
+        const foundFiles = addedFiles.filter(item => item === file);
+        return !!foundFiles.length;
+    }
+
     return (
         <div className="file-display">
             {files.filter(file => file).map((file, index) => (
-                <div key={index} className="file-item__wrapper">
-                    <div key={index} className="file-item">
+                <div key={index} className={`file-item__wrapper`}>
+                    <div key={index} className={`file-item ${fileIsAdded(file) ? 'is-new' : 'is-exist'}`}>
                         <FontAwesomeIcon icon={getFileIcon(file.type)} className="file-icon" />
                         <div className="file-details">
                             <span onClick={() => ShowFile(file)}>{file.name}</span>
@@ -50,7 +55,7 @@ const FileDisplay = ({ files, onFileDelete }) => {
                             <div className='file-actions-btn download-file-button' onClick={() => handleDownload(file)}>
                                 <Icon name='download-file' />
                             </div>
-                            <div className='file-actions-btn delete-button' onClick={() => onFileDelete(event, index)}>
+                            <div className='file-actions-btn delete-button' onClick={() => onFileDelete(event, file, index)}>
                                 <Icon name="delete"/>
                             </div>
                         </div>

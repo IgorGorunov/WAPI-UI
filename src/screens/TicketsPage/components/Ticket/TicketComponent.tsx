@@ -1,10 +1,10 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import "./styles.scss";
 import {verifyToken} from "@/services/auth";
 import {verifyUser} from "@/utils/userData";
 import {Routes} from "@/types/routes";
 import {ApiResponseType} from "@/types/api";
-import {createTicket, getSingleTicket, getTicketParams} from "@/services/tickets";
+import {createTicket, reopenTicket} from "@/services/tickets";
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import {SingleTicketType, TicketParamsType} from "@/types/tickets";
@@ -32,13 +32,12 @@ type TicketPropsType = {
     onClose: ()=>void;
     setDocUuid: (uuid: string)=>void;
     subject?: string;
+    reFetchTicket: ()=>void;
 };
 
-const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose}) => {
+const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose, reFetchTicket}) => {
 
-    console.log('ticket component 222', subject, subjectUuid, subjectType, ticketUuid, ticketParams, singleTicketData);
-
-    const {token, setToken, currentDate} = useAuth();
+    const {token, currentDate} = useAuth();
     const Router = useRouter();
 
     //const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
@@ -98,6 +97,36 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
 
     const handleCancel = () => {
         onClose();
+    }
+
+    const handleReopenTicket = async () => {
+        try {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
+                await Router.push(Routes.Login);
+            }
+
+            const res: ApiResponseType = await reopenTicket(
+                {
+                    token: token,
+                    uuid: ticketUuid,
+                }
+            );
+
+            if (res?.status === 200) {
+                //success
+                console.log('it is success')
+                reFetchTicket();
+            } else {
+
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const [curTab, setCurTab] = useState(singleTicketData ? 1 : 0);
@@ -176,15 +205,15 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                                 Files
                             </h3>
                             <div className='dropzoneBlock'>
-                                <DropZone readOnly={!!isDisabled} files={selectedFiles}
-                                          onFilesChange={handleFilesChange}/>
+                                <DropZone readOnly={isDisabled} files={selectedFiles}
+                                          onFilesChange={handleFilesChange} docUuid={singleTicketData?.uuid} showSend={true} />
                             </div>
                         </div>
                     </div>
                     {singleTicketData ?
                         <div key='messages-tab' className='files-tab'>
                             <div className={`card ticket--messages`}>
-                                <ChatBlock objectUuid={singleTicketData?.uuid}/>
+                                <ChatBlock objectUuid={singleTicketData?.uuid} canEdit={singleTicketData.canEdit}/>
                             </div>
                         </div>
                         : null
@@ -195,10 +224,13 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                     <Button type="submit" variant={ButtonVariant.PRIMARY}>Create ticket</Button>
                     <Button type="button" variant={ButtonVariant.SECONDARY} onClick={handleCancel}>Cancel</Button>
                 </div>}
+                {singleTicketData && singleTicketData.status==='Resolved' ? <div className='ticket--info-form-btns'>
+                    <Button type="button" variant={ButtonVariant.PRIMARY} onClick={handleReopenTicket}>Reopen ticket</Button>
+                </div> : null}
             </form>
 
         </div>
-    );
+);
 };
 
 export default TicketComponent;

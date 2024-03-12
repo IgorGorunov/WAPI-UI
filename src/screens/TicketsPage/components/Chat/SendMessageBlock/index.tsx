@@ -21,6 +21,7 @@ type SendMessagePropsType = {
     onSendMessage: ()=>void;
     showEmojiPicker: boolean;
     setShowEmojiPicker: (val:boolean)=>void;
+    canEdit?: boolean;
 }
 
 
@@ -32,7 +33,9 @@ type ChatFileType = {
     name?: string;
 }
 
-const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker}) => {
+const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker, canEdit}) => {
+    console.log('ticket editable'+ canEdit)
+
     const {token, currentDate} = useAuth();
     const Router = useRouter();
 
@@ -132,7 +135,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         const items = e.clipboardData?.items;
-        if (!items) return;
+        if (!items || !canEdit) return;
 
         const newFiles: ChatFileType[] = [];
 
@@ -165,6 +168,8 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
+        if (!canEdit) return;
+
         const droppedFiles = Array.from(e.dataTransfer.files);
         const newFiles: ChatFileType[] = [];
 
@@ -227,8 +232,9 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
                     onPaste={handlePaste}
                     onDragOver={(e) => e.preventDefault()}
                     ref={inputRef}
+                    disabled={!canEdit}
                 />
-                <button type='button' className={`send-message__btn`} disabled={!userInput && (!files || !files.length)} onClick={sendMessage}><Icon
+                <button type='button' className={`send-message__btn`} disabled={!canEdit || !userInput && (!files || !files.length)} onClick={sendMessage}><Icon
                     name={'send'}/>
                 </button>
                 {/*<button type='button' className={'emoji-btn'} onClick={()=>setShowEmojiPicker(!showEmojiPicker)}>*/}
@@ -277,7 +283,6 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
             )}
             {showFileTypeError && <ModalStatus statusModalType={STATUS_MODAL_TYPES.ERROR} title={'Error'} subtitle='File of this type is not allowed. You can add only images, PDF, .txt, .docx, .xlsx files.' onClose={handleCloseErrorModal} />}
-
         </div>
     );
 };

@@ -80,6 +80,25 @@ const createTicket = async (
     }
 };
 
+const reopenTicket = async (
+    data: {
+        uuid: string,
+        token: string;
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/ReopenTicket`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
 const sendTicketMessage = async (
     data: {
         message: string;
@@ -121,4 +140,4 @@ const getTicketMessages = async (
 };
 
 
-export { getTickets, getSingleTicket, getTicketParams, createTicket, sendTicketMessage, getTicketMessages};
+export { getTickets, getSingleTicket, getTicketParams, createTicket, sendTicketMessage, getTicketMessages, reopenTicket};

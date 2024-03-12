@@ -22,7 +22,7 @@ import CurrentFilters from "@/components/CurrentFilters";
 import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString} from "@/utils/date";
+import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 
 
 type StockMovementsListType = {
@@ -382,22 +382,23 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             key: 'icon',
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title={`Current condition or state of ${getDocType(docType).substring(0, getDocType(docType).length - 1) }`}><span>Status</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title={`Current condition or state of ${getDocType(docType).substring(0, getDocType(docType).length - 1) }`}><span>Status</span></Tooltip>}/>,
             render: (text: string, record) => {
                 //const underlineColor = getUnderlineColor(record.status);
                 return (
                     <TableCell
-                        minWidth="60px"
-                        maxWidth="60px"
+                        minWidth="100px"
+                        maxWidth="100px"
                         contentPosition="start"
-                        childrenAfter={
-                            <span style={{
-                                // borderBottom: `2px solid violet`,
-                                display: 'inline-block',
-                            }}
-                        >
-                        {text}
-                        </span>
+                        childrenBefore={
+                            <div>
+                                <div>
+                                    {text}
+                                </div>
+                                <div style={{fontSize:'9px'}}>
+                                    [{formatDateTimeToStringWithDotWithoutSeconds(record.statusPeriod)}]
+                                </div>
+                            </div>
                         }
                     >
                     </TableCell>

@@ -47,6 +47,7 @@ const TicketsPage = () => {
         if (singleTicketUuid) {
             setDocNotificationsAsRead(singleTicketUuid);
         }
+        fetchTickets();
     }
 
     //
