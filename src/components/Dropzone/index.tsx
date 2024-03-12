@@ -101,7 +101,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
 
     const onFileDelete = (event: React.MouseEvent<HTMLButtonElement>, file: any, index: number) => {
         event.preventDefault();
-        if (readOnly && !docUuid) {
+        if (readOnly && !docUuid ) {
             return;
         }
 
@@ -143,7 +143,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
     };
 
     const handleSendDocFile = async() => {
-        if (docUuid && readOnly && addedFiles.length) {
+        if (docUuid && (readOnly || showSend) && addedFiles.length) {
             sendDocumentFiles
 
             try {
@@ -182,7 +182,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
     }, [files, onFilesChange]);
 
     return (
-        <>
+        <div className='dropzone-wrapper'>
             <div onClick={handleDivClick} onPaste={onPaste} className={`dropzone-container ${readOnly ? 'read-only' : ''}`}>
                 {isDragging && <Loader />}
                 <div
@@ -207,7 +207,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
                 <div className='dropzone__btns'><Button onClick={handleSendDocFile}>Send files</Button></div>
             : null}
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
-        </>
+        </div>
     );
 };
 
