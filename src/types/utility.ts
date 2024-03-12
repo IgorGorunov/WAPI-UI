@@ -1,7 +1,7 @@
 export const enum ModalTypes {
     MAIN = 'main',
     STATUS = 'status',
-    COMMENT = 'comment',
+    PREVIEW = 'preview',
     CONFIRM = 'confirm',
     API_ERROR = 'api-error'
 }
@@ -43,6 +43,19 @@ export type WarehouseType = {
 export const enum FILTER_TYPE {
     CHECKBOX = 'checkbox',
     COLORED_CIRCLE = 'colored-circle',
+}
+
+export type DocProductParamsType = {
+    tableKey: string;
+    name: string;
+    sku: string;
+    uuid: string;
+    volume: number;
+    weightGross: number;
+    weightNet: number;
+    aliases: string;
+    barcodes: string;
+    //unitOfMeasures: string[];
 }
 
 export type ProductsSelectionType = {

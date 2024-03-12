@@ -1,7 +1,4 @@
-import axios from "axios";
-import { InvoiceType } from "@/types/invoices";
-
-const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
+import {api} from "@/services/api";
 
 const getInvoices = async (
     //token: string,
@@ -12,8 +9,8 @@ const getInvoices = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetInvoicesList`,
+        const response: any = await api.post(
+            `/GetInvoicesList`,
             data
         );
 
@@ -31,8 +28,8 @@ const getInvoiceForm = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetInvoicePrintForm`,
+        const response: any = await api.post(
+            `/GetInvoicePrintForm`,
             data,
             //{responseType: 'blob',} // Important for handling binary data
         );
@@ -53,8 +50,8 @@ const getInvoicesDebts = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetInvoicesDebt`,
+        const response: any = await api.post(
+            `/GetInvoicesDebt`,
             data
         );
 

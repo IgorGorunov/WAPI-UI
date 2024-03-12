@@ -40,7 +40,7 @@
     padding: 0;
     margin-bottom: 0;
 
-    input {
+    textarea {
       margin-bottom: 0;
       box-shadow: none;
       border-radius: 5px;
@@ -58,13 +58,13 @@
   }
 
   &.has-error {
-    input {
+    textarea {
       border-color: var(--color-error);
     }
   }
 
   &.is-disabled {
-    input {
+    textarea {
       background-color: var(--color-light-gray) !important;
       color: var(--color-gray-blue) !important;
     }

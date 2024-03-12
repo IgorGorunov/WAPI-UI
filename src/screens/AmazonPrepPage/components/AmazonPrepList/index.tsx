@@ -297,7 +297,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Status" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn title="" minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Current condition or state of an order"><span>Status</span></Tooltip>}
+                    />,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
@@ -325,9 +326,9 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             }),
         },
         {
-            title: <TitleColumn title="Date" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"  />
             ),
             dataIndex: 'date',
             key: 'date',
@@ -337,7 +338,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             }),
         },
         {
-            title: <TitleColumn title="WH number" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Order identifier within the WAPI system"><span>WH number</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
@@ -354,7 +355,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             },
         },
         {
-            title: <TitleColumn title="ASN" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Amazon Shipment Notification Number"><span>ASN</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
             ),
@@ -372,7 +373,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Order ID" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Unique code for order identification in the seller's system"><span>Order ID</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
             ),
@@ -385,7 +386,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Warehouse" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Code of warehouse"><span>Warehouse</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
@@ -398,7 +399,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Courier" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Service responsible for transporting and delivering packages"><span>Courier</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
@@ -411,7 +412,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Method" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Type of Amazon Prep Order: LTL or SPD"><span>Method</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
@@ -429,7 +430,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 maxWidth="50px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="This column displays Products" >
+                    <Tooltip title="Products" >
                         <span><Icon name={"shopping-cart"}/></span>
                     </Tooltip>
                 }
@@ -511,10 +512,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table
-                    dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize)}
+                    dataSource={filteredOrders.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
                     scroll={{y:700}}
+                    showSorterTooltip={false}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>

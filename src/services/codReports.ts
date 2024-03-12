@@ -1,7 +1,4 @@
-import axios from "axios";
-import { CodReportType } from "@/types/codReports";
-
-const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
+import {api} from "@/services/api";
 
 const getCodReports = async (
     //token: string,
@@ -12,8 +9,8 @@ const getCodReports = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetCODReportsList`,
+        const response: any = await api.post(
+            `/GetCODReportsList`,
             data
 
         );
@@ -32,8 +29,8 @@ const getCODReportForm = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetCODReportPrintForm`,
+        const response: any = await api.post(
+            `/GetCODReportPrintForm`,
             data,
             //{responseType: 'blob',} // Important for handling binary data
         );
@@ -56,8 +53,8 @@ const getCODIndicators = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetCODIndicators`,
+        const response: any = await api.post(
+            `/GetCODIndicators`,
             data
         );
 

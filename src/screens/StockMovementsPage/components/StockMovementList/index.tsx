@@ -332,7 +332,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     maxWidth="50px"
                     contentPosition="center"
                     childrenBefore={
-                        <Tooltip title="This column displays Products" >
+                        <Tooltip title="Sender country ➔ Receiver country" >
                             <span><Icon name={"car"}/></span>
                         </Tooltip>
                     }
@@ -382,7 +382,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             key: 'icon',
         },
         {
-            title: <TitleColumn title="Status" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title={`Current condition or state of ${getDocType(docType).substring(0, getDocType(docType).length - 1) }`}><span>Status</span></Tooltip>}/>,
             render: (text: string, record) => {
                 //const underlineColor = getUnderlineColor(record.status);
                 return (
@@ -411,7 +411,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn title="Date" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
@@ -423,7 +423,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn title="Number" minWidth="70px" maxWidth="700px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="70px" maxWidth="700px" contentPosition="start"  childrenBefore={<Tooltip title="Document identifier within the WAPI system"><span>Number</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
@@ -447,7 +447,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             },
         },
         {
-            title: <TitleColumn title="Incoming #" minWidth="120px" maxWidth="200px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="120px" maxWidth="200px" contentPosition="start" childrenBefore={<Tooltip title="Document number in the seller's system"><span>Incoming #</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
@@ -465,7 +465,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Sender" minWidth="100px" maxWidth="120px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="100px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title="The source responsible for initiating the movement of products"><span>Sender</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
             ),
@@ -479,7 +479,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Receiver" minWidth="100px" maxWidth="120px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="100px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title="The recipient of products"><span>Receiver</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
             ),
@@ -492,7 +492,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="ETA" minWidth="80px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Estimated arrival time"><span>ETA</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
@@ -504,74 +504,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
             responsive: ['lg'],
         },
-        // {
-        //     title: <TitleColumn title="Packa- ges" minWidth="30px" maxWidth="50px" contentPosition="start"/>,
-        //     render: (text: string) => (
-        //         <TableCell value={text} minWidth="30px" maxWidth="50px" contentPosition="start"/>
-        //     ),
-        //     dataIndex: 'packages',
-        //     key: 'packages',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-        //     }),
-        //     responsive: ['lg'],
-        // },
-        // {
-        //     title: <TitleColumn title="Pallet amount" minWidth="30px" maxWidth="50px" contentPosition="start"/>,
-        //     render: (text: string) => (
-        //         <TableCell value={text} minWidth="30px" maxWidth="50px" contentPosition="start"/>
-        //     ),
-        //     dataIndex: 'palletAmount',
-        //     key: 'palletAmount',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-        //     }),
-        //     responsive: ['lg'],
-        // },
-        // {
-        //     title: <TitleColumn title="Volume" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
-        //     render: (text: string) => (
-        //         <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
-        //     ),
-        //     dataIndex: 'volume',
-        //     key: 'volume',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-        //     }),
-        //     responsive: ['lg'],
-        // },
-        // {
-        //     title: <TitleColumn title="Weight gross" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
-        //     render: (text: string) => (
-        //         <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
-        //     ),
-        //     dataIndex: 'weightGross',
-        //     key: 'weightGross',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-        //     }),
-        //     responsive: ['lg'],
-        // },
-        // {
-        //     title: <TitleColumn title="Weight net" minWidth="40px" maxWidth="50px" contentPosition="start"/>,
-        //     render: (text: string) => (
-        //         <TableCell value={text} minWidth="40px" maxWidth="50px" contentPosition="start"/>
-        //     ),
-        //     dataIndex: 'weightNet',
-        //     key: 'weightNet',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<StockMovementType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
-        //     }),
-        //     responsive: ['lg'],
-        // },
         {
             title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="center" childrenBefore={
-                <Tooltip title="This column displays Products" >
+                <Tooltip title="Products" >
                     <span><Icon name={"shopping-cart"}/></span>
                 </Tooltip>
             }/>,
@@ -659,10 +594,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             </div>
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredDocs?.length ? '' : 'is-empty'}`}>
                 <Table
-                    dataSource={filteredDocs.slice((current - 1) * pageSize, current * pageSize)}
+                    dataSource={filteredDocs.slice((current - 1) * pageSize, current * pageSize).map(item => ({...item, key:item.tableKey}))}
                     columns={columns}
                     pagination={false}
                     scroll={{y:700}}
+                    showSorterTooltip={false}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>

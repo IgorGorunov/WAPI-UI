@@ -1,0 +1,104 @@
+@import "@/constants/devices.scss";
+
+.ticket {
+  display: block;
+
+  .card {
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &-wrapper {
+    max-width: 1084px;
+
+    @media (min-width: $tablet) {
+      width: 100%;
+      min-width: min(90vw, 1084px);
+    }
+
+    @media (max-width: $upToTablet) {
+      .width-17,
+      .width-33,
+      .width-50 {
+        max-width: 100%;
+        flex: 0 0 100%;
+      }
+    }
+
+    //&.new-ticket {
+    //  @media (min-width: $laptop) {
+    //    min-width: 550px;
+    //  }
+    //}
+  }
+
+  &--info {
+    padding: 16px 24px;
+
+    &-form {
+      &-btns {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        margin-top: 32px;
+      }
+    }
+  }
+
+  &--files {
+    padding: 24px;
+
+    .dropzone {
+      min-height: 200px;
+    }
+  }
+
+  &__block-title {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 25px;
+    color: var(--color-gray-blue);
+    margin-bottom: 16px;
+
+    &.title-small {
+      margin-bottom: 0;
+    }
+
+    svg {
+      margin-right: 16px;
+      max-width: 30px;
+      height: auto;
+    }
+  }
+
+  &--messages {
+    padding: 16px 0 0;
+    overflow: hidden auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      margin-right: 50px;
+    }
+
+    &::-webkit-scrollbar-track {
+      margin-top: 3px;
+      margin-bottom: 3px;
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-light-blue-gray);
+      border-radius: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--color-gray-blue);
+    }
+  }
+}

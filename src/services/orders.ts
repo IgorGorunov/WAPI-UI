@@ -1,8 +1,7 @@
-import axios from "axios";
 import {SingleOrderType, OrderCommentType} from "@/types/orders";
 import {AttachedFilesType } from '@/types/utility';
+import {api} from "@/services/api";
 
-const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
 
 const getOrders = async (
     //token: string,
@@ -13,8 +12,8 @@ const getOrders = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetOrdersList`,
+        const response: any = await api.post(
+            `/GetOrdersList`,
             data
 
         );
@@ -33,8 +32,8 @@ const getOrderData= async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetOrderData`,
+        const response: any = await api.post(
+            `/GetOrderData`,
             data
 
         );
@@ -47,14 +46,13 @@ const getOrderData= async (
 };
 
 const getOrderParameters = async (
-
     data: {
         token: string;
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetOrderParameters`,
+        const response: any = await api.post(
+            `/GetOrderParameters`,
             data
         );
 
@@ -73,8 +71,8 @@ const getOrderPickupPoints = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetPickupPoints`,
+        const response: any = await api.post(
+            `/GetPickupPoints`,
             data
         );
 
@@ -92,8 +90,8 @@ const sendOrderData = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/CreateUpdateOrder`,
+        const response: any = await api.post(
+            `/CreateUpdateOrder`,
             data
         );
 
@@ -111,8 +109,8 @@ const sendOrderComment = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/SendCommentToCourierService`,
+        const response: any = await api.post(
+            `/SendCommentToCourierService`,
             data
         );
 
@@ -130,8 +128,8 @@ const sendOrderFiles = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/BulkOrdersCreate`,
+        const response: any = await api.post(
+            `/BulkOrdersCreate`,
             data
         );
 

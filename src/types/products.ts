@@ -1,3 +1,5 @@
+import {TicketType} from "@/types/tickets";
+
 export type ProductType = {
     aliases: string;
     barcodes: string;
@@ -115,6 +117,7 @@ export type SingleProductType = {
     attachedFiles: AttachedFilesType[];
     statusHistory: StatusHistoryType[];
     canEdit: boolean;
+    tickets?: TicketType[];
 }
 
 export type SingleProductFormType = {

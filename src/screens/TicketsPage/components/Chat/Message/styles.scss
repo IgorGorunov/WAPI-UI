@@ -1,0 +1,103 @@
+@import "@/constants/devices.scss";
+
+.single-message {
+  position: relative;
+  padding: 8px 12px 26px;
+  max-width: 70%;
+  min-width: 150px;
+  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+
+  @media (max-width: $mobile) {
+    max-width: 90%;
+  }
+
+  &-block {
+    position: relative;
+    display: flex;
+    margin-bottom: 16px;
+
+  }
+
+  &.User-UI {
+    margin-right: auto;
+    background-color: var(--border-color);
+    border-radius: 15px 15px 15px 1px;
+  }
+
+  &.UI-User {
+    margin-left: auto;
+    background-color: var(--color-blue-15);
+    border-radius: 15px 15px 1px 15px;
+  }
+
+
+  &__user-name {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  &__text {
+    font-size: 12px;
+
+    span {
+      font-size: 24px;
+    }
+  }
+
+  &__period {
+    position: absolute;
+    bottom: 8px;
+    right: 6px;
+    font-size: 10px;
+
+    //.UI-User & {
+    //  right: 40px;
+    //}
+  }
+
+  &__files {
+    list-style: none;
+  }
+
+  &__file {
+    border-radius: 5px;
+    overflow: hidden;
+
+    &-wrapper {
+
+      margin-bottom: 16px;
+
+    }
+  }
+
+  &__checkmarks {
+    position: absolute;
+    right: 6px;
+    bottom: 8px;
+    width: 30px;
+    height: 22px;
+
+    svg {
+      width: 22px;
+    }
+
+    .second-checkmark {
+      position: absolute;
+      top: 0;
+      right: 8px;
+    }
+
+    .first-checkmark {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .Read & {
+      svg path {
+        fill: var(--color-blue);
+      }
+    }
+  }
+}

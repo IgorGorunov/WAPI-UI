@@ -75,6 +75,7 @@ const LoginForm: React.FC = () => {
       status?: any;
       response?: {
         data?: any;
+        status?: number;
       };
     };
 
@@ -94,7 +95,7 @@ const LoginForm: React.FC = () => {
         setCurrentDate(currentDate);
         await Router.push(Routes.Dashboard);
         // } else if (res?.response.status === 401) {
-      } else {
+      } else if (res?.response?.status === 401) {
         setError("Wrong login or password");
       }
     } catch (err) {

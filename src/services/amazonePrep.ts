@@ -1,7 +1,5 @@
-import axios from "axios";
 import {AttachedFilesType, SingleAmazonPrepOrderFormType} from "@/types/amazonPrep";
-
-const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
+import {api} from "@/services/api";
 
 const getAmazonPrep = async (
     //token: string,
@@ -12,8 +10,8 @@ const getAmazonPrep = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetAmazonPrepsList`,
+        const response: any = await api.post(
+            `/GetAmazonPrepsList`,
             data
 
         );
@@ -32,8 +30,8 @@ const getSingleAmazonPrepData = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/GetAmazonPrepData`,
+        const response: any = await api.post(
+            `/GetAmazonPrepData`,
             data
 
         );
@@ -53,8 +51,8 @@ const getAmazonPrepParameters = async (
     }
 ) => {
     try {
-        const ress = await axios.post(
-            `${API_ENDPOINT}/GetAmazonPrepParameters`,
+        const ress = await api.post(
+            `/GetAmazonPrepParameters`,
             data
         );
 
@@ -74,8 +72,8 @@ const sendAmazonPrepData = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/CreateUpdateAmazonPrep`,
+        const response: any = await api.post(
+            `/CreateUpdateAmazonPrep`,
             data
         );
 
@@ -93,8 +91,8 @@ const sendAmazonPrepFiles = async (
     }
 ) => {
     try {
-        const response: any = await axios.post(
-            `${API_ENDPOINT}/BulkOrdersCreate`,
+        const response: any = await api.post(
+            `/BulkOrdersCreate`,
             data
         );
 

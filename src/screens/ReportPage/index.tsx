@@ -118,20 +118,15 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                 {token: token, reportType: reportType, startDate: formatDateToString(currentRange.startDate), endDate: formatDateToString(currentRange.endDate)}
             );
 
-            console.log("report data:", res );
             if (res.data) {
                 setReportData(res.data);
-                console.log('report data: ', res.data);
             }
 
 
         } catch (error) {
             console.error("Error fetching data:", error);
-            console.log('error')
         } finally {
             setIsLoading(false);
-            console.log('finally')
-
         }
     },[token, currentRange]);
 

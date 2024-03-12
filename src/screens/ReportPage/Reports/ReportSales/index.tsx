@@ -97,7 +97,6 @@ export const columns_Off_Country_Product_Order: ColumnDef<ReportSalesRowType>[] 
 ];
 
 export const getReportSalesVariantColumns = (variant: REPORT_SALES_VARIANTS) => {
-    console.log('check columns variant:', variant, typeof variant)
     switch (variant) {
         case REPORT_SALES_VARIANTS.MONTH_COUNTRY_PRODUCT_ORDER:
             return columns_Month_Country_Product_Order;

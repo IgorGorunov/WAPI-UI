@@ -1,3 +1,5 @@
+import {ChatMessageDirectionType} from "@/types/utility";
+
 export enum NOTIFICATION_STATUSES {
     NEW = 'New',
     READ = 'Read',
@@ -16,6 +18,7 @@ export enum NOTIFICATION_OBJECT_TYPES {
     Outbound = '/outbounds',
     StockMovement = '/stockMovements',
     Product = '/products',
+    Ticket = '/tickets',
 }
 
 export type NotificationType = {
@@ -27,6 +30,8 @@ export type NotificationType = {
     message: string;
     objectType: NOTIFICATION_OBJECT_TYPES;
     objectUuid: string;
+    direction?: ChatMessageDirectionType;
+    sender?: string;
 }
 
 export type NotificationResponseType = {

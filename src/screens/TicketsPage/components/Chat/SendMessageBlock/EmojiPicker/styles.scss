@@ -1,0 +1,29 @@
+.emoji-picker {
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 4px;
+    list-style: none;
+
+    &-item {
+      padding: 2px 4px 0;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      transition: 0.3s ease;
+
+      .emoji-btn {
+        font-size: 24px;
+        transition: 0.3s ease;
+      }
+
+      &:hover {
+        //border-color: var(--color-blue);
+
+        .emoji-btn {
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+}

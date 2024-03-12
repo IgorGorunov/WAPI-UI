@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile, faFileImage, faFileAudio, faFileVideo, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import './styles.scss';
 import Icon from '@/components/Icon';
+import {base64ToBlob} from "@/utils/files";
 
 const FileDisplay = ({ files, onFileDelete }) => {
     const getFileIcon = (fileType) => {
@@ -34,18 +35,6 @@ const FileDisplay = ({ files, onFileDelete }) => {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-    };
-
-    const base64ToBlob = (base64String, type) => {
-        const binaryString = window.atob(base64String);
-        const len = binaryString.length;
-        const bytes = new Uint8Array(len);
-
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
-
-        return new Blob([bytes], { type });
     };
 
     return (

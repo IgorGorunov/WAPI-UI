@@ -68,7 +68,6 @@ const createColumn = (colName: string) => {
 
 
 export const getSaleDynamicVariantColumns = (variant: SALE_DYNAMIC_VARIANTS, resourceCols: string[]=[]) => {
-    console.log('check columns variant:', variant, typeof variant)
     switch (variant) {
         case SALE_DYNAMIC_VARIANTS.COUNTRY:
             return [...columns_Country_Weeks, ...resourceCols.map(colName => { return createColumn(colName)})];

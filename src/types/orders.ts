@@ -1,4 +1,11 @@
-import {SEND_COMMENT_TYPES, AttachedFilesType, WarehouseType, ProductsSelectionType} from "@/types/utility";
+import {
+    SEND_COMMENT_TYPES,
+    AttachedFilesType,
+    WarehouseType,
+    ProductsSelectionType,
+    DocProductParamsType
+} from "@/types/utility";
+import {TicketType} from "@/types/tickets";
 
 export type ClaimType = {
     date: string;
@@ -151,6 +158,7 @@ export type SingleOrderType = {
     services: OrderServiceType[];
     attachedFiles: AttachedFilesType[];
     canEdit: boolean;
+    tickets: TicketType[];
 }
 
 // export type AttachedFilesType = {
@@ -188,7 +196,8 @@ export type OrderProductType = {
 // }
 
 export type OrderParamsType = {
-    products?: OrderProductType[];
+    // products?: OrderProductType[];
+    products?: DocProductParamsType[];
     warehouses: WarehouseType[];
     currencies: string[];
     productsSelection: ProductsSelectionType[];

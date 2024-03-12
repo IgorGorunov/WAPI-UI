@@ -1,8 +1,13 @@
 import {TabFieldType} from '@/types/tabs';
 
-export const TabTitles = (objectExists: boolean) =>
-    objectExists ? ['General',  'Products', 'Services', 'Status history','Files'] : ['General', 'Products', 'Files'];
-
+export const TabTitles = (objectExists: boolean, hasTickets=false) => {
+    const tabsArr = objectExists ? ['General', 'Products', 'Services', 'Status history'] : ['General', 'Products'];
+    if (hasTickets) {
+        tabsArr.push('Tickets');
+    }
+    tabsArr.push('Files');
+    return tabsArr;
+}
 export const TabFields: TabFieldType[] = [
     {
         tabName: 'General',

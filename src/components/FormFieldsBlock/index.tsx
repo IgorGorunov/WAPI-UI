@@ -14,7 +14,7 @@ const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, e
             if (curField.fieldType === FormFieldTypes.GRID) {
                 return <div key={curField.name} className={`grid-inner-row ${curField.width ? "width-"+curField.width : ""} ${curField.classNames}`}>
                     <div className='grid-row'>
-                        {curField.fields.map((field )=> <SingleField curField={field} control={control} errors={errors} isDisabled={isDisabled} />)}
+                        {curField.fields.map((field, index )=> <div key={curField.name+'_'+index}><SingleField curField={field} control={control} errors={errors} isDisabled={isDisabled} /></div>)}
                     </div>
                 </div>
             } else {

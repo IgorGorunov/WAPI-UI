@@ -208,9 +208,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             title: <TitleColumn
                 minWidth="40px"
                 maxWidth="40px"
-                contentPosition="start"
+                contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="This column displays Warehouse" >
+                    <Tooltip title="Code of warehouse" >
                         <span><Icon name={"warehouse"}/></span>
                     </Tooltip>
                 }
@@ -226,7 +226,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
         },
         {
-            title: <TitleColumn title="SKU" minWidth="80px" maxWidth="120px" contentPosition="start"/>,
+            title: <TitleColumn minWidth="80px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title="A unique code for tracking each product in inventory"><span>SKU</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="120px"  contentPosition="start"/>
             ),
@@ -251,7 +251,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
         },
         {
-            title: <TitleColumn title="Available" minWidth="40px" maxWidth="40px"  contentPosition="center"/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px"  contentPosition="center" childrenBefore={<Tooltip title="Available products for new orders"><span>Available</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="center"/>
             ),
@@ -265,7 +265,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
 
         {
-            title: <TitleColumn title="Reserve" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products that were reserved for orders or movements"><span>Reserve</span></Tooltip>}/>,
             render: (text: number, record: ProductStockType) => (
                 <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
                     childrenAfter={<span
@@ -276,17 +276,6 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                             setIsDisplayedPopup(true);
 
                         }}
-                        // onMouseEnter={(e) => {
-                        //     setHoveredReserve(record);
-                        //     setMousePosition({ x: e.clientX, y: e.clientY });
-                        //     setIsDisplayedPopup(true);
-                        //
-                        // }}
-                        // onMouseLeave={() => {
-                        //     setHoveredReserve(null);
-                        //     setMousePosition(null);
-                        //     setIsDisplayedPopup(false);
-                        // }}
                     >
                         <span className={`reserve ${text !== 0 ? 'is-link' : '' }`}>{text}</span>
                     </span>
@@ -302,7 +291,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Damaged" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Damaged products"><span>Damaged</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
@@ -315,7 +304,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Expired" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products past usability"><span>Expired</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
@@ -327,34 +316,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
             responsive: ['lg'],
         },
-        // {
-        //     title: <TitleColumn title="Undefined status" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-        //     render: (text: string) => (
-        //         <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-        //     ),
-        //     dataIndex: 'undefinedStatus',
-        //     key: 'undefinedStatus',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<ProductStockType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
-        //     }),
-        //     responsive: ['lg'],
-        // },
-        // {
-        //     title: <TitleColumn title="Without box" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
-        //     render: (text: string) => (
-        //         <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
-        //     ),
-        //     dataIndex: 'withoutBox',
-        //     key: 'withoutBox',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<ProductStockType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
-        //     }),
-        //     responsive: ['lg'],
-        // },
         {
-            title: <TitleColumn title="Returning" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products that are being returned to the warehouse"><span>Returning</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
@@ -367,7 +330,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="On shipping" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products currently in transit in stock movements"><span>On shipping</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
@@ -380,7 +343,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Total" minWidth="40px" maxWidth="40px" contentPosition="center"/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="All stock including all product statuses"><span>Total</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
@@ -434,6 +397,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     columns={columns}
                     pagination={false}
                     scroll={{y:700}}
+                    showSorterTooltip={false}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>

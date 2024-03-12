@@ -1,9 +1,16 @@
-import {AttachedFilesType, ProductsSelectionType} from "@/types/utility";
+import {AttachedFilesType, DocProductParamsType, ProductsSelectionType} from "@/types/utility";
+import {TicketType} from "@/types/tickets";
 
 export const enum STOCK_MOVEMENT_DOC_TYPE {
-    INBOUNDS = 'inbound',
-    STOCK_MOVEMENT = 'stockMovement',
-    OUTBOUND = 'outbound',
+    INBOUNDS = 'Inbound',
+    STOCK_MOVEMENT = 'StockMovement',
+    OUTBOUND = 'Outbound',
+}
+
+export enum STOCK_MOVEMENT_DOC_SUBJECT {
+    'Inbound' = 'Inbound',
+    'StockMovement' = 'Stock movement',
+    'Outbound' = 'Outbound',
 }
 
 export type StockMovementType = {
@@ -62,7 +69,7 @@ export type StockMovementServiceType = {
 }
 
 export type SingleStockMovementType = {
-    // date: string;
+    date: string;
     number: string;
     incomingDate: string;
     incomingNumber: string;
@@ -90,6 +97,7 @@ export type SingleStockMovementType = {
     services: StockMovementServiceType[];
     attachedFiles: AttachedFilesType[];
     canEdit?: boolean;
+    tickets?: TicketType[];
 }
 
 export type StockMovementParamsProductType = {
@@ -107,7 +115,8 @@ export type StockMovementWarehouseType = {
 }
 
 export type StockMovementParamsType = {
-    products?: StockMovementParamsProductType[];
+    //products?: StockMovementParamsProductType[];
+    products?: DocProductParamsType[];
     sender: StockMovementWarehouseType[] | null;
     receiver: StockMovementWarehouseType[] | null;
     quality: string[];

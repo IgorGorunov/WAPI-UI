@@ -31,6 +31,10 @@
       margin-right: 16px;
       max-width: 30px;
       height: auto;
+
+      path {
+        fill: var(--color-light-blue-gray);
+      }
     }
   }
 

@@ -70,7 +70,13 @@ import Question from '@/assets/icons/question.svg'
 import Copy from '@/assets/icons/copy.svg'
 import Selection from '@/assets/icons/selection.svg'
 import Select from '@/assets/icons/select.svg'
-//import Notification from '@/assets/icons/notification.svg'
+import Send from '@/assets/icons/send.svg'
+import BigCheck from '@/assets/icons/big-check.svg'
+import PreviewFile from '@/assets/icons/preview.svg'
+import File from '@/assets/icons/file.svg'
+import Options from '@/assets/icons/options.svg'
+import Ticket  from '@/assets/icons/ticket.svg'
+import Emoji from '@/assets/icons/emoji.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -143,7 +149,13 @@ export const icons = {
   'copy': Copy,
   'selection': Selection,
   'select': Select,
-  //'notification': Notification,
+  'send': Send,
+  'big-check': BigCheck,
+  'preview': PreviewFile,
+  'file': File,
+  'options': Options,
+  'ticket': Ticket,
+  'emoji': Emoji,
 };
 
 export type IconType = keyof typeof icons;

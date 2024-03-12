@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API_ENDPOINT = "https://api.wapi.com/WAPI/hs/v1/UI";
+import {api} from "@/services/api";
 
 const getDasboardData = async (
   //token: string,
@@ -11,14 +9,9 @@ const getDasboardData = async (
   }
 ) => {
   try {
-    const response: any = await axios.post(
-      `${API_ENDPOINT}/GetDashboardData`,
+    const response: any = await api.post(
+      `/GetDashboardData`,
       data
-      //   {
-      //     headers: {
-      //       Authorization: token,
-      //     },
-      //   }
     );
 
     return response;
