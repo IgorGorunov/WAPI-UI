@@ -404,12 +404,14 @@ input[type="date"]::before {
 
 .icon {
   &-info,
-  &-warehouse {
+  &-warehouse{
     flex: 0 0 auto;
     width: 24px;
   }
 
-
+  &-download-file {
+    width: 26px;
+  }
 }
 
 .ant-table-cell {
