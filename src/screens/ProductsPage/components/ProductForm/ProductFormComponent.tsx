@@ -39,7 +39,6 @@ import useNotifications from "@/context/notificationContext";
 import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 import DocumentTickets from "@/components/DocumentTickets";
 import SingleDocument from "@/components/SingleDocument";
-import {formatDateStringToDisplayString} from "@/utils/date";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 
 const enum SendStatusType {
@@ -1202,7 +1201,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             Files
                         </h3>
                         <div className='dropzoneBlock'>
-                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} />
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={productData.canEdit ? '' : productData?.uuid} />
                         </div>
                     </div>
                 </div>

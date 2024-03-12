@@ -46,7 +46,7 @@ import useNotifications from "@/context/notificationContext";
 import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 import SingleDocument from "@/components/SingleDocument";
 import DocumentTickets from "@/components/DocumentTickets";
-import {formatDateStringToDisplayString, formatDateToDisplayString, formatDateToString} from "@/utils/date";
+import {formatDateStringToDisplayString} from "@/utils/date";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -1050,7 +1050,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 Files
                             </h3>
                             <div className='dropzoneBlock'>
-                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} />
+                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={orderData.canEdit ? '' : orderData?.uuid}/>
                             </div>
                         </div>
                     </div>

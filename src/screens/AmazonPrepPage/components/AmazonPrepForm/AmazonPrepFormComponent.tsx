@@ -34,7 +34,7 @@ import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
 import {verifyUser} from "@/utils/userData";
-import {AttachedFilesType, ProductsSelectionType, STATUS_MODAL_TYPES} from "@/types/utility";
+import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import Modal from "@/components/Modal";
 import useNotifications from "@/context/notificationContext";
@@ -722,7 +722,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                 Files
                             </h3>
                             <div className='dropzoneBlock'>
-                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} hint="Product labels, Carton labels, Pallet labels, Excel file any other file related to the order. No .csv files!" banCSV={true}/>
+                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData.canEdit ? '' : amazonPrepOrderData?.uuid} hint="Product labels, Carton labels, Pallet labels, Excel file any other file related to the order. No .csv files!" banCSV={true}/>
                             </div>
                         </div>
                     </div>

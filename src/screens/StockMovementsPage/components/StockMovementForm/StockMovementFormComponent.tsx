@@ -38,7 +38,7 @@ import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ImportFilesType} from "@/types/importFiles";
 import ProductsTotal from "@/screens/StockMovementsPage/components/StockMovementForm/ProductsTotal";
-import {AttachedFilesType, ProductsSelectionType, STATUS_MODAL_TYPES} from "@/types/utility";
+import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import DocumentTickets from "@/components/DocumentTickets";
 import SingleDocument from "@/components/SingleDocument";
@@ -702,7 +702,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             Files
                         </h3>
                         <div className='dropzoneBlock'>
-                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} />
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles} docUuid={docData.canEdit ? '' : docData?.uuid} onFilesChange={handleFilesChange} />
                         </div>
                     </div>
                 </div>

@@ -206,7 +206,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                             </h3>
                             <div className='dropzoneBlock'>
                                 <DropZone readOnly={isDisabled} files={selectedFiles}
-                                          onFilesChange={handleFilesChange}/>
+                                          onFilesChange={handleFilesChange} docUuid={singleTicketData?.uuid} showSend={true} />
                             </div>
                         </div>
                     </div>

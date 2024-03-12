@@ -20,6 +20,10 @@
     //margin-right: 30px;
     //margin-top: 20px;
 
+    &.is-new {
+      border: 1px solid var(--color-blue);
+    }
+
     &__wrapper {
       padding: 10px 15px;
     }
@@ -49,10 +53,45 @@
   }
 
   .delete-button {
+    border: 1px solid transparent;
+    transition: 0.3s ease;
+    svg path {
+      transition: all .3s ease;
+    }
 
+    &:hover {
+      border-color: var(--color-blue);
+      svg path {
+        fill: var(--color-blue);
+        transition: all .3s ease;
+      }
+
+
+    }
   }
 
   .download-file-button {
+    border: 1px solid transparent;
+    transition: 0.3s ease;
+
+    svg path {
+      fill: var(--color-light-blue-gray);
+    }
+
+    &:hover {
+      border-color: var(--color-blue);
+      svg path {
+        fill: var(--color-blue);
+      }
+
+
+    }
+  }
+}
+
+.read-only .is-exist .delete-button {
+  &:hover {
+    border-color: transparent;
     svg path {
       fill: var(--color-light-blue-gray);
     }

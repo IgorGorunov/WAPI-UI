@@ -44,6 +44,12 @@
     border-color: var(--color-blue);
   }
 
+  &__btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 32px;
+  }
+
 }
 
 
