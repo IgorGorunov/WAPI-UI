@@ -473,6 +473,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn
@@ -535,6 +536,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
@@ -560,12 +562,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Current condition of an order"><span>Status</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="60px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Current condition of an order"><span>Status</span></Tooltip>}/>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
                     <TableCell
-                        minWidth="80px"
+                        minWidth="60px"
                         maxWidth="100px"
                         contentPosition="start"
                         childrenAfter={
@@ -609,9 +611,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="60px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="80px" contentPosition="start"/>
             ),
             dataIndex: 'date',
             key: 'date',
