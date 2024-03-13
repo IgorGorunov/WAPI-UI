@@ -13,7 +13,7 @@ let redirectToLogin: () => void;
 export const setInterceptorRedirectCallback = (callback:()=>void)=> {redirectToLogin = callback;}
 
 const maintenanceErrorText = 'We are sorry for inconvenience. Maintenance is currently underway. Please, try a bit later.';
-const administratorErrorText = 'Something went wrong. Please, contact administrator!';
+const administratorErrorText = 'Something went wrong. We are already fixing this. Please contact Wapi IT department.';
 
 const loginApi = axios.create(
     {
