@@ -1050,7 +1050,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 Files
                             </h3>
                             <div className='dropzoneBlock'>
-                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={orderData.canEdit ? '' : orderData?.uuid}/>
+                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={orderData?.canEdit ? '' : orderData?.uuid}/>
                             </div>
                         </div>
                     </div>

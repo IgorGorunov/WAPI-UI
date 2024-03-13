@@ -213,7 +213,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                     {singleTicketData ?
                         <div key='messages-tab' className='files-tab'>
                             <div className={`card ticket--messages`}>
-                                <ChatBlock objectUuid={singleTicketData?.uuid} canEdit={singleTicketData.canEdit}/>
+                                <ChatBlock objectUuid={singleTicketData?.uuid} canEdit={singleTicketData?.canEdit}/>
                             </div>
                         </div>
                         : null

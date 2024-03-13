@@ -722,7 +722,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                 Files
                             </h3>
                             <div className='dropzoneBlock'>
-                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData.canEdit ? '' : amazonPrepOrderData?.uuid} hint="Product labels, Carton labels, Pallet labels, Excel file any other file related to the order. No .csv files!" banCSV={true}/>
+                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? '' : amazonPrepOrderData?.uuid} hint="Product labels, Carton labels, Pallet labels, Excel file any other file related to the order. No .csv files!" banCSV={true}/>
                             </div>
                         </div>
                     </div>
