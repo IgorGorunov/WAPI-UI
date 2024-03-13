@@ -702,7 +702,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             Files
                         </h3>
                         <div className='dropzoneBlock'>
-                            <DropZone readOnly={!!isDisabled} files={selectedFiles} docUuid={docData.canEdit ? '' : docData?.uuid} onFilesChange={handleFilesChange} />
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles} docUuid={docData?.canEdit ? '' : docData?.uuid} onFilesChange={handleFilesChange} />
                         </div>
                     </div>
                 </div>

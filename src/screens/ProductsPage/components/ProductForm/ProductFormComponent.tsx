@@ -1201,7 +1201,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             Files
                         </h3>
                         <div className='dropzoneBlock'>
-                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={productData.canEdit ? '' : productData?.uuid} />
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={productData?.canEdit ? '' : productData?.uuid} />
                         </div>
                     </div>
                 </div>
