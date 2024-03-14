@@ -434,3 +434,33 @@ input[type="date"]::before {
   position: relative;
 }
 
+.has-scroll {
+  overflow: hidden scroll;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    margin-right: 50px;
+  }
+
+  &::-webkit-scrollbar-track {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-light-blue-gray);
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gray-blue);
+  }
+}
+
+.new-line {
+  display: block;
+  min-height: 12px;
+}
+

@@ -3,6 +3,7 @@ import "./styles.scss";
 import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 import {ChatMessageType} from "@/types/tickets";
 import MessageFile from "./MessageFile";
+import {splitMessage} from "@/utils/textMessage";
 
 type MessagePropsType = {
     message: ChatMessageType;
@@ -40,10 +41,7 @@ const wrapEmojisInSpan = (text) => {
     return parts;
 };
 
-const splitMessage = (text: string) => {
-    const textArr = text.split('<br>');
-    return textArr.map(item => <span className='new-line'>{item}</span>);
-}
+
 const Message: React.FC<MessagePropsType> = ({message}) => {
     return (
         <div className="single-message-block">

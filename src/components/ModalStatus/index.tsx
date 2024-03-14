@@ -3,6 +3,7 @@ import ReactDOM from "react-dom"
 import Icon from "@/components/Icon";
 import "./styles.scss";
 import {ModalTypes, STATUS_MODAL_TYPES} from "@/types/utility";
+import {splitMessage} from "@/utils/textMessage";
 
 export type ModalStatusType = {
     classNames?: string;
@@ -60,7 +61,7 @@ const ModalStatus:React.FC<ModalStatusType> = ({statusModalType=STATUS_MODAL_TYP
                             <Icon name={getStatusModalIconName(statusModalType)}/>
                         </div>)}
                         {subtitle ? <div className='status-modal__subtitle'>
-                            {subtitle}
+                            {splitMessage(subtitle, '\n')}
                         </div> : null}
 
                         {text && text.length &&
