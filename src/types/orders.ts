@@ -159,6 +159,7 @@ export type SingleOrderType = {
     attachedFiles: AttachedFilesType[];
     canEdit: boolean;
     tickets: TicketType[];
+    commentCourierServiceFunctionsList: string;
 }
 
 // export type AttachedFilesType = {

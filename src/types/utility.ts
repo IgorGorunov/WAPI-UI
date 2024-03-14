@@ -15,7 +15,7 @@ export const enum STATUS_MODAL_TYPES {
 
 export const enum SEND_COMMENT_TYPES {
     REDELIVERY_SAME_ADDRESS = "Redelivery to the same address",
-    BACK_TO_SENDER = "Return to the warehouse",
+    BACK_TO_SENDER = "Delivery back to the sender",
     STORAGE = "Storage at courier agency",
     REDELIVERY_ANOTHER_ADDRESS = "Redelivery to another address",
 }

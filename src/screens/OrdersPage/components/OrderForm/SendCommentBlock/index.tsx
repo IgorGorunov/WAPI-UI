@@ -25,7 +25,12 @@ type SendCommentPropsType = {
 const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal }) => {
     const [isLoading, setIsLoading] = useState(false);
     const {token, currentDate} = useAuth();
-    const sendCommentTypeOptions = useMemo(()=> createOptions(SendCommentTypesArray), []);
+
+    const availableOptions = orderData.commentCourierServiceFunctionsList.split(';');
+
+    const sendCommentTypeOptions = useMemo(()=> createOptions(SendCommentTypesArray.filter(item=> availableOptions.includes(item))), []);
+
+    console.log('commentttt', availableOptions, sendCommentTypeOptions)
 
     const {control, handleSubmit, formState: { errors }, watch} = useForm({
         mode: 'onSubmit',

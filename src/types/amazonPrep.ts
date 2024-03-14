@@ -109,6 +109,7 @@ export type SingleAmazonPrepOrderType = {
     multipleLocations?: boolean;
     boxesType?: boolean;
     tickets?: TicketType[];
+    comment: string;
 }
 
 export type AmazonPrepOrderProductType = {
@@ -201,4 +202,5 @@ export type SingleAmazonPrepOrderFormType = {
     boxesType?: boolean;
     draft?: boolean;
     attachedFiles?: AttachedFilesType[];
+    comment: string;
 }

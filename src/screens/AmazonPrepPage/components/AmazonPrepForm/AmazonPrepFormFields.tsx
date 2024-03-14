@@ -61,6 +61,15 @@ export const GeneralFields = (newObject) => [
         width: WidthType.w50,
         classNames: "",
     },
+    {
+        fieldType: FormFieldTypes.TEXT,
+        type: "text",
+        name: 'comment',
+        label: 'Comment',
+        placeholder: "",
+        width: WidthType.w100,
+        classNames: "",
+    },
 ];
 
 export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions,  carrierTypeOptions, multipleLocations=false}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[];  carrierTypeOptions: OptionType[]; multipleLocations?: boolean;}) => [
@@ -268,15 +277,15 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         classNames: "",
         disabled: multipleLocations,
     },
-    {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: 'receiverComment',
-        label: 'Comment',
-        placeholder: "",
-        width: WidthType.w100,
-        classNames: "",
-        disabled: multipleLocations,
-    },
+    // {
+    //     fieldType: FormFieldTypes.TEXT,
+    //     type: "text",
+    //     name: 'receiverComment',
+    //     label: 'Comment',
+    //     placeholder: "",
+    //     width: WidthType.w100,
+    //     classNames: "",
+    //     disabled: multipleLocations,
+    // },
 ];
 
