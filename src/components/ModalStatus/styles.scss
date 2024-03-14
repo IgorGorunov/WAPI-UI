@@ -94,6 +94,13 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
+    min-height: 40px;
+
+    &__close {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
 
     &__title {
       font-size: 18px;

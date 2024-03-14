@@ -120,7 +120,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     //send comment modal
     const [showSendCommentModal, setShowSendCommentModal] = useState(false);
-
+    const handleShowCommentModal = () => {
+        if (orderData && orderData.commentCourierServiceFunctionsList) {
+            setShowSendCommentModal(true);
+        } else {
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: "Warning", subtitle: `Sending comment for this order is unavailable!`, onClose: ()=>setShowStatusModal(false)})
+            setShowStatusModal(true);
+        }
+    }
 
     const warehouses = useMemo(() => {
         if (orderParameters?.warehouses) {
@@ -1059,7 +1066,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 <div className='form-submit-btn'>
                     {orderData && orderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
                     {isDisabled && orderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                    {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={()=>setShowSendCommentModal(true)} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
+                    {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
                     </div>

@@ -145,6 +145,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         statusAdditionalInfo: amazonPrepOrderData?.statusAdditionalInfo || '',
         trackingLink: amazonPrepOrderData?.trackingLink || '',
         uuid: amazonPrepOrderData?.uuid || '',
+        comment: amazonPrepOrderData?.comment || '',
         wapiTrackingNumber: amazonPrepOrderData?.wapiTrackingNumber || '',
         warehouse: amazonPrepOrderData?.warehouse || '',
         carrierType: amazonPrepOrderData?.carrierType || (amazonPrepOrderParameters?.carrierTypes && amazonPrepOrderParameters?.carrierTypes.length && amazonPrepOrderParameters?.carrierTypes[0]) || "",
