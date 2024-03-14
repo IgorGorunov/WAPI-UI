@@ -21,6 +21,10 @@
     border-radius: 8px;
     font-size: 14px;
     font-weight: bold;
+
+    p {
+      font-size: 14px;
+    }
   }
 
   &-overlay {
@@ -39,6 +43,7 @@
     margin-top: 24px;
     display: flex;
     justify-content: space-around;
+    gap: 16px;
   }
 
 

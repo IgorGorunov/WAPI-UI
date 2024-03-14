@@ -27,8 +27,8 @@ const ConfirmModal:React.FC<ConfirmModalType> = ({ actionText='', onOk, onCancel
             <div className="confirm-modal-wrapper">
                 <p>Are you sure you want to {actionText}?</p>
                 <div className='confirm-modal__btns'>
-                    <Button variant={ButtonVariant.PRIMARY} onClick={onOk}>Confirm</Button>
-                    <Button variant={ButtonVariant.SECONDARY} onClick={onCancel}>Cancel</Button>
+                    <Button variant={ButtonVariant.PRIMARY} onClick={onOk}>Yes</Button>
+                    <Button variant={ButtonVariant.SECONDARY} onClick={onCancel}>No</Button>
                 </div>
             </div>
         </div>

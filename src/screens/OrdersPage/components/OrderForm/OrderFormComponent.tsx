@@ -19,7 +19,7 @@ import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
-import {getOrderPickupPoints, sendOrderData} from '@/services/orders';
+import {cancelOrder, getOrderPickupPoints, sendOrderData} from '@/services/orders';
 import {DetailsFields, GeneralFields, PickUpPointFields, ReceiverFields} from "./OrderFormFields";
 import {TabFields, TabTitles} from "./OrderFormTabs";
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
@@ -48,6 +48,7 @@ import SingleDocument from "@/components/SingleDocument";
 import DocumentTickets from "@/components/DocumentTickets";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
+import ConfirmModal from "@/components/ModalConfirm";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -771,6 +772,53 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         setShowTicketForm(true)
     }
 
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const handleConfirmCancelOrder = () => {
+        setShowConfirmModal(false);
+        handleCancelOrder();
+    }
+
+    const handleCancelOrder = async() => {
+        console.log('cancel order');
+        try {
+            //verify token
+            const responseVerification = await verifyToken(token);
+            if (!verifyUser(responseVerification, currentDate) ){
+                await Router.push(Routes.Login);
+            }
+
+            const res: ApiResponseType = await cancelOrder(
+                {
+                    token: token,
+                    uuid: orderData?.uuid,
+                }
+            );
+
+            if (res && "status" in res) {
+                if (res?.status === 200) {
+                    //success
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully canceled!`, onClose: closeSuccessModal})
+                    setShowStatusModal(true);
+                }
+            } else if (res && 'response' in res ) {
+                const errResponse = res.response;
+
+                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+                    const errorMessages = errResponse?.data.errorMessage;
+
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Order can not be canceled!`, text: errorMessages, onClose: closeErrorModal})
+                    setShowStatusModal(true);
+                }
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     const onSubmitForm = async (data) => {
         clearTabTitles();
         setIsLoading(true);
@@ -1015,18 +1063,29 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         </div>
                     </div>}
                     {orderData?.uuid && <div key='status-history-tab' className='status-history-tab'>
-                        <div className="card min-height-600 order-info--history">
-                            <h3 className='order-info__block-title'>
-                                <Icon name='history' />
-                                Status history
-                            </h3>
-                            <StatusHistory statusHistory={orderData?.statusHistory} />
+                        <div className="min-height-600 order-info--history">
+                            <div className='card'>
+                                <h3 className='order-info__block-title'>
+                                    <Icon name='history'/>
+                                    Status history
+                                </h3>
+                                <StatusHistory statusHistory={orderData?.statusHistory}/>
+                            </div>
+
+                            {/*<div className='card'>*/}
+                            {/*    <h3 className='order-info__block-title'>*/}
+                            {/*        <Icon name='history2'/>*/}
+                            {/*        Warehouse status history*/}
+                            {/*    </h3>*/}
+                            {/*    <StatusHistory statusHistory={orderData?.statusHistory}/>*/}
+                            {/*</div>*/}
+
                         </div>
                     </div>}
                     {orderData?.uuid && <div key='sms-history-tab' className='sms-history-tab'>
                         <div className="card min-height-600 order-info--sms-history">
                             <h3 className='order-info__block-title'>
-                                <Icon name='message' />
+                                <Icon name='message'/>
                                 SMS history
                             </h3>
                             <SmsHistory smsHistory={orderData?.smsHistory} />
@@ -1065,6 +1124,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
                 <div className='form-submit-btn'>
                     {orderData && orderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
+                    {orderData?.uuid && orderData?.canEdit ? <Button type='button' variant={ButtonVariant.PRIMARY} onClick={()=>setShowConfirmModal(true)}>Cancel order</Button> : null}
                     {isDisabled && orderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                     {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
@@ -1080,6 +1140,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             </Modal>}
 
             {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+
+            {showConfirmModal && <ConfirmModal
+                actionText='cancel this order'
+                onOk={handleConfirmCancelOrder}
+                onCancel={()=>setShowConfirmModal(false)}
+            />}
         </> : null}
     </div>
 }
