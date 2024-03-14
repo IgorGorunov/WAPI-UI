@@ -121,6 +121,25 @@ const sendOrderComment = async (
     }
 };
 
+const cancelOrder = async (
+    data: {
+        uuid: string,
+        token: string;
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/CancelOrder`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
 const sendOrderFiles = async (
     data: {
         files: AttachedFilesType[],
@@ -141,4 +160,4 @@ const sendOrderFiles = async (
 };
 
 
-export { getOrders, getOrderData, getOrderParameters, getOrderPickupPoints, sendOrderData, sendOrderFiles, sendOrderComment};
+export { getOrders, getOrderData, getOrderParameters, getOrderPickupPoints, sendOrderData, sendOrderFiles, sendOrderComment, cancelOrder};
