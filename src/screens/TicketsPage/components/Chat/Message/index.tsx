@@ -40,14 +40,16 @@ const wrapEmojisInSpan = (text) => {
     return parts;
 };
 
+const splitMessage = (text: string) => {
+    const textArr = text.split('<br>');
+    return textArr.map(item => <span className='new-line'>{item}</span>);
+}
 const Message: React.FC<MessagePropsType> = ({message}) => {
-
-
     return (
         <div className="single-message-block">
             <div className={`single-message ${message.author === 'UI' ? 'UI-User' : 'User-UI'}`}>
                 <div className={`single-message__user-name`}>{message.author === 'UI' ? 'You' : message.author}</div>
-                <div className={`single-message__text `}>{wrapEmojisInSpan(message.message).map((item, index) => (
+                <div className={`single-message__text `}>{splitMessage(message.message).map((item, index) => (
                         <React.Fragment key={index}>{item}</React.Fragment>
                     ))}
                 </div>
