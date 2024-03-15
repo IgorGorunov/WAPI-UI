@@ -107,6 +107,7 @@ export const getSaleDynamicVariantResourceCols = (arr: AllReportsRowArrayType, v
     return {
         sumCols: [...getSaleDynamicResourceColumnNames(arr, variant)],
         uniqueCols: [],
+        concatenatedCols: [],
     }
 }
 

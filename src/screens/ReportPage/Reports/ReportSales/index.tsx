@@ -176,6 +176,7 @@ export const getReportSalesVariantResourceCols = (variant: REPORT_SALES_VARIANTS
     return {
         sumCols: ['quantity'],
         uniqueCols: ['wapiTrackingNumber'],
+        concatenatedCols: [],
     }
 }
 
