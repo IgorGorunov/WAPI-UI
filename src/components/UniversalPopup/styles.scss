@@ -2,13 +2,18 @@
 
 .universal-popup {
   position: relative;
+  padding: 25px 8px 8px 2px;
 
-  &.has-close-icon {
-    padding: 25px 8px 8px 2px;
+  @media (hover: hover) {
+    padding-top: 8px;
   }
 
+  //&.has-close-icon {
+  //  padding: 25px 8px 8px 2px!important;
+  //}
+
   &.has-copy-icon {
-    padding: 36px 8px 8px 2px;
+    padding: 36px 8px 8px 2px!important;
   }
 
   &__close {
