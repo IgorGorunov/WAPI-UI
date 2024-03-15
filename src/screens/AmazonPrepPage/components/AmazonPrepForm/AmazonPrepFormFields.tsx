@@ -65,7 +65,7 @@ export const GeneralFields = (newObject) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'comment',
-        label: 'Comment',
+        label: 'Comment for warehouse',
         placeholder: "",
         width: WidthType.w100,
         classNames: "",
