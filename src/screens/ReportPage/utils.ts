@@ -180,7 +180,7 @@ export const getVariantResourceColsByReportType = (reportType: REPORT_TYPES, var
             return getCodReportVariantResourceCols(variant as COD_REPORT_VARIANTS);
 
         default:
-            return {sumCols: [], uniqueCols: []};
+            return {sumCols: [], uniqueCols: [], concatenatedCols: []};
     }
 }
 

@@ -255,6 +255,7 @@ export const getProductsOnStocksVariantResourceCols = (variant: PRODUCTS_ON_STOC
         sumCols: ['damagedClosingBalance', 'expiredClosingBalance', 'quantityClosingBalance', 'quantityExpense', 'quantityOpeningBalance', 'quantityReceipt',
             'undefinedStatusClosingBalance', 'withoutBoxClosingBalance', 'reserveClosingBalance','onShipping', 'available'],
         uniqueCols: [],
+        concatenatedCols: [],
     }
 }
 

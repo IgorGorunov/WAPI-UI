@@ -129,6 +129,7 @@ export const getCodReportVariantResourceCols = (variant: COD_REPORT_VARIANTS) =>
     return {
         sumCols: [],
         uniqueCols: [],
+        concatenatedCols: [],
     }
 }
 

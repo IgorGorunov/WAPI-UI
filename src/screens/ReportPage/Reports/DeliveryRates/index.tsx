@@ -21,13 +21,20 @@ export const getProbableBuyoutValue = (row:Row<DeliveryRatesRowType>) => {
     return row.getValue<number>('totalInTransit')===0 ? '0.0%' : formatPercent((row.getValue<number>('delivered')+row.getValue<number>('inTransit')) / row.getValue<number>('totalInTransit')*100)+'%';
 }
 
+export const getUniqueCount = (row:Row<DeliveryRatesRowType>, property:string) => {
+    const valStr = row.getValue<string>(property);
+    console.log('vallllue: ', valStr);
+    return 33;
+}
+
 const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     {
         accessorKey: 'totalOrders',
         header: () => <Tooltip title="All orders received" >
             <span>Total</span>
         </Tooltip>,
-        aggregationFn: 'sum',
+        //@ts-ignore
+        aggregationFn: 'aggUnique',
         size: 75,
         maxSize: 400,
 
@@ -35,13 +42,15 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
             formatNumbers(getValue<number>()),
         aggregatedCell: ({ getValue }) =>
             formatNumbers(getValue<number>()),
+
     },
     {
         accessorKey: 'totalInTransit',
         header: () => <Tooltip title="Orders ever been in transit" >
             <span>Total in transit</span>
         </Tooltip>,
-        aggregationFn: 'sum',
+        //@ts-ignore
+        aggregationFn: 'aggUnique',
         size: 75,
         maxSize: 400,
         cell: ({getValue }) =>
@@ -54,7 +63,9 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         header: () => <Tooltip title="Delivered to the final customer" >
             <span>Delivered</span>
         </Tooltip>,
-        aggregationFn: 'sum',
+        //aggregationFn: 'sum',
+        //@ts-ignore
+        aggregationFn: 'aggUnique',
         size: 75,
         maxSize: 400,
         cell: ({getValue }) =>
@@ -65,7 +76,9 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     {
         accessorKey: 'deliveredWithTroubleStatus',
         header: 'test',
-        aggregationFn: 'sum',
+        //aggregationFn: 'sum',
+        //@ts-ignore
+        aggregationFn: 'aggUnique',
         size: 80,
         maxSize: 400,
         cell: ({getValue }) =>
@@ -93,7 +106,9 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         </Tooltip>,
         // aggregatedCell: ({ getValue }) =>
         //     Math.round(getValue<number>() * 100) / 100,
-        aggregationFn: 'sum',
+        //aggregationFn: 'sum',
+        //@ts-ignore
+        aggregationFn: 'aggUnique',
         size: 80,
         maxSize: 400,
         cell: ({getValue }) =>
@@ -108,7 +123,9 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         </Tooltip>,
         // aggregatedCell: ({getValue}) =>
         //     Math.round(getValue<number>() * 100) / 100,
-        aggregationFn: 'sum',
+        //aggregationFn: 'sum',
+        //@ts-ignore
+        aggregationFn: 'aggUnique',
         size: 80,
         maxSize: 400,
         cell: ({getValue }) =>
@@ -121,7 +138,9 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         header: () => <Tooltip title="All orders except InTransit, Delivered, Returning, Returned" >
             <span>Other statuses</span>
         </Tooltip>,
-        aggregationFn: 'sum',
+        //aggregationFn: 'sum',
+        //@ts-ignore
+        aggregationFn: 'aggUnique',
         size: 80,
         maxSize: 400,
         cell: ({getValue }) =>
@@ -368,6 +387,7 @@ export const getDeliveryRateVariantResourceCols = (variant: DELIVERY_RATES_VARIA
     return {
         sumCols: ['sale'],
         uniqueCols: ['totalOrders','totalInTransit','delivered','returned', 'inTransit', 'otherStatuses', 'deliveredWithTroubleStatus'],
+        concatenatedCols: ['totalOrders','totalInTransit','delivered','returned', 'inTransit', 'otherStatuses', 'deliveredWithTroubleStatus'],
     }
 }
 

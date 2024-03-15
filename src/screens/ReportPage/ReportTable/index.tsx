@@ -113,6 +113,16 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
         onColumnVisibilityChange: setColumnVisibility,
         //onColumnFiltersChange: setColumnFilters,
         onColumnSizingChange: setColumnSizing,
+        aggregationFns: {
+            aggUnique: (columnId, leafRows, childRows) => {
+                if (childRows.length > 0) {
+                    const arr = childRows.map(item => item.original[columnId+"_c"].split(';'));
+                    const uniqueValues = new Set(arr.reduce((acc, curr) => acc.concat(curr), []).filter(item=>item));
+                    return uniqueValues.size;
+                }
+                return 0;
+            }
+        }
     })
 
     const calcPadding = useCallback((index: number, isCellAggregated: boolean, hasSubRows:boolean, depth: number ) => {

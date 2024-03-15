@@ -21,7 +21,7 @@ import FiltersBlock from "@/components/FiltersBlock";
 import FiltersContainer from "@/components/FiltersContainer";
 import ReportTable from "./ReportTable";
 import RadioButton from "@/components/FormBuilder/RadioButton";
-import {collapseTable} from "@/utils/collapseTable";
+//import {collapseTable} from "@/utils/collapseTable";
 import {
     getVariantByReportType,
     getVariantDimensionColsByReportType,
@@ -38,6 +38,7 @@ import CurrentFilters from "@/components/CurrentFilters";
 import RadioSwitch from "@/components/FormBuilder/RadioSwitch";
 import Icon from "@/components/Icon";
 import {Tooltip} from "antd";
+import {aggregateTableData} from "@/utils/aggregateTable";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -322,9 +323,24 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         setResourceColumnNames([...resourceColumns.sumCols, ...resourceColumns.uniqueCols]);
         //console.log('resource cols:', resourceColumns);
 
-        const reportDataCollapsed = reportData ? collapseTable(dimensionCols, resourceColumns.sumCols, resourceColumns.uniqueCols)(filteredData, ()=>{setIsCalculating(false)}) : [];
+        //const reportDataCollapsed = reportData ? collapseTable(dimensionCols, resourceColumns.sumCols, resourceColumns.uniqueCols)(filteredData, ()=>{setIsCalculating(false)}) : [];
+        try {
+            setIsCalculating(true);
+            if (reportData) {
+                const reportDataCollapsed = await  aggregateTableData(filteredData, dimensionCols, resourceColumns.sumCols, resourceColumns.uniqueCols, resourceColumns.concatenatedCols)
 
-        setCollapsedData(reportDataCollapsed);
+                if (reportDataCollapsed) {
+                    console.log('collapsed table: ', reportDataCollapsed)
+                    setCollapsedData(reportDataCollapsed);
+                } else {
+                    setCollapsedData([]);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsCalculating(false);
+        }
 
     }
 
