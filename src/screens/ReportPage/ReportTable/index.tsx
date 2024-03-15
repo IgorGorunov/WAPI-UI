@@ -117,7 +117,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
             aggUnique: (columnId, leafRows, childRows) => {
                 if (childRows.length > 0) {
                     const arr = childRows.map(item => item.original[columnId+"_c"].split(';'));
-                    const uniqueValues = new Set(arr.reduce((acc, curr) => acc.concat(curr), []));
+                    const uniqueValues = new Set(arr.reduce((acc, curr) => acc.concat(curr), []).filter(item=>item));
                     return uniqueValues.size;
                 }
                 return 0;
