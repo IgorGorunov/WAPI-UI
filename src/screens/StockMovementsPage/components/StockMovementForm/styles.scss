@@ -9,7 +9,7 @@
     padding: 28px;
     margin-bottom: 16px;
 
-    @media (max-width: $mobile) {
+    @media (max-width: $tablet) {
       padding: 16px;
     }
   }
@@ -143,15 +143,15 @@
     }
   }
 
-  .form-submit-btn {
-    display: flex;
-    justify-content: flex-end;
-    gap: 22px;
-    margin-top: 30px;
-
-    @media (max-width: $mobile) {
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-  }
+  //.form-submit-btn {
+  //  display: flex;
+  //  justify-content: flex-end;
+  //  gap: 22px;
+  //  margin-top: 30px;
+  //
+  //  @media (max-width: $mobile) {
+  //    gap: 6px;
+  //    flex-wrap: wrap;
+  //  }
+  //}
 }

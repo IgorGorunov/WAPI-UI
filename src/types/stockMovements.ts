@@ -130,7 +130,7 @@ export type SingleStockMovementProductFormType = {
     quantityPlan: number|string;
     quantity: number|string;
     quality: string;
-    unitOfMeasure: string;
+    //unitOfMeasure: string;
 };
 
 export type SingleStockMovementFormType = {

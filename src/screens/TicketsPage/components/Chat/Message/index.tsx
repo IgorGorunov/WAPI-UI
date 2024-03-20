@@ -48,7 +48,7 @@ const Message: React.FC<MessagePropsType> = ({message}) => {
             <div className={`single-message ${message.author === 'UI' ? 'UI-User' : 'User-UI'}`}>
                 <div className={`single-message__user-name`}>{message.author === 'UI' ? 'You' : message.author}</div>
                 <div className={`single-message__text `}>{splitMessage(message.message).map((item, index) => (
-                        <React.Fragment key={index}>{item}</React.Fragment>
+                        <React.Fragment key={`${item}_${index}`}>{item}</React.Fragment>
                     ))}
                 </div>
                 {message && message.attachedFiles && message.attachedFiles.length ? (

@@ -3,7 +3,6 @@ import ReactDOM from "react-dom"
 import Icon from "@/components/Icon";
 import "./styles.scss";
 import {ModalTypes, STATUS_MODAL_TYPES} from "@/types/utility";
-import {splitMessage} from "@/utils/textMessage";
 
 export type ModalStatusType = {
     classNames?: string;
@@ -61,13 +60,14 @@ const ModalStatus:React.FC<ModalStatusType> = ({statusModalType=STATUS_MODAL_TYP
                             <Icon name={getStatusModalIconName(statusModalType)}/>
                         </div>)}
                         {subtitle ? <div className='status-modal__subtitle'>
-                            {splitMessage(subtitle, '\n')}
+                            {/*{splitMessage(subtitle, '\n')}*/}
+                            {subtitle}
                         </div> : null}
 
                         {text && text.length &&
                             <div className='status-modal__text'>
                                 <ul className='status-modal__text-list'>
-                                    {text.map((item: string, index: number)=> <li key={`${item}-${index}`} className={'status-modal__text-lis-item'}>{item}</li> )}
+                                    {text.map((item: string, index: number)=> <li key={`${item}-${index}-${new Date().toISOString()}`} className={'status-modal__text-lis-item'}>{item}</li> )}
                                 </ul>
                             </div>
                         }

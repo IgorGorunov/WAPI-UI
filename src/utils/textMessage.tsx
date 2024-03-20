@@ -9,5 +9,5 @@ export const formatMessage_firstSymbols = (messageText: string, messageLength = 
 
 export const splitMessage = (text: string, breakSymbol='<br>') => {
     const textArr = text.split(breakSymbol);
-    return textArr.map(item => <span className='new-line'>{item}</span>);
+    return textArr.map((item, index) => <span key={`${item}_${index}`} className='new-line'>{item}</span>);
 }

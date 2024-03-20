@@ -11,7 +11,7 @@
     padding: 28px;
     margin-bottom: 16px;
 
-    @media (max-width: $mobile) {
+    @media (max-width: $tablet) {
       padding: 16px;
     }
   }
@@ -113,16 +113,47 @@
     }
   }
 
-  .form-submit-btn {
-    display: flex;
-    justify-content: flex-end;
-    gap: 22px;
-    margin-top: 30px;
+  //.form-submit-btn {
+  //  display: flex;
+  //  justify-content: flex-end;
+  //  gap: 22px;
+  //  margin-top: 30px;
+  //
+  //  @media (max-width: $mobile) {
+  //    gap: 6px;
+  //    flex-wrap: wrap;
+  //  }
+  //}
+}
 
-    @media (max-width: $mobile) {
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+.tutorial-info {
+  display: none;
+  max-height: 20vh;
+  overflow: hidden scroll;
+  p {
+    white-space: pre-wrap;
+  }
+  .tutorial-title {
+    font-weight: bold;
+    font-size: 14px;
+    //margin-right: 16px;
+  }
+
+  .tutorial-text {
+    font-size: 12px;
+  }
+
+  .tutorial-state & {
+    display: block;
+    margin-top: 16px;
   }
 }
 
+.main-info {
+  max-height: calc(100vh - 245px);
+  overflow: hidden scroll;
+
+  .tutorial-state & {
+    max-height: calc(80vh - 245px - 57px);
+  }
+}

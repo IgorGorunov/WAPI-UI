@@ -333,7 +333,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({productList, alr
                 <div className="product-selection__wrapper">
                     <div className='card table form-table product-selection__items product-selection__table '>
                         <Table
-                            dataSource={filteredProducts}
+                            dataSource={filteredProducts.map((item, index)=>({key:item.uuid+'_'+item.warehouse+'_'+index, ...item}))}
                             columns={allProductsColumns}
                             pagination={false}
                             scroll={{y:220}}
@@ -345,7 +345,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({productList, alr
                     <div className='card table form-table table-form-fields product-selection__selected product-selection__table'>
                         <Table
                             columns={getSelectedProductColumns(control)}
-                            dataSource={getValues('products')?.map((field, index) => ({ key: field.uuid+'-'+index, ...field })) || []}
+                            dataSource={getValues('products')?.map((field, index) => ({ key: field.uuid+'-'+index+'_'+(new Date()).toISOString(), ...field })) || []}
                             pagination={false}
                             scroll={{y:220}}
                             rowKey="key"

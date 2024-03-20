@@ -1,8 +1,8 @@
 @import '@/constants/devices.scss';
 
 .modal-wrapper {
-  position: absolute;
-  top: 40px;
+  position: fixed;
+  top: 20px;
   max-width: 100%;
 
   @media (max-width: $upToDesktop) {
@@ -21,7 +21,7 @@
   border: 2px solid var(--border-color);
   box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
 
-  @media (max-width: $tablet) {
+  @media (max-width: $upToLaptop) {
     padding: 16px;
   }
 
@@ -70,7 +70,7 @@
   margin: 0 -30px;
   border-bottom: 2px solid var(--border-color);
 
-  @media (max-width: $tablet) {
+  @media (max-width: $upToLaptop) {
     padding: 0 16px 16px;
     margin: 0 -16px;
   }
@@ -88,6 +88,9 @@
   &__close {
     position: absolute;
     right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
   }
 }

@@ -1,4 +1,5 @@
 .checkbox {
+  position: relative;
   padding-top: 12px;
   margin-bottom: 15px;
 
@@ -79,5 +80,12 @@
     input {
       margin: 0
     }
+  }
+
+  .error {
+    position: absolute;
+    bottom: -16px;
+    font-size: 10px;
+    color: var(--color-error);
   }
 }
