@@ -280,15 +280,16 @@
 
 
 .fade-in-down {
+  transform: translateY(0);
   animation: fadeInDown 1s forwards;
 }
 
 @keyframes fadeInDown {
-  from {
+  0% {
     opacity: 0;
     transform: translateY(-50px);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
@@ -296,9 +297,38 @@
 
 
 .ant-table-body {
-    table {
-      table-layout: auto !important;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    margin-right: 50px;
+  }
+
+  &::-webkit-scrollbar-track {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    background: transparent;
+
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background-color: #29CC39;
     }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-light-blue-gray);
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-gray-blue);
+  }
+
+  table {
+    table-layout: auto !important;
+  }
 }
 
 @keyframes fade {

@@ -3,9 +3,9 @@ import "./styles.scss";
 import Icon from "@/components/Icon";
 import {toast, ToastContainer} from '@/components/Toast';
 
-type PopupItem = {
+export type PopupItem = {
     title: string;
-    description: string | number;
+    description?: string | number;
 };
 
 type PopupPropsType = {
@@ -79,7 +79,7 @@ const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, hand
                     {items.map((item: PopupItem, index: number) => (
                         <li key={item.title + index} className="universal-popup__item">
                             <p className="universal-popup__item-text">{item.title}</p>
-                            <p>{item.description}</p>
+                            {item.description ? <p>{item.description}</p> : null}
                         </li>
                     ))}
                 </ul>

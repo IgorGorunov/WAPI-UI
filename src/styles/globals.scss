@@ -404,7 +404,8 @@ input[type="date"]::before {
 
 .icon {
   &-info,
-  &-warehouse{
+  &-warehouse,
+  &-book {
     flex: 0 0 auto;
     width: 24px;
   }
@@ -462,5 +463,38 @@ input[type="date"]::before {
 .new-line {
   display: block;
   min-height: 12px;
+  //white-space: break-spaces;
+}
+
+.tour-guide {
+  svg {
+    width: 24px;
+    transition: 0.3s ease;
+
+    path {
+      transition: 0.3s ease;
+    }
+
+    //&:hover {
+    //  //fill: var(--color-blue);
+    //  path {
+    //    stroke: var(--color-blue);
+    //  }
+    //}
+
+  }
+
+  &.is-active {
+    svg path {
+      stroke: var(--color-blue);
+
+      //fill: var(--color-blue);
+    }
+  }
+}
+
+.tutorial-mode .tutorial-hint-tooltip.has-hint .title-small {
+  padding-bottom: 10px;
+  margin-bottom: 0!important;
 }
 

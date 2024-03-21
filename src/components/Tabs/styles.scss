@@ -22,6 +22,10 @@
     font-size: 12px;
     font-weight: bold;
 
+    @media (max-width: $upToLaptop) {
+      padding: 0 12px;
+    }
+
 
     &-link {
       position: relative;
@@ -113,7 +117,7 @@
         @media (max-width: $upToLaptop) {
           margin: 0 -16px;
           padding: 0 16px;
-          max-height:none;
+          //max-height:none;
         }
 
         &::-webkit-scrollbar {

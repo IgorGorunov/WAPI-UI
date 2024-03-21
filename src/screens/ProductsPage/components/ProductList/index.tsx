@@ -8,7 +8,7 @@ import "@/styles/tables.scss";
 import {ProductType} from "@/types/products";
 
 import PageSizeSelector from '@/components/LabelSelect';
-import UniversalPopup from "@/components/UniversalPopup";
+import UniversalPopup, {PopupItem} from "@/components/UniversalPopup";
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
@@ -47,6 +47,7 @@ console.log('products list:', products)
     // Popup
     const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
     const [hoveredProduct, setHoveredProduct] = useState<ProductType | null>(null);
+    const [hoveredColumn, setHoveredColumn] = useState<string>('');
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
     const popupItems = products.flatMap(product => {
         return product.stock.map(stockItem => ({
@@ -166,7 +167,7 @@ console.log('products list:', products)
         {
             wight: "20px",
             title: <TitleColumn minWidth="20px" maxWidth="20px" contentPosition="center"/>,
-            render: (status: string) => {
+            render: (status: string, record) => {
                 const statusObj = statusFilter.find(s => s.value === status);
                 let color = statusObj ? statusObj.color : 'white';
                 return (
@@ -174,15 +175,38 @@ console.log('products list:', products)
                         minWidth="20px"
                         maxWidth="20px"
                         contentPosition="center"
-                        childrenAfter={<div style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        width: '20px',
-                                        height: '20px',
-                                        borderRadius: '50%',
-                                        backgroundColor: color
-                                    }}></div>}>
+                        childrenAfter={
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '50%',
+                                    backgroundColor: color
+                                }}
+                                onClick={(e) => {
+                                    setHoveredProduct(record);
+                                    setHoveredColumn('status');
+                                    setMousePosition({ x: e.clientX, y: e.clientY });
+                                    setIsDisplayedPopup(true);
+                                }}
+                                onMouseEnter={(e) => {
+                                    setHoveredProduct(record);
+                                    setHoveredColumn('status');
+                                    setMousePosition({ x: e.clientX, y: e.clientY });
+                                    setIsDisplayedPopup(true);
+                                }}
+                                onMouseLeave={() => {
+                                    setHoveredProduct(null);
+                                    setHoveredColumn('');
+                                    setMousePosition(null);
+                                    setIsDisplayedPopup(false);
+                                }}>
+
+                            </div>
+                        }>
                     </TableCell>
                 );
             },
@@ -303,16 +327,19 @@ console.log('products list:', products)
                         className="stock-cell-style"
                         onClick={(e) => {
                             setHoveredProduct(record);
+                            setHoveredColumn('available');
                             setMousePosition({ x: e.clientX, y: e.clientY });
                             setIsDisplayedPopup(true);
                         }}
                         onMouseEnter={(e) => {
                             setHoveredProduct(record);
+                            setHoveredColumn('available');
                             setMousePosition({ x: e.clientX, y: e.clientY });
                             setIsDisplayedPopup(true);
                         }}
                         onMouseLeave={() => {
                             setHoveredProduct(null);
+                            setHoveredColumn('');
                             setMousePosition(null);
                             setIsDisplayedPopup(false);
                         }}
@@ -360,19 +387,20 @@ console.log('products list:', products)
                     />
                 </div>
             </div>
-
-            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredProducts?.length ? '' : 'is-empty'}`}>
-                <Table
-                    dataSource={filteredProducts.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize)}
-                    columns={columns}
-                    pagination={false}
-                    scroll={{y:700}}
-                    showSorterTooltip={false}
-                />
-                <div className="order-products-total">
-                    <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total products:<span className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
-                    </ul>
+            <div className='product-list__container'>
+                <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredProducts?.length ? '' : 'is-empty'}`}>
+                    <Table
+                        dataSource={filteredProducts.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize)}
+                        columns={columns}
+                        pagination={false}
+                        scroll={{y:700}}
+                        showSorterTooltip={false}
+                    />
+                    <div className="order-products-total">
+                        <ul className='order-products-total__list'>
+                            <li className='order-products-total__list-item'>Total products:<span className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div className={'custom-pagination'}>
@@ -384,7 +412,7 @@ console.log('products list:', products)
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
-             </div>
+            </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={()=>setFilterStatus([])}>
                 <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
             </FiltersContainer>
@@ -397,9 +425,9 @@ console.log('products list:', products)
                     }}
                     >
                     <UniversalPopup
-                        items={popupItems}
-                        position='left'
-                        width = {150}
+                        items={hoveredColumn==='status' && hoveredProduct ? [{uuid: hoveredProduct?.uuid || '', title: hoveredProduct?.status || ''} as PopupItem] : popupItems}
+                        position={`${hoveredColumn==='status' ? 'right' : 'left'}`}
+                        width = {hoveredColumn==='status' ? 100 : 150}
                         handleClose={()=>setIsDisplayedPopup(false)}
                     />
                 </div>

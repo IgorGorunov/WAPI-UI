@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import {
-  DashboardPeriodType,
+  DashboardPeriodType, DateRangeType,
   PeriodType,
   PeriodTypes,
 } from "@/types/dashboard";
-import Datepicker from "./Datepicker";
+//import Datepicker from "./Datepicker";
+import DatepickerComponent from '@/components/Datepicker';
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
@@ -127,6 +128,20 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
     setSelectedPeriodType("CUSTOM");
   };
 
+  const onSaveCurrentPeriod = (periodRange: DateRangeType) => {
+    setCurrentPeriod({
+      periodType: "CUSTOM",
+      startDate: periodRange.startDate,
+      endDate: periodRange.endDate,
+    });
+    setShowCustom(false);
+    setDiagramType("DAY");
+  }
+
+  const onCloseCustom = () => {
+    setShowCustom(false);
+  }
+
   return (
     <div className="period-filter period-filter__container">
       <div onClick={() => setIsPeriodDropdownOpen(!isPeriodDropdownOpen)} className="period-filter__dropdown">
@@ -190,12 +205,14 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
       </ul>
       <div className="period-filter__datepicker">
         {showCustom && (
-          <Datepicker
-            currentPeriod={currentPeriod}
-            setCurrentPeriod={setCurrentPeriod}
-            setShowCustom={setShowCustom}
-            setDiagramType={setDiagramType}
-          />
+
+          // <Datepicker
+          //   currentPeriod={currentPeriod}
+          //   setCurrentPeriod={setCurrentPeriod}
+          //   setShowCustom={setShowCustom}
+          //   setDiagramType={setDiagramType}
+          // />
+          <DatepickerComponent initialRange={currentPeriod} onDateRangeSave={onSaveCurrentPeriod} onClose={onCloseCustom} />
         )}
       </div>
     </div>
