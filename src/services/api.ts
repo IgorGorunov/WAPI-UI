@@ -67,7 +67,7 @@ loginApi.interceptors.response.use(response=> {
 const verifyTokenApi = axios.create(
     {
         baseURL: API_URL,
-        timeout: 2000,
+        timeout: 20000,
         headers: {
             "content-type": "application/json",
         },
@@ -123,7 +123,7 @@ verifyTokenApi.interceptors.response.use(response=> {
 const api = axios.create(
     {
         baseURL: API_URL,
-        timeout: 1000000,
+        timeout: 10000000,
         headers: {
             "content-type": "application/json",
         },

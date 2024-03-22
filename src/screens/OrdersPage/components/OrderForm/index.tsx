@@ -38,11 +38,12 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
         try {
             setIsLoading(true);
 
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
+            //temporarily removed, to check if the problem is here
+            // //verify token
+            // const responseVerification = await verifyToken(token);
+            // if (!verifyUser(responseVerification, currentDate) ){
+            //     await Router.push(Routes.Login);
+            // }
 
             const res: ApiResponseType = await getOrderData(
                 {token, uuid}
