@@ -64,21 +64,22 @@ const OrdersPage = () => {
     const [orderUuid, setOrderUuid] = useState('');
     const [isOrderNew, setIsOrderNew] = useState(true);
 
-    const {setDocNotificationsAsRead} = useMarkNotificationAsRead()
+    //const {setDocNotificationsAsRead} = useMarkNotificationAsRead()
 
     const onOrderModalClose = () => {
         setShowOrderModal(false);
-        if (orderUuid) {
-            setDocNotificationsAsRead(orderUuid);
-        }
+        // if (orderUuid) {
+        //     setDocNotificationsAsRead(orderUuid);
+        // }
     }
 
     const fetchData = useCallback(async () => {
+        console.log('test is fetch')
         try {
             setIsLoading(true);
 
             //verify token
-            await verifyToken(token);
+            //await verifyToken(token);
             // if (!verifyUser(responseVerification, currentDate) ){
             //     await Router.push(Routes.Login);
             // }
@@ -176,7 +177,7 @@ const OrdersPage = () => {
             </div>
             {showOrderModal && (orderUuid || isOrderNew) &&
                 // <Modal title={`Order`} onClose={onOrderModalClose} >
-                    <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={()=>{onOrderModalClose(); fetchData();}}/>
+                    <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={()=>{onOrderModalClose(); fetchData(); }}/>
                 // </Modal>
             }
             {showImportModal &&

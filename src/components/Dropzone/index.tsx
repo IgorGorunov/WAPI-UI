@@ -136,7 +136,8 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
 
     const openFileDialog = (event) => {
         event.preventDefault();
-        if (readOnly && !docUuid) {
+        //if (readOnly && !docUuid) {
+        if (!(!docUuid || readOnly || showSend)) {
             return;
         }
         document.getElementById(inputId)?.click();
@@ -144,7 +145,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
 
     const handleSendDocFile = async() => {
         if (docUuid && (readOnly || showSend) && addedFiles.length) {
-            sendDocumentFiles
+            //sendDocumentFiles
 
             try {
                 setIsDragging(true);
@@ -177,21 +178,20 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
     }
 
 
-
     useEffect(() => {
     }, [files, onFilesChange]);
 
     return (
         <div className='dropzone-wrapper'>
             <div onClick={handleDivClick} onPaste={onPaste} className={`dropzone-container ${readOnly ? 'read-only' : ''}`}>
-                {isDragging && <Loader />}
+                {isDragging && <Loader/>}
                 <div
                     {...getRootProps()}
                     onClick={handleDivClick}
                     className={`dropzone ${isDragActive ? 'active' : ''}`}
                 >
                     <input {...getInputProps()} id={inputId} />
-                    {files && files.length == 0 &&  (<div className="circle"  onClick={openFileDialog} >
+                    {files && files.length == 0 && (<div className="circle" onClick={openFileDialog}>
                         <Icon name='upload'/>
                     </div>)}
                     <div onClick={openFileDialog} className='dropzone-title'>
