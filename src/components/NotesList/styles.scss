@@ -1,0 +1,85 @@
+@import '@/constants/devices.scss';
+
+.user-notes {
+  margin: 24px -28px 0 -28px;
+
+  @media (max-width: $mobile) {
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+
+  &__create-btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -54px;
+    padding: 0 24px;
+    margin-bottom: 16px;
+
+    //@media (max-width: $upToLaptop) {
+    //  padding: 0 32px;
+    //}
+  }
+
+
+
+
+    &__list {
+      list-style: none;
+
+      &-header {
+        display: flex;
+        align-items: center;
+        height: 60px;
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--color-gray-blue);
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      &-item {
+        display: flex;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--color-gray-blue);
+        border-bottom: 1px solid var(--border-color);
+      }
+    }
+
+    .column {
+      padding: 10px 12px;
+
+      @media (max-width: $mobile) {
+        padding: 10px 6px;
+      }
+
+      .new-line {
+        display: block;
+      }
+    }
+
+    .date-column {
+      flex: 0 0 120px;
+      padding: 10px 12px 10px 0;
+      margin-left: 20px;
+
+      @media (max-width: $mobile) {
+        padding: 10px 6px;
+        flex: 0 0 70px;
+      }
+    }
+    .user-column {
+      flex: 0 0 150px;
+
+      @media (max-width: $upToTablet) {
+        flex: 1 1 150px;
+      }
+    }
+
+    .comment-column {
+
+    }
+
+    .highlight {
+      background-color: #FAFBFC;
+    }
+  }

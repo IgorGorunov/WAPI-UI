@@ -62,7 +62,11 @@
   &__content {
 
     &.min-height {
-      min-height: min(calc(100vh - 245px), 610px);
+      min-height: min(calc(100vh - 225px), 610px);
+
+      //@media (max-width: $upToTablet) {
+      //  min-height: min(calc(100vh - 225px), 610px);
+      //}
     }
 
     &-notifications {

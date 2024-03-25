@@ -55,6 +55,7 @@ export type DocProductParamsType = {
     weightNet: number;
     aliases: string;
     barcodes: string;
+    volumeWeight?: number;
     //unitOfMeasures: string[];
 }
 
@@ -70,6 +71,7 @@ export type ProductsSelectionType = {
     selected?: number;
     weightNet: number;
     weightGross: number;
+    volumeWeight: number;
     volume: number;
 }
 

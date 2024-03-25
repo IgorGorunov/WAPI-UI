@@ -49,6 +49,7 @@ import DocumentTickets from "@/components/DocumentTickets";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import ConfirmModal from "@/components/ModalConfirm";
+import NotesList from "@/components/NotesList";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -275,25 +276,26 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         weightNet: 0,
         weightGross: 0,
         volume:0,
+        volumeWeight: 0,
     });
-
-    console.log('params:', orderParameters)
 
     const updateTotalProducts = () => {
         const rez = {
             cod: 0,
             weightNet: 0,
             weightGross: 0,
-            volume:0,
+            volume: 0,
+            volumeWeight: 0,
             currency: getValues('codCurrency'),
         };
         getValues('products').forEach(item => {
-            const prodInfo = orderParameters && orderParameters.products ? orderParameters.products.filter(product=>product.uuid === item.product) : [];
+            const prodInfo = orderParameters && orderParameters.productsSelection ? orderParameters.productsSelection.filter(product=>product.uuid === item.product) : [];
             if (prodInfo?.length) {
                 rez.cod += Number(item.cod);
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
                 rez.weightGross += prodInfo[0].weightGross * Number(item.quantity);
                 rez.volume += prodInfo[0].volume * Number(item.quantity);
+                rez.volumeWeight += prodInfo[0].volumeWeight ? prodInfo[0].volumeWeight * Number(item.quantity) : 0;
             }
         })
 
@@ -905,40 +907,44 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         {orderParameters && (orderUuid && orderData || !orderUuid) ? <>
             <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
                 <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
-                <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal' notifications={orderNotifications}>
+                <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal'
+                      notifications={orderNotifications}>
                     <div key='general-tab' className='general-tab'>
                         <div className='card order-info--general'>
                             <h3 className='order-info__block-title'>
-                                <Icon name='general' />
+                                <Icon name='general'/>
                                 General
                             </h3>
                             <div className='grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
+                                <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors}
+                                                 isDisabled={isDisabled}/>
                             </div>
                         </div>
                         <div className='card order-info--details'>
                             <h3 className='order-info__block-title'>
-                                <Icon name='additional' />
+                                <Icon name='additional'/>
                                 Details
                             </h3>
                             <div className='grid-row check-box-bottom'>
-                                <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors} isDisabled={isDisabled}/>
+                                <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors}
+                                                 isDisabled={isDisabled}/>
                             </div>
                         </div>
                     </div>
                     <div key='delivery-tab' className='delivery-tab'>
                         <div className='card order-info--receiver'>
                             <h3 className='order-info__block-title'>
-                                <Icon name='receiver' />
+                                <Icon name='receiver'/>
                                 Receiver
                             </h3>
                             <div className='grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors} isDisabled={isDisabled}/>
+                                <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors}
+                                                 isDisabled={isDisabled}/>
                             </div>
                         </div>
                         <div className='card order-info--pick-up-point'>
                             <h3 className='order-info__block-title'>
-                                <Icon name='general' />
+                                <Icon name='general'/>
                                 Pick up point
                             </h3>
                             <div className='grid-row'>
@@ -948,7 +954,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                     control={control}
                                     render={(
                                         {
-                                            field: { ...props},
+                                            field: {...props},
                                             fieldState: {error}
                                         }) => (
                                         <FieldBuilder
@@ -966,16 +972,17 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                 props.onChange(selectedOption);
                                             }}
                                             width={WidthType.w25}
-                                        /> )}
+                                        />)}
                                 />
-                                <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors} isDisabled={isDisabled}/>
+                                <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors}
+                                                 isDisabled={isDisabled}/>
                             </div>
                         </div>
                     </div>
                     <div key='product-tab' className='product-tab'>
                         <div className="card min-height-600 order-info--products">
                             <h3 className='order-info__block-title '>
-                                <Icon name='goods' />
+                                <Icon name='goods'/>
                                 Products
                             </h3>
                             <div className='grid-row mb-md'>
@@ -983,7 +990,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                     <Controller
                                         name="codCurrency"
                                         control={control}
-                                        render={({ field , fieldState: {error}}) => (
+                                        render={({field, fieldState: {error}}) => (
                                             <FieldBuilder
                                                 fieldType={FormFieldTypes.SELECT}
                                                 name='codCurrency'
@@ -1009,7 +1016,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                     <Controller
                                         name="priceCurrency"
                                         control={control}
-                                        render={({ field , fieldState: {error}}) => (
+                                        render={({field, fieldState: {error}}) => (
                                             <FieldBuilder
                                                 fieldType={FormFieldTypes.SELECT}
                                                 name='priceCurrency'
@@ -1023,19 +1030,39 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                 width={WidthType.w50}
                                             />
                                         )}
-                                        rules={{ required: 'Field is required' }}
+                                        rules={{required: 'Field is required'}}
                                     />
                                 </div>
                                 <div className='order-info--order-btns width-67'>
                                     <div className='grid-row'>
-                                        <div className='order-info--table-btns form-table--btns small-paddings width-100'>
-                                            <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
+                                        <div
+                                            className='order-info--table-btns form-table--btns small-paddings width-100'>
+                                            <Button type="button" icon='selection' iconOnTheRight
+                                                    size={ButtonSize.SMALL} disabled={isDisabled}
+                                                    variant={ButtonVariant.SECONDARY}
+                                                    onClick={() => handleProductSelection()} classNames='selection-btn'>
                                                 Selection
                                             </Button>
-                                            <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, sku: '', product: '', analogue:'',quantity:'', price:'',discount:'',tax:'',total:'', cod:'' })}>
+                                            <Button type="button" icon='add-table-row' iconOnTheRight
+                                                    size={ButtonSize.SMALL} disabled={isDisabled}
+                                                    variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({
+                                                key: `product-${Date.now().toString()}`,
+                                                selected: false,
+                                                sku: '',
+                                                product: '',
+                                                analogue: '',
+                                                quantity: '',
+                                                price: '',
+                                                discount: '',
+                                                tax: '',
+                                                total: '',
+                                                cod: ''
+                                            })}>
                                                 Add
                                             </Button>
-                                            <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
+                                            <Button type="button" icon='remove-table-row' iconOnTheRight
+                                                    size={ButtonSize.SMALL} disabled={isDisabled}
+                                                    variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
                                                 Remove selected
                                             </Button>
                                         </div>
@@ -1045,21 +1072,21 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             <div className='order-info--table table-form-fields form-table'>
                                 <Table
                                     columns={getProductColumns(control)}
-                                    dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
+                                    dataSource={getValues('products')?.map((field, index) => ({key: field.product + '-' + index, ...field})) || []}
                                     pagination={false}
                                     rowKey="key"
                                 />
-                                <ProductsTotal productsInfo={productsTotalInfo} />
+                                <ProductsTotal productsInfo={productsTotalInfo}/>
                             </div>
                         </div>
                     </div>
                     {orderData?.uuid && <div key='services-tab' className='services-tab'>
                         <div className="card min-height-600 order-info--history">
                             <h3 className='order-info__block-title'>
-                                <Icon name='bundle' />
+                                <Icon name='bundle'/>
                                 Services
                             </h3>
-                            <Services services={orderData?.services} />
+                            <Services services={orderData?.services}/>
                         </div>
                     </div>}
                     {orderData?.uuid && <div key='status-history-tab' className='status-history-tab'>
@@ -1071,15 +1098,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 </h3>
                                 <StatusHistory statusHistory={orderData?.statusHistory}/>
                             </div>
-
-                            {/*<div className='card'>*/}
-                            {/*    <h3 className='order-info__block-title'>*/}
-                            {/*        <Icon name='history2'/>*/}
-                            {/*        Warehouse status history*/}
-                            {/*    </h3>*/}
-                            {/*    <StatusHistory statusHistory={orderData?.statusHistory}/>*/}
-                            {/*</div>*/}
-
                         </div>
                     </div>}
                     {orderData?.uuid && <div key='sms-history-tab' className='sms-history-tab'>
@@ -1088,44 +1106,63 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 <Icon name='message'/>
                                 SMS history
                             </h3>
-                            <SmsHistory smsHistory={orderData?.smsHistory} />
+                            <SmsHistory smsHistory={orderData?.smsHistory}/>
                         </div>
                     </div>}
                     {orderData?.uuid && orderData?.claims.length ? <div key='claims-tab' className='claims-tab'>
                         <div className="card min-height-600 order-info--claims">
                             <h3 className='order-info__block-title'>
-                                <Icon name='complaint' />
+                                <Icon name='complaint'/>
                                 Claims
                             </h3>
-                            <Claims claims={orderData.claims} />
+                            <Claims claims={orderData.claims}/>
                         </div>
                     </div> : null}
                     {orderData?.uuid && orderData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
                         <div className="card min-height-600 order-info--tickets">
                             <h3 className='order-info__block-title'>
-                                <Icon name='ticket' />
+                                <Icon name='ticket'/>
                                 Tickets
                             </h3>
                             <DocumentTickets tickets={orderData.tickets}/>
                         </div>
                     </div> : null}
+                    {orderData?.uuid ? <div key='notes-tab' className='notes-tab'>
+                        <div className="card min-height-600 order-info--files">
+                            <h3 className='order-info__block-title'>
+                                <Icon name='edit'/>
+                                Notes
+                            </h3>
+                            <div className='notes'>
+                                <NotesList object={orderData?.uuid} notes={orderData?.notes} refetch={refetchDoc} />
+                            </div>
+                        </div>
+                    </div> : null}
                     <div key='files-tab' className='files-tab'>
                         <div className="card min-height-600 order-info--files">
                             <h3 className='order-info__block-title'>
-                                <Icon name='files' />
+                                <Icon name='files'/>
                                 Files
                             </h3>
                             <div className='dropzoneBlock'>
-                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={orderData?.canEdit ? '' : orderData?.uuid}/>
+                                <DropZone readOnly={!!isDisabled} files={selectedFiles}
+                                          onFilesChange={handleFilesChange}
+                                          docUuid={orderData?.canEdit ? '' : orderData?.uuid}/>
                             </div>
                         </div>
                     </div>
                 </Tabs>
 
                 <div className='form-submit-btn'>
-                    {orderData && orderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                    {orderData?.uuid && orderData?.canEdit ? <Button type='button' variant={ButtonVariant.PRIMARY} onClick={()=>setShowConfirmModal(true)}>Cancel order</Button> : null}
-                    {isDisabled && orderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                    {orderData && orderData.uuid ?
+                        <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
+                                onClick={handleCreateTicket}>Create ticket</Button> : null}
+                    {orderData?.uuid && orderData?.canEdit ?
+                        <Button type='button' variant={ButtonVariant.PRIMARY} onClick={() => setShowConfirmModal(true)}>Cancel
+                            order</Button> : null}
+                    {isDisabled && orderData?.canEdit && <Button type="button" disabled={false}
+                                                                 onClick={() => setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))}
+                                                                 variant={ButtonVariant.PRIMARY}>Edit</Button>}
                     {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}

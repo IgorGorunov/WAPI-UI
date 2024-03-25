@@ -6,6 +6,7 @@ import {
     DocProductParamsType
 } from "@/types/utility";
 import {TicketType} from "@/types/tickets";
+import {NoteType} from "@/types/notes";
 
 export type ClaimType = {
     date: string;
@@ -160,6 +161,7 @@ export type SingleOrderType = {
     canEdit: boolean;
     tickets: TicketType[];
     commentCourierServiceFunctionsList: string;
+    notes: NoteType[];
 }
 
 // export type AttachedFilesType = {
@@ -217,6 +219,7 @@ export type OrderProductWithTotalInfoType = {
     cod: number;
     weightNet: number;
     weightGross: number;
+    volumeWeight?: number;
     volume: number;
     currency?: string;
 }

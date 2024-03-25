@@ -11,6 +11,10 @@ export const TabTitles = (objectExists: boolean, hasClaim=false, hasTickets=fals
         tabArray.push('Tickets');
     }
 
+    if (objectExists) {
+        tabArray.push('Notes');
+    }
+
     tabArray.push('Files');
 
     return tabArray;

@@ -1,0 +1,14 @@
+@import '@/constants/devices.scss';
+
+.create-note {
+  min-width: 300px;
+
+  @media (min-width: $tablet) {
+    min-width: 500px;
+  }
+
+  .note-submit {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
