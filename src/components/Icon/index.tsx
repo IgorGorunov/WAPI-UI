@@ -36,6 +36,7 @@ import CloseInCircle from '@/assets/icons/close-in-circle.svg'
 import Upload from '@/assets/icons/upload.svg'
 import Bundle from '@/assets/icons/bundle.svg'
 import History from '@/assets/icons/history.svg'
+import History2 from '@/assets/icons/history2.svg'
 import Analogues from '@/assets/icons/analogues.svg'
 import Files from '@/assets/icons/files.svg'
 import Delete from '@/assets/icons/delete.svg'
@@ -77,6 +78,8 @@ import File from '@/assets/icons/file.svg'
 import Options from '@/assets/icons/options.svg'
 import Ticket  from '@/assets/icons/ticket.svg'
 import Emoji from '@/assets/icons/emoji.svg'
+import Book from '@/assets/icons/book.svg'
+import Edit from '@/assets/icons/edit.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -115,6 +118,7 @@ export const icons = {
   'upload': Upload,
   'bundle': Bundle,
   'history': History,
+  'history2': History2,
   'analogues': Analogues,
   'files': Files,
   'delete': Delete,
@@ -156,6 +160,8 @@ export const icons = {
   'options': Options,
   'ticket': Ticket,
   'emoji': Emoji,
+  'book': Book,
+  'edit': Edit,
 };
 
 export type IconType = keyof typeof icons;
