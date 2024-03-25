@@ -59,7 +59,7 @@ const NotesList: React.FC<NotesListPropsType> = ({object, notes, refetch}) => {
                                 </li>
                             ))}
                     </ul></>
-                : <p>You don't have any notes yet.</p>
+                : <p className='user-notes__empty'>You don't have any notes yet.</p>
             }
 
             {showCreateNoteModal ? <Modal title={`Create note`} onClose={onModalClose} >
