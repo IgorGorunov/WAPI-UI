@@ -94,13 +94,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
     console.log('order data: ', orderData)
 
     const onCloseWithSuccess = () => {
-        closeOrderModal();
+        closeOrderModalOnSuccess();
         if (orderUuid) {
             setDocNotificationsAsRead(orderUuid);
         }
     }
     const onClose = () => {
-        closeOrderModalOnSuccess();
+        closeOrderModal();
         if (orderUuid) {
             setDocNotificationsAsRead(orderUuid);
         }
