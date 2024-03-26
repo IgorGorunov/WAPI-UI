@@ -16,10 +16,10 @@ import "./styles.scss";
 import PeriodFilter from "@/screens/DashboardPage/components/PeriodFilter";
 import {formatDateToString} from "@/utils/date";
 import Loader from "@/components/Loader";
-import Joyride from 'react-joyride';
-import TourGuide from "@/components/TourGuide";
-import useTourGuide from "@/context/tourGuideContext";
-import {dashboardSteps} from "@/screens/DashboardPage/dashboardTourGuideSteps.constants";
+// import Joyride from 'react-joyride';
+// import TourGuide from "@/components/TourGuide";
+// import useTourGuide from "@/context/tourGuideContext";
+// import {dashboardSteps} from "@/screens/DashboardPage/dashboardTourGuideSteps.constants";
 
 const DashboardPage: React.FC = () => {
 
@@ -123,7 +123,8 @@ const DashboardPage: React.FC = () => {
         <div className="dashboard-page__container">
           {isLoading && <Loader />}
           <div className='header'>
-            <Header pageTitle="Dashboard" needTutorialBtn>
+            {/*<Header pageTitle="Dashboard" needTutorialBtn>*/}
+            <Header pageTitle="Dashboard" >
               <PeriodFilter currentPeriod={currentPeriod}
                   setCurrentPeriod={setCurrentPeriod}
                   setDiagramType={setDiagramType}
