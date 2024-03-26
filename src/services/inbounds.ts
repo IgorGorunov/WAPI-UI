@@ -97,6 +97,30 @@ const sendInboundData = async (
     }
 };
 
+const updateInboundData = async (
+    data: {
+        //documentType: STOCK_MOVEMENT_DOC_TYPE,
+        documentData: {
+            uuid: string,
+            estimatedTimeArrives: string,
+            courierServiceTrackingNumber: string,
+        },
+        token: string;
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/UpdateStockMovement`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
 const sendInboundFiles = async (
     data: {
         files: AttachedFilesType[],
@@ -117,4 +141,4 @@ const sendInboundFiles = async (
 };
 
 
-export { getInbounds, getInboundData, getInboundParameters, sendInboundData, sendInboundFiles};
+export { getInbounds, getInboundData, getInboundParameters, sendInboundData, updateInboundData, sendInboundFiles};
