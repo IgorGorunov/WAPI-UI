@@ -18,39 +18,39 @@ import '@/components/Toast/styles.scss'
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import {ImportFilesType} from "@/types/importFiles";
-import TourGuide, {TourGuideStepType} from "@/components/TourGuide";
-import useTourGuide from "@/context/tourGuideContext";
+// import TourGuide, {TourGuideStepType} from "@/components/TourGuide";
+// import useTourGuide from "@/context/tourGuideContext";
 
 
-const tourGuideStepsProduct: TourGuideStepType[] = [
-    {
-        target: '.ant-table-header', //'.product-list__container',
-        content: 'Here you can sort your products by clicking the name of the chosen column.',
-        disableBeacon: true,
-    },
-    {
-        target: '.filter',
-        content: 'Here you can filter the products.',
-    },
-    {
-        target: '.search-block',
-        content: 'Write data here to locate information on the list below.',
-    },
-    {
-        target: '.add-product',
-        content: 'Here you can add a product. It will then be checked by our logistics manager.',
-        //disableBeacon: true,
-    },
-    {
-        target: '.import-products',
-        content: 'Here you can import products by bulk from Excel.',
-    },
-    {
-        target: '.export-products',
-        content: 'Here you can export products into Excel \n' +
-            'Note: All filters will be applied into export file',
-    },
-]
+// const tourGuideStepsProduct: TourGuideStepType[] = [
+//     {
+//         target: '.ant-table-header', //'.product-list__container',
+//         content: 'Here you can sort your products by clicking the name of the chosen column.',
+//         disableBeacon: true,
+//     },
+//     {
+//         target: '.filter',
+//         content: 'Here you can filter the products.',
+//     },
+//     {
+//         target: '.search-block',
+//         content: 'Write data here to locate information on the list below.',
+//     },
+//     {
+//         target: '.add-product',
+//         content: 'Here you can add a product. It will then be checked by our logistics manager.',
+//         //disableBeacon: true,
+//     },
+//     {
+//         target: '.import-products',
+//         content: 'Here you can import products by bulk from Excel.',
+//     },
+//     {
+//         target: '.export-products',
+//         content: 'Here you can export products into Excel \n' +
+//             'Note: All filters will be applied into export file',
+//     },
+// ]
 
 const ProductsPage = () => {
     const Router = useRouter();
