@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, {useRef, useEffect, useState} from "react";
 import ReactDOM from "react-dom";
 import Icon from "@/components/Icon";
 import "./styles.scss";
@@ -11,9 +11,10 @@ type ModalType = {
     onClose: () => void;
     modalType?: ModalTypes;
     noHeaderDecor?: boolean;
+    needTutorial?: boolean;
 };
 
-const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" , modalType= ModalTypes.MAIN, noHeaderDecor = false}) => {
+const Modal: React.FC<ModalType> = ({ title, children, needTutorial=false, onClose, classNames = "" , modalType= ModalTypes.MAIN, noHeaderDecor = false}) => {
     const modalWrapperRef = useRef<HTMLDivElement>();
 
     const handleCloseClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -21,32 +22,21 @@ const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" 
         onClose();
     };
 
-    useEffect(() => {
-        const modalWrapper = modalWrapperRef.current;
-
-        if (modalWrapper) {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            modalWrapper.style.top = `${scrollTop + 20}px`;
-        }
-    }, []);
-
     // useEffect(() => {
-    //     if (document) {
-    //         console.log("doc:", document)
-    //         document.body.style.overflow = 'hidden';
-    //         document.body.style.height = '100vh';
-    //     }
+    //     const modalWrapper = modalWrapperRef.current;
     //
-    //     return () => {
-    //         document.body.style.overflow = 'auto';
-    //         document.body.style.height = 'auto';
+    //     if (modalWrapper) {
+    //         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    //         modalWrapper.style.top = `${scrollTop + 20}px`;
     //     }
-    // }, [])
+    // }, []);
+
+    const [isTutorial, setIsTutorial] = useState(false);
 
     const modalContent = (
         <div className={`modal-overlay ${classNames}`}>
             <div className="modal-wrapper" ref={modalWrapperRef}>
-                <div className="modal">
+                <div className={`modal ${needTutorial && isTutorial ? 'tutorial-state' : ''}`}>
                     <div className={`modal-header ${noHeaderDecor ? 'no-header-decor' : ''}`}>
                         {title && (
                             <div className="modal-header__title">
@@ -54,6 +44,8 @@ const Modal: React.FC<ModalType> = ({ title, children, onClose, classNames = "" 
                             </div>
                         )}
                         <div className="modal-header__close">
+                            {needTutorial ? <button className={`tour-guide ${isTutorial ? 'is-active' : ''}`} onClick={()=>setIsTutorial(!isTutorial)}><Icon name='book' /></button>
+                                : null}
                             <a href="#" onClick={handleCloseClick}>
                                 <Icon name="close" />
                             </a>
