@@ -1,7 +1,7 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 
-export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TYPE) => {
+export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TYPE, canEditATA: boolean) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
 
     return [
@@ -11,10 +11,6 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 name: 'number',
                 label: "Number",
                 placeholder: "",
-                // rules: {
-                //     required: "Required field",
-                // },
-                // errorMessage: "Required field",
                 disabled: true,
                 width: WidthType.w17,
                 classNames: "",
@@ -26,44 +22,16 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 name: 'incomingNumber',
                 label: "Incoming number",
                 placeholder: "",
-                // rules: {
-                //     required: "Required field",
-                // },
-                // errorMessage: "Required field",
                 width: newObject ? WidthType.w33 : WidthType.w17,
                 classNames: "",
             },
-            // {
-            //     fieldType: FormFieldTypes.DATE,
-            //     type: "date",
-            //     name: 'incomingDate',
-            //     label: "Incoming date",
-            //     placeholder: "",
-            //     rules: {
-            //         required: "Required field",
-            //     },
-            //     errorMessage: "Required field",
-            //     width: WidthType.w17,
-            //     classNames: "",
-            // },
-
-            // {
-            //     fieldType: FormFieldTypes.TEXT,
-            //     type: "text",
-            //     name: 'freightSupplier',
-            //     label: 'Fright supplier',
-            //     placeholder: "",
-            //     disabled: true,
-            //     width: WidthType.w33,
-            //     classNames: "",
-            //     isDisplayed: !newObject,
-            // },
             {
                 fieldType: FormFieldTypes.DATE,
                 type: "date",
                 name: 'estimatedTimeArrives',
                 label: 'ETA',
                 disabled: !isInbound,
+                notDisable: isInbound && canEditATA,
                 placeholder: "",
                 width: WidthType.w17,
                 classNames: "calendar-to-right",
@@ -118,7 +86,8 @@ export const DetailsFields = (
         senderOptions,
         receiverOptions,
         onSenderChange,
-        onReceiverChange
+        onReceiverChange,
+        canEditETA,
     }:{
         newObject: boolean,
         docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -127,6 +96,7 @@ export const DetailsFields = (
         senderOptions: OptionType[],
         onSenderChange: (newSender: string)=>void,
         onReceiverChange: (newReceiver: string)=>void,
+        canEditETA: boolean;
     }
 ) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
@@ -204,6 +174,7 @@ export const DetailsFields = (
             //disabled: true,
             width: WidthType.w50,
             classNames: "",
+            notDisable: isInbound && canEditETA,
             //isDisplayed: !newObject,
         },
         // {

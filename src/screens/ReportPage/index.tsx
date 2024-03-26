@@ -5,9 +5,7 @@ import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header";
-import {verifyToken} from "@/services/auth";
 import "./styles.scss";
-import {verifyUser} from "@/utils/userData";
 import {getReportData, getReportParams} from "@/services/reports";
 import {REPORT_TITLES, REPORT_TYPES, ReportParametersType} from "@/types/reports";
 import Loader from "@/components/Loader";
@@ -82,12 +80,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const fetchParamsData = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponse = await getReportParams(
                 {token: token}

@@ -1,7 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import "./styles.scss";
 import '@/styles/forms.scss';
-import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
@@ -23,17 +22,15 @@ import Loader from "@/components/Loader";
 import {toast, ToastContainer} from '@/components/Toast';
 import {
     SingleStockMovementFormType,
-    SingleStockMovementType, STOCK_MOVEMENT_DOC_SUBJECT,
+    SingleStockMovementType,
+    STOCK_MOVEMENT_DOC_SUBJECT,
     STOCK_MOVEMENT_DOC_TYPE,
     StockMovementParamsType
 } from "@/types/stockMovements";
-import {verifyToken} from "@/services/auth";
-import {verifyUser} from "@/utils/userData";
-import {Routes} from "@/types/routes";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {sendInboundData} from "@/services/inbounds";
+import {sendInboundData, updateInboundData} from "@/services/inbounds";
 import {ApiResponseType} from "@/types/api";
-import { SingleOrderProductFormType} from "@/types/orders";
+import {SingleOrderProductFormType} from "@/types/orders";
 import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import {ImportFilesType} from "@/types/importFiles";
@@ -60,10 +57,11 @@ type StockMovementFormType = {
 }
 
 const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc}) => {
-    const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!docData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
+    const [isJustETA, setIsJustETA] = useState(false);
+    const [isFinished, setIsFinished] = useState(docData?.status === 'Finished');
 
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
@@ -455,8 +453,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
 
     //form fields
-    const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType), [docData])
-    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange }), [docData]);
+    const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType, !!(docData?.uuid && !docData.canEdit && !isFinished)), [docData])
+    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished) }), [docData]);
     //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
 
 
@@ -530,28 +528,41 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         resetTabTables(tabTitleArray);
     }, [docData]);
 
+    const sendJustETA = async(data) => {
+        return await updateInboundData(
+            //docType,
+            {
+                token,
+                documentData: {
+                    uuid: data.uuid,
+                    estimatedTimeArrives: data.estimatedTimeArrives,
+                    courierServiceTrackingNumber: data.courierServiceTrackingNumber,
+                },
+            }
+        );
+    }
+
+    const sendDocument = async(data) => {
+        return await sendInboundData(
+            //docType,
+            {
+                token,
+                documentType: docType,
+                documentData: data,
+            }
+        );
+    }
+
     const onSubmitForm = async (data) => {
         clearTabTitles();
         setIsLoading(true);
+
+
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
 
         try {
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
-            const res: ApiResponseType = await sendInboundData(
-                //docType,
-                {
-                    token,
-                    documentType: docType,
-                    documentData: data,
-                }
-            );
+            const res = isJustETA ? await sendJustETA(data) : await sendDocument(data);
 
             if (res && "status" in res) {
                 if (res?.status === 200) {
@@ -574,12 +585,13 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             console.error("Error fetching data:", error);
         } finally {
             setIsLoading(false);
+            setIsJustETA(false);
         }
     }
 
     const onError = (props: any) => {
 
-        if (isDraft) {
+        if (isDraft || isJustETA) {
             clearErrors();
             const formData = getValues();
             console.log('Form data on error:', formData);
@@ -713,6 +725,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 {isDisabled && docData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(docData?.canEdit || !docData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
+                {isDisabled && docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !docData?.canEdit && !isFinished && <Button type="submit" onClick={()=>setIsJustETA(true)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

@@ -2,17 +2,13 @@ import React, {useEffect, useRef, useState} from "react";
 import "./styles.scss";
 import useAuth from "@/context/authContext";
 import {sendTicketMessage} from "@/services/tickets";
-import {verifyToken} from "@/services/auth";
-import {verifyUser} from "@/utils/userData";
-import {Routes} from "@/types/routes";
 import {ApiResponseType} from "@/types/api";
-import {useRouter} from "next/router";
 import Loader from "@/components/Loader";
 import Icon from "@/components/Icon";
 import ModalPreview from "@/components/ModalPreview";
 import {arrayBufferToBase64, readFileAsArrayBuffer} from "@/utils/files";
 import {CHAT_FILE_TYPES} from "@/types/tickets";
-import EmojiPicker from './EmojiPicker';
+//import EmojiPicker from './EmojiPicker';
 import ModalStatus from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 
@@ -36,8 +32,7 @@ type ChatFileType = {
 const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker, canEdit}) => {
     console.log('ticket editable'+ canEdit)
 
-    const {token, currentDate} = useAuth();
-    const Router = useRouter();
+    const {token} = useAuth();
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const dropRef = useRef<HTMLDivElement>(null);
@@ -102,11 +97,6 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         );
 
         try {
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
             const res: ApiResponseType = await sendTicketMessage(
                 {
                     token: token,

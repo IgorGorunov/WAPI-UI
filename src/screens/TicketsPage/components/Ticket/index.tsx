@@ -1,12 +1,8 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import "./styles.scss";
-import {verifyToken} from "@/services/auth";
-import {verifyUser} from "@/utils/userData";
-import {Routes} from "@/types/routes";
 import {ApiResponseType} from "@/types/api";
 import {getSingleTicket, getTicketParams} from "@/services/tickets";
 import useAuth from "@/context/authContext";
-import {useRouter} from "next/router";
 import {SingleTicketType, TicketParamsType} from "@/types/tickets";
 import Loader from "@/components/Loader";
 import {ToastContainer} from "@/components/Toast";
@@ -24,8 +20,7 @@ type TicketPropsType = {
 
 const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose}) => {
 
-    const {token, setToken, currentDate} = useAuth();
-    const Router = useRouter();
+    const {token} = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
@@ -43,12 +38,6 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
     const fetchSingleTicket = useCallback(async (uuid: string) => {
         try {
             setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponseType = await getSingleTicket(
                 {token, uuid}
@@ -70,12 +59,6 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
     const fetchTicketParams = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponseType = await getTicketParams(
                 {token}

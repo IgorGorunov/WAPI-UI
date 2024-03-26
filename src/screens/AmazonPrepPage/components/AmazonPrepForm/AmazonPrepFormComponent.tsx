@@ -7,9 +7,6 @@ import {
 } from "@/types/amazonPrep";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import {useRouter} from "next/router";
-import {Routes} from "@/types/routes";
-import {verifyToken} from "@/services/auth";
 import useAuth from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
@@ -33,7 +30,6 @@ import Pallets from "@/screens/AmazonPrepPage/components/AmazonPrepForm/Pallets"
 import {TabFields, TabTitles} from "./AmazonPrepFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import Modal from "@/components/Modal";
@@ -64,7 +60,7 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
 }
 
 const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc}) => {
-    const Router = useRouter();
+
     const { token, currentDate } = useAuth();
     const {notifications} = useNotifications();
 
@@ -516,11 +512,6 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         data.attachedFiles = selectedFiles;
 
         try {
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponseType = await sendAmazonPrepData(
                 {

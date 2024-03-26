@@ -1,24 +1,19 @@
 import React, { useState, useEffect } from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
-import {useRouter} from "next/router";
 import { getProductsStock } from "@/services/products";
-import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import ProductList from "./components/ProductList";
-import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {ProductStockType} from "@/types/products";
 import {exportFileXLS} from "@/utils/files";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 
 const ProductsStockPage = () => {
 
-    const Router = useRouter();
-    const { token, setToken, currentDate } = useAuth();
+    const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
@@ -35,11 +30,6 @@ const ProductsStockPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                //verify token
-                const responseVerification = await verifyToken(token);
-                if (!verifyUser(responseVerification, currentDate) ){
-                    await Router.push(Routes.Login);
-                }
 
                 const res: ApiResponse = await getProductsStock(
                     {token: token}

@@ -2,17 +2,14 @@ import React, {useState, useEffect, useCallback} from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
-import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
-import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {getTickets} from "@/services/tickets";
 import TicketList from "@/screens/TicketsPage/components/TicketList";
@@ -56,12 +53,6 @@ const TicketsPage = () => {
     const fetchTickets = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponseType = await getTickets(
                 {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}

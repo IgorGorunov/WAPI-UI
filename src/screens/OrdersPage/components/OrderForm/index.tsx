@@ -5,16 +5,12 @@ import {
 } from "@/types/orders";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import {useRouter} from "next/router";
-import {Routes} from "@/types/routes";
-import {verifyToken} from "@/services/auth";
 import useAuth from "@/context/authContext";
 import {getOrderData, getOrderParameters} from '@/services/orders';
 import {ApiResponseType} from '@/types/api';
 import {ToastContainer} from '@/components/Toast';
 import Modal from "@/components/Modal";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 import OrderFormComponent from "@/screens/OrdersPage/components/OrderForm/OrderFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 
@@ -25,10 +21,10 @@ type OrderFormType = {
 }
 
 const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOrderModalOnSuccess}) => {
-    const Router = useRouter();
+
     const [isLoading, setIsLoading] = useState(false);
 
-    const { token, currentDate } = useAuth();
+    const { token } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [orderData, setOrderData] = useState<SingleOrderType|null>(null);
@@ -63,12 +59,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
 
     const fetchOrderParams = useCallback(async() => {
         try {
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
             const resp: ApiResponseType = await getOrderParameters(
                 {token: token}
             );

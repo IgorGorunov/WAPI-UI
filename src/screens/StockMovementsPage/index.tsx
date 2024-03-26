@@ -5,7 +5,6 @@ import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
-import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
@@ -67,10 +66,6 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            if (!await verifyToken(token)) {
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponseType = await getInbounds(
                 {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate), documentType: docType}

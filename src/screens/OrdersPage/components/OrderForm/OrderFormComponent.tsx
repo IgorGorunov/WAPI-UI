@@ -10,9 +10,6 @@ import {
 import {AttachedFilesType, STATUS_MODAL_TYPES, WarehouseType} from "@/types/utility";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import {useRouter} from "next/router";
-import {Routes} from "@/types/routes";
-import {verifyToken} from "@/services/auth";
 import useAuth from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
@@ -39,7 +36,6 @@ import Modal from "@/components/Modal";
 import SendComment from "./SendCommentBlock";
 import SmsHistory from "./SmsHistory";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 import Claims from "@/screens/OrdersPage/components/OrderForm/Claims";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import useNotifications from "@/context/notificationContext";
@@ -64,7 +60,6 @@ type OrderFormType = {
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
     const {notifications} = useNotifications();
 
-    const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
@@ -227,12 +222,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const fetchPickupPoints = useCallback(async (courierService: string) => {
         try {
             setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponseType = await getOrderPickupPoints(
                 {token, courierService}
@@ -784,12 +773,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const handleCancelOrder = async() => {
         console.log('cancel order');
         try {
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
             const res: ApiResponseType = await cancelOrder(
                 {
                     token: token,
@@ -828,11 +811,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         data.attachedFiles= selectedFiles;
 
         try {
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponseType = await sendOrderData(
                 {

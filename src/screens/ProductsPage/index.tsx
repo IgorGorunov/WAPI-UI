@@ -4,11 +4,9 @@ import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import {getProducts} from "@/services/products";
 
-import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header";
 import ProductList from "./components/ProductList";
-import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {exportFileXLS} from "@/utils/files";
@@ -19,12 +17,44 @@ import 'react-toastify/dist/ReactToastify.css';
 import '@/components/Toast/styles.scss'
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 import {ImportFilesType} from "@/types/importFiles";
+// import TourGuide, {TourGuideStepType} from "@/components/TourGuide";
+// import useTourGuide from "@/context/tourGuideContext";
+
+
+// const tourGuideStepsProduct: TourGuideStepType[] = [
+//     {
+//         target: '.ant-table-header', //'.product-list__container',
+//         content: 'Here you can sort your products by clicking the name of the chosen column.',
+//         disableBeacon: true,
+//     },
+//     {
+//         target: '.filter',
+//         content: 'Here you can filter the products.',
+//     },
+//     {
+//         target: '.search-block',
+//         content: 'Write data here to locate information on the list below.',
+//     },
+//     {
+//         target: '.add-product',
+//         content: 'Here you can add a product. It will then be checked by our logistics manager.',
+//         //disableBeacon: true,
+//     },
+//     {
+//         target: '.import-products',
+//         content: 'Here you can import products by bulk from Excel.',
+//     },
+//     {
+//         target: '.export-products',
+//         content: 'Here you can export products into Excel \n' +
+//             'Note: All filters will be applied into export file',
+//     },
+// ]
 
 const ProductsPage = () => {
     const Router = useRouter();
-    const { token, setToken, currentDate } = useAuth();
+    const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
@@ -35,6 +65,16 @@ const ProductsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
+    // //tour guide
+    // const {runTour, setRunTour, checkTutorial} = useTourGuide();
+    //
+    // useEffect(() => {
+    //     if (!checkTutorial('Catalogs/Products')) {
+    //         if (!isLoading && productsData) {
+    //             setTimeout(() => setRunTour(true), 1000);
+    //         }
+    //     }
+    // }, [isLoading]);
 
     //import files modal
     const [showImportModal, setShowImportModal] = useState(false);
@@ -49,12 +89,6 @@ const ProductsPage = () => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponse = await getProducts(
                 {token: token}
@@ -97,7 +131,7 @@ const ProductsPage = () => {
             if (prevState && prevState.length) {
                 const el = prevState.filter(item => item.uuid === uuid);
                 if (el.length) {
-                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.name<b.name ? -1 : 1)
+                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.name.toLowerCase()<b.name.toLowerCase() ? -1 : 1)
                 }
             }
             return prevState;
@@ -144,11 +178,12 @@ const ProductsPage = () => {
         <Layout hasFooter>
             <div className="products-page__container">
                 {isLoading && <Loader />}
+                {/*<Header pageTitle='Products' toRight needTutorialBtn>*/}
                 <Header pageTitle='Products' toRight >
                     {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
-                    <Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
-                    <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                    <Button classNames='add-product' icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
+                    <Button classNames='import-products' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
+                    <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
                 {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
             </div>
@@ -163,6 +198,7 @@ const ProductsPage = () => {
                     <ImportFilesBlock file='Master data.xlsx' importFilesType={ImportFilesType.PRODUCTS} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }
+            {/*{productsData && runTour && tourGuideStepsProduct ? <TourGuide steps={tourGuideStepsProduct} run={runTour} pageName='Catalogs/Products' /> : null}*/}
         </Layout>
     )
 }

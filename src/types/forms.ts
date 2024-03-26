@@ -1,4 +1,5 @@
 import React, {ChangeEvent } from 'react'
+import {E164Number} from "libphonenumber-js";
 
 type RefType=any;
 
@@ -14,6 +15,7 @@ export const enum FormFieldTypes {
   GRID = 'grid',
   TEXT_AREA = 'text-area',
   RADIO_BUTTON = 'radio-button',
+  PHONE_NUMBER = 'phone-number',
 }
 
 export type TextFieldType = string
@@ -61,9 +63,11 @@ export type FieldPropsType = {
   disabled?: boolean
   // size?: SizeTypes.large | SizeTypes.medium | SizeTypes.small;
   innerRef?: RefType
-  value?: string | number | boolean | Date;
+  value?: E164Number | string | number | boolean | Date ;
+  valPhone?: E164Number;
+  onPhoneChange?: (value: E164Number)=>void;
   checked?: boolean;
-  onChange?: (event: ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType) => void;
+  onChange?: (event: ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType | E164Number) => void;
   onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement> | React.ClipboardEvent<HTMLInputElement> | ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType) => void
   onDrop?: (event: React.DragEvent<HTMLDivElement> | React.DragEvent<HTMLTextAreaElement>)=>void;
   onDragOver?: (event: React.DragEvent<HTMLDivElement> | React.DragEvent<HTMLTextAreaElement>)=>void;
@@ -87,6 +91,8 @@ export type FieldPropsType = {
   noCounters?: boolean;
   alignFlexH?: ALIGN_FLEX;
   //rows?: number;
+  hint?: string;
+  notDisable?: boolean;
 }
 
 export type FormBuilderType = FieldPropsType & {

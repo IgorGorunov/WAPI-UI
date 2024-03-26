@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
-import {useRouter} from "next/router";
 import { getDasboardData } from "@/services/dashboard";
 import {
   PeriodType,
   DashboardPeriodType,
 } from "@/types/dashboard";
-import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header"
 import Diagram from "./components/Diagram";
@@ -15,11 +13,13 @@ import Forecast from "./components/Forecast";
 import OrderStatuses from "./components/OrderStatuses";
 import OrdersByCountry from "./components/OrdersByCountry";
 import "./styles.scss";
-import {verifyToken} from "@/services/auth";
 import PeriodFilter from "@/screens/DashboardPage/components/PeriodFilter";
 import {formatDateToString} from "@/utils/date";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
+// import Joyride from 'react-joyride';
+// import TourGuide from "@/components/TourGuide";
+// import useTourGuide from "@/context/tourGuideContext";
+// import {dashboardSteps} from "@/screens/DashboardPage/dashboardTourGuideSteps.constants";
 
 const DashboardPage: React.FC = () => {
 
@@ -33,8 +33,6 @@ const DashboardPage: React.FC = () => {
   };
 
 
-
-  const Router = useRouter();
   const { token, setToken, currentDate } = useAuth();
   const savedToken = Cookie.get('token');
   if (savedToken) setToken(savedToken);
@@ -51,32 +49,25 @@ const DashboardPage: React.FC = () => {
   const [diagramType, setDiagramType] = useState<PeriodType>("DAY");
   const [isLoading, setIsLoading] = useState(true);
 
+  const createRequestData = useCallback((
+      startDate: Date,
+      endDate: Date
+  ) => {
+    return {
+      startDate: formatDateToString(startDate),
+      endDate: formatDateToString(endDate),
+      token: token || "",
+    };
+  },[token]);
+
   useEffect(() => {
     type ApiResponse = {
       data: any;
     };
 
-    const createRequestData = (
-      startDate: Date,
-      endDate: Date
-    ) => {
-      return {
-        startDate: formatDateToString(startDate),
-        endDate: formatDateToString(endDate),
-        token: token || "",
-      };
-    };
-
-
     const fetchData = async () => {
       try {
         setIsLoading(true);
-
-        //verify token
-        const responseVerification = await verifyToken(token);
-        if (!verifyUser(responseVerification, currentDate) ){
-          await Router.push(Routes.Login);
-        }
 
         const res: ApiResponse = await getDasboardData(
           createRequestData(
@@ -101,7 +92,16 @@ const DashboardPage: React.FC = () => {
     fetchData();
   }, [token, currentPeriod]);
 
-
+  // //tour guide
+  // const {runTour, setRunTour, checkTutorial} = useTourGuide();
+  //
+  // useEffect(() => {
+  //   if (!checkTutorial('Dashboard1')) {
+  //     if (!isLoading && pageData) {
+  //       setTimeout(() => setRunTour(true), 1000);
+  //     }
+  //   }
+  // }, [isLoading]);
 
   const gmv = pageData && pageData.gmv ? pageData.gmv : null;
   const orders = pageData && pageData.totalOrders ? pageData.totalOrders : null;
@@ -122,14 +122,16 @@ const DashboardPage: React.FC = () => {
       <Layout hasHeader hasFooter>
         <div className="dashboard-page__container">
           {isLoading && <Loader />}
-
-          <Header pageTitle="Dashboard">
-            <PeriodFilter currentPeriod={currentPeriod}
-                setCurrentPeriod={setCurrentPeriod}
-                setDiagramType={setDiagramType}
-                clickedPeriod={clickedPeriod}
-                setClickedPeriod={setClickedPeriod} />
-          </Header>
+          <div className='header'>
+            {/*<Header pageTitle="Dashboard" needTutorialBtn>*/}
+            <Header pageTitle="Dashboard" >
+              <PeriodFilter currentPeriod={currentPeriod}
+                  setCurrentPeriod={setCurrentPeriod}
+                  setDiagramType={setDiagramType}
+                  clickedPeriod={clickedPeriod}
+                  setClickedPeriod={setClickedPeriod} />
+            </Header>
+          </div>
           <div className="dashboard-animated-grid grid-row dashboard-grid-row">
             <div className="width-33 dashboard-grid-col">
               <Forecast
@@ -178,7 +180,9 @@ const DashboardPage: React.FC = () => {
                 departure={!orderByCountryDeparture ? [] : orderByCountryDeparture}
             />
           }
+          {/*{pageData && runTour && dashboardSteps ? <TourGuide steps={dashboardSteps} run={runTour} pageName='Dashboard' /> : null}*/}
         </div>
+
       </Layout>
   );
 };
