@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import "./styles.scss";
 import '@/styles/forms.scss';
-import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {ToastContainer} from '@/components/Toast';
@@ -10,7 +9,6 @@ import {
     STOCK_MOVEMENT_DOC_TYPE,
     StockMovementParamsType
 } from "@/types/stockMovements";
-import {verifyToken} from "@/services/auth";
 import {getInboundData, getInboundParameters} from "@/services/inbounds";
 import {ApiResponseType} from "@/types/api";
 import Modal from "@/components/Modal";
@@ -34,7 +32,7 @@ const docNamesSingle = {
 const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=null, closeDocModal, closeModalOnSuccess}) => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const { token, currentDate } = useAuth();
+    const { token } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
 
@@ -48,8 +46,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
         try {
             setIsLoading(true);
-
-           await verifyToken(token);
 
             const res: ApiResponse = await getInboundData({token, uuid, documentType: docType});
 
@@ -67,7 +63,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
     const fetchStockMovementParams = useCallback(async() => {
         try {
-            await verifyToken(token);
 
             const resp: ApiResponseType = await getInboundParameters({token: token, documentType: docType});
 

@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
-import {useRouter} from "next/router";
 import { getInvoices, getInvoicesDebts } from "@/services/invoices";
-import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import InvoiceList from "./components/InvoiceList";
-import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {InvoiceType, InvoiceBalanceType} from "@/types/invoices";
@@ -16,11 +13,9 @@ import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays, } from "@/utils/date";
 import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 
 const InvoicesPage = () => {
 
-    const Router = useRouter();
     const { token, setToken, currentDate } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
@@ -45,11 +40,6 @@ const InvoicesPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                //verify token
-                const responseVerification = await verifyToken(token);
-                if (!verifyUser(responseVerification, currentDate) ){
-                    await Router.push(Routes.Login);
-                }
 
                 const res: ApiResponse = await getInvoices(
                     {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
@@ -81,12 +71,6 @@ const InvoicesPage = () => {
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
-
-                //verify token
-                const responseVerification = await verifyToken(token);
-                if (!verifyUser(responseVerification, currentDate) ){
-                    await Router.push(Routes.Login);
-                }
 
                 const res: ApiResponse = await getInvoicesDebts(
                     { token: token }

@@ -1,7 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import "./styles.scss";
 import '@/styles/forms.scss';
-import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
@@ -28,9 +27,6 @@ import {
     STOCK_MOVEMENT_DOC_TYPE,
     StockMovementParamsType
 } from "@/types/stockMovements";
-import {verifyToken} from "@/services/auth";
-import {verifyUser} from "@/utils/userData";
-import {Routes} from "@/types/routes";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {sendInboundData, updateInboundData} from "@/services/inbounds";
 import {ApiResponseType} from "@/types/api";
@@ -61,7 +57,6 @@ type StockMovementFormType = {
 }
 
 const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc}) => {
-    const Router = useRouter();
     const [isDisabled, setIsDisabled] = useState(!!docData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
@@ -567,13 +562,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         data.attachedFiles= selectedFiles;
 
         try {
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
             const res = isJustETA ? await sendJustETA(data) : await sendDocument(data);
 
             if (res && "status" in res) {

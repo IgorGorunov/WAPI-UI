@@ -2,11 +2,9 @@ import React, {useState, useEffect, useCallback} from "react";
 import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
-import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import AmazonPrepList from "./components/AmazonPrepList";
-import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import {getAmazonPrep} from "@/services/amazonePrep";
 import Button from "@/components/Button/Button";
@@ -17,7 +15,6 @@ import {exportFileXLS} from "@/utils/files";
 import AmazonPrepForm from "./components/AmazonPrepForm";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 
 const AmazonPrepPage = () => {
     const {token, setToken, currentDate} = useAuth();
@@ -48,12 +45,6 @@ const AmazonPrepPage = () => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponseType = await getAmazonPrep(
                 {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}

@@ -1,7 +1,9 @@
 import axios from "axios";
+import pako from 'pako';
 
 
-const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI"; //"https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
+//const API_URL = "https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
+const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
 
 let setError: (title:string, message: string) => void;
 
@@ -125,12 +127,14 @@ const api = axios.create(
         baseURL: API_URL,
         timeout: 10000000,
         headers: {
+            //'Accept-Encoding': 'gzip',
             "content-type": "application/json",
         },
     }
 );
 
 api.interceptors.response.use(response=> {
+
     if (response.status === 200) {
         return  response;
     } else if (response.status === 401) {
@@ -144,7 +148,8 @@ api.interceptors.response.use(response=> {
     let errorMessage = '';
     let errorTitle = '';
 
-    if (error.code === "ERR_BAD_RESPONSE") {
+
+    if (error.code === "ERR_BAD_RESPONSE" || error.code === "ERR_BAD_REQUEST") {
         const errorStatus = error.response.status;
 
         if (errorStatus === 401) {

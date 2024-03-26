@@ -3,12 +3,8 @@ import "./styles.scss";
 import Message from "./Message";
 import SendMessageBlock from "@/screens/TicketsPage/components/Chat/SendMessageBlock";
 import useAuth from "@/context/authContext";
-import {verifyToken} from "@/services/auth";
-import {verifyUser} from "@/utils/userData";
-import {Routes} from "@/types/routes";
 import {ApiResponseType} from "@/types/api";
 import {getTicketMessages} from "@/services/tickets";
-import {useRouter} from "next/router";
 import Loader from "@/components/Loader";
 import {ChatMessageType} from "@/types/tickets";
 
@@ -19,8 +15,7 @@ type ChatPropsType = {
 
 const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
 
-    const {token, currentDate} = useAuth();
-    const Router = useRouter();
+    const {token} = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);
     const [chatMessages, setChatMessages] = useState<ChatMessageType[]>([]);
@@ -72,10 +67,7 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
         //fetch messages
         try {
             setIsLoading(true);
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
+
             const res: ApiResponseType = await getTicketMessages(
                 {
                     token: token,

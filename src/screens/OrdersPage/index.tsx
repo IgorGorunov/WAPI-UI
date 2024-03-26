@@ -6,7 +6,6 @@ import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import OrderList from "./components/OrderList";
-import {verifyToken} from "@/services/auth";
 import "./styles.scss";
 import {getOrders} from "@/services/orders";
 import Button from "@/components/Button/Button";
@@ -19,7 +18,6 @@ import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import {ImportFilesType} from "@/types/importFiles";
-import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 
 type ApiResponse = {
     data: any;
@@ -97,6 +95,8 @@ const OrdersPage = () => {
 
         } catch (error) {
             console.error("Error fetching data:", error);
+            setIsLoading(false);
+        } finally {
             setIsLoading(false);
         }
     }, [token,curPeriod]);

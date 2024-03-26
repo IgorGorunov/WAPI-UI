@@ -1,17 +1,13 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import "./styles.scss";
-import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Cookie from "js-cookie";
 import {ProductParamsType, ProductType, SingleProductType} from "@/types/products";
-import {verifyToken} from "@/services/auth";
-import {Routes} from "@/types/routes";
 import {getProductByUID, getProductParameters, getProducts} from "@/services/products";
 import {ToastContainer} from '@/components/Toast';
 import "@/styles/tables.scss";
 import '@/styles/forms.scss';
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 import Modal from "@/components/Modal";
 import ProductFormComponent from "@/screens/ProductsPage/components/ProductForm/ProductFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
@@ -27,8 +23,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const [productData, setProductData] = useState<SingleProductType|null>(null);
     const [productsList, setProductsList] = useState<ProductType[]|null>(products);
 
-    const Router = useRouter();
-    const { token, setToken, currentDate } = useAuth();
+    const { token, setToken } = useAuth();
     const savedToken = Cookie.get('token');
     if (savedToken) setToken(savedToken);
 
@@ -39,11 +34,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductData = async (uuid) => {
         try {
             setIsLoading(true);
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponse = await getProductByUID(
                 {token: token, uuid: uuid}
@@ -67,12 +57,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
         try {
             setIsLoading(true);
 
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
             const resParams: ApiResponse = await getProductParameters(
                 {token: token}
             );
@@ -93,12 +77,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductsList = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
 
             const res: ApiResponse = await getProducts(
                 {token: token}
