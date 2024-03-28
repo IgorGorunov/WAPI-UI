@@ -76,12 +76,6 @@ const OrdersPage = () => {
         try {
             setIsLoading(true);
 
-            //verify token
-            //await verifyToken(token);
-            // if (!verifyUser(responseVerification, currentDate) ){
-            //     await Router.push(Routes.Login);
-            // }
-
             const res: ApiResponse = await getOrders(
                 {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
             );

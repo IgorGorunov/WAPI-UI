@@ -66,62 +66,6 @@ loginApi.interceptors.response.use(response=> {
     return Promise.reject(error);
 });
 
-const verifyTokenApi = axios.create(
-    {
-        baseURL: API_URL,
-        timeout: 20000,
-        headers: {
-            "content-type": "application/json",
-        },
-    }
-);
-
-verifyTokenApi.interceptors.response.use(response=> {
-    if (response.status === 200) {
-        return  response;
-    } else if (response.status === 401) {
-        console.log('Unauthorized!');
-    }
-    return  response;
-}, function (error) {
-    console.log('get error 123', error);
-
-    let errorMessage = '';
-    let errorTitle = '';
-
-    if (error.code === "ERR_BAD_RESPONSE") {
-        const errorStatus = error.response.status;
-
-        if (errorStatus === 401) {
-            redirectToLogin();
-            //const errorMessage = error.response.data.message || error.response.data.errorMessage || 'Wrong login or password';
-        } else if (errorStatus === 500) {
-            const errorResponseMessage = error.response.data.message || error.response.data.errorMessage || 'Something went wrong. Please, contact administrator.';
-
-            if (errorResponseMessage) {
-                errorTitle = 'Error';
-                errorMessage = administratorErrorText
-            } else {
-                errorTitle = 'Maintenance';
-                errorMessage = maintenanceErrorText;
-            }
-        }
-
-        setError(errorTitle, errorMessage);
-        return Promise.reject(error);
-    }
-
-    if (error.code === "ECONNABORTED") {
-        // Request timed out
-        errorTitle = 'Maintenance';
-        errorMessage = maintenanceErrorText;
-    }
-
-    setError(errorTitle, errorMessage);
-
-    return Promise.reject(error);
-});
-
 const api = axios.create(
     {
         baseURL: API_URL,
@@ -209,13 +153,13 @@ noErrorApi.interceptors.response.use(response=> {
     } else {
         const errorStatus = error.response.status;
 
-        if (errorStatus === 401) {
-            redirectToLogin();
-        }
+        // if (errorStatus === 401) {
+        //     redirectToLogin();
+        // }
     }
     return Promise.reject(error);
 });
 
 
 
-export {loginApi, verifyTokenApi, api, noErrorApi};
+export {loginApi, api, noErrorApi};

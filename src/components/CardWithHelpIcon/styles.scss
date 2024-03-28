@@ -1,0 +1,18 @@
+.card-with-help-icon {
+  position: relative;
+
+  .card-question-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  &.tutorial-mode {
+    .card-question-btn {
+      svg path {
+        fill: var(--color-blue)
+      }
+    }
+  }
+
+}

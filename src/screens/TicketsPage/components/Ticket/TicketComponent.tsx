@@ -1,8 +1,5 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import "./styles.scss";
-import {verifyToken} from "@/services/auth";
-import {verifyUser} from "@/utils/userData";
-import {Routes} from "@/types/routes";
 import {ApiResponseType} from "@/types/api";
 import {createTicket, reopenTicket} from "@/services/tickets";
 import useAuth from "@/context/authContext";
@@ -101,12 +98,6 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
 
     const handleReopenTicket = async () => {
         try {
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
             const res: ApiResponseType = await reopenTicket(
                 {
                     token: token,
@@ -141,12 +132,6 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
         data.attachedFiles= selectedFiles;
 
         try {
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
             const res: ApiResponseType = await createTicket(
                 {
                     token: token,
