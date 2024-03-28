@@ -7,8 +7,6 @@ import Loader from "@/components/Loader";
 import {arrayBufferToBase64, readFileAsArrayBuffer} from "@/utils/files";
 import Button from "@/components/Button/Button";
 import {sendDocumentFiles} from "@/services/files";
-import {verifyToken} from "@/services/auth";
-import {verifyUser} from "@/utils/userData";
 import {ApiResponseType} from "@/types/api";
 import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import useAuth from "@/context/authContext";
@@ -149,9 +147,6 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
 
             try {
                 setIsDragging(true);
-                //verify token
-                const responseVerification = await verifyToken(token);
-               verifyUser(responseVerification, currentDate)
 
                 const res: ApiResponseType = await sendDocumentFiles(
                     {

@@ -1,5 +1,4 @@
-import {AuthApiResponseType} from "@/types/api";
-import {loginApi, verifyTokenApi} from "@/services/api";
+import {loginApi} from "@/services/api";
 
 
 const authenticate = async (login: string, password: string) => {
@@ -23,23 +22,4 @@ const authenticate = async (login: string, password: string) => {
   }
 };
 
-const verifyToken = async (token: string) => {
-  try {
-    const response: AuthApiResponseType = await verifyTokenApi.post(`/TokenIsValid`,
-      {
-        token
-      },
-      {
-        headers: {
-          "content-type": "application/json",
-        },
-      }
-    );
-    return response;
-  } catch (err) {
-    console.error(err);
-    return err;
-  }
-}
-
-export { authenticate, verifyToken };
+export { authenticate };

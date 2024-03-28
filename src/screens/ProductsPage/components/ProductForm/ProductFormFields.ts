@@ -1,5 +1,5 @@
-import {FormFieldTypes, WidthType} from "@/types/forms";
-import {OptionType} from "@/types/forms";
+import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import {ProductHints} from "@/screens/ProductsPage/productsHints.constants";
 
 export const PRODUCT = {
     uuid: 'uuid',
@@ -48,7 +48,10 @@ export const PRODUCT = {
 
 } as const;
 
-export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
+
+
+export const FormFieldsGeneral = ({countries, isNew=false}: { countries: OptionType[], isNew: boolean }) => {
+    return [
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
@@ -61,6 +64,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
             errorMessage: "Required field",
             width: WidthType.w50,
             classNames: "",
+            hint: ProductHints['name'] || '',
         },
         {
             fieldType: FormFieldTypes.SELECT,
@@ -75,6 +79,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
             errorMessage: "Required field",
             width: WidthType.w25,
             classNames: "",
+            hint: ProductHints['countryOfOrigin'] || '',
         },
         {
             fieldType: FormFieldTypes.NUMBER,
@@ -87,6 +92,7 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
             placeholder: "0",
             width: WidthType.w25,
             classNames: "",
+            hint: ProductHints['purchaseValue'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -98,12 +104,24 @@ export const FormFieldsGeneral = ({countries}: { countries: OptionType[] }) => [
                 required: "Required field",
             },
             errorMessage: "Required field",
-            width: WidthType.w100,
+            width: isNew ? WidthType.w100 : WidthType.w75,
             classNames: "",
+            hint: ProductHints['fullName'] || '',
+        },
+        {
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: 'status',
+            label: "Status",
+            width: WidthType.w25,
+            classNames: "",
+            hint: ProductHints['status'] || '',
+            isDisplayed: !isNew,
+            disabled: true,
         },
 
-
     ];
+}
 
 export const FormFieldsSKU = () => [
         {
@@ -118,6 +136,7 @@ export const FormFieldsSKU = () => [
             errorMessage: "Required field",
             width: WidthType.w33,
             classNames: "",
+            hint: ProductHints['sku'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -127,6 +146,7 @@ export const FormFieldsSKU = () => [
             placeholder: "",
             width: WidthType.w33,
             classNames: "",
+            hint: ProductHints['amazonSku'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -136,6 +156,7 @@ export const FormFieldsSKU = () => [
             placeholder: "",
             width: WidthType.w33,
             classNames: "",
+            hint: ProductHints['hsCode'] || '',
         },
     ];
 
@@ -154,6 +175,7 @@ export const FormFieldsWarehouse = ({typeOfStorage, salesPackingMaterial, specia
             errorMessage: "Required field",
             width: WidthType.w33,
             classNames: "",
+            hint: ProductHints['typeOfStorage'] || '',
         },
         {
             fieldType: FormFieldTypes.SELECT,
@@ -164,6 +186,7 @@ export const FormFieldsWarehouse = ({typeOfStorage, salesPackingMaterial, specia
             options: salesPackingMaterial,
             width: WidthType.w33,
             classNames: "",
+            hint: ProductHints['salesPackingMaterial'] || '',
         },
         {
             fieldType: FormFieldTypes.SELECT,
@@ -174,6 +197,7 @@ export const FormFieldsWarehouse = ({typeOfStorage, salesPackingMaterial, specia
             options: specialDeliveryOrStorageRequirements,
             width: WidthType.w33,
             classNames: "",
+            hint: ProductHints['specialDeliveryStorageRequest'] || '',
         }
     ];
 
@@ -188,6 +212,7 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
             options: whoProvidesPackagingMaterial,
             width: WidthType.w33,
             classNames: "",
+            hint: ProductHints['whoProvidesPackagingMaterial'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -196,6 +221,7 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
             label: "Special temperature control",
             width: WidthType.w33,
             classNames: "",
+            hint: ProductHints['specialTemperatureControl'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -204,6 +230,7 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
             label: "Expiring term (month)",
             width: WidthType.w33,
             classNames: "",
+            hint: ProductHints['expiringTerm'] || '',
         },
     ];
 export const FormFieldsAdditional2 = () => [
@@ -248,7 +275,9 @@ export const FormFieldsAdditional2 = () => [
             label: "Packing box",
             width: WidthType.w17,
             classNames: "",
+            hint: ProductHints['packingBox'] || '',
         },
+
     ];
 
 export const FormFieldsUnitsOfMeasures =  [

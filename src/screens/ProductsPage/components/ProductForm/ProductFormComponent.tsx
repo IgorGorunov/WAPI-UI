@@ -21,8 +21,6 @@ import {Table} from 'antd';
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import Tabs from "@/components/Tabs";
 import Icon from "@/components/Icon";
-import {verifyToken} from "@/services/auth";
-import {Routes} from "@/types/routes";
 import {sendProductInfo} from "@/services/products";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
@@ -33,13 +31,15 @@ import '@/styles/forms.scss';
 import {TabFields, TabTitles} from "./ProductFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
-import {verifyUser} from "@/utils/userData";
 import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import useNotifications from "@/context/notificationContext";
 import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 import DocumentTickets from "@/components/DocumentTickets";
 import SingleDocument from "@/components/SingleDocument";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
+import CardWithHelpIcon from "@/components/CardWithHelpIcon";
+import {ProductDimensionsHints, ProductOtherHints} from "@/screens/ProductsPage/productsHints.constants";
+import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -63,6 +63,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const {notifications} = useNotifications();
 
     const orderIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved') ;
+    const orderIsInDraft = !!(productData && productData?.status.toLowerCase() === 'draft');
 
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
@@ -119,6 +120,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             uuid: productData?.uuid || uuid || '',
             name: productData?.name || '',
             fullName: productData?.fullName || '',
+            status: productData?.status || SendStatusType.DRAFT,
             countryOfOrigin: productData?.countryOfOrigin || '',
             purchaseValue: productData?.purchaseValue || '',
             sku: productData?.sku || '',
@@ -289,7 +291,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Name *',
+                title: <TutorialHintTooltip hint={ProductDimensionsHints['name'] || ''}><div>Name *</div></TutorialHintTooltip>,
                 dataIndex: 'name',
                 width: '100%',
                 key: 'name',
@@ -894,12 +896,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         data.status = sendStatus;
 
         try {
-            //verify token
-            const responseVerification = await verifyToken(token);
-            if (!verifyUser(responseVerification, currentDate) ){
-                await Router.push(Routes.Login);
-            }
-
             const res: ApiResponse = await sendProductInfo(
                 {
                     token: token,
@@ -951,7 +947,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         updateTabTitles(fieldNames);
     };
 
-    const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr}), [COUNTRIES])
+    const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr, isNew: !productData?.uuid}), [COUNTRIES])
     const skuFields = useMemo(()=>FormFieldsSKU(), []);
     const warehouseFields = useMemo(()=>FormFieldsWarehouse({typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial:createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements)}),[productParams])
     const additionalFields = useMemo(()=> FormFieldsAdditional1({whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking)}), [])
@@ -964,7 +960,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='tabs-iddd' tabTitles={tabTitles} classNames='inside-modal' notifications={productNotifications}>
                 <div className='primary-tab'>
-                    <div className='card product-info--general'>
+                    <CardWithHelpIcon classNames='card product-info--general'>
                         <h3 className='product-info__block-title'>
                             <Icon name='general' />
                             General
@@ -972,8 +968,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
                         </div>
-                    </div>
-                    <div className='card product-info--sku'>
+                    </CardWithHelpIcon>
+                    <CardWithHelpIcon classNames='card product-info--sku'>
                         <h3 className='product-info__block-title'>
                             <Icon name='sku' />
                             SKU
@@ -981,8 +977,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors} isDisabled={isDisabled}/>
                         </div>
-                    </div>
-                    <div className='card product-info--warehouse'>
+                    </CardWithHelpIcon>
+                    <CardWithHelpIcon classNames='card product-info--warehouse'>
                         <h3 className='product-info__block-title'>
                             <Icon name='warehouse' />
                             Warehouse
@@ -990,8 +986,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={warehouseFields} errors={errors} isDisabled={isDisabled} />
                         </div>
-                    </div>
-                    <div className='card product-info--additional'>
+                    </CardWithHelpIcon>
+                    <CardWithHelpIcon classNames='card product-info--additional'>
                         <h3 className='product-info__block-title'>
                             <Icon name='additional' />
                             Additional
@@ -1004,10 +1000,10 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <div className='checkboxes grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={additionalCheckboxes} errors={errors} isDisabled={isDisabled} />
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
                 <div className="dimensions-tab">
-                    <div className="card min-height-600 product-info--unitOfMeasures">
+                    <CardWithHelpIcon classNames="card min-height-600 product-info--unitOfMeasures">
                         <h3 className='product-info__block-title'>
                             <Icon name='dimensions' />
                             Dimensions
@@ -1030,6 +1026,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                             errorMessage={error?.message}
                                             errors={errors}
                                             isRequired={true}
+                                            hint={ProductDimensionsHints['unitOfMeasure'] || ''}
                                         />
                                     )}
                                     rules={{ required: 'Field is required' }}
@@ -1055,21 +1052,28 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
 
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
                 <div className="barcodes-tab">
                     <div className="card min-height-600 product-info--barcodes">
                         <h3 className='product-info__block-title title-small'>
-                            <Icon name='barcodes' />
+                            <Icon name='barcodes'/>
                             Barcodes
                         </h3>
                         <div className='product-info--barcodes-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendBarcode({ key: `barcode-${Date.now().toString()}`, selected: false, barcode: '' })}>
+                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL}
+                                            disabled={isDisabled} variant={ButtonVariant.SECONDARY}
+                                            onClick={() => appendBarcode({
+                                                key: `barcode-${Date.now().toString()}`,
+                                                selected: false,
+                                                barcode: ''
+                                            })}>
                                         Add
                                     </Button>
-                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
+                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL}
+                                            disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
                                         Remove selected
                                     </Button>
 
@@ -1088,11 +1092,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     </div>
                 </div>
                 <div className="aliases-tab">
-                    <div className="card min-height-600 product-info--aliases">
-                        <h3 className='product-info__block-title title-small'>
-                            <Icon name='aliases' />
-                            Aliases
-                        </h3>
+                    <CardWithHelpIcon classNames="card min-height-600 product-info--aliases">
+                        <TutorialHintTooltip hint={ProductOtherHints['aliases'] || ''} position='left' >
+                            <h3 className='product-info__block-title title-small'>
+                                <Icon name='aliases' />
+                                Aliases
+                            </h3>
+                        </TutorialHintTooltip>
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
@@ -1115,14 +1121,16 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
 
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
                 <div className="bundles-tab">
-                    <div className="card min-height-600 product-info--bundleKit">
-                        <h3 className='product-info__block-title title-small'>
-                            <Icon name='bundle' />
-                            Bundle kit
-                        </h3>
+                    <CardWithHelpIcon classNames="card min-height-600 product-info--bundleKit">
+                        <TutorialHintTooltip hint={ProductOtherHints['virtualBundleKit'] || ''} position='left' >
+                            <h3 className='product-info__block-title title-small'>
+                                <Icon name='bundle' />
+                                Bundle kit
+                            </h3>
+                        </TutorialHintTooltip>
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
@@ -1145,14 +1153,16 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
 
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
                 <div className="analogues-tab">
-                    <div className="card min-height-600 product-info--analogues">
-                        <h3 className='product-info__block-title title-small'>
-                            <Icon name='analogues' />
-                            Analogues
-                        </h3>
+                    <CardWithHelpIcon classNames="card min-height-600 product-info--analogues">
+                        <TutorialHintTooltip hint={ProductOtherHints['analogues'] || ''} position='left' >
+                            <h3 className='product-info__block-title title-small'>
+                                <Icon name='analogues' />
+                                Analogues
+                            </h3>
+                        </TutorialHintTooltip>
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
@@ -1174,10 +1184,10 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 rowKey="key"
                             />
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
                 {productData?.statusHistory ? <div className="status-history-tab">
-                    <div className="card min-height-600 product-info--analogues">
+                    <div className="card min-height-600 product-info--status-history">
                         <h3 className='product-info__block-title'>
                             <Icon name='history' />
                             Status history
@@ -1195,22 +1205,24 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     </div>
                 </div> : null}
                 <div className='files-tab'>
-                    <div className="card min-height-600 product-info--files">
-                        <h3 className='product-info__block-title'>
-                            <Icon name='files' />
-                            Files
-                        </h3>
+                    <CardWithHelpIcon classNames="card min-height-600 product-info--files">
+                        <TutorialHintTooltip hint={ProductOtherHints['files'] || ''} position='left' >
+                            <h3 className='product-info__block-title title-small'>
+                                <Icon name='files' />
+                                Files
+                            </h3>
+                        </TutorialHintTooltip>
                         <div className='dropzoneBlock'>
                             <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={productData?.canEdit ? '' : productData?.uuid} />
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
             </Tabs>
             <div className='form-submit-btn'>
                 {productData && productData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
                 {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
-                {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
+                {(!isDisabled && !orderIsApproved || orderIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
                 {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
 
             </div>
