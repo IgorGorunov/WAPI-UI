@@ -54,9 +54,6 @@ const getDocType = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
 }
 
 const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, currentRange, setCurrentRange, setFilteredDocs, handleEditDoc }) => {
-
-    console.log('docs:', docs);
-
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
@@ -310,9 +307,6 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
     useEffect(() => {
         setFilteredDocs(filteredDocs);
-
-        console.log("filtered: ", filteredDocs)
-
     }, [filteredDocs]);
 
     const curWidth = useMemo(()=>{

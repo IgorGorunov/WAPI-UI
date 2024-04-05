@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useState} from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
@@ -19,6 +18,10 @@ import Loader from "@/components/Loader";
 import StockMovementList from "@/screens/StockMovementsPage/components/StockMovementList";
 import StockMovementForm from "@/screens/StockMovementsPage/components/StockMovementForm";
 import {ApiResponseType} from "@/types/api";
+// import useTourGuide from "@/context/tourGuideContext";
+// import {TourGuidePages} from "@/types/tourGuide";
+// import TourGuide from "@/components/TourGuide";
+// import {tourGuideStepsStockMovements} from "@/screens/StockMovementsPage/stockMovementsTourGuideSteps.constants";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
@@ -28,19 +31,13 @@ const docNamesPlural = {
     [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbounds',
     [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movements',
     [STOCK_MOVEMENT_DOC_TYPE.OUTBOUND]: 'Outbounds',
+    [STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE]: 'Logistic services',
 }
-// const docNamesSingle = {
-//     [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbound',
-//     [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movement',
-//     [STOCK_MOVEMENT_DOC_TYPE.OUTBOUND]: 'Outbound',
-// }
 
 const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     const Router = useRouter();
-    const { token, setToken, currentDate } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
+    const { token, currentDate } = useAuth();
 
     useEffect(() => {
         if (!token) Router.push(Routes.Login);
@@ -128,23 +125,32 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
         exportFileXLS(filteredData, docNamesPlural[docType]);
     }
 
+    // //tour guide
+    // const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+    //
+    // useEffect(() => {
+    //     if (!isTutorialWatched(TourGuidePages.StockMovement)) {
+    //         if (!isLoading && stockMovementData) {
+    //             setTimeout(() => setRunTour(true), 1000);
+    //         }
+    //     }
+    // }, [isLoading]);
+
     return (
         <Layout hasHeader hasFooter>
             <div className="stock-movement-page__container">
                 {isLoading && <Loader />}
-                <Header pageTitle={docNamesPlural[docType]} toRight >
-                    <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add</Button>
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle={docNamesPlural[docType]} toRight needTutorialBtn >
+                    <Button classNames='add-doc' icon="add" iconOnTheRight onClick={handleAddOrder}>Add</Button>
+                    <Button classNames='export-docs' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
                 {stockMovementData && <StockMovementList docType={docType} docs={stockMovementData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredDocs={setFilteredDocs} handleEditDoc={handleEditStockMovement} />}
             </div>
             {showStockMovementModal && (isDocNew && !docUuid || !isDocNew && docUuid) &&
                 <StockMovementForm docType={docType} docUuid={docUuid} closeDocModal={onShowStockMovementModalClose} closeModalOnSuccess={()=>{setShowStockMovementModal(false);fetchData();}} />
-                // <Modal title={docNamesSingle[docType]} onClose={onShowStockMovementModalClose} >
-                //     <StockMovementForm docType={docType} docParameters={docParameters} docData={singleStockMovement} closeDocModal={()=>{setShowStockMovementModal(false);fetchData();}}/>
-                // </Modal>
             }
+            {/*{stockMovementData && runTour && tourGuideStepsStockMovements ? <TourGuide steps={tourGuideStepsStockMovements} run={runTour} pageName={TourGuidePages.StockMovement} /> : null}*/}
         </Layout>
     )
 }

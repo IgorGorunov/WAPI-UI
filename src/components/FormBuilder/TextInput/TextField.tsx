@@ -1,24 +1,27 @@
 import React, {FormEvent, useCallback, forwardRef } from "react";
 import { FieldPropsType } from "@/types/forms";
 import "./styles.scss";
+import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
 const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
-    classNames='',
-  name,
-  label='',
-  type='text',
-  onChange,
-  isRequired = false,
-  placeholder = '',
-  errorMessage,
-  disabled = false,
-  value='',
-  rules,
-  errors,
-  needToasts=true,
-  width,
-    noCounters = true,
-   ...otherProps
+      classNames='',
+      name,
+      label='',
+      type='text',
+      onChange,
+      isRequired = false,
+      placeholder = '',
+      errorMessage,
+      disabled = false,
+      value='',
+      rules,
+      errors,
+      needToasts=true,
+      width,
+      hint='',
+      notDisable,
+      noCounters = true,
+      ...otherProps
 }, ref) => {
 
   const handleChange = useCallback((event: FormEvent) => {
@@ -34,29 +37,32 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
   const curVal = (type === 'number') ? value as number : type=== 'date' ? (getDate(value as string)) : value as string;
 
   return (
-    <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
-        {label && <label htmlFor={name}>{label}</label>}
-          <input
-            ref={ref}
-            id={name}
-            type={type}
-            placeholder={placeholder}
-            onChange={handleChange}
-            value={curVal || ""}
-            disabled={disabled}
-            onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-            {...otherProps}
-            autoComplete="new-user-email"
-            aria-autocomplete='none'
-            className={noCounters ? 'no-counters' : ''}
-          />
-        {errorMessage && <p className="error">{errorMessage}</p>}
-      {errors && name in errors ? (
-        <p className="error er1">
-          {(errors && errors[name]?.message) || errorMessage}
-        </p>
-      ) : null}
-    </div>
+    <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
+        <div className={`form-control ${classNames ? classNames : ""}  ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
+            {label && <label htmlFor={name}>{label}</label>}
+              <input
+                ref={ref}
+                id={name}
+                type={type}
+                placeholder={placeholder}
+                onChange={handleChange}
+                value={curVal || ""}
+                disabled={disabled}
+                onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                {...otherProps}
+                autoComplete="new-user-email"
+                aria-autocomplete='none'
+                className={noCounters ? 'no-counters' : ''}
+              />
+            {errorMessage && <p className="error">{errorMessage}</p>}
+          {errors && name in errors ? (
+            <p className="error er1">
+              {(errors && errors[name]?.message) || errorMessage}
+            </p>
+          ) : null}
+        </div>
+    </TutorialHintTooltip>
+
   );
 });
 

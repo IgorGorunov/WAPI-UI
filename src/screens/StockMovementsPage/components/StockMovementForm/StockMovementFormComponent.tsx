@@ -42,6 +42,9 @@ import SingleDocument from "@/components/SingleDocument";
 import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import {formatDateStringToDisplayString} from "@/utils/date";
+// import CardWithHelpIcon from "@/components/CardWithHelpIcon";
+// import TutorialHintTooltip from "@/components/TutorialHintTooltip";
+// import {StockMovementsHints} from "@/screens/StockMovementsHintstockMovementsPage/stockMovementsHints.constants";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -68,9 +71,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     const { token, currentDate } = useAuth();
 
-    console.log('params: ', docParameters);
-    console.log('data: ', docData);
-
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
@@ -85,7 +85,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //tickets
     const [showTicketForm, setShowTicketForm] = useState(false);
     const handleCreateTicket = () => {
-        console.log('create ticket');
         setShowTicketForm(true)
     }
 
@@ -97,9 +96,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             number: docData?.number || '',
             incomingDate: docData?.incomingDate || currentDate.toISOString(),
             incomingNumber: docData?.incomingNumber || '',
-            sender: docData?.sender || (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS ? 'Customer' : ''),
+            sender: docData?.sender || (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE ? 'Customer' : ''),
             senderCountry: docData?.senderCountry || '',
-            receiver: docData?.receiver || (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND ? 'Customer' : ''),
+            receiver: docData?.receiver || (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE ? 'Customer' : ''),
             receiverCountry: docData?.receiverCountry || '',
             estimatedTimeArrives: docData?.estimatedTimeArrives || '0001-01-01T00:00:00',
             uuid: docData?.uuid || '',
@@ -135,7 +134,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //sender
     const senderOptions = docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || !docParameters.sender ? [] : docParameters.sender.map(item => ({label: item.warehouse, value: item.warehouse}));
     const onSenderChange = (newSender: string) => {
-        if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS) return;
+        if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE) return;
         const newSenderCountry = docParameters.sender ? docParameters.sender.filter(item=>item.warehouse===newSender) : [];
         setValue('senderCountry',newSenderCountry.length ? newSenderCountry[0].country : '', { shouldValidate: true });
     }
@@ -143,7 +142,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //receiver
     const receiverOptions = docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || !docParameters.receiver ? [] : docParameters.receiver.map(item => ({label: item.warehouse, value: item.warehouse}));
     const onReceiverChange = (newReceiver: string) => {
-        if (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND) return;
+        if (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE) return;
         const newReceiverCountry = docParameters.receiver ? docParameters.receiver.filter(item=>item.warehouse===newReceiver) : [];
         setValue('receiverCountry',newReceiverCountry.length ? newReceiverCountry[0].country : '', { shouldValidate: true });
     }
@@ -454,7 +453,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     //form fields
     const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType, !!(docData?.uuid && !docData.canEdit && !isFinished)), [docData])
-    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished) }), [docData]);
+    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished), senderHide: !!docData?.senderHide, receiverHide: !!docData?.receiverHide }), [docData]);
     //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
 
 
@@ -590,12 +589,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     const onError = (props: any) => {
-
         if (isDraft || isJustETA) {
             clearErrors();
             const formData = getValues();
-            console.log('Form data on error:', formData);
-
             return onSubmitForm(formData as SingleStockMovementFormType);
         }
 
@@ -607,8 +603,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 autoClose: 3000,
             });
         }
-
-        console.log("validation errors: ", fieldNames, props)
 
         updateTabTitles(fieldNames);
     };
@@ -642,6 +636,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 </div>
 
                 <div key='product-tab' className='product-tab'>
+                    {/*<CardWithHelpIcon classNames="card min-height-600 stock-movement--products">*/}
                     <div className="card min-height-600 stock-movement--products">
                         <h3 className='stock-movement__block-title '>
                             <Icon name='goods' />
@@ -652,16 +647,24 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             <div className='stock-movement--btns width-100'>
                                 <div className='grid-row'>
                                     <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
-                                        <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
-                                        <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
-                                            Selection
-                                        </Button>
-                                        <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
-                                            Add
-                                        </Button>
-                                        <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                            Remove selected
-                                        </Button>
+                                        {/*<TutorialHintTooltip hint={StockMovementsHints['importProducts'] || ''} forBtn >*/}
+                                            <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
+                                        {/*</TutorialHintTooltip>*/}
+                                        {/*<TutorialHintTooltip hint={StockMovementsHints['selection'] || ''} forBtn >*/}
+                                            <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
+                                                Selection
+                                            </Button>
+                                        {/*</TutorialHintTooltip>*/}
+                                        {/*<TutorialHintTooltip hint={StockMovementsHints['addProduct'] || ''} forBtn >*/}
+                                            <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
+                                                Add
+                                            </Button>
+                                        {/*</TutorialHintTooltip>*/}
+                                        {/*<TutorialHintTooltip hint={StockMovementsHints['removeSelected'] || ''} forBtn >*/}
+                                            <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
+                                                Remove selected
+                                            </Button>
+                                        {/*</TutorialHintTooltip>*/}
                                     </div>
                                 </div>
                             </div>
@@ -708,11 +711,14 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     </div>
                 </div> : null}
                 <div key='files-tab' className='files-tab'>
-                    <div className="card min-height-600 stock-movement--files">
-                        <h3 className='stock-movement__block-title'>
-                            <Icon name='files' />
-                            Files
-                        </h3>
+                    {/*<CardWithHelpIcon classNames="card min-height-600 stock-movement--products">*/}
+                    <div className="card min-height-600 stock-movement--products">
+                        {/*<TutorialHintTooltip hint={StockMovementsHints['files'] || ''} position='left' >*/}
+                            <h3 className='stock-movement__block-title title-small'>
+                                <Icon name='files' />
+                                Files
+                            </h3>
+                        {/*</TutorialHintTooltip>*/}
                         <div className='dropzoneBlock'>
                             <DropZone readOnly={!!isDisabled} files={selectedFiles} docUuid={docData?.canEdit ? '' : docData?.uuid} onFilesChange={handleFilesChange} />
                         </div>

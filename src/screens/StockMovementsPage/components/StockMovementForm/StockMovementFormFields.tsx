@@ -1,5 +1,6 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
+import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 
 export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TYPE, canEditATA: boolean) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
@@ -15,6 +16,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 width: WidthType.w17,
                 classNames: "",
                 isDisplayed: !newObject,
+                hint: StockMovementsHints['number'] || '',
             },
             {
                 fieldType: FormFieldTypes.TEXT,
@@ -24,6 +26,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 placeholder: "",
                 width: newObject ? WidthType.w33 : WidthType.w17,
                 classNames: "",
+                hint: StockMovementsHints['incomingNumber'] || '',
             },
             {
                 fieldType: FormFieldTypes.DATE,
@@ -52,6 +55,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 },
                 errorMessage: "Required field",
                 isClearable: true,
+                hint: StockMovementsHints['estimatedTimeArrives'] || '',
             },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -63,6 +67,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
             width: WidthType.w25,
             classNames: "",
             isDisplayed: !newObject,
+            hint: StockMovementsHints['status'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -74,6 +79,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
             width: WidthType.w25,
             classNames: "",
             isDisplayed: !newObject,
+            hint: StockMovementsHints['statusAdditionalInfo'] || '',
         },
     ];
 }
@@ -88,6 +94,8 @@ export const DetailsFields = (
         onSenderChange,
         onReceiverChange,
         canEditETA,
+        receiverHide,
+        senderHide,
     }:{
         newObject: boolean,
         docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -97,26 +105,30 @@ export const DetailsFields = (
         onSenderChange: (newSender: string)=>void,
         onReceiverChange: (newReceiver: string)=>void,
         canEditETA: boolean;
+        receiverHide: boolean;
+        senderHide: boolean;
     }
 ) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
-    const isOutbound = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND
+    const isOutbound = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND;
+    const isLogisticService = docType === STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE;
     return [
         {
-            fieldType: isInbound ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
+            fieldType: isInbound || isLogisticService ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
             type: "text",
             name: 'sender',
             label: 'Sender',
             placeholder: "",
-            //disabled: isInbound,
+            disabled: senderHide,
             rules: {
                 required: "Required field",
             },
             errorMessage: "Required field",
-            options: isInbound ? [] : senderOptions,
+            options: isInbound || isLogisticService ? [] : senderOptions,
             onChange: onSenderChange,
             width: WidthType.w33,
             classNames: "",
+            hint: StockMovementsHints['sender'] || '',
         },
         {
             fieldType: FormFieldTypes.SELECT,
@@ -129,12 +141,13 @@ export const DetailsFields = (
                 required: "Required field",
             },
             errorMessage: "Required field",
-            disabled: !isInbound,
+            disabled: !isInbound && !isLogisticService,
             width: WidthType.w17,
             classNames: "",
+            hint: StockMovementsHints['senderCountry'] || '',
         },
         {
-            fieldType: isOutbound ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
+            fieldType: isOutbound || isLogisticService ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
             type: "text",
             name: 'receiver',
             label: 'Receiver',
@@ -143,11 +156,12 @@ export const DetailsFields = (
                 required: "Required field",
             },
             errorMessage: "Required field",
-            options: isOutbound ? [] : receiverOptions,
+            options: isOutbound || isLogisticService ? [] : receiverOptions,
             onChange: onReceiverChange,
-            //disabled: isOutbound,
+            disabled: receiverHide,
             width: WidthType.w33,
             classNames: "",
+            hint: StockMovementsHints['receiver'] || '',
         },
         {
             fieldType: FormFieldTypes.SELECT,
@@ -160,10 +174,11 @@ export const DetailsFields = (
             },
             errorMessage: "Required field",
             options: countryOptions,
-            disabled: !isOutbound,
+            disabled: !isOutbound && !isLogisticService,
             width: WidthType.w17,
 
             classNames: "",
+            hint: StockMovementsHints['receiverCountry'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -176,29 +191,8 @@ export const DetailsFields = (
             classNames: "",
             notDisable: isInbound && canEditETA,
             //isDisplayed: !newObject,
+            hint: StockMovementsHints['courierServiceTrackingNumber'] || '',
         },
-        // {
-        //     fieldType: FormFieldTypes.TEXT,
-        //     type: "text",
-        //     name: 'warehouseTrackingNumberCurrent',
-        //     label: 'Warehouse tracking number',
-        //     placeholder: "",
-        //     disabled: true,
-        //     width: WidthType.w33,
-        //     classNames: "",
-        //     isDisplayed: !newObject,
-        // },
-        // {
-        //     fieldType: FormFieldTypes.TEXT,
-        //     type: "text",
-        //     name: 'wapiTrackingNumber',
-        //     label: 'Wapi tracking number',
-        //     placeholder: "",
-        //     disabled: true,
-        //     width: WidthType.w33,
-        //     classNames: "",
-        //     isDisplayed: !newObject,
-        // },
         {
             fieldType: FormFieldTypes.TEXT_AREA,
             type: "text",
@@ -208,7 +202,7 @@ export const DetailsFields = (
             //disabled: true,
             width: WidthType.w100,
             classNames: "",
-
+            hint: StockMovementsHints['comment'] || '',
         },
 
     ];
