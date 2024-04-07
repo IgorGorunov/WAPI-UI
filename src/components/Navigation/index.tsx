@@ -32,7 +32,9 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
     //         handleClose();
     //     }
     // },[runNavigationTour]);
-    const handleCloseClick = useCallback(() => {},[]);
+    const handleCloseClick = useCallback(() => {
+        handleClose();
+    },[]);
 
 
     return (
