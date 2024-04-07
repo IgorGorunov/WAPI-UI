@@ -88,11 +88,13 @@ export type FieldPropsType = {
   isCheckboxHidden?: boolean;
   circleColor?: string;
   isCountry?: boolean;
+  flagBefore?: boolean;
   noCounters?: boolean;
   alignFlexH?: ALIGN_FLEX;
   //rows?: number;
   hint?: string;
   notDisable?: boolean;
+
 }
 
 export type FormBuilderType = FieldPropsType & {

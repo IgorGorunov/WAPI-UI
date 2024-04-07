@@ -239,7 +239,6 @@ export const getHeaderNameById = (reportType: REPORT_TYPES, headerId: string) =>
         case REPORT_TYPES.SALE_DYNAMIC :
             return getSaleDynamicHeaderNames(headerId) || '';
         case REPORT_TYPES.COD_REPORT :
-            console.log('column name: ', headerId, CodReportHeaderNames[headerId])
             return CodReportHeaderNames[headerId] || '';
 
         default:

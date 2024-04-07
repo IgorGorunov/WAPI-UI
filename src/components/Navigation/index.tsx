@@ -1,10 +1,14 @@
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Icon from "@/components/Icon";
 import Link from "next/link";
 import SubmenuBlock from "@/components/Navigation/SubmenuBlock";
 import {navBlocks} from "@/components/Navigation/navItems.constants";
 import './styles.scss'
 import SubmenuSingleItem from "@/components/Navigation/SubmenuSingleItem";
+// import useTourGuide from "@/context/tourGuideContext";
+// import {navigationSteps} from "./navigationTourGuideSteps.constants";
+// import TourGuide from "@/components/TourGuide";
+// import {TourGuidePages} from "@/types/tourGuide";
 
 type NavigationType = {
     isMenuOpen: boolean;
@@ -12,8 +16,27 @@ type NavigationType = {
 }
 const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
 
+    // //tour guide
+    // const {isNavigationWatched} = useTourGuide();
+    // const [runNavigationTour, setRunNavigationTour] = useState(false);
+    //
+    // useEffect(() => {
+    //     if (isMenuOpen && !isNavigationWatched()) {
+    //         setTimeout(() => setRunNavigationTour(true), 1000);
+    //
+    //     }
+    // }, [isMenuOpen]);
+
+    // const handleCloseClick = useCallback(() => {
+    //     if (!runNavigationTour) {
+    //         handleClose();
+    //     }
+    // },[runNavigationTour]);
+    const handleCloseClick = useCallback(() => {},[]);
+
+
     return (
-        <div className={`burger-menu__overlay ${isMenuOpen ? 'burger-menu__overlay-open' : ''}`} onClick={handleClose}>
+        <div className={`burger-menu__overlay ${isMenuOpen ? 'burger-menu__overlay-open' : ''}`} onClick={handleCloseClick}>
             <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`} onClick={(e)=>e.stopPropagation()}>
                 <div className={`burger-menu-child`}>
                     <button className="close-button" onClick={handleClose}>
@@ -36,6 +59,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                     ))  : null}
                 </div>
             </div>
+            {/*{isMenuOpen && runNavigationTour && navigationSteps ? <TourGuide steps={navigationSteps} run={runNavigationTour} setRunTourOpt={setRunNavigationTour} pageName={TourGuidePages.Navigation} disableAnimation={true} /> : null}*/}
         </div>
     )
 }

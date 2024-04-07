@@ -5,12 +5,14 @@ export const enum STOCK_MOVEMENT_DOC_TYPE {
     INBOUNDS = 'Inbound',
     STOCK_MOVEMENT = 'StockMovement',
     OUTBOUND = 'Outbound',
+    LOGISTIC_SERVICE = 'LogisticService',
 }
 
 export enum STOCK_MOVEMENT_DOC_SUBJECT {
     'Inbound' = 'Inbound',
     'StockMovement' = 'Stock movement',
     'Outbound' = 'Outbound',
+    'LogisticService' = 'Logistic service',
 }
 
 export type StockMovementType = {
@@ -99,6 +101,8 @@ export type SingleStockMovementType = {
     attachedFiles: AttachedFilesType[];
     canEdit?: boolean;
     tickets?: TicketType[];
+    receiverHide?: boolean;
+    senderHide?: boolean;
 }
 
 export type StockMovementParamsProductType = {

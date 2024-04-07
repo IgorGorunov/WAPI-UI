@@ -1,6 +1,8 @@
 @import "@/constants/devices.scss";
 
 :root {
+  overscroll-behavior: none;
+
   // colors
   --color-blue: #5380F5;
   --color-blue-5:rgba(83, 128, 245, 0.05);
@@ -163,6 +165,10 @@ p, label {
   font-size: 12px;
   line-height: 20px;
   color: inherit;
+}
+
+ul {
+  list-style: none;
 }
 
 label {

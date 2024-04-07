@@ -54,7 +54,6 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
     const [selectedFilesImport, setSelectedFilesImport] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
     const handleFilesChange = (files) => {
-        console.log("files import:", files)
         setSelectedFilesImport(files);
     };
 
@@ -128,8 +127,6 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
             setShowStatusModal(true);
         }
     }
-
-    console.log('selectedFilesImport', selectedFilesImport)
 
     return (
         <div className='import-files'>

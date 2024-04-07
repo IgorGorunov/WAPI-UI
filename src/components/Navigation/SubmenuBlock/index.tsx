@@ -21,7 +21,7 @@ const SubmenuBlock: React.FC<SubmenuBlockType> = ({submenuTitle, submenuIcon, na
     const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
 
     return (
-        <div className={`submenu-container ${isSubmenuOpen ? 'submenu-container-expanded' : ''}`}>
+        <div className={`submenu-container ${submenuTitle.replaceAll(' ','')} ${isSubmenuOpen ? 'submenu-container-expanded' : ''}`}>
             <div className="submenu-header" onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}>
                 <Icon name={submenuIcon} style={{width: "30px", height: "30px"}} />
                 <span style={{marginLeft: "20px"}}>{submenuTitle}</span>

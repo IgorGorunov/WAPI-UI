@@ -59,6 +59,10 @@ export const navBlocks: SubmenuBlockType[] = [
             {
                 title: 'Outbounds',
                 link: '/outbounds',
+            },
+            {
+                title: 'Logistic services',
+                link: '/logisticServices',
             }
         ]
     },
