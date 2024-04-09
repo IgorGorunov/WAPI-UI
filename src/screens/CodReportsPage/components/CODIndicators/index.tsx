@@ -8,6 +8,7 @@ type IndicatorsIfoCartPropsType = {
     type: string;
     indicatorsArray: CODIndicatorType[];
     cardIcons?: boolean;
+    classNames?: string;
 };
 
 const IndicatorsInfoCard: React.FC<IndicatorsIfoCartPropsType> = (props) => {
@@ -15,6 +16,7 @@ const IndicatorsInfoCard: React.FC<IndicatorsIfoCartPropsType> = (props) => {
         title,
         type,
         indicatorsArray,
+        classNames,
     } = props;
 
     const Formatter = Intl.NumberFormat();
@@ -26,7 +28,7 @@ const IndicatorsInfoCard: React.FC<IndicatorsIfoCartPropsType> = (props) => {
 
     return (
         <div
-            className={`card indicator-info-card ${type}`}
+            className={`card indicator-info-card ${type} ${classNames ? classNames : ''}`}
         >
             <div className="indicator-info-card__wrapper">
                 <h4 className="title">{title}</h4>

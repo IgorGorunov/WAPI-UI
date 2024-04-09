@@ -1,9 +1,7 @@
 import axios from "axios";
-import pako from 'pako';
 
-
-//const API_URL = "https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
-const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
+const API_URL = "https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
+//const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
 
 let setError: (title:string, message: string) => void;
 
@@ -20,7 +18,7 @@ const administratorErrorText = 'Something went wrong. We are already fixing this
 const loginApi = axios.create(
     {
         baseURL: API_URL,
-        timeout: 2000,
+        timeout: 20000,
         headers: {
             "content-type": "application/json",
         },
@@ -30,12 +28,9 @@ const loginApi = axios.create(
 loginApi.interceptors.response.use(response=> {
     if (response.status === 200) {
         return  response;
-    } else if (response.status === 401) {
-        console.log('Unauthorized!');
     }
     return  response;
 }, function (error) {
-    console.log('get error', error);
 
     let errorMessage = '';
     let errorTitle = '';
@@ -81,13 +76,10 @@ api.interceptors.response.use(response=> {
 
     if (response.status === 200) {
         return  response;
-    } else if (response.status === 401) {
-        console.log('Unauthorized!');
     }
     return  response;
 }, error => {
     console.log('get error 123', error, error.code);
-    //const router = useRouter();
 
     let errorMessage = '';
     let errorTitle = '';
@@ -95,10 +87,12 @@ api.interceptors.response.use(response=> {
 
     if (error.code === "ERR_BAD_RESPONSE" || error.code === "ERR_BAD_REQUEST") {
         const errorStatus = error.response.status;
+        if (errorStatus === 400 && error?.response?.data?.errorMessage) {
+            return Promise.reject(error);
+        }
 
         if (errorStatus === 401) {
             redirectToLogin();
-            //const errorMessage = error.response.data.message || error.response.data.errorMessage || 'Wrong login or password';
         } else if (errorStatus === 500) {
             const errorResponseMessage = error.response.data.message || error.response.data.errorMessage || 'Something went wrong. Please, contact administrator.';
 
@@ -141,8 +135,6 @@ const noErrorApi = axios.create(
 noErrorApi.interceptors.response.use(response=> {
     if (response.status === 200) {
         return  response;
-    } else if (response.status === 401) {
-        console.log('Unauthorized!');
     }
     return  response;
 }, error => {
@@ -153,9 +145,9 @@ noErrorApi.interceptors.response.use(response=> {
     } else {
         const errorStatus = error.response.status;
 
-        // if (errorStatus === 401) {
-        //     redirectToLogin();
-        // }
+        if (errorStatus === 401) {
+            redirectToLogin();
+        }
     }
     return Promise.reject(error);
 });

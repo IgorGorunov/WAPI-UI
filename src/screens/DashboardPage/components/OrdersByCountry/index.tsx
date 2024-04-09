@@ -21,14 +21,18 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
 
   return (
     <div className={`orders-by-country orders-by-country__container card mb-md`}>
-      <h4 className="title">Orders by countries</h4>
+      <p className="title-h4 title">Orders by countries</p>
       <div className="orders-by-country__wrapper">
         <ul className="orders-by-country__tablist" role="tablist">
           <li
             className={`tab ${
               activeTab === 0 ? "active-tab" : ""
-            }`}
+            } orders-by-country-of-departure`}
             key="departure"
+            role="tab"
+            aria-controls="panel-id-0"
+            aria-selected={activeTab === 0}
+            id="tab-id-0"
           >
             <a
               key="tab-0"
@@ -38,10 +42,6 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
                 event.preventDefault();
                 setActiveTab(0);
               }}
-              role="tab"
-              aria-controls="panel-id-0"
-              aria-selected={activeTab === 0}
-              id="tab-id-0"
             >
               By country of departure
             </a>
@@ -49,8 +49,12 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
           <li
             className={`tab ${
               activeTab === 1 ? "active-tab" : ""
-            }`}
+            } orders-by-country-of-arrival`}
             key="arrival"
+            role="tab"
+            aria-controls="panel-id-1"
+            aria-selected={activeTab === 1}
+            id="tab-id-1"
           >
             <a
               key="tab-1"
@@ -60,10 +64,7 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
                 event.preventDefault();
                 setActiveTab(1);
               }}
-              role="tab"
-              aria-controls="panel-id-1"
-              aria-selected={activeTab === 1}
-              id="tab-id-1"
+
             >
               By country of arrival
             </a>

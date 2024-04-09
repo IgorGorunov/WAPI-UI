@@ -98,7 +98,7 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
             {isLoading && <Loader />}
             <div className='chat-block__message-history' >
                 <ul className='chat-block__messages' ref={containerRef} style={{maxHeight:`calc(100vh - ${isMobile ? '200' : '300'}px - ${sendHeight}px)`, overflow: 'hidden scroll'}}>
-                    {chatMessages ?
+                    {chatMessages && chatMessages.length ?
                         chatMessages.sort((a, b) => a.date > b.date ? 1 : -1)
                             .map(message => <li key={Math.random()}><Message message={message}/></li>)
                         : null

@@ -100,7 +100,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
                     amazonPrepOrderParameters={amazonPrepOrderParameters}
                     docUuid={docUuid}
                     closeAmazonPrepOrderModal={onCloseWithSuccess}
-                    refetchDoc={()=>{fetchSingleAmazonPrepOrder(docUuid); console.log('1111')}}
+                    refetchDoc={()=>{fetchSingleAmazonPrepOrder(docUuid)}}
                 />
             </Modal>
         :null}

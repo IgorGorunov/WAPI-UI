@@ -1,7 +1,7 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 
 export const CreateTicketFields = (topicOptions: OptionType[], subjectUuid: string|null) => {
-    console.log('subjectUuid', subjectUuid)
+
     return [
         {
             fieldType: FormFieldTypes.SELECT,

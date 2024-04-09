@@ -107,7 +107,6 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
 
             if (res?.status === 200) {
                 //success
-                console.log('it is success')
                 reFetchTicket();
             } else {
 
@@ -126,7 +125,6 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
     }, [singleTicketData]);
 
     const onSubmitForm = async (data) => {
-        console.log('Submit', data)
         clearTabTitles();
         setIsLoading(true);
         data.attachedFiles= selectedFiles;
@@ -142,7 +140,6 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
             if (res && "status" in res) {
                 if (res?.status === 200 && res?.data) {
                     //success
-                    console.log('ticket created',res.data);
                     setDocUuid(res.data);
                 }
             } else {

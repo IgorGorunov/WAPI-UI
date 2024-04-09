@@ -70,8 +70,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
     const Router = useRouter();
     const { token, setToken, currentDate } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -91,7 +89,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     //tickets
     const [showTicketForm, setShowTicketForm] = useState(false);
     const handleCreateTicket = () => {
-        console.log('create ticket');
         setShowTicketForm(true)
     }
 
@@ -931,7 +928,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         if (sendStatus === SendStatusType.DRAFT) {
             clearErrors();
             const formData = getValues();
-            //console.log('Form data on error:', formData);
 
             return onSubmitForm(formData as SingleProductFormType);
         }

@@ -1,0 +1,9 @@
+@import '@/constants/devices.scss';
+
+.prices-info {
+  padding: 24px;
+
+  @media (max-width: $mobile) {
+    padding: 0;
+  }
+}

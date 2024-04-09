@@ -13,35 +13,6 @@ import DashboardPage from "@/screens/DashboardPage";
 
 
 export default function Home() {
-  const { token, setToken } = useAuth();
-  const savedToken = Cookie.get('token');
-
-  if (!token && savedToken) setToken(savedToken);
-  // const router = useRouter();
-
-
-  // const [pageData, setPageData] = useState<any>(null);
-
-  // const initData = {
-  //   startDate: "2023-09-15",
-  //   endDate: "2023-09-15",
-  //   periodType: PeriodTypes.DAY,
-  //   token: token || "",
-  // };
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const res = await getDasboardData(initData);
-  //     setPageData(res?.data);
-  //     return res;
-  //   };
-
-  //   const response = fetchData();
-  // }, []);
-
-  // if (!token && !savedToken) {
-  //   router.push('login');
-  // }
 
   return (
     <>

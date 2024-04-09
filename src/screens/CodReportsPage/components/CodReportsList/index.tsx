@@ -19,6 +19,8 @@ import useAuth from "@/context/authContext";
 import Cookie from "js-cookie";
 import Loader from "@/components/Loader";
 import {formatDateStringToDisplayString} from "@/utils/date";
+import SearchField from "@/components/SearchField";
+import SearchContainer from "@/components/SearchContainer";
 
 type CodReportsListType = {
     codReports: CodReportType[];
@@ -34,8 +36,6 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     const [isLoading, setIsLoading] = useState(false);
 
     const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -303,15 +303,21 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            <div className="date-filter-container">
+            {/*<div className="date-filter-container">*/}
+            {/*    <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*/}
+            {/*    <Input*/}
+            {/*        placeholder="🔍 Search..."*/}
+            {/*        value={searchTerm}*/}
+            {/*        onChange={e => handleFilterChange(e.target.value)}*/}
+            {/*        className="search-input"*/}
+            {/*    />*/}
+            {/*</div>*/}
+            <SearchContainer>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
-                <Input
-                    placeholder="🔍 Search..."
-                    value={searchTerm}
-                    onChange={e => handleFilterChange(e.target.value)}
-                    className="search-input"
-                />
-            </div>
+                <div className='search-block'>
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                </div>
+            </SearchContainer>
             <div className="page-size-container">
                 <span className="page-size-text"></span>
                 <PageSizeSelector

@@ -1,15 +1,12 @@
 import React from "react";
-import Cookie from "js-cookie";
-import useAuth from "@/context/authContext";
 import TicketsPage from "@/screens/TicketsPage";
+import AuthChecker from "@/components/AuthChecker";
 
 export default function Tickets() {
-    const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-
-    if (!token && savedToken) setToken(savedToken);
 
     return (
-        <TicketsPage />
+        <AuthChecker isUser={true}>
+            <TicketsPage />
+        </AuthChecker>
     );
 }

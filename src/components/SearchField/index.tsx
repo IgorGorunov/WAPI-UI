@@ -13,11 +13,12 @@ const SearchField: React.FC<SearchFieldPropsType> = ({ searchTerm, handleClear, 
     return (
         <div className="search-field">
             <Input
-                    placeholder="Search..."
-                    value={searchTerm}
-                    onChange={e => handleChange(e.target.value)}
-                    className="search-input"
-                />
+                id='search-input'
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={e => handleChange(e.target.value)}
+                className="search-input"
+            />
             {searchTerm ? <Button className='clear-search' icon='close' onClick={handleClear}/> : null}
         </div>
     );

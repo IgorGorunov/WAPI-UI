@@ -47,8 +47,6 @@ type ReportTablePropsType = {
 }
 
 const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAsString, reportData,reportGrouping, dimensionsCount, searchText='', sortingCols = [], resourceColumnNames=[]}) => {
-    // console.log('test report data:', reportData, reportGrouping, dimensionsCount);
-    // console.log('table data renders', reportVariantAsString);
     //resizing
     const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({});
     const [columnResizeMode, setColumnResizeMode] = React.useState<ColumnResizeMode>("onChange");
@@ -278,15 +276,8 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
         });
     }
 
-    useEffect(() => {
-        console.log('groups are open', groupsAreOpen)
-    }, [groupsAreOpen]);
-
-
     return (
         <div className='report'>
-
-
             <div className="card report-container">
                 <div className="h-2" />
                 <div className='interactive-block'>

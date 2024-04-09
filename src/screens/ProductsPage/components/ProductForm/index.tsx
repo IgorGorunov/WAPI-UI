@@ -24,8 +24,6 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const [productsList, setProductsList] = useState<ProductType[]|null>(products);
 
     const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
 
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 

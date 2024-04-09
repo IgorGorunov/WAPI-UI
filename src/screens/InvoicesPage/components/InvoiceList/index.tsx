@@ -54,8 +54,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
     //const Router = useRouter();
     const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
 
     // Pagination
     const [current, setCurrent] = React.useState(1);

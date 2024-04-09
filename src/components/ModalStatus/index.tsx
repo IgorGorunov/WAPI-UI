@@ -12,6 +12,7 @@ export type ModalStatusType = {
     text?: string[];
     onClose: ()=> void;
     modalType?: ModalTypes;
+    disableAutoClose?: boolean;
 }
 
 const getStatusModalIconName = (statusModalType: STATUS_MODAL_TYPES) => {
@@ -27,14 +28,14 @@ const getStatusModalIconName = (statusModalType: STATUS_MODAL_TYPES) => {
     }
 }
 
-const ModalStatus:React.FC<ModalStatusType> = ({statusModalType=STATUS_MODAL_TYPES.ERROR, title, subtitle, text, onClose, classNames='', modalType=ModalTypes.STATUS}) => {
+const ModalStatus:React.FC<ModalStatusType> = ({statusModalType=STATUS_MODAL_TYPES.ERROR, title, subtitle, text, onClose, classNames='', modalType=ModalTypes.STATUS, disableAutoClose=false}) => {
     const handleCloseClick = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         onClose();
     };
 
     useEffect(() => {
-        if (statusModalType===STATUS_MODAL_TYPES.SUCCESS) {
+        if (statusModalType===STATUS_MODAL_TYPES.SUCCESS && !disableAutoClose) {
             setTimeout(()=>onClose(), 2000);
         }
     }, []);

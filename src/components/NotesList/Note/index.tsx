@@ -33,12 +33,9 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
         try {
             setIsLoading(true);
             const res: ApiResponseType = await sendNote({token, uuid: uuid, note: noteText });
-            console.log('note res', res)
 
             if (res?.status === 200) {
                 //success
-                // setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Note is successfully created!`, onClose: onCloseOnSuccess})
-                // setShowStatusModal(true);
                 onCloseOnSuccess();
 
             } else  {
@@ -46,7 +43,6 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
 
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
-
                     setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Something went wrong!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }

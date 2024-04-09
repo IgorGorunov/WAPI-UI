@@ -54,8 +54,6 @@ const OrderStatuses: React.FC<OrderStatusesPropsType> = ({
                                                            ordersByStatuses,
                                                          }) => {
 
-  console.log('ordersByStatuses: ', ordersByStatuses);
-
   let maxAmount = 0;
   if (ordersByStatuses) {
       for (let i = 0; i < ordersByStatuses.length; i++) {
@@ -67,7 +65,7 @@ const OrderStatuses: React.FC<OrderStatusesPropsType> = ({
 
   return (
       <div className={`card order-statuses order-statuses__container`}>
-        <h4 className="title">Orders by statuses</h4>
+        <p className="title-h4 title">Orders by statuses</p>
           {ordersByStatuses && ordersByStatuses.sort((a,b)=>GroupStatusesOrder[a.status]>GroupStatusesOrder[b.status] ? 1 : -1 ).map((item: GroupOrderStatusType) => (
               <StatusBar
                   key={item.status}

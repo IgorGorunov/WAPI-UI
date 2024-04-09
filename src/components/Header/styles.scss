@@ -22,8 +22,19 @@
       display: none;
       margin-left: 20px;
 
-      @media (min-width: $laptop) {
+      @media (min-width: $mobile) {
         display: block;
+      }
+
+      &.no-margin {
+        display: block;
+        margin-left: 0;
+
+        h2 {
+          @media (max-width: $mobile) {
+            font-size: 16px;
+          }
+        }
       }
     }
   }
@@ -90,6 +101,8 @@
       gap: 0;
     }
   }
+
+
 }
 
 .main-header__icon {

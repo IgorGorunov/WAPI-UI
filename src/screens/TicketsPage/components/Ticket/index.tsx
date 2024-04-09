@@ -88,7 +88,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
 
     const onCloseModal = () => {
         onClose();
-        console.log('111222333', ticketUuid)
+
         if (ticketUuid) {
             setDocNotificationsAsRead(ticketUuid);
         }
@@ -101,7 +101,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
             <ToastContainer/>
             {ticketParams && (ticketUuid && singleTicketData || !ticketUuid) ?
                 <Modal title={`Ticket`} onClose={onCloseModal} >
-                    <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid}  reFetchTicket={()=>{fetchSingleTicket(ticketUuid); console.log('refetch ticket')}} onClose={onCloseModal}/>
+                    <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid}  reFetchTicket={()=>{fetchSingleTicket(ticketUuid)}} onClose={onCloseModal}/>
                 </Modal>
                 : null}
 

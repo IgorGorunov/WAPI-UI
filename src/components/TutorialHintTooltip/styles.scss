@@ -1,5 +1,8 @@
 .tutorial-hint-tooltip {
   position: relative;
+  //display: flex;
+  //flex-direction: column;
+  margin-top: auto;
 
   .tutorial-mode & {
     margin-bottom: 28px;
@@ -43,6 +46,10 @@
 
       &.is-right {
         justify-content: flex-end;
+      }
+
+      &.for-btn {
+        top: 100%;
       }
     }
 

@@ -1,15 +1,11 @@
 import React from "react";
-import Cookie from "js-cookie";
-import useAuth from "@/context/authContext";
 import InvoicesPage from "@/screens/InvoicesPage";
+import AuthChecker from "@/components/AuthChecker";
 
-export default function Orders() {
-    const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-
-    if (!token && savedToken) setToken(savedToken);
-
+export default function Invoices() {
     return (
-        <InvoicesPage />
+        <AuthChecker isUser={true}>
+            <InvoicesPage />
+        </AuthChecker>
     );
 }

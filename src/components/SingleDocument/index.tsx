@@ -20,7 +20,6 @@ type SingleDocPropsType = {
 }
 
 const SingleDocument: React.FC<SingleDocPropsType> = ({type, uuid, onClose, subjectType=null, subjectUuid=null, subject=''}) => {
-console.log('sd', type, uuid, subjectType, subjectUuid, subject)
     switch (type) {
         case NOTIFICATION_OBJECT_TYPES.Product :
             return <ProductForm uuid={uuid} onClose={onClose} onCloseSuccess={onClose} />

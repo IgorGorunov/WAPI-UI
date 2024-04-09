@@ -30,8 +30,6 @@ type ChatFileType = {
 }
 
 const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker, canEdit}) => {
-    console.log('ticket editable'+ canEdit)
-
     const {token} = useAuth();
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -59,11 +57,6 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         setFiles([]);
     }, []);
 
-    useEffect(() => {
-        //setSendHeight(sendTicketBlockRef.current.clientHeight);
-        console.log('test - test', dropRef.current.clientHeight);
-    }, [files]);
-
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement> | string) => {
         if (typeof e === 'string' || e instanceof String) {
             setUserInput(e as string);
@@ -74,12 +67,11 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
     };
 
     const sendMessage = async(e) => {
-        console.log('send message:', userInput);
         e.preventDefault();
 
         //attached files
         const attachedFiles = await Promise.all(
-            files ? files.map(async (file, index) => {
+            files && files.length ? files.map(async (file, index) => {
                 const arrayBuffer = await readFileAsArrayBuffer(file.file);
                 const base64String = arrayBufferToBase64(arrayBuffer);
 
@@ -138,14 +130,11 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
                 //newFiles.push(file);
                 if (file.type.startsWith('image')) {
                     const imageUrl = URL.createObjectURL(file);
-                    console.log('image: ', file);
                     newFiles.push({file: file, fileType: CHAT_FILE_TYPES.IMAGE, imgSrc: imageUrl} as ChatFileType)
                 } else if ((file.type === 'application/pdf')) {
                     const pdfUrl = URL.createObjectURL(file);
-                    console.log('pdf preview',  pdfUrl);
                     newFiles.push({file: file, fileType: CHAT_FILE_TYPES.PDF, imgSrc: pdfUrl} as ChatFileType)
                 } else {
-                    console.log('just file: ', file);
                     if (!isFileAllowed(file.name)) { setShowFileTypeError(true); continue;}
                     newFiles.push({file: file, fileType: CHAT_FILE_TYPES.OTHER} as ChatFileType)
                 }
@@ -165,15 +154,12 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
         for (let i = 0; i < droppedFiles.length; i++) {
             const file = droppedFiles[i];
-            console.log('file...: ', file);
 
             if (file.type.startsWith('image')) {
                 const imageUrl = URL.createObjectURL(file);
-                console.log('image: ', file);
                 newFiles.push({file: file, fileType: CHAT_FILE_TYPES.IMAGE, imgSrc: imageUrl} as ChatFileType)
             } else if ((file.type === 'application/pdf')) {
                 const pdfUrl = URL.createObjectURL(file);
-                console.log('pdf preview',  pdfUrl);
                 newFiles.push({file: file, fileType: CHAT_FILE_TYPES.PDF, imgSrc: pdfUrl} as ChatFileType)
             } else {
                 if (!isFileAllowed(file.name)) { setShowFileTypeError(true); continue;}
@@ -234,7 +220,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
             {/*{showEmojiPicker ? <EmojiPicker onEmojiClick={onAddEmoji} />: null}*/}
             <div className={`send-message__file-preview`} onDrop={handleDrop}
                  onDragOver={(e) => e.preventDefault()}>
-                {files ? files.map((file, index) => (
+                {files && files.length ? files.map((file, index) => (
                     <div key={index} className="file-container">
                         {file.fileType === CHAT_FILE_TYPES.IMAGE ?
                             <div className="send-message__file-preview-image" onClick={() => handleFileClick(index)}>

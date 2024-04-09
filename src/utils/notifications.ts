@@ -5,7 +5,7 @@ export const markNotificationAsRead = async(token: string, uuid: string) => {
     try {
         await setNotificationStatus({token, uuid, status: NOTIFICATION_STATUSES.READ});
     } catch {
-        console.log('Something went wrong')
+       // console.log('Something went wrong')
     }
 }
 
@@ -13,7 +13,7 @@ export const setNotificationStatusFn = async(token: string, uuid: string, status
     try {
         await setNotificationStatus({token, uuid, status: status});
     } catch {
-        console.log('Something went wrong')
+        //console.log('Something went wrong')
     }
 }
 

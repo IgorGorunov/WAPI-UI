@@ -80,6 +80,7 @@ import Ticket  from '@/assets/icons/ticket.svg'
 import Emoji from '@/assets/icons/emoji.svg'
 import Book from '@/assets/icons/book.svg'
 import Edit from '@/assets/icons/edit.svg'
+import ApiDocumentation from '@/assets/icons/api-documentation.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -162,6 +163,7 @@ export const icons = {
   'emoji': Emoji,
   'book': Book,
   'edit': Edit,
+  'api-documentation': ApiDocumentation,
 };
 
 export type IconType = keyof typeof icons;

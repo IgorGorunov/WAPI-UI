@@ -30,8 +30,6 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
 
     const sendCommentTypeOptions = useMemo(()=> createOptions(SendCommentTypesArray.filter(item=> availableOptions.includes(item))), []);
 
-    console.log('commentttt', availableOptions, sendCommentTypeOptions)
-
     const {control, handleSubmit, formState: { errors }, watch} = useForm({
         mode: 'onSubmit',
         defaultValues: {
@@ -63,7 +61,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
     const curAction = watch('action');
 
     useEffect (()=>{
-        console.log('action', curAction)
+        //console.log('action', curAction)
     },[curAction])
 
     const receiverFields = useMemo(()=>ReceiverFields({countries: countryOptions}),[countryOptions])
@@ -99,8 +97,6 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
         if (data.action === SEND_COMMENT_TYPES.REDELIVERY_SAME_ADDRESS || data.action === SEND_COMMENT_TYPES.REDELIVERY_ANOTHER_ADDRESS) {
             sendData.deliveryDate = {...data.deliveryDate, date: formatDateToString(new Date(data.deliveryDate.date))};
         }
-
-        console.log('sent data', sendData)
 
         try {
             const res: ApiResponseType = await sendOrderComment(

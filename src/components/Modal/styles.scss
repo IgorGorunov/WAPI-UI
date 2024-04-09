@@ -25,6 +25,10 @@
     padding: 16px;
   }
 
+  @media (max-width: $upToTablet) {
+    max-height: none;
+  }
+
   &::-webkit-scrollbar {
     width: 10px;
     margin-right: 50px;

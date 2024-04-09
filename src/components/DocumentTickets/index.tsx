@@ -17,8 +17,6 @@ const DocumentTickets: React.FC<DocTicketsPropsType> = ({ tickets }) => {
         return ticketStatusColors[statusText] || 'black';
     }, []);
 
-    console.log('ticket 111:', tickets)
-
     return (
         <div className="doc-tickets">
 
