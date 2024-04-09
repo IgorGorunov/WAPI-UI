@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Table, Pagination, Input} from 'antd';
+import {Table, Pagination} from 'antd';
 import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
@@ -16,7 +16,6 @@ import {DateRangeType} from "@/types/dashboard";
 import DateInput from "@/components/DateInput";
 import {getCODReportForm} from "@/services/codReports";
 import useAuth from "@/context/authContext";
-import Cookie from "js-cookie";
 import Loader from "@/components/Loader";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import SearchField from "@/components/SearchField";
@@ -32,10 +31,9 @@ type CodReportsListType = {
 const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, setCurrentRange, setFilteredCodReports}) => {
 
     const [animating, setAnimating] = useState(false);
-
     const [isLoading, setIsLoading] = useState(false);
 
-    const { token, setToken } = useAuth();
+    const { token } = useAuth();
 
     // Pagination
     const [current, setCurrent] = React.useState(1);

@@ -1,5 +1,5 @@
 import React from 'react';
-import Joyride, {ACTIONS, EVENTS, ORIGIN, STATUS, CallBackProps} from 'react-joyride';
+import Joyride, {ACTIONS, ORIGIN, STATUS, CallBackProps} from 'react-joyride';
 import './styles.scss';
 import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages, TourGuideStepType} from "@/types/tourGuide";
@@ -15,7 +15,7 @@ type TourGuidePropsType = {
 }
 
 export const handleTourGuideCallback = (props: CallBackProps, setRun: (val:boolean)=>void, setTutorialAsWatched, pageName) => {
-    const { action, index, origin, status, type } = props;
+    const { action, origin, status } = props;
 
     if (action === ACTIONS.CLOSE && origin === ORIGIN.KEYBOARD) {
         // do something

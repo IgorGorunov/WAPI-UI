@@ -6,10 +6,7 @@ import Router from "next/router";
 import {Routes} from "@/types/routes";
 import useAuth from "@/context/authContext";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import Cookie from 'js-cookie';
-
 import Button from "@/components/Button/Button";
-
 import "./styles.scss";
 import {UserStatusType} from "@/types/leads";
 

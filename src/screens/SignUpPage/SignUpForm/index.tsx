@@ -73,15 +73,11 @@ const SignUpForm: React.FC = () => {
         }
     };
 
-    const onError = (props: any) => {
-
-    }
-
     const checkbox = watch('personalData');
 
     return (
         <div className={`card sign-up-form`}>
-            <form onSubmit={handleSubmit(handleFormSubmit, onError)}>
+            <form onSubmit={handleSubmit(handleFormSubmit)}>
                 {signUpFormFields.map((curField: any ) => (
                     <div key={curField.name} className='grid-row'>
                         <Controller

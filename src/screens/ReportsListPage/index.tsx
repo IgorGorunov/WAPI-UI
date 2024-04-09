@@ -1,5 +1,4 @@
-import React, {useEffect, useCallback, useMemo} from "react";
-import Cookie from 'js-cookie';
+import React, {useEffect} from "react";
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
@@ -12,9 +11,7 @@ import {reportBlocks} from "@/screens/ReportsListPage/reports.constants";
 
 const ReportsListPage:React.FC = () => {
     const Router = useRouter();
-    const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
+    const { token } = useAuth();
 
     useEffect(() => {
         if (!token) Router.push(Routes.Login);

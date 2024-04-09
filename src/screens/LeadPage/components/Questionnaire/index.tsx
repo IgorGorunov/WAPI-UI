@@ -1,10 +1,8 @@
 import React, {useCallback, useEffect, useState} from "react";
 import "./styles.scss";
 import {QuestionnaireFormType, QuestionnaireParamsType, UserStatusType} from "@/types/leads";
-import {Controller, useForm} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {COUNTRIES} from "@/types/countries";
-import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {FormFieldTypes, OptionType} from "@/types/forms";
 import {
     CodField,
     CompanyNameField,

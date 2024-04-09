@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useState} from "react";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
 import {useForm} from "react-hook-form";
@@ -41,10 +41,6 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
         control,
         handleSubmit,
         formState: { errors },
-        getValues,
-        setValue,
-        watch,
-        clearErrors
     } = useForm(
         {
             mode: 'onSubmit',
@@ -113,13 +109,8 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
             setIsLoading(false);
         }
     }
-    const onError = (props) => {
-
-    }
 
     const noLegal = userStatus === UserStatusType.NoLegalPrices || userStatus === UserStatusType.NoLegalNoPrices;
-
-
 
     return (
         <div className={`card legal-info`}>
@@ -128,7 +119,7 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
                 <Button icon='download-file' iconOnTheRight onClick={handleContractDownload}>Download contract draft</Button>
             </div>
             <div className='legal-info__form-wrapper'>
-                <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
+                <form onSubmit={handleSubmit(onSubmitForm)} autoComplete="off">
                     <div className='grid-row'>
                         <FormFieldsBlock control={control} fieldsArray={companyInfoFields} errors={errors} isDisabled={noLegal || isDisabled}/>
                     </div>

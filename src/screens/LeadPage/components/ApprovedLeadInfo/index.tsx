@@ -3,7 +3,7 @@ import "./styles.scss";
 import Tabs from "@/components/Tabs";
 import LegalInfo from "./LegalInfo";
 import Prices from "./Prices";
-import {LegalInfoFormType, UserStatusType} from "@/types/leads";
+import {LegalInfoFormType} from "@/types/leads";
 import Icon from "@/components/Icon";
 import {ApiResponseType} from "@/types/api";
 import {getLegalData} from "@/services/leads";
@@ -35,8 +35,6 @@ const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
 
         }
     },[]);
-
-    const noLegal = userStatus === UserStatusType.NoLegalPrices || userStatus === UserStatusType.NoLegalNoPrices;
 
     useEffect(()=>{
        fetchLegalData();

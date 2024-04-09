@@ -1,4 +1,3 @@
-import {TourGuideStepType} from "@/types/tourGuide";
 
 export const tourGuideStepsTickets  = [
     {

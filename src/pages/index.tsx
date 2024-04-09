@@ -1,16 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import Cookie from "js-cookie";
-import useAuth from "@/context/authContext";
-
-// import { getDasboardData } from "@/services/dashboard";
-// import {
-//   DashboardPeriodType,
-//   PeriodType,
-//   PeriodTypes,
-// } from "@/types/dashboard";
 import DashboardPage from "@/screens/DashboardPage";
-
 
 export default function Home() {
 

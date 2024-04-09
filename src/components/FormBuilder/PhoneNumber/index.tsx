@@ -34,11 +34,6 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(
         if (onChange) onChange(phoneNumber);
     } ,[] )
 
-    const getDate = (dateStr: string) => {
-        const date = !dateStr ? new Date() : new Date(dateStr);
-        return date.toISOString().substring(0,10);
-    }
-
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
             <div className={`form-control phone-number ${classNames ? classNames : ""}  ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>

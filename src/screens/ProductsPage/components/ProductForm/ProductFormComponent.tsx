@@ -3,9 +3,7 @@ import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {FormFieldTypes, WidthType} from "@/types/forms";
 import {COUNTRIES} from "@/types/countries";
 import "./styles.scss";
-import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
-import Cookie from "js-cookie";
 import {ProductParamsType, SingleProductFormType, SingleProductType} from "@/types/products";
 import {
     FormFieldsAdditional1,
@@ -68,8 +66,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
-    const Router = useRouter();
-    const { token, setToken, currentDate } = useAuth();
+    const { token } = useAuth();
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);

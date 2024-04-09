@@ -13,7 +13,7 @@ import useAuth from "@/context/authContext";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 
 const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=false, docUuid = '', showSend=false}) => {
-    const { token, currentDate } = useAuth();
+    const { token } = useAuth();
 
     const [isDragging, setIsDragging] = useState(false);
     const inputId = `file-input__${Date.now().toString()}`;

@@ -35,7 +35,7 @@ const getHeaderTitle = (userStatus: string) => {
 }
 
 const LeadPage = () => {
-    const {token, getToken, userStatus, setUserStatus, textInfo, logout} = useAuth();
+    const {token, getToken, userStatus, logout} = useAuth();
     //const [curStatus, setCurStatus] = useState(getUserStatus() as UserStatusType);
     const Router = useRouter();
 

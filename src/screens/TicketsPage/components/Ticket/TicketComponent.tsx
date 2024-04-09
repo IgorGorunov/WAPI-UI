@@ -3,7 +3,6 @@ import "./styles.scss";
 import {ApiResponseType} from "@/types/api";
 import {createTicket, reopenTicket} from "@/services/tickets";
 import useAuth from "@/context/authContext";
-import {useRouter} from "next/router";
 import {SingleTicketType, TicketParamsType} from "@/types/tickets";
 import Loader from "@/components/Loader";
 import {ToastContainer} from "@/components/Toast";
@@ -34,8 +33,7 @@ type TicketPropsType = {
 
 const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose, reFetchTicket}) => {
 
-    const {token, currentDate} = useAuth();
-    const Router = useRouter();
+    const {token} = useAuth();
 
     //const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
     const [infoHeight, setInfoHeight] = useState(0)

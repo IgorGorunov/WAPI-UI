@@ -10,7 +10,6 @@ const Other = forwardRef<HTMLDivElement, FieldPropsType>(({
         otherComponent,
         width,
         hint = '',
-        ...otherProps
     }, ref) => {
 
     return (

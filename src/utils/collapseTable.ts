@@ -21,7 +21,6 @@ export function collapseTable<T extends InputObjectType, K extends keyof T>(
     uniqueColumns: K[],
 ) {
     return (arr: T[],callback: () => void): ResultObjectType[] => {
-        console.log('array', arr, arr.filter(row => rowDimensionsAreFilled(row, dimensionColumns)))
         const result: ResultObjectType[] = arr.reduce((acc, obj) => {
             // Extract only the specified properties
             const filteredObj: ResultObjectType = dimensionColumns.reduce((filtered, prop) => {
@@ -98,4 +97,3 @@ export function collapseTable<T extends InputObjectType, K extends keyof T>(
 // ];
 //
 // const result = collapseTable(['wh'], ['count1', 'count2'], ['uniqueColumn'])(inputArray);
-// console.log(result);

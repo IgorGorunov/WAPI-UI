@@ -1,5 +1,4 @@
 import {api} from "@/services/api";
-import {AttachedFilesType} from "@/types/utility";
 import {LegalInfoFormType, QuestionnaireFormType} from "@/types/leads";
 
 const getLeadParameters = async (
