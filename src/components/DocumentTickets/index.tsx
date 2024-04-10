@@ -12,10 +12,6 @@ type DocTicketsPropsType = {
 
 const DocumentTickets: React.FC<DocTicketsPropsType> = ({ tickets }) => {
 
-    // const getUnderlineColor = useCallback((statusText: string) => {
-    //     return ticketStatusColors[statusText] || 'black';
-    // }, []);
-
     return (
         <div className="doc-tickets">
 

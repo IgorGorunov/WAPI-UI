@@ -46,6 +46,9 @@ import {formatDateStringToDisplayString} from "@/utils/date";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import ConfirmModal from "@/components/ModalConfirm";
 import NotesList from "@/components/NotesList";
+import CardWithHelpIcon from "@/components/CardWithHelpIcon";
+import TutorialHintTooltip from "@/components/TutorialHintTooltip";
+import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -75,9 +78,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     //tickets
     const [showTicketForm, setShowTicketForm] = useState(false);
-
-    console.log('order data: ', orderData)
-
 
     //countries
     const allCountries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
@@ -149,8 +149,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         clientOrderID: orderData?.clientOrderID || '',
         codAmount: orderData?.codAmount || '',
         codCurrency: orderData?.codCurrency || '',
-        // commentCourierService: orderData?.commentWarehouse || '',
-        // commentWarehouse: orderData?.commentWarehouse || '',
         courierService: orderData?.courierService || '',
         courierServiceTrackingNumber: orderData?.courierServiceTrackingNumber || '',
         courierServiceTrackingNumberCurrent: orderData?.courierServiceTrackingNumberCurrent || '',
@@ -759,7 +757,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     }, [orderData]);
 
     const handleCreateTicket = () => {
-        console.log('create ticket');
         setShowTicketForm(true)
     }
 
@@ -771,7 +768,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     }
 
     const handleCancelOrder = async() => {
-        console.log('cancel order');
         try {
             const res: ApiResponseType = await cancelOrder(
                 {
@@ -848,7 +844,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         if (isDraft) {
             clearErrors();
             const formData = getValues();
-            //console.log('Form data on error:', formData);
 
             return onSubmitForm(formData as SingleOrderFormType);
         }
@@ -861,8 +856,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 autoClose: 3000,
             });
         }
-
-        console.log("validation errors: ", fieldNames, props)
 
         updateTabTitles(fieldNames);
     };
@@ -888,7 +881,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal'
                       notifications={orderNotifications}>
                     <div key='general-tab' className='general-tab'>
-                        <div className='card order-info--general'>
+                        <CardWithHelpIcon classNames='card order-info--general'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='general'/>
                                 General
@@ -897,8 +890,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors}
                                                  isDisabled={isDisabled}/>
                             </div>
-                        </div>
-                        <div className='card order-info--details'>
+                        </CardWithHelpIcon>
+                        <CardWithHelpIcon classNames='card order-info--details'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='additional'/>
                                 Details
@@ -907,7 +900,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors}
                                                  isDisabled={isDisabled}/>
                             </div>
-                        </div>
+                        </CardWithHelpIcon>
                     </div>
                     <div key='delivery-tab' className='delivery-tab'>
                         <div className='card order-info--receiver'>
@@ -958,7 +951,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         </div>
                     </div>
                     <div key='product-tab' className='product-tab'>
-                        <div className="card min-height-600 order-info--products">
+                        <CardWithHelpIcon classNames="card min-height-600 order-info--products">
                             <h3 className='order-info__block-title '>
                                 <Icon name='goods'/>
                                 Products
@@ -980,6 +973,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                 errors={errors}
                                                 disabled={isDisabled}
                                                 width={WidthType.w50}
+                                                hint={OrderHints['codCurrency']}
                                             />
                                         )}
                                         rules={{
@@ -1006,6 +1000,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                 errors={errors}
                                                 disabled={isDisabled}
                                                 width={WidthType.w50}
+                                                hint={OrderHints['priceCurrency']}
                                             />
                                         )}
                                         rules={{required: 'Field is required'}}
@@ -1015,34 +1010,40 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                     <div className='grid-row'>
                                         <div
                                             className='order-info--table-btns form-table--btns small-paddings width-100'>
-                                            <Button type="button" icon='selection' iconOnTheRight
+                                            <TutorialHintTooltip hint={OrderHints['selection'] || ''} forBtn >
+                                                <Button type="button" icon='selection' iconOnTheRight
                                                     size={ButtonSize.SMALL} disabled={isDisabled}
                                                     variant={ButtonVariant.SECONDARY}
                                                     onClick={() => handleProductSelection()} classNames='selection-btn'>
-                                                Selection
-                                            </Button>
-                                            <Button type="button" icon='add-table-row' iconOnTheRight
-                                                    size={ButtonSize.SMALL} disabled={isDisabled}
-                                                    variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({
-                                                key: `product-${Date.now().toString()}`,
-                                                selected: false,
-                                                sku: '',
-                                                product: '',
-                                                analogue: '',
-                                                quantity: '',
-                                                price: '',
-                                                discount: '',
-                                                tax: '',
-                                                total: '',
-                                                cod: ''
-                                            })}>
-                                                Add
-                                            </Button>
-                                            <Button type="button" icon='remove-table-row' iconOnTheRight
-                                                    size={ButtonSize.SMALL} disabled={isDisabled}
-                                                    variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                                Remove selected
-                                            </Button>
+                                                    Selection
+                                                </Button>
+                                            </TutorialHintTooltip>
+                                            <TutorialHintTooltip hint={OrderHints['addProduct'] || ''} forBtn >
+                                                <Button type="button" icon='add-table-row' iconOnTheRight
+                                                        size={ButtonSize.SMALL} disabled={isDisabled}
+                                                        variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({
+                                                    key: `product-${Date.now().toString()}`,
+                                                    selected: false,
+                                                    sku: '',
+                                                    product: '',
+                                                    analogue: '',
+                                                    quantity: '',
+                                                    price: '',
+                                                    discount: '',
+                                                    tax: '',
+                                                    total: '',
+                                                    cod: ''
+                                                })}>
+                                                    Add
+                                                </Button>
+                                            </TutorialHintTooltip>
+                                            <TutorialHintTooltip hint={OrderHints['removeSelected'] || ''} forBtn >
+                                                <Button type="button" icon='remove-table-row' iconOnTheRight
+                                                        size={ButtonSize.SMALL} disabled={isDisabled}
+                                                        variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
+                                                    Remove selected
+                                                </Button>
+                                            </TutorialHintTooltip>
                                         </div>
                                     </div>
                                 </div>
@@ -1056,7 +1057,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 />
                                 <ProductsTotal productsInfo={productsTotalInfo}/>
                             </div>
-                        </div>
+                        </CardWithHelpIcon>
                     </div>
                     {orderData?.uuid && <div key='services-tab' className='services-tab'>
                         <div className="card min-height-600 order-info--history">
@@ -1117,17 +1118,19 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         </div>
                     </div> : null}
                     <div key='files-tab' className='files-tab'>
-                        <div className="card min-height-600 order-info--files">
-                            <h3 className='order-info__block-title'>
-                                <Icon name='files'/>
-                                Files
-                            </h3>
+                        <CardWithHelpIcon classNames="card min-height-600 order-info--files">
+                            <TutorialHintTooltip hint={OrderHints['files'] || ''} position='left' >
+                                <h3 className='order-info__block-title  title-small' >
+                                    <Icon name='files'/>
+                                    Files
+                                </h3>
+                            </TutorialHintTooltip>
                             <div className='dropzoneBlock'>
                                 <DropZone readOnly={!!isDisabled} files={selectedFiles}
                                           onFilesChange={handleFilesChange}
                                           docUuid={orderData?.canEdit ? '' : orderData?.uuid}/>
                             </div>
-                        </div>
+                        </CardWithHelpIcon>
                     </div>
                 </Tabs>
 

@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
@@ -19,7 +18,6 @@ import FiltersBlock from "@/components/FiltersBlock";
 import FiltersContainer from "@/components/FiltersContainer";
 import ReportTable from "./ReportTable";
 import RadioButton from "@/components/FormBuilder/RadioButton";
-//import {collapseTable} from "@/utils/collapseTable";
 import {
     getVariantByReportType,
     getVariantDimensionColsByReportType,
@@ -37,6 +35,13 @@ import RadioSwitch from "@/components/FormBuilder/RadioSwitch";
 import Icon from "@/components/Icon";
 import {Tooltip} from "antd";
 import {aggregateTableData} from "@/utils/aggregateTable";
+import useTourGuide from "@/context/tourGuideContext";
+import {TourGuidePages} from "@/types/tourGuide";
+import TourGuide from "@/components/TourGuide";
+import {
+    tourGuideStepsReports,
+    tourGuideStepsReportsWithoutVariants
+} from "@/screens/ReportPage/reportTourGuideSteps.constants";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -44,13 +49,25 @@ type ReportPagePropType = {
 
 const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const Router = useRouter();
-    const { token, setToken, currentDate } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
+    const { token, setToken, currentDate, getToken } = useAuth();
 
     useEffect(() => {
-        if (!token) Router.push(Routes.Login);
+        if (!getToken()) Router.push(Routes.Login);
     }, [token]);
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [isCalculating, setIsCalculating] = useState(false);
+
+    //tour guide
+    const {runTour, setRunTour, isReportWatched} = useTourGuide();
+
+    useEffect(() => {
+        if (reportType && !isReportWatched(reportType)) {
+            if (!isLoading) {
+                setTimeout(() => setRunTour(true), 1000);
+            }
+        }
+    }, [isLoading]);
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -61,9 +78,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const [isCurrentRangeChanged, setIsCurrentRangeChanged] = useState(true);
 
     const [noData, setNoData] = useState(true);
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [isCalculating, setIsCalculating] = useState(false);
 
     //const [productsOnStocksData, setProductsOnStocksData] = useState<ProductsOnStocksReportType|null>(null)
     const [collapsedData, setCollapsedData] = useState<any|null>(null)
@@ -85,7 +99,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                 {token: token}
             );
 
-            //console.log("report params:", res );
             if (res.data) {
                 setReportParams(res.data);
             }
@@ -102,11 +115,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         try {
             setIsLoading(true);
 
-            // //verify token
-            // const responseVerification = await verifyToken(token);
-            // if (!verifyUser(responseVerification, currentDate) ){
-            //     await Router.push(Routes.Login);
-            // }
             const res: any = await getReportData(
                 {token: token, reportType: reportType, startDate: formatDateToString(currentRange.startDate), endDate: formatDateToString(currentRange.endDate)}
             );
@@ -284,8 +292,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
         const curVariantAsType = getVariantByReportType(reportType, curVariantAsString);
 
-        //console.log('curVariantAsType 123', curVariantAsType, curVariantAsString);
-
         setGroupedFields(getVariantGroupColsByReportType(reportType, curVariantAsType));
         const dimensionCols = getVariantDimensionColsByReportType(reportType, curVariantAsType);
         setDimensionsCont(getVariantDimensionNumberByReportType(reportType, curVariantAsType).length);
@@ -313,7 +319,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
         const resourceColumns = getVariantResourceColsByReportType(reportType, curVariantAsType, reportData);
         setResourceColumnNames([...resourceColumns.sumCols, ...resourceColumns.uniqueCols]);
-        //console.log('resource cols:', resourceColumns);
 
         //const reportDataCollapsed = reportData ? collapseTable(dimensionCols, resourceColumns.sumCols, resourceColumns.uniqueCols)(filteredData, ()=>{setIsCalculating(false)}) : [];
         try {
@@ -322,7 +327,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                 const reportDataCollapsed = await  aggregateTableData(filteredData, dimensionCols, resourceColumns.sumCols, resourceColumns.uniqueCols, resourceColumns.concatenatedCols)
 
                 if (reportDataCollapsed) {
-                    console.log('collapsed table: ', reportDataCollapsed)
                     setCollapsedData(reportDataCollapsed);
                 } else {
                     setCollapsedData([]);
@@ -370,23 +374,14 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     }, [reportData, periodVariantType, curVariant, searchTerm, filterCountry, filterProduct, filterWarehouse, filterReceiverCountry, filterProductType, filterCourierService, filterStatus]);
 
     useEffect(() => {
-        console.log('report data changed: ', reportData)
-    }, [reportData]);
-
-    useEffect(() => {
         setIsCalculating(false);
-
-        //console.log('collapsed data: ', collapsedData)
-
     }, [collapsedData]);
 
     return (
         <Layout hasFooter>
             <div className="page-container report-page report-page__container">
                 {(isLoading || isCalculating)&& (<Loader />)}
-                <Header pageTitle={REPORT_TITLES[reportType]} toRight >
-
-                </Header>
+                <Header pageTitle={REPORT_TITLES[reportType]} toRight needTutorialBtn />
 
                 {/*filters , search , + */}
                 <SearchContainer>
@@ -396,19 +391,23 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                         <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
                         {/*<FieldBuilder {...fullTextSearchField} />*/}
                     </div>
-                    <Button onClick={handleGenerateReport}>Generate</Button>
+                    <Button classNames='generate-report-btn' onClick={handleGenerateReport}>Generate</Button>
                 </SearchContainer>
-                {reportType !== REPORT_TYPES.SALE_DYNAMIC ?<div className='variant-container'>
-                    <p className='variant-container__period-type-title'>Variant:</p>
-                    {reportType===REPORT_TYPES.DELIVERY_RATES || reportType === REPORT_TYPES.REPORT_SALES ? (
-                            <div className='variant-container__period-type-wrapper'>
-                                {/*<p className='variant-container__period-type-title'>Group by period:</p>*/}
-                                <RadioSwitch name='periodVariantType' value={periodVariantType} onChange={(val)=>setPeriodVariantType(val as string)} options={periodVariantOptions} />
-                            </div>)
-                        : null
-                    }
-                    <RadioButton name='reportvariants' options={reportVariants} value={curVariant.toString()} onChange={(val)=>{setIsCalculating(true);setCurVariant(val.toString());}}/>
-                </div> : null}
+                {reportType !== REPORT_TYPES.SALE_DYNAMIC
+                    ? <div className='variant-container'>
+                        <div className='variant-container__wrapper'>
+                            <p className='variant-container__period-type-title'>Variant:</p>
+                            {reportType===REPORT_TYPES.DELIVERY_RATES || reportType === REPORT_TYPES.REPORT_SALES ? (
+                                    <div className='variant-container__period-type-wrapper'>
+                                        <RadioSwitch name='periodVariantType' value={periodVariantType} onChange={(val)=>setPeriodVariantType(val as string)} options={periodVariantOptions} />
+                                    </div>)
+                                : null
+                            }
+                            <RadioButton name='reportvariants' options={reportVariants} value={curVariant.toString()} onChange={(val)=>{setIsCalculating(true);setCurVariant(val.toString());}}/>
+                        </div>
+                    </div>
+                    : null
+                }
                 {/* report variants */}
                 <div className='filter-info-container'>
                     <div className='current-filter-container'>
@@ -473,7 +472,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
 
             </div>
-
+            {runTour && tourGuideStepsReports ? <TourGuide steps={reportType===REPORT_TYPES.SALE_DYNAMIC ? tourGuideStepsReportsWithoutVariants: tourGuideStepsReports} run={runTour} pageName={TourGuidePages[`Report_${reportType}`]} /> : null}
         </Layout>
 
 

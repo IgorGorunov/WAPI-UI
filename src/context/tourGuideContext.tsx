@@ -36,6 +36,8 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
     console.log('watched pages: ', watchedPages);
 
     const isTutorialWatched = (page: string) => {
+        console.log('tutorial: ', page)
+
         return watchedPages.filter(item => item==page).length > 0;
         // const tutorialCookieData = Cookie.get('tutorialData');
         // if (tutorialCookieData) {

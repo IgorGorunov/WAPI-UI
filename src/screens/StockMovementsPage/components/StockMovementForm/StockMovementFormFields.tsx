@@ -1,9 +1,12 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
+import {docNamesSingle} from "@/screens/StockMovementsPage";
 
 export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TYPE, canEditATA: boolean) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
+    const docTypeSingle = docNamesSingle[docType];
+    const docHintsObj = StockMovementsHints(docTypeSingle);
 
     return [
             {
@@ -16,7 +19,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 width: WidthType.w17,
                 classNames: "",
                 isDisplayed: !newObject,
-                hint: StockMovementsHints['number'] || '',
+                hint: docHintsObj['number'] || '',
             },
             {
                 fieldType: FormFieldTypes.TEXT,
@@ -26,7 +29,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 placeholder: "",
                 width: newObject ? WidthType.w33 : WidthType.w17,
                 classNames: "",
-                hint: StockMovementsHints['incomingNumber'] || '',
+                hint: docHintsObj['incomingNumber'] || '',
             },
             {
                 fieldType: FormFieldTypes.DATE,
@@ -55,7 +58,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 },
                 errorMessage: "Required field",
                 isClearable: true,
-                hint: StockMovementsHints['estimatedTimeArrives'] || '',
+                hint: docHintsObj['estimatedTimeArrives'] || '',
             },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -67,7 +70,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
             width: WidthType.w25,
             classNames: "",
             isDisplayed: !newObject,
-            hint: StockMovementsHints['status'] || '',
+            hint: docHintsObj['status'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -79,7 +82,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
             width: WidthType.w25,
             classNames: "",
             isDisplayed: !newObject,
-            hint: StockMovementsHints['statusAdditionalInfo'] || '',
+            hint: docHintsObj['statusAdditionalInfo'] || '',
         },
     ];
 }
@@ -112,6 +115,10 @@ export const DetailsFields = (
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
     const isOutbound = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND;
     const isLogisticService = docType === STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE;
+
+    const docTypeSingle = docNamesSingle[docType];
+    const docHintsObj = StockMovementsHints(docTypeSingle);
+
     return [
         {
             fieldType: isInbound || isLogisticService ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
@@ -128,7 +135,7 @@ export const DetailsFields = (
             onChange: onSenderChange,
             width: WidthType.w33,
             classNames: "",
-            hint: StockMovementsHints['sender'] || '',
+            hint: docHintsObj['sender'] || '',
         },
         {
             fieldType: FormFieldTypes.SELECT,
@@ -144,7 +151,7 @@ export const DetailsFields = (
             disabled: !isInbound && !isLogisticService,
             width: WidthType.w17,
             classNames: "",
-            hint: StockMovementsHints['senderCountry'] || '',
+            hint: docHintsObj['senderCountry'] || '',
         },
         {
             fieldType: isOutbound || isLogisticService ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
@@ -161,7 +168,7 @@ export const DetailsFields = (
             disabled: receiverHide,
             width: WidthType.w33,
             classNames: "",
-            hint: StockMovementsHints['receiver'] || '',
+            hint: docHintsObj['receiver'] || '',
         },
         {
             fieldType: FormFieldTypes.SELECT,
@@ -178,7 +185,7 @@ export const DetailsFields = (
             width: WidthType.w17,
 
             classNames: "",
-            hint: StockMovementsHints['receiverCountry'] || '',
+            hint: docHintsObj['receiverCountry'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -191,7 +198,7 @@ export const DetailsFields = (
             classNames: "",
             notDisable: isInbound && canEditETA,
             //isDisplayed: !newObject,
-            hint: StockMovementsHints['courierServiceTrackingNumber'] || '',
+            hint: docHintsObj['courierServiceTrackingNumber'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT_AREA,
@@ -202,7 +209,7 @@ export const DetailsFields = (
             //disabled: true,
             width: WidthType.w100,
             classNames: "",
-            hint: StockMovementsHints['comment'] || '',
+            hint: docHintsObj['comment'] || '',
         },
 
     ];

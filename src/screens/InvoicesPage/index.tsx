@@ -13,12 +13,18 @@ import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays, } from "@/utils/date";
 import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
 import Loader from "@/components/Loader";
+import useTourGuide from "@/context/tourGuideContext";
+import {TourGuidePages} from "@/types/tourGuide";
+import TourGuide from "@/components/TourGuide";
+import {
+    tourGuideStepsInvoices,
+    tourGuideStepsInvoicesNoDocs
+} from "@/screens/InvoicesPage/invoicesTourGuideSteps.constants";
+import {tourGuideStepsOrders, tourGuideStepsOrdersNoDocs} from "@/screens/OrdersPage/ordersTourGuideSteps.constants";
 
 const InvoicesPage = () => {
 
     const { token, setToken, currentDate } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
 
     //balance/debt
     const [invoiceBalance, setInvoiceBalance] = useState<InvoiceBalanceType|null>(null);
@@ -111,12 +117,28 @@ const InvoicesPage = () => {
         exportFileXLS(filteredData, "Invoices")
     }
 
+    //tour guide
+    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+
+    useEffect(() => {
+        if (!isTutorialWatched(TourGuidePages.Invoices)) {
+            if (!isLoading && invoicesData) {
+                setTimeout(() => setRunTour(true), 1000);
+            }
+        }
+    }, [isLoading]);
+
+    const [steps, setSteps] = useState([]);
+    useEffect(() => {
+        setSteps(invoicesData?.length ? tourGuideStepsInvoices : tourGuideStepsInvoicesNoDocs);
+    }, [invoicesData]);
+
     return (
         <Layout hasHeader hasFooter>
             <div className="invoices__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Invoices' toRight >
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle='Invoices' toRight needTutorialBtn >
+                    <Button classNames='export-invoices' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
                 {invoiceBalance ? (
                     <div className="grid-row balance-info-block has-cards-block">
@@ -139,6 +161,7 @@ const InvoicesPage = () => {
                 ) : null}
                 {invoicesData && <InvoiceList invoices={invoicesData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredInvoices={setFilteredInvoices}/>}
             </div>
+            {invoicesData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Invoices} /> : null}
         </Layout>
     )
 }

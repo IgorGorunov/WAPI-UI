@@ -18,4 +18,20 @@ export const tourGuideStepsProductsStock: TourGuideStepType[] = [
         target: '.export-products',
         content: 'Here you can download a report based on the chosen filters',
     },
+];
+
+export const tourGuideStepsProductsStockNoDocs: TourGuideStepType[] = [
+    {
+        target: '.filter',
+        content: 'Here you can filter your product stock by warehouse or country',
+        disableBeacon: true,
+    },
+    {
+        target: '.search-block',
+        content: 'Write data here to locate information on the list below',
+    },
+    {
+        target: '.export-products',
+        content: 'Here you can download a report based on the chosen filters',
+    },
 ]

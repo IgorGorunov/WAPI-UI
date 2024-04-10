@@ -1,4 +1,5 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import {TicketHints} from "@/screens/TicketsPage/ticketHints.constants";
 
 export const CreateTicketFields = (topicOptions: OptionType[], subjectUuid: string|null) => {
 
@@ -15,6 +16,7 @@ export const CreateTicketFields = (topicOptions: OptionType[], subjectUuid: stri
             rules: {
                 required: "Required field",
             },
+            hint: TicketHints['topic'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -29,6 +31,7 @@ export const CreateTicketFields = (topicOptions: OptionType[], subjectUuid: stri
                 required: "Required field",
             },
             disabled: !!subjectUuid,
+            hint: TicketHints['subject'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT_AREA,
@@ -42,6 +45,7 @@ export const CreateTicketFields = (topicOptions: OptionType[], subjectUuid: stri
             rules: {
                 required: "Required field",
             },
+            hint: TicketHints['description'] || '',
         },
 
     ];

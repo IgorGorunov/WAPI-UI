@@ -16,12 +16,22 @@ import TicketList from "@/screens/TicketsPage/components/TicketList";
 import Modal from "@/components/Modal";
 import Ticket from "./components/Ticket";
 import {TicketType} from "@/types/tickets";
+import useTourGuide from "@/context/tourGuideContext";
+import {TourGuidePages} from "@/types/tourGuide";
+import TourGuide from "@/components/TourGuide";
+import {
+    tourGuideStepsTickets,
+    tourGuideStepsTicketsNoDocs
+} from "@/screens/TicketsPage/ticketsTourGuideSteps.constants";
+import {
+    tourGuideStepsStockMovements,
+    tourGuideStepsStockMovementsNoDocs
+} from "@/screens/StockMovementsPage/stockMovementsTourGuideSteps.constants";
+import {docNamesSingle} from "@/screens/StockMovementsPage";
 
 
 const TicketsPage = () => {
     const {token, setToken, currentDate} = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -109,20 +119,32 @@ const TicketsPage = () => {
     ) => {
         setIsTicketNew(true);
         setSingleTicketUuid(null);
-        // setSingleAmazonPrepOrder(null);
-        //fetchTicketParams();
         setShowTicketModal(true);
     }
 
-    console.log('tickets:', ticketsData)
+    //tour guide
+    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+
+    useEffect(() => {
+        if (!isTutorialWatched(TourGuidePages.Tickets)) {
+            if (!isLoading && ticketsData) {
+                setTimeout(() => setRunTour(true), 1000);
+            }
+        }
+    }, [isLoading]);
+
+    const [steps, setSteps] = useState([]);
+    useEffect(() => {
+        setSteps(ticketsData?.length ? tourGuideStepsTickets : tourGuideStepsTicketsNoDocs);
+    }, [ticketsData]);
 
 
     return (
         <Layout hasHeader hasFooter>
             <div className="page-component tickets-page tickets-page__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Tickets' toRight >
-                    <Button icon="add" iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button>
+                <Header pageTitle='Tickets' toRight needTutorialBtn >
+                    <Button classNames='add-ticket' icon="add" iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button>
                 </Header>
 
                 {ticketsData && <TicketList tickets={ticketsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod}  handleEditTicket={handleEditTicket} />}
@@ -132,6 +154,7 @@ const TicketsPage = () => {
                     <Ticket ticketUuid={singleTicketUuid} onClose={handleTicketModalClose}/>
                 </Modal>
             }
+            {ticketsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.StockMovement} /> : null}
         </Layout>
     )
 }

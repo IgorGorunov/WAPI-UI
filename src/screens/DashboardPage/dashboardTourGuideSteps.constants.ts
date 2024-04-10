@@ -1,7 +1,7 @@
 export const dashboardSteps = [
     {
         target: '.main-header__user',
-        content: 'Here you can check your profile information or log out',
+        content: 'Here you can log out',
         disableBeacon: true,
     },
     // {

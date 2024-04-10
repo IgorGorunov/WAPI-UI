@@ -18,10 +18,13 @@ import Loader from "@/components/Loader";
 import StockMovementList from "@/screens/StockMovementsPage/components/StockMovementList";
 import StockMovementForm from "@/screens/StockMovementsPage/components/StockMovementForm";
 import {ApiResponseType} from "@/types/api";
-// import useTourGuide from "@/context/tourGuideContext";
-// import {TourGuidePages} from "@/types/tourGuide";
-// import TourGuide from "@/components/TourGuide";
-// import {tourGuideStepsStockMovements} from "@/screens/StockMovementsPage/stockMovementsTourGuideSteps.constants";
+import useTourGuide from "@/context/tourGuideContext";
+import {TourGuidePages} from "@/types/tourGuide";
+import TourGuide from "@/components/TourGuide";
+import {
+    tourGuideStepsStockMovements,
+    tourGuideStepsStockMovementsNoDocs
+} from "@/screens/StockMovementsPage/stockMovementsTourGuideSteps.constants";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
@@ -32,6 +35,13 @@ const docNamesPlural = {
     [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movements',
     [STOCK_MOVEMENT_DOC_TYPE.OUTBOUND]: 'Outbounds',
     [STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE]: 'Logistic services',
+}
+
+export const docNamesSingle = {
+    [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbound',
+    [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movement',
+    [STOCK_MOVEMENT_DOC_TYPE.OUTBOUND]: 'Outbound',
+    [STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE]: 'Logistic service',
 }
 
 const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
@@ -88,10 +98,6 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
     const handleEditStockMovement = (uuid: string) => {
         setIsDocNew(false);
         setDocUuid(uuid)
-        // setSingleStockMovement(null);
-        // fetchInboundParams();
-        // fetchSingleStockMovement(uuid);
-
         setShowStockMovementModal(true);
     }
 
@@ -125,16 +131,22 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
         exportFileXLS(filteredData, docNamesPlural[docType]);
     }
 
-    // //tour guide
-    // const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
-    //
-    // useEffect(() => {
-    //     if (!isTutorialWatched(TourGuidePages.StockMovement)) {
-    //         if (!isLoading && stockMovementData) {
-    //             setTimeout(() => setRunTour(true), 1000);
-    //         }
-    //     }
-    // }, [isLoading]);
+    //tour guide
+    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+    const [steps, setSteps] = useState([]);
+
+    useEffect(() => {
+        if (!isTutorialWatched(TourGuidePages[docType])) {
+            if (!isLoading && stockMovementData) {
+                setTimeout(() => setRunTour(true), 1000);
+            }
+        }
+    }, [isLoading, docType]);
+
+    useEffect(() => {
+        setSteps(stockMovementData?.length ? tourGuideStepsStockMovements(docNamesSingle[docType].toLowerCase()) : tourGuideStepsStockMovementsNoDocs(docNamesSingle[docType].toLowerCase()))
+    }, [stockMovementData]);
+
 
     return (
         <Layout hasHeader hasFooter>
@@ -150,7 +162,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             {showStockMovementModal && (isDocNew && !docUuid || !isDocNew && docUuid) &&
                 <StockMovementForm docType={docType} docUuid={docUuid} closeDocModal={onShowStockMovementModalClose} closeModalOnSuccess={()=>{setShowStockMovementModal(false);fetchData();}} />
             }
-            {/*{stockMovementData && runTour && tourGuideStepsStockMovements ? <TourGuide steps={tourGuideStepsStockMovements} run={runTour} pageName={TourGuidePages.StockMovement} /> : null}*/}
+            {stockMovementData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.StockMovement} /> : null}
         </Layout>
     )
 }

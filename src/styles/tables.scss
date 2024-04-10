@@ -295,6 +295,21 @@
   }
 }
 
+.products-cell-style {
+  display: flex;
+  height: 30px;
+  padding: 3px 10px 3px 15px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  top: 15px;
+  border-radius: 20px;
+  border: 2px solid #5380F5;
+  background: #5380F5;
+  color: white;
+  cursor: pointer;
+}
+
 
 .ant-table-body {
 

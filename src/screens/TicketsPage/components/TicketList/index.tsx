@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState} from "react";
-import {Pagination, Table, TableColumnProps} from 'antd';
+import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
@@ -21,6 +21,7 @@ import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 import {ticketStatusColors, TicketType} from "@/types/tickets";
 import {FILTER_TYPE} from "@/types/utility";
+import Icon from "@/components/Icon";
 
 
 type TicketListType = {
@@ -218,7 +219,16 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             }),
         },
         {
-            title: <TitleColumn title="Status" minWidth="50px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn
+                minWidth="50px"
+                maxWidth="80px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Current ticket status" >
+                        <span>Status</span>
+                    </Tooltip>
+                }
+            />,
             render: (status: string) => {
                 return (
                     <TableCell value={status} minWidth="50px" maxWidth="80px" contentPosition="start"/>
@@ -233,7 +243,16 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Ticket #" minWidth="70px" maxWidth="80px" contentPosition="start"/>,
+            title: <TitleColumn
+                minWidth="70px"
+                maxWidth="80px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Ticket number. Click on the number to view the correspondence" >
+                        <span>Ticket #</span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string) => (
                 <TableCell
                     value={text}
@@ -257,7 +276,16 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             },
         },
         {
-            title: <TitleColumn title="Date" minWidth="80px" maxWidth="120px" contentPosition="start"/>,
+            title: <TitleColumn
+                minWidth="80px"
+                maxWidth="120px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="When the ticket was created" >
+                        <span>Date</span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string) => (
                 <TableCell value={formatDateTimeToStringWithDotWithoutSeconds(text)} minWidth="80px" maxWidth="120px" contentPosition="start"/>
             ),
@@ -269,7 +297,16 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             }),
         },
         {
-            title: <TitleColumn title="Topic" minWidth="90px" maxWidth="400px" contentPosition="start"/>,
+            title: <TitleColumn
+                minWidth="90px"
+                maxWidth="400px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Ticket subject" >
+                        <span>Topic</span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="90px" maxWidth="400px" contentPosition="start"/>
             ),
@@ -283,7 +320,16 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Title" minWidth="115px" maxWidth="500px" contentPosition="start"/>,
+            title: <TitleColumn
+                minWidth="115px"
+                maxWidth="500px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Ticket title" >
+                        <span>Title</span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="115px" maxWidth="500px" contentPosition="start"/>
             ),

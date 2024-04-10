@@ -4,11 +4,11 @@
   display: block;
 
   .card {
-    margin-bottom: 12px;
+    //margin-bottom: 12px;
 
-    &:last-child {
-      margin-bottom: 0;
-    }
+    //&:last-child {
+    //  margin-bottom: 0;
+    //}
   }
 
   &-wrapper {
@@ -37,6 +37,10 @@
 
   &--info {
     padding: 16px 24px;
+
+    &-card {
+      margin-bottom: 12px;
+    }
 
     &-form {
       &-btns {

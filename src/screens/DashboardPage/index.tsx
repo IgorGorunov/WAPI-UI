@@ -1,11 +1,7 @@
-import React, {useState, useEffect, useCallback} from "react";
-import Cookie from 'js-cookie';
+import React, {useCallback, useEffect, useState} from "react";
 import useAuth from "@/context/authContext";
-import { getDasboardData } from "@/services/dashboard";
-import {
-  PeriodType,
-  DashboardPeriodType,
-} from "@/types/dashboard";
+import {getDasboardData} from "@/services/dashboard";
+import {DashboardPeriodType, PeriodType,} from "@/types/dashboard";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header"
 import Diagram from "./components/Diagram";
@@ -16,26 +12,29 @@ import "./styles.scss";
 import PeriodFilter from "@/screens/DashboardPage/components/PeriodFilter";
 import {formatDateToString} from "@/utils/date";
 import Loader from "@/components/Loader";
-// import Joyride from 'react-joyride';
-// import TourGuide from "@/components/TourGuide";
-// import useTourGuide from "@/context/tourGuideContext";
-// import {dashboardSteps} from "@/screens/DashboardPage/dashboardTourGuideSteps.constants";
+import TourGuide from "@/components/TourGuide";
+import useTourGuide from "@/context/tourGuideContext";
+import {dashboardSteps} from "@/screens/DashboardPage/dashboardTourGuideSteps.constants";
+import {TourGuidePages} from "@/types/tourGuide";
+import {Routes} from "@/types/routes";
+import Router from "next/router";
+
+type pageDataType = {
+  ordersDiagram: any;
+  gmv: any;
+  totalOrders: any;
+  ordersByStatuses: any;
+  orderByCountryArrival: any;
+  orderByCountryDeparture: any;
+};
 
 const DashboardPage: React.FC = () => {
 
-  type pageDataType = {
-    ordersDiagram: any;
-    gmv: any;
-    totalOrders: any;
-    ordersByStatuses: any;
-    orderByCountryArrival: any;
-    orderByCountryDeparture: any;
-  };
+  const { token, setToken, currentDate, isAuthorizedUser } = useAuth();
 
-
-  const { token, setToken, currentDate } = useAuth();
-  const savedToken = Cookie.get('token');
-  if (savedToken) setToken(savedToken);
+  useEffect(() => {
+    if (!isAuthorizedUser) Router.push(Routes.Login);
+  }, [token]);
 
   const [pageData, setPageData] = useState<pageDataType | null>(null);
 
@@ -92,16 +91,16 @@ const DashboardPage: React.FC = () => {
     fetchData();
   }, [token, currentPeriod]);
 
-  // //tour guide
-  // const {runTour, setRunTour, checkTutorial} = useTourGuide();
-  //
-  // useEffect(() => {
-  //   if (!checkTutorial('Dashboard1')) {
-  //     if (!isLoading && pageData) {
-  //       setTimeout(() => setRunTour(true), 1000);
-  //     }
-  //   }
-  // }, [isLoading]);
+  //tour guide
+  const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+
+  useEffect(() => {
+    if (!isTutorialWatched(TourGuidePages.Dashboard)) {
+      if (!isLoading && pageData) {
+        setTimeout(() => setRunTour(true), 1000);
+      }
+    }
+  }, [isLoading]);
 
   const gmv = pageData && pageData.gmv ? pageData.gmv : null;
   const orders = pageData && pageData.totalOrders ? pageData.totalOrders : null;
@@ -123,8 +122,8 @@ const DashboardPage: React.FC = () => {
         <div className="dashboard-page__container">
           {isLoading && <Loader />}
           <div className='header'>
-            {/*<Header pageTitle="Dashboard" needTutorialBtn>*/}
-            <Header pageTitle="Dashboard" >
+            <Header pageTitle="Dashboard" needTutorialBtn>
+            {/*<Header pageTitle="Dashboard" >*/}
               <PeriodFilter currentPeriod={currentPeriod}
                   setCurrentPeriod={setCurrentPeriod}
                   setDiagramType={setDiagramType}
@@ -180,7 +179,7 @@ const DashboardPage: React.FC = () => {
                 departure={!orderByCountryDeparture ? [] : orderByCountryDeparture}
             />
           }
-          {/*{pageData && runTour && dashboardSteps ? <TourGuide steps={dashboardSteps} run={runTour} pageName='Dashboard' /> : null}*/}
+          {pageData && runTour && dashboardSteps ? <TourGuide steps={dashboardSteps} run={runTour} pageName={TourGuidePages.Dashboard} /> : null}
         </div>
 
       </Layout>
