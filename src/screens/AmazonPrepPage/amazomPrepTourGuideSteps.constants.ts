@@ -51,7 +51,7 @@ export const tourGuideStepsAmazonPrepNoDocs: TourGuideStepType[] = [
     },
     {
         target: '.export-orders',
-        content: 'Here you can export orders into Excel \n' +
-            'Note: All filters will be applied into export file',
+        content: `Here you can export orders into Excel
+            Note: All filters will be applied into export file`,
     },
 ]

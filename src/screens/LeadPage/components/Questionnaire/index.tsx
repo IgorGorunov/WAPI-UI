@@ -61,7 +61,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                 dimensionsOfLargestProduct: '',
                 weightOfHeaviestProduct: '',
                 additionalPackagingForLastMileDelivery: false,
-                needCod: false,
+                needsCOD: false,
             }
         }
     );

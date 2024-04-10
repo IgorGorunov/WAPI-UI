@@ -21,27 +21,27 @@ export const dashboardSteps = [
     },
     {
         target: '.order-statuses',
-        content: 'Check the status of your orders.',
+        content: 'Check the status of your orders',
         disableBeacon: true,
     },
     {
         target: '.forecast.orders',
-        content: 'Here you can check the number of orders.',
+        content: 'Here you can check the number of orders',
         disableBeacon: true,
     },
     {
         target: '.dashboard-diagram__wrapper',
-        content: 'The number of orders by days. weeks, months',
+        content: 'The number of orders by days, weeks, months',
         disableBeacon: true,
     },
     {
         target: '.orders-by-country',
-        content: 'Here you can check the number of your items by countries of departure.',
+        content: 'Here you can check the number of your items by countries of departure',
         disableBeacon: true,
     },
     {
         target: '.orders-by-country-of-arrival',
-        content: 'Here you can check the number of your items by countries of arrival. ',
+        content: 'Here you can check the number of your items by countries of arrival',
         disableBeacon: true,
     },
 ]

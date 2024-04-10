@@ -80,7 +80,7 @@ export const PackagingField = {
 
 export const CodField = {
     fieldType: FormFieldTypes.TOGGLE,
-    name: 'needCod',
+    name: 'needsCOD',
     label: "Needs COD",
     width: WidthType.w50,
     classNames: "",

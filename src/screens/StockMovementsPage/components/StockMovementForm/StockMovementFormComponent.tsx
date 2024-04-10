@@ -45,6 +45,7 @@ import {formatDateStringToDisplayString} from "@/utils/date";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
+import {docNamesSingle} from "@/screens/StockMovementsPage";
 // import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 // import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 // import {StockMovementsHints} from "@/screens/StockMovementsHintstockMovementsPage/stockMovementsHints.constants";
@@ -659,20 +660,20 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             <div className='stock-movement--btns width-100'>
                                 <div className='grid-row'>
                                     <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
-                                        <TutorialHintTooltip hint={StockMovementsHints('')['importProducts'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >
                                             <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={StockMovementsHints('')['selection'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['selection'] || ''} forBtn >
                                             <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
                                                 Selection
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={StockMovementsHints('')['addProduct'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['addProduct'] || ''} forBtn >
                                             <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
                                                 Add
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={StockMovementsHints('')['removeSelected'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['removeSelected'] || ''} forBtn >
                                             <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
                                                 Remove selected
                                             </Button>

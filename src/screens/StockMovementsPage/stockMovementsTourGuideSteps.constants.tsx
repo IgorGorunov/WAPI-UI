@@ -24,8 +24,8 @@ export const tourGuideStepsStockMovements = (docType: string)  => [
     },
     {
         target: '.export-docs',
-        content: `Here you can export ${docType}s into Excel
-            Note: All filters will be applied into export file`,
+        content: 'Here you can export '+docType+'s into Excel \n'+
+            'Note: All filters will be applied into export file',
     },
 ];
 
@@ -50,8 +50,8 @@ export const tourGuideStepsStockMovementsNoDocs = (docType: string)  => [
     },
     {
         target: '.export-docs',
-        content: `Here you can export ${docType}s into Excel
-            Note: All filters will be applied into export file`,
+        content: 'Here you can export '+docType+'s into Excel /n'+
+            'Note: All filters will be applied into export file',
     },
 ];
 

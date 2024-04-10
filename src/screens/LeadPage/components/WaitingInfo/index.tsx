@@ -7,7 +7,7 @@ const WaitingInfo = () => {
 
     return (
         <div className={`card lead-page__waiting-info`}>
-            <p>{getTextInfo() || 'Please, wait for verification...'}</p>
+            <p>{getTextInfo() || 'Your request is being processed. Confirmation will be sent to your email...'}</p>
         </div>
     );
 };
