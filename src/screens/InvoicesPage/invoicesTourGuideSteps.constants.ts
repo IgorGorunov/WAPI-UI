@@ -35,9 +35,13 @@ export const tourGuideStepsInvoices: TourGuideStepType[] = [
 
 export const tourGuideStepsInvoicesNoDocs: TourGuideStepType[] = [
     {
+        target: '.balance-info-card.debt', //'.product-list__container',
+        content: 'Current total debt',
+        disableBeacon: true,
+    },
+    {
         target: '.balance-info-card.overdue',
         content: 'Current overdue debt',
-        disableBeacon: true,
     },
     {
         target: '.balance-info-card.limit',

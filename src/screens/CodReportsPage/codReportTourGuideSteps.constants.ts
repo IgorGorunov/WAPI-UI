@@ -31,6 +31,10 @@ export const tourGuideStepsCodReports: TourGuideStepType[] = [
 
 export const tourGuideStepsCodReportsNoDocs: TourGuideStepType[] = [
     {
+        target: '.indicator-info-card.year', //'.product-list__container',
+        content: 'COD accrued from the beginning of the year to the date',
+    },
+    {
         target: '.indicator-info-card.month',
         content: 'COD accrued from the beginning of the month to the date',
         disableBeacon: true,

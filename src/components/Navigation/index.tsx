@@ -5,10 +5,10 @@ import SubmenuBlock from "@/components/Navigation/SubmenuBlock";
 import {navBlocks} from "@/components/Navigation/navItems.constants";
 import './styles.scss'
 import SubmenuSingleItem from "@/components/Navigation/SubmenuSingleItem";
-// import useTourGuide from "@/context/tourGuideContext";
-// import {navigationSteps} from "./navigationTourGuideSteps.constants";
-// import TourGuide from "@/components/TourGuide";
-// import {TourGuidePages} from "@/types/tourGuide";
+import useTourGuide from "@/context/tourGuideContext";
+import {navigationSteps} from "./navigationTourGuideSteps.constants";
+import TourGuide from "@/components/TourGuide";
+import {TourGuidePages} from "@/types/tourGuide";
 
 type NavigationType = {
     isMenuOpen: boolean;
@@ -16,25 +16,26 @@ type NavigationType = {
 }
 const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
 
-    // //tour guide
-    // const {isNavigationWatched} = useTourGuide();
-    // const [runNavigationTour, setRunNavigationTour] = useState(false);
-    //
-    // useEffect(() => {
-    //     if (isMenuOpen && !isNavigationWatched()) {
-    //         setTimeout(() => setRunNavigationTour(true), 1000);
-    //
-    //     }
-    // }, [isMenuOpen]);
+    //tour guide
+    const {isNavigationWatched} = useTourGuide();
+    const [runNavigationTour, setRunNavigationTour] = useState(false);
+
+    useEffect(() => {
+        if (isMenuOpen && !isNavigationWatched()) {
+            setTimeout(() => setRunNavigationTour(true), 1000);
+
+        }
+    }, [isMenuOpen]);
+
+    const handleCloseClick = useCallback(() => {
+        if (!runNavigationTour) {
+            handleClose();
+        }
+    },[runNavigationTour]);
 
     // const handleCloseClick = useCallback(() => {
-    //     if (!runNavigationTour) {
-    //         handleClose();
-    //     }
-    // },[runNavigationTour]);
-    const handleCloseClick = useCallback(() => {
-        handleClose();
-    },[]);
+    //     handleClose();
+    // },[]);
 
 
     return (
@@ -61,7 +62,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                     ))  : null}
                 </div>
             </div>
-            {/*{isMenuOpen && runNavigationTour && navigationSteps ? <TourGuide steps={navigationSteps} run={runNavigationTour} setRunTourOpt={setRunNavigationTour} pageName={TourGuidePages.Navigation} disableAnimation={true} /> : null}*/}
+            {isMenuOpen && runNavigationTour && navigationSteps ? <TourGuide steps={navigationSteps} run={runNavigationTour} setRunTourOpt={setRunNavigationTour} pageName={TourGuidePages.Navigation} disableAnimation={true} /> : null}
         </div>
     )
 }
