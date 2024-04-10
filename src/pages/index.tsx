@@ -1,6 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import DashboardPage from "@/screens/DashboardPage";
+import AuthChecker from "@/components/AuthChecker";
 
 export default function Home() {
 
@@ -12,7 +13,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.png" type="image/png" sizes="16x48"/>
       </Head>
-      {<DashboardPage />}
+        <AuthChecker isUser={true}>
+            <DashboardPage />
+        </AuthChecker>
     </>
   );
 }
