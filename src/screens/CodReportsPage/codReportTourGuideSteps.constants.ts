@@ -20,7 +20,7 @@ export const tourGuideStepsCodReports: TourGuideStepType[] = [
     },
     {
         target: '.search-block',
-        content: 'Write data here to locate information on the list below',
+        content: 'Write data here to find information on the list below',
     },
     {
         target: '.export-file',
