@@ -2,7 +2,7 @@
 export const tourGuideStepsStockMovements = (docType: string)  => [
     {
         target: '.ant-table-header', //'.product-list__container',
-        content: `Click here to sort your  ${docType}s by clicking the name of the column`,
+        content: `Click here to sort your ${docType}s by clicking the name of the column`,
         disableBeacon: true,
     },
     {

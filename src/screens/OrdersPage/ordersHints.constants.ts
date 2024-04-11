@@ -11,8 +11,8 @@ export const OrderHints = {
     codCurrency: 'The currency in which the customer will pay the amount of the cash on delivery',
     priceCurrency: 'The currency of initial order',
     selection: 'Click here to choose multiple products for the order',
-    addProduct: 'Add a product to the order one by one',
-    removeSelected: 'Delete a chosen product',
+    // addProduct: 'Add a product to the order one by one',
+    // removeSelected: 'Delete a chosen product',
 
     files: 'Any files related to the order (e.g., invoice or return form)',
 }

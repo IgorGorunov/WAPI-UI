@@ -49,6 +49,7 @@ import NotesList from "@/components/NotesList";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
+import {CommonHints} from "@/constants/commonHints";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -1018,7 +1019,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                     Selection
                                                 </Button>
                                             </TutorialHintTooltip>
-                                            <TutorialHintTooltip hint={OrderHints['addProduct'] || ''} forBtn >
+                                            <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                                 <Button type="button" icon='add-table-row' iconOnTheRight
                                                         size={ButtonSize.SMALL} disabled={isDisabled}
                                                         variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({
@@ -1037,7 +1038,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                     Add
                                                 </Button>
                                             </TutorialHintTooltip>
-                                            <TutorialHintTooltip hint={OrderHints['removeSelected'] || ''} forBtn >
+                                            <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
                                                 <Button type="button" icon='remove-table-row' iconOnTheRight
                                                         size={ButtonSize.SMALL} disabled={isDisabled}
                                                         variant={ButtonVariant.SECONDARY} onClick={removeProducts}>

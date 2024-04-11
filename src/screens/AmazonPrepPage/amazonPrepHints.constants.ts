@@ -18,8 +18,8 @@ export const AmazonPrepHints = {
     prepackedMasterBoxes: 'When you know the quantity of boxes in advance',
     buildNewBoxes: 'When you don\'t know the quantity of boxes in advance',
     selection: 'Click here to choose multiple products for the order',
-    addProduct: 'Add a product to the order one by one',
-    removeSelected: 'Delete a chosen product',
+    // addProduct: 'Add a product to the order one by one',
+    // removeSelected: 'Delete a chosen product',
 
     files: 'You can attach files here by drag and drop or Ctrl+V',
 }

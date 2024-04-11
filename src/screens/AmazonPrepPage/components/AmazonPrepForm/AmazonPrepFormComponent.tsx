@@ -42,6 +42,7 @@ import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {AmazonPrepHints} from "@/screens/AmazonPrepPage/amazonPrepHints.constants";
+import {CommonHints} from "@/constants/commonHints";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -648,12 +649,12 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                                     Selection
                                                 </Button>
                                             </TutorialHintTooltip>
-                                            <TutorialHintTooltip hint={AmazonPrepHints['addProduct'] || ''} forBtn >
+                                            <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                                 <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:'', boxesQuantity: ''})}>
                                                     Add
                                                 </Button>
                                             </TutorialHintTooltip>
-                                            <TutorialHintTooltip hint={AmazonPrepHints['removeSelected'] || ''} forBtn >
+                                            <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
                                                 <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
                                                     Remove selected
                                                 </Button>

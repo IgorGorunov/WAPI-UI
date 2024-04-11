@@ -46,6 +46,7 @@ import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
+import {CommonHints} from "@/constants/commonHints";
 // import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 // import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 // import {StockMovementsHints} from "@/screens/StockMovementsHintstockMovementsPage/stockMovementsHints.constants";
@@ -644,7 +645,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         </h3>
                         <div className='grid-row '>
                             <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors} isDisabled={isDisabled}/>
-
                         </div>
                     </CardWithHelpIcon>
                 </div>
@@ -668,12 +668,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                                 Selection
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['addProduct'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                             <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
                                                 Add
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['removeSelected'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
                                             <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
                                                 Remove selected
                                             </Button>
