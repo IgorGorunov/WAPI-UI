@@ -41,7 +41,7 @@ import TourGuide from "@/components/TourGuide";
 import {
     tourGuideStepsReports,
     tourGuideStepsReportsWithoutVariants
-} from "@/screens/ReportPage/reportTourGuideSteps.constants";
+} from "./reportTourGuideSteps.constants";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -49,7 +49,7 @@ type ReportPagePropType = {
 
 const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const Router = useRouter();
-    const { token, setToken, currentDate, getToken } = useAuth();
+    const { token, currentDate, getToken } = useAuth();
 
     useEffect(() => {
         if (!getToken()) Router.push(Routes.Login);
@@ -65,6 +65,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         if (reportType && !isReportWatched(reportType)) {
             if (!isLoading) {
                 setTimeout(() => setRunTour(true), 1000);
+                console.log('steps: ', tourGuideStepsReports, tourGuideStepsReportsWithoutVariants)
             }
         }
     }, [isLoading]);

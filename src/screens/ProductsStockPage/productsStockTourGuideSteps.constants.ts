@@ -3,35 +3,23 @@ import {TourGuideStepType} from "@/types/tourGuide";
 export const tourGuideStepsProductsStock: TourGuideStepType[] = [
     {
         target: '.ant-table-header', //'.product-list__container',
-        content: 'Here you can sort your products by clicking the name of the chosen column',
+        content: 'Click here to sort your products by clicking the name of the column',
         disableBeacon: true,
     },
     {
         target: '.filter',
-        content: 'Here you can filter your product stock by warehouse or country',
+        content: 'Click here to filter product stock by parameters',
     },
     {
         target: '.search-block',
-        content: 'Write data here to locate information on the list below',
+        content: 'Write data here to find information on the list below',
     },
     {
         target: '.export-products',
-        content: 'Here you can download a report based on the chosen filters',
+        content: 'Click here to export product stock into Excel \n'+
+        'Note: All filters will be applied into export file',
     },
 ];
 
-export const tourGuideStepsProductsStockNoDocs: TourGuideStepType[] = [
-    {
-        target: '.filter',
-        content: 'Here you can filter your product stock by warehouse or country',
-        disableBeacon: true,
-    },
-    {
-        target: '.search-block',
-        content: 'Write data here to locate information on the list below',
-    },
-    {
-        target: '.export-products',
-        content: 'Here you can download a report based on the chosen filters',
-    },
-]
+export const tourGuideStepsProductsStockNoDocs: TourGuideStepType[] = tourGuideStepsProductsStock.slice(1);
+tourGuideStepsProductsStockNoDocs[0].disableBeacon = true;

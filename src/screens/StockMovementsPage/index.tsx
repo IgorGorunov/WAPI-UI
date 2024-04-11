@@ -162,7 +162,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             {showStockMovementModal && (isDocNew && !docUuid || !isDocNew && docUuid) &&
                 <StockMovementForm docType={docType} docUuid={docUuid} closeDocModal={onShowStockMovementModalClose} closeModalOnSuccess={()=>{setShowStockMovementModal(false);fetchData();}} />
             }
-            {stockMovementData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.StockMovement} /> : null}
+            {stockMovementData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages[docType]} /> : null}
         </Layout>
     )
 }

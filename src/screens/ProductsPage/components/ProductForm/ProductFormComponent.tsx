@@ -1026,12 +1026,16 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 />
                                 {/*</div>*/}
                                 <div className='product-info--table-btns width-67' aria-disabled={orderIsApproved}>
-                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
-                                        Add
-                                    </Button>
-                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
-                                        Remove selected
-                                    </Button>
+                                    <TutorialHintTooltip hint={ProductDimensionsHints['add-unit-btn'] || ''} forBtn >
+                                        <Button classNames='add-unit-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
+                                            Add
+                                        </Button>
+                                    </TutorialHintTooltip>
+                                    <TutorialHintTooltip hint={ProductDimensionsHints['remove-unit-btn'] || ''} forBtn >
+                                        <Button classNames='remove-unit-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
+                                            Remove selected
+                                        </Button>
+                                    </TutorialHintTooltip>
 
                                 </div>
                             </div>
@@ -1048,7 +1052,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     </CardWithHelpIcon>
                 </div>
                 <div className="barcodes-tab">
-                    <div className="card min-height-600 product-info--barcodes">
+                    <CardWithHelpIcon classNames="card min-height-600 product-info--barcodes">
                         <h3 className='product-info__block-title title-small'>
                             <Icon name='barcodes'/>
                             Barcodes
@@ -1056,19 +1060,23 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <div className='product-info--barcodes-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL}
-                                            disabled={isDisabled} variant={ButtonVariant.SECONDARY}
-                                            onClick={() => appendBarcode({
-                                                key: `barcode-${Date.now().toString()}`,
-                                                selected: false,
-                                                barcode: ''
-                                            })}>
-                                        Add
-                                    </Button>
-                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL}
-                                            disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
-                                        Remove selected
-                                    </Button>
+                                    <TutorialHintTooltip hint={ProductOtherHints['add-barcode-btn'] || ''} forBtn >
+                                        <Button classNames='add-barcode-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL}
+                                                disabled={isDisabled} variant={ButtonVariant.SECONDARY}
+                                                onClick={() => appendBarcode({
+                                                    key: `barcode-${Date.now().toString()}`,
+                                                    selected: false,
+                                                    barcode: ''
+                                                })}>
+                                            Add
+                                        </Button>
+                                    </TutorialHintTooltip>
+                                    <TutorialHintTooltip hint={ProductOtherHints['remove-barcode-btn'] || ''} forBtn >
+                                        <Button classNames='remove-barcode-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL}
+                                                disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
+                                            Remove selected
+                                        </Button>
+                                    </TutorialHintTooltip>
 
                                 </div>
                             </div>
@@ -1082,7 +1090,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
 
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
                 <div className="aliases-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--aliases">
@@ -1095,13 +1103,16 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
-                                        Add
-                                    </Button>
-                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
-                                        Remove selected
-                                    </Button>
-
+                                    <TutorialHintTooltip hint={ProductOtherHints['add-alias-btn'] || ''} forBtn >
+                                        <Button classNames='add-alias-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
+                                            Add
+                                        </Button>
+                                    </TutorialHintTooltip>
+                                    <TutorialHintTooltip hint={ProductOtherHints['remove-alias-btn'] || ''} forBtn >
+                                        <Button classNames='remove-alias-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
+                                            Remove selected
+                                        </Button>
+                                    </TutorialHintTooltip>
                                 </div>
                             </div>
                         </div>
@@ -1124,16 +1135,19 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 Bundle kit
                             </h3>
                         </TutorialHintTooltip>
-                        <div className='product-info--aliases-btns'>
+                        <div className='product-info--bundles-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:'' })}>
-                                        Add
-                                    </Button>
-                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
-                                        Remove selected
-                                    </Button>
-
+                                    <TutorialHintTooltip hint={ProductOtherHints['add-bundle-btn'] || ''} forBtn >
+                                        <Button classNames='add-bundle-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:'' })}>
+                                            Add
+                                        </Button>
+                                    </TutorialHintTooltip>
+                                    <TutorialHintTooltip hint={ProductOtherHints['remove-bundle-btn'] || ''} forBtn >
+                                        <Button classNames='remove-bundle-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
+                                            Remove selected
+                                        </Button>
+                                    </TutorialHintTooltip>
                                 </div>
                             </div>
                         </div>
@@ -1156,16 +1170,19 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 Analogues
                             </h3>
                         </TutorialHintTooltip>
-                        <div className='product-info--aliases-btns'>
+                        <div className='product-info--analogues-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY}  onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
-                                        Add
-                                    </Button>
-                                    <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
-                                        Remove selected
-                                    </Button>
-
+                                    <TutorialHintTooltip hint={ProductOtherHints['add-analogue-btn'] || ''} forBtn >
+                                        <Button classNames='add-analogue-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY}  onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
+                                            Add
+                                        </Button>
+                                    </TutorialHintTooltip>
+                                    <TutorialHintTooltip hint={ProductOtherHints['remove-analogue-btn'] || ''} forBtn >
+                                        <Button classNames='remove-analogue-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
+                                            Remove selected
+                                        </Button>
+                                    </TutorialHintTooltip>
                                 </div>
                             </div>
                         </div>

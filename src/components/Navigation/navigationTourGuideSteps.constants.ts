@@ -31,7 +31,7 @@ export const navigationSteps = [
     },
     {
         target: '.submenu-single-item.Tickets',
-        content: 'Here you can create a ticket to support service',
+        content: 'Contact support manager',
         disableBeacon: true,
     },
 

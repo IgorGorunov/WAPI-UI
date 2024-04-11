@@ -4,16 +4,16 @@ export const StockMovementsHints = (docType: string) => ({
     estimatedTimeArrives: `Estimated time of arrival`,
     status: ``,
     statusAdditionalInfo: ``,
-    sender: `Fill in street, building number, zip code, company name, contact person name, contact phone number`,
+    sender: docType=='Inbound' || docType=='Logistic service' ? `Fill in street, building number, zip code, company name, contact person name, contact phone number` : '',
     senderCountry: ``,
-    receiver: `Fill in street, building number, zip code, company name, contact person name, contact phone number`,
+    receiver: docType=='Outbound' || docType=='Logistic service' ?`Fill in street, building number, zip code, company name, contact person name, contact phone number` : '',
     receiverCountry: ``,
     courierServiceTrackingNumber: `Tracking number of your shipment`,
     comment: `Important details for us to know regarding your ${docType.toLowerCase()}`,
 
     // products
-    importProducts: 'Here you can import products from Excel file',
-    selection: `Here you can choose multiple products for the ${docType.toLowerCase()}`,
+    importProducts: 'Click here to import products from Excel file',
+    selection: `Click here to choose multiple products for the  ${docType.toLowerCase()}`,
     addProduct: `Add a product to the ${docType.toLowerCase()} one by one`,
     removeSelected: 'Delete chosen products',
 

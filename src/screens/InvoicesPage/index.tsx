@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import { getInvoices, getInvoicesDebts } from "@/services/invoices";
 import Layout from "@/components/Layout/Layout";
@@ -19,12 +18,11 @@ import TourGuide from "@/components/TourGuide";
 import {
     tourGuideStepsInvoices,
     tourGuideStepsInvoicesNoDocs
-} from "@/screens/InvoicesPage/invoicesTourGuideSteps.constants";
-import {tourGuideStepsOrders, tourGuideStepsOrdersNoDocs} from "@/screens/OrdersPage/ordersTourGuideSteps.constants";
+} from "./invoicesTourGuideSteps.constants";
 
 const InvoicesPage = () => {
 
-    const { token, setToken, currentDate } = useAuth();
+    const { token, currentDate } = useAuth();
 
     //balance/debt
     const [invoiceBalance, setInvoiceBalance] = useState<InvoiceBalanceType|null>(null);
@@ -122,11 +120,11 @@ const InvoicesPage = () => {
 
     useEffect(() => {
         if (!isTutorialWatched(TourGuidePages.Invoices)) {
-            if (!isLoading && invoicesData) {
+            if (!isLoading && invoicesData!==null) {
                 setTimeout(() => setRunTour(true), 1000);
             }
         }
-    }, [isLoading]);
+    }, [invoicesData]);
 
     const [steps, setSteps] = useState([]);
     useEffect(() => {
@@ -161,7 +159,7 @@ const InvoicesPage = () => {
                 ) : null}
                 {invoicesData && <InvoiceList invoices={invoicesData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredInvoices={setFilteredInvoices}/>}
             </div>
-            {invoicesData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Invoices} /> : null}
+            {invoicesData!==null && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Invoices} /> : null}
         </Layout>
     )
 }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import { getCodReports , getCODIndicators} from "@/services/codReports";
 import Layout from "@/components/Layout/Layout";
@@ -19,15 +18,11 @@ import TourGuide from "@/components/TourGuide";
 import {
     tourGuideStepsCodReports,
     tourGuideStepsCodReportsNoDocs
-} from "@/screens/CodReportsPage/codReportTourGuideSteps.constants";
-import {
-    tourGuideStepsInvoices,
-    tourGuideStepsInvoicesNoDocs
-} from "@/screens/InvoicesPage/invoicesTourGuideSteps.constants";
+} from "./codReportTourGuideSteps.constants";
 
 const CodReportsPage = () => {
 
-    const { token, setToken, currentDate } = useAuth();
+    const { token, currentDate } = useAuth();
 
     const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType|null>(null);
 
@@ -121,11 +116,11 @@ const CodReportsPage = () => {
 
     useEffect(() => {
         if (!isTutorialWatched(TourGuidePages.CodReports)) {
-            if (!isLoading && codReportsData) {
+            if (!isLoading && codReportsData!==null) {
                 setTimeout(() => setRunTour(true), 1000);
             }
         }
-    }, [isLoading]);
+    }, [codReportsData]);
 
     const [steps, setSteps] = useState([]);
     useEffect(() => {
@@ -160,7 +155,7 @@ const CodReportsPage = () => {
                 ) : null}
                 {codReportsData && <CodReportsList codReports={codReportsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod}  setFilteredCodReports={setFilteredCodReports}/>}
             </div>
-            {codReportsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.CodReports} /> : null}
+            {codReportsData!==null && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.CodReports} /> : null}
         </Layout>
     )
 }

@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useCallback} from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import Layout from "@/components/Layout/Layout";
@@ -22,16 +21,11 @@ import TourGuide from "@/components/TourGuide";
 import {
     tourGuideStepsTickets,
     tourGuideStepsTicketsNoDocs
-} from "@/screens/TicketsPage/ticketsTourGuideSteps.constants";
-import {
-    tourGuideStepsStockMovements,
-    tourGuideStepsStockMovementsNoDocs
-} from "@/screens/StockMovementsPage/stockMovementsTourGuideSteps.constants";
-import {docNamesSingle} from "@/screens/StockMovementsPage";
+} from "./ticketsTourGuideSteps.constants";
 
 
 const TicketsPage = () => {
-    const {token, setToken, currentDate} = useAuth();
+    const {token, currentDate} = useAuth();
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -154,7 +148,7 @@ const TicketsPage = () => {
                     <Ticket ticketUuid={singleTicketUuid} onClose={handleTicketModalClose}/>
                 </Modal>
             }
-            {ticketsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.StockMovement} /> : null}
+            {ticketsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Tickets} /> : null}
         </Layout>
     )
 }

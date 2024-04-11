@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import { getProductsStock } from "@/services/products";
 import Layout from "@/components/Layout/Layout";
@@ -16,19 +15,11 @@ import TourGuide from "@/components/TourGuide";
 import {
     tourGuideStepsProductsStock,
     tourGuideStepsProductsStockNoDocs
-} from "@/screens/ProductsStockPage/productsStockTourGuideSteps.constants";
-import {
-    tourGuideStepsTickets,
-    tourGuideStepsTicketsNoDocs
-} from "@/screens/TicketsPage/ticketsTourGuideSteps.constants";
-import {
-    tourGuideStepsProduct,
-    tourGuideStepsProductNoDocs
-} from "@/screens/ProductsPage/productListTourGuideSteps.constants";
+} from "./productsStockTourGuideSteps.constants";
 
 const ProductsStockPage = () => {
 
-    const { token, setToken } = useAuth();
+    const { token } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [filteredProducts, setFilteredProducts] = useState<ProductStockType[] | null>(null);
@@ -96,7 +87,7 @@ const ProductsStockPage = () => {
         }
     }, [isLoading]);
 
-    const [steps, setSteps] = useState([]);
+    const [steps, setSteps] = useState(tourGuideStepsProductsStockNoDocs);
     useEffect(() => {
         setSteps(productsData?.length ? tourGuideStepsProductsStock : tourGuideStepsProductsStockNoDocs);
     }, [productsData]);

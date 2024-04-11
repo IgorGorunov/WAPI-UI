@@ -14,7 +14,7 @@ import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
 import {sendAmazonPrepData} from '@/services/amazonePrep';
 import {DetailsFields, GeneralFields, ReceiverFields} from "./AmazonPrepFormFields";
-import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
@@ -606,12 +606,12 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                     </div>
                     <div key='product-tab' className='product-tab'>
                         <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--products">
-                            <TutorialHintTooltip hint={AmazonPrepHints['products'] || ''} position='left' >
-                                <h3 className='amazon-prep-info__block-title title-small'>
+                            {/*<TutorialHintTooltip hint={AmazonPrepHints['products'] || ''} position='left' >*/}
+                                <h3 className='amazon-prep-info__block-title'>
                                     <Icon name='goods' />
                                     Products
                                 </h3>
-                            </TutorialHintTooltip>
+                            {/*</TutorialHintTooltip>*/}
 
                             <div className='grid-row '>
                                 <div className='amazon-prep-info--order-btns  width-100'>
@@ -725,7 +725,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                 </h3>
                             </TutorialHintTooltip>
                             <div className='dropzoneBlock'>
-                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? '' : amazonPrepOrderData?.uuid} hint="Product labels, Carton labels, Pallet labels, Excel file any other file related to the order. No .csv files!" banCSV={true}/>
+                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? '' : amazonPrepOrderData?.uuid} hint="Product labels, Carton labels, Pallet labels, Excel file and any other files related to the order. Available formats: pdf, xls, xlsx." banCSV={true}/>
                             </div>
                         </CardWithHelpIcon>
                     </div>
