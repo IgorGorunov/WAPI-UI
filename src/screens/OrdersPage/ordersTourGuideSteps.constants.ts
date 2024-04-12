@@ -12,7 +12,7 @@ export const tourGuideStepsOrders: TourGuideStepType[] = [
     },
     {
         target: '.date-input-field',
-        content: 'Click here to filter your orders by the period of time',
+        content: 'Click here to filter orders by the period of time',
     },
     {
         target: '.search-block',

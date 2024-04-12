@@ -20,7 +20,7 @@ export const tourGuideStepsStockMovements = (docType: string)  => [
     },
     {
         target: '.add-doc',
-        content: `Click here to add a new  ${docType}. It will then be checked by our logistics team`,
+        content: `Click here to add a new ${docType}. It will then be checked by our logistics team`,
         //disableBeacon: true,
     },
     {
