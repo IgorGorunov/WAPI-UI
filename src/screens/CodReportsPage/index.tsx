@@ -131,7 +131,7 @@ const CodReportsPage = () => {
         <Layout hasHeader hasFooter>
             <div className="cod-reports__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Cod reports' toRight needTutorialBtn >
+                <Header pageTitle='COD reports' toRight needTutorialBtn >
                     <Button classNames='export-file' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
                 {CODIndicators ? (

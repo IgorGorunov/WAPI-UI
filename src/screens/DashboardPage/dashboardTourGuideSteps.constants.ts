@@ -6,7 +6,7 @@ export const dashboardSteps = [
     },
     {
         target: '.tour-guide',
-        content: 'Click here to watch the guide',
+        content: 'Click here to run the guide',
     },
     {
         target: '.header-notifications__wrapper',

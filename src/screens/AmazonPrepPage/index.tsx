@@ -18,13 +18,9 @@ import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsAmazonPrep, tourGuideStepsAmazonPrepNoDocs} from "./amazomPrepTourGuideSteps.constants";
-import {
-    tourGuideStepsCodReports,
-    tourGuideStepsCodReportsNoDocs
-} from "@/screens/CodReportsPage/codReportTourGuideSteps.constants";
 
 const AmazonPrepPage = () => {
-    const {token, setToken, currentDate} = useAuth();
+    const {token, currentDate} = useAuth();
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
