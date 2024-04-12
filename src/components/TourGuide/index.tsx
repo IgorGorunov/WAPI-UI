@@ -45,6 +45,7 @@ const TourGuide: React.FC<TourGuidePropsType> = ({steps, run, setRunTourOpt, pag
             steps={steps}
             callback={handleStop}
             floaterProps={{disableAnimation: disableAnimation}}
+            locale={{last: 'Finish'}}
             styles={{
                 options: {
                     primaryColor: 'var(--color-light-blue-gray)',
