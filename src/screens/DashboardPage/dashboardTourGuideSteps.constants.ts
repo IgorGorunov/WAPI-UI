@@ -13,6 +13,10 @@ export const dashboardSteps = [
         content: 'Your notifications',
     },
     {
+        target: '.main-header__icon',
+        content: 'Click here to open a menu',
+    },
+    {
         target: '.period-filter',
         content: 'Click here to filter dashboard data by period of time',
     },

@@ -2,7 +2,7 @@
 export const tourGuideStepsTickets  = [
     {
         target: '.ant-table-header', //'.product-list__container',
-        content: 'Here you can sort your tickets by clicking the name of the chosen column',
+        content: 'Here you can sort tickets by clicking the name of the chosen column',
         disableBeacon: true,
     },
     {
@@ -11,7 +11,7 @@ export const tourGuideStepsTickets  = [
     },
     {
         target: '.date-input-field',
-        content: 'Click here to filter your tickets by the period of time',
+        content: 'Click here to filter tickets by the period of time',
     },
     {
         target: '.search-block',

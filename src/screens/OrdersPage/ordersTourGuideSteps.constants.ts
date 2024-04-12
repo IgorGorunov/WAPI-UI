@@ -3,7 +3,7 @@ import {TourGuideStepType} from "@/types/tourGuide";
 export const tourGuideStepsOrders: TourGuideStepType[] = [
     {
         target: '.ant-table-header', //'.product-list__container',
-        content: 'Click here to sort your orders by clicking the name of the chosen column',
+        content: 'Click here to sort orders by clicking the name of the chosen column',
         disableBeacon: true,
     },
     {
@@ -25,7 +25,7 @@ export const tourGuideStepsOrders: TourGuideStepType[] = [
     },
     {
         target: '.import-orders',
-        content: 'Click here to import your orders by bulk from Excel',
+        content: 'Click here to import orders by bulk from Excel',
     },
     {
         target: '.export-orders',

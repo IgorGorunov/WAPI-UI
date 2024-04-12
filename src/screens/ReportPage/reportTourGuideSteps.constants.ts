@@ -8,7 +8,7 @@ export const tourGuideStepsReports: TourGuideStepType[] = [
     },
     {
         target: '.date-input-field',
-        content: 'Click here to filter report data by the period of time',
+        content: 'Click here to filter report by the period of time',
     },
     {
         target: '.search-block',

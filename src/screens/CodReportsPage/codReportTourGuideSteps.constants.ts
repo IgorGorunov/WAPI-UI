@@ -16,7 +16,7 @@ export const tourGuideStepsCodReports: TourGuideStepType[] = [
     },
     {
         target: '.date-input-field',
-        content: 'Click here to filter your COD reports by the period of time',
+        content: 'Click here to filter COD reports by the period of time',
     },
     {
         target: '.search-block',

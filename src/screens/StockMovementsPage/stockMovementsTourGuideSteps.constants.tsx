@@ -2,7 +2,7 @@
 export const tourGuideStepsStockMovements = (docType: string)  => [
     {
         target: '.ant-table-header', //'.product-list__container',
-        content: `Click here to sort your ${docType}s by clicking the name of the column`,
+        content: `Click here to sort ${docType}s by clicking the name of the column`,
         disableBeacon: true,
     },
     {
@@ -12,7 +12,7 @@ export const tourGuideStepsStockMovements = (docType: string)  => [
     },
     {
         target: '.date-input-field',
-        content: `Click here to filter your ${docType}s by the period of time`,
+        content: `Click here to filter ${docType}s by the period of time`,
     },
     {
         target: '.search-block',

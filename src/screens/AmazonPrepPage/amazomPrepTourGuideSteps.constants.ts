@@ -3,7 +3,7 @@ import {TourGuideStepType} from "@/types/tourGuide";
 export const tourGuideStepsAmazonPrep: TourGuideStepType[] = [
     {
         target: '.ant-table-header', //'.product-list__container',
-        content: 'Here you can sort your orders by clicking the name of the chosen column',
+        content: 'Here you can sort orders by clicking the name of the chosen column',
         disableBeacon: true,
     },
     {
@@ -12,7 +12,7 @@ export const tourGuideStepsAmazonPrep: TourGuideStepType[] = [
     },
     {
         target: '.date-input-field',
-        content: 'Click here to filter your orders by the period of time',
+        content: 'Click here to filter orders by the period of time',
     },
     {
         target: '.search-block',

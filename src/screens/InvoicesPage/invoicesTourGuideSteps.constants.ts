@@ -20,7 +20,7 @@ export const tourGuideStepsInvoices: TourGuideStepType[] = [
     },
     {
         target: '.date-input-field',
-        content: 'Click here to filter your invoices by the period of time',
+        content: 'Click here to filter invoices by the period of time',
     },
     {
         target: '.search-block',
