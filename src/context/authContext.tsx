@@ -64,10 +64,10 @@ export const AuthProvider = (props: PropsWithChildren) => {
   }
 
   const setTutorialInfo = (tutorialInfo: string[] | null | undefined) => {
-    // tutorialInfo && Array.isArray(tutorialInfo)
-    //     ? Cookie.set('tutorialData', tutorialInfo.join(';'))
-    //     : Cookie.set('tutorialData', null );
-    Cookie.set('tutorialData', '' )
+    tutorialInfo && Array.isArray(tutorialInfo)
+        ? Cookie.set('tutorialData', tutorialInfo.join(';'))
+        : Cookie.set('tutorialData', null );
+    //Cookie.set('tutorialData', '' )
   }
 
   //const userStatus = Cookie.get('userStatus')  as UserStatusType || null;

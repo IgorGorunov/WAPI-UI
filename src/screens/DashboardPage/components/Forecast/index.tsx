@@ -48,10 +48,10 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
 
   return (
       <div
-          className={`card forecast forecast__container ${isGMV ? "gmv" : ""}`}
+          className={`card forecast forecast__container ${isGMV ? "gmv" : "orders"}`}
       >
           <div className="forecast__wrapper">
-            <h4 className="title">{isGMV ? "GMV" : "Orders"}</h4>
+            <p className="title-h4 title">{isGMV ? "GMV" : "Orders"}</p>
             {isError ? (<div className='forecast__error-message'>{errorMessage}</div>) : (<>
               <p className="forecast__main-amount">
                 {amountPrefix}

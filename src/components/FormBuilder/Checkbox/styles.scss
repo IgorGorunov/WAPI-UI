@@ -45,6 +45,11 @@
 
     .flag-icon {
       margin-left: 4px;
+
+      &.flag-first {
+        margin-left: 0;
+        margin-right: 6px;
+      }
     }
     .colored-circle {
       display: inline-block;

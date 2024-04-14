@@ -1,8 +1,6 @@
 import React, {useState, useEffect, useCallback} from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
-import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import OrderList from "./components/OrderList";
@@ -18,21 +16,19 @@ import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import {ImportFilesType} from "@/types/importFiles";
-
-type ApiResponse = {
-    data: any;
-};
+import useTourGuide from "@/context/tourGuideContext";
+import {TourGuidePages} from "@/types/tourGuide";
+import TourGuide from "@/components/TourGuide";
+import {tourGuideStepsOrders, tourGuideStepsOrdersNoDocs} from "./ordersTourGuideSteps.constants";
+import {ApiResponseType} from "@/types/api";
+import {
+    tourGuideStepsProduct,
+    tourGuideStepsProductNoDocs
+} from "@/screens/ProductsPage/productListTourGuideSteps.constants";
 
 const OrdersPage = () => {
     const Router = useRouter();
-    const { token, setToken, currentDate } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
-    //if (!token) Router.push(Routes.Login);
-
-    useEffect(() => {
-        if (!token) Router.push(Routes.Login);
-    }, [token]);
+    const { token, currentDate, isAuthorizedUser } = useAuth();
 
     useEffect(() => {
         const { uuid } = Router.query;
@@ -51,6 +47,22 @@ const OrdersPage = () => {
     const [filteredOrders, setFilteredOrders] = useState<OrderType[]>(ordersData);
     const [isLoading, setIsLoading] = useState(true);
 
+    //tour guide
+    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+
+    useEffect(() => {
+        if (!isTutorialWatched(TourGuidePages.Orders)) {
+            if (!isLoading && ordersData) {
+                setTimeout(() => setRunTour(true), 1000);
+            }
+        }
+    }, [isLoading]);
+
+    const [steps, setSteps] = useState([]);
+    useEffect(() => {
+        setSteps(ordersData?.length ? tourGuideStepsOrders : tourGuideStepsOrdersNoDocs);
+    }, [ordersData]);
+
     //import files modal
     const [showImportModal, setShowImportModal] = useState(false);
     const onImportModalClose = () => {
@@ -62,21 +74,15 @@ const OrdersPage = () => {
     const [orderUuid, setOrderUuid] = useState('');
     const [isOrderNew, setIsOrderNew] = useState(true);
 
-    //const {setDocNotificationsAsRead} = useMarkNotificationAsRead()
-
     const onOrderModalClose = () => {
         setShowOrderModal(false);
-        // if (orderUuid) {
-        //     setDocNotificationsAsRead(orderUuid);
-        // }
     }
 
     const fetchData = useCallback(async () => {
-        console.log('test is fetch')
         try {
             setIsLoading(true);
 
-            const res: ApiResponse = await getOrders(
+            const res: ApiResponseType = await getOrders(
                 {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
             );
 
@@ -89,7 +95,6 @@ const OrdersPage = () => {
 
         } catch (error) {
             console.error("Error fetching data:", error);
-            setIsLoading(false);
         } finally {
             setIsLoading(false);
         }
@@ -102,9 +107,6 @@ const OrdersPage = () => {
     const handleEditOrder = (uuid: string) => {
         setIsOrderNew(false);
         setOrderUuid(uuid);
-        // setSingleOrder(null);
-        // fetchOrderParams();
-        // fetchSingleOrder(uuid);
 
         setOrdersData(prevState => {
             if (prevState && prevState.length) {
@@ -124,8 +126,6 @@ const OrdersPage = () => {
     ) => {
         setIsOrderNew(true);
         setOrderUuid(null);
-        // fetchOrderParams();
-        // setSingleOrder(null);
         setShowOrderModal(true);
     }
     const handleImportXLS = () => {
@@ -161,24 +161,23 @@ const OrdersPage = () => {
         <Layout hasHeader hasFooter>
             <div className="page-component orders-page__container">
                 {isLoading && (<Loader />)}
-                <Header pageTitle='Fulfillment' toRight >
-                    <Button icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
-                    <Button icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle='Fulfillment' toRight needTutorialBtn >
+                    <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
+                    <Button classNames='import-orders' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
+                    <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}
             </div>
             {showOrderModal && (orderUuid || isOrderNew) &&
-                // <Modal title={`Order`} onClose={onOrderModalClose} >
-                    <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={()=>{onOrderModalClose(); fetchData(); }}/>
-                // </Modal>
+                <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={()=>{onOrderModalClose(); fetchData(); }}/>
             }
             {showImportModal &&
                 <Modal title={`Import xls`} onClose={onImportModalClose} >
                     <ImportFilesBlock file='OrderTemplate.xlsx' importFilesType={ImportFilesType.ORDERS} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }
+            {ordersData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Orders} /> : null}
         </Layout>
     )
 }

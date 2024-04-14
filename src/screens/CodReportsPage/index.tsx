@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import { getCodReports , getCODIndicators} from "@/services/codReports";
 import Layout from "@/components/Layout/Layout";
@@ -13,12 +12,17 @@ import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {DateRangeType} from "@/types/dashboard";
 import CODIndicatorsCard from "@/screens/CodReportsPage/components/CODIndicators";
 import Loader from "@/components/Loader";
+import useTourGuide from "@/context/tourGuideContext";
+import {TourGuidePages} from "@/types/tourGuide";
+import TourGuide from "@/components/TourGuide";
+import {
+    tourGuideStepsCodReports,
+    tourGuideStepsCodReportsNoDocs
+} from "./codReportTourGuideSteps.constants";
 
 const CodReportsPage = () => {
 
-    const { token, setToken, currentDate } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
+    const { token, currentDate } = useAuth();
 
     const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType|null>(null);
 
@@ -107,34 +111,51 @@ const CodReportsPage = () => {
         exportFileXLS(filteredData, "Cod reports")
     }
 
+    //tour guide
+    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+
+    useEffect(() => {
+        if (!isTutorialWatched(TourGuidePages.CodReports)) {
+            if (!isLoading && codReportsData!==null) {
+                setTimeout(() => setRunTour(true), 1000);
+            }
+        }
+    }, [codReportsData]);
+
+    const [steps, setSteps] = useState([]);
+    useEffect(() => {
+        setSteps(codReportsData?.length ? tourGuideStepsCodReports : tourGuideStepsCodReportsNoDocs);
+    }, [codReportsData]);
+
     return (
         <Layout hasHeader hasFooter>
             <div className="cod-reports__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Cod reports' toRight >
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle='COD reports' toRight needTutorialBtn >
+                    <Button classNames='export-file' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
                 {CODIndicators ? (
                     <div className="grid-row indicator-info-block has-cards-block">
                         {CODIndicators.yearAmount && CODIndicators.yearAmount.length ? (
                             <div className='width-33 grid-col-33'>
-                                <CODIndicatorsCard title={"Year to date"} type="amount" indicatorsArray={CODIndicators.yearAmount} />
+                                <CODIndicatorsCard title={"Year to date"} type="amount" indicatorsArray={CODIndicators.yearAmount} classNames='year' />
                             </div>
                         ) : null}
                         {CODIndicators.monthAmount && CODIndicators.monthAmount.length ? (
                             <div className='width-33  grid-col-33'>
-                                <CODIndicatorsCard title={"Month to date"} type="amount" indicatorsArray={CODIndicators.monthAmount} />
+                                <CODIndicatorsCard title={"Month to date"} type="amount" indicatorsArray={CODIndicators.monthAmount} classNames='month' />
                             </div>
                         ) : null}
                         {CODIndicators.currentAmount ? (
                             <div className='width-33 grid-col-33'>
-                                <CODIndicatorsCard title={"Current period"} type="amount" indicatorsArray={CODIndicators.currentAmount} />
+                                <CODIndicatorsCard title={"Current period"} type="amount" indicatorsArray={CODIndicators.currentAmount} classNames='current' />
                             </div>
                         ) : null}
                     </div>
                 ) : null}
                 {codReportsData && <CodReportsList codReports={codReportsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod}  setFilteredCodReports={setFilteredCodReports}/>}
             </div>
+            {codReportsData!==null && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.CodReports} /> : null}
         </Layout>
     )
 }

@@ -1,6 +1,7 @@
 import React, {FormEvent, forwardRef, useCallback} from "react";
 import { FieldPropsType } from "@/types/forms";
 import "./styles.scss";
+import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
 
 const TextArea= forwardRef<HTMLTextAreaElement, FieldPropsType>(({
@@ -19,6 +20,7 @@ const TextArea= forwardRef<HTMLTextAreaElement, FieldPropsType>(({
      needToasts=true,
      width,
      rows = 4,
+     hint='',
      ...otherProps
  }, ref) => {
 
@@ -28,7 +30,8 @@ const TextArea= forwardRef<HTMLTextAreaElement, FieldPropsType>(({
     } ,[] )
 
     return (
-        <div className={`form-control ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
+        <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
+            <div className={`form-control ${classNames ? classNames : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
             {label && <label htmlFor={name}>{label}</label>}
             <textarea
                 id={name}
@@ -49,7 +52,8 @@ const TextArea= forwardRef<HTMLTextAreaElement, FieldPropsType>(({
                     {(errors && errors[name]?.message) || errorMessage}
                 </p>
             ) : null}
-        </div>
+            </div>
+        </TutorialHintTooltip>
     );
 });
 

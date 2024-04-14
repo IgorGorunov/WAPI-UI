@@ -74,8 +74,6 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
         }
     }, []);
 
-    console.log('order data: ', orderData)
-
     const onCloseWithSuccess = () => {
         closeOrderModalOnSuccess();
         if (orderUuid) {

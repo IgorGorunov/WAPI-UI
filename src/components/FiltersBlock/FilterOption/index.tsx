@@ -14,7 +14,6 @@ export type FilterOptionType = {
 
 const FilterOption: React.FC<FilterOptionType> = ({option, isChecked=false, filterType = FILTER_TYPE.CHECKBOX, onClick, isCountry=false }) => {
 
-    console.log()
     return (
         <div className={`filter-option ${isChecked ? "checked" : ""} ${filterType}-type`} >
             <Checkbox

@@ -20,23 +20,19 @@ export type FiltersBlockType = {
 const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterOptions, filterState, setFilterState, filterType=FILTER_TYPE.CHECKBOX, isOpen=false, setIsOpen, isCountry=false}) => {
 
     const handleOptionClick = (val: string) => {
-        console.log('clicked val', val, getIsChecked(val, filterState))
        setFilterState((prevState: string[]) => {
            if (!getIsChecked(val, prevState)) {
                return [...prevState, val]
            } else {
                return [...prevState.filter(item => item !== val)];
-           } });
+           }
+       });
     };
 
     const getIsChecked = (filterValue: string, filterState: string[]) => {
-        //console.log('filtered value: ', filterValue, 'checked in: ', filterState)
         return filterState.indexOf(filterValue) >= 0;
     }
 
-    // useEffect(() => {
-    //     console.log('filter state:', filterState)
-    // }, [filterState]);
 
     const filterTitleWithCheckedFilters = `${filterTitle} (${filterState.length})`
 

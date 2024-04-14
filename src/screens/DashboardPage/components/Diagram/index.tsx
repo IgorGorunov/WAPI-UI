@@ -181,7 +181,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
   return (
     <div className={`card dashboard-diagram__wrapper mb-md`}>
       <div className="dashboard-diagram__header">
-        <h4>Orders</h4>
+        <p className='title-h4'>Orders</p>
         <div className="dashboard-diagram__diagram-types">
           <div
             className={`dashboard-diagram__option ${

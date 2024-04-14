@@ -1,4 +1,5 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import {AmazonPrepHints} from "@/screens/AmazonPrepPage/amazonPrepHints.constants";
 
 export const GeneralFields = (newObject) => [
     {
@@ -42,6 +43,7 @@ export const GeneralFields = (newObject) => [
         placeholder: "",
         width: WidthType.w25,
         classNames: "",
+        hint: AmazonPrepHints['date'] || '',
     },
     {
         fieldType: FormFieldTypes.DATE,
@@ -51,6 +53,7 @@ export const GeneralFields = (newObject) => [
         placeholder: "",
         width: WidthType.w25,
         classNames: "",
+        hint: AmazonPrepHints['preferredDeliveryDate'] || '',
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -60,6 +63,7 @@ export const GeneralFields = (newObject) => [
         placeholder: "",
         width: WidthType.w50,
         classNames: "",
+        hint: AmazonPrepHints['clientOrderID'] || '',
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -69,10 +73,11 @@ export const GeneralFields = (newObject) => [
         placeholder: "",
         width: WidthType.w100,
         classNames: "",
+        hint: AmazonPrepHints['comment'] || '',
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions,  carrierTypeOptions, multipleLocations=false}:{warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[];  carrierTypeOptions: OptionType[]; multipleLocations?: boolean;}) => [
+export const DetailsFields = ({newObject, warehouses, courierServices, handleWarehouseChange,linkToTrack,deliveryMethodOptions,  carrierTypeOptions, multipleLocations=false}:{newObject:boolean, warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void,linkToTrack:any; deliveryMethodOptions: OptionType[];  carrierTypeOptions: OptionType[]; multipleLocations?: boolean;}) => [
     {
         name: 'grid-11',
         fieldType: FormFieldTypes.GRID,
@@ -88,12 +93,14 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
             },
             width: WidthType.autoGrow,
             classNames: "",
+            hint: AmazonPrepHints['asnNumber'] || '',
         },
         {
             fieldType:FormFieldTypes.RADIO,
             name: 'deliveryMethod',
             options: deliveryMethodOptions,
             width: WidthType.autoNoGrow,
+            hint: AmazonPrepHints['deliveryMethod'] || '',
         }]
     },
     {
@@ -108,6 +115,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
                 options: carrierTypeOptions,
                 width: WidthType.autoNoGrow,
                 //classNames: 'flex-auto',
+                hint: AmazonPrepHints['carrierType'] || '',
             },
             //
             // {
@@ -133,6 +141,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         width: WidthType.w50,
         //onChange: handleWarehouseChange,
         classNames: "",
+        hint: AmazonPrepHints['warehouse'] || '',
     },
     {
         fieldType: FormFieldTypes.SELECT,
@@ -144,6 +153,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         width: WidthType.w50,
         classNames: "",
         disabled: true, //carrierDisabled,
+        hint: AmazonPrepHints['courierService'] || '',
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -154,6 +164,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         disabled: true,
         width: WidthType.w25,
         classNames: "",
+        hint: AmazonPrepHints['courierServiceTrackingNumber'] || '',
     },
     {
         fieldType: FormFieldTypes.OTHER,
@@ -162,6 +173,8 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         otherComponent: linkToTrack,
         width: WidthType.w75,
         classNames: 'amazon-tracking-link',
+        hint: AmazonPrepHints['trackingLink'] || '',
+        isDisplayed: !newObject,
     },
 ];
 
@@ -172,6 +185,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         label: "Multiple locations",
         width: WidthType.w100,
         classNames: "",
+        hint: AmazonPrepHints['multipleLocations'] || '',
     },
     {
         fieldType: FormFieldTypes.SELECT,
@@ -253,7 +267,7 @@ export const ReceiverFields = ({countries, multipleLocations=false}: { countries
         rules: {
             validate: {
                 matchPattern: (v) =>
-                    v==='' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
+                    v==='' || /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) ||
                     "Please, enter valid email address",
             },
         },

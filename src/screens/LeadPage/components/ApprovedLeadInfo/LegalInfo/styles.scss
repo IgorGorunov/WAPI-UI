@@ -1,0 +1,34 @@
+@import '@/constants/devices.scss';
+
+.legal-info {
+  position: relative;
+  padding: 16px;
+
+  &__contract-download {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px;
+  }
+
+  &__form {
+    &-wrapper {
+      //max-width: 500px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    &-btns {
+      display: flex;
+      justify-content: center;
+      margin-top: 48px;
+      margin-bottom: 24px;
+    }
+  }
+
+  .width-25 {
+    @media (max-width: $upToTablet) {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+}

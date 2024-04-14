@@ -29,7 +29,7 @@ export type QuestionnaireFormType = {
     dimensionsOfLargestProduct: string;
     weightOfHeaviestProduct: number;
     additionalPackagingForLastMileDelivery: boolean;
-    needCod: boolean;
+    needsCOD: boolean;
 }
 
 export type LegalInfoFormType = {

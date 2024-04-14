@@ -13,7 +13,7 @@ import useAuth from "@/context/authContext";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 
 const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=false, docUuid = '', showSend=false}) => {
-    const { token, currentDate } = useAuth();
+    const { token } = useAuth();
 
     const [isDragging, setIsDragging] = useState(false);
     const inputId = `file-input__${Date.now().toString()}`;
@@ -103,10 +103,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
             return;
         }
 
-
         const removedFiles = addedFiles.filter(item => item===file);
-
-        console.log('removed ', file, removedFiles)
 
         if (removedFiles.length) {
             setAddedFiles(prevState => [...prevState.filter(item => item!==file)]);
@@ -118,9 +115,6 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
             const updatedFiles = files.filter((_, i) => i !== index);
             onFilesChange(updatedFiles);
         }
-
-        // const updatedFiles = files.filter((_, i) => i !== index);
-        // onFilesChange(updatedFiles);
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({

@@ -21,12 +21,6 @@ export const getProbableBuyoutValue = (row:Row<DeliveryRatesRowType>) => {
     return row.getValue<number>('totalInTransit')===0 ? '0.0%' : formatPercent((row.getValue<number>('delivered')+row.getValue<number>('inTransit')) / row.getValue<number>('totalInTransit')*100)+'%';
 }
 
-export const getUniqueCount = (row:Row<DeliveryRatesRowType>, property:string) => {
-    const valStr = row.getValue<string>(property);
-    console.log('vallllue: ', valStr);
-    return 33;
-}
-
 const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     {
         accessorKey: 'totalOrders',

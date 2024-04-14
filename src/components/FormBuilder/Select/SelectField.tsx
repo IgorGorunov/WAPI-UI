@@ -2,6 +2,7 @@ import React, {useCallback, forwardRef} from "react";
 import { FieldPropsType, OptionType } from '@/types/forms';
 import Select from 'react-select'
 import "./styles.scss";
+import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
 const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
     classNames,
@@ -18,6 +19,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
     errorMessage,
     isSearchable= true,
     isClearable = true,
+    hint='',
     ...otherProps
 }, ref) => {
 
@@ -46,7 +48,8 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
     const selectedOption = filteredOptions.length > 0 ? filteredOptions[0] : null;
 
     return (
-        <div className={`input-select__container ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''} ${disabled ? 'is-disabled' : ''}`}>
+        <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
+        <div className={`input-select__container ${classNames ? classNames : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''} ${disabled ? 'is-disabled' : ''}`}>
             {label && <label htmlFor={name}>{label}</label>}
             <Select
                 {...otherProps}
@@ -68,7 +71,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
             />
             {errorMessage && <p className="error">{errorMessage}</p>}
 
-        </div>
+        </div></TutorialHintTooltip>
     );
 });
 

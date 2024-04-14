@@ -14,7 +14,7 @@ import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {Table} from "antd";
+import {Table, Tooltip} from "antd";
 import DropZone from "@/components/Dropzone";
 import Services from "./Services";
 import {useTabsState} from "@/hooks/useTabsState";
@@ -42,6 +42,11 @@ import SingleDocument from "@/components/SingleDocument";
 import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import {formatDateStringToDisplayString} from "@/utils/date";
+import CardWithHelpIcon from "@/components/CardWithHelpIcon";
+import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
+import TutorialHintTooltip from "@/components/TutorialHintTooltip";
+import {docNamesSingle} from "@/screens/StockMovementsPage";
+import {CommonHints} from "@/constants/commonHints";
 // import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 // import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 // import {StockMovementsHints} from "@/screens/StockMovementsHintstockMovementsPage/stockMovementsHints.constants";
@@ -227,7 +232,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 ),
             },
             {
-                title: 'Product*',
+                // title: 'Product*',
+                title: <Tooltip title="Select the product" >
+                            <span>Product*</span>
+                       </Tooltip>,
                 dataIndex: 'product',
                 width: '100%',
                 key: 'product',
@@ -260,7 +268,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 ),
             },
             {
-                title: 'Quantity plan*',
+                //title: 'Quantity plan*',
+                title: <Tooltip title="Quantity of the product in pcs" >
+                    <span>Quantity plan*</span>
+                </Tooltip>,
                 dataIndex: 'quantityPlan',
                 key: 'quantityPlan',
                 minWidth: 50,
@@ -356,7 +367,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 ),
             },
             {
-                title: 'Quality',
+                //title: 'Quality',
+                title: <Tooltip title="Quality of the product" >
+                    <span>Quality</span>
+                </Tooltip>,
                 dataIndex: 'quality',
                 key: 'quality',
                 minWidth: 150,
@@ -482,6 +496,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     const [importResponse, setImportResponse] = useState<ApiResponseType|null>(null);
+
     useEffect(() => {
 
         if (!importResponse) return;
@@ -614,7 +629,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
             <Tabs id='stock-movement-tabs' tabTitles={tabTitles} classNames='inside-modal' >
                 <div key='general-tab' className='general-tab'>
-                    <div className='card stock-movement--general'>
+                    <CardWithHelpIcon classNames='card stock-movement--general'>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='general' />
                             General
@@ -622,22 +637,20 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
                         </div>
-                    </div>
-                    <div className='card stock-movement--details'>
+                    </CardWithHelpIcon>
+                    <CardWithHelpIcon classNames='card stock-movement--details'>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='additional' />
                             Details
                         </h3>
                         <div className='grid-row '>
                             <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors} isDisabled={isDisabled}/>
-
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
 
                 <div key='product-tab' className='product-tab'>
-                    {/*<CardWithHelpIcon classNames="card min-height-600 stock-movement--products">*/}
-                    <div className="card min-height-600 stock-movement--products">
+                    <CardWithHelpIcon classNames="card min-height-600 stock-movement--products">
                         <h3 className='stock-movement__block-title '>
                             <Icon name='goods' />
                             Products
@@ -647,24 +660,24 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             <div className='stock-movement--btns width-100'>
                                 <div className='grid-row'>
                                     <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
-                                        {/*<TutorialHintTooltip hint={StockMovementsHints['importProducts'] || ''} forBtn >*/}
+                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >
                                             <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
-                                        {/*</TutorialHintTooltip>*/}
-                                        {/*<TutorialHintTooltip hint={StockMovementsHints['selection'] || ''} forBtn >*/}
+                                        </TutorialHintTooltip>
+                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['selection'] || ''} forBtn >
                                             <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
                                                 Selection
                                             </Button>
-                                        {/*</TutorialHintTooltip>*/}
-                                        {/*<TutorialHintTooltip hint={StockMovementsHints['addProduct'] || ''} forBtn >*/}
+                                        </TutorialHintTooltip>
+                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                             <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
                                                 Add
                                             </Button>
-                                        {/*</TutorialHintTooltip>*/}
-                                        {/*<TutorialHintTooltip hint={StockMovementsHints['removeSelected'] || ''} forBtn >*/}
+                                        </TutorialHintTooltip>
+                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
                                             <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
                                                 Remove selected
                                             </Button>
-                                        {/*</TutorialHintTooltip>*/}
+                                        </TutorialHintTooltip>
                                     </div>
                                 </div>
                             </div>
@@ -681,7 +694,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             {/*<FormFieldsBlock control={control} fieldsArray={productsTotalFields} errors={errors} isDisabled={isDisabled}/>*/}
                             <ProductsTotal weightGross={docData?.weightGross || 0} weightNet={docData?.weightNet|| 0} volume={docData?.volume || 0} palletAmount={docData?.palletAmount || 0} packages={docData?.packages || 0} />
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
                 {docData?.uuid && <div key='services-tab' className='services-tab'>
                     <div className="card min-height-600 stock-movement--history">
@@ -711,18 +724,18 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     </div>
                 </div> : null}
                 <div key='files-tab' className='files-tab'>
-                    {/*<CardWithHelpIcon classNames="card min-height-600 stock-movement--products">*/}
-                    <div className="card min-height-600 stock-movement--products">
-                        {/*<TutorialHintTooltip hint={StockMovementsHints['files'] || ''} position='left' >*/}
+                    <CardWithHelpIcon classNames="card min-height-600 stock-movement--files">
+                    {/*<div className="card min-height-600 stock-movement--products">*/}
+                        <TutorialHintTooltip hint={StockMovementsHints('')['files'] || ''} position='left' >
                             <h3 className='stock-movement__block-title title-small'>
                                 <Icon name='files' />
                                 Files
                             </h3>
-                        {/*</TutorialHintTooltip>*/}
+                        </TutorialHintTooltip>
                         <div className='dropzoneBlock'>
                             <DropZone readOnly={!!isDisabled} files={selectedFiles} docUuid={docData?.canEdit ? '' : docData?.uuid} onFilesChange={handleFilesChange} />
                         </div>
-                    </div>
+                    </CardWithHelpIcon>
                 </div>
             </Tabs>
 

@@ -3,7 +3,6 @@ import "./styles.scss";
 import {ApiResponseType} from "@/types/api";
 import {createTicket, reopenTicket} from "@/services/tickets";
 import useAuth from "@/context/authContext";
-import {useRouter} from "next/router";
 import {SingleTicketType, TicketParamsType} from "@/types/tickets";
 import Loader from "@/components/Loader";
 import {ToastContainer} from "@/components/Toast";
@@ -19,6 +18,10 @@ import {CreateTicketFields} from "@/screens/TicketsPage/components/Ticket/Ticket
 import {AttachedFilesType} from "@/types/utility";
 import TicketInfoBlock from "@/screens/TicketsPage/components/Ticket/TicketInfoBlock";
 import ChatBlock from "@/screens/TicketsPage/components/Chat";
+import CardWithHelpIcon from "@/components/CardWithHelpIcon";
+import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
+import TutorialHintTooltip from "@/components/TutorialHintTooltip";
+import {TicketHints} from "@/screens/TicketsPage/ticketHints.constants";
 
 type TicketPropsType = {
     subjectType?: string | null;
@@ -34,8 +37,7 @@ type TicketPropsType = {
 
 const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose, reFetchTicket}) => {
 
-    const {token, currentDate} = useAuth();
-    const Router = useRouter();
+    const {token} = useAuth();
 
     //const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
     const [infoHeight, setInfoHeight] = useState(0)
@@ -107,7 +109,6 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
 
             if (res?.status === 200) {
                 //success
-                console.log('it is success')
                 reFetchTicket();
             } else {
 
@@ -126,7 +127,6 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
     }, [singleTicketData]);
 
     const onSubmitForm = async (data) => {
-        console.log('Submit', data)
         clearTabTitles();
         setIsLoading(true);
         data.attachedFiles= selectedFiles;
@@ -142,7 +142,6 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
             if (res && "status" in res) {
                 if (res?.status === 200 && res?.data) {
                     //success
-                    console.log('ticket created',res.data);
                     setDocUuid(res.data);
                 }
             } else {
@@ -169,31 +168,35 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                 <Tabs id='ticket-tabs' tabTitles={tabTitles} classNames='inside-modal' needMinHeight={false} curTab={curTab}>
 
                     <div key='main-tab' className='main-tab'>
-                        <div className='card ticket--info' ref={ticketInfoBlockRef}>
-                            {isTicketNew ? (
-                                <div className='ticket--info-form'>
-                                    <div className='grid-row'>
-                                        <FormFieldsBlock control={control} fieldsArray={createTicketFields}
-                                                         errors={errors}/>
+                        <div className='' ref={ticketInfoBlockRef}>
+                            {isTicketNew ?
+                                <CardWithHelpIcon classNames='card ticket--info ticket--info-card' >
+                                    <div className='ticket--info-form'>
+                                        <div className='grid-row'>
+                                            <FormFieldsBlock control={control} fieldsArray={createTicketFields}
+                                                             errors={errors}/>
+                                        </div>
+                                    </div>
+                                </CardWithHelpIcon>
+                            :   <div className='card ticket--info' ref={ticketInfoBlockRef}>
+                                    <div className='ticket--info-info'>
+                                        {singleTicketData ? <TicketInfoBlock ticketData={singleTicketData}/> : null}
                                     </div>
                                 </div>
-                            ) : (
-                                <div className='ticket--info-info'>
-                                    {singleTicketData ? <TicketInfoBlock ticketData={singleTicketData}/> : null}
-                                </div>
-                            )}
+                            }
                         </div>
-
-                        <div className="card ticket--files">
-                            <h3 className='ticket__block-title'>
-                                <Icon name='files'/>
-                                Files
-                            </h3>
+                        <CardWithHelpIcon classNames="card ticket--files">
+                            <TutorialHintTooltip hint={TicketHints['files'] || ''} position='left' >
+                                <h3 className='ticket__block-title title-small'>
+                                    <Icon name='files'/>
+                                    Files
+                                </h3>
+                            </TutorialHintTooltip>
                             <div className='dropzoneBlock'>
                                 <DropZone readOnly={isDisabled} files={selectedFiles}
                                           onFilesChange={handleFilesChange} docUuid={singleTicketData?.uuid} showSend={true} />
                             </div>
-                        </div>
+                        </CardWithHelpIcon>
                     </div>
                     {singleTicketData ?
                         <div key='messages-tab' className='files-tab'>

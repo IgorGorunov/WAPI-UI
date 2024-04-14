@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import "./styles.scss";
 import useAuth from "@/context/authContext";
-import Cookie from "js-cookie";
 import {ProductParamsType, ProductType, SingleProductType} from "@/types/products";
 import {getProductByUID, getProductParameters, getProducts} from "@/services/products";
 import {ToastContainer} from '@/components/Toast';
@@ -23,9 +22,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const [productData, setProductData] = useState<SingleProductType|null>(null);
     const [productsList, setProductsList] = useState<ProductType[]|null>(products);
 
-    const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
+    const { token } = useAuth();
 
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 

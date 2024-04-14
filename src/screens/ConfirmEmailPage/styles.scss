@@ -1,0 +1,48 @@
+@import '@/constants/devices.scss';
+
+.email-confirm-page {
+  position: relative;
+  width: 100%;
+  min-height: 50vh;
+
+  &__success {
+    padding: 36px 24px;
+    text-align: center;
+
+    @media (min-width: $tablet) {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    &-title {
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 1.2;
+      margin-bottom: 24px;
+    }
+
+    &-text {
+      font-size: 16px;
+      //font-weight: bold;
+      line-height: 1.2;
+    }
+
+    &-btns {
+      margin-top: 24px;
+      font-size: 16px;
+
+      a {
+        //font-size: 16px;
+        font-weight: bold;
+        color: var(--color-blue);
+        text-decoration: underline;
+
+        &:hover {
+          text-decoration: navajowhite;
+        }
+      }
+    }
+  }
+}

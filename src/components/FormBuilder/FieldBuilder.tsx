@@ -11,6 +11,7 @@ import Other from './Other';
 import ToggleSwitch from './ToggleSwitch';
 import TextArea from './TextArea';
 import RadioButton from "./RadioButton";
+import PhoneNumber from "./PhoneNumber";
 
 const formComponentsMap = {
   [FormFieldTypes.TEXT]: TextField,
@@ -23,6 +24,7 @@ const formComponentsMap = {
   [FormFieldTypes.TOGGLE]: ToggleSwitch,
   [FormFieldTypes.TEXT_AREA]: TextArea,
   [FormFieldTypes.RADIO_BUTTON]: RadioButton,
+  [FormFieldTypes.PHONE_NUMBER]: PhoneNumber,
 };
 
 //const FieldBuilder: React.FC<FormBuilderType> = ({

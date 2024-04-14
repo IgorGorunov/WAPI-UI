@@ -1,20 +1,20 @@
 @import '@/constants/devices.scss';
 
 .order-list {
-  .products-cell-style {
-    display: flex;
-    height: 30px;
-    padding: 3px 6px 3px 10px;
-    justify-content: center;
-    align-items: center;
-    gap: 3px;
-    top: 15px;
-    border-radius: 20px;
-    border: 2px solid var(--color-blue);
-    background: var(--color-blue);
-    color: white;
-    cursor: pointer;
-  }
+  //.products-cell-style {
+  //  display: flex;
+  //  height: 30px;
+  //  padding: 3px 6px 3px 10px;
+  //  justify-content: center;
+  //  align-items: center;
+  //  gap: 3px;
+  //  top: 15px;
+  //  border-radius: 20px;
+  //  border: 2px solid var(--color-blue);
+  //  background: var(--color-blue);
+  //  color: white;
+  //  cursor: pointer;
+  //}
 
   .track-link {
     display: flex;

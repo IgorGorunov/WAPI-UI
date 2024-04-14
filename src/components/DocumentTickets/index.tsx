@@ -1,10 +1,9 @@
-import React, {useCallback} from "react";
+import React from "react";
 import "./styles.scss";
-import {formatDateStringToDisplayString, formatDateTimeToStringWithDot} from "@/utils/date";
-import {ticketStatusColors, TicketType} from "@/types/tickets";
+import {formatDateStringToDisplayString} from "@/utils/date";
+import {TicketType} from "@/types/tickets";
 import Accordion from "@/components/Accordion";
 import TicketInfo from "./TicketInfo";
-
 
 
 type DocTicketsPropsType = {
@@ -12,12 +11,6 @@ type DocTicketsPropsType = {
 };
 
 const DocumentTickets: React.FC<DocTicketsPropsType> = ({ tickets }) => {
-
-    const getUnderlineColor = useCallback((statusText: string) => {
-        return ticketStatusColors[statusText] || 'black';
-    }, []);
-
-    console.log('ticket 111:', tickets)
 
     return (
         <div className="doc-tickets">

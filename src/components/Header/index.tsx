@@ -6,7 +6,7 @@ import useAuth from "@/context/authContext";
 import {Routes} from "@/types/routes";
 import Navigation from "@/components/Navigation";
 import HeaderNotifications from "@/components/HeaderNotifications";
-// import useTourGuide from "@/context/tourGuideContext";
+import useTourGuide from "@/context/tourGuideContext";
 
 type HeaderType = {
     pageTitle?: string;
@@ -32,16 +32,11 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
     }, []);
 
     const handleLogOut = async() => {
-        // setToken("");
-        // setUserName("");
-        // setUserStatus(null);
-        // setTextInfo('');
-        // setTutorialInfo(null);
         logout();
         await Router.push(Routes.Login);
     }
 
-    // const {runTour, setRunTour} = useTourGuide();
+    const {runTour, setRunTour} = useTourGuide();
 
     return (
         <div className={`main-header`}>
@@ -62,9 +57,9 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
                         <span className='user-name'>{curUserName}</span>
                         <Icon name='exit'/>
                     </div>
-                    {/*{needTutorialBtn ?*/}
-                    {/*    <button className={`tour-guide ${runTour ? 'is-active' : ''}`} onClick={()=>setRunTour(!runTour)}><Icon name='book' /></button>*/}
-                    {/*    : null}*/}
+                    {needTutorialBtn ?
+                        <button className={`tour-guide ${runTour ? 'is-active' : ''}`} onClick={()=>setRunTour(!runTour)}><Icon name='book' /></button>
+                        : null}
                     {needNotifications ? <div className='main-header__notifications'>
                         <HeaderNotifications />
                     </div> : null}

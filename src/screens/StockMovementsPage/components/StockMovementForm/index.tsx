@@ -15,19 +15,13 @@ import Modal from "@/components/Modal";
 import StockMovementFormComponent
     from "@/screens/StockMovementsPage/components/StockMovementForm/StockMovementFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {docNamesSingle} from "@/screens/StockMovementsPage";
 
 type StockMovementFormType = {
     docType: STOCK_MOVEMENT_DOC_TYPE,
     docUuid?: string;
     closeDocModal: ()=>void;
     closeModalOnSuccess: ()=>void;
-}
-
-const docNamesSingle = {
-    [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbound',
-    [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movement',
-    [STOCK_MOVEMENT_DOC_TYPE.OUTBOUND]: 'Outbound',
-    [STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE]: 'Logistic service',
 }
 
 const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=null, closeDocModal, closeModalOnSuccess}) => {

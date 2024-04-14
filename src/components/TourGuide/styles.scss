@@ -1,0 +1,33 @@
+.__floater {
+  & + span {
+    //z-index: 11!important;
+  }
+
+  &__body {
+    white-space: break-spaces;
+
+    button[data-action="primary"] {
+      min-width: 80px;
+      border: none!important;;
+      transition: all .3s ease-in;
+
+      &:hover {
+        background-color: var(--color-blue-15)!important;
+        box-shadow: 0 2px 5px 0 var(--color-blue-15)!important;;
+        cursor: pointer;
+        color: var(--color-gray-blue)!important;;
+      }
+    }
+
+    button[data-action="skip"] {
+      transition: all .3s ease-in;
+      min-width: 80px;
+
+      &:hover {
+        background-color: var(--color-gray2) !important;
+        box-shadow: 0 2px 5px 0 var(--color-gray2) !important;
+      }
+
+    }
+  }
+}

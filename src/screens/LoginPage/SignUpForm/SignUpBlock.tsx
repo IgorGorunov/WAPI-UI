@@ -2,10 +2,14 @@ import React from "react";
 import Button from "../../../components/Button/Button";
 
 import "./styles.scss";
+import Router from "next/router";
+import {Routes} from "@/types/routes";
 
 const SignUpBlock: React.FC = () => {
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+  const handleClick = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
+
+    await Router.push(Routes.SignUp);
   };
 
   return (

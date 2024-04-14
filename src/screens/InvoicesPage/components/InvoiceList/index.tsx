@@ -15,7 +15,6 @@ import getSymbolFromCurrency from "currency-symbol-map";
 import {DateRangeType} from "@/types/dashboard";
 import {getInvoiceForm} from "@/services/invoices";
 import useAuth from "@/context/authContext";
-import Cookie from "js-cookie";
 import Loader from "@/components/Loader";
 import {FormFieldTypes} from "@/types/forms";
 import Button, {ButtonVariant} from "@/components/Button/Button";
@@ -53,9 +52,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const [isLoading, setIsLoading] = useState(false);
 
     //const Router = useRouter();
-    const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
+    const { token } = useAuth();
 
     // Pagination
     const [current, setCurrent] = React.useState(1);

@@ -1,16 +1,11 @@
 import React from "react";
-import Head from "next/head";
-import Cookie from "js-cookie";
-import useAuth from "@/context/authContext";
 import ProductsPage from "@/screens/ProductsPage";
+import AuthChecker from "@/components/AuthChecker";
 
 export default function Orders() {
-    const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-
-    if (!token && savedToken) setToken(savedToken);
-
     return (
-        <ProductsPage />
+        <AuthChecker isUser={true}>
+            <ProductsPage />
+        </AuthChecker>
     );
 }

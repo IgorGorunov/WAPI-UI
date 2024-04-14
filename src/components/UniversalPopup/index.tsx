@@ -60,7 +60,6 @@ const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, hand
     }
 
     const handleCopy = () => {
-        console.log('Copy');
         copyToClipboard(getInfoToCopy(items, 'title'));
         toast.success('Successfully copied to clipboard!', {
             position: "bottom-center",

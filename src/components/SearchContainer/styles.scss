@@ -39,5 +39,9 @@
     @media (max-width: $mobile) {
       max-width: calc(100% - 60px);
     }
+
+    .toggle-switch {
+      margin-bottom: 8px;
+    }
   }
 }

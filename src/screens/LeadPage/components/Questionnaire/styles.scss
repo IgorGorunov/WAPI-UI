@@ -1,0 +1,73 @@
+@import '@/constants/devices.scss';
+
+.lead-questionnaire {
+  position: relative;
+  padding: 24px;
+
+  @media (max-width: $upToLaptop) {
+    padding: 16px;
+  }
+
+  .title-h3 {
+    text-align: center;
+  }
+
+  &__questions {
+    //max-width: 645px;
+    //margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  &-list {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0;
+    padding: 15px;
+
+    &-item {
+      .checkbox {
+        padding: 4px;
+        margin-bottom: 2px;
+
+        &-label-text {
+          font-size: 11px;
+        }
+
+        &-label input {
+          height: 18px;
+          padding: 7px;
+        }
+      }
+    }
+
+    &-title {
+      flex: 1 0 100%;
+      width: 100%;
+      font-weight: 700;
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+  }
+
+  &__errors {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 24px;
+    color: var(--color-error);
+    font-weight: bold;
+
+    .submit-error {
+      margin-top: 2px;
+    }
+  }
+
+  &__btns {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+    margin-bottom: 16px;
+  }
+
+}

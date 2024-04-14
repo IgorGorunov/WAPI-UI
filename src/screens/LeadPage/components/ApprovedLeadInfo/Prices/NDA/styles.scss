@@ -1,0 +1,32 @@
+.lead-page__prices--NDA {
+  max-width: 600px;
+
+  &-text {
+    margin-top: 16px;
+    padding: 24px;
+    max-height: calc(100vh - 240px);
+    overflow: hidden scroll;
+
+    .title-h4 {
+      margin-bottom: 12px;
+    }
+
+    &__list {
+      margin: 12px 0;
+      padding-left: 16px;
+
+      li {
+        font-size: 12px;
+        line-height: 20px;
+      }
+    }
+  }
+
+  &-confirm {
+    &-checkbox {
+    }
+    &-btn {
+      margin: 16px 0 0 auto;
+    }
+  }
+}

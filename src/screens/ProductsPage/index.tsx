@@ -18,45 +18,18 @@ import '@/components/Toast/styles.scss'
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import {ImportFilesType} from "@/types/importFiles";
-// import TourGuide, {TourGuideStepType} from "@/components/TourGuide";
-// import useTourGuide from "@/context/tourGuideContext";
-
-
-// const tourGuideStepsProduct: TourGuideStepType[] = [
-//     {
-//         target: '.ant-table-header', //'.product-list__container',
-//         content: 'Here you can sort your products by clicking the name of the chosen column.',
-//         disableBeacon: true,
-//     },
-//     {
-//         target: '.filter',
-//         content: 'Here you can filter the products.',
-//     },
-//     {
-//         target: '.search-block',
-//         content: 'Write data here to locate information on the list below.',
-//     },
-//     {
-//         target: '.add-product',
-//         content: 'Here you can add a product. It will then be checked by our logistics manager.',
-//         //disableBeacon: true,
-//     },
-//     {
-//         target: '.import-products',
-//         content: 'Here you can import products by bulk from Excel.',
-//     },
-//     {
-//         target: '.export-products',
-//         content: 'Here you can export products into Excel \n' +
-//             'Note: All filters will be applied into export file',
-//     },
-// ]
+import TourGuide from "@/components/TourGuide";
+import useTourGuide from "@/context/tourGuideContext";
+import {tourGuideStepsProduct, tourGuideStepsProductNoDocs} from "./productListTourGuideSteps.constants";
+import {TourGuidePages} from "@/types/tourGuide";
+import {
+    tourGuideStepsProductsStock,
+    tourGuideStepsProductsStockNoDocs
+} from "@/screens/ProductsStockPage/productsStockTourGuideSteps.constants";
 
 const ProductsPage = () => {
     const Router = useRouter();
     const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [uuid, setUuid]=useState<string|null>(null);
@@ -65,16 +38,21 @@ const ProductsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
-    // //tour guide
-    // const {runTour, setRunTour, checkTutorial} = useTourGuide();
-    //
-    // useEffect(() => {
-    //     if (!checkTutorial('Catalogs/Products')) {
-    //         if (!isLoading && productsData) {
-    //             setTimeout(() => setRunTour(true), 1000);
-    //         }
-    //     }
-    // }, [isLoading]);
+    //tour guide
+    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+
+    useEffect(() => {
+        if (!isTutorialWatched(TourGuidePages.Products)) {
+            if (!isLoading && productsData) {
+                setTimeout(() => setRunTour(true), 1000);
+            }
+        }
+    }, [isLoading]);
+
+    const [steps, setSteps] = useState([]);
+    useEffect(() => {
+        setSteps(productsData?.length ? tourGuideStepsProduct : tourGuideStepsProductNoDocs);
+    }, [productsData]);
 
     //import files modal
     const [showImportModal, setShowImportModal] = useState(false);
@@ -178,8 +156,8 @@ const ProductsPage = () => {
         <Layout hasFooter>
             <div className="products-page__container">
                 {isLoading && <Loader />}
-                {/*<Header pageTitle='Products' toRight needTutorialBtn>*/}
-                <Header pageTitle='Products' toRight >
+                <Header pageTitle='Products' toRight needTutorialBtn>
+                {/*<Header pageTitle='Products' toRight >*/}
                     {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
                     <Button classNames='add-product' icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
                     <Button classNames='import-products' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
@@ -189,16 +167,13 @@ const ProductsPage = () => {
             </div>
             {showModal && (uuid && !isNew || !uuid && isNew) &&
                 <ProductForm uuid={uuid} products={productsAsOptions} onClose={onModalClose} onCloseSuccess={()=>{setShowModal(false);fetchData();}} />
-                // <Modal title={`${singleProductData ? 'Product': 'Product'}`} onClose={onModalClose} >
-                //     <ProductForm productParams={productParams} productData={singleProductData} uuid={uuid} products={productsAsOptions} closeProductModal={()=>{setShowModal(false);fetchData();}}/>
-                // </Modal>
             }
             {showImportModal &&
                 <Modal title={`Import xls`} onClose={onImportModalClose} >
                     <ImportFilesBlock file='Master data.xlsx' importFilesType={ImportFilesType.PRODUCTS} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }
-            {/*{productsData && runTour && tourGuideStepsProduct ? <TourGuide steps={tourGuideStepsProduct} run={runTour} pageName='Catalogs/Products' /> : null}*/}
+            {productsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Products} /> : null}
         </Layout>
     )
 }

@@ -6,11 +6,9 @@ import Router from "next/router";
 import {Routes} from "@/types/routes";
 import useAuth from "@/context/authContext";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import Cookie from 'js-cookie';
-
 import Button from "@/components/Button/Button";
-
 import "./styles.scss";
+import {UserStatusType} from "@/types/leads";
 
 const LoginForm: React.FC = () => {
   const formFields: FormBuilderType[] = [
@@ -57,7 +55,7 @@ const LoginForm: React.FC = () => {
     },
   ];
 
-  const { setToken, setUserName, setCurrentDate } = useAuth();
+  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,15 +83,27 @@ const LoginForm: React.FC = () => {
       //const res = await authenticate("Test@Test.com", "Test");
       const res: ApiResponse = await authenticate(login, password);
 
-      console.log('auth: ', res)
-
       if (res?.status === 200) {
-        const { accessToken, userPresentation, currentDate } = res?.data;
-        setToken(accessToken);
-        Cookie.set('token', accessToken);
+        const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo } = res?.data;
+
+        setToken(accessToken, userStatus !== UserStatusType.user);
+
+        //Cookie.set('token', accessToken);
         setUserName(userPresentation ? userPresentation : login);
         setCurrentDate(currentDate);
-        await Router.push(Routes.Dashboard);
+        setUserStatus(userStatus);
+        setTutorialInfo(traningStatus);
+        setTextInfo(textInfo || '');
+
+        switch (userStatus) {
+          case 'user':
+            await Router.push(Routes.Dashboard);
+            return;
+          default:
+            await Router.push('/lead');
+            return;
+        }
+        //await Router.push(Routes.Dashboard);
         // } else if (res?.response.status === 401) {
       } else if (res?.response?.status === 401) {
         setError("Wrong login or password");
@@ -133,7 +143,7 @@ const LoginForm: React.FC = () => {
         ))}
         {error && <p className="login-error">{error}</p>}
         <div className="login-submit-block">
-          <p className="login-recovery-link">Password recovery</p>
+          <p id='login-recovery-link' className="login-recovery-link">Password recovery</p>
           <Button
             type="submit"
             icon={"arrow-right"}

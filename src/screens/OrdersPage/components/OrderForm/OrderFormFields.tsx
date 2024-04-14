@@ -1,4 +1,5 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
 
 export const GeneralFields = (newObject: boolean) => [
     {
@@ -42,6 +43,7 @@ export const GeneralFields = (newObject: boolean) => [
         placeholder: "",
         width: WidthType.w25,
         classNames: "",
+        hint: OrderHints['date'] || '',
     },
     {
         fieldType: FormFieldTypes.DATE,
@@ -51,6 +53,7 @@ export const GeneralFields = (newObject: boolean) => [
         placeholder: "",
         width: WidthType.w25,
         classNames: "",
+        hint: OrderHints['preferredDeliveryDate'] || '',
     },
     {
         fieldType: FormFieldTypes.TEXT,
@@ -60,6 +63,7 @@ export const GeneralFields = (newObject: boolean) => [
         placeholder: "",
         width: WidthType.w50,
         classNames: "",
+        hint: OrderHints['clientOrderID'] || '',
     },
 ];
 
@@ -74,6 +78,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         width: WidthType.w33,
         classNames: "",
         onChange: handleWarehouseChange,
+        hint: OrderHints['preferredWarehouse'] || '',
     },
     {
         fieldType: FormFieldTypes.TOGGLE,
@@ -83,6 +88,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         placeholder: "",
         width: WidthType.w17,
         classNames: "",
+        hint: OrderHints['preferredWarehouseMandatory'] || '',
     },
     {
         fieldType: FormFieldTypes.SELECT,
@@ -94,6 +100,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         width: WidthType.w33,
         classNames: "",
         onChange: handleCourierServiceChange,
+        hint: OrderHints['preferredCourierService'] || '',
     },
     {
         fieldType: FormFieldTypes.TOGGLE,
@@ -103,6 +110,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         placeholder: "",
         width: WidthType.w17,
         classNames: "",
+        hint: OrderHints['preferredCourierServiceMandatory'] || '',
     },
     // {
     //     fieldType: FormFieldTypes.TEXT,
@@ -262,7 +270,7 @@ export const ReceiverFields = ({countries, prefix=''}: { countries: OptionType[]
         rules: {
             validate: {
                 matchPattern: (v) =>
-                    v==='' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
+                    v==='' || /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) ||
                     "Please, enter valid email address",
             },
         },

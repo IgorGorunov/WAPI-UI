@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import { Icon } from "../Icon";
 import "./styles.scss";
 import {DateRangeType} from "@/types/dashboard";
 import Datepicker from "@/components/Datepicker"
 import useAuth from "@/context/authContext";
 import {formatDateToDisplayString} from "@/utils/date";
+import useOutsideClick from "@/hooks/useOutsideClick";
 
 
 type DateInputType = {
@@ -25,14 +26,22 @@ const DateInput: React.FC<DateInputType> = ({currentRange, handleRangeChange}) =
         setShowDateInput(false);
     }
 
-    return <div className='date-input-field'>
+    const handleCloseDatePicker = () => {
+        setShowDateInput(false);
+    }
+
+    const datePickerRef = useRef<HTMLDivElement>(null);
+
+    useOutsideClick(datePickerRef, handleCloseDatePicker);
+
+    return <div className='date-input-field' ref={datePickerRef}>
         <div className='date-input-btn card' onClick={handleDateInputClick}>
             <span className='date-input-btn__text'>{formatDateToDisplayString(curRange.startDate)} - {formatDateToDisplayString(curRange.endDate)}</span>
             <span className="date-input-icon">
                 <Icon name='calendar'/>
             </span>
         </div>
-        {showDateInput && (<div className="date-input__datepicker"><Datepicker initialRange={curRange} onDateRangeSave={handleDateState} onClose={()=>setShowDateInput(false)}/></div>)}
+        {showDateInput && (<div className="date-input__datepicker"><Datepicker initialRange={curRange} onDateRangeSave={handleDateState} onClose={handleCloseDatePicker}/></div>)}
     </div>
 }
 

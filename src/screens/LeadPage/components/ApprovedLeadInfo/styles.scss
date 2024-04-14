@@ -1,0 +1,40 @@
+.lead-page {
+  &__approved-block {
+    padding: 0 24px 24px;
+    background-color: var(--color-modal-bg);
+
+    .tabs-block__tablist {
+      padding: 24px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .api-documentation {
+      &__container {
+        padding: 24px;
+      }
+
+      &__link {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        font-weight: bold;
+        color: var(--color-blue);
+        text-decoration: underline;
+
+        &:hover {
+          text-decoration: none;
+        }
+
+        svg {
+          width: 40px;
+          fill: var(--color-blue);
+        }
+      }
+    }
+  }
+
+  &-tab {
+    padding: 24px 0;
+  }
+}

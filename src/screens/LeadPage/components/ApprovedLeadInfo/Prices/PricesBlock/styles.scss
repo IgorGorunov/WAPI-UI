@@ -1,0 +1,96 @@
+@import "@/constants/devices.scss";
+
+.lead-page__prices-block {
+  //flex: 1 0 100%;
+  //display: flex;
+  //flex-direction: column;
+  //height: 100%;
+  max-width: 550px;
+  margin: 0 auto;
+
+  //@media (max-width: $mobile) {
+  //  margin-left: -16px;
+  //  margin-right: -16px;
+  //}
+
+  &--header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--color-gray-blue);
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  &--list {
+    list-style: none;
+
+    &-item {
+      display: flex;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--color-gray-blue);
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  .column {
+    padding: 10px 12px;
+
+    @media (max-width: $upToTablet) {
+      padding: 10px 6px;
+    }
+
+    &-country {
+      flex: 0 1 150px;
+      padding-left: 24px;
+
+      @media (max-width: $mobile) {
+        padding-left: 8px;
+      }
+
+      .flag-icon {
+        margin-right: 8px;
+
+      }
+    }
+
+    &-prices {
+      position: relative;
+      flex: 1 1 225px;
+
+      a {
+        display: block;
+        padding-left: 36px;
+        color: var(--color-blue);
+        text-decoration: underline;
+        transform: scale(1);
+        transform-origin: center left;
+        transition: .3s ease;
+
+        &:hover {
+          transform: scale(1.05);
+          text-decoration: none;
+        }
+
+        .icon-download-file {
+          position: absolute;
+          top: 50%;
+          left: 2px;
+          transform: translateY(-50%);
+
+          path {
+            fill: var(--color-blue);
+          }
+        }
+      }
+
+    }
+  }
+
+
+  .highlight {
+    //background-color: #FAFBFC;
+  }
+}

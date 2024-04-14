@@ -53,7 +53,7 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
 
   const handleSelect = (ranges: any) => {
     setDateRange([ranges.selection]);
-    console.log('set range', dateRange);
+
     if (refRangeStartPreview?.current) {
        refRangeStartPreview.current.defaultValue = formatDateToString(ranges.selection.startDate)
     }
@@ -68,6 +68,8 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
       endDate: dateRange[0].endDate,
     });
   };
+
+
 
   return (
       <div className="datepicker">

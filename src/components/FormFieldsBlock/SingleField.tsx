@@ -31,7 +31,7 @@ const Field: React.FC<FormFieldsBlockType> = ({curField, control, errors, isDisa
                     errorMessage={error?.message}
                     errors={errors}
                     isRequired={!!curField?.rules?.required || false}
-                    disabled={(!!isDisabled || curField.disabled) && !curField.notDisable}
+                    disabled={(!!isDisabled || curField.disabled) && !curField?.notDisable}
                     classNames={curField.classNames}
                     onChange={(selectedOption) => {
                         props.onChange(selectedOption);

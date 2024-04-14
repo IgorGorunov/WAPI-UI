@@ -3,7 +3,6 @@ import ProductForm from "@/screens/ProductsPage/components/ProductForm";
 import OrderForm from "@/screens/OrdersPage/components/OrderForm";
 import AmazonPrepForm from "@/screens/AmazonPrepPage/components/AmazonPrepForm";
 import TicketForm from "@/screens/TicketsPage/components/Ticket";
-import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import StockMovementForm from "@/screens/StockMovementsPage/components/StockMovementForm";
 import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
@@ -20,7 +19,6 @@ type SingleDocPropsType = {
 }
 
 const SingleDocument: React.FC<SingleDocPropsType> = ({type, uuid, onClose, subjectType=null, subjectUuid=null, subject=''}) => {
-console.log('sd', type, uuid, subjectType, subjectUuid, subject)
     switch (type) {
         case NOTIFICATION_OBJECT_TYPES.Product :
             return <ProductForm uuid={uuid} onClose={onClose} onCloseSuccess={onClose} />

@@ -5,6 +5,8 @@ import {setInterceptorErrorCallback, setInterceptorRedirectCallback} from "@/ser
 import {ModalTypes, STATUS_MODAL_TYPES} from "@/types/utility";
 import ModalStatus from "@/components/ModalStatus";
 import {useRouter} from "next/router";
+import useAuth from "@/context/authContext";
+import {Routes} from "@/types/routes";
 
 type Props = {
   hasHeader?: boolean;
@@ -17,6 +19,7 @@ const Layout: React.FC<Props> = ({
   children,
 }) => {
     const router = useRouter();
+    const {logout} = useAuth();
 
     const [apiErrorTitle, setApiErrorTitle] = useState<string>('');
     const [apiErrorText, setApiErrorText] = useState<string>('');
@@ -26,8 +29,11 @@ const Layout: React.FC<Props> = ({
             setApiErrorTitle(title);
             setApiErrorText(message);
         });
-        setInterceptorRedirectCallback(()=>router.push('/login'))
 
+        setInterceptorRedirectCallback(async()=>{
+            logout();
+            await router.push(Routes.Login)
+        })
     }, []);
 
     const handleClose = () => {

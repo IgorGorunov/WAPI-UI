@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import { getProductsStock } from "@/services/products";
 import Layout from "@/components/Layout/Layout";
@@ -10,12 +9,17 @@ import Button from "@/components/Button/Button";
 import {ProductStockType} from "@/types/products";
 import {exportFileXLS} from "@/utils/files";
 import Loader from "@/components/Loader";
+import useTourGuide from "@/context/tourGuideContext";
+import {TourGuidePages} from "@/types/tourGuide";
+import TourGuide from "@/components/TourGuide";
+import {
+    tourGuideStepsProductsStock,
+    tourGuideStepsProductsStockNoDocs
+} from "./productsStockTourGuideSteps.constants";
 
 const ProductsStockPage = () => {
 
-    const { token, setToken } = useAuth();
-    const savedToken = Cookie.get('token');
-    if (savedToken) setToken(savedToken);
+    const { token } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [filteredProducts, setFilteredProducts] = useState<ProductStockType[] | null>(null);
@@ -72,14 +76,31 @@ const ProductsStockPage = () => {
         exportFileXLS(filteredData, `ProductsStock${warehouseForReport ? "_"+warehouseForReport : ""}`)
     }
 
+    //tour guide
+    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+
+    useEffect(() => {
+        if (!isTutorialWatched(TourGuidePages.ProductsStock)) {
+            if (!isLoading && productsData) {
+                setTimeout(() => setRunTour(true), 1000);
+            }
+        }
+    }, [isLoading]);
+
+    const [steps, setSteps] = useState(tourGuideStepsProductsStockNoDocs);
+    useEffect(() => {
+        setSteps(productsData?.length ? tourGuideStepsProductsStock : tourGuideStepsProductsStockNoDocs);
+    }, [productsData]);
+
     return (
         <Layout hasHeader hasFooter>
             <div className="products-stock__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Products stock' toRight >
-                    <Button icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle='Products stock' toRight needTutorialBtn >
+                    <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
                 {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setWarehouseForExport={setWarehouseForReport}/>}
+                {productsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.ProductsStock} /> : null}
             </div>
         </Layout>
     )
