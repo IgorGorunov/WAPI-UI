@@ -17,7 +17,7 @@ const SignUpBlock: React.FC = () => {
       <h2 className="signup-title">
         Are you looking for enrollment?
       </h2>
-      <Button disabled onClick={handleClick}>
+      <Button onClick={handleClick}>
         Sign up
       </Button>
     </div>
