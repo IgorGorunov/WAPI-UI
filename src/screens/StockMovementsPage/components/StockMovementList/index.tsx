@@ -91,7 +91,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     const [isOpenFilterReceiver, setIsOpenFilterReceiver] = useState(false);
 
     const calcOrderAmount = useCallback((property, value) => {
-        return docs.filter(doc => doc[property].toLowerCase() === value.toLowerCase()).length || 0;
+        return docs.filter(doc => doc[property] !== null && doc[property].toLowerCase() === value.toLowerCase()).length || 0;
     },[docs]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
