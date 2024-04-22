@@ -180,7 +180,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
                         <ul className={`lead-questionnaire__product-types-list lead-questionnaire-list`}>
                             <p className={`lead-questionnaire-list-title`}>
-                                Product types *
+                                Please specify product types *
                             </p>
                             {questionnaireParams.productTypes.map((item, index) => (
                                 <li key={item + '_' + index}
@@ -198,7 +198,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                         </ul>
                         <ul className={`lead-questionnaire-list grid-row`}>
                             <p className={`lead-questionnaire-list-title`}>
-                                Choose your marketplaces (if any)
+                                Indicate your marketplace, if applicable
                             </p>
                             {questionnaireParams.marketplaces.map((item, index) => (
                                 <li key={item + '_' + index}
@@ -216,7 +216,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                         </ul>
                         <ul className={`lead-questionnaire-list grid-row`}>
                             <p className={`lead-questionnaire-list-title`}>
-                                Target countries *
+                                Select the countries you're targeting *
                             </p>
                             {countryOptions.map((item, index) => (
                                 <li key={item.value + '_' + index}

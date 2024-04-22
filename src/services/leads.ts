@@ -137,6 +137,24 @@ const sendSignNDA = async (
     }
 };
 
+const checkLeadStatus = async (
+    data: {
+        token: string,
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
 
 
-export { getLeadParameters, sendQuestionnaire, sendLegalInfo, getPricesInfo, getPriceFile, sendSignNDA, getLegalData };
+
+export { getLeadParameters, sendQuestionnaire, sendLegalInfo, getPricesInfo, getPriceFile, sendSignNDA, getLegalData, checkLeadStatus };

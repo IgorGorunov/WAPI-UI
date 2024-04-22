@@ -18,7 +18,7 @@ const ConfirmEmailPage = () => {
 
     const [confirmToken, setConfirmToken] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(true);
     const [hasError, setHasError] = useState(false);
 
     //getting uuid from query
@@ -92,10 +92,15 @@ const ConfirmEmailPage = () => {
                 {isLoading && <Loader />}
                 {isLoaded ?
                     <div className='email-confirm-page__success'>
-                        <p className='email-confirm-page__success-title'>Confirmation of your email is complete.</p>
-                        <p className='email-confirm-page__success-text'>Login details for accessing the user interface will be sent to this email shortly.</p>
-                        <p className='email-confirm-page__success-text' >Please use these credentials to sign in.</p>
-                        <div className='email-confirm-page__success-btns'>Proceed to <Link href={Routes.Login}>Login</Link></div>
+                        <p className='email-confirm-page__success-title'>Almost there! Your email confirmation is complete!</p>
+                        <p className='email-confirm-page__success-text-title'>Next steps:</p>
+                        <div className='email-confirm-page__success-text-wrapper'>
+                            <p className='email-confirm-page__success-text'><span className='text-bold'>Step 1:</span> You'll soon receive an email with your login details.</p>
+                            <p className='email-confirm-page__success-text'><span className='text-bold'>Step 2:</span> Please sign in using these credentials.</p>
+                            <p className='email-confirm-page__success-text'><span className='text-bold'>Step 3:</span> Ready to explore? Let's go!</p>
+                        </div>
+                        <div className='email-confirm-page__success-btns'>Proceed to <Link
+                            href={Routes.Login}>Login</Link></div>
                     </div>
                     : hasError ?
                         <div className='email-confirm-page__success'>

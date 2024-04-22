@@ -2,6 +2,9 @@
 
 .email-confirm-page {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   min-height: 50vh;
 
@@ -9,12 +12,12 @@
     padding: 36px 24px;
     text-align: center;
 
-    @media (min-width: $tablet) {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+    //@media (min-width: $tablet) {
+    //  position: absolute;
+    //  top: 50%;
+    //  left: 50%;
+    //  transform: translate(-50%, -50%);
+    //}
 
     &-title {
       font-size: 24px;
@@ -24,9 +27,16 @@
     }
 
     &-text {
+      margin-bottom: 6px;
       font-size: 16px;
       //font-weight: bold;
       line-height: 1.2;
+
+      &-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 12px;
+      }
     }
 
     &-btns {

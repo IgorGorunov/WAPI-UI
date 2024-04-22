@@ -21,14 +21,10 @@ import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsOrders, tourGuideStepsOrdersNoDocs} from "./ordersTourGuideSteps.constants";
 import {ApiResponseType} from "@/types/api";
-import {
-    tourGuideStepsProduct,
-    tourGuideStepsProductNoDocs
-} from "@/screens/ProductsPage/productListTourGuideSteps.constants";
 
 const OrdersPage = () => {
     const Router = useRouter();
-    const { token, currentDate, isAuthorizedUser } = useAuth();
+    const { token, currentDate } = useAuth();
 
     useEffect(() => {
         const { uuid } = Router.query;

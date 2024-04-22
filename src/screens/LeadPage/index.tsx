@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import Layout from "@/components/Layout/Layout";
 import "./styles.scss";
 import Loader from "@/components/Loader";
-import {getLeadParameters} from "@/services/leads";
+import {checkLeadStatus, getLeadParameters} from "@/services/leads";
 import {ApiResponseType} from "@/types/api";
 import {QuestionnaireParamsType, UserStatusType} from "@/types/leads";
 import Questionnaire from "./components/Questionnaire";
@@ -35,7 +35,7 @@ const getHeaderTitle = (userStatus: string) => {
 }
 
 const LeadPage = () => {
-    const {token, getToken, userStatus, logout} = useAuth();
+    const {token, getToken, userStatus, setUserStatus, logout} = useAuth();
     //const [curStatus, setCurStatus] = useState(getUserStatus() as UserStatusType);
     const Router = useRouter();
 
@@ -51,7 +51,30 @@ const LeadPage = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        //check user status
+        const fetchStatus = async() => {
+            try {
+                setIsLoading(true);
 
+                const res: ApiResponseType = await checkLeadStatus({token});
+
+                if (res && "data" in res) {setQuestionnaireParams(res.data);
+                    setUserStatus(res.data);
+                } else {
+                    console.error("API did not return expected data");
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        fetchStatus();
+
+    }, []);
 
     const fetchLeadParams = useCallback(async () => {
         try {

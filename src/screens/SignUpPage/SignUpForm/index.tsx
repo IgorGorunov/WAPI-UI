@@ -43,13 +43,12 @@ const SignUpForm: React.FC = () => {
         try {
             setIsLoading(true);
             setError(null);
-            //const res = await authenticate("Test@Test.com", "Test");
             const res: ApiResponseType = await signUp(lead);
 
             if (res?.status === 200) {
                 //success modal
-                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Great news! You've completed the sign-up successfully!
-                The confirmation email will be sent shortly to the email address you have provided.`, onClose: closeSuccessModal, disableAutoClose:true })
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Congratulations! Sign-up complete!
+                The confirmation email is on its way to the email you provided.`, onClose: closeSuccessModal, disableAutoClose:true })
                 setShowStatusModal(true);
             } else if (res?.response) {
                 //error modal
