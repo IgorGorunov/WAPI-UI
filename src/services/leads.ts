@@ -139,12 +139,12 @@ const sendSignNDA = async (
 
 const checkLeadStatus = async (
     data: {
-        token: string,
+        lead: string,
     }
 ) => {
     try {
         const response: any = await api.post(
-            `/`,
+            `/Authorize`,
             data
         );
 

@@ -57,10 +57,10 @@ const LeadPage = () => {
             try {
                 setIsLoading(true);
 
-                const res: ApiResponseType = await checkLeadStatus({token});
+                const res: ApiResponseType = await checkLeadStatus({lead: token});
 
-                if (res && "data" in res) {setQuestionnaireParams(res.data);
-                    setUserStatus(res.data);
+                if (res && "data" in res) {
+                    setUserStatus(res.data?.userStatus);
                 } else {
                     console.error("API did not return expected data");
                 }
