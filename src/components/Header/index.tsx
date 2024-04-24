@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import "./styles.scss";
 import Icon from "@/components/Icon";
-import {useRouter} from "next/router";
-import useAuth from "@/context/authContext";
-import {Routes} from "@/types/routes";
+// import {useRouter} from "next/router";
+// import useAuth from "@/context/authContext";
+// import {Routes} from "@/types/routes";
 import Navigation from "@/components/Navigation";
 import HeaderNotifications from "@/components/HeaderNotifications";
 import useTourGuide from "@/context/tourGuideContext";
@@ -18,24 +18,24 @@ type HeaderType = {
     needNotifications?: boolean;
 }
 const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, needTutorialBtn=false, noMenu=false, needNotifications=true}) => {
-    const { getUserName, logout } = useAuth();
+    //const { getUserName, logout } = useAuth();
     const [isMenuOpen, setMenuOpen] = useState(false);
 
     const handleClick = () => {
         setMenuOpen(!isMenuOpen);
     }
 
-    const Router = useRouter();
-    const [curUserName, setCurUserName] = useState<string|null|undefined>("");
+    //const Router = useRouter();
+    // const [curUserName, setCurUserName] = useState<string|null|undefined>("");
+    //
+    // useEffect(() => {
+    //     setCurUserName(getUserName());
+    // }, []);
 
-    useEffect(() => {
-        setCurUserName(getUserName());
-    }, []);
-
-    const handleLogOut = async() => {
-        logout();
-        await Router.push(Routes.Login);
-    }
+    // const handleLogOut = async() => {
+    //     logout();
+    //     await Router.push(Routes.Login);
+    // }
 
     const {runTour, setRunTour} = useTourGuide();
 
@@ -54,11 +54,11 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
                 </div>
 
                 <div className='main-header__user-block'>
-                    <div className='main-header__user card' onClick={handleLogOut}>
-                        <span className='user-name'>{curUserName}</span>
-                        <Icon name='exit'/>
-                    </div>
-                    {/*<ProfileDropdown />*/}
+                    {/*<div className='main-header__user card' onClick={handleLogOut}>*/}
+                    {/*    <span className='user-name'>{curUserName}</span>*/}
+                    {/*    <Icon name='exit'/>*/}
+                    {/*</div>*/}
+                    <ProfileDropdown />
                     {needTutorialBtn ?
                         <button className={`tour-guide ${runTour ? 'is-active' : ''}`} onClick={()=>setRunTour(!runTour)}><Icon name='book' /></button>
                         : null}
