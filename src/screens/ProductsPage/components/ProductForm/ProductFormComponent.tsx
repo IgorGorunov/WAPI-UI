@@ -705,7 +705,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Product',
+                title: 'Product *',
                 dataIndex: 'uuid',
                 width: '100%',
                 key: 'uuid',
@@ -713,37 +713,45 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`bundleKit[${index}].uuid`}
                         control={control}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{}}>
                                 <FieldBuilder
                                     name={`bundleKit.${index}.uuid`}
                                     fieldType={FormFieldTypes.SELECT}
                                     {...field}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
                                     disabled={isDisabled}
                                     options={analogueOptions}
                                     isSearchable={true}
                                 /></div>
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
             {
-                title: 'Quantity',
+                title: 'Quantity *',
                 dataIndex: 'quantity',
                 key: 'quantity',
                 render: (text, record, index) => (
                     <Controller
                         name={`bundleKit[${index}].quantity`}
                         control={control}
-                        render={({ field }) => (
+                        render={({ field , fieldState: {error}}) => (
                             <div style={{maxWidth: '80px'}}>
                                 <FieldBuilder
                                     name={`bundleKit.${index}.quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
                                     disabled={isDisabled}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
                                 /></div>
                         )}
+                        rules={{ required: 'filed is required' }}
                     />
                 ),
             },
