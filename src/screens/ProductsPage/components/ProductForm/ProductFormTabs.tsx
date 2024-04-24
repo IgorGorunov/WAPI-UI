@@ -38,6 +38,10 @@ export const TabFields: TabFieldType[] = [
         tabName: 'Dimensions',
         fieldName: 'unitOfMeasure',
     },
+    {
+        tabName: 'Virtual bundle kit',
+        fieldName: 'bundleKit',
+    },
 
 ]
 
