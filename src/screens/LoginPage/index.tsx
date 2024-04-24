@@ -21,6 +21,7 @@ const LoginPage = () => {
     useEffect(() => {
         const { oneTimeToken } = router.query;
         setOneTimeToken(Array.isArray(oneTimeToken) ? (oneTimeToken.length ? oneTimeToken[0] : '') : oneTimeToken);
+        logout();
     }, [router.query]);
 
     return (
