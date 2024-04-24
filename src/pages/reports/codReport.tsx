@@ -5,7 +5,7 @@ import AuthChecker from "@/components/AuthChecker";
 
 export default function Orders() {
     return (
-        <AuthChecker isUser={true}>
+        <AuthChecker isUser={true} pageName="Reports/CodCheck">
             <ReportPage reportType={REPORT_TYPES.COD_REPORT} />
         </AuthChecker>
     );

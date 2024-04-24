@@ -1,17 +1,27 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Layout from "@/components/Layout/Layout";
 import LoginForm from "./LoginForm/LoginForm";
 import SignUpBlock from "./SignUpForm/SignUpBlock";
 import "./styles.scss";
 import Head from "next/head";
 import useAuth from "@/context/authContext";
+import {useRouter} from "next/router";
 
 const LoginPage = () => {
     const { logout } = useAuth();
+    const router = useRouter();
+
+    const [oneTimeToken, setOneTimeToken] = useState<string>('')
 
     useEffect(() => {
         logout();
     }, []);
+
+    //getting uuid from query
+    useEffect(() => {
+        const { oneTimeToken } = router.query;
+        setOneTimeToken(Array.isArray(oneTimeToken) ? (oneTimeToken.length ? oneTimeToken[0] : '') : oneTimeToken);
+    }, [router.query]);
 
     return (
         <Layout hasFooter>
@@ -27,7 +37,7 @@ const LoginPage = () => {
                     <h3>Welcome back</h3>
                 </div>
 
-                <LoginForm />
+                <LoginForm oneTimeToken={oneTimeToken}/>
                 <SignUpBlock />
             </div>
         </Layout>

@@ -286,7 +286,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
 
     const filteredOrders = useMemo(() => {
-        setCurrent(1);
+        //setCurrent(1);
 
         return orders.filter(order => {
 
@@ -328,6 +328,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         });
     }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
 
+
+    useEffect(() => {
+        setCurrent(1)
+    }, [searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
     //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {

@@ -6,7 +6,7 @@ import AuthChecker from "@/components/AuthChecker";
 export default function Orders() {
 
     return (
-        <AuthChecker isUser={true}>
+        <AuthChecker isUser={true} pageName="Reports/SaleDynamic">
             <ReportPage reportType={REPORT_TYPES.SALE_DYNAMIC} />
         </AuthChecker>
     );

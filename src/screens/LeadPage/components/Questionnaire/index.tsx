@@ -180,7 +180,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
                         <ul className={`lead-questionnaire__product-types-list lead-questionnaire-list`}>
                             <p className={`lead-questionnaire-list-title`}>
-                                Product types *
+                                Product categories *
                             </p>
                             {questionnaireParams.productTypes.map((item, index) => (
                                 <li key={item + '_' + index}

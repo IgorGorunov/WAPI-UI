@@ -6,19 +6,28 @@ import {navBlocks} from "@/components/Navigation/navItems.constants";
 import './styles.scss'
 import SubmenuSingleItem from "@/components/Navigation/SubmenuSingleItem";
 import useTourGuide from "@/context/tourGuideContext";
-import {navigationSteps} from "./navigationTourGuideSteps.constants";
+import {navigationStepsFull} from "./navigationTourGuideSteps.constants";
 import TourGuide from "@/components/TourGuide";
 import {TourGuidePages} from "@/types/tourGuide";
+import useAuth from "@/context/authContext";
 
 type NavigationType = {
     isMenuOpen: boolean;
     handleClose: ()=>void;
 }
 const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
+    const {isNavItemAccessible} = useAuth();
 
     //tour guide
     const {isNavigationWatched} = useTourGuide();
     const [runNavigationTour, setRunNavigationTour] = useState(false);
+
+    const navigationSteps = [];
+    navigationStepsFull.forEach(item => {
+        if (item.submenuName === 'Dashboard' || isNavItemAccessible(item.submenuName)) {
+            navigationSteps.push(item);
+        }
+    } )
 
     useEffect(() => {
         if (isMenuOpen && !isNavigationWatched()) {
@@ -32,10 +41,6 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
             handleClose();
         }
     },[runNavigationTour]);
-
-    // const handleCloseClick = useCallback(() => {
-    //     handleClose();
-    // },[]);
 
 
     return (
@@ -52,13 +57,13 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                         </Link>
                     </div>
                     {navBlocks && navBlocks.length ? navBlocks.map((navBlock, index)=> (
-                        <div key={`${navBlock.submenuTitle}-${index}`}>
+                        isNavItemAccessible(navBlock.submenuName) ? (<div key={`${navBlock.submenuTitle}-${index}`}>
                             {navBlock.submenuLink && !navBlock.navItems.length ?
                                 <SubmenuSingleItem {...navBlock}/>
                                 :
-                                <SubmenuBlock  submenuTitle={navBlock.submenuTitle} submenuIcon={navBlock.submenuIcon} navItems={navBlock.navItems} handleClose={handleClose} />
+                                <SubmenuBlock {...navBlock} handleClose={handleClose} />
                             }
-                        </div>
+                        </div>) : null
                     ))  : null}
                 </div>
             </div>

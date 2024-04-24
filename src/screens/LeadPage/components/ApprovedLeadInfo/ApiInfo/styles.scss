@@ -1,0 +1,53 @@
+.api-documentation {
+  //display: flex;
+  //align-items: center;
+  //gap: 4px;
+  //padding: 4px 0 4px 8px;
+
+  &__file-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 4px 0 4px 8px;
+  }
+
+  &__action-btn {
+    //border: 1px solid var(--color-light-blue-gray);
+    border: 1px solid var(--color-blue);
+    border-radius: 5px;
+    transform: scale(1);
+    transition: 0.3s ease;
+
+    svg {
+      display: block;
+      width: 26px;
+
+      path {
+        //fill: var(--color-light-blue-gray);
+        //transition: .3s ease;
+        fill: var(--color-blue);
+      }
+    }
+
+    &:hover {
+      //border-color: var(--color-blue);
+      transform: scale(1.15);
+      //svg {
+      //
+      //
+      //  path {
+      //    fill: var(--color-blue);
+      //  }
+      //}
+    }
+  }
+
+  &__name {
+    margin-left: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--color-blue);
+  }
+}

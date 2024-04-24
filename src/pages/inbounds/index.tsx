@@ -5,7 +5,7 @@ import AuthChecker from "@/components/AuthChecker";
 
 export default function Inbounds() {
     return (
-        <AuthChecker isUser={true}>
+        <AuthChecker isUser={true} pageName="StockManagment/Inbounds">
             <StockMovementsPage docType={STOCK_MOVEMENT_DOC_TYPE.INBOUNDS}/>
         </AuthChecker>
     );

@@ -1,13 +1,14 @@
 export const enum Routes {
   Dashboard = "/",
   Login = "/login",
-  SignUp = 'sign-up',
+  SignUp = '/sign-up',
   Orders = "/orders",
   Products = "/products",
   Inbounds = "/inbounds",
   StockMovements = "/stockMovements",
   Outbounds = "/outbounds",
   LogisticServices = '/logisticServices',
+  CookiePolicy = '/cookie-policy',
 
   //reports
   ProductsOnStocks = '/reports/productsOnStocks',
@@ -15,4 +16,7 @@ export const enum Routes {
   ReportSales = '/reports/reportSales',
   SaleDynamic = '/reports/saleDynamic',
   CodReport = '/reports/codReport',
+
+  //other
+  Profile = '/profile',
 }

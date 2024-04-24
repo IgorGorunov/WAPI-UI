@@ -45,6 +45,10 @@
 
   &__content {
     margin: 0 -26px;
+
+    .panel {
+      min-height: 20px;
+    }
   }
 }
 

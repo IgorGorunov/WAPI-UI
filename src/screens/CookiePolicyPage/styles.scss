@@ -1,0 +1,37 @@
+@import '@/constants/devices.scss';
+
+.cookie-policy-page {
+  &__text-wrapper {
+    padding: 24px;
+
+    @media (max-width: $mobile) {
+      padding: 0;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+
+    .text-bold {
+      font-weight: bold;
+    }
+
+    .is-link {
+      color: var(--color-blue);
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    .simple-list {
+      margin-inline-start: 36px;
+
+      @media (max-width: $mobile) {
+        margin-inline-start: 20px;
+      }
+    }
+  }
+}

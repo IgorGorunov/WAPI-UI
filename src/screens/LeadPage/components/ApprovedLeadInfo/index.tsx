@@ -4,14 +4,13 @@ import Tabs from "@/components/Tabs";
 import LegalInfo from "./LegalInfo";
 import Prices from "./Prices";
 import {LegalInfoFormType} from "@/types/leads";
-import Icon from "@/components/Icon";
 import {ApiResponseType} from "@/types/api";
 import {getLegalData} from "@/services/leads";
 import useAuth from "@/context/authContext";
+import ApiInfo from "@/screens/LeadPage/components/ApprovedLeadInfo/ApiInfo";
 
 type ApprovedLeadInfoPropsType = {
-    // status: UserStatusType;
-    // setStatus: (status: UserStatusType)=>void
+
 }
 
 const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
@@ -40,7 +39,9 @@ const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
        fetchLegalData();
     }, [userStatus]);
 
-    const tabTitles = ['Prices', 'Legal documentation', 'API info', 'UI tutorial'].map(item=>({title: item}));
+    //const tabTitles = ['Prices', 'Legal documentation', 'API info', 'UI tutorial'].map(item=>({title: item}));
+
+    const tabTitles = ['Prices', 'Legal documentation', 'API info'].map(item=>({title: item}));
 
     return (
         <div className={`card lead-page__approved-block `}>
@@ -52,13 +53,11 @@ const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
                     {legalData ? <LegalInfo legalData={legalData}/> : null }
                 </div>
                 <div key='api-tab' className='lead-page-tab'>
-                    <div className='api-documentation__container'>
-                        <a href='https://github.com/wapicom/API/wiki/Documentation-for-integration-with-the-WAPI-system-via-the-API' target='_blank' className='api-documentation__link'><Icon name='api-documentation' />Explore our API documentation here.</a>
-                    </div>
+                    <ApiInfo />
                 </div>
-                <div key='ui-tab' className='lead-page-tab'>
-                    UI
-                </div>
+                {/*<div key='ui-tab' className='lead-page-tab'>*/}
+                {/*    UI*/}
+                {/*</div>*/}
             </Tabs>
         </div>
     );

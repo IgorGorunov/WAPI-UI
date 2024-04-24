@@ -1,0 +1,37 @@
+.protocol-file {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0 4px 8px;
+  //border-bottom: 1px solid var(--color-light-blue-gray);
+
+  &__action-btn {
+    svg {
+      width: 26px;
+      transform: scale(1);
+      transition: 0.3s ease;
+
+      path {
+        fill: var(--color-light-blue-gray);
+        transition: .3s ease;
+      }
+    }
+
+    &:hover {
+      svg {
+        transform: scale(1.2);
+
+        path {
+          fill: var(--color-blue);
+        }
+      }
+    }
+  }
+
+  &__name {
+    margin-left: 8px;
+    font-weight: bold;
+  }
+
+
+}

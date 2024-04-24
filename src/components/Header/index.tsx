@@ -7,6 +7,7 @@ import {Routes} from "@/types/routes";
 import Navigation from "@/components/Navigation";
 import HeaderNotifications from "@/components/HeaderNotifications";
 import useTourGuide from "@/context/tourGuideContext";
+import ProfileDropdown from "@/components/ProfileDropdown";
 
 type HeaderType = {
     pageTitle?: string;
@@ -57,6 +58,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
                         <span className='user-name'>{curUserName}</span>
                         <Icon name='exit'/>
                     </div>
+                    {/*<ProfileDropdown />*/}
                     {needTutorialBtn ?
                         <button className={`tour-guide ${runTour ? 'is-active' : ''}`} onClick={()=>setRunTour(!runTour)}><Icon name='book' /></button>
                         : null}
@@ -66,9 +68,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
                 </div>
             </div>
 
-            {/*<div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`}>*/}
             <Navigation isMenuOpen={isMenuOpen} handleClose={()=>setMenuOpen(false)}/>
-            {/*</div>*/}
         </div>
     );
 };

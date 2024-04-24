@@ -28,7 +28,7 @@ export const SalesVolumePerMonthField = {
     fieldType: FormFieldTypes.NUMBER,
     type: "number",
     name: 'salesVolumePerMonth',
-    label: "Sales volume per month (orders)",
+    label: "Sales volume per month (number of orders)",
     placeholder: '0',
     width: WidthType.w50,
     classNames: "",
@@ -41,7 +41,7 @@ export const SkusField = {
     fieldType: FormFieldTypes.NUMBER,
     type: "number",
     name: 'skus',
-    label: "Number of references (SKUs)",
+    label: "Number of references (number of SKUs)",
     placeholder: '0',
     width: WidthType.w50,
     classNames: "",
@@ -73,7 +73,7 @@ export const WeightField = {
 export const PackagingField = {
     fieldType: FormFieldTypes.TOGGLE,
     name: 'additionalPackagingForLastMileDelivery',
-    label: "Additional package for last mile delivery",
+    label: "Additional package is needed for last mile delivery",
     width: WidthType.w50,
     classNames: "",
 };
