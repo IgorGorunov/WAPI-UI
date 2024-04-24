@@ -19,7 +19,7 @@ const ApiInfo:React.FC = () => {
 
     const handlePreview = async() => {
         if (window !== undefined) {
-            window.open('/sample.pdf', '_blank');
+            window.open('/Contract2024.docx`', '_blank');
         }
     }
 
