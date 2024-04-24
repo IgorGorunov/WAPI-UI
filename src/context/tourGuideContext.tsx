@@ -34,7 +34,6 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
     }, [token]);
 
     const isTutorialWatched = (page: string) => {
-        console.log('page', page)
         if (page === 'Lead') {
             return isLeadTutorialWatched();
         }

@@ -6,7 +6,7 @@ import {navBlocks} from "@/components/Navigation/navItems.constants";
 import './styles.scss'
 import SubmenuSingleItem from "@/components/Navigation/SubmenuSingleItem";
 import useTourGuide from "@/context/tourGuideContext";
-import {navigationSteps} from "./navigationTourGuideSteps.constants";
+import {navigationStepsFull} from "./navigationTourGuideSteps.constants";
 import TourGuide from "@/components/TourGuide";
 import {TourGuidePages} from "@/types/tourGuide";
 import useAuth from "@/context/authContext";
@@ -21,6 +21,13 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
     //tour guide
     const {isNavigationWatched} = useTourGuide();
     const [runNavigationTour, setRunNavigationTour] = useState(false);
+
+    const navigationSteps = [];
+    navigationStepsFull.forEach(item => {
+        if (item.submenuName === 'Dashboard' || isNavItemAccessible(item.submenuName)) {
+            navigationSteps.push(item);
+        }
+    } )
 
     useEffect(() => {
         if (isMenuOpen && !isNavigationWatched()) {
