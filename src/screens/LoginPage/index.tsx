@@ -11,7 +11,11 @@ const LoginPage = () => {
     const { logout } = useAuth();
     const router = useRouter();
 
-    const [oneTimeToken, setOneTimeToken] = useState<string>('')
+    const [oneTimeToken, setOneTimeToken] = useState<string>('');
+
+    useEffect(() => {
+        setOneTimeToken('');
+    }, []);
 
     useEffect(() => {
         logout();
@@ -21,7 +25,6 @@ const LoginPage = () => {
     useEffect(() => {
         const { oneTimeToken } = router.query;
         setOneTimeToken(Array.isArray(oneTimeToken) ? (oneTimeToken.length ? oneTimeToken[0] : '') : oneTimeToken);
-        logout();
     }, [router.query]);
 
     return (
@@ -38,7 +41,7 @@ const LoginPage = () => {
                     <h3>Welcome back</h3>
                 </div>
 
-                <LoginForm oneTimeToken={oneTimeToken}/>
+                <LoginForm oneTimeToken={oneTimeToken} setOneTimeToken={setOneTimeToken} />
                 <SignUpBlock />
             </div>
         </Layout>
