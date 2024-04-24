@@ -10,7 +10,7 @@ import {InvoiceType, InvoiceBalanceType} from "@/types/invoices";
 import {exportFileXLS} from "@/utils/files";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays, } from "@/utils/date";
-import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
+//import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
 import Loader from "@/components/Loader";
 import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages} from "@/types/tourGuide";
@@ -138,25 +138,25 @@ const InvoicesPage = () => {
                 <Header pageTitle='Invoices' toRight needTutorialBtn >
                     <Button classNames='export-invoices' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
-                {invoiceBalance ? (
-                    <div className="grid-row balance-info-block has-cards-block">
-                        {invoiceBalance.debt && invoiceBalance.debt.length ? (
-                            <div className='width-33 grid-col-33'>
-                                <BalanceInfoCard title={"Total debt"} type="debt" balanceArray={invoiceBalance.debt} />
-                            </div>
-                        ) : null}
-                        {invoiceBalance.overdue && invoiceBalance.overdue.length ? (
-                            <div className='width-33  grid-col-33'>
-                                <BalanceInfoCard title={"Overdue"} type="overdue" balanceArray={invoiceBalance.overdue} />
-                            </div>
-                        ) : null}
-                        {invoiceBalance.overdueLimit ? (
-                            <div className='width-33 grid-col-33'>
-                                <BalanceInfoCard title={"Overdue limit"} type="limit" balanceArray={invoiceBalance.overdueLimit} />
-                            </div>
-                        ) : null}
-                    </div>
-                ) : null}
+                {/*{invoiceBalance ? (*/}
+                {/*    <div className="grid-row balance-info-block has-cards-block">*/}
+                {/*        {invoiceBalance.debt && invoiceBalance.debt.length ? (*/}
+                {/*            <div className='width-33 grid-col-33'>*/}
+                {/*                <BalanceInfoCard title={"Total debt"} type="debt" balanceArray={invoiceBalance.debt} />*/}
+                {/*            </div>*/}
+                {/*        ) : null}*/}
+                {/*        {invoiceBalance.overdue && invoiceBalance.overdue.length ? (*/}
+                {/*            <div className='width-33  grid-col-33'>*/}
+                {/*                <BalanceInfoCard title={"Overdue"} type="overdue" balanceArray={invoiceBalance.overdue} />*/}
+                {/*            </div>*/}
+                {/*        ) : null}*/}
+                {/*        {invoiceBalance.overdueLimit ? (*/}
+                {/*            <div className='width-33 grid-col-33'>*/}
+                {/*                <BalanceInfoCard title={"Overdue limit"} type="limit" balanceArray={invoiceBalance.overdueLimit} />*/}
+                {/*            </div>*/}
+                {/*        ) : null}*/}
+                {/*    </div>*/}
+                {/*) : null}*/}
                 {invoicesData && <InvoiceList invoices={invoicesData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredInvoices={setFilteredInvoices}/>}
             </div>
             {invoicesData!==null && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Invoices} /> : null}
