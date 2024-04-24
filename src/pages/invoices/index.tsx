@@ -4,7 +4,7 @@ import AuthChecker from "@/components/AuthChecker";
 
 export default function Invoices() {
     return (
-        <AuthChecker isUser={true}>
+        <AuthChecker isUser={true} pageName="Finances/Invoices">
             <InvoicesPage />
         </AuthChecker>
     );

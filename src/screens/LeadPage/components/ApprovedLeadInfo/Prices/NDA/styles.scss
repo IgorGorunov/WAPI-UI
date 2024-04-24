@@ -1,5 +1,11 @@
+@import '@/constants/devices.scss';
+
 .lead-page__prices--NDA {
-  max-width: 600px;
+
+  @media (min-width: $laptop) {
+    max-width: 600px;
+    margin: 0 auto;
+  }
 
   &-text {
     margin-top: 16px;

@@ -1,0 +1,10 @@
+.profile-page {
+
+  &__container {
+    padding:  0 24px 24px;
+
+    .tabs-block__content {
+      min-height: 0 !important;
+    }
+  }
+}

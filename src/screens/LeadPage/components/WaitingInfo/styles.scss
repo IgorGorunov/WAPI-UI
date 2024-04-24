@@ -1,6 +1,8 @@
 .lead-page__waiting-info {
+  text-align: center;
 
   &__message {
+    display: inline-block;
     padding: 36px 24px;
     text-align: center;
 
@@ -17,12 +19,20 @@
       //font-weight: bold;
       line-height: 1.2;
 
+      &-wrapper {
+        text-align: start;
+      }
+
       &-title {
         font-size: 16px;
         font-weight: bold;
         margin-bottom: 12px;
       }
     }
+  }
+
+  &--rejected {
+    padding: 24px;
   }
 
 }

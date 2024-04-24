@@ -5,18 +5,21 @@ import useAuth from "@/context/authContext";
 
 type AuthCheckerPropsType = {
     isUser?: boolean;
+    pageName?: string;
     children: ReactNode;
 }
 
-const AuthChecker: React.FC<AuthCheckerPropsType> = ({ isUser=true, children }) => {
-    const { isAuthorizedUser, isAuthorizedLead, logout } = useAuth() // Access authentication state
+const AuthChecker: React.FC<AuthCheckerPropsType> = ({ isUser=true, pageName='', children }) => {
+    const { isAuthorizedUser, isAuthorizedLead, logout, isNavItemAccessible } = useAuth() // Access authentication state
     const [canShow, setCanShow] = useState(false)
 
     useEffect(() => {
         if (!(isUser && isAuthorizedUser() || !isUser && isAuthorizedLead() )) {
             logout();
             Router.push(Routes.Login);
-        } else setCanShow(true);
+        } else if (pageName && !isNavItemAccessible(pageName)) {
+            Router.replace(Routes.Dashboard);
+        }else setCanShow(true);
     }, []);
 
     return (

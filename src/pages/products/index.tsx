@@ -4,7 +4,7 @@ import AuthChecker from "@/components/AuthChecker";
 
 export default function Orders() {
     return (
-        <AuthChecker isUser={true}>
+        <AuthChecker isUser={true} pageName="Products/ProductsList">
             <ProductsPage />
         </AuthChecker>
     );

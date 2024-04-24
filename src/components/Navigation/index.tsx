@@ -9,12 +9,14 @@ import useTourGuide from "@/context/tourGuideContext";
 import {navigationSteps} from "./navigationTourGuideSteps.constants";
 import TourGuide from "@/components/TourGuide";
 import {TourGuidePages} from "@/types/tourGuide";
+import useAuth from "@/context/authContext";
 
 type NavigationType = {
     isMenuOpen: boolean;
     handleClose: ()=>void;
 }
 const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
+    const {isNavItemAccessible} = useAuth();
 
     //tour guide
     const {isNavigationWatched} = useTourGuide();
@@ -33,10 +35,6 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
         }
     },[runNavigationTour]);
 
-    // const handleCloseClick = useCallback(() => {
-    //     handleClose();
-    // },[]);
-
 
     return (
         <div className={`burger-menu__overlay ${isMenuOpen ? 'burger-menu__overlay-open' : ''}`} onClick={handleCloseClick}>
@@ -52,13 +50,13 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                         </Link>
                     </div>
                     {navBlocks && navBlocks.length ? navBlocks.map((navBlock, index)=> (
-                        <div key={`${navBlock.submenuTitle}-${index}`}>
+                        isNavItemAccessible(navBlock.submenuName) ? (<div key={`${navBlock.submenuTitle}-${index}`}>
                             {navBlock.submenuLink && !navBlock.navItems.length ?
                                 <SubmenuSingleItem {...navBlock}/>
                                 :
-                                <SubmenuBlock  submenuTitle={navBlock.submenuTitle} submenuIcon={navBlock.submenuIcon} navItems={navBlock.navItems} handleClose={handleClose} />
+                                <SubmenuBlock {...navBlock} handleClose={handleClose} />
                             }
-                        </div>
+                        </div>) : null
                     ))  : null}
                 </div>
             </div>

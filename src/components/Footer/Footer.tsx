@@ -1,6 +1,8 @@
 import React, { memo } from "react";
 import LogoWAPI from "@/assets/icons/LogoWAPI.svg";
 import "./styles.scss";
+import Link from "next/link";
+import {Routes} from "@/types/routes";
 
 const Footer: React.FC = () => {
   return (
@@ -20,9 +22,10 @@ const Footer: React.FC = () => {
         </div>
         <div className="footer-right">
           <ul className="footer-links">
-            <li>info@wapi.com</li>
+            {/*<li>info@wapi.com</li>*/}
+            <li><a className='is-link' href="mailto:info@wapi.com">info@wapi.com</a></li>
             <li>Privacy Policy</li>
-            <li>Cookie Policy</li>
+            <li><Link className='is-link' href={Routes.CookiePolicy}>Cookie Policy</Link></li>
           </ul>
         </div>
       </div>

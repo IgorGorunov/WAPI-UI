@@ -2,6 +2,11 @@ import React, {createContext, PropsWithChildren, useContext, useState,} from "re
 import Cookie from "js-cookie";
 import {UserStatusType} from "@/types/leads";
 
+type NavAccessItemType = {
+  available: boolean;
+  access: string
+}
+
 type authContextType = {
   token: string | null;
   userName: string | null | undefined;
@@ -22,6 +27,10 @@ type authContextType = {
   logout: ()=>void;
   isAuthorizedUser: ()=>boolean;
   isAuthorizedLead: ()=>boolean;
+  isCookieConsentReceived: boolean;
+  setCookieConsentReceived: ()=>void;
+  setNavItemsAccess: (val: NavAccessItemType[])=>void;
+  isNavItemAccessible: (navItemName: string )=>boolean
 };
 
 const AuthContext = createContext<authContextType>({} as authContextType);
@@ -42,6 +51,8 @@ export const getCurrentDate = () => {
 export const AuthProvider = (props: PropsWithChildren) => {
   const [token, setUserToken] = useState<string|undefined|null>(Cookie.get('token'));
   const [userStatus, setCurrentUserStatus] = useState<UserStatusType|undefined|null>(Cookie.get('userStatus')  as UserStatusType || null);
+  const [isCookieConsentReceived, setIsCookieConsentReceived] = useState<boolean>(!!Cookie.get('WAPI_CookieConsent'));
+  const [access, setAccess] = useState<string[]>((Cookie.get('WAPI_navAccess') || '').split(';'));
 
   const setToken = (token:string, isLead=false) => {
     if (isLead) {
@@ -67,7 +78,6 @@ export const AuthProvider = (props: PropsWithChildren) => {
     tutorialInfo && Array.isArray(tutorialInfo)
         ? Cookie.set('tutorialData', tutorialInfo.join(';'))
         : Cookie.set('tutorialData', null );
-    //Cookie.set('tutorialData', '' )
   }
 
   //const userStatus = Cookie.get('userStatus')  as UserStatusType || null;
@@ -103,8 +113,29 @@ export const AuthProvider = (props: PropsWithChildren) => {
     return token && userStatus && userStatus!==UserStatusType.user;
   }
 
+  const setCookieConsentReceived = () => {
+    Cookie.set('WAPI_CookieConsent', 'true', {expires: 180});
+    setIsCookieConsentReceived(true);
+  }
+
+  const setNavItemsAccess = (navItemsAccess: NavAccessItemType[]) => {
+    const arr:string[] = [];
+    navItemsAccess.forEach(item => {
+      if (item.available) arr.push(item.access);
+    })
+
+    Cookie.set('WAPI_navAccess', arr.join(';'));
+    setAccess(arr);
+  }
+
+  const isNavItemAccessible = (navItemName: string) => {
+    return access.includes(navItemName);
+  }
+
+
+
   return (
-    <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead }}>
+    <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible }}>
       {props.children}
     </AuthContext.Provider>
   );

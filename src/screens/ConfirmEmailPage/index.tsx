@@ -7,18 +7,16 @@ import {ApiResponseType} from "@/types/api";
 import {confirmEmail} from "@/services/signUp";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import Loader from "@/components/Loader";
-//import useAuth from "@/context/authContext";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Link from "next/link";
 import {Routes} from "@/types/routes";
 
 const ConfirmEmailPage = () => {
-    //const { setToken, setUserName, setCurrentDate, setTutorialInfo } = useAuth();
     const router = useRouter();
 
     const [confirmToken, setConfirmToken] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isLoaded, setIsLoaded] = useState(true);
+    const [isLoaded, setIsLoaded] = useState(false);
     const [hasError, setHasError] = useState(false);
 
     //getting uuid from query

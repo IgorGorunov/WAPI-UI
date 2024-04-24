@@ -144,7 +144,7 @@ export const otherInfoFields = [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'actingOnTheBasisOf',
-        label: "acting on the basis of",
+        label: "Acting on the basis of",
         width: WidthType.w50,
         classNames: "",
         rules: {

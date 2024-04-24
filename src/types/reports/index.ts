@@ -36,6 +36,7 @@ export type BlockReportsType = {
     reportType: REPORT_TYPES;
     reportPageLink: string;
     reportDescription?: string;
+    reportName: string;
 }
 
 export type ReportsListBlockType = {

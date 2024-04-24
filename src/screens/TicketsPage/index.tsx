@@ -36,7 +36,7 @@ const TicketsPage = () => {
     // const [ticketParams, setTicketParams] = useState<TicketParamsType | null>(null);
     // const [singleTicketData, setSingleTicketData] = useState<SingleTicketType | null>(null);
     const [singleTicketUuid, setSingleTicketUuid] = useState<string|null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [isTicketNew, setIsTicketNew] = useState(true);
 

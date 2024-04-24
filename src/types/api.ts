@@ -6,6 +6,7 @@ export type ApiResponseType = {
             errorMessage: string[];
             data?: any;
         }
+        status?: number;
     }
 };
 

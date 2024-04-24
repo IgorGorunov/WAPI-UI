@@ -22,13 +22,20 @@
         color: var(--color-blue);
         text-decoration: underline;
 
+
         &:hover {
           text-decoration: none;
+
+          svg {
+            transform: scale(1.15);
+          }
         }
 
         svg {
           width: 40px;
           fill: var(--color-blue);
+          transform: scale(1);
+          transition: .3s ease;
         }
       }
     }

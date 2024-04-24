@@ -22,7 +22,7 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, classNames='', tabTitles, chi
             <ul className='tabs-block__tablist' role='tablist'>
                 {tabTitles.map((tab, index) => <li className={`tabs-block__tab ${index===activeTab ? 'active-tab' : ''}`} key={`tab-${index}`}>
                     <a key={`tab-link-${index}`}
-                       className={`tabs-block__tab-link ${index === activeTab ? 'active' : ''} ${tab.hasError ? 'has-error' : ''}`}
+                       className={`tabs-block__tab-link ${index === activeTab ? 'active' : ''} ${tab.hasError ? 'has-error' : ''} ${tab.title.replaceAll(' ','-').toLowerCase()}`}
                        href='#' role='tab'
                        aria-controls={`panel-id-${index}`}
                        aria-selected={activeTab===index}

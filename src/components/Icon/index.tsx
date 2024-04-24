@@ -81,6 +81,7 @@ import Emoji from '@/assets/icons/emoji.svg'
 import Book from '@/assets/icons/book.svg'
 import Edit from '@/assets/icons/edit.svg'
 import ApiDocumentation from '@/assets/icons/api-documentation.svg'
+import Profile from '@/assets/icons/profile.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -164,6 +165,7 @@ export const icons = {
   'book': Book,
   'edit': Edit,
   'api-documentation': ApiDocumentation,
+  'profile': Profile,
 };
 
 export type IconType = keyof typeof icons;
@@ -176,7 +178,7 @@ export type IconProps = React.ImgHTMLAttributes<HTMLImageElement> & {
 export const Icon: React.FC<IconProps> = memo(({ name = "arrow-left", className="" }) => {
   const IconComponent = useMemo(() => icons[name], [name]);
 
-  return <IconComponent className={`icon-${name} ${className}`}/>;
+  return <IconComponent className={`icon icon-${name} ${className}`}/>;
 });
 
 Icon.displayName = "Icon";

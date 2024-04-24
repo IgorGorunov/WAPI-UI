@@ -116,7 +116,7 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
         <div className={`card legal-info`}>
             {isLoading && <Loader />}
             <div className='legal-info__contract-download'>
-                <Button icon='download-file' iconOnTheRight onClick={handleContractDownload}>Download contract draft</Button>
+                <Button icon='download-file' iconOnTheRight onClick={handleContractDownload}>Contract sample</Button>
             </div>
             <div className='legal-info__form-wrapper'>
                 <form onSubmit={handleSubmit(onSubmitForm)} autoComplete="off">

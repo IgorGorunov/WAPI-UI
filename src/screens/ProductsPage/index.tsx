@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import Cookie from 'js-cookie';
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import {getProducts} from "@/services/products";
@@ -22,14 +21,10 @@ import TourGuide from "@/components/TourGuide";
 import useTourGuide from "@/context/tourGuideContext";
 import {tourGuideStepsProduct, tourGuideStepsProductNoDocs} from "./productListTourGuideSteps.constants";
 import {TourGuidePages} from "@/types/tourGuide";
-import {
-    tourGuideStepsProductsStock,
-    tourGuideStepsProductsStockNoDocs
-} from "@/screens/ProductsStockPage/productsStockTourGuideSteps.constants";
 
 const ProductsPage = () => {
     const Router = useRouter();
-    const { token, setToken } = useAuth();
+    const { token } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [uuid, setUuid]=useState<string|null>(null);
@@ -144,6 +139,7 @@ const ProductsPage = () => {
             dimension: item.dimension,
             weight: item.weight,
             aliases: item.aliases,
+            barcodes: item.barcodes,
         }));
         exportFileXLS(filteredData, "Products")
     }

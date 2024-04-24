@@ -5,7 +5,7 @@ import AuthChecker from "@/components/AuthChecker";
 export default function Tickets() {
 
     return (
-        <AuthChecker isUser={true}>
+        <AuthChecker isUser={true} pageName="Tickets">
             <TicketsPage />
         </AuthChecker>
     );

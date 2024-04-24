@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {FormBuilderType, FormFieldTypes, WidthType} from "@/types/forms";
-import {authenticate} from "@/services/auth";
+import {authenticate, authenticateWithOneTimeToken} from "@/services/auth";
 import Router from "next/router";
 import {Routes} from "@/types/routes";
 import useAuth from "@/context/authContext";
@@ -9,8 +9,63 @@ import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button from "@/components/Button/Button";
 import "./styles.scss";
 import {UserStatusType} from "@/types/leads";
+import {ApiResponseType} from "@/types/api";
+import Loader from "@/components/Loader";
 
-const LoginForm: React.FC = () => {
+type LoginFormPropsType = {
+  oneTimeToken?: string;
+}
+
+const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken}) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess } = useAuth();
+
+  const [error, setError] = useState<string | null>(null);
+
+  const loginUserWithOneTimeToken = useCallback(async() => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      //const res = await authenticate("Test@Test.com", "Test");
+      const res: ApiResponseType = await authenticateWithOneTimeToken({oneTimeToken});
+
+      if (res?.status === 200) {
+        const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access } = res?.data;
+
+        setToken(accessToken, userStatus !== UserStatusType.user);
+
+        //Cookie.set('token', accessToken);
+        setUserName(userPresentation || 'user');
+        setCurrentDate(currentDate);
+        setUserStatus(userStatus);
+        setTutorialInfo(traningStatus);
+        setTextInfo(textInfo || '');
+        setNavItemsAccess(access || []);
+
+        switch (userStatus) {
+          case 'user':
+            await Router.push(Routes.Dashboard);
+            return;
+          default:
+            await Router.push('/lead');
+            return;
+        }
+      } else if (res?.response?.status === 401) {
+        setError("Wrong token");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [oneTimeToken]);
+
+  useEffect(() => {
+    if (oneTimeToken) {
+      loginUserWithOneTimeToken();
+    }
+  }, [oneTimeToken]);
+
   const formFields: FormBuilderType[] = [
     {
       fieldType: FormFieldTypes.TEXT,
@@ -55,10 +110,7 @@ const LoginForm: React.FC = () => {
     },
   ];
 
-  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo } = useAuth();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const {
     control,
@@ -84,7 +136,7 @@ const LoginForm: React.FC = () => {
       const res: ApiResponse = await authenticate(login, password);
 
       if (res?.status === 200) {
-        const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo } = res?.data;
+        const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access } = res?.data;
 
         setToken(accessToken, userStatus !== UserStatusType.user);
 
@@ -94,6 +146,7 @@ const LoginForm: React.FC = () => {
         setUserStatus(userStatus);
         setTutorialInfo(traningStatus);
         setTextInfo(textInfo || '');
+        setNavItemsAccess(access || []);
 
         switch (userStatus) {
           case 'user':
@@ -117,6 +170,7 @@ const LoginForm: React.FC = () => {
 
   return (
     <div className={`card login-form`}>
+      {isLoading && <Loader />}
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         {formFields.map((curField: any ) => (
 

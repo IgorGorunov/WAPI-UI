@@ -156,5 +156,4 @@ const checkLeadStatus = async (
 };
 
 
-
 export { getLeadParameters, sendQuestionnaire, sendLegalInfo, getPricesInfo, getPriceFile, sendSignNDA, getLegalData, checkLeadStatus };

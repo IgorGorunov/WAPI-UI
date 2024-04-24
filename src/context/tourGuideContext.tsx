@@ -33,21 +33,19 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
         setWatchedPages(Cookie.get('tutorialData') ? Cookie.get('tutorialData').split(';') : []);
     }, [token]);
 
-    console.log('watched pages: ', watchedPages);
-
     const isTutorialWatched = (page: string) => {
-        console.log('tutorial: ', page)
+        console.log('page', page)
+        if (page === 'Lead') {
+            return isLeadTutorialWatched();
+        }
 
         return watchedPages.filter(item => item==page).length > 0;
-        // const tutorialCookieData = Cookie.get('tutorialData');
-        // if (tutorialCookieData) {
-        //     return (tutorialCookieData.split(';')).filter(item => item==page).length > 0;
-        // }
-        //return false;
     }
 
     const setTutorialAsWatched = (page: TourGuidePages) => {
-        if (!isTutorialWatched(page)) {
+        if (page === 'Lead') {
+            setLeadTutorialAsWatched();
+        } else if (!isTutorialWatched(page)) {
             const tutorialCookieData = Cookie.get('tutorialData');
             if (tutorialCookieData) {
                 Cookie.set('tutorialData', watchedPages.filter(item=>item!==page).join(';') + ';' + page);
@@ -60,14 +58,6 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
 
     const isNavigationWatched = () => {
         return watchedPages.length > 1 || watchedPages.filter(item => item===TourGuidePages.Navigation).length > 0;
-        // const tutorialCookieData = Cookie.get('tutorialData');
-        // if (tutorialCookieData) {
-        //     if (tutorialCookieData.includes('Navigation') || tutorialCookieData.split(';').length > 1) {
-        //         return true;
-        //     }
-        // }
-        //
-        // return false;
     }
 
     const isReportWatched = (report: REPORT_TYPES) => {
@@ -78,14 +68,13 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
         }
 
         return false;
+    }
 
-        // const tutorialCookieData = Cookie.get('tutorialData');
-        // const tourGuidePageForReport = TourGuidePages[`Report_${report}`];
-        //
-        // if (tutorialCookieData && tourGuidePageForReport) {
-        //     return (tutorialCookieData.split(';')).filter(item => item==tourGuidePageForReport).length > 0;
-        // }
-        // return false;
+    const isLeadTutorialWatched = () => {
+        return !!Cookie.get('WAPI_lead_tutorial');
+    }
+    const setLeadTutorialAsWatched = () => {
+        Cookie.set('WAPI_lead_tutorial', 'true', {expires: 30});
     }
 
     return (

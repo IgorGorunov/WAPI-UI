@@ -3,10 +3,11 @@ import Icon from "@/components/Icon";
 import Link from "next/link";
 import './styles.scss'
 import {REPORT_TITLES, ReportsListBlockType} from "@/types/reports";
+import useAuth from "@/context/authContext";
 
 
 const ReportsBlock: React.FC<ReportsListBlockType> = ({blockTitle, blockIcon, blockReports}) => {
-
+    const {isNavItemAccessible} = useAuth();
     return (
         <div className={`reports-block-container card`}>
             <div className="reports-block-header">
@@ -15,14 +16,14 @@ const ReportsBlock: React.FC<ReportsListBlockType> = ({blockTitle, blockIcon, bl
             </div>
             <div className="reports-block__items grid-row">
                 {blockReports.map((reportItem,index) => (
-                    <div className='reports-block-item__wrapper  width-33' key={`${REPORT_TITLES[reportItem.reportType]}_${index}`}>
+                    isNavItemAccessible(reportItem.reportName) ? <div className='reports-block-item__wrapper  width-33' key={`${REPORT_TITLES[reportItem.reportType]}_${index}`}>
                         <Link  href={reportItem.reportPageLink} className="reports-block-item">
                             {REPORT_TITLES[reportItem.reportType]}
                         </Link>
                         {reportItem.reportDescription ? <div className="reports-block-item__description">
                             {reportItem.reportDescription}
                         </div> : null}
-                    </div>
+                    </div> : null
                 )) }
             </div>
 

@@ -18,6 +18,7 @@ export enum TourGuidePages {
     Report_ReportCodCheck = 'Reports/ReportCodCheck',
     Report_ReportSaleDynamic = 'Reports/ReportSaleDynamic',
     Report_ReportSales = 'Reports/ReportSales',
+    Lead = 'Lead',
 }
 
 export type TourGuidePagesType = keyof typeof TourGuidePages;
