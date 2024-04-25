@@ -1,0 +1,118 @@
+@import '@/constants/devices.scss';
+
+.profile-info {
+  margin-top: 8px;
+
+  @media (max-width: $mobile) {
+    margin-top: 24px;
+  }
+
+  &__wrapper {
+    display: flex;
+    gap: 10%;
+  }
+  &__user {
+    &-info {
+      flex: 1 0 80%;
+      display: flex;
+      //flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+      font-size: 13px;
+
+      @media (max-width: $mobile) {
+        flex-wrap: wrap;
+        margin-top: 0;
+      }
+
+      &--row{
+        display: flex;
+        //flex-wrap: wrap;
+        gap: 8px 16px;
+        //line-height: 40px;
+        margin-bottom: 8px;
+      }
+
+
+      &--title {
+        flex: 0 0 60px;
+        font-weight: bold;
+      }
+
+      &--value {
+        flex: 1 1 auto;
+        display: flex;
+        gap: 16px;
+      }
+
+      &--user {
+        flex: 1 1 50%;
+        //margin-top: 34px;
+
+        @media (max-width: $mobile) {
+          flex: 1 1 100%;
+          min-width: 100%;
+          margin-top: 0;
+        }
+      }
+
+      &--managers {
+        flex: 1 1 50%;
+
+        @media (max-width: $mobile) {
+          flex: 1 1 100%;
+          min-width: 100%;
+        }
+      }
+
+      &--manager {
+        &-title {
+          font-size: 14px;
+          font-weight: bold;
+          margin-bottom: 12px;
+        }
+      }
+    }
+    &-avatar {
+      flex: 1 1 20%;
+      min-width: 70px;
+      padding-bottom: 8px;
+
+      @media (min-width: $mobile) {
+        min-width: 135px;
+      }
+
+      svg {
+        width: 100%;
+
+        path {
+          transform: scale(1.3);
+          transform-origin: center;
+        }
+      }
+    }
+  }
+
+  &__change-password {
+    display: flex;
+    justify-content: center;
+
+    .btn {
+      line-height: normal;
+      padding: 6px 10px;
+      height: auto;
+    }
+  }
+
+  .is-link {
+    font-weight: bold;
+    transform: scale(1);
+    transform-origin: left;
+    transition: .3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+  }
+}

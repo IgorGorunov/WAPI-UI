@@ -14,7 +14,7 @@ const FileFolder: React.FC<FileFolderPropsType> = ({folder}) => {
     return (
         <>
             { folder.isFolder ?
-                <AccordionFile title={folder.name} isOpen >
+                <AccordionFile title={folder.name} >
                     <>{folder.children ? folder.children.map(item=> <div key={item.name}><FileFolder folder={item} /></div>) : null}</>
                 </AccordionFile> :
                 <SingleFile file={folder} />

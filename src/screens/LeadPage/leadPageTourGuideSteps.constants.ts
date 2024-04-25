@@ -12,7 +12,7 @@ export const tourGuideStepsLeads: TourGuideStepType[] = [
     },
     {
         target: '.tabs-block__tab-link.api-info-tab',
-        content: 'Find our API documentation and other ways to integrate with WAPI',
+        content: 'Check the ways to integrate with WAPI',
     },
     // {
     //     target: '.tabs-block__tab-link.ui-tutorial-tab',

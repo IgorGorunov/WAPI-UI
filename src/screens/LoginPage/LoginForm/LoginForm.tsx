@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
-import {FormBuilderType, FormFieldTypes, WidthType} from "@/types/forms";
 import {authenticate, authenticateWithOneTimeToken} from "@/services/auth";
 import Router from "next/router";
 import {Routes} from "@/types/routes";
@@ -11,16 +10,44 @@ import "./styles.scss";
 import {UserStatusType} from "@/types/leads";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
+import {formFields} from "./LoginFormFields.constants";
 
 type LoginFormPropsType = {
   oneTimeToken?: string;
+  setOneTimeToken?: (val: string)=>void;
 }
 
-const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken}) => {
+const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess } = useAuth();
+  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
+
+  const setAuthData = async(authData) => {
+    const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile } = authData;
+
+    setToken(accessToken, userStatus !== UserStatusType.user);
+
+    //Cookie.set('token', accessToken);
+    setUserName(userPresentation || 'user');
+    setCurrentDate(currentDate);
+    setUserStatus(userStatus);
+    setTutorialInfo(traningStatus);
+    setTextInfo(textInfo || '');
+    setNavItemsAccess(access || []);
+    setUserInfoProfile(userProfile?.userInfo || null);
+
+    setOneTimeToken('');
+
+    switch (userStatus) {
+      case 'user':
+        await Router.push(Routes.Dashboard);
+        return;
+      default:
+        await Router.push('/lead');
+        return;
+    }
+  }
 
   const loginUserWithOneTimeToken = useCallback(async() => {
     try {
@@ -30,26 +57,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken}) => {
       const res: ApiResponseType = await authenticateWithOneTimeToken({oneTimeToken});
 
       if (res?.status === 200) {
-        const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access } = res?.data;
-
-        setToken(accessToken, userStatus !== UserStatusType.user);
-
-        //Cookie.set('token', accessToken);
-        setUserName(userPresentation || 'user');
-        setCurrentDate(currentDate);
-        setUserStatus(userStatus);
-        setTutorialInfo(traningStatus);
-        setTextInfo(textInfo || '');
-        setNavItemsAccess(access || []);
-
-        switch (userStatus) {
-          case 'user':
-            await Router.push(Routes.Dashboard);
-            return;
-          default:
-            await Router.push('/lead');
-            return;
-        }
+        setAuthData(res.data);
       } else if (res?.response?.status === 401) {
         setError("Wrong token");
       }
@@ -66,49 +74,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken}) => {
     }
   }, [oneTimeToken]);
 
-  const formFields: FormBuilderType[] = [
-    {
-      fieldType: FormFieldTypes.TEXT,
-      type: "text",
-      name: "login",
-      label: "Your email",
-      placeholder: "laithoff@gmail.com",
-      rules: {
-        required: "Email is required!",
-        // pattern: {
-        //   value: "^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$",
-        //   message: "please. enter valid email",
-        // },
-        validate: {
-          matchPattern: (v) =>
-             /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
-              "Please, enter valid email address",
-        },
-      },
-      errorMessage: "Email is required!",
-      width: WidthType.w100,
-      classNames: 'big-version',
-      needToasts: false,
-    },
-    {
-      fieldType: FormFieldTypes.TEXT,
-      type: "password",
-      name: "password",
-      label: "Your password",
-      placeholder: "********",
-      rules: {
-        required:  "Please, enter valid password!",
-        minLength: {
-          value: 3,
-          message: "Password has to be at least 3 symbols!"
-        },
-      },
-      errorMessage: "Please, enter valid password!",
-      width: WidthType.w100,
-      classNames: 'big-version',
-      needToasts: false,
-    },
-  ];
+
 
 
 
@@ -136,28 +102,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken}) => {
       const res: ApiResponse = await authenticate(login, password);
 
       if (res?.status === 200) {
-        const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access } = res?.data;
-
-        setToken(accessToken, userStatus !== UserStatusType.user);
-
-        //Cookie.set('token', accessToken);
-        setUserName(userPresentation ? userPresentation : login);
-        setCurrentDate(currentDate);
-        setUserStatus(userStatus);
-        setTutorialInfo(traningStatus);
-        setTextInfo(textInfo || '');
-        setNavItemsAccess(access || []);
-
-        switch (userStatus) {
-          case 'user':
-            await Router.push(Routes.Dashboard);
-            return;
-          default:
-            await Router.push('/lead');
-            return;
-        }
-        //await Router.push(Routes.Dashboard);
-        // } else if (res?.response.status === 401) {
+        setAuthData(res.data)
       } else if (res?.response?.status === 401) {
         setError("Wrong login or password");
       }

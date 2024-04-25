@@ -7,6 +7,19 @@ type NavAccessItemType = {
   access: string
 }
 
+type ManagerInfoType = {
+  name: string;
+  email: string;
+}
+
+type UserInfoType = {
+    testMode: boolean;
+    client: string;
+    userLogin: string;
+    userName: string;
+    supportManager?: ManagerInfoType;
+}
+
 type authContextType = {
   token: string | null;
   userName: string | null | undefined;
@@ -30,7 +43,9 @@ type authContextType = {
   isCookieConsentReceived: boolean;
   setCookieConsentReceived: ()=>void;
   setNavItemsAccess: (val: NavAccessItemType[])=>void;
-  isNavItemAccessible: (navItemName: string )=>boolean
+  isNavItemAccessible: (navItemName: string )=>boolean;
+  userInfo: UserInfoType;
+  setUserInfoProfile: (val: UserInfoType) => void;
 };
 
 const AuthContext = createContext<authContextType>({} as authContextType);
@@ -53,6 +68,15 @@ export const AuthProvider = (props: PropsWithChildren) => {
   const [userStatus, setCurrentUserStatus] = useState<UserStatusType|undefined|null>(Cookie.get('userStatus')  as UserStatusType || null);
   const [isCookieConsentReceived, setIsCookieConsentReceived] = useState<boolean>(!!Cookie.get('WAPI_CookieConsent'));
   const [access, setAccess] = useState<string[]>((Cookie.get('WAPI_navAccess') || '').split(';'));
+  const getProfileFromCookie = () => {
+    const profileInfo = Cookie.get('WAPI_profile_info');
+    if (profileInfo && profileInfo !== 'null') {
+      return JSON.parse(profileInfo);
+    } else return null;
+  }
+  const [userInfo, setUserInfo] = useState<UserInfoType|null>(getProfileFromCookie());
+
+
 
   const setToken = (token:string, isLead=false) => {
     if (isLead) {
@@ -132,10 +156,15 @@ export const AuthProvider = (props: PropsWithChildren) => {
     return access.includes(navItemName);
   }
 
+  const setUserInfoProfile = (val: UserInfoType) => {
+    setUserInfo(val);
+    Cookie.set('WAPI_profile_info', JSON.stringify(val));
+  }
+
 
 
   return (
-    <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible }}>
+    <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile }}>
       {props.children}
     </AuthContext.Provider>
   );

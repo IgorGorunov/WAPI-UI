@@ -35,3 +35,23 @@ export const getApiProtocol = async (
         return err;
     }
 };
+
+export const changePassword = async (
+    data: {
+        token: string;
+        currentPassword: string;
+        newPassword: string;
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/ChangePassword`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+}
