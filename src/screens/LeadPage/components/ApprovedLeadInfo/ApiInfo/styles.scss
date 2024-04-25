@@ -1,15 +1,10 @@
 .api-documentation {
-  //display: flex;
-  //align-items: center;
-  //gap: 4px;
-  //padding: 4px 0 4px 8px;
-
   &__file-container {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    margin-top: 24px;
+    //margin-top: 24px;
     padding: 4px 0 4px 8px;
   }
 
@@ -35,7 +30,6 @@
       //border-color: var(--color-blue);
       transform: scale(1.15);
       //svg {
-      //
       //
       //  path {
       //    fill: var(--color-blue);
