@@ -12,14 +12,15 @@
       transition: 0.3s ease;
 
       path {
-        fill: var(--color-light-blue-gray);
+        //fill: var(--color-light-blue-gray);
+        fill: var(--color-blue);
         transition: .3s ease;
       }
     }
 
     &:hover {
       svg {
-        transform: scale(1.2);
+        transform: scale(1.25);
 
         path {
           fill: var(--color-blue);
@@ -31,6 +32,7 @@
   &__name {
     margin-left: 8px;
     font-weight: bold;
+    color: var(--color-blue);
   }
 
 

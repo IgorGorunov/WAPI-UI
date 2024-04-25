@@ -423,6 +423,9 @@ input[type="date"]::before {
   &-download-file {
     width: 26px;
   }
+  &-minus {
+    width: 30px;
+  }
 }
 
 .ant-table-cell {

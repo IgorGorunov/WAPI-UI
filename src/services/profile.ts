@@ -39,7 +39,7 @@ export const getApiProtocol = async (
 export const changePassword = async (
     data: {
         token: string;
-        oldPassword: string;
+        currentPassword: string;
         newPassword: string;
     }
 ) => {

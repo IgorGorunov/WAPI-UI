@@ -33,9 +33,9 @@ const AccordionFile: React.FC<AccordionFilePropsType> = ({ title, children, isOp
                 className={`accordion-file-item__title ${isActive ? "is-active" : ''}`}
                 onClick={toggleAccordion}
             >
-                <Icon name='minus' className={`accordion-file-item__title-icon active`} />
-                <Icon name='minus' className={`accordion-file-item__title-icon ${isActive ? 'active' : ''}`}/>
-                <p className="accordion-file-item__title-text">{title}</p>
+                {/*<Icon name='minus' className={`accordion-file-item__title-icon active`} />*/}
+                <Icon name='keyboard-arrow-up' className={`accordion-file-item__title-icon ${isActive ? 'active' : ''}`}/>
+                <p className="accordion-file-item__title-text"><Icon name='folder' className='folder-icon' />{title}</p>
 
             </button>
             <div

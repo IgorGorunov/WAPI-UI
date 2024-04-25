@@ -9,8 +9,8 @@ type ApiProtocolsPropsType = {
 }
 
 export type HierarchyNodeType = {
-    name: string;
-    isFolder: boolean;
+    name?: string;
+    isFolder?: boolean;
     children?: HierarchyNodeType[];
     uuid?: string;
 }
@@ -46,7 +46,9 @@ const ApiProtocols: React.FC<ApiProtocolsPropsType> = ({apiProtocols}) => {
             }
         }
 
-        return rootNode.children[0];
+        console.log('node: ', rootNode)
+
+        return rootNode;
     }, []);
 
     const fileHierarchy = useMemo(()=>getHierarchicalFileStructure(apiProtocols || []), [apiProtocols]);
@@ -61,13 +63,10 @@ const ApiProtocols: React.FC<ApiProtocolsPropsType> = ({apiProtocols}) => {
 
     return (
         <div className={`api-protocols`}>
-            {/*<h2 className="api-protocols--title">*/}
-            {/*    Available delivery protocols*/}
-            {/*</h2>*/}
-            {apiProtocols && apiProtocols.length && fileHierarchy ?
-                <div className='api-protocols__wrapper'>
-                    <FileFolder folder={fileHierarchy} />
-                </div>
+            {apiProtocols && apiProtocols.length && fileHierarchy && fileHierarchy.children && fileHierarchy.children.length ?
+                <ul className='api-protocols__wrapper'>
+                    {fileHierarchy.children.map(folder => <li key={folder.name}><FileFolder folder={folder} /></li>)}
+                </ul>
                 : null
             }
         </div>

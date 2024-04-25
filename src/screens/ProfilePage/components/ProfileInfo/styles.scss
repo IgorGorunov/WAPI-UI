@@ -17,10 +17,12 @@
       display: flex;
       //flex-wrap: wrap;
       gap: 16px;
+      margin-top: 16px;
       font-size: 13px;
 
       @media (max-width: $mobile) {
         flex-wrap: wrap;
+        margin-top: 0;
       }
 
       &--row{
@@ -45,7 +47,7 @@
 
       &--user {
         flex: 1 1 50%;
-        margin-top: 34px;
+        //margin-top: 34px;
 
         @media (max-width: $mobile) {
           flex: 1 1 100%;

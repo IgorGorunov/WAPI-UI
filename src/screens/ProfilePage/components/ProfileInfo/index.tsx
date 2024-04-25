@@ -25,6 +25,7 @@ const ProfileInfo: React.FC = () => {
                 </div>
                 <div className='profile-info__user-info'>
                     <div className='profile-info__user-info--user'>
+                        <p className='profile-info__user-info--manager-title'>Credentials</p>
                         <div className='profile-info__user-info--row'>
                             <div className="profile-info__user-info--title">Client:</div>
                             <div className="profile-info__user-info--value">{userInfo?.client}</div>
@@ -39,8 +40,8 @@ const ProfileInfo: React.FC = () => {
                         </div>
                     </div>
                     <div className='profile-info__user-info--managers'>
-                        <div className='profile-info__user-info--manager'>
-                            <p className='profile-info__user-info--manager-title'>Suppurt manager</p>
+                    <div className='profile-info__user-info--manager'>
+                            <p className='profile-info__user-info--manager-title'>Support manager</p>
                             <div className='profile-info__user-info--row'>
                                 <div className="profile-info__user-info--title">Name</div>
                                 <div className="profile-info__user-info--value">{userInfo?.supportManager?.name}</div>

@@ -44,8 +44,8 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
         {
             fieldType: FormFieldTypes.TEXT,
             type: "password",
-            name: "oldPassword",
-            label: "Old password",
+            name: "currentPassword",
+            label: "Current password",
             placeholder: "********",
             rules: {
                 required:  "Please, enter valid password!",
@@ -97,7 +97,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
     const handleFormSubmit = async (data: any) => {
         try {
             setIsLoading(true);
-            const res: ApiResponseType = await changePassword({token, oldPassword: data.oldPassword, newPassword: data.newPassword});
+            const res: ApiResponseType = await changePassword({token, currentPassword: data.currentPassword, newPassword: data.newPassword});
 
             if (res?.status === 200) {
                 //display success modal

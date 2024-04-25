@@ -82,6 +82,7 @@ import Book from '@/assets/icons/book.svg'
 import Edit from '@/assets/icons/edit.svg'
 import ApiDocumentation from '@/assets/icons/api-documentation.svg'
 import Profile from '@/assets/icons/profile.svg'
+import Folder from '@/assets/icons/folder.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -166,6 +167,7 @@ export const icons = {
   'edit': Edit,
   'api-documentation': ApiDocumentation,
   'profile': Profile,
+  'folder': Folder,
 };
 
 export type IconType = keyof typeof icons;
