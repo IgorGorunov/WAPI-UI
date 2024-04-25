@@ -19,12 +19,12 @@ type LoginFormPropsType = {
 
 const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess } = useAuth();
+  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
 
   const setAuthData = async(authData) => {
-    const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access } = authData;
+    const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile } = authData;
 
     setToken(accessToken, userStatus !== UserStatusType.user);
 
@@ -35,6 +35,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
     setTutorialInfo(traningStatus);
     setTextInfo(textInfo || '');
     setNavItemsAccess(access || []);
+    setUserInfoProfile(userProfile?.userInfo || null);
 
     setOneTimeToken('');
 
