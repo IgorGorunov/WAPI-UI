@@ -1,6 +1,6 @@
 export const dashboardSteps = [
     {
-        target: '.main-header__user',
+        target: '.profile-dropdown__user',
         content: 'Click here to log out',
         disableBeacon: true,
     },
