@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Footer from "@/components/Footer/Footer";
 import "./styles.scss";
 import {setInterceptorErrorCallback, setInterceptorRedirectCallback} from "@/services/api";
@@ -12,11 +12,13 @@ import CookieConsent from "@/components/CookieConsent";
 type Props = {
   hasHeader?: boolean;
   hasFooter?: boolean;
+  isWide?: boolean;
   children?: React.ReactNode;
 };
 
 const Layout: React.FC<Props> = ({
   hasFooter = false,
+  isWide = false,
   children,
 }) => {
     const router = useRouter();
@@ -44,7 +46,7 @@ const Layout: React.FC<Props> = ({
     };
 
     //const cookieConsentRef = useRef<HTMLDivElement>(null);
-    const [extraPadding, setExtraPadding] = useState<number>(0);
+    //const [extraPadding, setExtraPadding] = useState<number>(0);
     //
     // useEffect(() => {
     //     if (!isCookieConsentReceived && cookieConsentRef?.current) {
@@ -60,8 +62,8 @@ const Layout: React.FC<Props> = ({
     }, [isCookieConsentReceived]);
 
   return (
-      <div className="main" style={{paddingBottom: extraPadding}}>
-          <div className="main-content">
+      <div className="main" >
+          <div className={`main-content ${isWide ? 'is-wide' : ''}`}>
               {children}
           </div>
           {hasFooter && <Footer/>}

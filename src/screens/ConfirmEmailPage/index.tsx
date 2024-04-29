@@ -28,9 +28,9 @@ const ConfirmEmailPage = () => {
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeSuccessModal = useCallback(()=>{
-        setShowStatusModal(false);
-    }, []);
+    // const closeSuccessModal = useCallback(()=>{
+    //     setShowStatusModal(false);
+    // }, []);
     const closeErrorModal = useCallback(()=>{
         setShowStatusModal(false);
         setHasError(true);
@@ -39,7 +39,7 @@ const ConfirmEmailPage = () => {
     useEffect(() => {
         if (confirmToken) {
             //send confirmation to endpoint
-            const sendConfirm = async(token: string) => {
+            const sendConfirm = async(confirmToken: string) => {
                 try {
                     setIsLoading(true);
                     const res: ApiResponseType = await confirmEmail({uuid: confirmToken});
@@ -93,9 +93,9 @@ const ConfirmEmailPage = () => {
                         <p className='email-confirm-page__success-title'>Almost there! Your email confirmation is complete!</p>
                         <p className='email-confirm-page__success-text-title'>Next steps:</p>
                         <div className='email-confirm-page__success-text-wrapper'>
-                            <p className='email-confirm-page__success-text'><span className='text-bold'>Step 1:</span> You'll soon receive an email with your login details.</p>
-                            <p className='email-confirm-page__success-text'><span className='text-bold'>Step 2:</span> Please sign in using these credentials.</p>
-                            <p className='email-confirm-page__success-text'><span className='text-bold'>Step 3:</span> Ready to explore? Let's go!</p>
+                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>Step 1:</span> You'll soon receive an email with your login details.</p>
+                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>Step 2:</span> Please sign in using these credentials.</p>
+                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>Step 3:</span> Ready to explore? Let's go!</p>
                         </div>
                         <div className='email-confirm-page__success-btns'>Proceed to <Link
                             href={Routes.Login}>Login</Link></div>

@@ -7,7 +7,7 @@ import {NotificationsProvider} from "@/context/notificationContext";
 import {TourGuideProvider} from "@/context/tourGuideContext";
 
 const roboto = Roboto({
-  weight: ["400", "700", "900"],
+  weight: ["300", "400", "500", "700"],
   style: ["normal", "italic"],
   subsets: ["latin"],
   display: "swap",

@@ -15,12 +15,12 @@ const WaitingInfo = () => {
 
                 <div className='lead-page__waiting-info__message-text-wrapper'>
                     <p className='lead-page__waiting-info__message-text-title'>Here's what to do next:</p>
-                    <p className='lead-page__waiting-info__message-text'><span className='text-bold'>Step 1:</span> Keep
+                    <p className='lead-page__waiting-info__message-text'><span className='waiting-step text-bold'>Step 1:</span> Keep
                         an eye out for the confirmation email.</p>
                     <p className='lead-page__waiting-info__message-text'><span
-                        className='text-bold'>Step 2:</span> Check your inbox.</p>
+                        className='waiting-step text-bold'>Step 2:</span> Check your inbox.</p>
                     <p className='lead-page__waiting-info__message-text'><span
-                        className='text-bold'>Step 3:</span> Follow the instructions provided in the email carefully.
+                        className='waiting-step text-bold'>Step 3:</span> Follow the instructions provided in the email carefully.
                     </p>
                 </div>
             </div> : <p className={'lead-page__waiting-info--rejected'}>{getTextInfo() || 'We are very sorry but your application has been rejected...'}</p>}

@@ -83,6 +83,11 @@ import Edit from '@/assets/icons/edit.svg'
 import ApiDocumentation from '@/assets/icons/api-documentation.svg'
 import Profile from '@/assets/icons/profile.svg'
 import Folder from '@/assets/icons/folder.svg'
+import Analytics from '@/assets/icons/analytics.svg'
+import FinTransparency from '@/assets/icons/fin-transparency.svg'
+import GalaSettings from '@/assets/icons/gala_settings.svg'
+import OutlineClock from '@/assets/icons/clock-outline.svg'
+import OutlineShopping from '@/assets/icons/outline_shopping.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -168,6 +173,11 @@ export const icons = {
   'api-documentation': ApiDocumentation,
   'profile': Profile,
   'folder': Folder,
+  'analytics': Analytics,
+  'fin-transparency': FinTransparency,
+  'settings': GalaSettings,
+  'shopping-outline': OutlineShopping,
+  'clock': OutlineClock,
 };
 
 export type IconType = keyof typeof icons;
