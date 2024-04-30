@@ -6,6 +6,7 @@ const getDasboardData = async (
     startDate: string;
     endDate: string;
     token: string;
+    ui?: string;
   }
 ) => {
   try {

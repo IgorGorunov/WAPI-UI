@@ -16,7 +16,7 @@ type NotePropsType = {
 }
 const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
 
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
     const [noteText, setNoteText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -32,7 +32,8 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
 
         try {
             setIsLoading(true);
-            const res: ApiResponseType = await sendNote({token, uuid: uuid, note: noteText });
+            const requestData = {token, uuid: uuid, note: noteText };
+            const res: ApiResponseType = await sendNote(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res?.status === 200) {
                 //success

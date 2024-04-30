@@ -30,7 +30,7 @@ type ChatFileType = {
 }
 
 const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker, canEdit}) => {
-    const {token} = useAuth();
+    const {token, superUser, ui} = useAuth();
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const dropRef = useRef<HTMLDivElement>(null);
@@ -89,14 +89,13 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         );
 
         try {
-            const res: ApiResponseType = await sendTicketMessage(
-                {
-                    token: token,
-                    message: userInput,
-                    objectUuid: objectUuid,
-                    attachedFiles: attachedFiles,
-                }
-            );
+            const requestData = {
+                token: token,
+                message: userInput,
+                objectUuid: objectUuid,
+                attachedFiles: attachedFiles,
+            };
+            const res: ApiResponseType = await sendTicketMessage(superUser && ui ? {...requestData, ui} : requestData);
             if (res.status === 200) {
                 onSendMessage();
                 setFiles(null);

@@ -7,6 +7,7 @@ const getTickets = async (
         token: string;
         startDate: string;
         endDate: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -27,6 +28,7 @@ const getSingleTicket = async (
     data: {
         uuid: string;
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -46,6 +48,7 @@ const getTicketParams = async (
     //token: string,
     data: {
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -65,6 +68,7 @@ const createTicket = async (
     data: {
         ticket: any,
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -84,6 +88,7 @@ const reopenTicket = async (
     data: {
         uuid: string,
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -105,6 +110,7 @@ const sendTicketMessage = async (
         objectUuid: string;
         token: string;
         attachedFiles: AttachedFilesType[];
+        ui?: string;
     }
 ) => {
     try {
@@ -124,6 +130,7 @@ const getTicketMessages = async (
     data: {
         uuid: string;
         token: string;
+        ui?: string;
     }
 ) => {
     try {

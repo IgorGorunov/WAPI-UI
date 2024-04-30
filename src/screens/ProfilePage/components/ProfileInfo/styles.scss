@@ -3,7 +3,7 @@
 .profile-info {
   margin-top: 8px;
 
-  @media (max-width: $mobile) {
+  @media (max-width: $upToTablet) {
     margin-top: 24px;
   }
 
@@ -20,7 +20,7 @@
       margin-top: 16px;
       font-size: 13px;
 
-      @media (max-width: $mobile) {
+      @media (max-width: $upToTablet) {
         flex-wrap: wrap;
         margin-top: 0;
       }
@@ -49,7 +49,7 @@
         flex: 1 1 50%;
         //margin-top: 34px;
 
-        @media (max-width: $mobile) {
+        @media (max-width: $upToTablet) {
           flex: 1 1 100%;
           min-width: 100%;
           margin-top: 0;
@@ -59,7 +59,7 @@
       &--managers {
         flex: 1 1 50%;
 
-        @media (max-width: $mobile) {
+        @media (max-width: $upToTablet) {
           flex: 1 1 100%;
           min-width: 100%;
         }

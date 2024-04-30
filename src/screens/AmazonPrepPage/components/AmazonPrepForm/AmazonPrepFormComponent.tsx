@@ -65,7 +65,7 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
 
 const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc}) => {
 
-    const { token, currentDate } = useAuth();
+    const { token, currentDate, superUser, ui } = useAuth();
     const {notifications} = useNotifications();
 
     const [isDisabled, setIsDisabled] = useState(!!docUuid);
@@ -515,13 +515,12 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         data.attachedFiles = selectedFiles;
 
         try {
+            const requestData = {
+                token: token,
+                orderData: data
+            };
 
-            const res: ApiResponseType = await sendAmazonPrepData(
-                {
-                    token: token,
-                    orderData: data
-                }
-            );
+            const res: ApiResponseType = await sendAmazonPrepData(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res) {
                 if (res?.status === 200) {

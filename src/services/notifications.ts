@@ -5,6 +5,7 @@ import {api, noErrorApi} from "@/services/api";
 const getNotifications = async (data: {
     token: string;
     limit?: number;
+    ui?: string;
 }) => {
     try {
         const response: any = await api.post(
@@ -21,6 +22,7 @@ const setNotificationStatus = async (data: {
     token: string;
     uuid: string;
     status: NOTIFICATION_STATUSES;
+    ui?: string;
 }) => {
     try {
         const response: any = await api.post(
@@ -35,6 +37,7 @@ const setNotificationStatus = async (data: {
 
 const checkNewNotifications = async (data: {
     token: string;
+    ui?: string;
 }) => {
     try {
         const response: any = await noErrorApi.post(

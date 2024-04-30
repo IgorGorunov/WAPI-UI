@@ -27,6 +27,15 @@
     svg {
       flex: 0 0 auto;
       width: 26px;
+
+      &.icon-admin {
+        border: 2px solid var(--color-blue);
+        border-radius: 50%;
+
+        path {
+          fill: var(--color-blue);
+        }
+      }
     }
 
     &-block {

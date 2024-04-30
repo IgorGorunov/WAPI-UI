@@ -24,7 +24,7 @@ type SendCommentPropsType = {
 
 const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const {token, currentDate} = useAuth();
+    const {token, currentDate, superUser, ui} = useAuth();
 
     const availableOptions = orderData.commentCourierServiceFunctionsList.split(';');
 
@@ -99,12 +99,11 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
         }
 
         try {
-            const res: ApiResponseType = await sendOrderComment(
-                {
-                    token: token,
-                    comment: sendData
-                }
-            );
+            const requestData = {
+                token: token,
+                comment: sendData
+            };
+            const res: ApiResponseType = await sendOrderComment(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res) {
                 if (res?.status === 200) {

@@ -22,7 +22,7 @@ import {
 
 const CodReportsPage = () => {
 
-    const { token, currentDate } = useAuth();
+    const { token, currentDate, superUser, ui } = useAuth();
 
     const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType|null>(null);
 
@@ -43,10 +43,8 @@ const CodReportsPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-
-                const res: ApiResponse = await getCodReports(
-                    {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
-                );
+                const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
+                const res: ApiResponse = await getCodReports(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
                     setCodReportsData(res.data);
@@ -74,10 +72,8 @@ const CodReportsPage = () => {
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
-
-                const res: ApiResponse = await getCODIndicators(
-                    {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
-                );
+                const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
+                const res: ApiResponse = await getCODIndicators(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
                     setCODIndicators(res.data);

@@ -20,7 +20,7 @@ import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsAmazonPrep, tourGuideStepsAmazonPrepNoDocs} from "./amazomPrepTourGuideSteps.constants";
 
 const AmazonPrepPage = () => {
-    const {token, currentDate} = useAuth();
+    const {token, currentDate, superUser, ui} = useAuth();
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -59,9 +59,9 @@ const AmazonPrepPage = () => {
         try {
             setIsLoading(true);
 
-            const res: ApiResponseType = await getAmazonPrep(
-                {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
-            );
+            const requesData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
+
+            const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requesData, ui} : requesData);
 
             if (res && "data" in res) {
                 setAmazonPrepOrdersData(res.data);

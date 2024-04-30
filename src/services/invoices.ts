@@ -6,6 +6,7 @@ const getInvoices = async (
         token: string;
         startDate: string;
         endDate: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -25,6 +26,7 @@ const getInvoiceForm = async (
     data: {
         token: string;
         uuid: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -47,6 +49,7 @@ const getInvoiceForm = async (
 const getInvoicesDebts = async (
     data: {
         token: string;
+        ui?: string;
     }
 ) => {
     try {

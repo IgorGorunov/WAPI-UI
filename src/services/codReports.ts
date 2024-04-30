@@ -6,6 +6,7 @@ const getCodReports = async (
         token: string;
         startDate: string;
         endDate: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -26,6 +27,7 @@ const getCODReportForm = async (
     data: {
         token: string;
         uuid: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -50,6 +52,7 @@ const getCODIndicators = async (
         token: string;
         startDate: string;
         endDate: string;
+        ui?: string;
     }
 ) => {
     try {

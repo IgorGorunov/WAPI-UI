@@ -20,7 +20,7 @@ type TicketPropsType = {
 
 const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose}) => {
 
-    const {token} = useAuth();
+    const {token, superUser, ui} = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
@@ -38,10 +38,8 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
     const fetchSingleTicket = useCallback(async (uuid: string) => {
         try {
             setIsLoading(true);
-
-            const res: ApiResponseType = await getSingleTicket(
-                {token, uuid}
-            );
+            const requestData = {token, uuid};
+            const res: ApiResponseType = await getSingleTicket(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setSingleTicketData(res.data);
@@ -59,10 +57,8 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
     const fetchTicketParams = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            const res: ApiResponseType = await getTicketParams(
-                {token}
-            );
+            const requestData = {token};
+            const res: ApiResponseType = await getTicketParams(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setTicketParams(res.data);

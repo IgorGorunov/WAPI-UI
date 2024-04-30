@@ -1,0 +1,38 @@
+@import '@/constants/devices.scss';
+
+.users-list {
+  min-width: 630px;
+
+  @media (max-width: $mobile) {
+    min-width: 100%;
+  }
+
+  &__list {
+    margin: 0 -16px;
+    max-height: calc(100vh - 220px);
+
+    &-item {
+      padding: 4px 24px;
+
+      button {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        color: var(--color-blue);
+        transform: scale(1);
+        transition: .3s ease;
+        transform-origin: center;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+
+      svg {
+        flex: 0 0 25px;
+        width: 25px;
+        margin-right: 6px;
+      }
+    }
+  }
+}

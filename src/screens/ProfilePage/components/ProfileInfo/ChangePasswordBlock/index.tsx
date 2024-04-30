@@ -17,7 +17,7 @@ type ChangePasswordPropsType = {
 }
 
 const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
-    const {token} = useAuth();
+    const {token, superUser, ui} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     //status modal
@@ -97,7 +97,8 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
     const handleFormSubmit = async (data: any) => {
         try {
             setIsLoading(true);
-            const res: ApiResponseType = await changePassword({token, currentPassword: data.currentPassword, newPassword: data.newPassword});
+            const requestData = {token, currentPassword: data.currentPassword, newPassword: data.newPassword};
+            const res: ApiResponseType = await changePassword(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res?.status === 200) {
                 //display success modal
