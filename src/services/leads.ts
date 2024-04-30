@@ -2,14 +2,14 @@ import {api} from "@/services/api";
 import {LegalInfoFormType, QuestionnaireFormType} from "@/types/leads";
 
 const getLeadParameters = async (
-    // data: {
-    //     token: string;
-    // }
+    data: {
+        token: string;
+    }
 ) => {
     try {
         const response: any = await api.post(
             `/GetLeadParameters`,
-            // data
+            data
         );
 
         return response;
