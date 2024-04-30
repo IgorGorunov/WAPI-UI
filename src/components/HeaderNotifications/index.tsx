@@ -9,7 +9,7 @@ import NotificationsBlock from "@/components/HeaderNotifications/NotificationsBl
 import useNotifications from "@/context/notificationContext";
 
 const HeaderNotifications: React.FC = () => {
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
     const { notifications, setNotifications, newNotifications, setNewNotifications} = useNotifications();
 
     const [isNotificationsListOpen, setIsNotificationsListOpen] = useState(false);
@@ -18,7 +18,8 @@ const HeaderNotifications: React.FC = () => {
     const notificationsListRef = useRef<HTMLDivElement>(null);
 
     const checkNotifications = async() => {
-        const res: ApiResponseType = await checkNewNotifications({token});
+        const requestData = {token};
+        const res: ApiResponseType = await checkNewNotifications(superUser && ui ? {...requestData, ui} : requestData);
 
         if (res && res.data && res.data.newNotifications > 0 || notifications === null) {
             fetchNotificationsData();
@@ -27,7 +28,8 @@ const HeaderNotifications: React.FC = () => {
 
     const fetchNotificationsData = async() => {
         try {
-            const res: ApiResponseType = await getNotifications({token});
+            const requestData = {token};
+            const res: ApiResponseType = await getNotifications(superUser && ui ? {...requestData, ui} : requestData);
             if (res && res.data) {
                 const notificationsData = res.data as NotificationResponseType;
                 if (notificationsData.notifications && Array.isArray(notificationsData.notifications)) {

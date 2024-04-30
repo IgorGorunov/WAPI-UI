@@ -94,7 +94,9 @@ export type FieldPropsType = {
   //rows?: number;
   hint?: string;
   notDisable?: boolean;
-
+  disableWeekends?: boolean;
+  disablePreviousDays?: boolean;
+  disableDaysFromToday?: number;
 }
 
 export type FormBuilderType = FieldPropsType & {

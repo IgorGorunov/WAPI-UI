@@ -24,7 +24,7 @@ import {ApiResponseType} from "@/types/api";
 
 const OrdersPage = () => {
     const Router = useRouter();
-    const { token, currentDate } = useAuth();
+    const { token, currentDate, superUser, ui } = useAuth();
 
     useEffect(() => {
         const { uuid } = Router.query;
@@ -77,10 +77,8 @@ const OrdersPage = () => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            const res: ApiResponseType = await getOrders(
-                {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
-            );
+            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
+            const res: ApiResponseType = await getOrders(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setOrdersData(res.data.map(item=>({...item, key: item.uuid})));
@@ -94,11 +92,11 @@ const OrdersPage = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [token,curPeriod]);
+    }, [token,curPeriod, ui]);
 
     useEffect(() => {
         fetchData();
-    }, [token, curPeriod]);
+    }, [token, curPeriod, ui]);
 
     const handleEditOrder = (uuid: string) => {
         setIsOrderNew(false);

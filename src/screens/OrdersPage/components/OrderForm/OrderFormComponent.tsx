@@ -75,7 +75,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
-    const { token, currentDate } = useAuth();
+    const { token, currentDate, superUser, ui } = useAuth();
 
     //tickets
     const [showTicketForm, setShowTicketForm] = useState(false);
@@ -221,15 +221,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const fetchPickupPoints = useCallback(async (courierService: string) => {
         try {
             setIsLoading(true);
-
-            const res: ApiResponseType = await getOrderPickupPoints(
-                {token, courierService}
-            );
+            const requestData = {token, courierService};
+            const res: ApiResponseType = await getOrderPickupPoints(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setCurPickupPoints(res.data)
                 setPickupOptions(createPickupOptions());
-
             } else {
                 console.error("API did not return expected data");
             }
@@ -808,13 +805,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         data.attachedFiles= selectedFiles;
 
         try {
-
-            const res: ApiResponseType = await sendOrderData(
-                {
-                    token: token,
-                    orderData: data
-                }
-            );
+            const requestData = {
+                token: token,
+                orderData: data
+            };
+            const res: ApiResponseType = await sendOrderData(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res) {
                 if (res?.status === 200) {

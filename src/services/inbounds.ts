@@ -12,6 +12,7 @@ const getInbounds = async (
         documentType: STOCK_MOVEMENT_DOC_TYPE;
         startDate: string;
         endDate: string;
+        ui?: string;
     }
 ) => {
     const docEndpoint = 'GetStockMovementList';
@@ -36,6 +37,7 @@ const getInboundData = async (
         uuid: string;
         documentType: STOCK_MOVEMENT_DOC_TYPE,
         token: string;
+        ui?: string;
     }
 ) => {
     const docEndpoint = 'GetStockMovementData';
@@ -57,6 +59,7 @@ const getInboundParameters = async (
     data: {
         documentType: STOCK_MOVEMENT_DOC_TYPE;
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -82,6 +85,7 @@ const sendInboundData = async (
         documentType: STOCK_MOVEMENT_DOC_TYPE,
         documentData: SingleStockMovementType,
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -106,6 +110,7 @@ const updateInboundData = async (
             courierServiceTrackingNumber: string,
         },
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -125,6 +130,7 @@ const sendInboundFiles = async (
     data: {
         files: AttachedFilesType[],
         token: string;
+        ui?: string;
     }
 ) => {
     try {

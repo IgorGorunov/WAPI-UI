@@ -9,6 +9,7 @@ const getOrders = async (
         token: string;
         startDate: string;
         endDate: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -29,6 +30,7 @@ const getOrderData= async (
     data: {
         uuid: string;
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -48,6 +50,7 @@ const getOrderData= async (
 const getOrderParameters = async (
     data: {
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -68,6 +71,7 @@ const getOrderPickupPoints = async (
     data: {
         courierService: string;
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -87,6 +91,7 @@ const sendOrderData = async (
     data: {
         orderData: SingleOrderType,
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -106,6 +111,7 @@ const sendOrderComment = async (
     data: {
         comment: OrderCommentType,
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -125,6 +131,7 @@ const cancelOrder = async (
     data: {
         uuid: string,
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -144,6 +151,7 @@ const sendOrderFiles = async (
     data: {
         files: AttachedFilesType[],
         token: string;
+        ui?: string;
     }
 ) => {
     try {

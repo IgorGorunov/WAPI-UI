@@ -15,7 +15,7 @@ type ChatPropsType = {
 
 const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
 
-    const {token} = useAuth();
+    const {token, superUser, ui} = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);
     const [chatMessages, setChatMessages] = useState<ChatMessageType[]>([]);
@@ -67,13 +67,11 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
         //fetch messages
         try {
             setIsLoading(true);
-
-            const res: ApiResponseType = await getTicketMessages(
-                {
-                    token: token,
-                    uuid: objectUuid,
-                }
-            );
+            const requstData = {
+                token: token,
+                uuid: objectUuid,
+            };
+            const res: ApiResponseType = await getTicketMessages(superUser && ui ? {...requstData, ui} : requstData);
             if (res.status === 200) {
                 setChatMessages(res.data);
             }

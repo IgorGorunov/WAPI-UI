@@ -7,6 +7,7 @@ const getProducts = async (
     //token: string,
     data: {
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -26,6 +27,7 @@ const getProductByUID = async (
     data: {
         token: string;
         uuid: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -45,6 +47,7 @@ const getProductParameters = async (
 
     data: {
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -64,6 +67,7 @@ const getProductsStock = async (
     //token: string,
     data: {
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -86,6 +90,7 @@ const sendProductInfo = async (
     data: {
         productData: SingleProductType,
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -105,6 +110,7 @@ const sendProductFiles = async (
     data: {
         files: AttachedFilesType[],
         token: string;
+        ui?: string;
     }
 ) => {
     try {

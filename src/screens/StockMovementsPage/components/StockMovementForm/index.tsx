@@ -27,7 +27,7 @@ type StockMovementFormType = {
 const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=null, closeDocModal, closeModalOnSuccess}) => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
 
@@ -41,8 +41,8 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
         try {
             setIsLoading(true);
-
-            const res: ApiResponse = await getInboundData({token, uuid, documentType: docType});
+            const requstData = {token, uuid, documentType: docType};
+            const res: ApiResponse = await getInboundData(superUser && ui ? {...requstData, ui} : requstData);
 
             if (res && "data" in res) {
                 setDocData(res.data);
@@ -58,8 +58,9 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
     const fetchStockMovementParams = useCallback(async() => {
         try {
-
-            const resp: ApiResponseType = await getInboundParameters({token: token, documentType: docType});
+            setIsLoading(true);
+            const requestData = {token: token, documentType: docType};
+            const resp: ApiResponseType = await getInboundParameters(superUser && ui ? {...requestData, ui} : requestData);
 
             if (resp && "data" in resp) {
                 setDocParameters(resp.data);

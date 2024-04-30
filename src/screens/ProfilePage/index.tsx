@@ -12,7 +12,7 @@ import {getApiProtocols} from "@/services/profile";
 import useAuth from "@/context/authContext";
 
 const ProfilePage = () => {
-    const {token} = useAuth();
+    const {token, superUser, ui} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [apiProtocolsData, setApiProtocolsData] = useState<ApiProtocolType[]|null>(null);
 
@@ -20,7 +20,8 @@ const ProfilePage = () => {
         const fetchApiProtocols = async() => {
             try {
                 setIsLoading(true);
-                const res = await getApiProtocols({token});
+                const requestData = {token};
+                const res = await getApiProtocols(superUser && ui ? {...requestData, ui} : requestData);
                 if (res.status === 200) {
                     setApiProtocolsData(res.data);
                 }

@@ -24,7 +24,7 @@ import {TourGuidePages} from "@/types/tourGuide";
 
 const ProductsPage = () => {
     const Router = useRouter();
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [uuid, setUuid]=useState<string|null>(null);
@@ -62,10 +62,8 @@ const ProductsPage = () => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            const res: ApiResponse = await getProducts(
-                {token: token}
-            );
+            const requestData = {token: token};
+            const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setProductsData(res.data);

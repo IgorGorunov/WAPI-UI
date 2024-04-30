@@ -37,4 +37,19 @@ const authenticateWithOneTimeToken = async (data: {
   }
 };
 
-export { authenticate, authenticateWithOneTimeToken };
+const getUserList = async (data: {
+  token: string,
+}) => {
+  try {
+    const response: any = await loginApi.post(
+        `/GetUIList`,
+        data
+    );
+    return response;
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+};
+
+export { authenticate, authenticateWithOneTimeToken, getUserList };

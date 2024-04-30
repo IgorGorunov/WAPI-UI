@@ -25,7 +25,7 @@ import {
 
 
 const TicketsPage = () => {
-    const {token, currentDate} = useAuth();
+    const {token, currentDate, superUser, ui} = useAuth();
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -33,8 +33,6 @@ const TicketsPage = () => {
     const Router = useRouter();
 
     const [ticketsData, setTicketsData] = useState<TicketType[] | null>(null);
-    // const [ticketParams, setTicketParams] = useState<TicketParamsType | null>(null);
-    // const [singleTicketData, setSingleTicketData] = useState<SingleTicketType | null>(null);
     const [singleTicketUuid, setSingleTicketUuid] = useState<string|null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -57,10 +55,8 @@ const TicketsPage = () => {
     const fetchTickets = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            const res: ApiResponseType = await getTickets(
-                {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
-            );
+            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
+            const res: ApiResponseType = await getTickets(superUser && ui ? {...requestData, ui} : requestData);
             if (res && res.data ) {
                 setTicketsData(res.data);
             }
@@ -81,21 +77,7 @@ const TicketsPage = () => {
     const handleEditTicket = async (uuid: string) => {
         setIsTicketNew(false);
         setSingleTicketUuid(uuid)
-        // setTicketParams(null);
-        // setSingleTicketData(null);
-        // fetchTicketParams();
-        // fetchSingleTicket(uuid);
 
-        // setAmazonPrepOrdersData(prevState => {
-        //     if (prevState && prevState.length) {
-        //         const el = prevState.filter(item => item.uuid === uuid);
-        //         if (el.length) {
-        //             return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
-        //         }
-        //     }
-        //     return [...prevState];
-        // });
-        //
         setShowTicketModal(true);
 
     }

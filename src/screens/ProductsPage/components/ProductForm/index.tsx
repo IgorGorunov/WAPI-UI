@@ -22,7 +22,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const [productData, setProductData] = useState<SingleProductType|null>(null);
     const [productsList, setProductsList] = useState<ProductType[]|null>(products);
 
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
 
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
@@ -31,10 +31,8 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductData = async (uuid) => {
         try {
             setIsLoading(true);
-
-            const res: ApiResponse = await getProductByUID(
-                {token: token, uuid: uuid}
-            );
+            const requestData = {token: token, uuid: uuid};
+            const res: ApiResponse = await getProductByUID(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setProductData(res.data);
@@ -53,10 +51,8 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductParams = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            const resParams: ApiResponse = await getProductParameters(
-                {token: token}
-            );
+            const requestData = {token: token};
+            const resParams: ApiResponse = await getProductParameters(superUser && ui ? {...requestData, ui} : requestData);
 
             if (resParams && "data" in resParams) {
                 setProductParams(resParams.data);
@@ -74,10 +70,8 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductsList = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            const res: ApiResponse = await getProducts(
-                {token: token}
-            );
+            const requestData = {token: token};
+            const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setProductsList(res.data);

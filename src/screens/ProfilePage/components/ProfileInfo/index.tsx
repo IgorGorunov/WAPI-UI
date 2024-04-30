@@ -10,7 +10,6 @@ import ChangePasswordBlock from "./ChangePasswordBlock";
 const ProfileInfo: React.FC = () => {
 
     const {userInfo} = useAuth();
-    console.log('user info', userInfo)
 
     const [showPasswordModal, setShowPasswordModal] = useState(false);
 

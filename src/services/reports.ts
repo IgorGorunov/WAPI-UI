@@ -8,6 +8,7 @@ const getReportData = async (
         reportType: string;
         startDate: string;
         endDate: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -27,6 +28,7 @@ const getReportParams = async (
     //token: string,
     data: {
         token: string;
+        ui?: string;
         // reportType: string;
     }
 ) => {

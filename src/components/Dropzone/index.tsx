@@ -13,7 +13,7 @@ import useAuth from "@/context/authContext";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 
 const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=false, docUuid = '', showSend=false}) => {
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
 
     const [isDragging, setIsDragging] = useState(false);
     const inputId = `file-input__${Date.now().toString()}`;
@@ -141,14 +141,12 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
 
             try {
                 setIsDragging(true);
-
-                const res: ApiResponseType = await sendDocumentFiles(
-                    {
-                        token,
-                        uuid: docUuid,
-                        attachedFiles: addedFiles,
-                    }
-                );
+                const requestData = {
+                    token,
+                    uuid: docUuid,
+                    attachedFiles: addedFiles,
+                }
+                const res: ApiResponseType = await sendDocumentFiles(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res?.status === 200) {
                    //success

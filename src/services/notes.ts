@@ -4,6 +4,7 @@ export const getNotes = async (
     data: {
         token: string;
         uuid: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -25,6 +26,7 @@ export const sendNote = async (
         uuid: string;
         //period: string;
         note: string;
+        ui?: string;
     }
 ) => {
     try {

@@ -47,7 +47,7 @@ export const docNamesSingle = {
 const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     const Router = useRouter();
-    const { token, currentDate } = useAuth();
+    const { token, currentDate, superUser, ui } = useAuth();
 
     useEffect(() => {
         if (!token) Router.push(Routes.Login);
@@ -73,10 +73,8 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-
-            const res: ApiResponseType = await getInbounds(
-                {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate), documentType: docType}
-            );
+            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate), documentType: docType};
+            const res: ApiResponseType = await getInbounds(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setStockMovementData(res.data.map(item=>({...item, key: item.uuid})));

@@ -30,7 +30,7 @@ type pageDataType = {
 
 const DashboardPage: React.FC = () => {
 
-  const { token, setToken, currentDate, isAuthorizedUser } = useAuth();
+  const { token, currentDate, isAuthorizedUser, superUser, ui } = useAuth();
 
   useEffect(() => {
     if (!isAuthorizedUser) Router.push(Routes.Login);
@@ -68,12 +68,12 @@ const DashboardPage: React.FC = () => {
       try {
         setIsLoading(true);
 
-        const res: ApiResponse = await getDasboardData(
-          createRequestData(
+        const requestData = createRequestData(
             currentPeriod.startDate,
             currentPeriod.endDate
-          )
         );
+
+        const res: ApiResponse = await getDasboardData(superUser && ui ? {...requestData, ui} : requestData);
 
         if (res && "data" in res) {
           setPageData(res.data);
@@ -89,7 +89,7 @@ const DashboardPage: React.FC = () => {
     };
 
     fetchData();
-  }, [token, currentPeriod]);
+  }, [token, currentPeriod, superUser, ui]);
 
   //tour guide
   const {runTour, setRunTour, isTutorialWatched} = useTourGuide();

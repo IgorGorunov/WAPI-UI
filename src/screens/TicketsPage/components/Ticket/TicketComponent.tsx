@@ -19,7 +19,6 @@ import {AttachedFilesType} from "@/types/utility";
 import TicketInfoBlock from "@/screens/TicketsPage/components/Ticket/TicketInfoBlock";
 import ChatBlock from "@/screens/TicketsPage/components/Chat";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
-import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {TicketHints} from "@/screens/TicketsPage/ticketHints.constants";
 
@@ -37,7 +36,7 @@ type TicketPropsType = {
 
 const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose, reFetchTicket}) => {
 
-    const {token} = useAuth();
+    const {token, superUser, ui} = useAuth();
 
     //const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
     const [infoHeight, setInfoHeight] = useState(0)
@@ -100,12 +99,11 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
 
     const handleReopenTicket = async () => {
         try {
-            const res: ApiResponseType = await reopenTicket(
-                {
-                    token: token,
-                    uuid: ticketUuid,
-                }
-            );
+            const requestData = {
+                token: token,
+                uuid: ticketUuid,
+            };
+            const res: ApiResponseType = await reopenTicket(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res?.status === 200) {
                 //success
@@ -132,12 +130,11 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
         data.attachedFiles= selectedFiles;
 
         try {
-            const res: ApiResponseType = await createTicket(
-                {
-                    token: token,
-                    ticket: data
-                }
-            );
+            const requestData = {
+                token: token,
+                ticket: data
+            };
+            const res: ApiResponseType = await createTicket(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res) {
                 if (res?.status === 200 && res?.data) {

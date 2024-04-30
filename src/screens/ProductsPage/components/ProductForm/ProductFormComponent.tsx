@@ -67,7 +67,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -899,12 +899,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         data.status = sendStatus;
 
         try {
-            const res: ApiResponse = await sendProductInfo(
-                {
-                    token: token,
-                    productData: prepareProductDataForSending(data)
-                }
-            );
+            const requestData = {
+                token: token,
+                productData: prepareProductDataForSending(data)
+            };
+            const res: ApiResponse = await sendProductInfo(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res) {
                 if (res?.status === 200) {

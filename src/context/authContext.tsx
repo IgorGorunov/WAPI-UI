@@ -2,17 +2,17 @@ import React, {createContext, PropsWithChildren, useContext, useState,} from "re
 import Cookie from "js-cookie";
 import {UserStatusType} from "@/types/leads";
 
-type NavAccessItemType = {
+export type NavAccessItemType = {
   available: boolean;
   access: string
 }
 
-type ManagerInfoType = {
+export type ManagerInfoType = {
   name: string;
   email: string;
 }
 
-type UserInfoType = {
+export type UserInfoType = {
     testMode: boolean;
     client: string;
     userLogin: string;
@@ -46,6 +46,10 @@ type authContextType = {
   isNavItemAccessible: (navItemName: string )=>boolean;
   userInfo: UserInfoType;
   setUserInfoProfile: (val: UserInfoType) => void;
+  superUser: boolean;
+  setIsSuperUser: (isSuperUser: boolean) => void;
+  ui: string | null;
+  setUserUi: (ui: string | null) => void;
 };
 
 const AuthContext = createContext<authContextType>({} as authContextType);
@@ -76,7 +80,8 @@ export const AuthProvider = (props: PropsWithChildren) => {
   }
   const [userInfo, setUserInfo] = useState<UserInfoType|null>(getProfileFromCookie());
 
-
+  const [superUser, setSuperUser] = useState<boolean>(Cookie.get('isSU')==='true');
+  const [ui, setUi] = useState<string|null>(Cookie.get('ui') || null);
 
   const setToken = (token:string, isLead=false) => {
     if (isLead) {
@@ -127,6 +132,12 @@ export const AuthProvider = (props: PropsWithChildren) => {
     setUserName('');
     setTutorialInfo(['']);
     setTextInfo('');
+    setUserUi(null);
+    //setIsSuperUser(false);
+    //setUserUi('');
+    Cookie.remove('isSU')
+    Cookie.remove('ui');
+    setUserInfoProfile(null);
   }
 
   const isAuthorizedUser = () => {
@@ -161,10 +172,20 @@ export const AuthProvider = (props: PropsWithChildren) => {
     Cookie.set('WAPI_profile_info', JSON.stringify(val));
   }
 
+  const setIsSuperUser = (isSU: boolean) => {
+    Cookie.set('isSU', isSU ? 'true' : 'false');
+    setSuperUser(isSU);
+  }
+
+  const setUserUi = (ui: string | null) => {
+    Cookie.set('ui', ui);
+    setUi(ui);
+  }
+
 
 
   return (
-    <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile }}>
+    <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser, setIsSuperUser, ui, setUserUi }}>
       {props.children}
     </AuthContext.Provider>
   );

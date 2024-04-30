@@ -3,6 +3,7 @@ import {api} from "@/services/api";
 export const getApiProtocols = async (
     data: {
         token: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -21,6 +22,7 @@ export const getApiProtocols = async (
 export const getApiProtocol = async (
     data: {
         uuid: string;
+        ui?: string;
     }
 ) => {
     try {
@@ -41,6 +43,7 @@ export const changePassword = async (
         token: string;
         currentPassword: string;
         newPassword: string;
+        ui?: string;
     }
 ) => {
     try {

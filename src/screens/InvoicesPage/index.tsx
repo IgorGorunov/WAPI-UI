@@ -22,7 +22,7 @@ import {
 
 const InvoicesPage = () => {
 
-    const { token, currentDate } = useAuth();
+    const { token, currentDate, superUser, ui } = useAuth();
 
     //balance/debt
     const [invoiceBalance, setInvoiceBalance] = useState<InvoiceBalanceType|null>(null);
@@ -44,10 +44,8 @@ const InvoicesPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-
-                const res: ApiResponse = await getInvoices(
-                    {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
-                );
+                const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
+                const res: ApiResponse = await getInvoices(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
                     setInvoicesData(res.data);
@@ -75,10 +73,8 @@ const InvoicesPage = () => {
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
-
-                const res: ApiResponse = await getInvoicesDebts(
-                    { token: token }
-                );
+                const requestData = { token: token };
+                const res: ApiResponse = await getInvoicesDebts(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
                     setInvoiceBalance(res.data);

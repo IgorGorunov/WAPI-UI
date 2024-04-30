@@ -17,8 +17,6 @@ export type HierarchyNodeType = {
 
 const ApiProtocols: React.FC<ApiProtocolsPropsType> = ({apiProtocols}) => {
 
-    console.log('protocols', apiProtocols)
-
     const getHierarchicalFileStructure = useCallback((filePaths: ApiProtocolType[]) : HierarchyNodeType => {
         const rootNode: Record<string, any> = { name: '', isFolder: true, children: [] };
         const fileMap = new Map<string, Record<string, any>>();
@@ -45,8 +43,6 @@ const ApiProtocols: React.FC<ApiProtocolsPropsType> = ({apiProtocols}) => {
                 }
             }
         }
-
-        console.log('node: ', rootNode)
 
         return rootNode;
     }, []);

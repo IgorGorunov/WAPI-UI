@@ -47,9 +47,6 @@ import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHi
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
-// import CardWithHelpIcon from "@/components/CardWithHelpIcon";
-// import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-// import {StockMovementsHints} from "@/screens/StockMovementsHintstockMovementsPage/stockMovementsHints.constants";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -74,7 +71,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
-    const { token, currentDate } = useAuth();
+    const { token, currentDate, superUser, ui } = useAuth();
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -543,28 +540,24 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }, [docData]);
 
     const sendJustETA = async(data) => {
-        return await updateInboundData(
-            //docType,
-            {
-                token,
-                documentData: {
-                    uuid: data.uuid,
-                    estimatedTimeArrives: data.estimatedTimeArrives,
-                    courierServiceTrackingNumber: data.courierServiceTrackingNumber,
-                },
-            }
-        );
+        const requestData = {
+            token,
+            documentData: {
+                uuid: data.uuid,
+                estimatedTimeArrives: data.estimatedTimeArrives,
+                courierServiceTrackingNumber: data.courierServiceTrackingNumber,
+            },
+        };
+        return await updateInboundData(superUser && ui ? {...requestData, ui} : requestData);
     }
 
     const sendDocument = async(data) => {
-        return await sendInboundData(
-            //docType,
-            {
-                token,
-                documentType: docType,
-                documentData: data,
-            }
-        );
+        const requestData = {
+            token,
+            documentType: docType,
+            documentData: data,
+        };
+        return await sendInboundData(superUser && ui ? {...requestData, ui} : requestData);
     }
 
     const onSubmitForm = async (data) => {

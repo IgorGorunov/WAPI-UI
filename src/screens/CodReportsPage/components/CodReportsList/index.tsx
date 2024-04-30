@@ -33,7 +33,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     const [animating, setAnimating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -106,10 +106,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     const handleDownloadCORReport = async (uuid) => {
        setIsLoading(true);
         try {
-
-            const response = await getCODReportForm(
-                { token: token, uuid: uuid }
-            );
+            const requestData = { token: token, uuid: uuid };
+            const response = await getCODReportForm(superUser && ui ? {...requestData, ui} : requestData);
 
             if (response && response.data) {
                 const files = response.data;

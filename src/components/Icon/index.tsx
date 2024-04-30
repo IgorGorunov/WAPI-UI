@@ -88,6 +88,8 @@ import FinTransparency from '@/assets/icons/fin-transparency.svg'
 import GalaSettings from '@/assets/icons/gala_settings.svg'
 import OutlineClock from '@/assets/icons/clock-outline.svg'
 import OutlineShopping from '@/assets/icons/outline_shopping.svg'
+import Lines from '@/assets/icons/lines.svg'
+import Admin from '@/assets/icons/admin.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -178,6 +180,8 @@ export const icons = {
   'settings': GalaSettings,
   'shopping-outline': OutlineShopping,
   'clock': OutlineClock,
+  'lines': Lines,
+  'admin': Admin,
 };
 
 export type IconType = keyof typeof icons;

@@ -52,7 +52,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const [isLoading, setIsLoading] = useState(false);
 
     //const Router = useRouter();
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -133,10 +133,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const handleDownloadInvoice = async (uuid) => {
         setIsLoading(true);
         try {
-
-            const response = await getInvoiceForm(
-                { token: token, uuid: uuid }
-            );
+            const requsetData = { token: token, uuid: uuid }
+            const response = await getInvoiceForm(superUser && ui ? {...requsetData, ui} : requsetData);
 
             if (response && response.data) {
                 const files = response.data;

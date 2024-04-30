@@ -19,7 +19,7 @@ import {
 
 const ProductsStockPage = () => {
 
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [filteredProducts, setFilteredProducts] = useState<ProductStockType[] | null>(null);
@@ -34,10 +34,8 @@ const ProductsStockPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-
-                const res: ApiResponse = await getProductsStock(
-                    {token: token}
-                );
+                const requestData = {token: token};
+                const res: ApiResponse = await getProductsStock(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
                     setProductsData(res.data);

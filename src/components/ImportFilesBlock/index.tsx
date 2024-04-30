@@ -50,7 +50,7 @@ type ImportFilesBlockType = {
     setResponseData?: (res: ApiResponseType)=>void;
 }
 const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
-    const { token } = useAuth();
+    const { token, superUser, ui } = useAuth();
     const [selectedFilesImport, setSelectedFilesImport] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
     const handleFilesChange = (files) => {
@@ -88,12 +88,11 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
         if (selectedFilesImport.length) {
             setIsLoading(true);
             try {
-                const res: ApiResponseType = await sendFunc(
-                    {
-                        token: token,
-                        files: selectedFilesImport
-                    }
-                );
+                const requstData = {
+                    token: token,
+                    files: selectedFilesImport
+                };
+                const res: ApiResponseType = await sendFunc(superUser && ui ? {...requstData, ui} : requstData);
 
                 if (setResponseData) {
                     setResponseData(res);
