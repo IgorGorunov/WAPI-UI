@@ -15,6 +15,7 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {DateFields, MainFields, ReceiverFields} from "./CommentFields";
 import {formatDateToString} from "@/utils/date";
 import Loader from "@/components/Loader";
+import {addDays} from "date-fns";
 
 type SendCommentPropsType = {
     orderData: SingleOrderType;
@@ -29,6 +30,13 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
     const availableOptions = orderData.commentCourierServiceFunctionsList.split(';');
 
     const sendCommentTypeOptions = useMemo(()=> createOptions(SendCommentTypesArray.filter(item=> availableOptions.includes(item))), []);
+
+   let commentDate = addDays(currentDate, 1);
+   if (commentDate.getDay() === 0) {
+       commentDate = addDays(commentDate, 1);
+   } else if (commentDate.getDay() === 6) {
+       commentDate = addDays(commentDate, 2);
+   }
 
     const {control, handleSubmit, formState: { errors }, watch} = useForm({
         mode: 'onSubmit',
@@ -51,7 +59,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 zip: orderData?.receiverZip || '',
             },
             deliveryDate :{
-                date: currentDate.toISOString(),
+                date: commentDate.toISOString(),
                 hourFrom: '',
                 hourTo: '',
             }

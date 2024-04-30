@@ -142,6 +142,9 @@ export const DateFields = () => [
         placeholder: "",
         width: WidthType.w50,
         classNames: "",
+        disableWeekends: true,
+        disablePreviousDays: true,
+        disableDaysFromToday: 1,
     },
     {
         fieldType: FormFieldTypes.TEXT,

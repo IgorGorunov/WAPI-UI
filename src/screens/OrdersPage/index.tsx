@@ -92,11 +92,11 @@ const OrdersPage = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [token,curPeriod]);
+    }, [token,curPeriod, ui]);
 
     useEffect(() => {
         fetchData();
-    }, [token, curPeriod]);
+    }, [token, curPeriod, ui]);
 
     const handleEditOrder = (uuid: string) => {
         setIsOrderNew(false);

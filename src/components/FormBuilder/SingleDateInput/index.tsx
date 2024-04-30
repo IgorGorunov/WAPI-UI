@@ -30,6 +30,9 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
        isClearable = false,
        hint='',
        notDisable,
+       disableWeekends = false,
+       disablePreviousDays = false,
+       disableDaysFromToday = 0,
        ...otherProps
 }, ref) => {
 
@@ -60,6 +63,24 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
     const dateInputRef = useRef<HTMLDivElement>(null);
     useOutsideClick(dateInputRef, handleCloseDatePicker);
 
+    const disableDays = (date: Date) => {
+        let isDisadled = false;
+        if (disableWeekends) {
+            const dayOfWeek = date.getDay();
+            isDisadled = dayOfWeek === 0 || dayOfWeek === 6;
+        }
+        if (disablePreviousDays) {
+            isDisadled = isDisadled || date < addDays(disableDaysFromToday-1);
+        }
+        return isDisadled;
+    }
+
+    function addDays(days) {
+        const result = new Date();
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
             <div className={`form-control-date ${classNames ? classNames : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${disabled ? 'is-disabled' : ''}`}>
@@ -77,6 +98,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                                 showDateDisplay={false}
                                 showMonthAndYearPickers={false}
                                 color="#5380F5"
+                                disabledDay={disableDays}
                             />
                         </div>}
                     <div className='date-input__wrapper'>
