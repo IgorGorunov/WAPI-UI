@@ -1,8 +1,8 @@
 import axios from "axios";
 
-//const API_URL = "https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
+const API_URL = "https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
 //const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
-const API_URL = "https://first.wapi.com:4443/WAPI/hs/v1/UI";
+//const API_URL = "https://first.wapi.com:4443/WAPI/hs/v1/UI";
 
 let setError: (title:string, message: string) => void;
 
