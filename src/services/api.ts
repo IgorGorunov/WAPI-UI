@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const API_URL = "https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
-//const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
-//const API_URL = "https://first.wapi.com:4443/WAPI/hs/v1/UI";
+//const API_URL = "https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
+const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
+//const API_URL = "https://first.wapi.com:4443/DB1/hs/UI/ROOT/";
 
 let setError: (title:string, message: string) => void;
 
@@ -22,6 +22,7 @@ const loginApi = axios.create(
         timeout: 20000,
         headers: {
             "content-type": "application/json",
+            // "IBSession": "start",
         },
     }
 );

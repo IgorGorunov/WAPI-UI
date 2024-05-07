@@ -10,15 +10,28 @@ export const useMarkNotificationAsRead = () => {
     const setNotificationAsRead = (uuid: string) => {
         markNotificationAsRead(token, uuid);
 
-        setNotifications((prevState: NotificationType[]) => {
-            const newStatusNotification = prevState.filter(item => item.uuid === uuid && item.status !== NOTIFICATION_STATUSES.READ);
-            if (newStatusNotification.length) {
-                return [...prevState.filter(item => item.uuid!==uuid), {...newStatusNotification[0], status: NOTIFICATION_STATUSES.READ}].sort((a,b)=>(a.period < b.period ? 1 : -1));
-            }
-            return prevState;
-        });
+        if (!uuid) {
+            //set all notifications status as read
+            setNotifications((prevState: NotificationType[]) => {
+                return [...prevState.map(item => ({...item, status: NOTIFICATION_STATUSES.READ}))];
+            });
 
-        setNewNotifications(prevState => prevState>0 ? prevState-1 : prevState);
+            setNewNotifications(0);
+
+        } else {
+            //set one notification status
+            setNotifications((prevState: NotificationType[]) => {
+                const newStatusNotification = prevState.filter(item => item.uuid === uuid && item.status !== NOTIFICATION_STATUSES.READ);
+                if (newStatusNotification.length) {
+                    return [...prevState.filter(item => item.uuid!==uuid), {...newStatusNotification[0], status: NOTIFICATION_STATUSES.READ}].sort((a,b)=>(a.period < b.period ? 1 : -1));
+                }
+                return prevState;
+            });
+
+            setNewNotifications(prevState => prevState>0 ? prevState-1 : prevState);
+        }
+
+
     }
 
     const setNotificationAsUnread = (uuid: string) => {
