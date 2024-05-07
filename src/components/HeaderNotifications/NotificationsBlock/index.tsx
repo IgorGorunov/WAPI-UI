@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./styles.scss";
 import Icon from "@/components/Icon";
-import {useRouter} from "next/router";
 import {
     NOTIFICATION_OBJECT_TYPES,
     NOTIFICATION_STATUSES,
@@ -84,9 +83,9 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
     }
 
     const setAllNotificationsAsRead = () => {
-        notificationsList.map(item => {
-            setNotificationAsRead(item.uuid);
-        })
+        //notificationsList.map(item => {
+            setNotificationAsRead('');
+        //})
     }
     const handleToggleStatus = (notification: NotificationType) => {
         if (notification.status === NOTIFICATION_STATUSES.READ) {
