@@ -4,7 +4,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import "./styles.scss";
 import { FieldPropsType } from "@/types/forms";
-import {formatDateToDisplayString} from '@/utils/date'
+import {addWorkingDays, formatDateToDisplayString} from '@/utils/date'
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
@@ -32,7 +32,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
        notDisable,
        disableWeekends = false,
        disablePreviousDays = false,
-       disableDaysFromToday = 0,
+       disableDaysAfterToday = 0,
        ...otherProps
 }, ref) => {
 
@@ -70,15 +70,9 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
             isDisadled = dayOfWeek === 0 || dayOfWeek === 6;
         }
         if (disablePreviousDays) {
-            isDisadled = isDisadled || date < addDays(disableDaysFromToday-1);
+            isDisadled = isDisadled || date < addWorkingDays(disableDaysAfterToday);
         }
         return isDisadled;
-    }
-
-    function addDays(days) {
-        const result = new Date();
-        result.setDate(result.getDate() + days);
-        return result;
     }
 
     return (

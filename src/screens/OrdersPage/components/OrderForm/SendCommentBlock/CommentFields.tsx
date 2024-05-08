@@ -130,7 +130,7 @@ export const MainFields = () => [
     },
 ];
 
-export const DateFields = () => [
+export const DateFields = (numberOfDisabledDays = 0) => [
     {
         fieldType: FormFieldTypes.DATE,
         type: "text",
@@ -144,7 +144,7 @@ export const DateFields = () => [
         classNames: "",
         disableWeekends: true,
         disablePreviousDays: true,
-        disableDaysFromToday: 1,
+        disableDaysAfterToday: numberOfDisabledDays,
     },
     {
         fieldType: FormFieldTypes.TEXT,

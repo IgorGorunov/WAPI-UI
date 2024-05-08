@@ -162,6 +162,8 @@ export type SingleOrderType = {
     tickets: TicketType[];
     commentCourierServiceFunctionsList: string;
     notes: NoteType[];
+    commentTodayWasSent: boolean;
+    nextAvailableDayAfterDays: number;
 }
 
 // export type AttachedFilesType = {

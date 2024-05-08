@@ -95,8 +95,8 @@ export type FieldPropsType = {
   hint?: string;
   notDisable?: boolean;
   disableWeekends?: boolean;
-  disablePreviousDays?: boolean;
-  disableDaysFromToday?: number;
+  disablePreviousDays?: boolean; //today is considered as previous day (as per delivery assumption)
+  disableDaysAfterToday?: number;
 }
 
 export type FormBuilderType = FieldPropsType & {
