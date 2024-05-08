@@ -81,11 +81,12 @@ const ProfileDropdown = () => {
                         </ul>
                     )}
                 </>
-                : <div className='profile-dropdown__user card' onClick={handleLogOut}>
-                    <span className='user-name'>{userName}</span>
-                    <Icon name='exit'/>
-                </div>
-
+                : <>
+                    {userStatus ? <div className='profile-dropdown__user card' onClick={handleLogOut}>
+                        <span className='user-name'>{userName}</span>
+                        <Icon name='exit'/>
+                    </div> : null}
+                </>
             }
             {showUserList && users && users.length &&
                 <Modal title="Clients" onClose={()=>setShowUserList(false)}>

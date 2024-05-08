@@ -13,17 +13,17 @@ import {sendOrderComment} from '@/services/orders';
 import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {DateFields, MainFields, ReceiverFields} from "./CommentFields";
-import {formatDateToString} from "@/utils/date";
+import {addWorkingDays, formatDateToString} from "@/utils/date";
 import Loader from "@/components/Loader";
-import {addDays} from "date-fns";
 
 type SendCommentPropsType = {
     orderData: SingleOrderType;
     countryOptions: OptionType[];
     closeSendCommentModal: ()=>void;
+    onSuccess: ()=>void;
 };
 
-const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal }) => {
+const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal, onSuccess }) => {
     const [isLoading, setIsLoading] = useState(false);
     const {token, currentDate, superUser, ui} = useAuth();
 
@@ -31,12 +31,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
 
     const sendCommentTypeOptions = useMemo(()=> createOptions(SendCommentTypesArray.filter(item=> availableOptions.includes(item))), []);
 
-   let commentDate = addDays(currentDate, 1);
-   if (commentDate.getDay() === 0) {
-       commentDate = addDays(commentDate, 1);
-   } else if (commentDate.getDay() === 6) {
-       commentDate = addDays(commentDate, 2);
-   }
+    let commentDate = addWorkingDays((orderData?.nextAvailableDayAfterDays || 0)+1);
 
     const {control, handleSubmit, formState: { errors }, watch} = useForm({
         mode: 'onSubmit',
@@ -59,7 +54,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 zip: orderData?.receiverZip || '',
             },
             deliveryDate :{
-                date: commentDate.toISOString(),
+                date: commentDate?.toISOString() ,
                 hourFrom: '',
                 hourTo: '',
             }
@@ -74,7 +69,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
 
     const receiverFields = useMemo(()=>ReceiverFields({countries: countryOptions}),[countryOptions])
     const mainFields = useMemo(()=>MainFields(),[])
-    const dateFields = useMemo(()=>DateFields(),[])
+    const dateFields = useMemo(()=>DateFields(orderData?.nextAvailableDayAfterDays || 0),[orderData])
 
 
     //status modal
@@ -117,6 +112,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 if (res?.status === 200) {
                     //success
                     setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Comment is sent successfully!`, onClose: closeSuccessModal})
+                    onSuccess();
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {

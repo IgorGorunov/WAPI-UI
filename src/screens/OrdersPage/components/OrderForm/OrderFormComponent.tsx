@@ -118,8 +118,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     //send comment modal
     const [showSendCommentModal, setShowSendCommentModal] = useState(false);
+    const [commentHasBeenSent, setCommentHasBeenSent] = useState(orderData?.commentTodayWasSent || false);
     const handleShowCommentModal = () => {
-        if (orderData && orderData.commentCourierServiceFunctionsList) {
+        if (orderData && orderData.commentTodayWasSent || commentHasBeenSent) {
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: "Warning", subtitle: `Comment for this order has already been sent!
+            There needs to be at least 48 hours between comments for the same order.`, onClose: ()=>setShowStatusModal(false)})
+            setShowStatusModal(true);
+        }
+        else if (orderData && orderData.commentCourierServiceFunctionsList) {
             setShowSendCommentModal(true);
         } else {
             setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: "Warning", subtitle: `Sending comment for this order is unavailable!`, onClose: ()=>setShowStatusModal(false)})
@@ -1146,8 +1152,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     </div>
             </form>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
-            {showSendCommentModal && <Modal title={`Send comment for order ${orderData?.wapiTrackingNumber}`} onClose={()=>setShowSendCommentModal(false)} >
-                <SendComment orderData={orderData} countryOptions={countries} closeSendCommentModal={()=>setShowSendCommentModal(false)}/>
+            {showSendCommentModal && <Modal title={`Send comment for order ${orderData?.wapiTrackingNumber}`} onClose={()=>{setShowSendCommentModal(false)}} >
+                <SendComment orderData={orderData} countryOptions={countries} closeSendCommentModal={()=>setShowSendCommentModal(false)} onSuccess={()=>setCommentHasBeenSent(true)}/>
             </Modal>}
             {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
                 <ProductSelection productList={orderParameters?.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>

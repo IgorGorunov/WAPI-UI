@@ -68,6 +68,21 @@ const formatDateToWeekRange = (dateStr: string) => {
     return `${startDate.getDate()} ${MONTHS[startDate.getMonth()]} ${startDate.getFullYear()} - ${endDate.getDate()} ${MONTHS[endDate.getMonth()]} ${endDate.getFullYear()}`;
 }
 
+const addWorkingDays = (days: number) => {
+    const result = new Date();
+
+    if (days !== 0) {
+        let count = 0;
+        while (count < days) {
+            result.setDate(result.getDate() + 1);
+            if (result.getDay() != 0 && result.getDay() != 6) // Skip weekends
+                count++;
+        }
+    }
+
+    return result;
+}
+
 
 
 export {
@@ -80,5 +95,6 @@ export {
     getLastFewDays,
     formatDateToShowMonthYear,
     formatDateToWeekRange,
-    formatDateTimeToStringWithDotWithoutSeconds
+    formatDateTimeToStringWithDotWithoutSeconds,
+    addWorkingDays,
 }
