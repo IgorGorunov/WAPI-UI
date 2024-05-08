@@ -20,9 +20,10 @@ type SendCommentPropsType = {
     orderData: SingleOrderType;
     countryOptions: OptionType[];
     closeSendCommentModal: ()=>void;
+    onSuccess: ()=>void;
 };
 
-const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal }) => {
+const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal, onSuccess }) => {
     const [isLoading, setIsLoading] = useState(false);
     const {token, currentDate, superUser, ui} = useAuth();
 
@@ -111,6 +112,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 if (res?.status === 200) {
                     //success
                     setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Comment is sent successfully!`, onClose: closeSuccessModal})
+                    onSuccess();
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
