@@ -9,6 +9,7 @@ export const enum Routes {
   Outbounds = "/outbounds",
   LogisticServices = '/logisticServices',
   CookiePolicy = '/cookie-policy',
+  PrivacyPolicy = '/privacy-policy',
 
   //reports
   ProductsOnStocks = '/reports/productsOnStocks',
