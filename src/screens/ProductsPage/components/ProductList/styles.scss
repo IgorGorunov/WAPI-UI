@@ -33,3 +33,19 @@
 		}
 	}
 }
+
+.product-list {
+	&__notice {
+		padding: 24px 16px 0 16px;
+		text-align: center;
+
+		@media (max-width: $mobile) {
+			padding-top: 12px;
+		}
+
+		p {
+			font-size: 16px;
+			font-weight: bold;
+		}
+	}
+}

@@ -362,21 +362,33 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         <div className='table'>
             <Head>
                 <title>Products</title>
-                <meta name="products" content="products" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta name="products" content="products"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <link rel="icon" href="/logo.png"/>
             </Head>
             <SearchContainer>
-                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
+                <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER}
+                        icon={'filter'}></Button>
                 <div className='search-block'>
-                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => {
+                        setSearchTerm("");
+                        handleFilterChange("");
+                    }}/>
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
 
+            <div className='product-list__notice'>
+                <p>Before sending a new product to our warehouse, please wait until the product receives "Approved" status</p>
+            </div>
+
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses}
+                                    onClose={() => setFilterStatus([])} onClick={() => {
+                        setIsFiltersVisible(true);
+                        setIsOpenFilterStatus(true)
+                    }}/>
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -388,17 +400,22 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 </div>
             </div>
             <div className='product-list__container'>
-                <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredProducts?.length ? '' : 'is-empty'}`}>
+                <div
+                    className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredProducts?.length ? '' : 'is-empty'}`}>
                     <Table
-                        dataSource={filteredProducts.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize)}
+                        dataSource={filteredProducts.map(item => ({
+                            ...item,
+                            key: item.uuid
+                        })).slice((current - 1) * pageSize, current * pageSize)}
                         columns={columns}
                         pagination={false}
-                        scroll={{y:700}}
+                        scroll={{y: 700}}
                         showSorterTooltip={false}
                     />
                     <div className="order-products-total">
                         <ul className='order-products-total__list'>
-                            <li className='order-products-total__list-item'>Total products:<span className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
+                            <li className='order-products-total__list-item'>Total products:<span
+                                className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
                         </ul>
                     </div>
                 </div>
@@ -413,8 +430,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     showSizeChanger={false}
                 />
             </div>
-            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={()=>setFilterStatus([])}>
-                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible}
+                              onClearFilters={() => setFilterStatus([])}>
+                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE}
+                              filterOptions={transformedStatuses} filterState={filterStatus}
+                              setFilterState={setFilterStatus} isOpen={isOpenFilterStatus}
+                              setIsOpen={setIsOpenFilterStatus}/>
             </FiltersContainer>
             {hoveredProduct && isDisplayedPopup && (
                 <div
@@ -423,12 +444,15 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                         top: mousePosition?.y || 0,
                         left: mousePosition?.x || 0,
                     }}
-                    >
+                >
                     <UniversalPopup
-                        items={hoveredColumn==='status' && hoveredProduct ? [{uuid: hoveredProduct?.uuid || '', title: hoveredProduct?.status || ''} as PopupItem] : popupItems}
-                        position={`${hoveredColumn==='status' ? 'right' : 'left'}`}
-                        width = {hoveredColumn==='status' ? 100 : 150}
-                        handleClose={()=>setIsDisplayedPopup(false)}
+                        items={hoveredColumn === 'status' && hoveredProduct ? [{
+                            uuid: hoveredProduct?.uuid || '',
+                            title: hoveredProduct?.status || ''
+                        } as PopupItem] : popupItems}
+                        position={`${hoveredColumn === 'status' ? 'right' : 'left'}`}
+                        width={hoveredColumn === 'status' ? 100 : 150}
+                        handleClose={() => setIsDisplayedPopup(false)}
                     />
                 </div>
             )}
