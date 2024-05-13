@@ -6,6 +6,8 @@ import TicketForm from "@/screens/TicketsPage/components/Ticket";
 import StockMovementForm from "@/screens/StockMovementsPage/components/StockMovementForm";
 import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
+import ModalStatus from "@/components/ModalStatus";
 
 type SingleDocPropsType = {
     type: NOTIFICATION_OBJECT_TYPES;
@@ -35,7 +37,9 @@ const SingleDocument: React.FC<SingleDocPropsType> = ({type, uuid, onClose, subj
         case NOTIFICATION_OBJECT_TYPES.LogisticService :
             return <StockMovementForm docUuid={uuid} docType={STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE} closeModalOnSuccess={onClose} closeDocModal={onClose} />
         case NOTIFICATION_OBJECT_TYPES.Ticket :
-            return <TicketForm ticketUuid={uuid} subjectUuid={subjectUuid} subjectType={subjectType} subject={subject} onClose={onClose} />
+            //return <TicketForm ticketUuid={uuid} subjectUuid={subjectUuid} subjectType={subjectType} subject={subject} onClose={onClose} />
+            return <ModalStatus onClose={onClose} statusModalType={STATUS_MODAL_TYPES.MESSAGE} title="Warning" subtitle={`Tickets are temporary unavailable! 
+We are working on resolving this issue! It will be resolved soon.`} />
         default:
             return null;
     }
