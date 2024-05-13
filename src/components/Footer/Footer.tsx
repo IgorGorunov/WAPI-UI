@@ -22,9 +22,8 @@ const Footer: React.FC = () => {
         </div>
         <div className="footer-right">
           <ul className="footer-links">
-            {/*<li>info@wapi.com</li>*/}
             <li><a className='is-link' href="mailto:info@wapi.com">info@wapi.com</a></li>
-            <li>Privacy Policy</li>
+            <li><Link className='is-link' href={Routes.PrivacyPolicy}>Privacy Policy</Link></li>
             <li><Link className='is-link' href={Routes.CookiePolicy}>Cookie Policy</Link></li>
           </ul>
         </div>

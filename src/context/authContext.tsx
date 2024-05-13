@@ -138,6 +138,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
     Cookie.remove('isSU')
     Cookie.remove('ui');
     setUserInfoProfile(null);
+    setNavItemsAccess([]);
   }
 
   const isAuthorizedUser = () => {
