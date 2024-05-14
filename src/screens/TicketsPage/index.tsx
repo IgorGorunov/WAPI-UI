@@ -22,8 +22,6 @@ import {
     tourGuideStepsTickets,
     tourGuideStepsTicketsNoDocs
 } from "./ticketsTourGuideSteps.constants";
-import ModalStatus from "@/components/ModalStatus";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 
 const TicketsPage = () => {
@@ -128,11 +126,12 @@ const TicketsPage = () => {
                 {ticketsData && <TicketList tickets={ticketsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod}  handleEditTicket={handleEditTicket} />}
             </div>
             {showTicketModal && (singleTicketUuid || isTicketNew) &&
-                // <Modal title={`Ticket`} onClose={handleTicketModalClose} >
-                //     <Ticket ticketUuid={singleTicketUuid} onClose={handleTicketModalClose}/>
-                // </Modal>
-                <ModalStatus onClose={handleTicketModalClose} statusModalType={STATUS_MODAL_TYPES.MESSAGE} title="Warning" subtitle={`Tickets are temporary unavailable! 
-We are working on resolving this issue! It will be resolved soon.`} />
+                <Modal title={`Ticket`} onClose={handleTicketModalClose} >
+                    <Ticket ticketUuid={singleTicketUuid} onClose={handleTicketModalClose}/>
+                </Modal>
+
+//                 <ModalStatus onClose={handleTicketModalClose} statusModalType={STATUS_MODAL_TYPES.MESSAGE} title="Warning" subtitle={`Tickets are temporary unavailable!
+// We are working on resolving this issue! It will be resolved soon.`} />
             }
             {ticketsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Tickets} /> : null}
         </Layout>

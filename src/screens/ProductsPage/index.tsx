@@ -151,6 +151,8 @@ const ProductsPage = () => {
             <div className="products-page__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Products' toRight needTutorialBtn>
+                {/*<Header pageTitle='Products' toRight >*/}
+                    {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
                     <Button classNames='add-product' icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
                     <Button classNames='import-products' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
                     <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
