@@ -32,8 +32,12 @@ const SingleDocument: React.FC<SingleDocPropsType> = ({type, uuid, onClose, subj
             return <StockMovementForm docUuid={uuid} docType={STOCK_MOVEMENT_DOC_TYPE.INBOUNDS} closeModalOnSuccess={onClose} closeDocModal={onClose} />
         case NOTIFICATION_OBJECT_TYPES.Outbound :
             return <StockMovementForm docUuid={uuid} docType={STOCK_MOVEMENT_DOC_TYPE.OUTBOUND} closeModalOnSuccess={onClose} closeDocModal={onClose} />
+        case NOTIFICATION_OBJECT_TYPES.LogisticService :
+            return <StockMovementForm docUuid={uuid} docType={STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE} closeModalOnSuccess={onClose} closeDocModal={onClose} />
         case NOTIFICATION_OBJECT_TYPES.Ticket :
             return <TicketForm ticketUuid={uuid} subjectUuid={subjectUuid} subjectType={subjectType} subject={subject} onClose={onClose} />
+//             return <ModalStatus onClose={onClose} statusModalType={STATUS_MODAL_TYPES.MESSAGE} title="Warning" subtitle={`Tickets are temporary unavailable!
+// We are working on resolving this issue! It will be resolved soon.`} />
         default:
             return null;
     }
