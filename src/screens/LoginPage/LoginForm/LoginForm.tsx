@@ -58,7 +58,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
       const res: ApiResponseType = await authenticateWithOneTimeToken({oneTimeToken});
 
       if (res?.status === 200) {
-        setAuthData(res.data);
+        await setAuthData(res.data);
       } else if (res?.response?.status === 401) {
         setError("Wrong token");
       }
@@ -103,7 +103,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
       const res: ApiResponse = await authenticate(login, password);
 
       if (res?.status === 200) {
-        setAuthData(res.data)
+        await setAuthData(res.data)
       } else if (res?.response?.status === 401) {
         setError("Wrong login or password");
       }

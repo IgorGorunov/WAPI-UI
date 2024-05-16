@@ -1,7 +1,8 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {
     AmazonPrepOrderParamsType,
-    AmazonPrepOrderProductWithTotalInfoType, SingleAmazonPrepOrderFormType,
+    AmazonPrepOrderProductWithTotalInfoType,
+    SingleAmazonPrepOrderFormType,
     SingleAmazonPrepOrderType,
     WarehouseType,
 } from "@/types/amazonPrep";
@@ -571,176 +572,176 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         {(isLoading || !amazonPrepOrderParameters) && <Loader />}
         <ToastContainer />
         {amazonPrepOrderParameters ? <><form onSubmit={handleSubmit(onSubmitForm, onError)}>
-                <Tabs id='amazon-prep-tabs' tabTitles={tabTitles} classNames='inside-modal' notifications={amazonPrepNotifications} >
-                    <div key='general-tab' className='general-tab'>
-                        <CardWithHelpIcon classNames='card amazon-prep-info--general'>
-                            <h3 className='amazon-prep-info__block-title'>
-                                <Icon name='general' />
-                                General
-                            </h3>
-                            <div className='grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
-                            </div>
-                        </CardWithHelpIcon>
+            <Tabs id='amazon-prep-tabs' tabTitles={tabTitles} classNames='inside-modal' notifications={amazonPrepNotifications} >
+                <div key='general-tab' className='general-tab'>
+                    <CardWithHelpIcon classNames='card amazon-prep-info--general'>
+                        <h3 className='amazon-prep-info__block-title'>
+                            <Icon name='general' />
+                            General
+                        </h3>
+                        <div className='grid-row'>
+                            <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
+                        </div>
+                    </CardWithHelpIcon>
 
-                    </div>
-                    <div key='delivery-tab' className='delivery-tab'>
-                        <CardWithHelpIcon classNames='card amazon-prep-info--details'>
-                            <h3 className='amazon-prep-info__block-title'>
-                                <Icon name='additional' />
-                                Details
-                            </h3>
-                            <div className='grid-row check-box-bottom'>
-                                <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors} isDisabled={isDisabled}/>
-                            </div>
-                        </CardWithHelpIcon>
-                        <CardWithHelpIcon classNames='card amazon-prep-info--receiver'>
-                            <h3 className='amazon-prep-info__block-title'>
-                                <Icon name='receiver' />
-                                Receiver
-                            </h3>
-                            <div className='grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors} isDisabled={isDisabled}/>
-                            </div>
-                        </CardWithHelpIcon>
-                    </div>
-                    <div key='product-tab' className='product-tab'>
-                        <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--products">
-                            {/*<TutorialHintTooltip hint={AmazonPrepHints['products'] || ''} position='left' >*/}
-                                <h3 className='amazon-prep-info__block-title'>
-                                    <Icon name='goods' />
-                                    Products
-                                </h3>
-                            {/*</TutorialHintTooltip>*/}
-
-                            <div className='grid-row '>
-                                <div className='amazon-prep-info--order-btns  width-100'>
-                                    {/*<div className='grid-row'>*/}
-                                    <div className='amazon-prep-info--btns small-paddings width-100'>
-                                        <div className='amazon-prep-info--btns__radio'>
-                                            <Controller
-                                                key='boxesType'
-                                                name='boxesType'
-                                                control={control}
-                                                render={(
-                                                    {
-                                                        field: { ...props},
-                                                        fieldState: {error}
-                                                    }) => (
-                                                    <FieldBuilder
-                                                        disabled={!!isDisabled}
-                                                        {...props}
-                                                        name='boxesType'
-                                                        label=''
-                                                        fieldType={FormFieldTypes.RADIO}
-                                                        options={boxesTypeOptions}
-                                                        errorMessage={error?.message}
-                                                        errors={errors}
-                                                        // width={WidthType.w50}
-                                                        hint={AmazonPrepHints['boxTypes'] || ''}
-                                                    />
-                                                )}
-                                            />
-                                        </div>
-                                        <div className='amazon-prep-info--btns__table-btns'>
-                                            <TutorialHintTooltip hint={AmazonPrepHints['selection'] || ''} forBtn >
-                                                <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
-                                                    Selection
-                                                </Button>
-                                            </TutorialHintTooltip>
-                                            <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
-                                                <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:'', boxesQuantity: ''})}>
-                                                    Add
-                                                </Button>
-                                            </TutorialHintTooltip>
-                                            <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
-                                                <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                                    Remove selected
-                                                </Button>
-                                            </TutorialHintTooltip>
-                                        </div>
-                                    </div>
-                                    {/*</div>*/}
-                                </div>
-                            </div>
-                            <div className='amazon-prep-info--table table-form-fields form-table'>
-                                <Table
-                                    columns={getProductColumns(control)}
-                                    dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
-                                    pagination={false}
-                                    rowKey="key"
-                                />
-                                <ProductsTotal productsInfo={productsTotalInfo} />
-                            </div>
-                        </CardWithHelpIcon>
-                    </div>
-                    {amazonPrepOrderData?.uuid &&
-                        <div key='pallets-tab' className='pallets-tab'>
-                            <div className="card min-height-600 amazon-prep-info--pallets">
-                                <h3 className='amazon-prep-info__block-title'>
-                                    <Icon name='bundle' />
-                                    Pallets
-                                </h3>
-                                <Pallets pallets={amazonPrepOrderData?.pallets} />
-                            </div>
-                        </div>
-                    }
-                    {amazonPrepOrderData?.uuid &&
-                        <div key='services-tab' className='services-tab'>
-                            <div className="card min-height-600 amazon-prep-info--services">
-                                <h3 className='amazon-prep-info__block-title'>
-                                    <Icon name='bundle' />
-                                    Services
-                                </h3>
-                                <Services services={amazonPrepOrderData?.services} />
-                            </div>
-                        </div>
-                    }
-                    {amazonPrepOrderData?.uuid &&
-                        <div key='status-history-tab' className='status-history-tab'>
-                            <div className="card min-height-600 amazon-prep-info--history">
-                                <h3 className='amazon-prep-info__block-title'>
-                                    <Icon name='history' />
-                                    Status history
-                                </h3>
-                                <StatusHistory statusHistory={amazonPrepOrderData?.statusHistory} />
-                            </div>
-                        </div>
-                    }
-                    {amazonPrepOrderData?.uuid && amazonPrepOrderData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
-                        <div className="card min-height-600 amazon-prep-info--tickets">
-                            <h3 className='amazon-prep-info__block-title'>
-                                <Icon name='ticket' />
-                                Tickets
-                            </h3>
-                            <DocumentTickets tickets={amazonPrepOrderData.tickets}/>
-                        </div>
-                    </div> : null}
-                    <div key='files-tab' className='files-tab'>
-                        <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--files">
-                            <TutorialHintTooltip hint={AmazonPrepHints['files'] || ''} position='left' >
-                                <h3 className='amazon-prep-info__block-title title-small'>
-                                    <Icon name='files' />
-                                    Files
-                                </h3>
-                            </TutorialHintTooltip>
-                            <div className='dropzoneBlock'>
-                                <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? '' : amazonPrepOrderData?.uuid} hint="Product labels, Carton labels, Pallet labels, Excel file and any other files related to the order. Available formats: pdf, xls, xlsx." banCSV={true}/>
-                            </div>
-                        </CardWithHelpIcon>
-                    </div>
-                </Tabs>
-
-                <div className='form-submit-btn'>
-                    {amazonPrepOrderData && amazonPrepOrderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                    {isDisabled && amazonPrepOrderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(amazonPrepOrderData?.canEdit || !amazonPrepOrderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                    {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
-                    {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY} >Save</Button>}
                 </div>
+                <div key='delivery-tab' className='delivery-tab'>
+                    <CardWithHelpIcon classNames='card amazon-prep-info--details'>
+                        <h3 className='amazon-prep-info__block-title'>
+                            <Icon name='additional' />
+                            Details
+                        </h3>
+                        <div className='grid-row check-box-bottom'>
+                            <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors} isDisabled={isDisabled}/>
+                        </div>
+                    </CardWithHelpIcon>
+                    <CardWithHelpIcon classNames='card amazon-prep-info--receiver'>
+                        <h3 className='amazon-prep-info__block-title'>
+                            <Icon name='receiver' />
+                            Receiver
+                        </h3>
+                        <div className='grid-row'>
+                            <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors} isDisabled={isDisabled}/>
+                        </div>
+                    </CardWithHelpIcon>
+                </div>
+                <div key='product-tab' className='product-tab'>
+                    <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--products">
+                        {/*<TutorialHintTooltip hint={AmazonPrepHints['products'] || ''} position='left' >*/}
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='goods' />
+                                Products
+                            </h3>
+                        {/*</TutorialHintTooltip>*/}
+
+                        <div className='grid-row '>
+                            <div className='amazon-prep-info--order-btns  width-100'>
+                                {/*<div className='grid-row'>*/}
+                                <div className='amazon-prep-info--btns small-paddings width-100'>
+                                    <div className='amazon-prep-info--btns__radio'>
+                                        <Controller
+                                            key='boxesType'
+                                            name='boxesType'
+                                            control={control}
+                                            render={(
+                                                {
+                                                    field: { ...props},
+                                                    fieldState: {error}
+                                                }) => (
+                                                <FieldBuilder
+                                                    disabled={!!isDisabled}
+                                                    {...props}
+                                                    name='boxesType'
+                                                    label=''
+                                                    fieldType={FormFieldTypes.RADIO}
+                                                    options={boxesTypeOptions}
+                                                    errorMessage={error?.message}
+                                                    errors={errors}
+                                                    // width={WidthType.w50}
+                                                    hint={AmazonPrepHints['boxTypes'] || ''}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                    <div className='amazon-prep-info--btns__table-btns'>
+                                        <TutorialHintTooltip hint={AmazonPrepHints['selection'] || ''} forBtn >
+                                            <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
+                                                Selection
+                                            </Button>
+                                        </TutorialHintTooltip>
+                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
+                                            <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:'', boxesQuantity: ''})}>
+                                                Add
+                                            </Button>
+                                        </TutorialHintTooltip>
+                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
+                                            <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
+                                                Remove selected
+                                            </Button>
+                                        </TutorialHintTooltip>
+                                    </div>
+                                </div>
+                                {/*</div>*/}
+                            </div>
+                        </div>
+                        <div className='amazon-prep-info--table table-form-fields form-table'>
+                            <Table
+                                columns={getProductColumns(control)}
+                                dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
+                                pagination={false}
+                                rowKey="key"
+                            />
+                            <ProductsTotal productsInfo={productsTotalInfo} />
+                        </div>
+                    </CardWithHelpIcon>
+                </div>
+                {amazonPrepOrderData?.uuid &&
+                    <div key='pallets-tab' className='pallets-tab'>
+                        <div className="card min-height-600 amazon-prep-info--pallets">
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='bundle' />
+                                Pallets
+                            </h3>
+                            <Pallets pallets={amazonPrepOrderData?.pallets} />
+                        </div>
+                    </div>
+                }
+                {amazonPrepOrderData?.uuid &&
+                    <div key='services-tab' className='services-tab'>
+                        <div className="card min-height-600 amazon-prep-info--services">
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='bundle' />
+                                Services
+                            </h3>
+                            <Services services={amazonPrepOrderData?.services} />
+                        </div>
+                    </div>
+                }
+                {amazonPrepOrderData?.uuid &&
+                    <div key='status-history-tab' className='status-history-tab'>
+                        <div className="card min-height-600 amazon-prep-info--history">
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='history' />
+                                Status history
+                            </h3>
+                            <StatusHistory statusHistory={amazonPrepOrderData?.statusHistory} />
+                        </div>
+                    </div>
+                }
+                {amazonPrepOrderData?.uuid && amazonPrepOrderData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                    <div className="card min-height-600 amazon-prep-info--tickets">
+                        <h3 className='amazon-prep-info__block-title'>
+                            <Icon name='ticket' />
+                            Tickets
+                        </h3>
+                        <DocumentTickets tickets={amazonPrepOrderData.tickets}/>
+                    </div>
+                </div> : null}
+                <div key='files-tab' className='files-tab'>
+                    <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--files">
+                        <TutorialHintTooltip hint={AmazonPrepHints['files'] || ''} position='left' >
+                            <h3 className='amazon-prep-info__block-title title-small'>
+                                <Icon name='files' />
+                                Files
+                            </h3>
+                        </TutorialHintTooltip>
+                        <div className='dropzoneBlock'>
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? '' : amazonPrepOrderData?.uuid} hint="Product labels, Carton labels, Pallet labels, Excel file and any other files related to the order. Available formats: pdf, xls, xlsx." banCSV={true}/>
+                        </div>
+                    </CardWithHelpIcon>
+                </div>
+            </Tabs>
+
+            <div className='form-submit-btn'>
+                {amazonPrepOrderData && amazonPrepOrderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
+                {isDisabled && amazonPrepOrderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(amazonPrepOrderData?.canEdit || !amazonPrepOrderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY} >Save</Button>}
+            </div>
             </form>
                 {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
                 {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
-                    <ProductSelection productList={amazonPrepOrderParameters?.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
+                    <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
                 </Modal>}
                 {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.AmazonPrep} subjectUuid={docUuid} subject={`AmazonPrep ${amazonPrepOrderData?.wapiTrackingNumber} ${amazonPrepOrderData?.date ? formatDateStringToDisplayString(amazonPrepOrderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
             </>
