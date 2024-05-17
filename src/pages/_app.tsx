@@ -31,13 +31,13 @@ export default function App({ Component, pageProps }: AppProps) {
       `}</style>
 
       {
-        <AuthProvider>
-          <NotificationsProvider>
+        <NotificationsProvider>
+          <AuthProvider>
             <TourGuideProvider>
               <Component {...pageProps} />
             </TourGuideProvider>
-          </NotificationsProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </NotificationsProvider>
       }
     </>
   );

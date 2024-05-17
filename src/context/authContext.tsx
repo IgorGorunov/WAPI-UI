@@ -1,6 +1,7 @@
 import React, {createContext, PropsWithChildren, useContext, useState,} from "react";
 import Cookie from "js-cookie";
 import {UserStatusType} from "@/types/leads";
+import useNotifications from "@/context/notificationContext";
 
 export type NavAccessItemType = {
   available: boolean;
@@ -90,6 +91,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
     } else {
         Cookie.set('token', token);
     }
+
     setUserToken(token);
   }
   const getToken = () => Cookie.get('token');
@@ -125,6 +127,8 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
   const currentDate =  Cookie.get('currentDate') ? new Date(Cookie.get('currentDate')) : new Date();
 
+  const {setNotifications} = useNotifications();
+
 
   const logout = () => {
     setToken('');
@@ -139,6 +143,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
     Cookie.remove('ui');
     setUserInfoProfile(null);
     setNavItemsAccess([]);
+    setNotifications(null);
   }
 
   const isAuthorizedUser = () => {
