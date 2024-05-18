@@ -33,6 +33,7 @@ type OrderListType = {
     setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
     setFilteredOrders: React.Dispatch<React.SetStateAction<OrderType[]>>;
     handleEditOrder(uuid: string): void;
+    handleRefresh: ()=>void;
 }
 
 const pageOptions = [
@@ -44,7 +45,7 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
-const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder}) => {
+const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, handleRefresh}) => {
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -810,6 +811,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
+                {/*<Button onClick={handleRefresh}>Refresh</Button>*/}
                 <div className='search-block'>
                     <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
                     <FieldBuilder {...fullTextSearchField} />

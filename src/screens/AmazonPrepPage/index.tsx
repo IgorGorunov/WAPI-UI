@@ -58,7 +58,7 @@ const AmazonPrepPage = () => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-
+            setAmazonPrepOrdersData([]);
             const requesData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
 
             const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requesData, ui} : requesData);

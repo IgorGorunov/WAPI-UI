@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://api.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
-//const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
+//const API_URL = "https://api2.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
+const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
 //const API_URL = "https://first.wapi.com:4443/DB1/hs/UI/ROOT/";
 
 let setError: (title:string, message: string) => void;
@@ -124,6 +124,67 @@ api.interceptors.response.use(response=> {
     return Promise.reject(error);
 });
 
+const apiCompressed = axios.create(
+    {
+        baseURL: API_URL,
+        timeout: 10000000,
+        headers: {
+            'Accept-Encoding': 'gzip',
+            "content-type": "application/json",
+        },
+    }
+);
+
+apiCompressed.interceptors.response.use(response=> {
+
+    if (response.status === 200) {
+        return  response;
+    }
+    return  response;
+}, error => {
+    console.log('get error 123', error, error.code);
+
+    let errorMessage = '';
+    let errorTitle = '';
+
+
+    if (error.code === "ERR_BAD_RESPONSE" || error.code === "ERR_BAD_REQUEST") {
+        const errorStatus = error.response.status;
+        if (errorStatus === 400 && error?.response?.data?.errorMessage) {
+            return Promise.reject(error);
+        }
+
+        if (errorStatus === 401) {
+            redirectToLogin();
+        } else if (errorStatus === 500) {
+            const errorResponseMessage = error.response.data.message || error.response.data.errorMessage || 'Something went wrong. Please, contact administrator.';
+
+            if (errorResponseMessage) {
+                errorTitle = 'Error';
+                errorMessage = administratorErrorText
+            } else {
+                errorTitle = 'Maintenance';
+                errorMessage = maintenanceErrorText
+            }
+        } else {
+            errorTitle = 'Error';
+            errorMessage = administratorErrorText;
+        }
+
+        setError(errorTitle, errorMessage);
+        return Promise.reject(error);
+    }
+
+    if (error.code === "ECONNABORTED") {
+        // Request timed out
+        errorTitle = 'Maintenance';
+        errorMessage = maintenanceErrorText;
+    }
+
+    setError(errorTitle, errorMessage);
+    return Promise.reject(error);
+});
+
 const noErrorApi = axios.create(
     {
         baseURL: API_URL,
@@ -156,4 +217,4 @@ noErrorApi.interceptors.response.use(response=> {
 
 
 
-export {loginApi, api, noErrorApi};
+export {loginApi, api, apiCompressed, noErrorApi};

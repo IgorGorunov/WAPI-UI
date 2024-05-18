@@ -62,6 +62,7 @@ const ProductsPage = () => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
+            setProductsData([]);
             const requestData = {token: token};
             const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
 

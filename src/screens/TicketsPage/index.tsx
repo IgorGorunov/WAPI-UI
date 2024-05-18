@@ -55,6 +55,7 @@ const TicketsPage = () => {
     const fetchTickets = useCallback(async () => {
         try {
             setIsLoading(true);
+            setTicketsData([]);
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
             const res: ApiResponseType = await getTickets(superUser && ui ? {...requestData, ui} : requestData);
             if (res && res.data ) {
