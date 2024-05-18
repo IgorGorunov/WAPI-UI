@@ -147,7 +147,7 @@ export type AmazonPrepOrderParamsType = {
     deliveryMethod: string[];
     carrierTypes?: string[];
     boxesTypes?: string[];
-    productsSelection: ProductsSelectionType[];
+    productsSelection?: ProductsSelectionType[];
 }
 
 export type AmazonPrepOrderProductWithTotalInfoType = {

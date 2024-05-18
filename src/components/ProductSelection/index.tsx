@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import "./styles.scss";
 import '@/styles/tables.scss';
 import '@/styles/forms.scss';
@@ -14,6 +14,10 @@ import TableCell from "@/components/TableCell";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import RadioButton from "@/components/FormBuilder/RadioButton";
+import {ApiResponseType} from "@/types/api";
+import useAuth from "@/context/authContext";
+import Loader from "@/components/Loader";
+import {getProductSelection} from "@/services/productSelection";
 
 
 export type SelectedProductType = {
@@ -24,7 +28,7 @@ export type SelectedProductType = {
 }
 
 type ProductSelectionPropsType = {
-    productList: ProductsSelectionType[];
+    productList?: ProductsSelectionType[];
     alreadyAdded: SelectedProductType[];
     handleAddSelection: (selectedProducts: SelectedProductType[]) => void;
 };
@@ -37,8 +41,35 @@ const getWarehouseCountry = (productList:ProductsSelectionType[], warehouse: str
     return '';
 }
 
-const ProductSelection: React.FC<ProductSelectionPropsType> = ({productList, alreadyAdded, handleAddSelection}) => {
-    const [filteredProducts, setFilteredProducts]  = useState(productList);
+const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, handleAddSelection}) => {
+    const [filteredProducts, setFilteredProducts]  = useState<ProductsSelectionType[]>([]);
+    const {token, superUser, ui} = useAuth();
+    const [productList, setProductList]  = useState<ProductsSelectionType[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const fetchProductSelection = useCallback(async() => {
+        try {
+            setIsLoading(true);
+            const requestData = {token: token};
+            const resp: ApiResponseType = await getProductSelection(superUser && ui ? {...requestData, ui} : requestData);
+
+            if (resp && "data" in resp) {
+                setProductList(resp.data);
+                setFilteredProducts(resp.data);
+            } else {
+                console.error("API did not return expected data");
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    },[token]);
+
+    useEffect(() => {
+        fetchProductSelection();
+    }, []);
 
     const warehouseOptions = useMemo(()=> {
         const warehouses = productList.map(item => (item.warehouse));
@@ -66,8 +97,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({productList, alr
 
     useEffect(() => {
         setSelectedWarehouse(warehouseOptions.length ? warehouseOptions[0].value : '');
-    }, [warehouseOptions]);
-
+    }, [warehouseOptions, productList]);
 
     //form
     const {control, formState: { errors }, getValues, watch} = useForm({
@@ -319,6 +349,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({productList, alr
 
     return (
         <div className="product-selection">
+            {(isLoading) && <Loader />}
             <div className="product-selection__container">
                 <div className='product-selection__warehouses'>
                     <RadioButton name='warehouseSelection' isCountry={true} options={warehouseOptions} value={selectedWarehouse} onChange={(val)=>setSelectedWarehouse(val as string)} alignFlexH={ALIGN_FLEX.CENTER}/>

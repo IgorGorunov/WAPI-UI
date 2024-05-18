@@ -125,7 +125,7 @@ export type StockMovementParamsType = {
     sender: StockMovementWarehouseType[] | null;
     receiver: StockMovementWarehouseType[] | null;
     quality: string[];
-    productsSelection: ProductsSelectionType[];
+    productsSelection?: ProductsSelectionType[];
 }
 
 //send form types

@@ -10,7 +10,6 @@ type notificationsContextType = {
     setNotifications: React.Dispatch<React.SetStateAction<NotificationType[]>>;
     newNotifications: number;
     setNewNotifications: React.Dispatch<React.SetStateAction<number>>;
-
 };
 
 const NotificationsContext = createContext<notificationsContextType>({} as notificationsContextType);

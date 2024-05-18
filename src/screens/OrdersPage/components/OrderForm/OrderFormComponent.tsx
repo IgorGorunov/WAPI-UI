@@ -1156,7 +1156,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 <SendComment orderData={orderData} countryOptions={countries} closeSendCommentModal={()=>setShowSendCommentModal(false)} onSuccess={()=>setCommentHasBeenSent(true)}/>
             </Modal>}
             {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
-                <ProductSelection productList={orderParameters?.productsSelection} alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
+                <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
             </Modal>}
 
             {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}

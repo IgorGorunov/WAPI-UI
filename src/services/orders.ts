@@ -66,7 +66,6 @@ const getOrderParameters = async (
     }
 };
 
-
 const getOrderPickupPoints = async (
     data: {
         courierService: string;

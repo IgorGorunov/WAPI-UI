@@ -77,6 +77,7 @@ const OrdersPage = () => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
+            setOrdersData([]);
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
             const res: ApiResponseType = await getOrders(superUser && ui ? {...requestData, ui} : requestData);
 
@@ -161,7 +162,7 @@ const OrdersPage = () => {
                     <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
-                {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} />}
+                {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} handleRefresh={()=>fetchData()}/>}
             </div>
             {showOrderModal && (orderUuid || isOrderNew) &&
                 <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={()=>{onOrderModalClose(); fetchData(); }}/>

@@ -166,13 +166,6 @@ export type SingleOrderType = {
     nextAvailableDayAfterDays: number;
 }
 
-// export type AttachedFilesType = {
-//     id: string;
-//     name: string;
-//     type: string;
-//     data: string;
-// }
-
 export type OrderProductType = {
     available: number;
     country: string;
@@ -205,7 +198,7 @@ export type OrderParamsType = {
     products?: DocProductParamsType[];
     warehouses: WarehouseType[];
     currencies: string[];
-    productsSelection: ProductsSelectionType[];
+    productsSelection?: ProductsSelectionType[];
 }
 
 export type PickupPointsType = {

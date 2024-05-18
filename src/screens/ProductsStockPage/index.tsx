@@ -34,6 +34,8 @@ const ProductsStockPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
+                setProductsData([]);
+                setFilteredProducts([]);
                 const requestData = {token: token};
                 const res: ApiResponse = await getProductsStock(superUser && ui ? {...requestData, ui} : requestData);
 

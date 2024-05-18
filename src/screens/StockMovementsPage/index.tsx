@@ -73,6 +73,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
+            setStockMovementData([]);
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate), documentType: docType};
             const res: ApiResponseType = await getInbounds(superUser && ui ? {...requestData, ui} : requestData);
 

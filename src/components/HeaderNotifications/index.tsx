@@ -18,13 +18,18 @@ const HeaderNotifications: React.FC = () => {
     const notificationsListRef = useRef<HTMLDivElement>(null);
 
     const checkNotifications = async() => {
-        const requestData = {token};
-        const res: ApiResponseType = await checkNewNotifications(superUser && ui ? {...requestData, ui} : requestData);
+        if (token) {
+            const requestData = {token};
+            const res: ApiResponseType = await checkNewNotifications(superUser && ui ? {
+                ...requestData,
+                ui
+            } : requestData);
 
-        if (res && res.data && res.data.newNotifications > 0 || notifications === null) {
-            fetchNotificationsData();
+            if (res?.data?.newNotifications > 0 || notifications === null) {
+                fetchNotificationsData();
+            }
         }
-    }
+    };
 
     const fetchNotificationsData = async() => {
         try {
@@ -57,11 +62,12 @@ const HeaderNotifications: React.FC = () => {
         return () => {
             clearInterval(fetchDataInterval);
         };
-    }, [notifications, token]);
+    }, [notifications]);
 
-    useEffect(() => {
-        setNotifications(null);
-    }, [token]);
+    // useEffect(() => {
+    //     //setNotifications(null);
+    //     console.log('token change in notifications', token)
+    // }, [token]);
 
     const handleClick = () => {
         setIsNotificationsListOpen(prevState => !prevState);
