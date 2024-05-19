@@ -195,6 +195,9 @@
         background-color: var(--color-light-blue-gray);
       }
     }
+    &-description {
+      word-break: break-word;
+    }
   }
 }
 
