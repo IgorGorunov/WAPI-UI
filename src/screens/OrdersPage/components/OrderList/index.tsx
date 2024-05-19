@@ -68,44 +68,44 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         hideTextOnMobile: true,
     }
 
-    const productItems = orders.flatMap(order => {
-        return order.products.map(orderItem => ({
-            uuid: order.uuid,
-            title: orderItem.product,
-            description: orderItem.quantity
-        }));
-    }).filter(item => item.uuid === hoveredOrder?.uuid);
+    // const productItems = orders.flatMap(order => {
+    //     return order.products.map(orderItem => ({
+    //         uuid: order.uuid,
+    //         title: orderItem.product,
+    //         description: orderItem.quantity
+    //     }));
+    // }).filter(item => item.uuid === hoveredOrder?.uuid);
 
-    const troubleStatusesItems = orders.flatMap(order => {
-        return order.troubleStatuses.map(orderItem => ({
-            uuid: order.uuid,
-            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.period),
-            description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
-        }));
-    }).filter(item => item.uuid === hoveredOrder?.uuid);
+    // const troubleStatusesItems = orders.flatMap(order => {
+    //     return order.troubleStatuses.map(orderItem => ({
+    //         uuid: order.uuid,
+    //         title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.period),
+    //         description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
+    //     }));
+    // }).filter(item => item.uuid === hoveredOrder?.uuid);
 
-    const claimItems = orders.flatMap(order => {
-        return order.claims.map(orderItem => ({
-            uuid: order.uuid,
-            title: orderItem.date,
-            description: orderItem.status,
-        }));
-    }).filter(item => item.uuid === hoveredOrder?.uuid);
+    // const claimItems = orders.flatMap(order => {
+    //     return order.claims.map(orderItem => ({
+    //         uuid: order.uuid,
+    //         title: orderItem.date,
+    //         description: orderItem.status,
+    //     }));
+    // }).filter(item => item.uuid === hoveredOrder?.uuid);
 
-    const receiverItem = orders.flatMap(order => [
-        { uuid: order.uuid, title: "Country", description: order.receiverCountry },
-        { uuid: order.uuid, title: "City", description: order.receiverCity },
-        { uuid: order.uuid, title: "Zip", description: order.receiverZip },
-        { uuid: order.uuid, title: "Address", description: order.receiverAddress },
-        { uuid: order.uuid, title: "Full name", description: order.receiverFullName },
-        { uuid: order.uuid, title: "Phone", description: order.receiverPhone },
-        { uuid: order.uuid, title: "E-mail", description: order.receiverEMail },
-        { uuid: order.uuid, title: "Comment", description: order.receiverComment },
-    ]).filter(item => item.uuid === hoveredOrder?.uuid);
+    // const receiverItem = orders.flatMap(order => [
+    //     { uuid: order.uuid, title: "Country", description: order.receiverCountry },
+    //     { uuid: order.uuid, title: "City", description: order.receiverCity },
+    //     { uuid: order.uuid, title: "Zip", description: order.receiverZip },
+    //     { uuid: order.uuid, title: "Address", description: order.receiverAddress },
+    //     { uuid: order.uuid, title: "Full name", description: order.receiverFullName },
+    //     { uuid: order.uuid, title: "Phone", description: order.receiverPhone },
+    //     { uuid: order.uuid, title: "E-mail", description: order.receiverEMail },
+    //     { uuid: order.uuid, title: "Comment", description: order.receiverComment },
+    // ]).filter(item => item.uuid === hoveredOrder?.uuid);
 
-    const statusAdditionalInfoItem = orders.flatMap(order => [
-        { uuid: order.uuid, title: order.lastUpdateDate, description: order.statusAdditionalInfo },
-    ]).filter(item => item.uuid === hoveredOrder?.uuid);
+    // const statusAdditionalInfoItem = orders.flatMap(order => [
+    //     { uuid: order.uuid, title: order.lastUpdateDate, description: order.statusAdditionalInfo },
+    // ]).filter(item => item.uuid === hoveredOrder?.uuid);
 
     const calcOrderAmount = useCallback((property: string, value: string) => {
         return orders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
@@ -900,15 +900,43 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                             (() => {
                                 switch (hoveredColumn) {
                                     case 'productLines':
-                                        return productItems;
+                                        //return productItems;
+                                        return hoveredOrder ? hoveredOrder.products.map(item => ({
+                                            uuid: hoveredOrder.uuid,
+                                            title: item.product,
+                                            description: item.quantity,
+                                        })) : [];
                                     case 'claims':
-                                        return claimItems;
+                                        //return claimItems;
+                                        return hoveredOrder ? hoveredOrder.claims.map(orderItem => ({
+                                            uuid: hoveredOrder.uuid,
+                                            title: orderItem.date,
+                                            description: orderItem.status,
+                                        })) : [];
                                     case 'troubleStatus':
-                                        return troubleStatusesItems;
+                                        //return troubleStatusesItems;
+                                        return hoveredOrder ? hoveredOrder.troubleStatuses.map(orderItem => ({
+                                            uuid: hoveredOrder.uuid,
+                                            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.period),
+                                            description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
+                                        })) : [];
                                     case 'receiver':
-                                        return receiverItem;
+                                        //return receiverItem;
+                                        return hoveredOrder ? [
+                                            { uuid: hoveredOrder.uuid, title: "Country", description: hoveredOrder.receiverCountry },
+                                            { uuid: hoveredOrder.uuid, title: "City", description: hoveredOrder.receiverCity },
+                                            { uuid: hoveredOrder.uuid, title: "Zip", description: hoveredOrder.receiverZip },
+                                            { uuid: hoveredOrder.uuid, title: "Address", description: hoveredOrder.receiverAddress },
+                                            { uuid: hoveredOrder.uuid, title: "Full name", description: hoveredOrder.receiverFullName },
+                                            { uuid: hoveredOrder.uuid, title: "Phone", description: hoveredOrder.receiverPhone },
+                                            { uuid: hoveredOrder.uuid, title: "E-mail", description: hoveredOrder.receiverEMail },
+                                            { uuid: hoveredOrder.uuid, title: "Comment", description: hoveredOrder.receiverComment },
+                                        ] : [];
                                     case 'statusAdditionalInfo':
-                                        return statusAdditionalInfoItem;
+                                        //return statusAdditionalInfoItem;
+                                        return hoveredOrder ? [
+                                            { uuid: hoveredOrder.uuid, title: hoveredOrder.lastUpdateDate, description: hoveredOrder.statusAdditionalInfo },
+                                        ] : [];
                                     default:
                                         return [];
                                 }

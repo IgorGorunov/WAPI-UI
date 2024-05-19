@@ -78,7 +78,7 @@ const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, hand
                     {items.map((item: PopupItem, index: number) => (
                         <li key={item.title + index} className="universal-popup__item">
                             <p className="universal-popup__item-text">{item.title}</p>
-                            {item.description ? <p>{item.description}</p> : null}
+                            {item.description ? <p className='universal-popup__item-description'>{item.description}</p> : null}
                         </li>
                     ))}
                 </ul>
