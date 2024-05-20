@@ -25,6 +25,7 @@ import CurrentFilters from "@/components/CurrentFilters";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
+import Loader from "@/components/Loader";
 
 
 type OrderListType = {
@@ -910,7 +911,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                         //return claimItems;
                                         return hoveredOrder ? hoveredOrder.claims.map(orderItem => ({
                                             uuid: hoveredOrder.uuid,
-                                            title: orderItem.date,
+                                            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.date),
                                             description: orderItem.status,
                                         })) : [];
                                     case 'troubleStatus':
@@ -935,7 +936,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                     case 'statusAdditionalInfo':
                                         //return statusAdditionalInfoItem;
                                         return hoveredOrder ? [
-                                            { uuid: hoveredOrder.uuid, title: hoveredOrder.lastUpdateDate, description: hoveredOrder.statusAdditionalInfo },
+                                            {
+                                                uuid: hoveredOrder.uuid,
+                                                title: formatDateTimeToStringWithDotWithoutSeconds(hoveredOrder.lastUpdateDate),
+                                                description: hoveredOrder.statusAdditionalInfo
+                                            },
                                         ] : [];
                                     default:
                                         return [];
