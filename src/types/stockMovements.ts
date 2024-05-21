@@ -1,4 +1,4 @@
-import {AttachedFilesType, DocProductParamsType, ProductsSelectionType} from "@/types/utility";
+import {AttachedFilesType, DocProductParamsType} from "@/types/utility";
 import {TicketType} from "@/types/tickets";
 
 export const enum STOCK_MOVEMENT_DOC_TYPE {
@@ -31,11 +31,6 @@ export type StockMovementType = {
     tableKey: string;
     uuid: string;
     statusPeriod: string;
-    // packages: number;
-    // palletAmount: number;
-    // volume: number;
-    // weightGross: number;
-    // weightNet: number;
 }
 
 export type ProductInfoType = {
@@ -82,17 +77,13 @@ export type SingleStockMovementType = {
     senderCountry: string;
     receiver: string;
     receiverCountry: string;
-    // freightSupplier: string;
     estimatedTimeArrives: string;
     courierServiceTrackingNumber: string;
-    // wapiTrackingNumber: string;
-    // warehouseTrackingNumber: string;
     uuid: string;
     volume: number;
     weightGross: number;
     weightNet: number;
     comment: string;
-    //commentCargo: string;
     status: string;
     products: SingleStockMovementProductType[];
     statusHistory: StockMovementHistoryType[];
@@ -120,12 +111,10 @@ export type StockMovementWarehouseType = {
 }
 
 export type StockMovementParamsType = {
-    //products?: StockMovementParamsProductType[];
     products?: DocProductParamsType[];
     sender: StockMovementWarehouseType[] | null;
     receiver: StockMovementWarehouseType[] | null;
     quality: string[];
-    productsSelection?: ProductsSelectionType[];
 }
 
 //send form types
@@ -141,27 +130,14 @@ export type SingleStockMovementFormType = {
     incomingDate: string;
     number: string;
     incomingNumber: string;
-    // packages: number;
-    // palletAmount: number;
     sender: string;
     senderCountry: string;
     receiver: string;
     receiverCountry: string;
-    // freightSupplier: string;
     estimatedTimeArrives: string;
     courierServiceTrackingNumber: string;
-    // wapiTrackingNumber: string;
-    // warehouseTrackingNumber: string;
     uuid: string;
-    // volume: number;
-    // weightGross: number;
-    // weightNet: number;
     comment: string;
-    //commentCargo: string;
     status: string;
     products: SingleStockMovementProductFormType[];
-    // statusHistory: StockMovementHistoryType[];
-    // services: StockMovementServiceType[];
-    // attachedFiles: AttachedFilesType[];
-    // canEdit?: boolean;
 }
