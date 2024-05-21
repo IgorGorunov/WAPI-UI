@@ -187,7 +187,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const curWidth = useMemo(()=>{
         const displayedData = filteredProducts.slice((current - 1) * pageSize, current * pageSize);
         const maxAmount = displayedData.reduce((acc,item)=> Math.max(acc, item.reserved),0).toString().length;
-        const width = 47+maxAmount*9;
+
+        const width = 63+maxAmount*9;
         return width.toString()+'px';
     },[current, pageSize, filteredProducts]);
 
@@ -265,9 +266,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products that were reserved for orders or movements"><span>Reserve</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="60px" maxWidth="100px" contentPosition="center" childrenBefore={<Tooltip title="Products that were reserved for orders or movements"><span>Reserve</span></Tooltip>}/>,
             render: (text: number, record: ProductStockType) =>  (
-                <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
+                <TableCell minWidth="60px" maxWidth="100px" contentPosition="center"
                     childrenBefore={
                         <Popover
                             content={record.reserved ? <SimplePopup
