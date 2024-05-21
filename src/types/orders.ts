@@ -2,7 +2,6 @@ import {
     SEND_COMMENT_TYPES,
     AttachedFilesType,
     WarehouseType,
-    ProductsSelectionType,
     DocProductParamsType
 } from "@/types/utility";
 import {TicketType} from "@/types/tickets";
@@ -187,18 +186,10 @@ export type OrderProductType = {
     volume: number;
 }
 
-// export type WarehouseType = {
-//     warehouse: string;
-//     courierService: string;
-//     country: string;
-// }
-
 export type OrderParamsType = {
-    // products?: OrderProductType[];
     products?: DocProductParamsType[];
     warehouses: WarehouseType[];
     currencies: string[];
-    productsSelection?: ProductsSelectionType[];
 }
 
 export type PickupPointsType = {
@@ -258,8 +249,6 @@ export type SingleOrderProductFormType = {
     clientOrderID: string;
     codAmount: number;
     codCurrency: string;
-    // commentCourierService: string;
-    // commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
     courierServiceTrackingNumberCurrent: string;
@@ -293,8 +282,4 @@ export type SingleOrderProductFormType = {
     wapiTrackingNumber: string;
     warehouse: string;
     products: SingleOrderProductFormType[];
-    // statusHistory: OrderHistoryType[];
-    // services: OrderServiceType[];
-    // attachedFiles: AttachedFilesType[];
-    // canEdit: boolean;
 }

@@ -280,7 +280,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             currency: getValues('codCurrency'),
         };
         getValues('products').forEach(item => {
-            const prodInfo = orderParameters && orderParameters.productsSelection ? orderParameters.productsSelection.filter(product=>product.uuid === item.product) : [];
+            const prodInfo = orderParameters && orderParameters.products ? orderParameters.products.filter(product=>product.uuid === item.product) : [];
             if (prodInfo?.length) {
                 rez.cod += Number(item.cod);
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);

@@ -1,4 +1,4 @@
-import {DocProductParamsType, ProductsSelectionType} from "@/types/utility";
+import {DocProductParamsType} from "@/types/utility";
 import {TicketType} from "@/types/tickets";
 
 export type AmazonPrepOrderType = {
@@ -78,8 +78,6 @@ export type SingleAmazonPrepOrderType = {
     attachedFiles: AttachedFilesType[];
     canEdit: boolean;
     clientOrderID: string;
-    // commentCourierService: string;
-    //commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
     date: string;
@@ -141,13 +139,11 @@ export type WarehouseType = {
 }
 
 export type AmazonPrepOrderParamsType = {
-    // products?: AmazonPrepOrderProductType[];
     products?: DocProductParamsType[];
     warehouses: WarehouseType[];
     deliveryMethod: string[];
     carrierTypes?: string[];
     boxesTypes?: string[];
-    productsSelection?: ProductsSelectionType[];
 }
 
 export type AmazonPrepOrderProductWithTotalInfoType = {
@@ -161,17 +157,12 @@ export type AmazonPrepOrderProductWithTotalInfoType = {
 //type of form data sent to server
 export type SingleAmazonPrepOrderFormType = {
     asnNumber: string;
-    //attachedFiles: AttachedFilesType[];
-    //canEdit: boolean;
     clientOrderID: string;
-    // commentCourierService: string;
-    // commentWarehouse: string;
     courierService: string;
     courierServiceTrackingNumber: string;
     date: string;
     deliveryMethod: string;
     incomingDate: string;
-    //pallets: PalletType[];
     preferredDeliveryDate: string;
     receiverAddress: string;
     receiverCity: string;
@@ -194,9 +185,6 @@ export type SingleAmazonPrepOrderFormType = {
         quantity: string;
         boxesQuantity: string;
     }[];
-    //statusHistory: AmazonPrepOrderHistoryType[];
-    //services: AmazonPrepOrderServiceType[];
-    //draft?: boolean;
     carrierType?: string;
     multipleLocations?: boolean;
     boxesType?: boolean;

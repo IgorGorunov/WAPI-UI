@@ -25,7 +25,7 @@ const AuthChecker: React.FC<AuthCheckerPropsType> = ({ isUser=true, pageName='',
 
     return (
         <>
-            {canShow ? children : null}
+            {token && canShow ? children : null}
         </>
     );
 };

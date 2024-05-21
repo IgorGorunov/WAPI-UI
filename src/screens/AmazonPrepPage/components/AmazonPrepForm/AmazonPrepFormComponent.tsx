@@ -190,7 +190,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
             volume:0,
         };
         getValues('products').forEach(item => {
-            const prodInfo = amazonPrepOrderParameters ? amazonPrepOrderParameters?.productsSelection.filter(product=>product.uuid === item.product) : [];
+            const prodInfo = amazonPrepOrderParameters ? amazonPrepOrderParameters?.products.filter(product=>product.uuid === item.product) : [];
             if (prodInfo?.length) {
                 rez.weightNet += prodInfo[0].weightNet * Number(item.quantity);
                 rez.weightGross += prodInfo[0].weightGross * Number(item.quantity);
