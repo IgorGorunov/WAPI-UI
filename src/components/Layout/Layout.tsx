@@ -62,12 +62,12 @@ const Layout: React.FC<Props> = ({
     }, [isCookieConsentReceived]);
 
   return (
-      <div className="main" >
+      <div className="main">
           <div className={`main-content ${isWide ? 'is-wide' : ''}`}>
               {children}
           </div>
           {hasFooter && <Footer/>}
-          {showCookieConsent ? <CookieConsent  /> : null}
+          {showCookieConsent ? <CookieConsent/> : null}
           <div id="modal-root-main"></div>
           <div id="modal-root-status"></div>
           <div id="modal-root-preview"></div>
@@ -79,7 +79,8 @@ const Layout: React.FC<Props> = ({
               modalType={ModalTypes.API_ERROR}
               title={apiErrorTitle || ''}
               subtitle={apiErrorText || ''}
-              onClose={handleClose}/> : null}
+              onClose={handleClose}/> : null
+          }
       </div>
   );
 };

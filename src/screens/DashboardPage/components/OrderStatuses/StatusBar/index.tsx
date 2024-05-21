@@ -1,22 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { GroupOrderStatusType, StatusColors } from "../index";
-import UniversalPopup from "@/components/UniversalPopup";
 import "./styles.scss";
+import {Popover} from "antd";
+import SimplePopup from "@/components/SimplePopup";
+import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 
 type StatusBarPropsType = {
     groupStatus: GroupOrderStatusType;
     maxAmount: number;
 };
 
-const StatusBar: React.FC<StatusBarPropsType> = ({
-                                                     groupStatus,
-                                                     maxAmount,
-                                                 }) => {
-    const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
+const StatusBar: React.FC<StatusBarPropsType> = ({groupStatus, maxAmount}) => {
 
-    const showPopup = () => setIsDisplayedPopup(true);
-    const hidePopup = () => setIsDisplayedPopup(false);
+    const isTouchDevice = useIsTouchDevice();
 
     const barWidth =
         maxAmount === 0
@@ -31,24 +28,25 @@ const StatusBar: React.FC<StatusBarPropsType> = ({
             description: status.ordersCount.toString()
         }));
 
+    // @ts-ignore
     return (
         <div className={`status-bar status-bar__wrapper`}>
-            <div
-                className="status-bar__label"
-                onMouseOver={showPopup}
-                onMouseOut={hidePopup}
+            <Popover
+                content={<SimplePopup
+                    items={popupItems}
+                    width={350}
+                />}
+                trigger={isTouchDevice ? 'click' : 'hover'}
+                placement="right"
+                overlayClassName="doc-list-popover"
             >
-                {groupStatus.status}
-                <div className="status-bar__count">
-                    <span>{groupStatus.ordersCount}</span>
-                    {groupStatus.ordersCount !== 0 && isDisplayedPopup && (
-                        <UniversalPopup
-                            items={popupItems}
-                            position='right'
-                        />
-                    )}
+                <div className="status-bar__label">
+                    {groupStatus.status}
+                    <div className="status-bar__count">
+                        <span>{groupStatus.ordersCount}</span>
+                    </div>
                 </div>
-            </div>
+            </Popover>
             <div className="colored-bar">
                 <div
                     style={{

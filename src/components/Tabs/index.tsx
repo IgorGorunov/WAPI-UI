@@ -11,7 +11,7 @@ type TabsType = {
     curTab?: number;
     classNames?: string;
     tabTitles?: TabTitle[];
-    children?: React.ReactNode[];
+    children?: React.ReactNode[] | React.ReactNode;
     notifications?: NotificationMessageInDocumentsType[];
     needMinHeight?: boolean;
 }

@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Table, Pagination, Tooltip} from 'antd';
+import {Table, Pagination, Tooltip, Popover} from 'antd';
 import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
@@ -20,7 +20,8 @@ import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import {Countries} from "@/types/countries";
 import FiltersContainer from "@/components/FiltersContainer";
-import UniversalPopup from "@/components/UniversalPopup";
+import SimplePopup from "@/components/SimplePopup";
+import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -29,25 +30,19 @@ type ProductListType = {
 }
 
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setWarehouseForExport}) => {
-
     const [animating, setAnimating] = useState(false);
+    const isTouchDevice = useIsTouchDevice();
 
     // Popup
-    const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
-    const [hoveredReserve, setHoveredReserve] = useState<ProductStockType | null>(null);
-    const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
-
-    const popupItems = useMemo(()=>{
+    const getPopupItems = useCallback((hoveredReserve)=> {
         if (!hoveredReserve) return [];
 
-        const curProducts = products.filter(item => item.uuid === hoveredReserve.uuid && item.warehouse === hoveredReserve.warehouse);
-        return curProducts.length ? curProducts[0].reservedRows.map(stockItem => ({
-                uuid: hoveredReserve.uuid,
-                title: stockItem.document,
-                description: stockItem.reserved,
-            })) : [];
-    },[hoveredReserve]);
-
+        return hoveredReserve.reservedRows.map(stockItem => ({
+            uuid: hoveredReserve.uuid,
+            title: stockItem.document,
+            description: stockItem.reserved,
+        }));
+    },[]);
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -189,6 +184,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         setWarehouseForExport(filterWarehouse.join('_'))
     }, [filterWarehouse]);
 
+    const curWidth = useMemo(()=>{
+        const displayedData = filteredProducts.slice((current - 1) * pageSize, current * pageSize);
+        const maxAmount = displayedData.reduce((acc,item)=> Math.max(acc, item.reserved),0).toString().length;
+        const width = 47+maxAmount*9;
+        return width.toString()+'px';
+    },[current, pageSize, filteredProducts]);
+
     const columns: ColumnType<ProductStockType>[] = useMemo(() => [
         {
             title: <TitleColumn title="" minWidth="15px" maxWidth="15px" contentPosition="center"
@@ -262,25 +264,27 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
-
-
         {
             title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products that were reserved for orders or movements"><span>Reserve</span></Tooltip>}/>,
-            render: (text: number, record: ProductStockType) => (
+            render: (text: number, record: ProductStockType) =>  (
                 <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
-                    childrenAfter={<span
-                        className="reserve-cell"
-                        onClick={(e) => {
-                            setHoveredReserve(record);
-                            setMousePosition({ x: e.clientX, y: e.clientY });
-                            setIsDisplayedPopup(true);
-
-                        }}
-                    >
-                        <span className={`reserve ${text !== 0 ? 'is-link' : '' }`}>{text}</span>
-                    </span>
-                    }>
-                </TableCell>
+                    childrenBefore={
+                        <Popover
+                            content={record.reserved ? <SimplePopup
+                                items={getPopupItems(record)}
+                                width={200}
+                                hasCopyBtn={true}
+                                needScroll={true}
+                            /> : null}
+                            trigger={isTouchDevice ? 'click' : 'hover'}
+                            placement="left"
+                            overlayClassName="doc-list-popover"
+                        >
+                            <span style={{width: curWidth}} className="products-cell-style">{text} <Icon
+                                name="info"/></span>
+                        </Popover>
+                    }
+                />
             ),
             dataIndex: 'reserved',
             key: 'reserved',
@@ -415,25 +419,6 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     showSizeChanger={false}
                 />
             </div>
-            {hoveredReserve && isDisplayedPopup && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: mousePosition?.y || 0,
-                        left: mousePosition?.x || 0,
-                    }}
-                >
-                    <UniversalPopup
-                        items={popupItems}
-                        position='right'
-                        width = {200}
-                        handleClose={()=>setIsDisplayedPopup(false)}
-                        hasCopyBtn={true}
-                        changePositionOnMobile={true}
-                        needScroll={true}
-                    />
-                </div>
-            )}
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>

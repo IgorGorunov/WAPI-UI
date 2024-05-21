@@ -2,7 +2,6 @@ import React from "react";
 import StatusBar from "./StatusBar";
 import "./styles.scss";
 
-
 export const enum GroupStatuses {
   "Ready for dispatch" = 'Ready for dispatch',
   "Delivered" = "Delivered",

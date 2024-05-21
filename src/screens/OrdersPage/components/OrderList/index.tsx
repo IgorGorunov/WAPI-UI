@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
+import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
@@ -7,7 +7,6 @@ import "@/styles/tables.scss";
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
-import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
 import DateInput from "@/components/DateInput";
 import {DateRangeType} from "@/types/dashboard";
@@ -25,6 +24,8 @@ import CurrentFilters from "@/components/CurrentFilters";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
+import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import SimplePopup, {PopupItem} from "@/components/SimplePopup";
 
 
 type OrderListType = {
@@ -46,16 +47,12 @@ const pageOptions = [
 ];
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, handleRefresh}) => {
+    const isTouchDevice = useIsTouchDevice();
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-
-    const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
-    const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
-    const [hoveredOrder, setHoveredOrder] = useState<OrderType | null>(null);
-    const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
     const fullTextSearchField = {
@@ -67,45 +64,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         classNames: 'full-text-search-toggle',
         hideTextOnMobile: true,
     }
-
-    // const productItems = orders.flatMap(order => {
-    //     return order.products.map(orderItem => ({
-    //         uuid: order.uuid,
-    //         title: orderItem.product,
-    //         description: orderItem.quantity
-    //     }));
-    // }).filter(item => item.uuid === hoveredOrder?.uuid);
-
-    // const troubleStatusesItems = orders.flatMap(order => {
-    //     return order.troubleStatuses.map(orderItem => ({
-    //         uuid: order.uuid,
-    //         title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.period),
-    //         description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
-    //     }));
-    // }).filter(item => item.uuid === hoveredOrder?.uuid);
-
-    // const claimItems = orders.flatMap(order => {
-    //     return order.claims.map(orderItem => ({
-    //         uuid: order.uuid,
-    //         title: orderItem.date,
-    //         description: orderItem.status,
-    //     }));
-    // }).filter(item => item.uuid === hoveredOrder?.uuid);
-
-    // const receiverItem = orders.flatMap(order => [
-    //     { uuid: order.uuid, title: "Country", description: order.receiverCountry },
-    //     { uuid: order.uuid, title: "City", description: order.receiverCity },
-    //     { uuid: order.uuid, title: "Zip", description: order.receiverZip },
-    //     { uuid: order.uuid, title: "Address", description: order.receiverAddress },
-    //     { uuid: order.uuid, title: "Full name", description: order.receiverFullName },
-    //     { uuid: order.uuid, title: "Phone", description: order.receiverPhone },
-    //     { uuid: order.uuid, title: "E-mail", description: order.receiverEMail },
-    //     { uuid: order.uuid, title: "Comment", description: order.receiverComment },
-    // ]).filter(item => item.uuid === hoveredOrder?.uuid);
-
-    // const statusAdditionalInfoItem = orders.flatMap(order => [
-    //     { uuid: order.uuid, title: order.lastUpdateDate, description: order.statusAdditionalInfo },
-    // ]).filter(item => item.uuid === hoveredOrder?.uuid);
 
     const calcOrderAmount = useCallback((property: string, value: string) => {
         return orders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
@@ -387,31 +345,30 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         </div>
                     }
                     childrenAfter={
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}
-                                  onClick={(e) => {
-                                      setHoveredOrder(record);
-                                      setHoveredColumn('receiver');
-                                      setMousePosition({ x: e.clientX, y: e.clientY });
-                                      setIsDisplayedPopup(!isDisplayedPopup);
-                                  }}
-                                  onMouseEnter={(e) => {
-                                      setHoveredOrder(record);
-                                      setHoveredColumn('receiver');
-                                      setMousePosition({ x: e.clientX, y: e.clientY });
-                                      setIsDisplayedPopup(true);
-
-                                  }}
-                                  onMouseLeave={() => {
-                                      setHoveredOrder(null);
-                                      setHoveredColumn('');
-                                      setMousePosition(null);
-                                      setIsDisplayedPopup(false);
-                                  }}
-                            />
-                            <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
-                        </div>
-                }
+                        <Popover
+                            content={<SimplePopup
+                                items={[
+                                    { uuid: record.uuid, title: "Country", description: record.receiverCountry } as PopupItem,
+                                    { uuid: record.uuid, title: "City", description: record.receiverCity },
+                                    { uuid: record.uuid, title: "Zip", description: record.receiverZip },
+                                    { uuid: record.uuid, title: "Address", description: record.receiverAddress },
+                                    { uuid: record.uuid, title: "Full name", description: record.receiverFullName },
+                                    { uuid: record.uuid, title: "Phone", description: record.receiverPhone },
+                                    { uuid: record.uuid, title: "E-mail", description: record.receiverEMail },
+                                    { uuid: record.uuid, title: "Comment", description: record.receiverComment },
+                                ] as PopupItem[]}
+                                width={350}
+                            />}
+                            trigger={isTouchDevice ? 'click' : 'hover'}
+                            placement="right"
+                            overlayClassName="doc-list-popover"
+                        >
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}/>
+                                <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
+                            </div>
+                        </Popover>
+                    }
                 >
                 </TableCell>,
             dataIndex: 'icon',
@@ -438,34 +395,27 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         contentPosition="center"
                         childrenBefore={
                             record.claimsExist && (
-                                <div style={{
-                                    minHeight: '8px',
-                                    minWidth: '8px',
-                                    backgroundColor: 'red',
-                                    borderRadius: '50%',
-                                    display: 'inline-block',
-                                    alignSelf: 'center',
-                                }}
-                                     onClick={(e) => {
-                                         setHoveredOrder(record);
-                                         setHoveredColumn('claims');
-                                         setMousePosition({ x: e.clientX, y: e.clientY });
-                                         setIsDisplayedPopup(!isDisplayedPopup);
-
-                                     }}
-                                     onMouseEnter={(e) => {
-                                         setHoveredOrder(record);
-                                         setHoveredColumn('claims');
-                                         setMousePosition({ x: e.clientX, y: e.clientY });
-                                         setIsDisplayedPopup(true);
-
-                                     }}
-                                     onMouseLeave={() => {
-                                         setHoveredOrder(null);
-                                         setHoveredColumn('');
-                                         setMousePosition(null);
-                                         setIsDisplayedPopup(false);
-                                     }}/>
+                                <Popover
+                                    content={record.claims.length ? <SimplePopup
+                                        items={record.claims.map(orderItem => ({
+                                            uuid: record.uuid,
+                                            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.date),
+                                            description: orderItem.status,
+                                        }))}
+                                    /> : null}
+                                    trigger={isTouchDevice ? 'click' : 'hover'}
+                                    placement="right"
+                                    overlayClassName="doc-list-popover"
+                                >
+                                    <div style={{
+                                            minHeight: '8px',
+                                            minWidth: '8px',
+                                            backgroundColor: 'red',
+                                            borderRadius: '50%',
+                                            display: 'inline-block',
+                                            alignSelf: 'center',
+                                        }} />
+                                </Popover>
                             )
                         }
                     >
@@ -501,34 +451,28 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         contentPosition="center"
                         childrenBefore={
                             record.troubleStatusesExist && (
-                                <div style={{
-                                    minHeight: '8px',
-                                    minWidth: '8px',
-                                    backgroundColor: 'red',
-                                    borderRadius: '50%',
-                                    display: 'inline-block',
-                                    alignSelf: 'center',
-                                }}
-                                     onClick={(e) => {
-                                         setHoveredOrder(record);
-                                         setHoveredColumn('troubleStatus');
-                                         setMousePosition({ x: e.clientX, y: e.clientY });
-                                         setIsDisplayedPopup(!isDisplayedPopup);
-
-                                     }}
-                                     onMouseEnter={(e) => {
-                                         setHoveredOrder(record);
-                                         setHoveredColumn('troubleStatus');
-                                         setMousePosition({ x: e.clientX, y: e.clientY });
-                                         setIsDisplayedPopup(true);
-
-                                     }}
-                                     onMouseLeave={() => {
-                                         setHoveredOrder(null);
-                                         setHoveredColumn('');
-                                         setMousePosition(null);
-                                         setIsDisplayedPopup(false);
-                                     }}/>
+                                <Popover
+                                    content={record.troubleStatuses.length ? <SimplePopup
+                                        items={record.troubleStatuses.map(orderItem => ({
+                                            uuid: record.uuid,
+                                            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.period),
+                                            description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
+                                        }))}
+                                        width={500}
+                                    /> : null}
+                                    trigger={isTouchDevice ? 'click' : 'hover'}
+                                    placement="right"
+                                    overlayClassName="doc-list-popover"
+                                >
+                                    <div style={{
+                                            minHeight: '8px',
+                                            minWidth: '8px',
+                                            backgroundColor: 'red',
+                                            borderRadius: '50%',
+                                            display: 'inline-block',
+                                            alignSelf: 'center',
+                                        }} />
+                                </Popover>
                             )
                         }
                     >
@@ -576,33 +520,26 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         maxWidth="100px"
                         contentPosition="start"
                         childrenAfter={
-                            <span style={{
-                                borderBottom: `2px solid ${underlineColor}`,
-                                display: 'inline-block',
-                            }}
-                          onClick={(e) => {
-                              setHoveredOrder(record);
-                              setHoveredColumn('statusAdditionalInfo');
-                              setMousePosition({ x: e.clientX, y: e.clientY });
-                              setIsDisplayedPopup(!isDisplayedPopup);
-
-                          }}
-                          onMouseEnter={(e) => {
-                              setHoveredOrder(record);
-                              setHoveredColumn('statusAdditionalInfo');
-                              setMousePosition({ x: e.clientX, y: e.clientY });
-                              setIsDisplayedPopup(true);
-
-                          }}
-                          onMouseLeave={() => {
-                              setHoveredOrder(null);
-                              setHoveredColumn('');
-                              setMousePosition(null);
-                              setIsDisplayedPopup(false);
-                          }}
-                        >
-                        {text}
-                        </span>
+                            <Popover
+                                content={<SimplePopup
+                                    items={[
+                                        {
+                                            uuid: record.uuid,
+                                            title: formatDateTimeToStringWithDotWithoutSeconds(record.lastUpdateDate),
+                                            description: record.statusAdditionalInfo
+                                        } as PopupItem,
+                                    ]}
+                                    width={400}
+                                />}
+                                trigger={isTouchDevice ? 'click' : 'hover'}
+                                placement="right"
+                                overlayClassName="doc-list-popover"
+                            >
+                                <span style={{
+                                        borderBottom: `2px solid ${underlineColor}`,
+                                        display: 'inline-block',
+                                    }}>{text}</span>
+                            </Popover>
                         }
                     >
                     </TableCell>
@@ -761,31 +698,23 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     minWidth="50px"
                     maxWidth="100px"
                     contentPosition="center"
-                    childrenAfter ={
-                    <span
-                        style={{width: curWidth}}
-                        className="products-cell-style"
-                        onClick={(e) => {
-                            setHoveredOrder(record);
-                            setHoveredColumn('productLines');
-                            setMousePosition({ x: e.clientX, y: e.clientY });
-                            setIsDisplayedPopup(!isDisplayedPopup);
-                        }}
-                        onMouseEnter={(e) => {
-                            setHoveredOrder(record);
-                            setHoveredColumn('productLines');
-                            setMousePosition({ x: e.clientX, y: e.clientY });
-                            setIsDisplayedPopup(true);
-                        }}
-                        onMouseLeave={() => {
-                            setHoveredOrder(null);
-                            setHoveredColumn('');
-                            setMousePosition(null);
-                            setIsDisplayedPopup(false);
-                        }}
-                    >
-                        {text} <Icon name="info" />
-                    </span>}>
+                    childrenAfter = {
+                        <Popover
+                            content={record.products.length ? <SimplePopup
+                                items={record.products.map(item => ({
+                                    uuid: record.uuid,
+                                    title: item.product,
+                                    description: item.quantity,
+                                }))}
+                            /> : null}
+                            trigger={isTouchDevice ? 'click' : 'hover'}
+                            placement="left"
+                            overlayClassName="doc-list-popover"
+                        >
+                            <span style={{width: curWidth}} className="products-cell-style">{text} <Icon name="info" /></span>
+                        </Popover>
+                    }
+                >
                 </TableCell>
 
             ),
@@ -869,100 +798,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
                 <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
-            {hoveredOrder && isDisplayedPopup && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: mousePosition?.y || 0,
-                        left: mousePosition?.x || 0,
-                    }}
-                >
-                    <UniversalPopup
-                        width={
-                            (() => {
-                                switch (hoveredColumn) {
-                                    case 'productLines':
-                                        return null;
-                                    case 'status':
-                                        return 800;
-                                    case 'statusAdditionalInfo':
-                                        return 400;
-                                    case 'troubleStatus':
-                                        return 500;
-                                    case 'receiver':
-                                        return 350;
-                                    default:
-                                        return null;
-                                }
-                            })()
-                        }
-                        items={
-                            (() => {
-                                switch (hoveredColumn) {
-                                    case 'productLines':
-                                        //return productItems;
-                                        return hoveredOrder ? hoveredOrder.products.map(item => ({
-                                            uuid: hoveredOrder.uuid,
-                                            title: item.product,
-                                            description: item.quantity,
-                                        })) : [];
-                                    case 'claims':
-                                        //return claimItems;
-                                        return hoveredOrder ? hoveredOrder.claims.map(orderItem => ({
-                                            uuid: hoveredOrder.uuid,
-                                            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.date),
-                                            description: orderItem.status,
-                                        })) : [];
-                                    case 'troubleStatus':
-                                        //return troubleStatusesItems;
-                                        return hoveredOrder ? hoveredOrder.troubleStatuses.map(orderItem => ({
-                                            uuid: hoveredOrder.uuid,
-                                            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.period),
-                                            description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
-                                        })) : [];
-                                    case 'receiver':
-                                        //return receiverItem;
-                                        return hoveredOrder ? [
-                                            { uuid: hoveredOrder.uuid, title: "Country", description: hoveredOrder.receiverCountry },
-                                            { uuid: hoveredOrder.uuid, title: "City", description: hoveredOrder.receiverCity },
-                                            { uuid: hoveredOrder.uuid, title: "Zip", description: hoveredOrder.receiverZip },
-                                            { uuid: hoveredOrder.uuid, title: "Address", description: hoveredOrder.receiverAddress },
-                                            { uuid: hoveredOrder.uuid, title: "Full name", description: hoveredOrder.receiverFullName },
-                                            { uuid: hoveredOrder.uuid, title: "Phone", description: hoveredOrder.receiverPhone },
-                                            { uuid: hoveredOrder.uuid, title: "E-mail", description: hoveredOrder.receiverEMail },
-                                            { uuid: hoveredOrder.uuid, title: "Comment", description: hoveredOrder.receiverComment },
-                                        ] : [];
-                                    case 'statusAdditionalInfo':
-                                        //return statusAdditionalInfoItem;
-                                        return hoveredOrder ? [
-                                            {
-                                                uuid: hoveredOrder.uuid,
-                                                title: formatDateTimeToStringWithDotWithoutSeconds(hoveredOrder.lastUpdateDate),
-                                                description: hoveredOrder.statusAdditionalInfo
-                                            },
-                                        ] : [];
-                                    default:
-                                        return [];
-                                }
-                            })()
-                        }
-                        position={
-                            (() => {
-                                switch (hoveredColumn) {
-                                    case 'productLines':
-                                        return 'left';
-                                    case 'status':
-                                        return 'right';
-                                    default:
-                                        return 'right';
-                                }
-                            })()
-                        }
-                        handleClose={()=>setIsDisplayedPopup(false)}
-                    />
-                </div>
-            )}
-
         </div>
     );
 };

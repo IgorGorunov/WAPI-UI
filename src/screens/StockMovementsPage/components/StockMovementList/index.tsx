@@ -1,11 +1,10 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
+import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
 import Icon from "@/components/Icon";
-import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
 import DateInput from "@/components/DateInput";
 import {DateRangeType} from "@/types/dashboard";
@@ -23,6 +22,8 @@ import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
+import SimplePopup from "@/components/SimplePopup";
+import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 
 
 type StockMovementsListType = {
@@ -50,19 +51,18 @@ const getDocType = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
         return 'outbounds';
     } else if (docType===STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT) {
         return 'stock movements';
+    } else if (docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE) {
+            return 'logistic services';
     } else return 'documents'
 }
 
 const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, currentRange, setCurrentRange, setFilteredDocs, handleEditDoc }) => {
+    const isTouchDevice = useIsTouchDevice();
+
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-
-    const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
-    const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
-    const [hoveredDoc, setHoveredDoc] = useState<StockMovementType | null>(null);
-    const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
     const fullTextSearchField = {
@@ -75,13 +75,18 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         hideTextOnMobile: true,
     }
 
-    const productItems = docs.flatMap(doc => {
-        return doc.products.map(docItem => ({
-            uuid: doc.uuid,
+    const getProductItems = useCallback((hoveredDoc) => {
+        console.log('hovered: ', hoveredDoc, hoveredDoc ? hoveredDoc.products.map(docItem => ({
+            uuid: hoveredDoc.uuid,
             title: docItem.product,
             description: docItem.quantity
-        }));
-    }).filter(item => item.uuid === hoveredDoc?.uuid);
+        })) : [])
+        return hoveredDoc ? hoveredDoc.products.map(docItem => ({
+            uuid: hoveredDoc.uuid,
+            title: docItem.product,
+            description: docItem.quantity
+        })) : [];
+    }, []);
 
     //filters
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
@@ -281,11 +286,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         });
     }, [docs, searchTerm, filterStatus, filterSenderCountry, filterReceiverCountry, filterReceiver, filterSender, sortColumn, sortDirection, fullTextSearch]);
 
-    //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange) => {
         setCurrentRange(newRange);
-        //setShowDatepicker(false);
     };
 
     const [isFiltersVisible, setIsFiltersVisible] = useState(false);
@@ -347,31 +350,12 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     childrenAfter={
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}
-                                  onClick={(e) => {
-                                      setHoveredDoc(record);
-                                      setHoveredColumn('receiver');
-                                      setMousePosition({ x: e.clientX, y: e.clientY });
-                                      setIsDisplayedPopup(!isDisplayedPopup);
-                                  }}
-                                  onMouseEnter={(e) => {
-                                      setHoveredDoc(record);
-                                      setHoveredColumn('receiver');
-                                      setMousePosition({ x: e.clientX, y: e.clientY });
-                                      setIsDisplayedPopup(true);
-
-                                  }}
-                                  onMouseLeave={() => {
-                                      setHoveredDoc(null);
-                                      setHoveredColumn('');
-                                      setMousePosition(null);
-                                      setIsDisplayedPopup(false);
-                                  }}
                             />
                             <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
                         </div>
-                }
-                >
-                </TableCell>,
+
+                    }
+                />,
             dataIndex: 'icon',
             key: 'icon',
         },
@@ -517,31 +501,18 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                         maxWidth="70px"
                         contentPosition="center"
                         childrenAfter ={
-                        <span
-                            style={{width: curWidth}}
-                            className="products-cell-style"
-                            onClick={(e) => {
-                                setHoveredDoc(record);
-                                setHoveredColumn('productLines');
-                                setMousePosition({ x: e.clientX, y: e.clientY });
-                                setIsDisplayedPopup(!isDisplayedPopup);
-                            }}
-                            onMouseEnter={(e) => {
-                                setHoveredDoc(record);
-                                setHoveredColumn('productLines');
-                                setMousePosition({ x: e.clientX, y: e.clientY });
-                                setIsDisplayedPopup(true);
-                            }}
-                            onMouseLeave={() => {
-                                setHoveredDoc(null);
-                                setHoveredColumn('');
-                                setMousePosition(null);
-                                setIsDisplayedPopup(false);
-                            }}
-                        >
-                            {productCount} <Icon name="info" />
-                        </span>}>
-                    </TableCell>
+                            <Popover
+                                content={record.products.length ? <SimplePopup
+                                    items={getProductItems(record)}
+                                /> : null}
+                                trigger={isTouchDevice ? 'click' : 'hover'}
+                                placement="left"
+                                overlayClassName="doc-list-popover"
+                            >
+                                <span style={{width: curWidth}} className="products-cell-style">{productCount} <Icon name="info" /></span>
+                            </Popover>
+                        }
+                    />
                 );
             },
             dataIndex: 'productLines',
@@ -619,41 +590,6 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
                 <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
-            {hoveredDoc && isDisplayedPopup && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: mousePosition?.y || 0,
-                        left: mousePosition?.x || 0,
-                    }}
-                >
-                    <UniversalPopup
-                        items={
-                            (() => {
-                                switch (hoveredColumn) {
-                                    case 'productLines':
-                                        return productItems;
-                                    default:
-                                        return [];
-                                }
-                            })()
-                        }
-                        position={
-                            (() => {
-                                switch (hoveredColumn) {
-                                    case 'productLines':
-                                        return 'left';
-                                    // case 'status':
-                                    //     return 'right';
-                                    default:
-                                        return 'right';
-                                }
-                            })()
-                        }
-                        handleClose={()=>setIsDisplayedPopup(false)}
-                    />
-                </div>
-            )}
         </div>
     );
 };
