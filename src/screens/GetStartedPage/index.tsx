@@ -85,7 +85,7 @@ const GetStartedPage: React.FC = () => {
                             <div className="get-started-page__text-block">
                                 <div className="get-started-page__text-block-title">
                                     <div className="get-started-page__text-block--icon">
-                                        <Icon name='settings'/>
+                                        <Icon name='gala-settings'/>
                                     </div>
                                     <h3>Rapid Product Discovery</h3>
                                 </div>

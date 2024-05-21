@@ -1,11 +1,10 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
+import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
 import Icon from "@/components/Icon";
-import UniversalPopup from "@/components/UniversalPopup";
 import {ColumnType} from "antd/es/table";
 import DateInput from "@/components/DateInput";
 import {DateRangeType} from "@/types/dashboard";
@@ -24,6 +23,8 @@ import {Countries} from "@/types/countries";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString} from "@/utils/date";
+import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import SimplePopup from "@/components/SimplePopup";
 
 
 type AmazonPrepListType = {
@@ -44,23 +45,20 @@ const pageOptions = [
 ];
 
 const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, currentRange, setCurrentRange, setFilteredAmazonPrepOrders,handleEditAmazonPrepOrder}) => {
+    const isTouchDevice = useIsTouchDevice();
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
-    const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
-    const [hoveredOrder, setHoveredOrder] = useState<AmazonPrepOrderType | null>(null);
-    const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
-    const productItems = amazonPrepOrders.flatMap(order => {
-        return order.products.map(orderItem => ({
-            uuid: order.uuid,
+    const getProductItems = useCallback((hoveredOrder) => {
+        return hoveredOrder ? hoveredOrder.products.map(orderItem => ({
+            uuid: hoveredOrder.uuid,
             title: orderItem.product,
             description: orderItem.quantity
-        }));
-    }).filter(item => item.uuid === hoveredOrder?.uuid);
+        })) : [];
+    }, []);
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
     const fullTextSearchField = {
@@ -441,32 +439,18 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     maxWidth="50px"
                     contentPosition="center"
                     childrenAfter ={
-                    <span
-                        style={{width: curWidth}}
-                        className="products-cell-style"
-                        onClick={(e) => {
-                            setHoveredOrder(record);
-                            setHoveredColumn('productLines');
-                            setMousePosition({ x: e.clientX, y: e.clientY });
-                            setIsDisplayedPopup(true);
-                        }}
-                        onMouseEnter={(e) => {
-                            setHoveredOrder(record);
-                            setHoveredColumn('productLines');
-                            setMousePosition({ x: e.clientX, y: e.clientY });
-                            setIsDisplayedPopup(true);
-                        }}
-                        onMouseLeave={() => {
-                            setHoveredOrder(null);
-                            setHoveredColumn('');
-                            setMousePosition(null);
-                            setIsDisplayedPopup(false);
-                        }}
-                    >
-                        {text} <Icon name="info" />
-                    </span>}>
-                </TableCell>
-
+                        <Popover
+                            content={record.products.length ? <SimplePopup
+                                items={getProductItems(record)}
+                            /> : null}
+                            trigger={isTouchDevice ? 'click' : 'hover'}
+                            placement="left"
+                            overlayClassName="doc-list-popover"
+                        >
+                            <span style={{width: curWidth}} className="products-cell-style">{text} <Icon name="info" /></span>
+                        </Popover>
+                    }
+                />
             ),
             dataIndex: 'productLines',
             key: 'productLines',
@@ -541,22 +525,6 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
 
-            {hoveredOrder && isDisplayedPopup && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: mousePosition?.y || 0,
-                        left: mousePosition?.x || 0,
-                    }}
-                >
-                    <UniversalPopup
-                        width={null}
-                        items={productItems}
-                        position={'left'}
-                        handleClose={()=>setIsDisplayedPopup(false)}
-                    />
-                </div>
-            )}
         </div>
     );
 };

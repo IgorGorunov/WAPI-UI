@@ -1,14 +1,12 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Table, Tooltip} from 'antd';
+import {Pagination, Popover, Table, Tooltip} from 'antd';
 import {ColumnType} from "antd/es/table";
 
 import "./styles.scss";
 import "@/styles/tables.scss";
 
 import {ProductType} from "@/types/products";
-
 import PageSizeSelector from '@/components/LabelSelect';
-import UniversalPopup, {PopupItem} from "@/components/UniversalPopup";
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
@@ -23,6 +21,8 @@ import FiltersBlock from "@/components/FiltersBlock";
 import {FILTER_TYPE} from "@/types/utility";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
+import SimplePopup, {PopupItem} from "@/components/SimplePopup";
+import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 
 type ProductListType = {
     products: ProductType[];
@@ -41,21 +41,17 @@ const statusFilter = [
 ];
 
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, handleEditProduct}) => {
-
+    const isTouchDevice = useIsTouchDevice();
     const [animating, setAnimating] = useState(false);
 
     // Popup
-    const [isDisplayedPopup, setIsDisplayedPopup] = useState(false);
-    const [hoveredProduct, setHoveredProduct] = useState<ProductType | null>(null);
-    const [hoveredColumn, setHoveredColumn] = useState<string>('');
-    const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
-    const popupItems = products.flatMap(product => {
-        return product.stock.map(stockItem => ({
-            uuid: product.uuid,
+    const getPopupItems = useCallback((hoveredProduct) => {
+        return hoveredProduct ? hoveredProduct.stock.map(stockItem => ({
+            uuid: hoveredProduct.uuid,
             title: stockItem.warehouse,
             description: stockItem.available
-        }));
-    }).filter(item => item.uuid === hoveredProduct?.uuid);
+        })) : [];
+    }, []);
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -176,36 +172,29 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                         maxWidth="20px"
                         contentPosition="center"
                         childrenAfter={
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    width: '20px',
-                                    height: '20px',
-                                    borderRadius: '50%',
-                                    backgroundColor: color
-                                }}
-                                onClick={(e) => {
-                                    setHoveredProduct(record);
-                                    setHoveredColumn('status');
-                                    setMousePosition({ x: e.clientX, y: e.clientY });
-                                    setIsDisplayedPopup(true);
-                                }}
-                                onMouseEnter={(e) => {
-                                    setHoveredProduct(record);
-                                    setHoveredColumn('status');
-                                    setMousePosition({ x: e.clientX, y: e.clientY });
-                                    setIsDisplayedPopup(true);
-                                }}
-                                onMouseLeave={() => {
-                                    setHoveredProduct(null);
-                                    setHoveredColumn('');
-                                    setMousePosition(null);
-                                    setIsDisplayedPopup(false);
-                                }}>
-
-                            </div>
+                            <Popover
+                                content={<SimplePopup
+                                    items={[{
+                                            uuid: record?.uuid || '',
+                                            title: record?.status || ''
+                                        } as PopupItem]
+                                    }
+                                    width={100}
+                                />}
+                                trigger={isTouchDevice ? 'click' : 'hover'}
+                                placement="right"
+                                overlayClassName="doc-list-popover"
+                            >
+                                <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            width: '20px',
+                                            height: '20px',
+                                            borderRadius: '50%',
+                                            backgroundColor: color
+                                        }}></div>
+                            </Popover>
                         }>
                     </TableCell>
                 );
@@ -323,29 +312,18 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     minWidth="90px"
                     maxWidth="90px"
                     contentPosition="start"
-                    childrenAfter={<span
-                        className="stock-cell-style"
-                        onClick={(e) => {
-                            setHoveredProduct(record);
-                            setHoveredColumn('available');
-                            setMousePosition({ x: e.clientX, y: e.clientY });
-                            setIsDisplayedPopup(true);
-                        }}
-                        onMouseEnter={(e) => {
-                            setHoveredProduct(record);
-                            setHoveredColumn('available');
-                            setMousePosition({ x: e.clientX, y: e.clientY });
-                            setIsDisplayedPopup(true);
-                        }}
-                        onMouseLeave={() => {
-                            setHoveredProduct(null);
-                            setHoveredColumn('');
-                            setMousePosition(null);
-                            setIsDisplayedPopup(false);
-                        }}
-                    >
-                        {text} <Icon name="info" />
-                    </span>
+                    childrenAfter={
+                        <Popover
+                            content={record.stock.length ? <SimplePopup
+                                items={getPopupItems(record)}
+                                width={150}
+                            /> : null}
+                            trigger={isTouchDevice ? 'click' : 'hover'}
+                            placement="left"
+                            overlayClassName="doc-list-popover"
+                        >
+                            <span className="stock-cell-style">{text} <Icon name="info" /></span>
+                        </Popover>
                     }>
                 </TableCell>
             ),
@@ -356,7 +334,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
             }),
         },
-        ], [handleHeaderCellClick, setHoveredProduct, setIsDisplayedPopup]);
+        ], [handleHeaderCellClick]);
 
     return (
         <div className='table'>
@@ -437,25 +415,6 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                               setFilterState={setFilterStatus} isOpen={isOpenFilterStatus}
                               setIsOpen={setIsOpenFilterStatus}/>
             </FiltersContainer>
-            {hoveredProduct && isDisplayedPopup && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: mousePosition?.y || 0,
-                        left: mousePosition?.x || 0,
-                    }}
-                >
-                    <UniversalPopup
-                        items={hoveredColumn === 'status' && hoveredProduct ? [{
-                            uuid: hoveredProduct?.uuid || '',
-                            title: hoveredProduct?.status || ''
-                        } as PopupItem] : popupItems}
-                        position={`${hoveredColumn === 'status' ? 'right' : 'left'}`}
-                        width={hoveredColumn === 'status' ? 100 : 150}
-                        handleClose={() => setIsDisplayedPopup(false)}
-                    />
-                </div>
-            )}
         </div>
     );
 };

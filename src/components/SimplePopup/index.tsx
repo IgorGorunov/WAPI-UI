@@ -10,7 +10,6 @@ export type PopupItem = {
 
 type PopupPropsType = {
     items: PopupItem[];
-    position: 'left' | 'right';
     width?: number | null;
     handleClose?: () => void;
     hasCopyBtn?: boolean;
@@ -18,12 +17,13 @@ type PopupPropsType = {
     needScroll?: boolean;
 };
 
-const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, handleClose, hasCopyBtn=false, changePositionOnMobile=false, needScroll=false }) => {
+const SimplePopup: React.FC<PopupPropsType> = ({ items, width, handleClose, hasCopyBtn=false, changePositionOnMobile=false, needScroll=false }) => {
+
     if (items.length === 0) {
         return null;
     }
 
-    const positionClass = `universal-popup__wrapper universal-popup__wrapper--${position} ${changePositionOnMobile ? 'change-on-mobile' : ''}`;
+    const positionClass = `simple-popup__wrapper ${changePositionOnMobile ? 'change-on-mobile' : ''}`;
     const wrapperStyle = width !== null ? { width: width + 'px' } : {};
 
     const copyToClipboard = useCallback((text: string) => {
@@ -69,16 +69,16 @@ const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, hand
 
     return (
         <>
-            <div className={`universal-popup ${positionClass} ${!!handleClose ? 'has-close-icon' : ''} ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle}>
+            <div className={`simple-popup ${positionClass} ${!!handleClose ? 'has-close-icon' : ''} ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle} >
                 {hasCopyBtn && <button className='copy-btn' onClick={handleCopy}>{items.length > 1 ? 'copy all' : 'copy'}<Icon name='copy' /></button> }
-                {!!handleClose ? (<a className="universal-popup__close" href="#" onClick={handleClose}>
-                    <Icon name='close' />
-                </a>) : null }
-                <ul className={`universal-popup__list ${needScroll ? 'has-scroll' : ''}`}>
+                {/*{!!handleClose ? (<a className="simple-popup__close" href="#" onClick={handleClose}>*/}
+                {/*    <Icon name='close' />*/}
+                {/*</a>) : null }*/}
+                <ul className={`simple-popup__list ${needScroll ? 'has-scroll' : ''}`}>
                     {items.map((item: PopupItem, index: number) => (
-                        <li key={item.title + index} className="universal-popup__item">
-                            <p className="universal-popup__item-text">{item.title}</p>
-                            {item.description ? <p className='universal-popup__item-description'>{item.description}</p> : null}
+                        <li key={item.title + index} className="simple-popup__item">
+                            <p className="simple-popup__item-text">{item.title}</p>
+                            {item.description ? <p className='simple-popup__item-description'>{item.description}</p> : null}
                         </li>
                     ))}
                 </ul>
@@ -89,4 +89,4 @@ const UniversalPopup: React.FC<PopupPropsType> = ({ items, position, width, hand
     );
 };
 
-export default UniversalPopup;
+export default SimplePopup;

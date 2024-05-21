@@ -1,6 +1,6 @@
 @import '@/constants/devices.scss';
 
-.universal-popup {
+.simple-popup {
   position: relative;
   padding: 25px 8px 8px 2px;
 
@@ -8,24 +8,8 @@
     padding-top: 8px;
   }
 
-  //&.has-close-icon {
-  //  padding: 25px 8px 8px 2px!important;
-  //}
-
   &.has-copy-icon {
     padding: 36px 8px 8px 2px!important;
-  }
-
-  &__close {
-    position: absolute;
-    top: 0;
-    right: 0;
-
-    .hide-close-btn & {
-      @media (hover: hover) {
-        display: none;
-      }
-    }
   }
 
   .copy-btn {
@@ -61,7 +45,7 @@
       }
     }
   }
-  
+
   &__list {
     position: relative;
 
@@ -93,24 +77,13 @@
   }
 
   &__wrapper {
-    position: absolute;
-    top: calc(50% - 2px);
     background-color: var(--color-dark-blue);
     color: white;
     border-radius: 5px;
-    transform: translateY(-50%);
     opacity: 0;
     animation: fadeIn 1s forwards;
     z-index: 1000;
-    &::before {
-      content: '';
-      position: absolute;
-      top: calc(50% - 3px);
-      width: 0;
-      height: 0;
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-    }
+
     @media (max-width: $tablet) {
       max-width: 400px;
     }
@@ -118,56 +91,13 @@
       max-width: 250px;
     }
 
-    &--right{
-      left: 32px;
-
-      &::before {
-        left: -5px;
-        border-right:5px solid var(--color-dark-blue);
-      }
-
-      &.change-on-mobile {
-        @media (max-width:  $upToLaptop) {
-          left: auto;
-          right: 32px;
-
-          &::before {
-            left: auto;
-            right: -5px;
-            border-left: 5px solid var(--color-dark-blue);
-            border-right: none;
-          }
-        }
-      }
-    }
-    &--left {
-      right: 32px;
-
-      &::before {
-        right: -5px;
-        border-left:5px solid var(--color-dark-blue);
-      }
-
-      &.change-on-mobile {
-        @media (max-width: $upToLaptop) {
-          left: 32px;
-          right: auto;
-
-          &::before {
-            left: -5px;
-            right: auto;
-            border-left: none;
-            border-right: 5px solid var(--color-dark-blue);
-          }
-        }
-      }
-    }
   }
 
 
   &__item{
     display: flex;
     justify-content: space-between;
+    gap: 16px;
     padding: 5px 10px;
 
     @media (max-width: $mobile) {
@@ -196,6 +126,7 @@
       }
     }
     &-description {
+      min-width: 12px;
       word-break: break-word;
     }
   }

@@ -90,6 +90,7 @@ import OutlineClock from '@/assets/icons/clock-outline.svg'
 import OutlineShopping from '@/assets/icons/outline_shopping.svg'
 import Lines from '@/assets/icons/lines.svg'
 import Admin from '@/assets/icons/admin.svg'
+import Settings from '@/assets/icons/settings.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -177,11 +178,12 @@ export const icons = {
   'folder': Folder,
   'analytics': Analytics,
   'fin-transparency': FinTransparency,
-  'settings': GalaSettings,
+  'gala-settings': GalaSettings,
   'shopping-outline': OutlineShopping,
   'clock': OutlineClock,
   'lines': Lines,
   'admin': Admin,
+  'settings': Settings,
 };
 
 export type IconType = keyof typeof icons;
