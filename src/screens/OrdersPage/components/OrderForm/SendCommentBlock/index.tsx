@@ -25,13 +25,14 @@ type SendCommentPropsType = {
 
 const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal, onSuccess }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const {token, currentDate, superUser, ui} = useAuth();
+    const {token, superUser, ui} = useAuth();
 
     const availableOptions = orderData.commentCourierServiceFunctionsList.split(';');
 
     const sendCommentTypeOptions = useMemo(()=> createOptions(SendCommentTypesArray.filter(item=> availableOptions.includes(item))), []);
 
-    let commentDate = addWorkingDays((orderData?.nextAvailableDayAfterDays || 0)+1);
+    //TEMPORARILY !!!
+    let commentDate = addWorkingDays((orderData?.nextAvailableDayAfterDays || 0)+1, '14:00'); //14:00 added temporarily. Need data from backend
 
     const {control, handleSubmit, formState: { errors }, watch} = useForm({
         mode: 'onSubmit',

@@ -33,6 +33,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
        disableWeekends = false,
        disablePreviousDays = false,
        disableDaysAfterToday = 0,
+       disableDaysTime = '0',
        ...otherProps
 }, ref) => {
 
@@ -70,7 +71,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
             isDisadled = dayOfWeek === 0 || dayOfWeek === 6;
         }
         if (disablePreviousDays) {
-            isDisadled = isDisadled || date < addWorkingDays(disableDaysAfterToday);
+            isDisadled = isDisadled || date < addWorkingDays(disableDaysAfterToday, disableDaysTime);
         }
         return isDisadled;
     }
