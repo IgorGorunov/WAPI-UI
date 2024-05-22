@@ -68,12 +68,38 @@ const formatDateToWeekRange = (dateStr: string) => {
     return `${startDate.getDate()} ${MONTHS[startDate.getMonth()]} ${startDate.getFullYear()} - ${endDate.getDate()} ${MONTHS[endDate.getMonth()]} ${endDate.getFullYear()}`;
 }
 
-const addWorkingDays = (days: number) => {
+const adjustDisabledDaysAfterTodayConsideringTime = (disableDaysAfterToday: number, time='0') => {
+    if (time==='0' || disableDaysAfterToday === 0) {
+        return disableDaysAfterToday;
+    }
+    const [hours, minutes] = time.split(':');
+
+    const now = new Date();
+    const timeZoneItaly = 'Europe/Rome';
+    const timeFormat = Intl.DateTimeFormat('en-US', {
+        timeZone: timeZoneItaly,
+        hourCycle: 'h24',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+    });
+
+    const timeItaly = timeFormat.format(now);
+
+    const [curHours, curMinutes] = timeItaly.split(':');
+    const isBeforeTime = (Number(curHours) < Number(hours) || (Number(curHours) === Number(hours) && Number(curMinutes) < Number(minutes)));
+
+    return isBeforeTime ? disableDaysAfterToday-1 : disableDaysAfterToday;
+}
+
+const addWorkingDays = (days: number, time='0') => {
     const result = new Date();
 
-    if (days !== 0) {
+    const adjustedDays = adjustDisabledDaysAfterTodayConsideringTime(days, time);
+
+    if (adjustedDays !== 0) {
         let count = 0;
-        while (count < days) {
+        while (count < adjustedDays) {
             result.setDate(result.getDate() + 1);
             if (result.getDay() != 0 && result.getDay() != 6) // Skip weekends
                 count++;

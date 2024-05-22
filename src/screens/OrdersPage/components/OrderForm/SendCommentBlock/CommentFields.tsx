@@ -145,6 +145,7 @@ export const DateFields = (numberOfDisabledDays = 0) => [
         disableWeekends: true,
         disablePreviousDays: true,
         disableDaysAfterToday: numberOfDisabledDays,
+        disableDaysTime: '14:00',
     },
     {
         fieldType: FormFieldTypes.TEXT,
