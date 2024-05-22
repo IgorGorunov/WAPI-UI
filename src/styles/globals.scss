@@ -512,9 +512,12 @@ input[type="date"]::before {
   margin-bottom: 0!important;
 }
 
+
+//pop-up component
 .doc-list-popover {
   background-color: var(--color-dark-blue);
   border-radius: 8px;
+  //animation: fadeIn 1s forwards;
 
   .ant-popover-inner {
     padding: 0;
@@ -523,8 +526,20 @@ input[type="date"]::before {
 
   .ant-popover-arrow {
     &:before {
+      opacity: 0;
       background-color: var(--color-dark-blue);
+      animation: fadeIn 1s forwards;
     }
   }
 }
 
+
+//animations
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
