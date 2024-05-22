@@ -89,7 +89,7 @@ const adjustDisabledDaysAfterTodayConsideringTime = (disableDaysAfterToday: numb
     const [curHours, curMinutes] = timeItaly.split(':');
     const isBeforeTime = (Number(curHours) < Number(hours) || (Number(curHours) === Number(hours) && Number(curMinutes) < Number(minutes)));
 
-    return isBeforeTime ? disableDaysAfterToday-1 : disableDaysAfterToday;
+    return isBeforeTime ? disableDaysAfterToday : disableDaysAfterToday+1;
 }
 
 const addWorkingDays = (days: number, time='0') => {
