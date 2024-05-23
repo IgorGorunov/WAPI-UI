@@ -5,6 +5,8 @@ import { AuthProvider } from "@/context/authContext";
 import "@/styles/globals.scss";
 import {NotificationsProvider} from "@/context/notificationContext";
 import {TourGuideProvider} from "@/context/tourGuideContext";
+import { clarity } from 'react-microsoft-clarity';
+import {useEffect} from "react";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -21,6 +23,13 @@ const inter = Inter({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+
+  useEffect(() => {
+    if (!clarity.hasStarted()) {
+      clarity.init('mgi3bjcotp');
+    }
+  }, []);
+
   return (
     <>
       <style jsx global>{`
