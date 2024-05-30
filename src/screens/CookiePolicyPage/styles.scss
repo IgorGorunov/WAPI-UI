@@ -34,4 +34,22 @@
       }
     }
   }
+
+  &__cookie-list-table {
+    margin-bottom: 36px;
+    font-size: 14px;
+    border-spacing: 0;
+    border: 1px solid var(--color-gray);
+
+    td, th {
+      font-size: 14px;
+      padding: 6px 10px;
+      border: 1px solid var(--color-gray);
+      min-width: 86px;
+    }
+
+    th {
+      background-color: var(--color-blue-15);
+    }
+  }
 }

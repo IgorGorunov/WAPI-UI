@@ -131,18 +131,20 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
 
   const logout = () => {
-    setToken('');
-    setUserStatus('');
-    setUserName('');
-    setTutorialInfo(['']);
-    setTextInfo('');
-    setUserUi(null);
+    Cookie.remove('token');
+    Cookie.remove('userStatus');
+    Cookie.remove('userName');
+    Cookie.remove('tutorialData');
+    Cookie.remove('textInfo');
+    //Cookie.remove('isSU);
     //setIsSuperUser(false);
     //setUserUi('');
     Cookie.remove('isSU')
     Cookie.remove('ui');
-    setUserInfoProfile(null);
-    setNavItemsAccess([]);
+    Cookie.remove('WAPI_profile_info');
+    Cookie.remove('WAPI_navAccess');
+    Cookie.remove('currentDate');
+
     setNotifications(null);
   }
 
