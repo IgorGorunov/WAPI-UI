@@ -146,5 +146,25 @@ const sendInboundFiles = async (
     }
 };
 
+const fillInboundByStock = async (
+    data: {
+        token: string;
+        ui?: string;
+        quality: string[];
+        warehouse: string;
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/FillStockMovementAllStock`,
+            data
+        );
 
-export { getInbounds, getInboundData, getInboundParameters, sendInboundData, updateInboundData, sendInboundFiles};
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+export { getInbounds, getInboundData, getInboundParameters, sendInboundData, updateInboundData, sendInboundFiles, fillInboundByStock};

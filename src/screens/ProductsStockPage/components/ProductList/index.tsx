@@ -266,9 +266,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="100px" contentPosition="center" childrenBefore={<Tooltip title="Products that were reserved for orders or movements"><span>Reserve</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products that were reserved for orders or movements"><span>Reserve</span></Tooltip>}/>,
             render: (text: number, record: ProductStockType) =>  (
-                <TableCell minWidth="60px" maxWidth="100px" contentPosition="center"
+                <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
                     childrenBefore={
                         <Popover
                             content={record.reserved ? <SimplePopup
