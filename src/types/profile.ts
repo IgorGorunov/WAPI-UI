@@ -7,3 +7,19 @@ export type ApiProtocolType = {
     name: string;
     uuid: string;
 }
+
+
+export type UserPriceType = {
+    //country: string;
+    name: string;
+    uuid: string;
+    startDate: string;
+    endDate: string;
+}
+
+export type UserContractType = {
+    uuid: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+}

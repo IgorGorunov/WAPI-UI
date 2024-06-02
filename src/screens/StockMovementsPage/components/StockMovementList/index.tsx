@@ -76,11 +76,6 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     }
 
     const getProductItems = useCallback((hoveredDoc) => {
-        console.log('hovered: ', hoveredDoc, hoveredDoc ? hoveredDoc.products.map(docItem => ({
-            uuid: hoveredDoc.uuid,
-            title: docItem.product,
-            description: docItem.quantity
-        })) : [])
         return hoveredDoc ? hoveredDoc.products.map(docItem => ({
             uuid: hoveredDoc.uuid,
             title: docItem.product,

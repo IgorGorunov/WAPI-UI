@@ -63,6 +63,11 @@ export type OrderType = {
         additionalInfo: string;
     }[],
     notifications: boolean;
+    commentToCourierService: {
+        period: string;
+        additionalInfo: string;
+    }[];
+    commentToCourierServiceExist: boolean;
 
 }
 

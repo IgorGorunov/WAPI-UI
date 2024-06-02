@@ -47,6 +47,7 @@ import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHi
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
+import FillByStock from "@/screens/StockMovementsPage/components/StockMovementForm/FillByStock";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -129,6 +130,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const { append: appendProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
     //const currencyOptions = useMemo(()=>{return docParameters && docParameters?.currencies.length ? createOptions(docParameters?.currencies) : []},[]);
+
+    const sender = watch('sender');
+    const [importType, setImportType] = useState('');
 
     //countries
     const allCountries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
@@ -476,7 +480,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     //import files modal
     const addImportedProducts = (importedProducts) => {
-        if (!importedProducts || !Array.isArray(importResponse)) return;
+
+        if (!importedProducts || !Array.isArray(importedProducts)) return;
         const existedRows = products.length;
 
         for (let i=0; i < importedProducts.length; i++) {
@@ -503,10 +508,11 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             //imported successfully
 
             //import data
-            addImportedProducts(importResponse?.data?.data || []);
+            addImportedProducts(importResponse?.data?.data || importResponse?.data || []);
 
             //show success message
-            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Products are successfully imported`, onClose: ()=>closeSuccessModal(true)})
+            const modalSubTitle = importType === 'fillByStock' ? 'Document filled by stock successfully' : 'Products are successfully imported';
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: modalSubTitle, onClose: ()=>closeSuccessModal(true)})
             setShowStatusModal(true);
         } else {
             //there are errors
@@ -529,7 +535,17 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         setShowImportModal(false);
     }
     const handleImportXLS = () => {
+        setImportType('importXLS');
         setShowImportModal(true)
+    }
+
+    const [showFillModal, setShowFillModal] = useState(false);
+    const onFillModalClose = () => {
+        setShowFillModal(false);
+    }
+    const handleFillByStock = () => {
+        setImportType('fillByStock');
+        setShowFillModal(true)
     }
 
     const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length));
@@ -649,10 +665,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             Products
                         </h3>
                         <div className='grid-row mb-md'>
-
                             <div className='stock-movement--btns width-100'>
                                 <div className='grid-row'>
                                     <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
+                                        {(docType===STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT || docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND) ? <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >
+                                            <Button type="button" icon="fill-doc" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || !sender} onClick={handleFillByStock}>Fill by stock</Button>
+                                        </TutorialHintTooltip> : null}
                                         <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >
                                             <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
                                         </TutorialHintTooltip>
@@ -744,6 +762,11 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         {showImportModal &&
             <Modal title={`Import xls`} onClose={onImportModalClose} >
                 <ImportFilesBlock file='Products import.xlsx' importFilesType={ImportFilesType.STOCK_MOVEMENTS_PRODUCTS} setResponseData={setImportResponse} closeModal={()=>setShowImportModal(false)}/>
+            </Modal>
+        }
+        {showFillModal &&
+            <Modal title={`Choose required quality`} onClose={onFillModalClose} >
+                <FillByStock qualityList={docParameters?.quality} warehouse={sender} setResponseData={setImportResponse} onClose={()=>setShowFillModal(false)}/>
             </Modal>
         }
         {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
