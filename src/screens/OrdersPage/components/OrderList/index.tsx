@@ -77,6 +77,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         return orders.filter(order => order.claimsExist).length || 0;
     },[orders]);
 
+    const calcOrderWithCommentsToCourierService = useCallback(() => {
+        return orders.filter(order => order.commentToCourierServiceExist).length || 0;
+    },[orders]);
+
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
@@ -137,6 +141,21 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             amount: (orders.length - calcOrderWithClaims()),
         },
     ]), [orders]);
+
+    const [filterCommentsToCourierService, setFilterCommentsToCourierService] = useState<string[]>([]);
+    const commentToCourierServiceFilterOptions = useMemo(() => ([
+        {
+            value: 'With comments',
+            label: 'With comments',
+            amount:  calcOrderWithCommentsToCourierService(),
+        },
+        {
+            value: 'Without comments',
+            label: 'Without comments',
+            amount: (orders.length - calcOrderWithCommentsToCourierService()),
+        },
+    ]), [orders]);
+
 
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     // const allWarehouses = orders.map(order => order.warehouse);
@@ -208,6 +227,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setFilterWarehouse([]);
         setFilterCourierService([]);
         setFilterReceiverCountry([]);
+        setFilterCommentsToCourierService([])
 
         //close filter modal
         //setIsFiltersVisible(false);
@@ -270,13 +290,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 filterTroubleStatus.includes(order.lastTroubleStatus);
             const matchesClaims = !filterClaims.length || (filterClaims.includes('With claims') && order.claimsExist) ||
                 (filterClaims.includes('Without claims') && !order.claimsExist);
+            const matchesCommentsToCourierService = !filterCommentsToCourierService.length || (filterCommentsToCourierService.includes('With comments') && order.commentToCourierServiceExist) ||
+                (filterClaims.includes('Without comments') && !order.commentToCourierServiceExist);
             const matchesWarehouse = !filterWarehouse.length ||
                 filterWarehouse.map(item=>item.toLowerCase()).includes(order.warehouse.toLowerCase());
             const matchesCourierService = !filterCourierService.length ||
                 filterCourierService.map(item=>item.toLowerCase()).includes(order.courierService.toLowerCase());
             const matchesReceiverCountry = !filterReceiverCountry.length ||
                 filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
-            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesClaims && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
+            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesClaims && matchesCommentsToCourierService && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -285,8 +307,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
+    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
 
+
+    useEffect(() => {
+        console.log('filtered: ', filteredOrders)
+    }, [filteredOrders]);
 
     useEffect(() => {
         setCurrent(1)
@@ -307,6 +333,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
     const [isOpenFilterTroubleStatus, setIsOpenFilterTroubleStatus] = useState(false);
     const [isOpenFilterClaim, setIsOpenFilterClaim] = useState(false);
+    const [isOpenFilterCommentToCourierService, setIsOpenFilterCommentToCourierService] = useState(false);
     const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
     const [isOpenFilterCourierStatus, setIsOpenFilterCourierStatus] = useState(false);
     const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
@@ -752,6 +779,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
                     <CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>setFilterTroubleStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
                     <CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>setFilterClaims([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
+                    <CurrentFilters title='Claims' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>setFilterCommentsToCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />
                     <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
                     <CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>
                     <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
@@ -794,6 +822,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
                 <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
+                <FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={setFilterCommentsToCourierService} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>
                 <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
                 <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
                 <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>

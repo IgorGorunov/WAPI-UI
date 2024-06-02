@@ -14,12 +14,13 @@ type TabsType = {
     children?: React.ReactNode[] | React.ReactNode;
     notifications?: NotificationMessageInDocumentsType[];
     needMinHeight?: boolean;
+    withHorizontalDivider?: boolean;
 }
-const Tabs: React.FC<TabsType> = ({id, curTab = 0, classNames='', tabTitles, children, needMinHeight=true, notifications}) => {
+const Tabs: React.FC<TabsType> = ({id, curTab = 0, classNames='', tabTitles, children, needMinHeight=true, notifications, withHorizontalDivider=false}) => {
     const [activeTab, setActiveTab] = useState<number>(curTab);
     return <div className={`tabs-block ${classNames ? classNames : ''}`} id={id}>
         <div className='tabs-block__wrapper'>
-            <ul className='tabs-block__tablist' role='tablist'>
+            <ul className={`tabs-block__tablist${withHorizontalDivider ? ' with-h-divider' : ''}`} role='tablist'>
                 {tabTitles.map((tab, index) => <li className={`tabs-block__tab ${index===activeTab ? 'active-tab' : ''}`} key={`tab-${index}`}>
                     <a key={`tab-link-${index}`}
                        className={`tabs-block__tab-link ${index === activeTab ? 'active' : ''} ${tab.hasError ? 'has-error' : ''} ${tab.title.replaceAll(' ','-').toLowerCase()+'-tab'}`}

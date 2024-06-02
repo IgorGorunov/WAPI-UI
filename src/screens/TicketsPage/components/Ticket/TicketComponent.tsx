@@ -175,7 +175,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                                         </div>
                                     </div>
                                 </CardWithHelpIcon>
-                            :   <div className='card ticket--info' ref={ticketInfoBlockRef}>
+                            :   <div className='card ticket--info mb-md' ref={ticketInfoBlockRef}>
                                     <div className='ticket--info-info'>
                                         {singleTicketData ? <TicketInfoBlock ticketData={singleTicketData}/> : null}
                                     </div>

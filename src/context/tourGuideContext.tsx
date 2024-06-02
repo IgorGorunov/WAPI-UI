@@ -27,13 +27,17 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
     const [watchedPages, setWatchedPages] = useState( Cookie.get('tutorialData') ? Cookie.get('tutorialData').split(';') : [])
     const [runTour, setRunTour] = useState(false);
 
-    const {token} = useAuth();
+    const {token, ui} = useAuth();
 
     useEffect(() => {
         setWatchedPages(Cookie.get('tutorialData') ? Cookie.get('tutorialData').split(';') : []);
     }, [token]);
 
     const isTutorialWatched = (page: string) => {
+        if (ui) {
+            return true;
+        }
+
         if (page === 'Lead') {
             return isLeadTutorialWatched();
         }
