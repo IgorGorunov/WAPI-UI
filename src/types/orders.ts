@@ -68,7 +68,9 @@ export type OrderType = {
         additionalInfo: string;
     }[];
     commentToCourierServiceExist: boolean;
-
+    selfCollect: boolean;
+    sentSMS: {}[];
+    sentSMSExist: boolean;
 }
 
 export type ProductInfoType = {

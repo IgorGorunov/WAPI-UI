@@ -130,11 +130,11 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const handleFilterChange = (newSearchTerm :string) => {
         setSearchTerm(newSearchTerm);
     };
-    const handleDownloadInvoice = async (uuid) => {
+    const handleDownloadInvoice = async (uuid, type='download') => {
         setIsLoading(true);
         try {
-            const requsetData = { token: token, uuid: uuid }
-            const response = await getInvoiceForm(superUser && ui ? {...requsetData, ui} : requsetData);
+            const requestData = { token: token, uuid: uuid, type }
+            const response = await getInvoiceForm(superUser && ui ? {...requestData, ui} : requestData);
 
             if (response && response.data) {
                 const files = response.data;
@@ -151,17 +151,29 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                         // // Create a Blob
                         const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
 
-                        // Create a download link
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(blob);
-                        link.download = file.name;
 
-                        // Append the link to the document and trigger a click event
-                        document.body.appendChild(link);
-                        link.click();
+                        if (type === 'preview') {
+                            // Open Blob object in new tab
+                            const url = URL.createObjectURL(blob);
+                            const newTab = window.open(url, '_blank');
+                            if (newTab) {
+                                newTab.document.title = file.name;
+                            } else {
+                                alert('Please allow pop-ups for this site to open the file.');
+                            }
+                        } else {
+                            // Create a download link
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            link.download = file.name;
 
-                        // Remove the link from the document
-                        document.body.removeChild(link);
+                            // Append the link to the document and trigger a click event
+                            document.body.appendChild(link);
+                            link.click();
+
+                            // Remove the link from the document
+                            document.body.removeChild(link);
+                        }
                     });
                 }
             setIsLoading(false);
@@ -445,17 +457,28 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         //     responsive: ['md'],
         // },
         {
-            title: <TitleColumn title="" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn title="" minWidth="130px" maxWidth="130px" contentPosition="start"/>,
             render: (text: string, record: InvoiceType) => (
-                <TableCell
-                    minWidth="60px"
-                    maxWidth="60px"
-                    contentPosition="center"
-                    childrenBefore={
-                        <span className="services-cell-style">
-                        <Icon name="download-file" />
+                <div className='services-cell-style__wrapper'>
+                    <TableCell
+                        minWidth="60px"
+                        maxWidth="60px"
+                        contentPosition="center"
+                        childrenBefore={
+                            <span className="services-cell-style" onClick={()=>handleDownloadInvoice(record.uuid)}>
+                                <Icon name="download-file" />
+                            </span>}>
+                    </TableCell>
+                    <TableCell
+                        minWidth="60px"
+                        maxWidth="60px"
+                        contentPosition="center"
+                        childrenBefore={
+                            <span className="services-cell-style" onClick={()=> handleDownloadInvoice(record.uuid, 'preview')}>
+                        <Icon name="preview" />
                         </span>}>
-                </TableCell>
+                    </TableCell>
+                </div>
             ),
             dataIndex: 'uuid',
             key: 'uuid',
@@ -463,17 +486,18 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
-            onCell: (record) => {
-                return {
-                    onClick: () => {handleDownloadInvoice(record.uuid)}
-                };
-            },
+            // onCell: (record) => {
+            //     return {
+            //         onClick: () => {handleDownloadInvoice(record.uuid)}
+            //     };
+            // },
             responsive: ['lg'],
         },
 
+
     ], [handleHeaderCellClick]);
     return (
-        <div className='table'>
+        <div className='table invoices-list'>
             {isLoading && <Loader />}
             <Head>
                 <title>Invoices</title>

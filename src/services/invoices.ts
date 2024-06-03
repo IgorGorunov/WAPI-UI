@@ -27,6 +27,7 @@ const getInvoiceForm = async (
         token: string;
         uuid: string;
         ui?: string;
+        type: string; //download / preview
     }
 ) => {
     try {
