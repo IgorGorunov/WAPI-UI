@@ -177,13 +177,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [filterSentSMS, setFilterSentSMS] = useState<string[]>([]);
     const sentSMSFilterOptions = useMemo(() => ([
         {
-            value: 'Has sent SMS',
-            label: 'Has sent SMS',
+            value: 'SMS was sent',
+            label: 'SMS was sent',
             amount:  calcOrderWithBooleanProperty('sentSMSExist', true),
         },
         {
-            value: "Doesn't have sent SMS",
-            label: "Doesn't have sent SMS",
+            value: "Doesn't have SMS",
+            label: "Doesn't have SMS",
             amount: (orders.length - calcOrderWithBooleanProperty('sentSMSExist', true)),
         },
     ]), [orders]);
@@ -326,8 +326,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 (filterCommentsToCourierService.includes('Without comments') && !order.commentToCourierServiceExist);
             const matchesSelfCollect = !filterSelfCollect.length || (filterSelfCollect.includes('Self collect') && order.selfCollect) ||
                 (filterSelfCollect.includes('Not self collect') && !order.selfCollect);
-            const matchesSentSMS = !filterSentSMS.length || (filterSentSMS.includes('Has sent SMS') && order.sentSMSExist) ||
-                (filterSentSMS.includes("Doesn't have sent SMS") && !order.sentSMSExist);
+            const matchesSentSMS = !filterSentSMS.length || (filterSentSMS.includes('SMS was sent') && order.sentSMSExist) ||
+                (filterSentSMS.includes("Doesn't have SMS") && !order.sentSMSExist);
             const matchesWarehouse = !filterWarehouse.length ||
                 filterWarehouse.map(item=>item.toLowerCase()).includes(order.warehouse.toLowerCase());
             const matchesCourierService = !filterCourierService.length ||
