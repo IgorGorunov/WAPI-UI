@@ -9,7 +9,7 @@ import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {exportFileXLS} from "@/utils/files";
-import { getInbounds} from "@/services/inbounds";
+import { getInbounds} from "@/services/stockMovements";
 import {
     STOCK_MOVEMENT_DOC_TYPE,
     StockMovementType

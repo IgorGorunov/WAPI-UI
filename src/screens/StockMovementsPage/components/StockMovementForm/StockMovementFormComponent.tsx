@@ -28,7 +28,7 @@ import {
     StockMovementParamsType
 } from "@/types/stockMovements";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {sendInboundData, updateInboundData} from "@/services/inbounds";
+import {sendInboundData, updateInboundData} from "@/services/stockMovements";
 import {ApiResponseType} from "@/types/api";
 import {SingleOrderProductFormType} from "@/types/orders";
 import Modal from "@/components/Modal";

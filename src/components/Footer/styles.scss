@@ -45,15 +45,14 @@
       line-height: 40px;
     }
 
-    .is-link {
+    .is-footer-link {
       display: block;
-      //text-decoration: underline;
+      //text-decoration: none;
       transform: scale(1);
       transform-origin: left;
       transition: 0.3s ease;
 
       &:hover {
-        text-decoration: none;
         transform: scale(1.05);
       }
     }

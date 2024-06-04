@@ -9,7 +9,7 @@ import {
     STOCK_MOVEMENT_DOC_TYPE,
     StockMovementParamsType
 } from "@/types/stockMovements";
-import {getInboundData, getInboundParameters} from "@/services/inbounds";
+import {getInboundData, getInboundParameters} from "@/services/stockMovements";
 import {ApiResponseType} from "@/types/api";
 import Modal from "@/components/Modal";
 import StockMovementFormComponent

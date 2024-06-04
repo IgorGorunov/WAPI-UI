@@ -10,7 +10,7 @@ import {ToastContainer} from "@/components/Toast";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
 import Button, {ButtonVariant} from "@/components/Button/Button";
-import {fillInboundByStock} from "@/services/inbounds";
+import {fillInboundByStock} from "@/services/stockMovements";
 
 type PropsType = {
     qualityList: string[];
