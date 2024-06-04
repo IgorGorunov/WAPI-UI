@@ -60,6 +60,10 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
     }
 
     const isNavigationWatched = () => {
+        if (ui) {
+            return true;
+        }
+
         return watchedPages.length > 1 || watchedPages.filter(item => item===TourGuidePages.Navigation).length > 0;
     }
 
