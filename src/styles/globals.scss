@@ -480,6 +480,16 @@ input[type="date"]::before {
   //white-space: break-spaces;
 }
 
+.is-link {
+  color: var(--color-blue);
+  text-decoration: underline;
+  transition: .3s ease;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
 .tour-guide {
   svg {
     width: 24px;
@@ -488,14 +498,6 @@ input[type="date"]::before {
     path {
       transition: 0.3s ease;
     }
-
-    //&:hover {
-    //  //fill: var(--color-blue);
-    //  path {
-    //    stroke: var(--color-blue);
-    //  }
-    //}
-
   }
 
   &.is-active {

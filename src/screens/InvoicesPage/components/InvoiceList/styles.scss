@@ -23,8 +23,37 @@
   gap: 5px;
   top: 15px;
   border-radius: 20px;
-  border: 2px solid #5380F5;
+  //border: 2px solid #5380F5;
   background: #5380F5;
   color: white;
   cursor: pointer;
+  transition: 0.3s ease;
+
+  svg path {
+    transition: .3s ease;
+  }
+
+  &:hover {
+    background-color: var(--color-blue-15);
+
+    svg path {
+      fill: var(--color-gray-blue);
+    }
+  }
+
+  &__wrapper {
+    max-width: 130px;
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+.invoices-list {
+  .icon-preview {
+    width: 26px;
+
+    path {
+      fill: white;
+    }
+  }
 }

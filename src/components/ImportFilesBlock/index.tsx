@@ -9,7 +9,7 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {ApiResponseType} from "@/types/api";
 import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
-import {sendInboundFiles} from "@/services/inbounds";
+import {sendInboundFiles} from "@/services/stockMovements";
 import {ImportFilesType} from "@/types/importFiles";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 

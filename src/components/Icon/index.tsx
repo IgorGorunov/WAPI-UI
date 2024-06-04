@@ -91,6 +91,7 @@ import OutlineShopping from '@/assets/icons/outline_shopping.svg'
 import Lines from '@/assets/icons/lines.svg'
 import Admin from '@/assets/icons/admin.svg'
 import Settings from '@/assets/icons/settings.svg'
+import FillDoc from '@/assets/icons/fillDoc.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -184,6 +185,7 @@ export const icons = {
   'lines': Lines,
   'admin': Admin,
   'settings': Settings,
+  'fill-doc': FillDoc,
 };
 
 export type IconType = keyof typeof icons;

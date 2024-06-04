@@ -25,6 +25,7 @@ import DropZone from "@/components/Dropzone";
 import {ApiResponseType} from '@/types/api';
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
+import WarehouseStatusHistory from "./WarehouseStatusHistory";
 import ProductsTotal from "./ProductsTotal";
 import {toast, ToastContainer} from '@/components/Toast';
 import Pallets from "@/screens/AmazonPrepPage/components/AmazonPrepForm/Pallets";
@@ -699,24 +700,33 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                 }
                 {amazonPrepOrderData?.uuid &&
                     <div key='status-history-tab' className='status-history-tab'>
-                        <div className="card min-height-600 amazon-prep-info--history">
+                        <div className="card amazon-prep-info--history">
                             <h3 className='amazon-prep-info__block-title'>
-                                <Icon name='history' />
+                                <Icon name='history'/>
                                 Status history
                             </h3>
-                            <StatusHistory statusHistory={amazonPrepOrderData?.statusHistory} />
+                            <StatusHistory statusHistory={amazonPrepOrderData?.statusHistory}/>
                         </div>
+
+                        {amazonPrepOrderData?.warehouseStatusHistory && amazonPrepOrderData?.warehouseStatusHistory.length ? <div className="card amazon-prep-info--history">
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='warehouse'/>
+                                Warehouse status history
+                            </h3>
+                            <WarehouseStatusHistory statusHistory={amazonPrepOrderData?.warehouseStatusHistory}/>
+                        </div> : null}
                     </div>
                 }
-                {amazonPrepOrderData?.uuid && amazonPrepOrderData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
-                    <div className="card min-height-600 amazon-prep-info--tickets">
-                        <h3 className='amazon-prep-info__block-title'>
-                            <Icon name='ticket' />
-                            Tickets
-                        </h3>
-                        <DocumentTickets tickets={amazonPrepOrderData.tickets}/>
-                    </div>
-                </div> : null}
+                {amazonPrepOrderData?.uuid && amazonPrepOrderData.tickets.length ?
+                    <div key='tickets-tab' className='tickets-tab'>
+                        <div className="card min-height-600 amazon-prep-info--tickets">
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='ticket'/>
+                                Tickets
+                            </h3>
+                            <DocumentTickets tickets={amazonPrepOrderData.tickets}/>
+                        </div>
+                    </div> : null}
                 <div key='files-tab' className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--files">
                         <TutorialHintTooltip hint={AmazonPrepHints['files'] || ''} position='left' >

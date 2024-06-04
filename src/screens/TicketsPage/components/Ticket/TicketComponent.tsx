@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import "./styles.scss";
 import {ApiResponseType} from "@/types/api";
 import {createTicket, reopenTicket} from "@/services/tickets";
@@ -15,12 +15,13 @@ import DropZone from "@/components/Dropzone";
 import {TabFields, TabTitles} from "./TicketTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import {CreateTicketFields} from "@/screens/TicketsPage/components/Ticket/TicketFormFields";
-import {AttachedFilesType} from "@/types/utility";
+import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import TicketInfoBlock from "@/screens/TicketsPage/components/Ticket/TicketInfoBlock";
 import ChatBlock from "@/screens/TicketsPage/components/Chat";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {TicketHints} from "@/screens/TicketsPage/ticketHints.constants";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 
 type TicketPropsType = {
     subjectType?: string | null;
@@ -59,6 +60,13 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
     };
+
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
 
     //form
     const {control, handleSubmit, formState: { errors }} = useForm({
@@ -134,17 +142,24 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                 token: token,
                 ticket: data
             };
-            const res: ApiResponseType = await createTicket(superUser && ui ? {...requestData, ui} : requestData);
 
+            const res: ApiResponseType = await createTicket(superUser && ui ? {...requestData, ui} : requestData);
+            console.log('ticket res: ', res)
             if (res && "status" in res) {
                 if (res?.status === 200 && res?.data) {
                     //success
                     setDocUuid(res.data);
                 }
-            } else {
+            } else if (res && 'response' in res ) {
+                const errResponse = res.response;
 
+                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+                    const errorMessages = errResponse?.data.errorMessage;
+
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Ticket is not created!`, text: errorMessages, onClose: closeErrorModal})
+                    setShowStatusModal(true);
+                }
             }
-
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -213,7 +228,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                     <Button type="button" variant={ButtonVariant.PRIMARY} onClick={handleReopenTicket}>Reopen ticket</Button>
                 </div> : null}
             </form>
-
+            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </div>
 );
 };

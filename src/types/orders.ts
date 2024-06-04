@@ -63,7 +63,14 @@ export type OrderType = {
         additionalInfo: string;
     }[],
     notifications: boolean;
-
+    commentToCourierService: {
+        period: string;
+        additionalInfo: string;
+    }[];
+    commentToCourierServiceExist: boolean;
+    selfCollect: boolean;
+    sentSMS: {}[];
+    sentSMSExist: boolean;
 }
 
 export type ProductInfoType = {

@@ -33,10 +33,10 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
     setCurrentDate(currentDate);
     setUserStatus(userStatus);
     setTutorialInfo(traningStatus);
-    setTextInfo(textInfo || '');
+    if (textInfo) setTextInfo(textInfo || '');
     setNavItemsAccess(access || []);
     setUserInfoProfile(userProfile?.userInfo || null);
-    setIsSuperUser(!!superUser)
+    if (!!superUser) setIsSuperUser(!!superUser);
 
     setOneTimeToken('');
 

@@ -1,14 +1,14 @@
 import React, {useCallback} from "react";
-import {AmazonPrepOrderHistoryType} from "@/types/amazonPrep";
+import {AmazonPrepOrderHistoryType, AmazonPrepOrderWarehouseStatusHistoryType} from "@/types/amazonPrep";
 import "./styles.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
 
 type PropsType = {
-    statusHistory?: AmazonPrepOrderHistoryType[] ;
+    statusHistory?: AmazonPrepOrderWarehouseStatusHistoryType[] ;
 };
 
-const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
+const WarehouseStatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
 
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
@@ -19,7 +19,6 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
             <div className="order-status-history__header">
                 <div className='date-column'>Period</div>
                 <div className='column status-column'>Status</div>
-                <div className='column tracking-number-column'>Tracking #</div>
                 <div className='column comment-column'>Additional information</div>
             </div>
             <ul className="order-status-history__list">
@@ -34,13 +33,12 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                             <div className='date-column'>{formatDateTimeToStringWithDot(status.period)}</div>
                             <div className='column status-column'>
                                 <span style={{
-                                    borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,
+                                    //borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,
                                     display: 'inline-block',
                                 }}>
                                     {status.status}
                                 </span>
                             </div>
-                            <div className='column tracking-number-column'>{status.trackingNumber}</div>
                             <div className='column comment-column'>{status.additionalInfo}</div>
                         </li>
                     ))}
@@ -49,4 +47,4 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
     );
 };
 
-export default StatusHistory;
+export default WarehouseStatusHistory;

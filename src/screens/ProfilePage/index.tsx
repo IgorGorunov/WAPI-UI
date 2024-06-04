@@ -1,41 +1,58 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Layout from "@/components/Layout/Layout";
 import "./styles.scss";
 import Head from "next/head";
 import Loader from "@/components/Loader";
 import Header from "@/components/Header";
 import Tabs from "@/components/Tabs";
-import ProfileInfo from "@/screens/ProfilePage/components/ProfileInfo";
-import ApiProtocols from "@/screens/ProfilePage/components/ApiProtocols";
-import {ApiProtocolType} from "@/types/profile";
-import {getApiProtocols} from "@/services/profile";
+import ProfileInfo from "./components/ProfileInfo";
+import ApiProtocols from "./components/ApiProtocols";
+import {ApiProtocolType, UserPriceType} from "@/types/profile";
+import {getApiProtocols, getUserContracts, getUserPrices} from "@/services/profile";
 import useAuth from "@/context/authContext";
+import UserContractsAndPrices from "./components/UserContractsAndPrices";
 
 const ProfilePage = () => {
     const {token, superUser, ui} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [apiProtocolsData, setApiProtocolsData] = useState<ApiProtocolType[]|null>(null);
+    const [pricesData, setPricesData] = useState<UserPriceType[]|null>(null);
+    const [contractsData, setContractsData] = useState<any[]|null>(null);
+
+    const fetchProfileData = useCallback(async() => {
+        try {
+            setIsLoading(true);
+            const requestData = {token};
+
+            const res = await getApiProtocols(superUser && ui ? {...requestData, ui} : requestData);
+            if (res.status === 200) {
+                setApiProtocolsData(res.data);
+            }
+
+            const resPrices = await getUserPrices(superUser && ui ? {...requestData, ui} : requestData);
+            if (resPrices.status === 200) {
+                setPricesData(resPrices.data);
+            }
+
+            const resContracts = await getUserContracts(superUser && ui ? {...requestData, ui} : requestData);
+            if (resContracts.status === 200) {
+                setContractsData(resContracts.data);
+            }
+
+        } catch {
+            //something went wrong
+        } finally {
+            setIsLoading(false);
+        }
+    }, [token, ui]);
 
     useEffect(() => {
-        const fetchApiProtocols = async() => {
-            try {
-                setIsLoading(true);
-                const requestData = {token};
-                const res = await getApiProtocols(superUser && ui ? {...requestData, ui} : requestData);
-                if (res.status === 200) {
-                    setApiProtocolsData(res.data);
-                }
-            } catch {
-                //something went wrong
-            } finally {
-                setIsLoading(false);
-            }
-        }
 
-        fetchApiProtocols();
+
+        fetchProfileData();
     }, []);
 
-    const tabTitles = ['User profile', 'Delivery protocols'].map(item=>({title: item}));
+    const tabTitles = ['User profile', 'Delivery protocols', 'Contracts and prices'].map(item=>({title: item}));
 
     return (
         <Layout hasFooter>
@@ -48,12 +65,15 @@ const ProfilePage = () => {
                 {isLoading && <Loader />}
                 <Header pageTitle='Profile' toRight  />
                 <div className='card profile-page__container'>
-                    <Tabs id='order-tabs' tabTitles={tabTitles}>
-                        <div key='prices-tab' className='profile-page-tab'>
-                            <ProfileInfo />
+                    <Tabs id='profile-tabs' tabTitles={tabTitles} withHorizontalDivider>
+                        <div key='profile-info-tab' className='profile-page-tab'>
+                            <ProfileInfo/>
                         </div>
-                        <div key='legal-tab' className='profile-page-tab'>
+                        <div key='protocols-tab' className='profile-page-tab'>
                             <ApiProtocols apiProtocols={apiProtocolsData}/>
+                        </div>
+                        <div key='prices-and-contracts-tab' className='profile-page-tab'>
+                            <UserContractsAndPrices prices={pricesData} contracts={contractsData}/>
                         </div>
                     </Tabs>
                 </div>

@@ -22,9 +22,9 @@ const Footer: React.FC = () => {
         </div>
         <div className="footer-right">
           <ul className="footer-links">
-            <li><a className='is-link' href="mailto:info@wapi.com">info@wapi.com</a></li>
-            <li><Link className='is-link' href={Routes.PrivacyPolicy}>Privacy Policy</Link></li>
-            <li><Link className='is-link' href={Routes.CookiePolicy}>Cookie Policy</Link></li>
+            <li><a className='is-footer-link' href="mailto:info@wapi.com">info@wapi.com</a></li>
+            <li><Link className='is-footer-link' href={Routes.PrivacyPolicy}>Privacy Policy</Link></li>
+            <li><Link className='is-footer-link' href={Routes.CookiePolicy}>Cookie Policy</Link></li>
           </ul>
         </div>
       </div>

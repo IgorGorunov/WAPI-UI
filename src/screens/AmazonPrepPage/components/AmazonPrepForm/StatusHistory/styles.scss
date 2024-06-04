@@ -26,6 +26,10 @@
       font-weight: 700;
       color: var(--color-gray-blue);
       border-bottom: 1px solid var(--border-color);
+
+      &:last-child {
+        border-radius: 0 0 30px 30px;
+      }
     }
   }
 

@@ -1,6 +1,6 @@
 @import "@/constants/devices.scss";
 
-.doc-tickets {
+.order-status-history {
   margin: 24px -28px 0 -28px;
 
   @media (max-width: $mobile) {
@@ -35,10 +35,6 @@
     @media (max-width: $mobile) {
       padding: 10px 6px;
     }
-
-    .new-line {
-      display: block;
-    }
   }
 
   .date-column {
@@ -52,13 +48,13 @@
     }
   }
   .status-column {
-    flex: 0 0 150px;
+    flex: 0 0 200px;
 
     @media (max-width: $upToTablet) {
       flex: 1 1 150px;
     }
   }
-  .number-column {
+  .tracking-number-column {
     flex: 0 0 200px;
 
     @media (max-width: $upToTablet) {
@@ -69,7 +65,7 @@
       display: none;
     }
   }
-  .topic-column {
+  .trouble-status-column {
     flex: 0 0 150px;
 
     @media (max-width: $mobile) {
@@ -80,7 +76,7 @@
       flex: 1 1 150px;
     }
   }
-  .description-column {
+  .comment-column {
     flex: 0 0 300px;
 
     @media (max-width: $upToTablet) {
@@ -90,22 +86,5 @@
 
   .highlight {
     background-color: #FAFBFC;
-  }
-
-  //.is-link {
-  //  font-weight: bold;
-  //  color: var(--color-blue);
-  //  text-decoration: underline;
-  //  cursor: pointer;
-  //
-  //  &:hover {
-  //    text-decoration: none;
-  //  }
-  //}
-}
-
-.tickets-tab {
-  svg path {
-    fill: var(--color-light-blue-gray);
   }
 }

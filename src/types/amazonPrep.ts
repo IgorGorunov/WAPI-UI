@@ -45,6 +45,12 @@ export type AmazonPrepOrderHistoryType = {
     statusGroup: string;
 }
 
+export type AmazonPrepOrderWarehouseStatusHistoryType = {
+    additionalInfo: string;
+    period: string;
+    status: string;
+}
+
 export type AmazonPrepOrderServiceType = {
     amount: number;
     amountEuro: number;
@@ -108,6 +114,7 @@ export type SingleAmazonPrepOrderType = {
     boxesType?: boolean;
     tickets?: TicketType[];
     comment: string;
+    warehouseStatusHistory?: AmazonPrepOrderWarehouseStatusHistoryType[];
 }
 
 export type AmazonPrepOrderProductType = {
