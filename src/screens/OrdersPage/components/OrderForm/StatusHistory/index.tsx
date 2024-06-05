@@ -68,11 +68,13 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
     return (
         <div className="order-status-history">
             <div className="order-status-history__header">
-                <div className='date-column'>Period</div>
-                <div className='column status-column'>Status</div>
-                <div className='column tracking-number-column'>Tracking #</div>
-                <div className='column trouble-status-column'>Trouble status</div>
-                <div className='column comment-column'>Additional information</div>
+                <div className='date-column'>Period / Status</div>
+                {/*<div className='column status--column'>Status</div>*/}
+                <div className='column tracking-number--column'>Tracking #</div>
+                <div className='column trouble-status--column'>Trouble status</div>
+                <div className='column event-column'>Event</div>
+                <div className='column location-column'>Location</div>
+                <div className='column comment--column'>Additional information</div>
 
             </div>
             <ul className="order-status-history__list">
@@ -84,8 +86,8 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                 index % 2 === 1 ? "highlight" : " "
                             }`}
                         >
-                            <div className='date-column'>{formatDateTimeToStringWithDot(status.period)}</div>
-                            <div className='column status-column'>
+                            <div className='date-column'>
+                                <span>{formatDateTimeToStringWithDot(status.period)}</span>
                                 <span style={{
                                     borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,
                                     display: 'inline-block',
@@ -93,9 +95,19 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                     {status.status}
                                 </span>
                             </div>
-                            <div className='column tracking-number-column'>{status.trackingNumber}</div>
-                            <div className='column trouble-status-column'>{status.troubleStatus}</div>
-                            <div className='column comment-column'>{formatCommentMessage(status.additionalInfo)}</div>
+                            {/*<div className='column status--column'>*/}
+                            {/*    <span style={{*/}
+                            {/*        borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,*/}
+                            {/*        display: 'inline-block',*/}
+                            {/*    }}>*/}
+                            {/*        {status.status}*/}
+                            {/*    </span>*/}
+                            {/*</div>*/}
+                            <div className='column tracking-number--column tp'>{status.trackingNumber}</div>
+                            <div className='column trouble-status--column  tp'>{status.troubleStatus}</div>
+                            <div className='column event-column  tp'>{status?.event || ''}</div>
+                            <div className='column location-column  tp'>{status?.location || ''}</div>
+                            <div className='column comment--column'>{formatCommentMessage(status.additionalInfo)}</div>
                         </li>
                     ))}
             </ul>

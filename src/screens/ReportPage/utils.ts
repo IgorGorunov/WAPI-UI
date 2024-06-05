@@ -221,7 +221,7 @@ export const getVariantSortingColsByReportType = (reportType: REPORT_TYPES, vari
 }
 
 export const formatNumbers = (num: number) => {
-    return num.toLocaleString('en-GB').replace(',', ' ');
+    return num.toLocaleString('en-GB').replaceAll(',', ' ');
 }
 
 export const formatPercent = (num: number) => {
