@@ -65,14 +65,14 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
                       {amountPrefix}
                       {amounts.beginOfMonth}
                     </p>
-                    <p>Month to date</p>
+                    <p className={`forecast__small-text`}>Month to date</p>
                   </div>
                   <div className={`grid-col-2 line forecast__col`}>
                     <p className={`forecast__amount`}>
                       {amountPrefix}
                       {amounts.beginOfYear}
                     </p>
-                    <p>Year to date</p>
+                    <p className={`forecast__small-text`}>Year to date</p>
                   </div>
                 </div>
                 <div className="grid-row forecast__row">
@@ -81,14 +81,14 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
                       {amountPrefix}
                       {amounts.forecastByMonth}
                     </p>
-                    <p>Month forecast</p>
+                    <p className={`forecast__small-text`}>Month forecast</p>
                   </div>
                   <div className={`grid-col-2 line `}>
                     <p className={`forecast__amount`}>
                       {amountPrefix}
                       {amounts.forecastByYear}
                     </p>
-                    <p>Year forecast</p>
+                    <p className={`forecast__small-text`}>Year forecast</p>
                   </div>
                 </div>
               </div>
