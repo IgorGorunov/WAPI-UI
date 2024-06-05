@@ -22,6 +22,10 @@
 
   &__wrapper {
     padding: 0 15px;
+
+    @media (min-width: $tablet) and (max-width: $upToDesktop) {
+      padding: 0 12px;
+    }
   }
 
   .title {
@@ -38,6 +42,10 @@
     @media (min-width: $tablet) and (max-width: $upToLaptop) {
       font-size: 32px;
     }
+
+    @media (min-width: $laptop) and (max-width: $upToDesktop) {
+      font-size: 36px;
+    }
   }
 
   &__amount {
@@ -49,6 +57,9 @@
 
     @media (min-width: $tablet) and (max-width: $upToLaptop) {
       font-size: 14px;
+    }
+    @media (min-width: $laptop) and (max-width: $upToDesktop) {
+      font-size: 18px;
     }
   }
 
