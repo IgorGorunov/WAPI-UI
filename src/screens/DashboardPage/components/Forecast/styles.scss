@@ -5,6 +5,10 @@
     opacity: 1;
     height: 100%;
     padding: 26px 24px;
+
+    @media (min-width: $tablet) and (max-width: $upToDesktop) {
+      padding: 26px 12px;
+    }
   }
 
   &.gmv {
@@ -30,6 +34,10 @@
     line-height: 1;
     margin-bottom: 2px;
     min-height: 40px;
+
+    @media (min-width: $tablet) and (max-width: $upToLaptop) {
+      font-size: 32px;
+    }
   }
 
   &__amount {
@@ -38,6 +46,18 @@
     line-height: 1;
     margin-bottom: 6px;
     white-space: nowrap;
+
+    @media (min-width: $tablet) and (max-width: $upToLaptop) {
+      font-size: 14px;
+    }
+  }
+
+  &__small-text {
+    font-size: 12px;
+
+    @media (min-width: $tablet) and (max-width: $upToLaptop) {
+      font-size: 10px;
+    }
   }
 
   &__row {
