@@ -99,6 +99,8 @@ export type OrderHistoryType = {
     trackingNumber: string;
     troubleStatus: string;
     statusGroup: string;
+    location: string;
+    event: string;
 }
 
 export type OrderSmsHistoryType = {

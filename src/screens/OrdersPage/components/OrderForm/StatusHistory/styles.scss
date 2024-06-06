@@ -39,9 +39,16 @@
     .new-line {
       display: block;
     }
+
+    &.tp {
+      padding-top: 22px;
+    }
   }
 
   .date-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     flex: 0 0 120px;
     padding: 10px 12px 10px 0;
     margin-left: 20px;
@@ -51,41 +58,72 @@
       flex: 0 0 70px;
     }
   }
-  .status-column {
-    flex: 0 0 150px;
+
+  .status--column {
+    flex: 0 0 100px;
 
     @media (max-width: $upToTablet) {
-      flex: 1 1 150px;
+      flex: 1 1 100px;
     }
   }
-  .tracking-number-column {
-    flex: 0 0 200px;
+  .tracking-number--column {
+    padding-top: 10px;
+    flex: 0 0 175px;
 
-    @media (max-width: $upToTablet) {
-      flex: 1 0 120px;
-    }
+    //@media (max-width: $upToTablet) {
+    //  flex: 1 0 120px;
+    //}
 
     @media (max-width: $mobile) {
       display: none;
     }
   }
-  .trouble-status-column {
-    flex: 0 0 150px;
+  .trouble-status--column {
+    flex: 0 0 130px;
+    word-break: break-word;
 
     @media (max-width: $mobile) {
       display: none;
     }
 
-    @media (max-width: $upToTablet) {
-      flex: 1 1 150px;
-    }
+    //@media (max-width: $upToTablet) {
+    //  flex: 1 1 120px;
+    //}
   }
-  .comment-column {
-    flex: 0 0 300px;
+  .location-column {
+    flex: 0 0 120px;
+    word-break: break-word;
 
-    @media (max-width: $upToTablet) {
-      flex: 1 1 300px;
+    @media (max-width: $upToLaptop) {
+      display: none;
     }
+
+    //@media (max-width: $upToLaptop) {
+    //  flex: 1 1 150px;
+    //}
+  }
+
+  .event-column {
+    flex: 0 0 130px;
+    word-break: break-word;
+
+    @media (max-width: $upToLaptop) {
+      display: none;
+    }
+
+    //@media (max-width: $upToLaptop) {
+    //  flex: 1 1 130px;
+    //}
+  }
+
+
+  .comment--column {
+    flex: 1 1 280px;
+    word-break: break-word;
+
+    //@media (max-width: $upToTablet) {
+    //  flex: 0 1 280px;
+    //}
   }
 
   .highlight {

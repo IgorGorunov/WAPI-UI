@@ -30,6 +30,17 @@ const resourceColumns: ColumnDef<ReportSalesRowType>[] = [
         aggregatedCell: ({ getValue }) =>
             formatNumbers(getValue<number>()),
     },
+    {
+        accessorKey: 'saleEuro',
+        header: ()=> <Tooltip title="Sales (euro)" ><span>Sales (euro)</span></Tooltip>,
+        aggregationFn: 'sum',
+        size: 80,
+        maxSize: 400,
+        cell: ({getValue }) =>
+            formatNumbers(getValue<number>()),
+        aggregatedCell: ({ getValue }) =>
+            formatNumbers(getValue<number>()),
+    },
 ];
 
 const dimensionColumns: ColumnDef<ReportSalesRowType>[] = [
@@ -174,7 +185,7 @@ export const getReportSalesVariantDimensionCols = (variant: REPORT_SALES_VARIANT
 
 export const getReportSalesVariantResourceCols = (variant: REPORT_SALES_VARIANTS) => {
     return {
-        sumCols: ['quantity'],
+        sumCols: ['quantity', 'saleEuro'],
         uniqueCols: ['wapiTrackingNumber'],
         concatenatedCols: [],
     }
@@ -208,4 +219,5 @@ export const ReportSalesHeaderNames = {
     'price': "Price",
     'quantity': "Product quantity",
     'wapiTrackingNumber': "Orders count",
+    'saleEuro': "Sales (euro)",
 }
