@@ -2,9 +2,9 @@
 
 .order-info {
 
-  @media (min-width: $tablet) {
-    width: calc(100vw - 100px);
-  }
+  //@media (min-width: $tablet) {
+  //  width: calc(100vw - 100px);
+  //}
 
   @media (min-width: $desktop) {
     width: 1090px;
