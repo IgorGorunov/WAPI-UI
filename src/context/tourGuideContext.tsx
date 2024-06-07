@@ -27,14 +27,14 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
     const [watchedPages, setWatchedPages] = useState( Cookie.get('tutorialData') ? Cookie.get('tutorialData').split(';') : [])
     const [runTour, setRunTour] = useState(false);
 
-    const {token, ui} = useAuth();
+    const {token, superUser} = useAuth();
 
     useEffect(() => {
         setWatchedPages(Cookie.get('tutorialData') ? Cookie.get('tutorialData').split(';') : []);
     }, [token]);
 
     const isTutorialWatched = (page: string) => {
-        if (ui) {
+        if (superUser) {
             return true;
         }
 
@@ -60,7 +60,7 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
     }
 
     const isNavigationWatched = () => {
-        if (ui) {
+        if (superUser) {
             return true;
         }
 

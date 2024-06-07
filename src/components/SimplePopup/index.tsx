@@ -69,7 +69,7 @@ const SimplePopup: React.FC<PopupPropsType> = ({ items, width, handleClose, hasC
 
     return (
         <>
-            <div className={`simple-popup ${positionClass} ${!!handleClose ? 'has-close-icon' : ''} ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle} >
+            <div className={`simple-popup ${positionClass}  ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle} >
                 {hasCopyBtn && <button className='copy-btn' onClick={handleCopy}>{items.length > 1 ? 'copy all' : 'copy'}<Icon name='copy' /></button> }
                 {/*{!!handleClose ? (<a className="simple-popup__close" href="#" onClick={handleClose}>*/}
                 {/*    <Icon name='close' />*/}

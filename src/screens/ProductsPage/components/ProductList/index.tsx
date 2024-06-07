@@ -40,6 +40,10 @@ const statusFilter = [
     { value: 'Expired', label: 'Expired' , color: '#FF4000'},
 ];
 
+const extraStatusHints = {
+    'Draft' : ' - needs to be send for approve',
+}
+
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, handleEditProduct}) => {
     const isTouchDevice = useIsTouchDevice();
     const [animating, setAnimating] = useState(false);
@@ -176,10 +180,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                                 content={<SimplePopup
                                     items={[{
                                             uuid: record?.uuid || '',
-                                            title: record?.status || ''
+                                            title: record?.status + (extraStatusHints[record?.status] || '') || ''
                                         } as PopupItem]
                                     }
-                                    width={100}
+                                    //width={100}
                                 />}
                                 trigger={isTouchDevice ? 'click' : 'hover'}
                                 placement="right"

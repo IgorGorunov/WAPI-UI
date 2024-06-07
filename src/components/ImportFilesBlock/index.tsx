@@ -25,7 +25,8 @@ const getFileData = (importType: ImportFilesType) => {
            return {
                downloadFileName: 'Master data.xlsx',
                sendFileFunction: sendProductFiles,
-               title: 'To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
+               title: `To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system.
+               After uploading a document, you need to send draft products for approve (open a product and click "Send")`,
            }
        case ImportFilesType.STOCK_MOVEMENTS_PRODUCTS:
            return {
