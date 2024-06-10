@@ -1,7 +1,5 @@
 
-import {SubmenuBlockType} from "@/components/Navigation/SubmenuBlock";
-
-export const navBlocks: SubmenuBlockType[] = [
+export const navBlocks = (unreadAmount: number = 0) => ([
     {
         submenuTitle: 'Products',
         submenuName: "Products",
@@ -85,13 +83,13 @@ export const navBlocks: SubmenuBlockType[] = [
         submenuName: "Reports",
         submenuIcon: 'reports-folder',
         submenuLink: '/reports',
-        navItems: []
+        navItems: [],
     },
     {
-        submenuTitle: 'Tickets',
+        submenuTitle: `Tickets (${unreadAmount})`,
         submenuName: "Tickets",
         submenuIcon: 'ticket',
-        submenuLink: '/tickets',
-        navItems: []
+        submenuLink: '/tickets?filter=Has new messages',
+        navItems: [],
     },
-];
+]);

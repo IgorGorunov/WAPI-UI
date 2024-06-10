@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
@@ -21,6 +21,7 @@ import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 import {ticketStatusColors, TicketType} from "@/types/tickets";
 import {FILTER_TYPE} from "@/types/utility";
+import {useRouter} from "next/router";
 import Icon from "@/components/Icon";
 
 
@@ -41,7 +42,7 @@ const pageOptions = [
 ];
 
 const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrentRange, handleEditTicket}) => {
-
+    const router = useRouter();
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -98,11 +99,27 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         }))
     ]), [uniqueTopics]);
 
+    const [filterNewMessages, setFilterNewMessages] = useState<string[]>([]);
+    const newMessagesOptions = useMemo(() => ([
+        {
+            value: 'Has new messages',
+            label: 'Has new messages',
+            amount: tickets ? tickets.filter(item=>item.newMessages).length : 0,
+        },
+        {
+            value: "Doesn't have new messages",
+            label: "Doesn't have new messages",
+            amount: tickets ? tickets.length - tickets.filter(item=>item.newMessages).length : 0,
+        },
+
+    ]), [uniqueTopics]);
+
 
 
     const handleClearAllFilters = () => {
         setFilterStatus([]);
         setFilterTopic([]);
+        setFilterNewMessages([]);
         //close filter modal
         //setIsFiltersVisible(false);
     }
@@ -158,8 +175,10 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 (filterStatus.includes(ticket.status));
             const matchesTopic = !filterTopic.length ||
                 (filterTopic.includes(ticket.topic));
+            const matchesNewMessages = !filterNewMessages.length || (filterNewMessages.includes('Has new messages') && ticket.newMessages) ||
+                (filterNewMessages.includes("Doesn't have new messages") && !ticket.newMessages);
 
-            return matchesSearch && matchesStatus && matchesTopic;
+            return matchesSearch && matchesStatus && matchesTopic && matchesNewMessages;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -168,7 +187,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [tickets, searchTerm, filterStatus, sortColumn, sortDirection, fullTextSearch]);
+    }, [tickets, searchTerm, filterStatus, filterNewMessages, sortColumn, sortDirection, fullTextSearch]);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
         setCurrentRange(newRange);
@@ -182,7 +201,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     };
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
     const [isOpenFilterTopic, setIsOpenFilterTopic] = useState(false);
-
+    const [isOpenFilterNewMessages, setIsOpenFilterNewMessages] = useState(true);
 
     const columns: TableColumnProps<TicketType>[]  = [
         {
@@ -241,6 +260,29 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof TicketType),
             }),
             responsive: ['md'],
+        },
+        {
+            title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
+            />,
+            render: (text: string, record: TicketType) => (
+                <TableCell
+                    className='no-padding'
+                    minWidth="20px"
+                    maxWidth="20px"
+                    contentPosition="center"
+                    childrenAfter ={
+                        <span style={{marginTop:'3px'}}>{record.newMessages ? <Icon name="notification" />: null}</span>}
+                >
+                </TableCell>
+
+            ),
+            dataIndex: 'newMessages',
+            key: 'newMessages',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<TicketType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof TicketType),
+            }),
+            responsive: ['lg'],
         },
         {
             title: <TitleColumn
@@ -344,6 +386,16 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
     ];
 
+    //getting filter from query
+    useEffect(() => {
+        const { filter } = router.query;
+        if (filter) {
+            setFilterNewMessages(Array.isArray(filter) ? (filter.length ? filter : []) : [filter]);
+            router.replace('/tickets', undefined, { shallow: true });
+
+        }
+    }, [router.query]);
+
     return (
         <div className="table order-list">
             <Head>
@@ -365,6 +417,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 <div className='current-filter-container'>
                     <CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
                     <CurrentFilters title='Topic' filterState={filterTopic} options={topicOptions} onClose={()=>setFilterTopic([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />
+                    <CurrentFilters title='New messages' filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>setFilterNewMessages([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -405,6 +458,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={statusOptions} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle='Topic' filterOptions={topicOptions} filterState={filterTopic} setFilterState={setFilterTopic} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>
+                <FiltersBlock filterTitle='New messages' filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={setFilterNewMessages} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>
             </FiltersContainer>
         </div>
     );

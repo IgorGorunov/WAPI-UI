@@ -9,6 +9,8 @@ export enum NOTIFICATION_STATUSES {
 export enum NOTIFICATION_TYPES {
     INFO = 'Info',
     ERROR = 'Error',
+    IMPORTANT = 'Important',
+    URGENT = 'Urgent',
 }
 
 export enum NOTIFICATION_OBJECT_TYPES {

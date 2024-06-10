@@ -30,11 +30,11 @@ const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterOptions, f
     };
 
     const getIsChecked = (filterValue: string, filterState: string[]) => {
-        return filterState.indexOf(filterValue) >= 0;
+        return filterState ? filterState.indexOf(filterValue) >= 0 : false;
     }
 
 
-    const filterTitleWithCheckedFilters = `${filterTitle} (${filterState.length})`
+    const filterTitleWithCheckedFilters = `${filterTitle} (${filterState ? filterState.length : 0})`
 
     return (
         <div className="filter-block filter-block__wrapper">

@@ -39,7 +39,7 @@ import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import DocumentTickets from "@/components/DocumentTickets";
 import SingleDocument from "@/components/SingleDocument";
-import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
+import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
@@ -48,6 +48,7 @@ import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
 import FillByStock from "@/screens/StockMovementsPage/components/StockMovementForm/FillByStock";
+import useNotifications from "@/context/notificationContext";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -73,6 +74,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
     const { token, currentDate, superUser, ui } = useAuth();
+    const {notifications} = useNotifications();
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -465,6 +467,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         });
     }
 
+    //notifications
+    let docNotifications: NotificationType[] = [];
+    if (docData && docData.uuid && notifications && notifications.length) {
+        docNotifications = notifications.filter(item => item.objectUuid === docData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
+    }
+
 
     //form fields
     const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType, !!(docData?.uuid && !docData.canEdit && !isFinished)), [docData])
@@ -636,7 +644,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
             <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
-            <Tabs id='stock-movement-tabs' tabTitles={tabTitles} classNames='inside-modal' >
+            <Tabs id='stock-movement-tabs' tabTitles={tabTitles} classNames='inside-modal' notifications={docNotifications}>
                 <div key='general-tab' className='general-tab'>
                     <CardWithHelpIcon classNames='card stock-movement--general'>
                         <h3 className='stock-movement__block-title'>

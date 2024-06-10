@@ -11,7 +11,7 @@ type CurrentFilterType = {
     onClick: ()=>void;
 }
 const CurrentFilters: React.FC<CurrentFilterType> = ({title, options, filterState, onClick, onClose}) => {
-    const valuesAsString = filterState.map(filterVal => options.filter(item=>item.value===filterVal)).filter(filteredValues => filteredValues.length).map(item => item[0].label).join(', ');
+    const valuesAsString =filterState.map(filterVal => options.filter(item=>item.value===filterVal)).filter(filteredValues => filteredValues.length).map(item => item[0].label).join(', ');
 
     return (
         <>

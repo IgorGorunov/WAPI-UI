@@ -29,7 +29,9 @@
       }
     }
 
-    .notification-Error & {
+    .notification-Error &,
+    .notification-Important &,
+    .notification-Urgent & {
       left: 6px;
       height: 14px;
     }
@@ -41,7 +43,9 @@
       //border: 1px solid var(--color-blue);
     }
 
-    &-Error {
+    &-Error,
+    &-Important,
+    &-Urgent {
       color: var(--color-error);
       //border: 1px solid var(--color-error);
 

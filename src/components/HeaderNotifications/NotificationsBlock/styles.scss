@@ -160,28 +160,38 @@
 
             &-icon {
               position: absolute;
-              top: 5px;
-              right: 0;
+              top: 7px;
+              right: 3px;
 
               svg {
-                width: 20px;
+                width: 14px;
+                opacity: 0.7;
 
                 path {
-                  fill: var(--color-blue);
+                  fill: var(--color-error)
                 }
               }
 
-              &.type-Error {
-                top: 7px;
-                right: 3px;
+              &.type-Info {
+                top: 5px;
+                right: 0;
 
                 svg {
-                  width: 14px;
-                  opacity: 0.7;
+                  width: 20px;
 
                   path {
-                    fill: var(--color-error)
+                    fill: var(--color-blue);
                   }
+                }
+              }
+
+              &.type-Important {
+                right: 3px;
+              }
+
+              &.type-Urgent {
+                svg {
+                  width: 20px;
                 }
               }
 
@@ -195,6 +205,15 @@
             font-weight: normal;
           }
         }
+
+        &.type-Important {
+          border: 1px solid var(--color-error);
+        }
+
+        &.type-Urgent {
+          border: 1px solid var(--color-error);
+          background-color: rgba(	230, 46, 46, 0.05);
+        }
       }
 
       .notification-toggle-status-btn {
@@ -207,9 +226,9 @@
         background-color: var(--color-medium-gray);
 
         &.is-unread {
-          &.type-Error {
+          //&.type-Error {
             background-color: var(--color-error);
-          }
+          //}
 
           &.type-Info {
             background-color: var(--color-blue);
