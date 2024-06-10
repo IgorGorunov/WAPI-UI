@@ -8,6 +8,7 @@ import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import {Routes} from "@/types/routes";
 import CookieConsent from "@/components/CookieConsent";
+//import { clarity } from 'react-microsoft-clarity';
 
 type Props = {
   hasHeader?: boolean;
@@ -58,7 +59,10 @@ const Layout: React.FC<Props> = ({
     // }, [isCookieConsentReceived]);
 
     useEffect(() => {
-        setShowCookieConsent(!isCookieConsentReceived)
+        setShowCookieConsent(!isCookieConsentReceived);
+        // if (isCookieConsentReceived && clarity.hasStarted()) {
+        //     clarity.consent();
+        // }
     }, [isCookieConsentReceived]);
 
   return (

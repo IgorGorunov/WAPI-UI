@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import Icon from "@/components/Icon";
 import Link from "next/link";
-import SubmenuBlock from "@/components/Navigation/SubmenuBlock";
+import SubmenuBlock, {SubmenuBlockType} from "@/components/Navigation/SubmenuBlock";
 import {navBlocks} from "@/components/Navigation/navItems.constants";
 import './styles.scss'
 import SubmenuSingleItem from "@/components/Navigation/SubmenuSingleItem";
@@ -10,13 +10,33 @@ import {navigationStepsFull} from "./navigationTourGuideSteps.constants";
 import TourGuide from "@/components/TourGuide";
 import {TourGuidePages} from "@/types/tourGuide";
 import useAuth from "@/context/authContext";
+import useNotifications from "@/context/notificationContext";
+import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 
 type NavigationType = {
     isMenuOpen: boolean;
     handleClose: ()=>void;
 }
+
+const getTicketsWithUnreadMessages = (notifications: NotificationType[]) => {
+    if (!notifications) {
+        return 0;
+    }
+
+    const res = notifications.filter(item => item.objectType === 'Ticket' as NOTIFICATION_OBJECT_TYPES && item.status !== NOTIFICATION_STATUSES.READ).map(item => item.objectUuid);
+    const uniqueTickets = new Set(res);
+
+    return uniqueTickets.size;
+}
+
 const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
     const {isNavItemAccessible} = useAuth();
+    const {notifications} = useNotifications();
+    const [amountOfTicketsWithUnreadMessages, setAmountOfTicketsWithUnreadMessages] = useState(getTicketsWithUnreadMessages(notifications));
+
+    useEffect(() => {
+        setAmountOfTicketsWithUnreadMessages(getTicketsWithUnreadMessages(notifications))
+    }, [notifications]);
 
     //tour guide
     const {isNavigationWatched} = useTourGuide();
@@ -42,6 +62,8 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
         }
     },[runNavigationTour]);
 
+    const navBlocksArray = useMemo(()=>navBlocks(amountOfTicketsWithUnreadMessages) as SubmenuBlockType[],[amountOfTicketsWithUnreadMessages]);
+
 
     return (
         <div className={`burger-menu__overlay ${isMenuOpen ? 'burger-menu__overlay-open' : ''}`} onClick={handleCloseClick}>
@@ -56,7 +78,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                             <span style={{marginLeft: "20px"}}>Dashboard</span>
                         </Link>
                     </div>
-                    {navBlocks && navBlocks.length ? navBlocks.map((navBlock, index)=> (
+                    {navBlocksArray && navBlocksArray.length ? navBlocksArray.map((navBlock, index)=> (
                         isNavItemAccessible(navBlock.submenuName) ? (<div key={`${navBlock.submenuTitle}-${index}`}>
                             {navBlock.submenuLink && !navBlock.navItems.length ?
                                 <SubmenuSingleItem {...navBlock}/>

@@ -21,7 +21,7 @@ export type SubmenuBlockType = {
 
 const SubmenuBlock: React.FC<SubmenuBlockType> = ({submenuTitle, submenuIcon, navItems, handleClose}) => {
 
-    const {isNavItemAccessible} = useAuth()
+    const {isNavItemAccessible} = useAuth();
     const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
 
     return (

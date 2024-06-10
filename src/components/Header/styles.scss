@@ -3,6 +3,7 @@
 .main-header {
   position: relative;
   width: 100%;
+  margin-bottom: 24px;
   z-index: 1000;
 
   &__wrapper {
@@ -10,8 +11,8 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
+    margin-bottom: 12px;
     padding: 10px 20px;
-    margin-bottom: 38px;
   }
 
   &__menu-block {
@@ -106,44 +107,83 @@
     }
   }
 
+  &__icon {
+    cursor: pointer;
+    padding: 10px;
+    background-color: var(--color-blue);
+    border-radius: 50%;
+    line-height: 0;
+    box-shadow: 0 2px 5px 0 var(--color-blue);
+    transition: all 0.3s ease;
 
-}
+    &:hover {
+      background-color: var(--color-blue-15);
+      box-shadow: 0 2px 5px 0 var(--color-blue-15);
 
-.main-header__icon {
-  cursor: pointer;
-  padding: 10px;
-  background-color: var(--color-blue);
-  border-radius: 50%;
-  line-height: 0;
-  box-shadow: 0 2px 5px 0 var(--color-blue);
-  transition: all 0.3s ease;
+      svg {
+        rect:first-of-type {
+          fill: var(--color-blue-15);
+        }
+        path {
+          fill: var(--color-gray-blue);
+          stroke: transparent;
+          //fill: black;
+          //stroke: black;
+        }
+      }
+    }
 
-  &:hover {
-    background-color: var(--color-blue-15);
-    box-shadow: 0 2px 5px 0 var(--color-blue-15);
+    svg {
+      rect:first-of-type {
+        transition: fill 0.3s ease;
+      }
+      path {
+        fill: var(--color-white);
+        transition: all 0.3s ease;
+      }
+    }
   }
+
+  &__urgent-notifications {
+    &-list {
+
+      &-item {
+        position: relative;
+        margin: 6px 0;
+        padding: 6px 36px;
+        border: 1px solid var(--color-red);
+        background-color: rgba(	230, 46, 46, 0.05);
+
+        &--icon {
+          position: absolute;
+          top: 10px;
+          left: 8px;
+          fill: var(--color-red);
+        }
+
+        &--title {
+          font-size: 16px;
+        }
+
+        &--text {
+
+        }
+
+        &--close {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          cursor: pointer;
+          z-index: 1;
+        }
+
+      }
+    }
+  }
+
+
 }
 
-.main-header__icon svg rect:first-of-type {
-  transition: fill 0.3s ease;
-}
-
-.main-header__icon svg path {
-  fill: var(--color-white);
-  transition: all 0.3s ease;
-}
-
-
-.main-header__icon:hover svg rect:first-of-type {
-  fill: var(--color-blue-15);
-}
-
-.main-header__icon:hover svg path {
-  fill: var(--color-gray-blue);
-  stroke: transparent;
-  //fill: black;
-  //stroke: black;
-}
 
 .dashboard-menu-link {
   margin: 10px 10px 10px 10px;

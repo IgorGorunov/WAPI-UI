@@ -2,7 +2,7 @@ import React from "react";
 import "./styles.scss";
 import {NOTIFICATION_TYPES} from "@/types/notifications";
 import Icon from "@/components/Icon";
-import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {getNotificationIconName} from "@/components/HeaderNotifications/NotificationsBlock";
 
 export type NotificationMessageInDocumentsType = {
     title?: string;
@@ -13,9 +13,8 @@ export type NotificationMessageInDocumentsType = {
 };
 
 const NotificationMessageInDocuments: React.FC<NotificationMessageInDocumentsType> = ({
-     title, period, message, type, uuid
+      message, type
  }) => {
-    const {setNotificationAsRead} = useMarkNotificationAsRead();
 
     // const handleClose = () => {
     //     setNotificationAsRead(uuid);
@@ -26,7 +25,7 @@ const NotificationMessageInDocuments: React.FC<NotificationMessageInDocumentsTyp
             {/*{title ? <div className='document-notification-message__title'>{title}</div> : null}*/}
             {/*<div className='document-notification-message__period'>{formatDateTimeToStringWithDotWithoutSeconds(period)}</div>*/}
             <div className='document-notification-message__icon'>
-                <Icon name={type === NOTIFICATION_TYPES.ERROR ? 'error' : 'info'} />
+                <Icon name={getNotificationIconName(type)} />
             </div>
             <div className='document-notification-message__message'>{message}</div>
             {/*<div className='document-notification-message__close' onClick={handleClose}>*/}

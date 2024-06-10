@@ -22,6 +22,7 @@ export type TicketType = {
     tableKey: string;
     supportManager: string;
     number: string;
+    newMessages: boolean;
 }
 
 export type TicketParamsType = {

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./styles.scss";
-import Icon from "@/components/Icon";
+import Icon, {IconType} from "@/components/Icon";
 import {
     NOTIFICATION_OBJECT_TYPES,
     NOTIFICATION_STATUSES,
@@ -24,6 +24,21 @@ const formatMessage = (messageText: string, messageLength = 50) => {
         return messageText.substring(0,messageLength)+'...';
     }
     return messageText;
+}
+
+export const getNotificationIconName = (notificationType: NOTIFICATION_TYPES) => {
+    switch (notificationType) {
+        case NOTIFICATION_TYPES.INFO :
+            return 'info';
+        case NOTIFICATION_TYPES.ERROR :
+            return 'error';
+        case NOTIFICATION_TYPES.IMPORTANT :
+            return 'warning';
+        case NOTIFICATION_TYPES.URGENT :
+            return 'lightning-bolt';
+        default:
+            return 'info';
+    }
 }
 
 
@@ -192,7 +207,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                                                     <div className='notification-period'>{formatDateTimeToStringWithDotWithoutSeconds(item.period)}</div>
                                                     <div className='notification-message'> {formatMessage(item.message, 200)}</div>
                                                     <div className={`notification-icon type-${item.type}`}>
-                                                        <Icon name={item.type === NOTIFICATION_TYPES.ERROR ? 'error' : 'info'} />
+                                                        <Icon name={getNotificationIconName(item.type) as IconType} />
                                                     </div>
                                                 </button>
                                                 <button className={`notification-toggle-status-btn ${item.status === NOTIFICATION_STATUSES.READ ? 'is-read' : 'is-unread'} type-${item.type}`} onClick={()=>handleToggleStatus(item)} />

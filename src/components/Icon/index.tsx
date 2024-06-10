@@ -92,6 +92,8 @@ import Lines from '@/assets/icons/lines.svg'
 import Admin from '@/assets/icons/admin.svg'
 import Settings from '@/assets/icons/settings.svg'
 import FillDoc from '@/assets/icons/fillDoc.svg'
+import LightningBolt from '@/assets/icons/lightning-bolt.svg'
+import Warning from '@/assets/icons/warning.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -186,6 +188,8 @@ export const icons = {
   'admin': Admin,
   'settings': Settings,
   'fill-doc': FillDoc,
+  'lightning-bolt': LightningBolt,
+  'warning': Warning,
 };
 
 export type IconType = keyof typeof icons;

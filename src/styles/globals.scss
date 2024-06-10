@@ -416,7 +416,9 @@ input[type="date"]::before {
 .icon {
   &-info,
   &-warehouse,
-  &-book {
+  &-book,
+  &-trouble,
+  &-lightning-bolt {
     flex: 0 0 auto;
     width: 24px;
   }

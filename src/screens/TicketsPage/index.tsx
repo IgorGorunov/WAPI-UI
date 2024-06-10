@@ -38,28 +38,37 @@ const TicketsPage = () => {
 
     const [isTicketNew, setIsTicketNew] = useState(true);
 
+//
+    const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     //modal
     const [showTicketModal, setShowTicketModal] = useState(false);
     const handleTicketModalClose = () => {
         setShowTicketModal(false);
+
         if (singleTicketUuid) {
             setDocNotificationsAsRead(singleTicketUuid);
         }
-        fetchTickets();
+        fetchTickets(singleTicketUuid);
     }
 
-    //
-    const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
-
-    const fetchTickets = useCallback(async () => {
+    const fetchTickets = useCallback(async (ticketUuid='') => {
         try {
             setIsLoading(true);
             setTicketsData([]);
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
             const res: ApiResponseType = await getTickets(superUser && ui ? {...requestData, ui} : requestData);
             if (res && res.data ) {
-                setTicketsData(res.data);
+                let tickets = res.data;
+                if (ticketUuid) {
+                    const el = res.data.filter(item => item.uuid === ticketUuid);
+
+                    if (el.length) {
+                        tickets = [...res.data.filter(item => item.uuid !== ticketUuid), {...el[0], newMessages: false}].sort((a,b)=>a.number<b.number ? 1 : -1)
+                    }
+                }
+
+                setTicketsData(tickets.sort((a,b)=>a.number<b.number ? 1 : -1));
             }
 
         } catch (error) {
@@ -79,6 +88,18 @@ const TicketsPage = () => {
         setIsTicketNew(false);
         setSingleTicketUuid(uuid)
 
+        // setTicketsData(prevState => {
+        //     if (prevState && prevState.length) {
+        //         const el = prevState.filter(item => item.uuid === uuid);
+        //
+        //         if (el.length) {
+        //             console.log('new state: ', [...prevState.filter(item => item.uuid !== uuid), {...el[0], newMessages: false}].sort((a,b)=>a.number<b.number ? 1 : -1))
+        //             return [...prevState.filter(item => item.uuid !== uuid), {...el[0], newMessages: false}].sort((a,b)=>a.number<b.number ? 1 : -1)
+        //         }
+        //     }
+        //     return [...prevState];
+        // });
+
         setShowTicketModal(true);
 
     }
@@ -91,6 +112,10 @@ const TicketsPage = () => {
             Router.replace('/tickets');
         }
     }, [Router.query]);
+
+    // useEffect(() => {
+    //     fetchTickets();
+    // }, [notifications]);
 
     const handleCreateTicket = (
     ) => {
@@ -130,9 +155,6 @@ const TicketsPage = () => {
                 <Modal title={`Ticket`} onClose={handleTicketModalClose} >
                     <Ticket ticketUuid={singleTicketUuid} onClose={handleTicketModalClose}/>
                 </Modal>
-
-//                 <ModalStatus onClose={handleTicketModalClose} statusModalType={STATUS_MODAL_TYPES.MESSAGE} title="Warning" subtitle={`Tickets are temporary unavailable!
-// We are working on resolving this issue! It will be resolved soon.`} />
             }
             {ticketsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Tickets} /> : null}
         </Layout>
