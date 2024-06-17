@@ -3,6 +3,7 @@ import { Icon, IconType } from "../Icon";
 import "./styles.scss";
 
 export const enum ButtonSize {
+  EXTRA_SMALL= "x-sm",
   SMALL = "sm",
   MEDIUM = "md",
   LARGE = "lg",

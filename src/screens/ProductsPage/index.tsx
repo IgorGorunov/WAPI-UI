@@ -59,16 +59,33 @@ const ProductsPage = () => {
         data: any;
     };
 
+    const isProductSelected = (prevState: ProductType[], uuid: string) => {
+        if (!prevState) return false;
+        //console.log('prev state:', prevState)
+        const neededProduct = prevState.find(item=>item.uuid===uuid);
+
+        //console.log('is selected', prevState, neededProduct)
+
+        if (neededProduct) {
+            return neededProduct.selected || false;
+        } else {
+            return false;
+        }
+    }
+
     const fetchData = useCallback(async () => {
+        console.log('fetch')
         try {
             setIsLoading(true);
-            setProductsData([]);
+            // const prevProductData = productsData || [];
+            // setProductsData([]);
             const requestData = {token: token};
             const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
-                setProductsData(res.data);
-                // setUuid(uuid);
+                //setProductsData([...res.data.map(product => ({...product, selected: isProductSelected(prevProductData, product.uuid)}))]);
+                setProductsData(prevState => [...res.data.map(product => ({...product, selected: isProductSelected(prevState, product.uuid)}))])
+
             } else {
                 console.error("API did not return expected data");
             }
@@ -158,7 +175,7 @@ const ProductsPage = () => {
                     <Button classNames='import-products' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
                     <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
-                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
+                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setProductsData={setProductsData} handleEditProduct={handleEditProduct} reFetchData={fetchData}/>}
             </div>
             {showModal && (uuid && !isNew || !uuid && isNew) &&
                 <ProductForm uuid={uuid} products={productsAsOptions} onClose={onModalClose} onCloseSuccess={()=>{setShowModal(false);fetchData();}} />

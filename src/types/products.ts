@@ -1,6 +1,7 @@
 import {TicketType} from "@/types/tickets";
 
 export type ProductType = {
+    selected?: boolean;
     aliases: string;
     barcodes: string;
     dimension: string;

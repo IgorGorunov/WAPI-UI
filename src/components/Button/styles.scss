@@ -29,6 +29,12 @@
   }
 
   &-size {
+    &-x-sm {
+      padding: 10px 16px;
+      height: auto;
+      line-height: normal;
+    }
+
     &-sm {
       padding: 5px 16px;
     }
