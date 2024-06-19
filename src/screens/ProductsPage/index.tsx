@@ -59,22 +59,21 @@ const ProductsPage = () => {
         data: any;
     };
 
-    const isProductSelected = (prevState: ProductType[], uuid: string) => {
-        if (!prevState) return false;
-        //console.log('prev state:', prevState)
-        const neededProduct = prevState.find(item=>item.uuid===uuid);
-
-        //console.log('is selected', prevState, neededProduct)
-
-        if (neededProduct) {
-            return neededProduct.selected || false;
-        } else {
-            return false;
-        }
-    }
+    // const isProductSelected = (prevState: ProductType[], uuid: string) => {
+    //     if (!prevState) return false;
+    //     //console.log('prev state:', prevState)
+    //     const neededProduct = prevState.find(item=>item.uuid===uuid);
+    //
+    //     //console.log('is selected', prevState, neededProduct)
+    //
+    //     if (neededProduct) {
+    //         return neededProduct.selected || false;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     const fetchData = useCallback(async () => {
-        console.log('fetch')
         try {
             setIsLoading(true);
             // const prevProductData = productsData || [];
@@ -83,9 +82,8 @@ const ProductsPage = () => {
             const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
-                //setProductsData([...res.data.map(product => ({...product, selected: isProductSelected(prevProductData, product.uuid)}))]);
-                setProductsData(prevState => [...res.data.map(product => ({...product, selected: isProductSelected(prevState, product.uuid)}))])
-
+                setProductsData(res.data);
+                //setProductsData(prevState => [...res.data.map(product => ({...product, selected: isProductSelected(prevState, product.uuid)}))])
             } else {
                 console.error("API did not return expected data");
             }
@@ -116,15 +114,15 @@ const ProductsPage = () => {
         setIsNew(false);
         setShowModal(true);
         //fetchProductData(uuid);
-        setProductsData(prevState => {
-            if (prevState && prevState.length) {
-                const el = prevState.filter(item => item.uuid === uuid);
-                if (el.length) {
-                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.name.toLowerCase()<b.name.toLowerCase() ? -1 : 1)
-                }
-            }
-            return prevState;
-        });
+        // setProductsData(prevState => {
+        //     if (prevState && prevState.length) {
+        //         const el = prevState.filter(item => item.uuid === uuid);
+        //         if (el.length) {
+        //             return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.name.toLowerCase()<b.name.toLowerCase() ? -1 : 1)
+        //         }
+        //     }
+        //     return prevState;
+        // });
     }
 
     useEffect(() => {

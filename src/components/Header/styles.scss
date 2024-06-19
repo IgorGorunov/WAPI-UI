@@ -177,6 +177,9 @@
           z-index: 1;
         }
 
+        &.is-clickable {
+          cursor: pointer;
+        }
       }
     }
   }
