@@ -74,6 +74,17 @@
     }
   }
 
+  &.no-margin {
+    input {
+      margin-right: 0;
+    }
+  }
+
+  &.vertical-center {
+    padding-top: 0;
+    margin-bottom: 0;
+  }
+
   .table-form-fields & {
     padding-top: 0;
     margin-bottom: 0;

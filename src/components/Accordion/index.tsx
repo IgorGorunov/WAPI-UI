@@ -7,11 +7,13 @@ type AccordionPropsType = {
     children?: React.ReactNode;
     isOpen?: boolean;
     setIsOpen?: (val: boolean)=> void;
+    classNames?: string;
 }
 
-const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= false, setIsOpen }) => {
+const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= false, setIsOpen, classNames='' }) => {
     const [isActive, setIsActive] = useState(isOpen);
     const [height, setHeight] = useState('0px');
+    const [showOverflow, setShowOverflow] = useState(isOpen);
 
     const contentSpace = useRef<HTMLDivElement>(null);
 
@@ -44,8 +46,16 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= fals
         setHeight(isActive ? '0px' : `${contentSpace.current.scrollHeight}px`);
     }
 
+    useEffect(() => {
+        if (isActive) {
+            setTimeout(()=>setShowOverflow(true), 300)
+        } else {
+            setShowOverflow(false);
+        }
+    }, [isActive]);
+
     return (
-        <div className="accordion-item">
+        <div className={`accordion-item ${classNames} ${showOverflow ? "is-active" : 'deactivated'}`}>
             <button
                 className={`accordion-item__title ${isActive ? "is-active" : ''}`}
                 onClick={toggleAccordion}

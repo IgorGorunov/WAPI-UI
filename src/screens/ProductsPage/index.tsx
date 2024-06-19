@@ -59,16 +59,31 @@ const ProductsPage = () => {
         data: any;
     };
 
+    // const isProductSelected = (prevState: ProductType[], uuid: string) => {
+    //     if (!prevState) return false;
+    //     //console.log('prev state:', prevState)
+    //     const neededProduct = prevState.find(item=>item.uuid===uuid);
+    //
+    //     //console.log('is selected', prevState, neededProduct)
+    //
+    //     if (neededProduct) {
+    //         return neededProduct.selected || false;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-            setProductsData([]);
+            // const prevProductData = productsData || [];
+            // setProductsData([]);
             const requestData = {token: token};
             const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setProductsData(res.data);
-                // setUuid(uuid);
+                //setProductsData(prevState => [...res.data.map(product => ({...product, selected: isProductSelected(prevState, product.uuid)}))])
             } else {
                 console.error("API did not return expected data");
             }
@@ -99,15 +114,15 @@ const ProductsPage = () => {
         setIsNew(false);
         setShowModal(true);
         //fetchProductData(uuid);
-        setProductsData(prevState => {
-            if (prevState && prevState.length) {
-                const el = prevState.filter(item => item.uuid === uuid);
-                if (el.length) {
-                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.name.toLowerCase()<b.name.toLowerCase() ? -1 : 1)
-                }
-            }
-            return prevState;
-        });
+        // setProductsData(prevState => {
+        //     if (prevState && prevState.length) {
+        //         const el = prevState.filter(item => item.uuid === uuid);
+        //         if (el.length) {
+        //             return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.name.toLowerCase()<b.name.toLowerCase() ? -1 : 1)
+        //         }
+        //     }
+        //     return prevState;
+        // });
     }
 
     useEffect(() => {
@@ -158,7 +173,7 @@ const ProductsPage = () => {
                     <Button classNames='import-products' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
                     <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
-                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct}/>}
+                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setProductsData={setProductsData} handleEditProduct={handleEditProduct} reFetchData={fetchData}/>}
             </div>
             {showModal && (uuid && !isNew || !uuid && isNew) &&
                 <ProductForm uuid={uuid} products={productsAsOptions} onClose={onModalClose} onCloseSuccess={()=>{setShowModal(false);fetchData();}} />

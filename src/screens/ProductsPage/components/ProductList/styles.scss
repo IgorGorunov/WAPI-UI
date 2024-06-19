@@ -49,3 +49,37 @@
 		}
 	}
 }
+
+///
+.list-extra-actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 0 6px;
+
+	.tutorial-hint-tooltip.no-hint {
+		margin-top: 0;
+	}
+
+	&--select {
+		padding: 0;
+		min-width: 215px;
+
+		@media (max-width: $mobile) {
+			min-width: 155px;
+		}
+	}
+}
+
+///
+.list-extra-actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 0 6px;
+
+	&--select {
+		padding: 0;
+		min-width: 130px;
+	}
+}

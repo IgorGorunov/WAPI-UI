@@ -1,6 +1,11 @@
 .accordion-item {
   width: 100%;
-  overflow: hidden;
+  //overflow: hidden;
+  //transition: .3s ease;
+
+  //&.is-active {
+  //  overflow: initial;
+  //}
 
   &__title {
     display: flex;
@@ -37,6 +42,14 @@
       &.active {
         transform: rotate(0deg);
       }
+
+      .extra-actions & {
+        margin-left: 0;
+      }
+    }
+
+    .extra-actions & {
+      justify-content: normal;
     }
   }
 
@@ -47,6 +60,27 @@
       background-color: var(--color-white);
       border-bottom: 2px solid var(--border-color);
       transition: max-height 0.3s ease-in;
+      overflow: hidden;
+
+      .deactivated & {
+        overflow: hidden;
+      }
+
+      .is-active & {
+        overflow: initial;
+      }
+
+      .extra-actions & {
+        background-color: transparent;
+      }
     }
+
+    .extra-actions & {
+      padding: 8px 16px;
+    }
+  }
+
+  &.extra-actions {
+    margin-bottom: -16px;
   }
 }
