@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Pagination, Popover, Table, Tooltip} from 'antd';
 import {ColumnType} from "antd/es/table";
 
@@ -14,23 +14,15 @@ import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import SearchField from "@/components/SearchField";
 import {FormFieldTypes} from "@/types/forms";
-import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
+import Button, {ButtonVariant} from "@/components/Button/Button";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import CurrentFilters from "@/components/CurrentFilters";
 import FiltersBlock from "@/components/FiltersBlock";
-import {FILTER_TYPE, STATUS_MODAL_TYPES} from "@/types/utility";
+import {FILTER_TYPE,} from "@/types/utility";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import SimplePopup, {PopupItem} from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
-import Accordion from "@/components/Accordion";
-import ModalConfirm from "@/components/ModalConfirm";
-import Loader from "@/components/Loader";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {getProductByUID, sendProductInfo} from "@/services/products";
-import useAuth from "@/context/authContext";
-import {ApiResponseType} from "@/types/api";
-import {validateProduct} from "@/screens/ProductsPage/components/ProductForm/temporaryUtils";
 
 type ProductListType = {
     products: ProductType[];
@@ -50,10 +42,10 @@ const statusFilter = [
     { value: 'Expired', label: 'Expired' , color: '#FF4000'},
 ];
 
-const statusOptions = [
-    { value: 'Draft', label: 'Draft' , color: '#FEDB4F'},
-    { value: 'Pending', label: 'Pending (send to approve)' , color: '#FFA500'},
-];
+// const statusOptions = [
+//     { value: 'Draft', label: 'Draft' , color: '#FEDB4F'},
+//     { value: 'Pending', label: 'Pending (send to approve)' , color: '#FFA500'},
+// ];
 
 const extraStatusHints = {
     'Draft' : ' - needs to be send for approve',
@@ -61,12 +53,11 @@ const extraStatusHints = {
 
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setProductsData, handleEditProduct, reFetchData}) => {
 
-    //console.log('products 123: ', products.map(item=>item.selected), products)
-    const {token, superUser, ui} = useAuth();
+    //const {token, superUser, ui} = useAuth();
 
     const isTouchDevice = useIsTouchDevice();
     const [animating, setAnimating] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    //const [isLoading, setIsLoading] = useState(false);
 
     // Popup
     const getPopupItems = useCallback((hoveredProduct) => {
@@ -183,197 +174,189 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     }, [searchTerm, filterStatus]);
 
 
-    //change products status
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
-    //change status errors
-    const [changeStatusErrors, setChangeStatusErrors] = useState([]);
-    //status modal
-    const [showStatusModal, setShowStatusModal]=useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeSuccessModal = useCallback(()=>{
-        setChangeStatusErrors([])
-        setShowStatusModal(false);
-        reFetchData();
-    }, []);
-    const closeErrorModal = useCallback(()=>{
-        setChangeStatusErrors([])
-        setShowStatusModal(false);
-    }, [])
-
-    //select all products
-    const [selectedProducts, setSelectedProducts] = useState<ProductType[]>([]);
-    const [isAllSelected, setIsAllSelected] = useState(false);
-    const selectAllProducts = (val: boolean) => {
-        console.log('select all: ', isAllSelected);
-        setIsAllSelected(val);
-
-        setProductsData(prevState => {
-            return prevState.map(item => ({...item, selected: val})).sort((a,b)=>a.name.toLowerCase()<b.name.toLowerCase() ? -1 : 1)
-        });
-
-        if (val) {
-            setSelectedProducts(filteredProducts);
-        } else {
-            setSelectedProducts([]);
-        }
-    }
-
-    const selectProduct = (val: boolean, record: ProductType) => {
-        setProductsData(prevState => {
-            return [...prevState.filter(item => item.uuid !== record.uuid), {...record, selected: val}].sort((a,b)=>a.name.toLowerCase()<b.name.toLowerCase() ? -1 : 1)
-        })
-
-        if (val) {
-            setSelectedProducts(prevState => ([...prevState, record]));
-        } else {
-            setSelectedProducts(prevState => ([...prevState.filter(item => item.uuid !== record.uuid)]));
-        }
-    }
-
-    const [selectedNewStatus, setSelectedNewStatus] = useState(statusOptions ? statusOptions[0].value : '');
-
-
-    const handleOneProductStatusChange = (product: ProductType, status: string)=> {
-        return new Promise((resolve, reject) => {
-            (async(product: ProductType, status: string) => {
-                try {
-                    const requestData1 = {token: token, uuid:product.uuid};
-                    const resProductData: ApiResponseType = await getProductByUID(superUser && ui ? {...requestData1, ui} : requestData1);
-                    if (resProductData && "data" in resProductData) {
-                        const productData = resProductData.data;
-                        if (productData.canEdit) {
-                            productData.status = status;
-                            //we got product data, now we send new status
-                            const requestData2 = {
-                                token: token,
-                                productData: productData,
-                            };
-                            if (status !== 'Draft') {
-                                const validationRes = validateProduct(productData);
-                                if (!validationRes.isValid) {
-                                    setChangeStatusErrors(prevState => [...prevState, {product: product, errors: validationRes.errors}])
-
-                                    return resolve(false);
-                                }
-                            }
-
-                            const resStatusChange: ApiResponseType = await sendProductInfo(superUser && ui ? {
-                                ...requestData2,
-                                ui
-                            } : requestData2);
-
-                            if (resStatusChange && "status" in resStatusChange) {
-                                if (resStatusChange?.status === 200) {
-                                    //success
-                                    console.log('is success', selectedProducts, )
-                                    setProductsData(prevState=>[...prevState.filter(item=>item.uuid!==product.uuid), {...product, selected: false}])
-                                    return resolve(true);
-                                }
-                            } else if (resStatusChange && 'response' in resStatusChange ) {
-                                const errResponse = resStatusChange.response;
-
-                                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
-                                    //get errors, set error messages
-                                    const errorMessages = errResponse?.data.errorMessage;
-                                    if (!changeStatusErrors.find(item => item.product.uuid === product.uuid)) {
-                                        setChangeStatusErrors(prevState => [...prevState, {product: product, errors: errorMessages}]);
-                                    }
-
-                                    return resolve(false);
-                                }
-                            }
-                        } else {
-                            //can't edit, set error
-                            setChangeStatusErrors(prevState => [...prevState, {product: product, errors: ["You can't edit this order"]}])
-
-                            return resolve(false);
-                        }
-
-                    } else {
-                        //set error - product cannot be opened
-                        setChangeStatusErrors(prevState => [...prevState, {product: product, errors: ["Something went wrong. Try again a bit later."]}])
-                        return resolve(false);
-                    }
-
-                } catch(err) {
-                    return reject(err);
-                }
-            })(product, status);
-        });
-    }
-
-    useEffect(() => {
-        console.log('selected products', selectedProducts)
-    }, [selectedProducts]);
-
-    const handleStatusChange = async() => {
-        setShowConfirmModal(false);
-        setIsLoading(true);
-        setProductsData(prevState => [...prevState.map(item => (item.status === selectedNewStatus ? {...item, selected: false } : item))]);
-        try {
-            const results = await Promise.allSettled(selectedProducts.filter(product=>product.status !== selectedNewStatus).map(product => handleOneProductStatusChange(product,selectedNewStatus)));
-            //check results
-            const successful = results.filter(item => item?.status === 'fulfilled' && item?.value===true).length;
-
-            if (successful === results.length) {
-                //success
-                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Status was changed successfully!`, onClose: closeSuccessModal})
-                setShowStatusModal(true);
-            } else if (successful < 1) {
-                //all failed
-                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `All of the selected products have errors. Please, fix them before changing status!`, onClose: closeSuccessModal})
-                setShowStatusModal(true);
-            } else {
-                //some successful, some failed
-                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Some of the selected products have errors. Please, fix them before changing status!`, onClose: closeErrorModal})
-                setShowStatusModal(true);
-            }
-
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setIsLoading(false);
-        }
-
-
-
-
-    }
-
-    useEffect(() => {
-        console.log('changeStatusErrors', changeStatusErrors)
-    }, [changeStatusErrors]);
+    // //change products status
+    // const [showConfirmModal, setShowConfirmModal] = useState(false);
+    // //change status errors
+    // const [changeStatusErrors, setChangeStatusErrors] = useState([]);
+    // //status modal
+    // const [showStatusModal, setShowStatusModal]=useState(false);
+    // const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    // const closeSuccessModal = useCallback(()=>{
+    //     setChangeStatusErrors([])
+    //     setShowStatusModal(false);
+    //     reFetchData();
+    // }, []);
+    // const closeErrorModal = useCallback(()=>{
+    //     setChangeStatusErrors([])
+    //     setShowStatusModal(false);
+    // }, [])
+    //
+    // //select all products
+    // const [selectedProducts, setSelectedProducts] = useState<ProductType[]>([]);
+    // const [isAllSelected, setIsAllSelected] = useState(false);
+    // const selectAllProducts = (val: boolean) => {
+    //     console.log('select all: ', isAllSelected);
+    //     setIsAllSelected(val);
+    //
+    //     setProductsData(prevState => {
+    //         return prevState.map(item => ({...item, selected: val})).sort((a,b)=>a.name.toLowerCase()<b.name.toLowerCase() ? -1 : 1)
+    //     });
+    //
+    //     if (val) {
+    //         setSelectedProducts(filteredProducts);
+    //     } else {
+    //         setSelectedProducts([]);
+    //     }
+    // }
+    //
+    // const selectProduct = (val: boolean, record: ProductType) => {
+    //     setProductsData(prevState => {
+    //         return [...prevState.filter(item => item.uuid !== record.uuid), {...record, selected: val}].sort((a,b)=>a.name.toLowerCase()<b.name.toLowerCase() ? -1 : 1)
+    //     })
+    //
+    //     if (val) {
+    //         setSelectedProducts(prevState => ([...prevState, record]));
+    //     } else {
+    //         setSelectedProducts(prevState => ([...prevState.filter(item => item.uuid !== record.uuid)]));
+    //     }
+    // }
+    //
+    // const [selectedNewStatus, setSelectedNewStatus] = useState(statusOptions ? statusOptions[0].value : '');
+    //
+    //
+    // const handleOneProductStatusChange = (product: ProductType, status: string)=> {
+    //     return new Promise((resolve, reject) => {
+    //         (async(product: ProductType, status: string) => {
+    //             try {
+    //                 const requestData1 = {token: token, uuid:product.uuid};
+    //                 const resProductData: ApiResponseType = await getProductByUID(superUser && ui ? {...requestData1, ui} : requestData1);
+    //                 if (resProductData && "data" in resProductData) {
+    //                     const productData = resProductData.data;
+    //                     if (productData.canEdit) {
+    //                         productData.status = status;
+    //                         //we got product data, now we send new status
+    //                         const requestData2 = {
+    //                             token: token,
+    //                             productData: productData,
+    //                         };
+    //                         if (status !== 'Draft') {
+    //                             const validationRes = validateProduct(productData);
+    //                             if (!validationRes.isValid) {
+    //                                 setChangeStatusErrors(prevState => [...prevState, {product: product, errors: validationRes.errors}])
+    //
+    //                                 return resolve(false);
+    //                             }
+    //                         }
+    //
+    //                         const resStatusChange: ApiResponseType = await sendProductInfo(superUser && ui ? {
+    //                             ...requestData2,
+    //                             ui
+    //                         } : requestData2);
+    //
+    //                         if (resStatusChange && "status" in resStatusChange) {
+    //                             if (resStatusChange?.status === 200) {
+    //                                 //success
+    //                                 console.log('is success', selectedProducts, )
+    //                                 setProductsData(prevState=>[...prevState.filter(item=>item.uuid!==product.uuid), {...product, selected: false}])
+    //                                 return resolve(true);
+    //                             }
+    //                         } else if (resStatusChange && 'response' in resStatusChange ) {
+    //                             const errResponse = resStatusChange.response;
+    //
+    //                             if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+    //                                 //get errors, set error messages
+    //                                 const errorMessages = errResponse?.data.errorMessage;
+    //                                 if (!changeStatusErrors.find(item => item.product.uuid === product.uuid)) {
+    //                                     setChangeStatusErrors(prevState => [...prevState, {product: product, errors: errorMessages}]);
+    //                                 }
+    //
+    //                                 return resolve(false);
+    //                             }
+    //                         }
+    //                     } else {
+    //                         //can't edit, set error
+    //                         setChangeStatusErrors(prevState => [...prevState, {product: product, errors: ["You can't edit this order"]}])
+    //
+    //                         return resolve(false);
+    //                     }
+    //
+    //                 } else {
+    //                     //set error - product cannot be opened
+    //                     setChangeStatusErrors(prevState => [...prevState, {product: product, errors: ["Something went wrong. Try again a bit later."]}])
+    //                     return resolve(false);
+    //                 }
+    //
+    //             } catch(err) {
+    //                 return reject(err);
+    //             }
+    //         })(product, status);
+    //     });
+    // }
+    //
+    // const handleStatusChange = async() => {
+    //     setShowConfirmModal(false);
+    //     setIsLoading(true);
+    //     setProductsData(prevState => [...prevState.map(item => (item.status === selectedNewStatus ? {...item, selected: false } : item))]);
+    //     try {
+    //         const results = await Promise.allSettled(selectedProducts.filter(product=>product.status !== selectedNewStatus).map(product => handleOneProductStatusChange(product,selectedNewStatus)));
+    //         //check results
+    //         const successful = results.filter(item => item?.status === 'fulfilled' && item?.value===true).length;
+    //
+    //         if (successful === results.length) {
+    //             //success
+    //             setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Status was changed successfully!`, onClose: closeSuccessModal})
+    //             setShowStatusModal(true);
+    //         } else if (successful < 1) {
+    //             //all failed
+    //             setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `All of the selected products have errors. Please, fix them before changing status!`, onClose: closeSuccessModal})
+    //             setShowStatusModal(true);
+    //         } else {
+    //             //some successful, some failed
+    //             setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Some of the selected products have errors. Please, fix them before changing status!`, onClose: closeErrorModal})
+    //             setShowStatusModal(true);
+    //         }
+    //
+    //     } catch (err) {
+    //         console.error(err);
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    //
+    //
+    //
+    //
+    // }
 
     // Table
     const columns: ColumnType<ProductType>[] = useMemo(() => [
-        {
-            title: (
-                <div style={{width: '30px', justifyContent: 'center', alignItems: 'center'}}>
-                    <FieldBuilder
-                        name={'selectedAllUnits'}
-                        fieldType={FormFieldTypes.CHECKBOX}
-                        checked={isAllSelected}
-                        //disabled={}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                            selectAllProducts(e.target.checked);
-                        }}
-                        classNames={'no-margin vertical-center'}
-                    /></div>
-
-            ),
-            dataIndex: 'selected',
-            width: '40px',
-            key: 'selected',
-            render: (text: string, record, index) => (
-                <FieldBuilder
-                    name={`products.${index}.selected`}
-                    fieldType={FormFieldTypes.CHECKBOX}
-                    value={record?.selected || false}
-                    onChange={(e: ChangeEvent<HTMLInputElement>)=>selectProduct(e.target.checked,record)}
-                    classNames={'no-margin vertical-center'}
-                />
-            ),
-        },
+        // {
+        //     title: (
+        //         <div style={{width: '30px', justifyContent: 'center', alignItems: 'center'}}>
+        //             <FieldBuilder
+        //                 name={'selectedAllUnits'}
+        //                 fieldType={FormFieldTypes.CHECKBOX}
+        //                 checked={isAllSelected}
+        //                 //disabled={}
+        //                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
+        //                     selectAllProducts(e.target.checked);
+        //                 }}
+        //                 classNames={'no-margin vertical-center'}
+        //             /></div>
+        //
+        //     ),
+        //     dataIndex: 'selected',
+        //     width: '40px',
+        //     key: 'selected',
+        //     render: (text: string, record, index) => (
+        //         <FieldBuilder
+        //             name={`products.${index}.selected`}
+        //             fieldType={FormFieldTypes.CHECKBOX}
+        //             value={record?.selected || false}
+        //             onChange={(e: ChangeEvent<HTMLInputElement>)=>selectProduct(e.target.checked,record)}
+        //             classNames={'no-margin vertical-center'}
+        //         />
+        //     ),
+        // },
         {
             width: "40px",
             title: <TitleColumn minWidth="20px" maxWidth="20px" contentPosition="center"/>,
@@ -548,11 +531,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
             }),
         },
-        ], [handleHeaderCellClick, isAllSelected]);
+        ], [handleHeaderCellClick]);   //], [handleHeaderCellClick, isAllSelected]);
 
     return (
         <div className='table'>
-            {isLoading && <Loader />}
+            {/*{isLoading && <Loader />}*/}
             <Head>
                 <title>Products</title>
                 <meta name="products" content="products"/>
@@ -575,13 +558,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 <p>Before sending a new product to our warehouse, please wait until the product receives "Approved" status</p>
             </div>
 
-            <Accordion title={'Extra actions'} classNames='extra-actions'>
-                <div className='list-extra-actions'>
-                    <p className='text-bold'>Set status of selected products to:</p>
-                    <FieldBuilder fieldType={FormFieldTypes.SELECT} name={'newStatus'} options={statusOptions} value={selectedNewStatus} isClearable={false} onChange={(val)=>setSelectedNewStatus(val as string)} classNames={'list-extra-actions--select'}/>
-                    <Button disabled={!selectedProducts.length} size={ButtonSize.EXTRA_SMALL} onClick={()=>setShowConfirmModal(true)}>Apply</Button>
-                </div>
-            </Accordion>
+            {/*<Accordion title={'Extra actions'} classNames='extra-actions'>*/}
+            {/*    <div className='list-extra-actions'>*/}
+            {/*        <p className='text-bold'>Set status of selected products to:</p>*/}
+            {/*        <FieldBuilder fieldType={FormFieldTypes.SELECT} name={'newStatus'} options={statusOptions} value={selectedNewStatus} isClearable={false} onChange={(val)=>setSelectedNewStatus(val as string)} classNames={'list-extra-actions--select'}/>*/}
+            {/*        <Button disabled={!selectedProducts.length} size={ButtonSize.EXTRA_SMALL} onClick={()=>setShowConfirmModal(true)}>Apply</Button>*/}
+            {/*    </div>*/}
+            {/*</Accordion>*/}
 
 
             <div className='filter-and-pagination-container'>
@@ -642,8 +625,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                               setFilterState={setFilterStatus} isOpen={isOpenFilterStatus}
                               setIsOpen={setIsOpenFilterStatus}/>
             </FiltersContainer>
-            {showConfirmModal && <ModalConfirm actionText={`to change status of ${selectedProducts.length} product${selectedProducts.length>1 ?'s':''}`} onOk={handleStatusChange} onCancel={()=>setShowConfirmModal(false)} />}
-            {showStatusModal && (modalStatusInfo.statusModalType===STATUS_MODAL_TYPES.SUCCESS || changeStatusErrors.length) && <ModalStatus {...modalStatusInfo} multipleObjectsErrorText={changeStatusErrors.map(item=>({title: `${item.product.name}:`, text: item.errors}))}/>}
+            {/*{showConfirmModal && <ModalConfirm actionText={`to change status of ${selectedProducts.length} product${selectedProducts.length>1 ?'s':''}`} onOk={handleStatusChange} onCancel={()=>setShowConfirmModal(false)} />}*/}
+            {/*{showStatusModal && (modalStatusInfo.statusModalType===STATUS_MODAL_TYPES.SUCCESS || changeStatusErrors.length) && <ModalStatus {...modalStatusInfo} multipleObjectsErrorText={changeStatusErrors.map(item=>({title: `${item.product.name}:`, text: item.errors}))}/>}*/}
 
         </div>
     );
