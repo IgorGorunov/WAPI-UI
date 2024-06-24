@@ -70,5 +70,12 @@
     .flag-icon {
       margin-left: 6px;
     }
+
+    &.is-disabled {
+      background-color: var(--color-gray2);
+      color: var(--color-gray-blue)
+    }
   }
+
+
 }

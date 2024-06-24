@@ -43,6 +43,12 @@
     margin-bottom: 8px;
   }
 
+  &__select-all-btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -20px;
+  }
+
   &__buttons {
     display: flex;
     justify-content: flex-end;

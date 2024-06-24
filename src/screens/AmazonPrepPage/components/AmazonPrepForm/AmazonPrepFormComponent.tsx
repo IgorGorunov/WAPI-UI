@@ -647,7 +647,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                     <div className='amazon-prep-info--btns__table-btns'>
                                         <TutorialHintTooltip hint={AmazonPrepHints['selection'] || ''} forBtn >
                                             <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
-                                                Selection
+                                                Select by list
                                             </Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
@@ -751,7 +751,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
             </form>
                 {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
                 {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
-                    <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
+                    <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={warehouse} needOnlyOneWarehouse={false}/>
                 </Modal>}
                 {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.AmazonPrep} subjectUuid={docUuid} subject={`AmazonPrep ${amazonPrepOrderData?.wapiTrackingNumber} ${amazonPrepOrderData?.date ? formatDateStringToDisplayString(amazonPrepOrderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
             </>

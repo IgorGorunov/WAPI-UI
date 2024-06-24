@@ -26,6 +26,7 @@ export type OptionType = {
   extraInfo?: string;
   amount?: number;
   color?: string;
+  isDisabled?: boolean;
 }
 
 export const enum WidthType {

@@ -99,6 +99,7 @@ export const DetailsFields = (
         canEditETA,
         receiverHide,
         senderHide,
+        isSenderDisabled,
     }:{
         newObject: boolean,
         docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -110,6 +111,7 @@ export const DetailsFields = (
         canEditETA: boolean;
         receiverHide: boolean;
         senderHide: boolean;
+        isSenderDisabled?: boolean
     }
 ) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
@@ -126,7 +128,7 @@ export const DetailsFields = (
             name: 'sender',
             label: 'Sender',
             placeholder: "",
-            disabled: senderHide,
+            disabled: senderHide || isSenderDisabled,
             rules: {
                 required: "Required field",
             },

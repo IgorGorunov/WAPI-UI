@@ -18,6 +18,7 @@ import {ApiResponseType} from "@/types/api";
 import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {getProductSelection} from "@/services/productSelection";
+import {aggregateTableData} from "@/utils/aggregateTable";
 
 
 export type SelectedProductType = {
@@ -25,12 +26,16 @@ export type SelectedProductType = {
     product: string;
     name?: string;
     quantity: number;
+    warehouse?: string;
 }
 
 type ProductSelectionPropsType = {
     productList?: ProductsSelectionType[];
     alreadyAdded: SelectedProductType[];
     handleAddSelection: (selectedProducts: SelectedProductType[]) => void;
+    selectedDocWarehouse?: string;
+    needWarehouses?: boolean;
+    needOnlyOneWarehouse?: boolean;
 };
 
 const getWarehouseCountry = (productList:ProductsSelectionType[], warehouse: string) => {
@@ -41,11 +46,17 @@ const getWarehouseCountry = (productList:ProductsSelectionType[], warehouse: str
     return '';
 }
 
-const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, handleAddSelection}) => {
+const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, handleAddSelection, selectedDocWarehouse, needWarehouses=true, needOnlyOneWarehouse=true}) => {
     const [filteredProducts, setFilteredProducts]  = useState<ProductsSelectionType[]>([]);
     const {token, superUser, ui} = useAuth();
     const [productList, setProductList]  = useState<ProductsSelectionType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [productSelectionDocWarehouse, setProductSelectionDocWarehouse] = useState(selectedDocWarehouse);
+
+    useEffect(() => {
+        setProductSelectionDocWarehouse(needWarehouses ? selectedDocWarehouse : '');
+    }, [selectedDocWarehouse]);
 
     const fetchProductSelection = useCallback(async() => {
         try {
@@ -55,7 +66,13 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
 
             if (resp && "data" in resp) {
                 setProductList(resp.data);
-                setFilteredProducts(resp.data);
+                if (needWarehouses) {
+                    setFilteredProducts(selectedDocWarehouse ? getFilteredProducts(selectedDocWarehouse, searchTerm, resp.data) : resp.data);
+                } else {
+
+                    const res = await aggregateTableData(resp.data, ['uuid', 'name', 'sku','aliases','barcodes'], ['available'], ['warehouse','country','weightNet','weightGross','volumeWeight','volume'], [])
+                    setFilteredProducts(res.map(item => ({...item, warehouse: '', key: item.uuid})) as ProductsSelectionType[]);
+                }
             } else {
                 console.error("API did not return expected data");
             }
@@ -65,27 +82,28 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         } finally {
             setIsLoading(false);
         }
-    },[token]);
+    },[token, selectedDocWarehouse]);
 
     useEffect(() => {
         fetchProductSelection();
     }, []);
 
+
     const warehouseOptions = useMemo(()=> {
         const warehouses = productList.map(item => (item.warehouse));
-        const uniqueWarehouses = Array.from(new Set(warehouses))
-        const warehouseOptionsArray = uniqueWarehouses.map(warehouse => ({
-            value: warehouse,
-            label: warehouse,
-            extraInfo: getWarehouseCountry(productList, warehouse) || '',
+        const uniqueWarehouses = Array.from(new Set(warehouses)).filter(item => item !== "No stock");
+
+        const warehouseOptionsArray = uniqueWarehouses.map(warehouseItem => ({
+            value: warehouseItem,
+            label: warehouseItem,
+            extraInfo: getWarehouseCountry(productList, warehouseItem) || '',
+            isDisabled: needOnlyOneWarehouse && !!productSelectionDocWarehouse && productSelectionDocWarehouse !== warehouseItem,
         }));
 
-        warehouseOptionsArray.unshift({value: 'off', label: "All warehouses", extraInfo: ''});
-
         return warehouseOptionsArray;
-    }, [productList]);
+    }, [productList, productSelectionDocWarehouse]);
 
-    const [selectedWarehouse, setSelectedWarehouse] = useState( warehouseOptions.length ? warehouseOptions[0].value : '')
+    const [selectedWarehouse, setSelectedWarehouse] = useState( productSelectionDocWarehouse ? productSelectionDocWarehouse : warehouseOptions.length ? warehouseOptions[0].value : '')
 
     const productOptions = useMemo(() =>{
         const uniqueProducts = Array.from(new Set(productList.map(item => item.uuid)));
@@ -96,8 +114,8 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
     },[productList]);
 
     useEffect(() => {
-        setSelectedWarehouse(warehouseOptions.length ? warehouseOptions[0].value : '');
-    }, [warehouseOptions, productList]);
+        setSelectedWarehouse(productSelectionDocWarehouse ? productSelectionDocWarehouse : warehouseOptions.length ? warehouseOptions[0].value : '');
+    }, [warehouseOptions, productList, productSelectionDocWarehouse]);
 
     //form
     const {control, formState: { errors }, getValues, watch} = useForm({
@@ -111,6 +129,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                             product: product.product,
                             name: '123',
                             quantity: product.quantity || '',
+                            warehouse: selectedWarehouse || '',
                         }))
                     : [] as SelectedProductType[],
         }
@@ -137,9 +156,8 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         setSearchTerm(newSearchTerm);
     };
 
-    useEffect(() => {
-        //filtering
-        const filteredProducts1 = productList.filter(product => {
+    const getFilteredProducts = useCallback((selectedWarehouse: string, searchTerm='', productList:ProductsSelectionType[])=>{
+        return  productList.filter(product => {
             const matchesSearch = !searchTerm.trim() || Object.keys(product).some(key => {
                 const value = product[key];
                 if (key !== 'uuid') {
@@ -160,25 +178,28 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
 
             return matchesSearch && matchesWarehouse;
         });
+    }, []);
 
-        setFilteredProducts(filteredProducts1);
-
-    }, [searchTerm, selectedProducts, selectedWarehouse]);
-
-
-    // useEffect(() => {
-    //     filteredProducts.forEach(item => {
-    //         const curItemUuid = item.uuid;
-    //
-    //     })
-    // }, [selectedProducts]);
+    useEffect(() => {
+        setFilteredProducts(getFilteredProducts(selectedWarehouse, searchTerm, productList));
+    }, [searchTerm, selectedProducts, selectedWarehouse, productList]);
 
     const addProduct = (record: ProductsSelectionType) => {
-        appendProduct({key: `${record.uuid}-${Date.now().toString()}`, product: record.uuid, name: record.name, quantity: 1})
+        appendProduct({key: `${record.uuid}-${Date.now().toString()}`, product: record.uuid, name: record.name, quantity: 1, warehouse: record.warehouse})
+        setProductSelectionDocWarehouse(record.warehouse);
+    }
+
+    const removeSelectedProduct = (record: ProductsSelectionType, index: number) => {
+        removeProduct(index);
+
+        if (!selectedDocWarehouse && selectedProducts.filter(item => item.key !== record.key).length === 0) {
+            //clear selected warehouse
+            setProductSelectionDocWarehouse('');
+        }
     }
 
     //columns
-    const allProductsColumns: TableColumnProps<ProductsSelectionType>[]  = [
+    const allProductsColumnsWithFilter: TableColumnProps<ProductsSelectionType>[]  = [
         {
             title: <TitleColumn title="Product name" minWidth="100px" maxWidth="150px" contentPosition="start"/>,
             render: (text: string, record: ProductsSelectionType) => (
@@ -275,6 +296,79 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         },
     ];
 
+    const allProductsColumnsWithoutFilter: TableColumnProps<ProductsSelectionType>[]  = [
+        {
+            title: <TitleColumn title="Product name" minWidth="100px" maxWidth="150px" contentPosition="start"/>,
+            render: (text: string, record: ProductsSelectionType) => (
+                <TableCell value={record.name} minWidth="100px" maxWidth="150px" contentPosition="start"/>
+            ),
+            dataIndex: 'uuid',
+            key: 'uuid',
+            sorter: true,
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
+        },
+        {
+            title: <TitleColumn title="SKU" minWidth="80px" maxWidth="150px" contentPosition="start"/>,
+            render: (text: string, record: ProductsSelectionType) => (
+                <TableCell value={text} minWidth="80px" maxWidth="150px" contentPosition="start"/>
+            ),
+            dataIndex: 'sku',
+            key: 'sku',
+            sorter: true,
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
+        },
+        {
+            title: <TitleColumn title="Aliases" minWidth="100px" maxWidth="250px" contentPosition="start"/>,
+            render: (text: string, record: ProductsSelectionType) => (
+                <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="250px" contentPosition="start"/>
+            ),
+            dataIndex: 'aliases',
+            key: 'aliases',
+            sorter: true,
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
+        },
+        {
+            title: <TitleColumn title="Barcodes" minWidth="100px" maxWidth="250px" contentPosition="start"/>,
+            render: (text: string, record: ProductsSelectionType) => (
+                <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="250px" contentPosition="start"/>
+            ),
+            dataIndex: 'barcodes',
+            key: 'barcodes',
+            sorter: true,
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
+        },
+        {
+            title: <TitleColumn title="Available" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            render: (text: string, record: ProductsSelectionType) => (
+                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="center"/>
+            ),
+            dataIndex: 'available',
+            key: 'available',
+            sorter: true,
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
+        },
+        {
+            title: '',
+            key: 'action',
+            width: 30,
+            render: (text, record, index) => (
+                <button className='action-btn add-type' onClick={() => addProduct(record)}>
+                    <Icon name='shopping-cart' />
+                </button>
+            ),
+        },
+    ];
+
     const getSelectedProductColumns = (control: any) => {
         return [
 
@@ -339,7 +433,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                 key: 'action',
                 width: 30,
                 render: (text, record, index) => (
-                    <button className='action-btn remove-type' onClick={() => removeProduct(index)}>
+                    <button className='action-btn remove-type' onClick={() => removeSelectedProduct(record, index)}>
                         <Icon name='waste-bin'/>
                     </button>
                 ),
@@ -347,48 +441,68 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         ];
     };
 
+    const handleSelectAll = () => {
+        filteredProducts.forEach(record => {
+            if (record.available > 0) appendProduct({key: `${record?.uuid}-${Date.now().toString()}`, product: record.uuid, name: record.name, quantity: record.available, warehouse: record.warehouse})
+        })
+    }
+
     return (
         <div className="product-selection">
             {(isLoading) && <Loader />}
-            <div className="product-selection__container">
-                <div className='product-selection__warehouses'>
-                    <RadioButton name='warehouseSelection' isCountry={true} options={warehouseOptions} value={selectedWarehouse} onChange={(val)=>setSelectedWarehouse(val as string)} alignFlexH={ALIGN_FLEX.CENTER}/>
-                </div>
+            <div className={`product-selection__container ${needWarehouses ? 'with-filter' : "without-filter"}`}>
+                {needWarehouses ?
+                    <div className='product-selection__warehouses'>
+                        <RadioButton name='warehouseSelection' isCountry={true} options={warehouseOptions}
+                                     value={selectedWarehouse} onChange={(val) => setSelectedWarehouse(val as string)}
+                                     alignFlexH={ALIGN_FLEX.CENTER}/>
+                    </div>
+                    : null
+                }
                 <div className="product-selection__search">
 
                     <SearchContainer>
-                        <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                        <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => {
+                            setSearchTerm("");
+                            handleFilterChange("");
+                        }}/>
                         <FieldBuilder {...fullTextSearchField} />
                     </SearchContainer>
                 </div>
                 <div className="product-selection__wrapper">
                     <div className='card table form-table product-selection__items product-selection__table '>
                         <Table
-                            dataSource={filteredProducts.map((item, index)=>({key:item.uuid+'_'+item.warehouse+'_'+index, ...item}))}
-                            columns={allProductsColumns}
+                            dataSource={filteredProducts.map((item, index) => ({key: item.uuid + '_' + item.warehouse + '_' + index, ...item}))}
+                            columns={needWarehouses ? allProductsColumnsWithFilter : allProductsColumnsWithoutFilter}
                             pagination={false}
-                            scroll={{y:220}}
+                            scroll={{y: 220}}
                         />
                     </div>
-                    <div className='product-selection__table-title title-h4'>
-                        Selected into document products:
+                    <div className="product-selection__select-all-btn">
+                        <Button icon='shopping-cart' onClick={handleSelectAll}> Select all </Button>
                     </div>
-                    <div className='card table form-table table-form-fields product-selection__selected product-selection__table'>
-                        <Table
-                            columns={getSelectedProductColumns(control)}
-                            dataSource={getValues('products')?.map((field, index) => ({ key: field.uuid+'-'+index+'_'+(new Date()).toISOString(), ...field })) || []}
-                            pagination={false}
-                            scroll={{y:220}}
-                            rowKey="key"
-                        />
-                    </div>
-                    <div className='product-selection__buttons'>
-                        <Button onClick={ ()=>handleAddSelection(selectedProducts as SelectedProductType[])}>Add to document</Button>
-                    </div>
+                <div className='product-selection__table-title title-h4'>
+                    Selected into document products:
+                </div>
+                <div
+                    className='card table form-table table-form-fields product-selection__selected product-selection__table'>
+                    <Table
+                        columns={getSelectedProductColumns(control)}
+                        dataSource={getValues('products')?.map((field, index) => ({key: field.uuid + '-' + index + '_' + (new Date()).toISOString(), ...field})) || []}
+                        pagination={false}
+                        scroll={{y: 220}}
+                        rowKey="key"
+                    />
+                </div>
+                <div className='product-selection__buttons'>
+                    <Button onClick={() => handleAddSelection(selectedProducts as SelectedProductType[])}>Add to
+                        document</Button>
                 </div>
             </div>
         </div>
-    );
+</div>
+)
+    ;
 };
 
 export default ProductSelection;
