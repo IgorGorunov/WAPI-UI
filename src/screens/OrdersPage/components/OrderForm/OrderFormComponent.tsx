@@ -216,6 +216,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const products = watch('products');
     const currencyOptions = useMemo(()=>{return orderParameters && orderParameters?.currencies.length ? createOptions(orderParameters?.currencies) : []},[]);
 
+    const preferredWarehouse = watch('preferredWarehouse');
+
     //pickup points
     const createPickupOptions = () => {
         if (curPickupPoints && curPickupPoints.length) {
@@ -1017,26 +1019,28 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                     size={ButtonSize.SMALL} disabled={isDisabled}
                                                     variant={ButtonVariant.SECONDARY}
                                                     onClick={() => handleProductSelection()} classNames='selection-btn'>
-                                                    Selection
+                                                    Add by SKU
                                                 </Button>
                                             </TutorialHintTooltip>
                                             <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                                 <Button type="button" icon='add-table-row' iconOnTheRight
                                                         size={ButtonSize.SMALL} disabled={isDisabled}
-                                                        variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({
-                                                    key: `product-${Date.now().toString()}`,
-                                                    selected: false,
-                                                    sku: '',
-                                                    product: '',
-                                                    analogue: '',
-                                                    quantity: '',
-                                                    price: '',
-                                                    discount: '',
-                                                    tax: '',
-                                                    total: '',
-                                                    cod: ''
-                                                })}>
-                                                    Add
+                                                        variant={ButtonVariant.SECONDARY}
+                                                        onClick={() => appendProduct({
+                                                            key: `product-${Date.now().toString()}`,
+                                                            selected: false,
+                                                            sku: '',
+                                                            product: '',
+                                                            analogue: '',
+                                                            quantity: '',
+                                                            price: '',
+                                                            discount: '',
+                                                            tax: '',
+                                                            total: '',
+                                                            cod: ''
+                                                        })}
+                                                >
+                                                    Add by SKU
                                                 </Button>
                                             </TutorialHintTooltip>
                                             <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
@@ -1156,7 +1160,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 <SendComment orderData={orderData} countryOptions={countries} closeSendCommentModal={()=>setShowSendCommentModal(false)} onSuccess={()=>setCommentHasBeenSent(true)}/>
             </Modal>}
             {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
-                <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
+                {/*<ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>*/}
+                <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={preferredWarehouse} needOnlyOneWarehouse={false}/>
+
             </Modal>}
 
             {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}

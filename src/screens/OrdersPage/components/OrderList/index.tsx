@@ -23,7 +23,7 @@ import FiltersBlock from "@/components/FiltersBlock";
 import CurrentFilters from "@/components/CurrentFilters";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
+import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds, formatTimeStringFromString} from "@/utils/date";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import SimplePopup, {PopupItem} from "@/components/SimplePopup";
 
@@ -620,7 +620,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             title: <TitleColumn minWidth="60px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="80px" contentPosition="start"/>
+                <TableCell minWidth="60px" maxWidth="80px" contentPosition="start"
+                    childrenAfter={
+                        <div className="table-date-time-container">
+                            <span className="table-date">{formatDateStringToDisplayString(text)}</span>
+                            <span className="table-time">{formatTimeStringFromString(text)}</span>
+                        </div>
+                    }
+                />
+
             ),
             dataIndex: 'date',
             key: 'date',

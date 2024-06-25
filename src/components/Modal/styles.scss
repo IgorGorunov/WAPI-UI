@@ -63,7 +63,8 @@
 }
 
 .modal-body {
-  //padding-top: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 .modal-header {
@@ -95,6 +96,10 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    z-index: 2;
 
+    @media (max-width: $upToLaptop) {
+      right: 16px;
+    }
   }
 }

@@ -41,6 +41,13 @@ const formatDateStringToDisplayString = (dateString: string) => {
     return formatDateToDisplayString(new Date(dateString));
 }
 
+const formatTimeStringFromString = (dateString: string) => {
+    let d = new Date(dateString);
+    const hours = d.getHours().toString();
+    const minutes = d.getMinutes().toString();
+    return `${hours.length<2 ? "0"+hours : hours}:${minutes.length<2 ? "0"+minutes : minutes}`;
+}
+
 const getFirstDayOfMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth(), 1)
 }
@@ -117,6 +124,7 @@ export {
     formatDateStringToDisplayString,
     getFirstDayOfMonth,
     formatDateToDisplayString,
+    formatTimeStringFromString,
     getFirstDayOfYear,
     getLastFewDays,
     formatDateToShowMonthYear,

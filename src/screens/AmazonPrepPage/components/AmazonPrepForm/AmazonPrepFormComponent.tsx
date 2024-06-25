@@ -647,12 +647,12 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                     <div className='amazon-prep-info--btns__table-btns'>
                                         <TutorialHintTooltip hint={AmazonPrepHints['selection'] || ''} forBtn >
                                             <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
-                                                Selection
+                                                Add from List
                                             </Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                             <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:'', boxesQuantity: ''})}>
-                                                Add
+                                                Add by SKU
                                             </Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
@@ -751,7 +751,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
             </form>
                 {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
                 {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
-                    <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
+                    <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={warehouse} needOnlyOneWarehouse={false}/>
                 </Modal>}
                 {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.AmazonPrep} subjectUuid={docUuid} subject={`AmazonPrep ${amazonPrepOrderData?.wapiTrackingNumber} ${amazonPrepOrderData?.date ? formatDateStringToDisplayString(amazonPrepOrderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
             </>

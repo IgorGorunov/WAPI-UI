@@ -8,7 +8,7 @@ import "./styles.scss";
 import {getOrders} from "@/services/orders";
 import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getLastFewDays} from "@/utils/date";
+import {formatDateTimeToStringWithDotWithoutSeconds, formatDateToString, getLastFewDays} from "@/utils/date";
 import {OrderType} from "@/types/orders";
 import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
@@ -132,7 +132,7 @@ const OrdersPage = () => {
             wapiTrackingNumber: item.wapiTrackingNumber,
             status: item.status,
             statusAdditionalInfo: item.statusAdditionalInfo,
-            date: item.date,
+            date: formatDateTimeToStringWithDotWithoutSeconds(item.date),
             codAmount: item.codAmount,
             codCurrency: item.codCurrency,
             clientOrderID: item.clientOrderID,

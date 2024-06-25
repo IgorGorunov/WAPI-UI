@@ -47,7 +47,6 @@ import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHi
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
-import FillByStock from "@/screens/StockMovementsPage/components/StockMovementForm/FillByStock";
 import useNotifications from "@/context/notificationContext";
 
 
@@ -69,6 +68,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const [isDraft, setIsDraft] = useState(false);
     const [isJustETA, setIsJustETA] = useState(false);
     const [isFinished, setIsFinished] = useState(docData?.status === 'Finished');
+
+    const isOutboundOrStockMovement = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT;
 
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
@@ -134,6 +135,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //const currencyOptions = useMemo(()=>{return docParameters && docParameters?.currencies.length ? createOptions(docParameters?.currencies) : []},[]);
 
     const sender = watch('sender');
+    const receiver = watch('receiver');
     const [importType, setImportType] = useState('');
 
     //countries
@@ -157,16 +159,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
-
-    // const getUnitsOptions = (index) => {
-    //     const curProduct = products[index].product;
-    //     if (docParameters.products.length ) {
-    //         const units = docParameters.products.filter(item => item.uuid === curProduct);
-    //
-    //         if (units.length) return createOptions(units[0].unitOfMeasures);
-    //     }
-    //     return [];
-    // }
 
     const productQualityOptions = createOptions(docParameters.quality);
     //temporarily
@@ -465,7 +457,25 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             }
 
         });
+
+        //set sender warehouse if needed
+        if (selectedProducts.length && isOutboundOrStockMovement) {
+
+            setValue('sender', selectedProducts[0].warehouse);
+            onSenderChange(selectedProducts[0].warehouse);
+        }
     }
+
+    const [isSenderDisabled, setIsSenderDisabled] = useState<boolean>(isOutboundOrStockMovement && !!(docData && docData?.products && docData.products.length && sender));
+
+    useEffect(() => {
+        if (products.length && sender && isOutboundOrStockMovement) {
+            //make field not clickable
+            setIsSenderDisabled(true)
+        } else {
+            setIsSenderDisabled(false)
+        }
+    }, [products, sender]);
 
     //notifications
     let docNotifications: NotificationType[] = [];
@@ -476,7 +486,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     //form fields
     const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType, !!(docData?.uuid && !docData.canEdit && !isFinished)), [docData])
-    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished), senderHide: !!docData?.senderHide, receiverHide: !!docData?.receiverHide }), [docData]);
+    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished), senderHide: !!docData?.senderHide, receiverHide: !!docData?.receiverHide, sender: sender, receiver:receiver, isSenderDisabled: isSenderDisabled }), [docData, products, sender, receiver, isSenderDisabled]);
     //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
 
 
@@ -547,14 +557,14 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         setShowImportModal(true)
     }
 
-    const [showFillModal, setShowFillModal] = useState(false);
-    const onFillModalClose = () => {
-        setShowFillModal(false);
-    }
-    const handleFillByStock = () => {
-        setImportType('fillByStock');
-        setShowFillModal(true)
-    }
+    //const [showFillModal, setShowFillModal] = useState(false);
+    // const onFillModalClose = () => {
+    //     setShowFillModal(false);
+    // }
+    // const handleFillByStock = () => {
+    //     setImportType('fillByStock');
+    //     setShowFillModal(true)
+    // }
 
     const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length));
     const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
@@ -676,20 +686,20 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             <div className='stock-movement--btns width-100'>
                                 <div className='grid-row'>
                                     <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
-                                        {(docType===STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT || docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND) ? <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >
-                                            <Button type="button" icon="fill-doc" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || !sender} onClick={handleFillByStock}>Fill by stock</Button>
-                                        </TutorialHintTooltip> : null}
+                                        {/*{(isOutboundOrStockMovement) ? <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >*/}
+                                        {/*    <Button type="button" icon="fill-doc" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || !sender} onClick={handleFillByStock}>Fill by stock</Button>*/}
+                                        {/*</TutorialHintTooltip> : null}*/}
                                         <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >
                                             <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['selection'] || ''} forBtn >
                                             <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
-                                                Selection
+                                                Add from List
                                             </Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                             <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
-                                                Add
+                                                Add by SKU
                                             </Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
@@ -772,13 +782,13 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 <ImportFilesBlock file='Products import.xlsx' importFilesType={ImportFilesType.STOCK_MOVEMENTS_PRODUCTS} setResponseData={setImportResponse} closeModal={()=>setShowImportModal(false)}/>
             </Modal>
         }
-        {showFillModal &&
-            <Modal title={`Choose required quality`} onClose={onFillModalClose} >
-                <FillByStock qualityList={docParameters?.quality} warehouse={sender} setResponseData={setImportResponse} onClose={()=>setShowFillModal(false)}/>
-            </Modal>
-        }
+        {/*{showFillModal &&*/}
+        {/*    <Modal title={`Choose required quality`} onClose={onFillModalClose} >*/}
+        {/*        <FillByStock qualityList={docParameters?.quality} warehouse={sender} setResponseData={setImportResponse} onClose={()=>setShowFillModal(false)}/>*/}
+        {/*    </Modal>*/}
+        {/*}*/}
         {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
-            <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>
+            <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={sender} needWarehouses={isOutboundOrStockMovement}/>
         </Modal>}
         {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
     </div>
