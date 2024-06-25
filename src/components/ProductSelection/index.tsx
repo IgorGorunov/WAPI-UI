@@ -201,9 +201,9 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
     //columns
     const allProductsColumnsWithFilter: TableColumnProps<ProductsSelectionType>[]  = [
         {
-            title: <TitleColumn title="Product name" minWidth="100px" maxWidth="150px" contentPosition="start"/>,
+            title: <TitleColumn title="Product name" minWidth="100px" maxWidth="300px" contentPosition="start"/>,
             render: (text: string, record: ProductsSelectionType) => (
-                <TableCell value={record.name} minWidth="100px" maxWidth="150px" contentPosition="start"/>
+                <TableCell value={record.name} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
             dataIndex: 'uuid',
             key: 'uuid',
@@ -298,9 +298,9 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
 
     const allProductsColumnsWithoutFilter: TableColumnProps<ProductsSelectionType>[]  = [
         {
-            title: <TitleColumn title="Product name" minWidth="100px" maxWidth="150px" contentPosition="start"/>,
+            title: <TitleColumn title="Product name" minWidth="100px" maxWidth="300px" contentPosition="start"/>,
             render: (text: string, record: ProductsSelectionType) => (
-                <TableCell value={record.name} minWidth="100px" maxWidth="150px" contentPosition="start"/>
+                <TableCell value={record.name} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
             dataIndex: 'uuid',
             key: 'uuid',
