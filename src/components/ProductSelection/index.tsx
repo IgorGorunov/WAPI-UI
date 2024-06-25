@@ -290,7 +290,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
             width: 30,
             render: (text, record, index) => (
                 <button className='action-btn add-type' onClick={() => addProduct(record)}>
-                    <Icon name='shopping-cart' />
+                    <Icon name='add-table-row' />
                 </button>
             ),
         },
@@ -363,7 +363,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
             width: 30,
             render: (text, record, index) => (
                 <button className='action-btn add-type' onClick={() => addProduct(record)}>
-                    <Icon name='shopping-cart' />
+                    <Icon name='add-table-row' />
                 </button>
             ),
         },
@@ -450,7 +450,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
     return (
         <div className="product-selection">
             {(isLoading) && <Loader />}
-            <div className={`product-selection__container ${needWarehouses ? 'with-filter' : "without-filter"}`}>
+            <div className={`product-selection__container ${needWarehouses ? 'with-filter' : "without-filter"} has-scroll`}>
                 {needWarehouses ?
                     <div className='product-selection__warehouses'>
                         <RadioButton name='warehouseSelection' isCountry={true} options={warehouseOptions}
@@ -479,7 +479,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                         />
                     </div>
                     <div className="product-selection__select-all-btn">
-                        <Button icon='shopping-cart' onClick={handleSelectAll}> Select all </Button>
+                        <Button icon='add-table-row' onClick={handleSelectAll}> Select all </Button>
                     </div>
                 <div className='product-selection__table-title title-h4'>
                     Selected into document products:

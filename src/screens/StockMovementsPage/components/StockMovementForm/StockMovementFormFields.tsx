@@ -99,6 +99,8 @@ export const DetailsFields = (
         canEditETA,
         receiverHide,
         senderHide,
+        sender,
+        receiver,
         isSenderDisabled,
     }:{
         newObject: boolean,
@@ -111,12 +113,15 @@ export const DetailsFields = (
         canEditETA: boolean;
         receiverHide: boolean;
         senderHide: boolean;
+        sender: string;
+        receiver: string;
         isSenderDisabled?: boolean
     }
 ) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
     const isOutbound = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND;
     const isLogisticService = docType === STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE;
+    const isStockMovement = docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT;
 
     const docTypeSingle = docNamesSingle[docType];
     const docHintsObj = StockMovementsHints(docTypeSingle);
@@ -133,7 +138,7 @@ export const DetailsFields = (
                 required: "Required field",
             },
             errorMessage: "Required field",
-            options: isInbound || isLogisticService ? [] : senderOptions,
+            options: isInbound || isLogisticService ? [] : isStockMovement && !!receiver ? senderOptions.filter(item => item.value !== receiver) : senderOptions,
             onChange: onSenderChange,
             width: WidthType.w33,
             classNames: "",
@@ -165,7 +170,7 @@ export const DetailsFields = (
                 required: "Required field",
             },
             errorMessage: "Required field",
-            options: isOutbound || isLogisticService ? [] : receiverOptions,
+            options: isOutbound || isLogisticService ? [] : isStockMovement && !!sender ? receiverOptions.filter(item => item.value !== sender) : receiverOptions,
             onChange: onReceiverChange,
             disabled: receiverHide,
             width: WidthType.w33,

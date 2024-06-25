@@ -1019,26 +1019,28 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                     size={ButtonSize.SMALL} disabled={isDisabled}
                                                     variant={ButtonVariant.SECONDARY}
                                                     onClick={() => handleProductSelection()} classNames='selection-btn'>
-                                                    Select by list
+                                                    Add by SKU
                                                 </Button>
                                             </TutorialHintTooltip>
                                             <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                                 <Button type="button" icon='add-table-row' iconOnTheRight
                                                         size={ButtonSize.SMALL} disabled={isDisabled}
-                                                        variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({
-                                                    key: `product-${Date.now().toString()}`,
-                                                    selected: false,
-                                                    sku: '',
-                                                    product: '',
-                                                    analogue: '',
-                                                    quantity: '',
-                                                    price: '',
-                                                    discount: '',
-                                                    tax: '',
-                                                    total: '',
-                                                    cod: ''
-                                                })}>
-                                                    Add
+                                                        variant={ButtonVariant.SECONDARY}
+                                                        onClick={() => appendProduct({
+                                                            key: `product-${Date.now().toString()}`,
+                                                            selected: false,
+                                                            sku: '',
+                                                            product: '',
+                                                            analogue: '',
+                                                            quantity: '',
+                                                            price: '',
+                                                            discount: '',
+                                                            tax: '',
+                                                            total: '',
+                                                            cod: ''
+                                                        })}
+                                                >
+                                                    Add by SKU
                                                 </Button>
                                             </TutorialHintTooltip>
                                             <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >

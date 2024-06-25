@@ -135,6 +135,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //const currencyOptions = useMemo(()=>{return docParameters && docParameters?.currencies.length ? createOptions(docParameters?.currencies) : []},[]);
 
     const sender = watch('sender');
+    const receiver = watch('receiver');
     const [importType, setImportType] = useState('');
 
     //countries
@@ -158,16 +159,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     //products
     const [selectAllProducts, setSelectAllProducts] = useState(false);
-
-    // const getUnitsOptions = (index) => {
-    //     const curProduct = products[index].product;
-    //     if (docParameters.products.length ) {
-    //         const units = docParameters.products.filter(item => item.uuid === curProduct);
-    //
-    //         if (units.length) return createOptions(units[0].unitOfMeasures);
-    //     }
-    //     return [];
-    // }
 
     const productQualityOptions = createOptions(docParameters.quality);
     //temporarily
@@ -475,8 +466,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         }
     }
 
-
-
     const [isSenderDisabled, setIsSenderDisabled] = useState<boolean>(isOutboundOrStockMovement && !!(docData && docData?.products && docData.products.length && sender));
 
     useEffect(() => {
@@ -497,7 +486,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     //form fields
     const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType, !!(docData?.uuid && !docData.canEdit && !isFinished)), [docData])
-    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished), senderHide: !!docData?.senderHide, receiverHide: !!docData?.receiverHide, isSenderDisabled: isSenderDisabled }), [docData, products, isSenderDisabled]);
+    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished), senderHide: !!docData?.senderHide, receiverHide: !!docData?.receiverHide, sender: sender, receiver:receiver, isSenderDisabled: isSenderDisabled }), [docData, products, sender, receiver, isSenderDisabled]);
     //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
 
 
@@ -705,12 +694,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['selection'] || ''} forBtn >
                                             <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
-                                                Select by list
+                                                Add from List
                                             </Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                             <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
-                                                Add
+                                                Add by SKU
                                             </Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >

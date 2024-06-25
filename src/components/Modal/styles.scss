@@ -97,5 +97,9 @@
     align-items: center;
     gap: 8px;
     z-index: 2;
+
+    @media (max-width: $upToLaptop) {
+      right: 16px;
+    }
   }
 }
