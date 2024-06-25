@@ -462,6 +462,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         if (selectedProducts.length && isOutboundOrStockMovement) {
 
             setValue('sender', selectedProducts[0].warehouse);
+            if (receiver === selectedProducts[0].warehouse) {
+                setValue('receiver', '');
+                setValue('receiverCountry', '');
+            }
             onSenderChange(selectedProducts[0].warehouse);
         }
     }
