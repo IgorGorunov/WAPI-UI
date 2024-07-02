@@ -1019,7 +1019,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                     size={ButtonSize.SMALL} disabled={isDisabled}
                                                     variant={ButtonVariant.SECONDARY}
                                                     onClick={() => handleProductSelection()} classNames='selection-btn'>
-                                                    Add by SKU
+                                                    Add from List
                                                 </Button>
                                             </TutorialHintTooltip>
                                             <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
@@ -1125,7 +1125,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     </div> : null}
                     <div key='files-tab' className='files-tab'>
                         <CardWithHelpIcon classNames="card min-height-600 order-info--files">
-                            <TutorialHintTooltip hint={OrderHints['files'] || ''} position='left' >
+                            <TutorialHintTooltip hint={OrderHints['files'] || ''} position='left' classNames='mb-md'>
                                 <h3 className='order-info__block-title  title-small' >
                                     <Icon name='files'/>
                                     Files
