@@ -49,6 +49,8 @@ const pageOptions = [
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
 
+    console.log('orrrrr', orders.filter(item => item.wapiTrackingNumber=="WH0001323161"));
+
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);

@@ -17,6 +17,7 @@
     align-items: flex-end;
     padding-bottom: 8px;
     gap: 30px;
+    line-height: normal;
 
     @media (max-width: $tablet) {
       gap: 12px;
