@@ -223,9 +223,9 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         setFilteredInvoices(filteredInvoices)
     }, [filteredInvoices]);
 
-    const getUnderlineColor = useCallback((statusText: string) => {
-        return StatusColors[statusText] || 'black';
-    }, []);
+    // const getUnderlineColor = useCallback((statusText: string) => {
+    //     return StatusColors[statusText] || 'black';
+    // }, []);
 
     const columns: ColumnType<InvoiceType>[] = useMemo(() => [
         // {
@@ -265,12 +265,12 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         {
             title: <TitleColumn
                 title="Number"
-                minWidth="80px"
+                minWidth="60px"
                 maxWidth="120px"
                 contentPosition="start"
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="60px" maxWidth="80px"  contentPosition="start"/>
             ),
             dataIndex: 'number',
             key: 'number',
@@ -282,12 +282,12 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         {
             title: <TitleColumn
                 title="Date"
-                minWidth="80px"
+                minWidth="60px"
                 maxWidth="150px"
                 contentPosition="start"
             />,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="80px"  contentPosition="start"/>
             ),
             dataIndex: 'date',
             key: 'date',
@@ -299,7 +299,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         {
             title: <TitleColumn
                 title="Amount"
-                minWidth="75px"
+                minWidth="60px"
                 maxWidth="150px"
                 contentPosition="start"
             />,
@@ -311,8 +311,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     return (
                         <TableCell
                             value={`${text} ${currencySymbol}`}
-                            minWidth="75px"
-                            maxWidth="75px"
+                            minWidth="60px"
+                            maxWidth="150px"
                             contentPosition="start"
                             textColor={textColor}
                         >
@@ -322,8 +322,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     return (
                         <TableCell
                             value={'-'}
-                            minWidth="75px"
-                            maxWidth="75px"
+                            minWidth="60px"
+                            maxWidth="150px"
                             contentPosition="start"
                             textColor={textColor}>
                         </TableCell>
@@ -340,12 +340,12 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         {
             title: <TitleColumn
                 title="Due date"
-                minWidth="80px"
+                minWidth="60px"
                 maxWidth="80px"
                 contentPosition="start"
             />,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="150px"  contentPosition="start"/>
             ),
             dataIndex: 'dueDate',
             key: 'dueDate',
@@ -457,11 +457,11 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         //     responsive: ['md'],
         // },
         {
-            title: <TitleColumn title="" minWidth="130px" maxWidth="130px" contentPosition="start"/>,
+            title: <TitleColumn title="" minWidth="80px" maxWidth="130px" contentPosition="start"/>,
             render: (text: string, record: InvoiceType) => (
                 <div className='services-cell-style__wrapper'>
                     <TableCell
-                        minWidth="60px"
+                        minWidth="35px"
                         maxWidth="60px"
                         contentPosition="center"
                         childrenBefore={
@@ -470,7 +470,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                             </span>}>
                     </TableCell>
                     <TableCell
-                        minWidth="60px"
+                        minWidth="35px"
                         maxWidth="60px"
                         contentPosition="center"
                         childrenBefore={
@@ -491,7 +491,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             //         onClick: () => {handleDownloadInvoice(record.uuid)}
             //     };
             // },
-            responsive: ['lg'],
+            //responsive: ['lg'],
         },
 
 
