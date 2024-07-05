@@ -54,7 +54,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const [fullTextSearch, setFullTextSearch] = useState(true);
+    const [fullTextSearch, setFullTextSearch] = useState(false);
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
