@@ -606,7 +606,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
 
-        data.products.forEach(item => item.quality = item.quality || 'Salable')
+        data.products.forEach(item => item.quality = item.quality || 'Saleable')
 
         try {
             const res = isJustETA ? await sendJustETA(data) : await sendDocument(data);
