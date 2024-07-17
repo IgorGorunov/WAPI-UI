@@ -364,7 +364,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             {
                 //title: 'Quality',
                 title: <Tooltip title="Quality of the product" >
-                    <span>Quality</span>
+                    <span>Quality*</span>
                 </Tooltip>,
                 dataIndex: 'quality',
                 key: 'quality',
@@ -384,7 +384,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                     disabled={isDisabled}
                                     errorMessage={error?.message}
                                     errors={errors}
-                                    isRequired={false}
+                                    isRequired={true}
                                     onChange={(newValue: string) => {
                                         field.onChange(newValue);
                                     }}
@@ -605,6 +605,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
+
+        data.products.forEach(item => item.quality = item.quality || 'Salable')
 
         try {
             const res = isJustETA ? await sendJustETA(data) : await sendDocument(data);
