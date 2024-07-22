@@ -53,9 +53,11 @@ const HeaderNotifications: React.FC = () => {
     };
 
     useEffect(() => {
-        checkNotifications();
+        if (!notifications) {
+            checkNotifications();
+        }
 
-        // Set up interval to call fetchData every 60 seconds
+        // Set up interval to call fetchData every 120 seconds
         const fetchDataInterval = setInterval(()=>checkNotifications(), 120000);
 
         // Clean up function to clear interval when component unmounts
