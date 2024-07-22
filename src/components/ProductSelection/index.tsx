@@ -52,7 +52,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
     const [productList, setProductList]  = useState<ProductsSelectionType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    const [productSelectionDocWarehouse, setProductSelectionDocWarehouse] = useState(selectedDocWarehouse);
+    const [productSelectionDocWarehouse, setProductSelectionDocWarehouse] = useState(needWarehouses ? selectedDocWarehouse : "");
 
     useEffect(() => {
         setProductSelectionDocWarehouse(needWarehouses ? selectedDocWarehouse : '');
@@ -103,7 +103,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         return warehouseOptionsArray;
     }, [productList, productSelectionDocWarehouse]);
 
-    const [selectedWarehouse, setSelectedWarehouse] = useState( productSelectionDocWarehouse ? productSelectionDocWarehouse : warehouseOptions.length ? warehouseOptions[0].value : '')
+    const [selectedWarehouse, setSelectedWarehouse] = useState( (productSelectionDocWarehouse || !needWarehouses) ? productSelectionDocWarehouse : warehouseOptions.length ? warehouseOptions[0].value : '')
 
     const productOptions = useMemo(() =>{
         const uniqueProducts = Array.from(new Set(productList.map(item => item.uuid)));
@@ -114,7 +114,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
     },[productList]);
 
     useEffect(() => {
-        setSelectedWarehouse(productSelectionDocWarehouse ? productSelectionDocWarehouse : warehouseOptions.length ? warehouseOptions[0].value : '');
+        setSelectedWarehouse(productSelectionDocWarehouse || !needWarehouses ? productSelectionDocWarehouse : warehouseOptions.length ? warehouseOptions[0].value : '');
     }, [warehouseOptions, productList, productSelectionDocWarehouse]);
 
     //form
@@ -172,7 +172,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                 }
                 return false;
             });
-            const matchesWarehouse = selectedWarehouse==='off' || selectedWarehouse === product.warehouse;
+            const matchesWarehouse = selectedWarehouse==='off' || selectedWarehouse==='' || selectedWarehouse === product.warehouse;
 
             //const isSelected = selectedProducts.filter(item => item.product === product.uuid).length > 0;
 
