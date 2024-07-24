@@ -794,7 +794,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         {/*    </Modal>*/}
         {/*}*/}
         {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
-            <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={sender} needWarehouses={isOutboundOrStockMovement}/>
+            <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={isOutboundOrStockMovement ? sender : ""} needWarehouses={isOutboundOrStockMovement}/>
         </Modal>}
         {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
     </div>
