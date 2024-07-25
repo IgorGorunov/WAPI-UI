@@ -99,6 +99,7 @@ export type FieldPropsType = {
   disablePreviousDays?: boolean; //today is considered as previous day (as per delivery assumption)
   disableDaysAfterToday?: number;
   disableDaysTime?: string; //if current time (in Italy) if before this time, disableDaysAfterToday=disableDaysAfterToday-1
+  onlyAllowedSymbols?: boolean;
 }
 
 export type FormBuilderType = FieldPropsType & {
