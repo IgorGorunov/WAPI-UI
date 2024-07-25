@@ -65,6 +65,7 @@ export const FormFieldsGeneral = ({countries, isNew=false}: { countries: OptionT
             width: WidthType.w50,
             classNames: "",
             hint: ProductHints['name'] || '',
+            onlyAllowedSymbols: true,
         },
         {
             fieldType: FormFieldTypes.SELECT,
@@ -80,6 +81,7 @@ export const FormFieldsGeneral = ({countries, isNew=false}: { countries: OptionT
             width: WidthType.w25,
             classNames: "",
             hint: ProductHints['countryOfOrigin'] || '',
+            onlyAllowedSymbols: true,
         },
         {
             fieldType: FormFieldTypes.NUMBER,
@@ -107,6 +109,7 @@ export const FormFieldsGeneral = ({countries, isNew=false}: { countries: OptionT
             width: isNew ? WidthType.w100 : WidthType.w75,
             classNames: "",
             hint: ProductHints['fullName'] || '',
+            onlyAllowedSymbols: true,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -222,6 +225,7 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
             width: WidthType.w33,
             classNames: "",
             hint: ProductHints['specialTemperatureControl'] || '',
+            onlyAllowedSymbols: true,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -231,6 +235,7 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
             width: WidthType.w33,
             classNames: "",
             hint: ProductHints['expiringTerm'] || '',
+            onlyAllowedSymbols: true,
         },
     ];
 export const FormFieldsAdditional2 = () => [

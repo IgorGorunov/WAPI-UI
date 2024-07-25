@@ -305,6 +305,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
+                                    onlyAllowedSymbols={true}
                                 /></div>
                         )}
                         rules={{required: "Required field",}}
@@ -633,6 +634,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     disabled={isDisabled}
+                                    onlyAllowedSymbols={true}
                                 /></div>
                         )}
                     />
