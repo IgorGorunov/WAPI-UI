@@ -26,7 +26,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
 }, ref) => {
 
   //const validRegex = /^[a-zA-Z0-9\s.,\-+_:;!?*()\[\]'"]+$/;
-  const invalidRegex = /[^a-zA-Z0-9\s.,\-+_:;!?*'"%()\[\]]+/g;
+  const invalidRegex = /[^a-zA-Z0-9\s.,\-+_:;!?*'"%&#()\[\]]+/g;
 
   const handleChange = useCallback((event: FormEvent) => {
       const {value} = event.target as HTMLInputElement;
