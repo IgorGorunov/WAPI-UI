@@ -21,12 +21,21 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
       hint='',
       notDisable,
       noCounters = true,
+      onlyAllowedSymbols = false,
       ...otherProps
 }, ref) => {
 
+  //const validRegex = /^[a-zA-Z0-9\s.,\-+_:;!?*()\[\]'"]+$/;
+  const invalidRegex = /[^a-zA-Z0-9\s.,\-+_:;!?*'"%&#()\[\]]+/g;
+
   const handleChange = useCallback((event: FormEvent) => {
       const {value} = event.target as HTMLInputElement;
-      if (onChange) onChange(value);
+      if (onChange) {
+          if (onlyAllowedSymbols) {
+              const sanitizedValue = value.replace(invalidRegex, '');
+              onChange(sanitizedValue);
+          } else onChange(value);
+      }
   } ,[] )
 
   const getDate = (dateStr: string) => {
