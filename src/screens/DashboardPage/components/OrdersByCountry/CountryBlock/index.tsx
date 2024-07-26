@@ -3,6 +3,7 @@ import { OrderByCountryType } from "..";
 import { CountryCodes } from "@/types/countries";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "./styles.scss";
+import {useTranslations} from "next-intl";
 
 type CountryBlockProps = OrderByCountryType & {
   sum: number;
@@ -13,15 +14,17 @@ const CountryBlock: React.FC<CountryBlockProps> = ({
   ordersCount,
   sum = 0,
 }) => {
+    const t = useTranslations('countries');
+
   const barWidth = sum === 0 ? 0 : Math.round((ordersCount / sum) * 100) + "%";
-  const countryCode = CountryCodes[country];
+  const countryCode = CountryCodes[country] || "noCountry";
 
   return (
     <div className="country-block country-block__wrapper">
       <div className="flag">
         <span className={`fi fi-${countryCode} "flag-icon"`}></span>
       </div>
-      <div className="country-block__name">{country}</div>
+      <div className="country-block__name">{t(countryCode)}</div>
       <div className="country-block__bar">
         <div
           style={{

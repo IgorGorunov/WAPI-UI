@@ -18,6 +18,7 @@ import ConfirmModal from "@/components/ModalConfirm";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
 import SingleDocument from "@/components/SingleDocument";
+import {useTranslations} from "next-intl";
 
 const formatMessage = (messageText: string, messageLength = 50) => {
     if (messageText.length > messageLength) {
@@ -49,6 +50,8 @@ type NotificationsBlockPropsType = {
 }
 
 const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notificationsList, isNotificationsBlockOpen, onClose}) => {
+    const t = useTranslations('notifications');
+
     const {setNotificationAsRead, setNotificationAsUnread} = useMarkNotificationAsRead();
     const {newNotifications} = useNotifications();
 
@@ -125,7 +128,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
     const onlyUnreadField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'onlyUnread',
-        label: 'Unread',
+        label: t('unread'),
         checked: onlyUnread,
         onChange: ()=>{setOnlyUnread(prevState => !prevState)},
         hideTextOnMobile: true,
@@ -165,7 +168,6 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
     }, [searchTermNotifications, notificationsList, newNotifications, onlyUnread]);
 
 
-
     return (
         <div className={`notifications-block__overlay ${isNotificationsBlockOpen ? 'notifications-block__overlay-open' : ''}`} onClick={onClose}>
             <div className={`notifications-block ${isNotificationsBlockOpen ? 'notifications-block--open' : ''}`} onClick={(e)=>e.stopPropagation()}>
@@ -179,7 +181,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                         <button
                                 className='notifications-block__clear-all'
                                 onClick={()=>setShowConfirmModal(true)}
-                            >Set all notifications as read
+                            >{t('setAllAsRead')}
                         </button>
 
                     </div>
@@ -219,7 +221,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                                             className="notifications-block__notifications-load-more-btn"
                                             onClick={handleLoadMore}
                                         >
-                                            Load more
+                                            {t('loadMore')}
                                         </button>
                                     )}
                                 </>
@@ -233,7 +235,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
             </div>
             {showNotificationModal && <ModalStatus {...modalStatusInfo} />}
             {showConfirmModal && <ConfirmModal
-                actionText='set all notifications to read'
+                actionText={t('confirmMarkAsReadText')}
                 onOk={handleConfirmAllToRead}
                 onCancel={handleCancelAllToRead}
             />}

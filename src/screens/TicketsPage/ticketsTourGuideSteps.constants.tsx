@@ -1,29 +1,33 @@
+import {TourGuideStepType} from "@/types/tourGuide";
 
-export const tourGuideStepsTickets  = [
+export const tourGuideStepsTickets  = (t) => [
     {
         target: '.ant-table-header', //'.product-list__container',
-        content: 'Here you can sort tickets by clicking the name of the chosen column',
+        content: t('step1'),
         disableBeacon: true,
     },
     {
         target: '.filter',
-        content: 'Click here to filter tickets by parameters',
+        content: t('step2'),
     },
     {
         target: '.date-input-field',
-        content: 'Click here to filter tickets by the period of time',
+        content: t('step3'),
     },
     {
         target: '.search-block',
-        content: 'Write data here to find information on the list below',
+        content: t('step4'),
     },
     {
         target: '.add-ticket',
-        content: 'Click here to add a new ticket to support manager. Please note that if your question is related to specific order/product/movement, create a ticket from the corresponding document',
+        content: t('step5'),
         //disableBeacon: true,
     },
 
-];
+] as TourGuideStepType[];
 
-export const tourGuideStepsTicketsNoDocs  = tourGuideStepsTickets.slice(1);
-tourGuideStepsTicketsNoDocs[0].disableBeacon = true;
+export const tourGuideStepsTicketsNoDocs  = (t) => {
+    const steps = tourGuideStepsTickets(t).slice(1);
+    steps[0].disableBeacon = true;
+    return steps;
+}

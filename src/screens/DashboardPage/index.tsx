@@ -15,9 +15,10 @@ import Loader from "@/components/Loader";
 import TourGuide from "@/components/TourGuide";
 import useTourGuide from "@/context/tourGuideContext";
 import {dashboardSteps} from "@/screens/DashboardPage/dashboardTourGuideSteps.constants";
-import {TourGuidePages} from "@/types/tourGuide";
+import {TourGuidePages, TourGuideStepType} from "@/types/tourGuide";
 import {Routes} from "@/types/routes";
 import Router from "next/router";
+import {useTranslations} from "next-intl";
 
 type pageDataType = {
   ordersDiagram: any;
@@ -29,7 +30,7 @@ type pageDataType = {
 };
 
 const DashboardPage: React.FC = () => {
-
+  const t = useTranslations('Dashboard');
   const { token, currentDate, isAuthorizedUser, superUser, ui } = useAuth();
 
   useEffect(() => {
@@ -117,12 +118,14 @@ const DashboardPage: React.FC = () => {
       ? pageData.orderByCountryDeparture
       : null;
 
+  const tourGuideSteps = dashboardSteps() as TourGuideStepType[];
+
   return (
       <Layout hasHeader hasFooter>
         <div className="dashboard-page__container">
           {isLoading && <Loader />}
           <div className='header'>
-            <Header pageTitle="Dashboard" needTutorialBtn>
+            <Header pageTitle={t('headerTitle')} needTutorialBtn>
             {/*<Header pageTitle="Dashboard" >*/}
               <PeriodFilter currentPeriod={currentPeriod}
                   setCurrentPeriod={setCurrentPeriod}
@@ -179,7 +182,7 @@ const DashboardPage: React.FC = () => {
                 departure={!orderByCountryDeparture ? [] : orderByCountryDeparture}
             />
           }
-          {pageData && runTour && dashboardSteps ? <TourGuide steps={dashboardSteps} run={runTour} pageName={TourGuidePages.Dashboard} /> : null}
+          {pageData && runTour && dashboardSteps ? <TourGuide steps={tourGuideSteps} run={runTour} pageName={TourGuidePages.Dashboard} /> : null}
         </div>
 
       </Layout>

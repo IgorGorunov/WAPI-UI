@@ -24,13 +24,18 @@ import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import Router from "next/router";
 import {Routes} from "@/types/routes";
+import {useTranslations} from "next-intl";
 
 type QuestionnairePropsType = {
     questionnaireParams: QuestionnaireParamsType;
-    //setStatus: (status: UserStatusType)=>void;
 };
 
 const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) => {
+    const t = useTranslations('LeadPage.questionnaire');
+    const tMessages = useTranslations('messages');
+    const tBtns = useTranslations('common.buttons');
+    const requiredFieldMessage = tMessages('requiredField');
+
     const { token, setUserStatus, logout } = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -106,12 +111,12 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
         let isNotValid = false;
         if (checkedProductTypes.length === 0) {
             isNotValid = true;
-            curSubmitErrors.push('Please, choose at least one product type!');
+            curSubmitErrors.push(tMessages('errorMessages.noProductTypesSelected'));
         }
 
         if (checkedCountries.length === 0) {
             isNotValid = true;
-            curSubmitErrors.push('Please, choose at least one target country!');
+            curSubmitErrors.push(tMessages('errorMessages.noCountriesSelected'));
         }
 
         setSubmitErrors(curSubmitErrors);
@@ -139,7 +144,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Thank you for sharing your responses.`, text: ['We will reach out for any necessary additional information.'], onClose: closeSuccessModal, disableAutoClose: true})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: tMessages('successMessages.infoSubmit'), text: [tMessages('successMessages.weWillReachYou')], onClose: closeSuccessModal, disableAutoClose: true})
                     setShowStatusModal(true);
                     setUserStatus(UserStatusType.Waiting);
                 }
@@ -148,7 +153,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Something went wrong...`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.somethingWentWrongShorVersion'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -173,14 +178,14 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                 <input autoComplete="false" name="hidden" type="text" style={{display: 'none'}}/>
                 <div className={`lead-questionnaire__questions`}>
                     <div className={`grid-row`}>
-                        <SingleField key={CompanyNameField.name} curField={CompanyNameField} control={control}
+                        <SingleField key={CompanyNameField.name} curField={CompanyNameField(t,requiredFieldMessage)} control={control}
                                      errors={errors}/>
-                        <SingleField key={CompanyWebpageField.name} curField={CompanyWebpageField} control={control}
+                        <SingleField key={CompanyWebpageField.name} curField={CompanyWebpageField(t)} control={control}
                                      errors={errors}/>
 
                         <ul className={`lead-questionnaire__product-types-list lead-questionnaire-list`}>
                             <p className={`lead-questionnaire-list-title`}>
-                                Product categories *
+                                {t('productCategories')} *
                             </p>
                             {questionnaireParams.productTypes.map((item, index) => (
                                 <li key={item + '_' + index}
@@ -198,7 +203,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                         </ul>
                         <ul className={`lead-questionnaire-list grid-row`}>
                             <p className={`lead-questionnaire-list-title`}>
-                                Choose your marketplaces (if any)
+                                {t('marketplace')}
                             </p>
                             {questionnaireParams.marketplaces.map((item, index) => (
                                 <li key={item + '_' + index}
@@ -216,7 +221,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                         </ul>
                         <ul className={`lead-questionnaire-list grid-row`}>
                             <p className={`lead-questionnaire-list-title`}>
-                                Target countries *
+                                {t('targetCountries')} *
                             </p>
                             {countryOptions.map((item, index) => (
                                 <li key={item.value + '_' + index}
@@ -234,17 +239,15 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                                 </li>
                             ))}
                         </ul>
-                        <SingleField key={SalesVolumePerMonthField.name} curField={SalesVolumePerMonthField}
+                        <SingleField key={SalesVolumePerMonthField.name} curField={SalesVolumePerMonthField(t,requiredFieldMessage)}
                                      control={control} errors={errors}/>
-                        <SingleField key={SkusField.name} curField={SkusField} control={control} errors={errors}/>
-                        <SingleField key={DimensionsField.name} curField={DimensionsField} control={control}
+                        <SingleField key={SkusField.name} curField={SkusField(t,requiredFieldMessage)} control={control} errors={errors}/>
+                        <SingleField key={DimensionsField.name} curField={DimensionsField(t)} control={control}
                                      errors={errors}/>
-                        <SingleField key={WeightField.name} curField={WeightField} control={control} errors={errors}/>
-                        <SingleField key={PackagingField.name} curField={PackagingField} control={control}
+                        <SingleField key={WeightField.name} curField={WeightField(t)} control={control} errors={errors}/>
+                        <SingleField key={PackagingField.name} curField={PackagingField(t)} control={control}
                                      errors={errors}/>
-                        <SingleField key={CodField.name} curField={CodField} control={control} errors={errors}/>
-
-
+                        <SingleField key={CodField.name} curField={CodField(t)} control={control} errors={errors}/>
                     </div>
                     {isSubmitted && submitErrors.length ?
                         <div className={`lead-questionnaire__errors`}>
@@ -252,7 +255,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                         </div> : null
                     }
                     <div className={`lead-questionnaire__btns`}>
-                        <Button type='submit'>Submit for review</Button>
+                        <Button type='submit'>{tBtns('submitForReview')}</Button>
                     </div>
                 </div>
             </form>

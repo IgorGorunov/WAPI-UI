@@ -3,12 +3,14 @@ import {AmazonPrepOrderHistoryType} from "@/types/amazonPrep";
 import "./styles.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
+import {useTranslations} from "next-intl";
 
 type PropsType = {
     statusHistory?: AmazonPrepOrderHistoryType[] ;
 };
 
 const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
+    const t = useTranslations('AmazonPrep.amazonColumns.statusHistory');
 
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
@@ -17,10 +19,10 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
     return (
         <div className="order-status-history">
             <div className="order-status-history__header">
-                <div className='date-column'>Period</div>
-                <div className='column status-column'>Status</div>
-                <div className='column tracking-number-column'>Tracking #</div>
-                <div className='column comment-column'>Additional information</div>
+                <div className='date-column'>{t('period')}</div>
+                <div className='column status-column'>{t('status')}</div>
+                <div className='column tracking-number-column'>{t('trackingNumber')}</div>
+                <div className='column comment-column'>{t('additionalIngo')}</div>
             </div>
             <ul className="order-status-history__list">
                 {statusHistory &&

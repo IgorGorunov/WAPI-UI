@@ -34,6 +34,7 @@ import {
     getDeliveredWithFirstAttemptValue,
     getProbableBuyoutValue
 } from "@/screens/ReportPage/Reports/DeliveryRates";
+import {useTranslations} from "next-intl";
 
 type ReportTablePropsType = {
     reportData: AllReportsRowType[];
@@ -47,6 +48,11 @@ type ReportTablePropsType = {
 }
 
 const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAsString, reportData,reportGrouping, dimensionsCount, searchText='', sortingCols = [], resourceColumnNames=[]}) => {
+    const t = useTranslations("Reports");
+    const tColumns = useTranslations('Reports.reportColumns');
+    const tBtns = useTranslations("common.buttons");
+    const tCountries = useTranslations('countries');
+
     //resizing
     const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({});
     const [columnResizeMode, setColumnResizeMode] = React.useState<ColumnResizeMode>("onChange");
@@ -85,7 +91,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
 
     const curVariantAsType = getVariantByReportType(reportType, reportVariantAsString);
 
-    const columns = getVariantColumnsByReportType(reportType, curVariantAsType, resourceColumnNames);
+    const columns = getVariantColumnsByReportType(tColumns, tCountries, reportType, curVariantAsType, resourceColumnNames);
 
     const table = useReactTable({
         data: reportData,
@@ -281,11 +287,11 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
             <div className="card report-container">
                 <div className="h-2" />
                 <div className='interactive-block'>
-                    <Button onClick={handleDownload} icon='download-file' iconOnTheRight variant={ButtonVariant.SECONDARY}>Export to Excel</Button>
-                    {reportGrouping.length ? <Button iconOnTheRight onClick={()=>{table.toggleAllRowsExpanded(!groupsAreOpen); setGroupsAreOpen(prev => !prev);}} icon={ groupsAreOpen ? 'minus' : 'plus'} variant={ButtonVariant.SECONDARY} >{groupsAreOpen ? 'Collapse all' : 'Expand all'}</Button> : null}
+                    <Button onClick={handleDownload} icon='download-file' iconOnTheRight variant={ButtonVariant.SECONDARY}>{tBtns('exportToExcel')}</Button>
+                    {reportGrouping.length ? <Button iconOnTheRight onClick={()=>{table.toggleAllRowsExpanded(!groupsAreOpen); setGroupsAreOpen(prev => !prev);}} icon={ groupsAreOpen ? 'minus' : 'plus'} variant={ButtonVariant.SECONDARY} >{groupsAreOpen ? tBtns('collapseAll') : tBtns('expandAll')}</Button> : null}
                     {reportType===REPORT_TYPES.SALE_DYNAMIC ? <div className='sales-dynamic-legend'>
-                        <div><Icon name='arrow-up-green' /> Your sales have increased by more than 25 percent</div>
-                        <div><Icon name='arrow-down-red' /> Your sales have decreased by more than 25 percent</div>
+                        <div><Icon name='arrow-up-green' /> {t("salesIncreased")}</div>
+                        <div><Icon name='arrow-down-red' /> {t("salesDecreased")}</div>
                     </div> : null}
                 </div>
 

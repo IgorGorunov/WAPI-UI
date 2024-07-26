@@ -13,8 +13,13 @@ export const setInterceptorErrorCallback = (callback: (title: string, message: s
 let redirectToLogin: () => void;
 export const setInterceptorRedirectCallback = (callback:()=>void)=> {redirectToLogin = callback;}
 
-const maintenanceErrorText = 'We are sorry for inconvenience. Maintenance is currently underway. Please, try a bit later.';
-const administratorErrorText = 'Something went wrong. We are already fixing this. Please contact Wapi IT department.';
+
+const maintenanceTitle = "maintenanceTitle";
+const adminErrorTitle = "error";
+const maintenanceErrorText = "maintenanceError";
+const administratorErrorText = "backendError";
+// const maintenanceErrorText = 'We are sorry for inconvenience. Maintenance is currently underway. Please, try a bit later.';
+// const administratorErrorText = 'Something went wrong. We are already fixing this. Please contact Wapi IT department.';
 
 const loginApi = axios.create(
     {
@@ -39,8 +44,8 @@ loginApi.interceptors.response.use(response=> {
 
     if (error.code === "ECONNABORTED") {
         // Request timed out
-        errorTitle = 'Maintenance';
-        errorMessage = maintenanceErrorText
+        errorTitle = maintenanceTitle; //'Maintenance';
+        errorMessage = maintenanceErrorText;
     } else {
         const errorStatus = error.response.status;
 
@@ -50,10 +55,10 @@ loginApi.interceptors.response.use(response=> {
             const errorResponseMessage = error.response.data.message || error.response.data.errorMessage || 'Something went wrong. Please, contact administrator.';
 
             if (errorResponseMessage) {
-                errorTitle = 'Error';
+                errorTitle = adminErrorTitle;//'Error';
                 errorMessage = administratorErrorText;
             } else {
-                errorTitle = 'Maintenance';
+                errorTitle = maintenanceTitle; //'Maintenance';
                 errorMessage = maintenanceErrorText;
             }
         }
@@ -81,10 +86,9 @@ api.interceptors.response.use(response=> {
     }
     return  response;
 }, error => {
-    console.log('get error 123', error, error.code);
 
-    let errorMessage = '';
-    let errorTitle = '';
+    let errorMessage = adminErrorTitle;
+    let errorTitle = administratorErrorText;
 
 
     if (error.code === "ERR_BAD_RESPONSE" || error.code === "ERR_BAD_REQUEST") {
@@ -99,14 +103,14 @@ api.interceptors.response.use(response=> {
             const errorResponseMessage = error.response.data.message || error.response.data.errorMessage || 'Something went wrong. Please, contact administrator.';
 
             if (errorResponseMessage) {
-                errorTitle = 'Error';
+                errorTitle = adminErrorTitle; //'Error';
                 errorMessage = administratorErrorText
             } else {
-                errorTitle = 'Maintenance';
+                errorTitle = maintenanceTitle; //'Maintenance';
                 errorMessage = maintenanceErrorText
             }
         } else {
-            errorTitle = 'Error';
+            errorTitle = adminErrorTitle; //'Error';
             errorMessage = administratorErrorText;
         }
 
@@ -116,7 +120,7 @@ api.interceptors.response.use(response=> {
 
     if (error.code === "ECONNABORTED") {
         // Request timed out
-        errorTitle = 'Maintenance';
+        errorTitle = maintenanceTitle; //'Maintenance';
         errorMessage = maintenanceErrorText;
     }
 
@@ -142,7 +146,6 @@ apiCompressed.interceptors.response.use(response=> {
     }
     return  response;
 }, error => {
-    console.log('get error 123', error, error.code);
 
     let errorMessage = '';
     let errorTitle = '';
@@ -160,14 +163,14 @@ apiCompressed.interceptors.response.use(response=> {
             const errorResponseMessage = error.response.data.message || error.response.data.errorMessage || 'Something went wrong. Please, contact administrator.';
 
             if (errorResponseMessage) {
-                errorTitle = 'Error';
+                errorTitle = adminErrorTitle; //'Error';
                 errorMessage = administratorErrorText
             } else {
-                errorTitle = 'Maintenance';
+                errorTitle = maintenanceTitle; //'Maintenance';
                 errorMessage = maintenanceErrorText
             }
         } else {
-            errorTitle = 'Error';
+            errorTitle = adminErrorTitle; //'Error';
             errorMessage = administratorErrorText;
         }
 
@@ -177,7 +180,7 @@ apiCompressed.interceptors.response.use(response=> {
 
     if (error.code === "ECONNABORTED") {
         // Request timed out
-        errorTitle = 'Maintenance';
+        errorTitle = maintenanceTitle; //'Maintenance';
         errorMessage = maintenanceErrorText;
     }
 

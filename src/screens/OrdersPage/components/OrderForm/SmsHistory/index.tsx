@@ -3,13 +3,14 @@ import {OrderSmsHistoryType} from "@/types/orders";
 import "./styles.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
+import {useTranslations} from "next-intl";
 
 type PropsType = {
     smsHistory?: OrderSmsHistoryType[] ;
 };
 
 const SmsHistory: React.FC<PropsType> = ({ smsHistory }) => {
-
+    const t = useTranslations('Fulfillment.orderTabsInfo.smsHistory');
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
     }, []);
@@ -17,10 +18,10 @@ const SmsHistory: React.FC<PropsType> = ({ smsHistory }) => {
     return (
         <div className="order-sms-history">
             <div className="order-sms-history__header">
-                <div className='date-column'>Period</div>
-                <div className='column status-column'>Status</div>
-                <div className='column recipient-column'>Recipient</div>
-                <div className='column text-column'>Sms text</div>
+                <div className='date-column'>{t('period')}</div>
+                <div className='column status-column'>{t('status')}</div>
+                <div className='column recipient-column'>{t('recipient')}</div>
+                <div className='column text-column'>{t('smsText')}</div>
 
             </div>
             <ul className="order-sms-history__list">

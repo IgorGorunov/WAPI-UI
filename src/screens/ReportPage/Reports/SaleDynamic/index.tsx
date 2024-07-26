@@ -39,19 +39,19 @@ const getColor = (row: any, colName: string) => {
     }
 }
 
-export const columns_Country_Weeks: ColumnDef<SaleDynamicRowType>[] = [
+export const columns_Country_Weeks = (t, tCountries) => [
     {
         accessorKey: 'country',
         id: 'country',
-        header: () => <Tooltip title="Receiver country" ><span>Country</span></Tooltip>,
-        cell: info => <span><span className={`fi fi-${info.row.original.countryCode ? info.row.original?.countryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.country}</span>,
+        header: () => <Tooltip title={t('ReportSaleDynamic.receiverCountryHint')} ><span>{t('ReportSaleDynamic.receiverCountry')}</span></Tooltip>,
+        cell: info => <span><span className={`fi fi-${info.row.original.countryCode ? info.row.original?.countryCode.toLowerCase() : ''} flag-icon`}></span>{tCountries(info.row.original?.countryCode.toLowerCase())}</span>,
         aggregationFn: 'count',
         size: 150,
         minSize: 150,
         maxSize: 500,
     },
 
-];
+] as ColumnDef<SaleDynamicRowType>[];
 
 const createColumn = (colName: string) => {
     return {
@@ -67,12 +67,12 @@ const createColumn = (colName: string) => {
 }
 
 
-export const getSaleDynamicVariantColumns = (variant: SALE_DYNAMIC_VARIANTS, resourceCols: string[]=[]) => {
+export const getSaleDynamicVariantColumns = (t:any, tCountries: any, variant: SALE_DYNAMIC_VARIANTS, resourceCols: string[]=[]) => {
     switch (variant) {
         case SALE_DYNAMIC_VARIANTS.COUNTRY:
-            return [...columns_Country_Weeks, ...resourceCols.map(colName => { return createColumn(colName)})];
+            return [...columns_Country_Weeks(t, tCountries), ...resourceCols.map(colName => { return createColumn(colName)})];
         default:
-            return columns_Country_Weeks;
+            return [...columns_Country_Weeks(t, tCountries)];
     }
 }
 

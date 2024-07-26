@@ -26,6 +26,7 @@ const FilterOption: React.FC<FilterOptionType> = ({option, isChecked=false, filt
                 checked={isChecked}
                 onChange={()=>onClick(option.value)}
                 isCheckboxHidden={filterType !== FILTER_TYPE.CHECKBOX}
+                flagBefore={true}
             />
         </div>
     );

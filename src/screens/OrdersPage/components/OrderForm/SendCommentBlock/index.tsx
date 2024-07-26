@@ -15,6 +15,8 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {DateFields, MainFields, ReceiverFields} from "./CommentFields";
 import {addWorkingDays, formatDateToString} from "@/utils/date";
 import Loader from "@/components/Loader";
+import {useTranslations} from "next-intl";
+import {useRouter} from "next/router";
 
 type SendCommentPropsType = {
     orderData: SingleOrderType;
@@ -24,12 +26,19 @@ type SendCommentPropsType = {
 };
 
 const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal, onSuccess }) => {
+    const t = useTranslations('Fulfillment.commentModal')
+    const tActions = useTranslations('Fulfillment.commentActions');
+    const tFields = useTranslations('Fulfillment.orderFields')
+    const tMessages = useTranslations('messages');
+    const tBtns = useTranslations('common.buttons');
+    const {locale} = useRouter();
+
     const [isLoading, setIsLoading] = useState(false);
     const {token, superUser, ui} = useAuth();
 
     const availableOptions = orderData.commentCourierServiceFunctionsList.split(';');
 
-    const sendCommentTypeOptions = useMemo(()=> createOptions(SendCommentTypesArray.filter(item=> availableOptions.includes(item))), []);
+    const sendCommentTypeOptions = useMemo(()=> SendCommentTypesArray.filter(item=> availableOptions.includes(item)).map(item=>({value:item, label:tActions(item)})), []);
 
     //TEMPORARILY !!!
     let commentDate = addWorkingDays((orderData?.nextAvailableDayAfterDays || 0)+1, '14:00'); //14:00 added temporarily. Need data from backend
@@ -68,9 +77,9 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
         //console.log('action', curAction)
     },[curAction])
 
-    const receiverFields = useMemo(()=>ReceiverFields({countries: countryOptions}),[countryOptions])
-    const mainFields = useMemo(()=>MainFields(),[])
-    const dateFields = useMemo(()=>DateFields(orderData?.nextAvailableDayAfterDays || 0),[orderData])
+    const receiverFields = useMemo(()=>ReceiverFields({t: tFields, requiredFieldMessage: '', countries: countryOptions}),[countryOptions, locale])
+    const mainFields = useMemo(()=>MainFields(t),[locale])
+    const dateFields = useMemo(()=>DateFields(t, tMessages('requiredField'), orderData?.nextAvailableDayAfterDays || 0),[orderData, locale])
 
 
     //status modal
@@ -112,7 +121,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Comment is sent successfully!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: tMessages('successMessages.commentSendSuccessfully'), onClose: closeSuccessModal})
                     onSuccess();
                     setShowStatusModal(true);
                 }
@@ -122,7 +131,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Something went wrong! Please, try later. `, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.somethingWentWrong'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -153,7 +162,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                                 disabled={false}
                                 {...props}
                                 name='action'
-                                label='Type of comment'
+                                label={t('typeOfComment')}
                                 fieldType={FormFieldTypes.SELECT}
                                 options={sendCommentTypeOptions}
                                 placeholder='Select'
@@ -174,7 +183,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                     <FormFieldsBlock control={control} fieldsArray={dateFields} errors={errors} isDisabled={false}/>
                 </div>}
                 <div className='form-submit-btn'>
-                    <Button type="submit"  variant={ButtonVariant.PRIMARY}>Send</Button>
+                    <Button type="submit"  variant={ButtonVariant.PRIMARY}>{tBtns('send')}</Button>
                 </div>
             </form>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

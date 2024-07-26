@@ -23,6 +23,9 @@ import {ticketStatusColors, TicketType} from "@/types/tickets";
 import {FILTER_TYPE} from "@/types/utility";
 import {useRouter} from "next/router";
 import Icon from "@/components/Icon";
+import {useTranslations} from "next-intl";
+import {itemRender} from "@/utils/pagination";
+import {PageOptions} from "@/constants/pagination";
 
 
 type TicketListType = {
@@ -32,16 +35,12 @@ type TicketListType = {
     handleEditTicket(uuid: string): void;
 }
 
-const pageOptions = [
-    { value: '10', label: '10 per page' },
-    { value: '20', label: '20 per page' },
-    { value: '50', label: '50 per page' },
-    { value: '100', label: '100 per page' },
-    { value: '1000', label: '1000 per page' },
-    { value: '1000000', label: 'All' },
-];
-
 const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrentRange, handleEditTicket}) => {
+    const t = useTranslations('Tickets');
+    const tColumns = useTranslations('Tickets.listColumns');
+    const tCommon = useTranslations('common');
+
+
     const router = useRouter();
 
     const [current, setCurrent] = React.useState(1);
@@ -53,7 +52,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
-        label: 'Full text search',
+        label: tCommon('fullTextSearchLabel'),
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
@@ -103,12 +102,12 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     const newMessagesOptions = useMemo(() => ([
         {
             value: 'Has new messages',
-            label: 'Has new messages',
+            label: tCommon('filters.newMessagesOptions.hasMessages'),
             amount: tickets ? tickets.filter(item=>item.newMessages).length : 0,
         },
         {
             value: "Doesn't have new messages",
-            label: "Doesn't have new messages",
+            label: tCommon('filters.newMessagesOptions.noMessages'),
             amount: tickets ? tickets.length - tickets.filter(item=>item.newMessages).length : 0,
         },
 
@@ -243,8 +242,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 maxWidth="80px"
                 contentPosition="start"
                 childrenBefore={
-                    <Tooltip title="Current ticket status" >
-                        <span>Status</span>
+                    <Tooltip title={tColumns('statusHint')} >
+                        <span>{tColumns('status')}</span>
                     </Tooltip>
                 }
             />,
@@ -290,8 +289,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 maxWidth="80px"
                 contentPosition="start"
                 childrenBefore={
-                    <Tooltip title="Ticket number. Click on the number to view the correspondence" >
-                        <span>Ticket #</span>
+                    <Tooltip title={tColumns('ticketNumberHint')} >
+                        <span>{tColumns('ticketNumber')}</span>
                     </Tooltip>
                 }
             />,
@@ -323,8 +322,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 maxWidth="120px"
                 contentPosition="start"
                 childrenBefore={
-                    <Tooltip title="When the ticket was created" >
-                        <span>Date</span>
+                    <Tooltip title={tColumns('dateHint')} >
+                        <span>{tColumns('date')}</span>
                     </Tooltip>
                 }
             />,
@@ -344,8 +343,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 maxWidth="400px"
                 contentPosition="start"
                 childrenBefore={
-                    <Tooltip title="Ticket subject" >
-                        <span>Topic</span>
+                    <Tooltip title={tColumns('topicHint')} >
+                        <span>{tColumns('topic')}</span>
                     </Tooltip>
                 }
             />,
@@ -367,8 +366,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 maxWidth="500px"
                 contentPosition="start"
                 childrenBefore={
-                    <Tooltip title="Ticket title" >
-                        <span>Title</span>
+                    <Tooltip title={tColumns('titleHint')} >
+                        <span>{tColumns('title')}</span>
                     </Tooltip>
                 }
             />,
@@ -399,8 +398,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     return (
         <div className="table order-list">
             <Head>
-                <title>Orders</title>
-                <meta name="orders" content="orders" />
+                <title>{t('headerTitle')}</title>
+                <meta name={t('headerTitle')} content={t('headerTitle')} />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
@@ -415,14 +414,14 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Topic' filterState={filterTopic} options={topicOptions} onClose={()=>setFilterTopic([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />
-                    <CurrentFilters title='New messages' filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>setFilterNewMessages([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />
+                    <CurrentFilters title={tCommon('filters.status')} filterState={filterStatus} options={statusOptions} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title={tCommon('filters.topic')} filterState={filterTopic} options={topicOptions} onClose={()=>setFilterTopic([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />
+                    <CurrentFilters title={tCommon('filters.newMessages')} filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>setFilterNewMessages([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
                     <PageSizeSelector
-                        options={pageOptions}
+                        options={PageOptions(tCommon)}
                         value={pageSize}
                         onChange={(value: number) => handleChangePageSize(value)}
                     />
@@ -441,7 +440,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total tickets:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                        <li className='order-products-total__list-item'>{t('totalTickets')}:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -453,12 +452,13 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                     total={filteredOrders.length}
                     hideOnSinglePage
                     showSizeChanger={false}
+                    itemRender={itemRender(tCommon)}
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={statusOptions} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Topic' filterOptions={topicOptions} filterState={filterTopic} setFilterState={setFilterTopic} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>
-                <FiltersBlock filterTitle='New messages' filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={setFilterNewMessages} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>
+                <FiltersBlock filterTitle={tCommon('filters.status')} filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={statusOptions} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle={tCommon('filters.topic')} filterOptions={topicOptions} filterState={filterTopic} setFilterState={setFilterTopic} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>
+                <FiltersBlock filterTitle={tCommon('filters.newMessages')} filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={setFilterNewMessages} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>
             </FiltersContainer>
         </div>
     );

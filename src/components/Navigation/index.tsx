@@ -12,6 +12,7 @@ import {TourGuidePages} from "@/types/tourGuide";
 import useAuth from "@/context/authContext";
 import useNotifications from "@/context/notificationContext";
 import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import {useTranslations} from "next-intl";
 
 type NavigationType = {
     isMenuOpen: boolean;
@@ -32,10 +33,12 @@ const getTicketsWithUnreadMessages = (notifications: NotificationType[]) => {
 const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
     const {isNavItemAccessible} = useAuth();
     const {notifications} = useNotifications();
+    const t = useTranslations('Navigation');
+    const tGuide = useTranslations('Navigation.tourGuide');
     const [amountOfTicketsWithUnreadMessages, setAmountOfTicketsWithUnreadMessages] = useState(getTicketsWithUnreadMessages(notifications));
 
     useEffect(() => {
-        setAmountOfTicketsWithUnreadMessages(getTicketsWithUnreadMessages(notifications))
+        setAmountOfTicketsWithUnreadMessages(getTicketsWithUnreadMessages(notifications));
     }, [notifications]);
 
     //tour guide
@@ -43,7 +46,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
     const [runNavigationTour, setRunNavigationTour] = useState(false);
 
     const navigationSteps = [];
-    navigationStepsFull.forEach(item => {
+    navigationStepsFull(tGuide).forEach(item => {
         if (item.submenuName === 'Dashboard' || isNavItemAccessible(item.submenuName)) {
             navigationSteps.push(item);
         }
@@ -64,7 +67,6 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
 
     const navBlocksArray = useMemo(()=>navBlocks(amountOfTicketsWithUnreadMessages) as SubmenuBlockType[],[amountOfTicketsWithUnreadMessages]);
 
-
     return (
         <div className={`burger-menu__overlay ${isMenuOpen ? 'burger-menu__overlay-open' : ''}`} onClick={handleCloseClick}>
             <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`} onClick={(e)=>e.stopPropagation()}>
@@ -75,13 +77,13 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                     <div className='dashboard-menu-link'>
                         <Link href="/" className="button-link" passHref onClick={handleClose}>
                             <Icon name="home" className="icon-home"/>
-                            <span style={{marginLeft: "20px"}}>Dashboard</span>
+                            <span style={{marginLeft: "20px"}}>{t('Dashboard')}</span>
                         </Link>
                     </div>
                     {navBlocksArray && navBlocksArray.length ? navBlocksArray.map((navBlock, index)=> (
                         isNavItemAccessible(navBlock.submenuName) ? (<div key={`${navBlock.submenuTitle}-${index}`}>
                             {navBlock.submenuLink && !navBlock.navItems.length ?
-                                <SubmenuSingleItem {...navBlock}/>
+                                <SubmenuSingleItem {...navBlock} unreadAmount={amountOfTicketsWithUnreadMessages}/>
                                 :
                                 <SubmenuBlock {...navBlock} handleClose={handleClose} />
                             }

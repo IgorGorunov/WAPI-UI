@@ -12,17 +12,19 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {LegalInfoFormType, UserStatusType} from "@/types/leads";
 import Loader from "@/components/Loader";
 import {E164Number} from "libphonenumber-js";
+import {useTranslations} from "next-intl";
 
 type LegalInfoPropsType = {
     legalData: any | null;
 }
 
 const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
+    const t = useTranslations('LeadPage.approvedLeadInfo.legalInfo');
+    const tMessages = useTranslations('messages');
+
     const {token, userStatus, setUserStatus} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
-
     const [isDisabled, setIsDisabled] = useState(userStatus === UserStatusType.NoLegalNoPrices || userStatus === UserStatusType.NoLegalPrices);
-
 
     const handleContractDownload = async () => {
         const res = await fetch(`/Contract2024.docx`); // Adjust the path accordingly
@@ -89,7 +91,7 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Thank you for submitting information to fill the contract! `, text: ['We will reach out for any necessary additional information.'], onClose: closeSuccessModal, disableAutoClose: true})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: tMessages('successMessages.contractSubmit'), text: [tMessages('successMessages.weWillReachYou')], onClose: closeSuccessModal, disableAutoClose: true})
                     setShowStatusModal(true);
                     setIsDisabled(true);
                 }
@@ -98,7 +100,7 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
 
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Something went wrong...`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.somethingWentWrongShorVersion'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -116,23 +118,23 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
         <div className={`card legal-info`}>
             {isLoading && <Loader />}
             <div className='legal-info__contract-download'>
-                <Button icon='download-file' iconOnTheRight onClick={handleContractDownload}>Contract sample</Button>
+                <Button icon='download-file' iconOnTheRight onClick={handleContractDownload}>{t('contractSample')}</Button>
             </div>
             <div className='legal-info__form-wrapper'>
                 <form onSubmit={handleSubmit(onSubmitForm)} autoComplete="off">
                     <div className='grid-row'>
-                        <FormFieldsBlock control={control} fieldsArray={companyInfoFields} errors={errors} isDisabled={noLegal || isDisabled}/>
+                        <FormFieldsBlock control={control} fieldsArray={companyInfoFields(t,tMessages)} errors={errors} isDisabled={noLegal || isDisabled}/>
                     </div>
                     <br/><br/>
                     <div className='grid-row'>
-                        <FormFieldsBlock control={control} fieldsArray={bankInfoFields} errors={errors} isDisabled={noLegal || isDisabled} />
+                        <FormFieldsBlock control={control} fieldsArray={bankInfoFields(t,tMessages)} errors={errors} isDisabled={noLegal || isDisabled} />
                     </div>
                     <br/><br/>
                     <div className='grid-row'>
-                        <FormFieldsBlock control={control} fieldsArray={otherInfoFields} errors={errors} isDisabled={noLegal || isDisabled} />
+                        <FormFieldsBlock control={control} fieldsArray={otherInfoFields(t,tMessages)} errors={errors} isDisabled={noLegal || isDisabled} />
                     </div>
                     <div className='legal-info__form-btns'>
-                        <Button type='submit' disabled={isDisabled}>Submit contract</Button>
+                        <Button type='submit' disabled={isDisabled}>{t('submitContractBtn')}</Button>
                     </div>
                 </form>
             </div>

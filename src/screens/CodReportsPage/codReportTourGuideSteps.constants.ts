@@ -1,32 +1,34 @@
 import {TourGuideStepType} from "@/types/tourGuide";
 
-export const tourGuideStepsCodReports: TourGuideStepType[] = [
-    {
-        target: '.indicator-info-card.year', //'.product-list__container',
-        content: 'COD accrued from the beginning of the year to the date',
-        disableBeacon: true,
-    },
-    {
-        target: '.indicator-info-card.month',
-        content: 'COD accrued from the beginning of the month to the date',
-    },
-    {
-        target: '.indicator-info-card.current',
-        content: 'COD accrued in the current period',
-    },
-    {
-        target: '.date-input-field',
-        content: 'Click here to filter COD reports by the period of time',
-    },
-    {
-        target: '.search-block',
-        content: 'Write data here to find information on the list below',
-    },
-    {
-        target: '.export-file',
-        content: 'Click here to export COD reports into Excel \n' +
-            'Note: All filters will be applied into export file',
-    },
-];
+export const tourGuideStepsCodReports = (t) => {
+    return [
+        {
+            target: '.indicator-info-card.year', //'.product-list__container',
+            content: t('step1'),
+            disableBeacon: true,
+        },
+        {
+            target: '.indicator-info-card.month',
+            content: t('step2'),
+        },
+        {
+            target: '.indicator-info-card.current',
+            content: t('step3'),
+        },
+        {
+            target: '.date-input-field',
+            content: t('step4'),
+        },
+        {
+            target: '.search-block',
+            content: t('step5'),
+        },
+        {
+            target: '.export-file',
+            content: t('step6-1') + ' \n' +
+                t('step6-2'),
+        },
+    ] as TourGuideStepType[];
+}
 
-export const tourGuideStepsCodReportsNoDocs: TourGuideStepType[] = tourGuideStepsCodReports;
+export const tourGuideStepsCodReportsNoDocs = (t) => tourGuideStepsCodReports(t);

@@ -3,33 +3,32 @@ import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 
-export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TYPE, canEditATA: boolean) => {
+export const GeneralFields = (t: any, tTypes, requiredFieldMessage: string, newObject: boolean, docType: STOCK_MOVEMENT_DOC_TYPE, canEditATA: boolean) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
     const docTypeSingle = docNamesSingle[docType];
-    const docHintsObj = StockMovementsHints(docTypeSingle);
 
     return [
             {
                 fieldType: FormFieldTypes.TEXT,
                 type: "text",
                 name: 'number',
-                label: "Number",
+                label: t('number'),
                 placeholder: "",
                 disabled: true,
                 width: WidthType.w17,
                 classNames: "",
                 isDisplayed: !newObject,
-                hint: docHintsObj['number'] || '',
+                hint: t('numberHint'),
             },
             {
                 fieldType: FormFieldTypes.TEXT,
                 type: "text",
                 name: 'incomingNumber',
-                label: "Incoming number",
+                label: t('incomingNumber'),
                 placeholder: "",
                 width: newObject ? WidthType.w33 : WidthType.w17,
                 classNames: "",
-                hint: docHintsObj['incomingNumber'] || '',
+                hint: t('incomingNumberHint', {docType: tTypes(docType)}),
             },
             {
                 fieldType: FormFieldTypes.DATE,
@@ -42,7 +41,7 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                 width: WidthType.w17,
                 classNames: "calendar-to-right",
                 rules: {
-                    required: isInbound ? "Required field" : false,
+                    required: isInbound ? requiredFieldMessage : false,
                     validate: value => {
                         if (!isInbound) return true;
 
@@ -50,45 +49,47 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
                         const year2000 = new Date('2000-01-01');
 
                         if (selectedDate < year2000) {
-                            return 'Required field';
+                            return requiredFieldMessage;
                         }
 
                         return true; // Validation passed
                     }
                 },
-                errorMessage: "Required field",
                 isClearable: true,
-                hint: docHintsObj['estimatedTimeArrives'] || '',
+                hint: t('estimatedTimeArrivesHint') || '',
             },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: 'status',
-            label: 'Status',
+            label: t('status'),
             placeholder: "",
             disabled: true,
             width: WidthType.w25,
             classNames: "",
             isDisplayed: !newObject,
-            hint: docHintsObj['status'] || '',
+            hint: t("statusHint") || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: 'statusAdditionalInfo',
-            label: 'Status additional info',
+            label: t('statusAdditionalInfo'),
             placeholder: "",
             disabled: true,
             width: WidthType.w25,
             classNames: "",
             isDisplayed: !newObject,
-            hint: docHintsObj['statusAdditionalInfo'] || '',
+            hint: t('statusAdditionalInfoHint') || '',
         },
     ];
 }
 
 export const DetailsFields = (
     {
+        t,
+        tTypes,
+        requiredFieldMessage,
         newObject,
         docType,
         countryOptions,
@@ -103,6 +104,9 @@ export const DetailsFields = (
         receiver,
         isSenderDisabled,
     }:{
+        t: any,
+        tTypes: any
+        requiredFieldMessage: string,
         newObject: boolean,
         docType: STOCK_MOVEMENT_DOC_TYPE,
         countryOptions: OptionType[],
@@ -131,92 +135,89 @@ export const DetailsFields = (
             fieldType: isInbound || isLogisticService ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
             type: "text",
             name: 'sender',
-            label: 'Sender',
+            label: t('sender'),
             placeholder: "",
             disabled: senderHide || isSenderDisabled,
             rules: {
-                required: "Required field",
+                required: requiredFieldMessage,
             },
-            errorMessage: "Required field",
             options: isInbound || isLogisticService ? [] : isStockMovement && !!receiver ? senderOptions.filter(item => item.value !== receiver) : senderOptions,
             onChange: onSenderChange,
             width: WidthType.w33,
             classNames: "",
-            hint: docHintsObj['sender'] || '',
+            hint: t(isInbound || isLogisticService ? "senderInboundHint" : "senderOutboundHint"),
         },
         {
             fieldType: FormFieldTypes.SELECT,
             type: "text",
             name: 'senderCountry',
-            label: 'Country of sender',
+            label: t('senderCountry'),
             options: countryOptions,
             placeholder: "",
             rules: {
-                required: "Required field",
+                required: requiredFieldMessage,
             },
-            errorMessage: "Required field",
             disabled: !isInbound && !isLogisticService,
             width: WidthType.w17,
             classNames: "",
-            hint: docHintsObj['senderCountry'] || '',
+            hint: t('senderCountryHint') || '',
         },
         {
             fieldType: isOutbound || isLogisticService ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
             type: "text",
             name: 'receiver',
-            label: 'Receiver',
+            label: t('receiver'),
             placeholder: "",
             rules: {
-                required: "Required field",
+                required: requiredFieldMessage,
             },
-            errorMessage: "Required field",
             options: isOutbound || isLogisticService ? [] : isStockMovement && !!sender ? receiverOptions.filter(item => item.value !== sender) : receiverOptions,
             onChange: onReceiverChange,
             disabled: receiverHide,
             width: WidthType.w33,
             classNames: "",
-            hint: docHintsObj['receiver'] || '',
+            hint: t(isOutbound || isLogisticService ? 'receiverOutboundHint' : 'receiverInboundHint'),
         },
         {
             fieldType: FormFieldTypes.SELECT,
             type: "text",
             name: 'receiverCountry',
-            label: 'Country of receiver',
+            label: t('receiverCountry'),
             placeholder: "",
             rules: {
-                required: "Required field",
+                required: requiredFieldMessage,
             },
-            errorMessage: "Required field",
             options: countryOptions,
             disabled: !isOutbound && !isLogisticService,
             width: WidthType.w17,
 
             classNames: "",
-            hint: docHintsObj['receiverCountry'] || '',
+            hint: t('receiverCountryHint') || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: 'courierServiceTrackingNumber',
-            label: 'Courier service tracking number',
+            label: t('courierServiceTrackingNumber'),
             placeholder: "",
             //disabled: true,
             width: WidthType.w50,
             classNames: "",
             notDisable: isInbound && canEditETA,
             //isDisplayed: !newObject,
-            hint: docHintsObj['courierServiceTrackingNumber'] || '',
+            hint: t('courierServiceTrackingNumberHint') || '',
         },
         {
             fieldType: FormFieldTypes.TEXT_AREA,
             type: "text",
             name: 'comment',
-            label: 'Comment',
+            label: t('comment'),
             placeholder: "",
             //disabled: true,
             width: WidthType.w100,
             classNames: "",
-            hint: docHintsObj['comment'] || '',
+            //hint: t('commentHint', {docType: tTypes(docType)}),
+            hint: t('commentHint'+docType),
         },
 
     ];

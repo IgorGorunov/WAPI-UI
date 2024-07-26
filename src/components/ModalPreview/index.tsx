@@ -14,16 +14,6 @@ type ModalType = {
 const Modal: React.FC<ModalType> = ({ children, onClose, classNames = "" , modalType= ModalTypes.PREVIEW,}) => {
     const modalWrapperRef = useRef<HTMLDivElement>();
 
-
-    // useEffect(() => {
-    //     document.body.classList.add('modalOpen');
-    //
-    //
-    //     return () => {
-    //         document.body.classList.remove('modalOpen');
-    //     };
-    // }, []);
-
     const handleCloseClick = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         onClose();
@@ -38,7 +28,6 @@ const Modal: React.FC<ModalType> = ({ children, onClose, classNames = "" , modal
             </div>
             <div className="preview-modal" ref={modalWrapperRef} onClick={(e) => e.stopPropagation()}>
                 <div className="preview-modal__content">
-
                     {children}
                 </div>
             </div>

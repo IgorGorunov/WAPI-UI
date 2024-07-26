@@ -8,13 +8,14 @@ import {ApiResponseType} from "@/types/api";
 import {getLegalData} from "@/services/leads";
 import useAuth from "@/context/authContext";
 import ApiInfo from "@/screens/LeadPage/components/ApprovedLeadInfo/ApiInfo";
+import {useTranslations} from "next-intl";
 
 type ApprovedLeadInfoPropsType = {
 
 }
 
 const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
-
+    const t = useTranslations('LeadPage.approvedLeadInfo.tabs')
     const {token, userStatus} = useAuth();
     const [legalData, setLegalData] = useState<null|LegalInfoFormType>(null);
 
@@ -41,7 +42,7 @@ const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
 
     //const tabTitles = ['Prices', 'Legal documentation', 'API info', 'UI tutorial'].map(item=>({title: item}));
 
-    const tabTitles = ['Prices', 'Legal documentation', 'API info'].map(item=>({title: item}));
+    const tabTitles = [t('prices'), t('legalInfo'), t('api')].map(item=>({title: item}));
 
     return (
         <div className={`card lead-page__approved-block `}>

@@ -26,6 +26,10 @@ import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds, formatTimeStringFromString} from "@/utils/date";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import SimplePopup, {PopupItem} from "@/components/SimplePopup";
+import {MessageKeys, useTranslations} from "next-intl";
+import {useRouter} from "next/router";
+import {itemRender} from "@/utils/pagination";
+import {PageOptions} from "@/constants/pagination";
 
 
 type OrderListType = {
@@ -47,9 +51,16 @@ const pageOptions = [
 ];
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, handleRefresh}) => {
+    const t = useTranslations('Fulfillment');
+    const tColumns = useTranslations('Fulfillment.listColumns');
+    const tCommon = useTranslations('common');
+    const tCountry = useTranslations('countries');
+
+    const {locale} = useRouter();
+
     const isTouchDevice = useIsTouchDevice();
 
-    console.log('orrrrr', orders.filter(item => item.wapiTrackingNumber=="WH0001323161"));
+   console.log('12121212', orders.filter(item => item.commentToCourierServiceExist || item.commentToCourierService.length))
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -60,7 +71,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
-        label: 'Full text search',
+        label: tCommon('fullTextSearchLabel'),
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
@@ -118,7 +129,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const transformedTroubleStatuses = useMemo(() => ([
         {
             value: '-All trouble statuses-',
-            label: '-All trouble statuses-',
+            label: tCommon('filters.troubleStatusOptions.allTroubleStatuses'),
             amount: calcOrderAllTroubleStatuses(),
         },
         ...uniqueTroubleStatuses.map(status => ({
@@ -126,7 +137,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             label: status,
             amount: calcOrderAmount('lastTroubleStatus', status),
         }))
-    ]), [uniqueTroubleStatuses]);
+    ]), [uniqueTroubleStatuses, locale]);
 
     // useEffect(() => {
     //     setFilterTroubleStatus(prevState => {
@@ -138,57 +149,57 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const claimFilterOptions = useMemo(() => ([
         {
             value: 'With claims',
-            label: 'With claims',
+            label: tCommon('filters.claimOptions.withClaims'),
             amount:  calcOrderWithClaims(),
         },
         {
             value: 'Without claims',
-            label: 'Without claims',
+            label: tCommon('filters.claimOptions.withoutClaims'),
             amount: (orders.length - calcOrderWithClaims()),
         },
-    ]), [orders]);
+    ]), [orders, locale]);
 
     const [filterCommentsToCourierService, setFilterCommentsToCourierService] = useState<string[]>([]);
     const commentToCourierServiceFilterOptions = useMemo(() => ([
         {
             value: 'With comments',
-            label: 'With comments',
+            label: tCommon('filters.commentsToCourierServiceOptions.withComments'),
             amount:  calcOrderWithCommentsToCourierService(),
         },
         {
             value: 'Without comments',
-            label: 'Without comments',
+            label: tCommon('filters.commentsToCourierServiceOptions.withoutComments'),
             amount: (orders.length - calcOrderWithCommentsToCourierService()),
         },
-    ]), [orders]);
+    ]), [orders, locale]);
 
     const [filterSelfCollect, setFilterSelfCollect] = useState<string[]>([]);
     const selfCollectFilterOptions = useMemo(() => ([
         {
             value: 'Self collect',
-            label: 'Self collect',
+            label: tCommon('filters.selfCollectOptions.isSelfCollect'),
             amount:  calcOrderWithBooleanProperty('selfCollect', true),
         },
         {
             value: 'Not self collect',
-            label: 'Not self collect',
+            label: tCommon('filters.selfCollectOptions.notSelfCollect'),
             amount: (orders.length - calcOrderWithBooleanProperty('selfCollect', true)),
         },
-    ]), [orders]);
+    ]), [orders, locale]);
 
     const [filterSentSMS, setFilterSentSMS] = useState<string[]>([]);
     const sentSMSFilterOptions = useMemo(() => ([
         {
             value: 'SMS was sent',
-            label: 'SMS was sent',
+            label: tCommon("filters.sentSmsOptions.smsWasSent"),
             amount:  calcOrderWithBooleanProperty('sentSMSExist', true),
         },
         {
             value: "Doesn't have SMS",
-            label: "Doesn't have SMS",
+            label: tCommon("filters.sentSmsOptions.noSms"),
             amount: (orders.length - calcOrderWithBooleanProperty('sentSMSExist', true)),
         },
-    ]), [orders]);
+    ]), [orders, locale]);
 
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     // const allWarehouses = orders.map(order => order.warehouse);
@@ -242,10 +253,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const transformedReceiverCountries = useMemo(() => ([
         ...uniqueReceiverCountries.map(country => ({
             value: country,
-            label: Countries[country] as string || country,
+            label: tCountry(country.toLowerCase() as MessageKeys<any, any>) || country,
             amount: calcOrderAmount('receiverCountry', country),
         }))
-    ]), [uniqueReceiverCountries]);
+    ]), [uniqueReceiverCountries, locale]);
 
     // useEffect(() => {
     //     setFilterReceiverCountry(prevState => {
@@ -347,11 +358,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         });
     }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
 
-
-    useEffect(() => {
-        console.log('filtered: ', filteredOrders)
-    }, [filteredOrders]);
-
     useEffect(() => {
         setCurrent(1)
     }, [searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
@@ -397,7 +403,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon  name={"car"}/></Tooltip>}>
+                    childrenBefore={<Tooltip title={tColumns('countriesHint')}> <Icon  name={"car"}/></Tooltip>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
@@ -415,14 +421,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         <Popover
                             content={<SimplePopup
                                 items={[
-                                    { uuid: record.uuid, title: "Country", description: record.receiverCountry } as PopupItem,
-                                    { uuid: record.uuid, title: "City", description: record.receiverCity },
-                                    { uuid: record.uuid, title: "Zip", description: record.receiverZip },
-                                    { uuid: record.uuid, title: "Address", description: record.receiverAddress },
-                                    { uuid: record.uuid, title: "Full name", description: record.receiverFullName },
-                                    { uuid: record.uuid, title: "Phone", description: record.receiverPhone },
-                                    { uuid: record.uuid, title: "E-mail", description: record.receiverEMail },
-                                    { uuid: record.uuid, title: "Comment", description: record.receiverComment },
+                                    { uuid: record.uuid, title: t('orderFields.receiverCountry'), description: record.receiverCountry } as PopupItem,
+                                    { uuid: record.uuid, title: t('orderFields.receiverCity'), description: record.receiverCity },
+                                    { uuid: record.uuid, title: t('orderFields.receiverZip'), description: record.receiverZip },
+                                    { uuid: record.uuid, title: t('orderFields.receiverAddress'), description: record.receiverAddress },
+                                    { uuid: record.uuid, title: t('orderFields.receiverFullName'), description: record.receiverFullName },
+                                    { uuid: record.uuid, title: t('orderFields.receiverPhone'), description: record.receiverPhone },
+                                    { uuid: record.uuid, title: t('orderFields.receiverEMail'), description: record.receiverEMail },
+                                    { uuid: record.uuid, title: t('orderFields.receiverComment'), description: record.receiverComment },
                                 ] as PopupItem[]}
                                 width={350}
                             />}
@@ -448,7 +454,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="24px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="If order has Claims" >
+                    <Tooltip title={tColumns('claimsHint')} >
                         <span><Icon name={"complaint"}/></span>
                     </Tooltip>
                 }
@@ -504,7 +510,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="24px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="If order has Trouble statuses">
+                    <Tooltip title={tColumns('troubleStatusHint')}>
                         <span><Icon name={"trouble"}/></span>
                     </Tooltip>
                 }
@@ -578,7 +584,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Current condition of an order"><span>Status</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="60px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title={tColumns('statusHint')}><span>{tColumns('status')}</span></Tooltip>}/>,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
@@ -620,7 +626,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="60px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title={tColumns('dateHint')}><span>{tColumns('date')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell minWidth="60px" maxWidth="80px" contentPosition="start"
                     childrenAfter={
@@ -640,7 +646,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Order identifier within the WAPI system"><span>WH number</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title={tColumns('whNumberHint')}><span>{tColumns('whNumber')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
@@ -664,7 +670,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             },
         },
         {
-            title: <TitleColumn minWidth="75px" maxWidth="75px" contentPosition="center" childrenBefore={<Tooltip title="The sum of cash on delivery"><span>COD</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="75px" maxWidth="75px" contentPosition="center" childrenBefore={<Tooltip title={tColumns('codHint')}><span>{tColumns('cod')}</span></Tooltip>}/>,
             render: (text: string, record) => {
                 if (record.codCurrency) {
                     const currencySymbol = getSymbolFromCurrency(record.codCurrency);
@@ -696,7 +702,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Unique code for order identification in the seller's system"><span>Order ID</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title={tColumns('orderIdHint')}><span>{tColumns('orderID')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
@@ -710,7 +716,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Code of warehouse"><span>Warehouse</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title={tColumns('warehouseHint')}><span>{tColumns('warehouse')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
@@ -723,7 +729,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="75px" maxWidth="75px" contentPosition="start" childrenBefore={<Tooltip title="Service responsible for transporting and delivering packages"><span>Courier</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="75px" maxWidth="75px" contentPosition="start" childrenBefore={<Tooltip title={tColumns('courierHint')}><span>{tColumns('courier')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
             ),
@@ -736,9 +742,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="start" childrenBefore={<Tooltip title="Number for monitoring the movement of products during transportation/delivery"><span>Tracking</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="70px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title={tColumns('trackingHint')}><span>{tColumns('tracking')}</span></Tooltip>}/>,
             render: (text: string, record) => (
-                <TableCell  minWidth="70px" maxWidth="70px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span  className='track-link' >Track<Icon name='track'/></span> }/>
+                <TableCell  minWidth="70px" maxWidth="120px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span  className='track-link' >{tColumns('trackLabelText')}<Icon name='track'/></span> }/>
             ),
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
@@ -763,7 +769,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="100px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="Products" >
+                    <Tooltip title={tColumns('productsHint')} >
                         <span><Icon name={"shopping-cart"}/></span>
                     </Tooltip>
                 }
@@ -824,20 +830,20 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>setFilterTroubleStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
-                    <CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>setFilterClaims([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
-                    <CurrentFilters title='Comment to courier service' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>setFilterCommentsToCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />
-                    <CurrentFilters title='Self collect' filterState={filterSelfCollect} options={selfCollectFilterOptions} onClose={()=>setFilterSelfCollect([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)}} />
-                    <CurrentFilters title='Sent SMS' filterState={filterSentSMS} options={sentSMSFilterOptions} onClose={()=>setFilterSentSMS([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)}} />
-                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
-                    <CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>
-                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                    <CurrentFilters title={tCommon('filters.status')} filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title={tCommon('filters.troubleStatus')} filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>setFilterTroubleStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
+                    <CurrentFilters title={tCommon('filters.claims')} filterState={filterClaims} options={claimFilterOptions} onClose={()=>setFilterClaims([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
+                    <CurrentFilters title={tCommon('filters.commentsToCourierService')} filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>setFilterCommentsToCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />
+                    <CurrentFilters title={tCommon('filters.selfCollect')} filterState={filterSelfCollect} options={selfCollectFilterOptions} onClose={()=>setFilterSelfCollect([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)}} />
+                    <CurrentFilters title={tCommon('filters.sentSms')} filterState={filterSentSMS} options={sentSMSFilterOptions} onClose={()=>setFilterSentSMS([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)}} />
+                    <CurrentFilters title={tCommon('filters.warehouse')} filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
+                    <CurrentFilters title={tCommon('filters.courierService')} filterState={filterCourierService} options={transformedCourierServices} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>
+                    <CurrentFilters title={tCommon('filters.receiverCountry')} filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
                     <PageSizeSelector
-                        options={pageOptions}
+                        options={PageOptions(tCommon)}
                         value={pageSize}
                         onChange={(value: number) => handleChangePageSize(value)}
                     />
@@ -854,7 +860,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total orders:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                        <li className='order-products-total__list-item'>{t('totalOrders')}:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -866,18 +872,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     total={filteredOrders.length}
                     hideOnSinglePage
                     showSizeChanger={false}
+                    itemRender={itemRender(tCommon)}
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
-                <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
-                <FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={setFilterCommentsToCourierService} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>
-                <FiltersBlock filterTitle='Self collect' filterOptions={selfCollectFilterOptions} filterState={filterSelfCollect} setFilterState={setFilterSelfCollect} isOpen={isOpenFilterSelfCollect} setIsOpen={setIsOpenFilterSelfCollect}/>
-                <FiltersBlock filterTitle='Sent SMS' filterOptions={sentSMSFilterOptions} filterState={filterSentSMS} setFilterState={setFilterSentSMS} isOpen={isOpenFilterSentSMS} setIsOpen={setIsOpenFilterSentSMS}/>
-                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
-                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                <FiltersBlock filterTitle={tCommon('filters.status')} filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle={tCommon('filters.troubleStatus')} filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
+                <FiltersBlock filterTitle={tCommon('filters.claims')} filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
+                <FiltersBlock filterTitle={tCommon('filters.commentsToCourierService')} filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={setFilterCommentsToCourierService} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>
+                <FiltersBlock filterTitle={tCommon('filters.selfCollect')} filterOptions={selfCollectFilterOptions} filterState={filterSelfCollect} setFilterState={setFilterSelfCollect} isOpen={isOpenFilterSelfCollect} setIsOpen={setIsOpenFilterSelfCollect}/>
+                <FiltersBlock filterTitle={tCommon('filters.sentSms')} filterOptions={sentSMSFilterOptions} filterState={filterSentSMS} setFilterState={setFilterSentSMS} isOpen={isOpenFilterSentSMS} setIsOpen={setIsOpenFilterSentSMS}/>
+                <FiltersBlock filterTitle={tCommon('filters.warehouse')} filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle={tCommon('filters.courierService')} filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
+                <FiltersBlock filterTitle={tCommon('filters.receiverCountry')} isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
         </div>
     );

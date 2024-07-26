@@ -45,6 +45,8 @@ import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {AmazonPrepHints} from "@/screens/AmazonPrepPage/amazonPrepHints.constants";
 import {CommonHints} from "@/constants/commonHints";
+import {MessageKeys, useTranslations} from "next-intl";
+import {useRouter} from "next/router";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -66,6 +68,14 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
 }
 
 const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc}) => {
+    const t = useTranslations('AmazonPrep')
+    const tCommon = useTranslations('common');
+    const tTabs = useTranslations('AmazonPrep.amazonTabs');
+    const tFields = useTranslations('AmazonPrep.amazonFields');
+    const tColumns = useTranslations('AmazonPrep.amazonColumns');
+    const tMessages = useTranslations('messages');
+
+    const {locale} = useRouter();
 
     const { token, currentDate, superUser, ui } = useAuth();
     const {notifications} = useNotifications();
@@ -109,7 +119,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                     label: item.warehouse.trim(),
                     value: item.warehouse.trim()
                 } as OptionType))
-                .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
+                .sort((a, b) => a.label.toString().localeCompare(b.label as string)); // Сортировка по метке
         }
 
         return [];
@@ -119,10 +129,12 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
     const deliveryMethodOptions = useMemo(()=>amazonPrepOrderParameters?.deliveryMethod.map(item => ({label: item, value: item})),[amazonPrepOrderParameters]);
 
     //carrierTypeOptions
-    const carrierTypeOptions = useMemo(()=>amazonPrepOrderParameters?.carrierTypes ? amazonPrepOrderParameters?.carrierTypes.map(item => ({label: item, value: item})) : [{label: 'WAPI carrier', value: 'WAPI carrier'}, {label: 'Customer carrier', value: 'Customer carrier'}],[amazonPrepOrderParameters]);
+    const defaultCarrierOptions = ["WAPI carrier", "Customer carrier"];
+    const carrierTypeOptions = useMemo(()=>amazonPrepOrderParameters?.carrierTypes ? amazonPrepOrderParameters?.carrierTypes.map(item => (defaultCarrierOptions.find(defaultItem =>defaultItem==item) ? {label: tFields(`carrierTypeOptions.${item}` as MessageKeys<any, any>), value: item} : {label: item, value: item})) : [{label: tFields("carrierTypeOptions.WAPI carrier"), value: 'WAPI carrier'}, {label: tFields("carrierTypeOptions.Customer carrier"), value: 'Customer carrier'}],[amazonPrepOrderParameters]);
 
     //boxTypesOptions
-    const boxesTypeOptions = useMemo(()=> amazonPrepOrderParameters?.boxesTypes ? amazonPrepOrderParameters.boxesTypes.map(item => ({label: item as string, value: item as string})) : [],[amazonPrepOrderParameters]);
+    const defaultBoxTypeOptions = ["Prepacked master boxes", "Build new boxes"];
+    const boxesTypeOptions = useMemo(()=> amazonPrepOrderParameters?.boxesTypes ? amazonPrepOrderParameters.boxesTypes.map(item => (defaultBoxTypeOptions.find(defaultItem => defaultItem==item) ? {label: tFields(`boxesTypeOptions.${item}` as MessageKeys<any, any>), value: item as string} : {label: item as string, value: item as string})) : [],[amazonPrepOrderParameters]);
 
     //form
     const defaultFormValues = useMemo(()=>({
@@ -225,7 +237,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         label: courierService,
                         value: courierService
                     } as OptionType))
-                    .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
+                    .sort((a, b) => a.label.toString().localeCompare(b.label as string)); // Сортировка по метке
             } else {
                 const filteredWarehouses = amazonPrepOrderParameters.warehouses.filter(
                     (item: WarehouseType) => item.warehouse.trim() === warehouse.trim()
@@ -244,7 +256,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         label: courierService,
                         value: courierService
                     } as OptionType))
-                    .sort((a, b) => a.label.localeCompare(b.label));
+                    .sort((a, b) => a.label.toString().localeCompare(b.label as string));
             }
         }
         return [];
@@ -265,9 +277,9 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
 
     const linkToTrack = amazonPrepOrderData && amazonPrepOrderData.trackingLink ? <a href={amazonPrepOrderData?.trackingLink} target='_blank'>{amazonPrepOrderData?.trackingLink}</a> : null;
 
-    const generalFields = useMemo(()=> GeneralFields(!amazonPrepOrderData?.uuid), [])
-    const detailsFields = useMemo(()=>DetailsFields({newObject: !amazonPrepOrderData?.uuid, warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions, carrierTypeOptions}), [warehouse, amazonPrepOrderParameters]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries, multipleLocations}),[countries,multipleLocations ])
+    const generalFields = useMemo(()=> GeneralFields(tFields, !amazonPrepOrderData?.uuid), [locale])
+    const detailsFields = useMemo(()=>DetailsFields({t:tFields, requiredFieldMessage: tMessages('requiredField'), newObject: !amazonPrepOrderData?.uuid, warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions, carrierTypeOptions}), [warehouse, amazonPrepOrderParameters, locale]);
+    const receiverFields = useMemo(()=>ReceiverFields({t: tFields, requiredFieldMessage:tMessages('requiredField'), validEMaiMessage:tMessages('validEmail'), countries, multipleLocations}),[countries,multipleLocations, locale ])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(amazonPrepOrderData?.attachedFiles || []);
 
     const handleFilesChange = (files: AttachedFilesType[]) => {
@@ -328,7 +340,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
             },
 
             {
-                title: 'Product',
+                title: tColumns('products.product'),
                 dataIndex: 'product',
                 width: '100%',
                 key: 'product',
@@ -357,7 +369,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
             },
 
             {
-                title: 'Qty | units',
+                title: tColumns('products.quantityUnits'),
                 dataIndex: 'quantity',
                 key: 'quantity',
                 render: (text, record, index) => (
@@ -380,7 +392,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                 ),
             },
             {
-                title: 'Qty | boxes',
+                title: tColumns('products.quantityBoxes'),
                 dataIndex: 'boxesQuantity',
                 key: 'quantity',
                 render: (text, record, index) => (
@@ -502,8 +514,8 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         // orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid)
     }
 
-    const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid, !!(amazonPrepOrderData?.tickets && amazonPrepOrderData?.tickets.length));
-    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+    const tabTitleArray =  TabTitles(tTabs, !!amazonPrepOrderData?.uuid, !!(amazonPrepOrderData?.tickets && amazonPrepOrderData?.tickets.length));
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields(tTabs));
 
     useEffect(() => {
         resetTabTables(tabTitleArray);
@@ -527,7 +539,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully ${ amazonPrepOrderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: `${amazonPrepOrderData?.uuid ? tMessages("successMessages.orderIsEdited") :  tMessages("successMessages.orderIsCreated")}!`, onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -536,7 +548,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.pleaseFixErrors'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -561,7 +573,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         const fieldNames = Object.keys(props);
 
         if (fieldNames.length > 0) {
-            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+            toast.warn(`${tMessages('errorMessages.validationError')}: ${fieldNames.join(', ')}`, {
                 position: "top-right",
                 autoClose: 1000,
             });
@@ -578,7 +590,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                     <CardWithHelpIcon classNames='card amazon-prep-info--general'>
                         <h3 className='amazon-prep-info__block-title'>
                             <Icon name='general' />
-                            General
+                            {tFields('generalCard')}
                         </h3>
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
@@ -590,7 +602,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                     <CardWithHelpIcon classNames='card amazon-prep-info--details'>
                         <h3 className='amazon-prep-info__block-title'>
                             <Icon name='additional' />
-                            Details
+                            {tFields('detailsCard')}
                         </h3>
                         <div className='grid-row check-box-bottom'>
                             <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors} isDisabled={isDisabled}/>
@@ -599,7 +611,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                     <CardWithHelpIcon classNames='card amazon-prep-info--receiver'>
                         <h3 className='amazon-prep-info__block-title'>
                             <Icon name='receiver' />
-                            Receiver
+                            {tFields('receiverCard')}
                         </h3>
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors} isDisabled={isDisabled}/>
@@ -611,7 +623,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         {/*<TutorialHintTooltip hint={AmazonPrepHints['products'] || ''} position='left' >*/}
                             <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='goods' />
-                                Products
+                                {tFields('productsCard')}
                             </h3>
                         {/*</TutorialHintTooltip>*/}
 
@@ -639,25 +651,26 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                                     errorMessage={error?.message}
                                                     errors={errors}
                                                     // width={WidthType.w50}
-                                                    hint={AmazonPrepHints['boxTypes'] || ''}
+                                                    hint={tFields('boxTypesHint') || ''}
+                                                    classNames={'no-pb'}
                                                 />
                                             )}
                                         />
                                     </div>
                                     <div className='amazon-prep-info--btns__table-btns'>
-                                        <TutorialHintTooltip hint={AmazonPrepHints['selection'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={tCommon('buttons.selectionHint',{docType: tCommon('buttons.selectionDocTypes.order')})} forBtn >
                                             <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
-                                                Add from List
+                                                {tCommon('buttons.selection')}
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={tCommon('buttons.addRowHint') || ''} forBtn >
                                             <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:'', boxesQuantity: ''})}>
-                                                Add by SKU
+                                                {tCommon('buttons.addRow')}
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={tCommon('buttons.removeSelectedHint') || ''} forBtn >
                                             <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                                Remove selected
+                                                {tCommon('buttons.removeSelected')}
                                             </Button>
                                         </TutorialHintTooltip>
                                     </div>
@@ -681,7 +694,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         <div className="card min-height-600 amazon-prep-info--pallets">
                             <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='bundle' />
-                                Pallets
+                                {tFields('palletsCard')}
                             </h3>
                             <Pallets pallets={amazonPrepOrderData?.pallets} />
                         </div>
@@ -692,7 +705,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         <div className="card min-height-600 amazon-prep-info--services">
                             <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='bundle' />
-                                Services
+                                {tFields('servicesCard')}
                             </h3>
                             <Services services={amazonPrepOrderData?.services} />
                         </div>
@@ -703,7 +716,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         <div className="card amazon-prep-info--history">
                             <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='history'/>
-                                Status history
+                                {tFields('statusHistoryCard')}
                             </h3>
                             <StatusHistory statusHistory={amazonPrepOrderData?.statusHistory}/>
                         </div>
@@ -711,7 +724,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         {amazonPrepOrderData?.warehouseStatusHistory && amazonPrepOrderData?.warehouseStatusHistory.length ? <div className="card amazon-prep-info--history">
                             <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='warehouse'/>
-                                Warehouse status history
+                                {tFields('warehouseStatusHistoryCard')}
                             </h3>
                             <WarehouseStatusHistory statusHistory={amazonPrepOrderData?.warehouseStatusHistory}/>
                         </div> : null}
@@ -722,38 +735,38 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         <div className="card min-height-600 amazon-prep-info--tickets">
                             <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='ticket'/>
-                                Tickets
+                                {tFields('ticketsCard')}
                             </h3>
                             <DocumentTickets tickets={amazonPrepOrderData.tickets}/>
                         </div>
                     </div> : null}
                 <div key='files-tab' className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--files">
-                        <TutorialHintTooltip hint={AmazonPrepHints['files'] || ''} position='left' >
+                        <TutorialHintTooltip hint={tFields('filesCardHint') || ''} position='left' classNames='mb-md'>
                             <h3 className='amazon-prep-info__block-title title-small'>
                                 <Icon name='files' />
-                                Files
+                                {tFields('filesCard')}
                             </h3>
                         </TutorialHintTooltip>
                         <div className='dropzoneBlock'>
-                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? '' : amazonPrepOrderData?.uuid} hint="Product labels, Carton labels, Pallet labels, Excel file and any other files related to the order. Available formats: pdf, xls, xlsx." banCSV={true}/>
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? '' : amazonPrepOrderData?.uuid} hint={t('amazonDropFilesHint')} banCSV={true}/>
                         </div>
                     </CardWithHelpIcon>
                 </div>
             </Tabs>
 
             <div className='form-submit-btn'>
-                {amazonPrepOrderData && amazonPrepOrderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                {isDisabled && amazonPrepOrderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(amazonPrepOrderData?.canEdit || !amazonPrepOrderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
-                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY} >Save</Button>}
+                {amazonPrepOrderData && amazonPrepOrderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>{tCommon('buttons.createTicket')}</Button> : null}
+                {isDisabled && amazonPrepOrderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(amazonPrepOrderData?.canEdit || !amazonPrepOrderData?.uuid))} variant={ButtonVariant.PRIMARY}>{tCommon('buttons.edit')}</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>{tCommon('buttons.saveAsDraft')}</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY} >{tCommon('buttons.save')}</Button>}
             </div>
             </form>
                 {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
-                {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
+                {showProductSelectionModal && <Modal title={tCommon('productSelection')} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
                     <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={warehouse} needOnlyOneWarehouse={false}/>
                 </Modal>}
-                {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.AmazonPrep} subjectUuid={docUuid} subject={`AmazonPrep ${amazonPrepOrderData?.wapiTrackingNumber} ${amazonPrepOrderData?.date ? formatDateStringToDisplayString(amazonPrepOrderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+                {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.AmazonPrep} subjectUuid={docUuid} subject={`${tCommon('documentTypes.Amazon prep')} ${amazonPrepOrderData?.wapiTrackingNumber} ${amazonPrepOrderData?.date ? formatDateStringToDisplayString(amazonPrepOrderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
             </>
         :null}
     </div>

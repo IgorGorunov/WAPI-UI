@@ -1,38 +1,43 @@
 import {TourGuideStepType} from "@/types/tourGuide";
 
-export const tourGuideStepsOrders: TourGuideStepType[] = [
-    {
-        target: '.ant-table-header', //'.product-list__container',
-        content: 'Click here to sort orders by clicking the name of the chosen column',
-        disableBeacon: true,
-    },
-    {
-        target: '.filter',
-        content: 'Click here to filter orders by parameters',
-    },
-    {
-        target: '.date-input-field',
-        content: 'Click here to filter orders by the period of time',
-    },
-    {
-        target: '.search-block',
-        content: 'Write data here to find information on the list below',
-    },
-    {
-        target: '.add-order',
-        content: 'Click here to create an order by filling out the form',
-        //disableBeacon: true,
-    },
-    {
-        target: '.import-orders',
-        content: 'Click here to import orders by bulk from Excel',
-    },
-    {
-        target: '.export-orders',
-        content: 'Click here to export orders into Excel  \n' +
-            'Note: All filters will be applied into export file',
-    },
-];
+export const tourGuideStepsOrders = (t: any) =>{
+    return [
+        {
+            target: '.ant-table-header', //'.product-list__container',
+            content: t("step1"),
+            disableBeacon: true,
+        },
+        {
+            target: '.filter',
+            content: t("step2"),
+        },
+        {
+            target: '.date-input-field',
+            content: t("step3"),
+        },
+        {
+            target: '.search-block',
+            content: t("step4"),
+        },
+        {
+            target: '.add-order',
+            content: t("step5"),
+            //disableBeacon: true,
+        },
+        {
+            target: '.import-orders',
+            content: t("step6"),
+        },
+        {
+            target: '.export-orders',
+            content: t("step7-1")+'  \n' +
+                t("step7-2"),
+        },
+    ] as TourGuideStepType[];
+}
 
-export const tourGuideStepsOrdersNoDocs: TourGuideStepType[] = tourGuideStepsOrders.slice(1);
-tourGuideStepsOrdersNoDocs[0].disableBeacon = true;
+export const tourGuideStepsOrdersNoDocs  = (t: any) => {
+    const steps = tourGuideStepsOrders(t).slice(1);
+    steps[0].disableBeacon = true;
+    return steps;
+}

@@ -1,5 +1,6 @@
 import Head from "next/head";
 import ConfirmEmailPage from "@/screens/ConfirmEmailPage";
+import {GetStaticPropsContext} from "next";
 
 export default function ConfirmEmail() {
     return (
@@ -13,4 +14,12 @@ export default function ConfirmEmail() {
             <ConfirmEmailPage />
         </>
     );
+}
+
+export async function getStaticProps({locale}: GetStaticPropsContext) {
+    return {
+        props: {
+            messages: (await import(`../../messages/${locale}.json`)).default
+        }
+    };
 }

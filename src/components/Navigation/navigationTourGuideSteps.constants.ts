@@ -1,43 +1,43 @@
-export const navigationStepsFull = [
+export const navigationStepsFull = (t) => [
     {
         target: '.dashboard-menu-link .button-link',
-        content: 'General information about your orders',
+        content: t('dashboard'),
         disableBeacon: true,
         submenuName: 'Dashboard',
     },
     {
         target: '.submenu-container.Products',
-        content: 'Information about your products and stock',
+        content: t('products'),
         disableBeacon: true,
         submenuName: 'Products',
     },
     {
         target: '.submenu-container.Orders',
-        content: 'List of your orders',
+        content: t('orders'),
         disableBeacon: true,
         submenuName: 'Orders',
     },
     {
         target: '.submenu-container.Finances',
-        content: 'Information about invoices and COD reports',
+        content: t('finances'),
         disableBeacon: true,
         submenuName: 'Finances',
     },
     {
         target: '.submenu-container.Stockmanagement',
-        content: 'Inbounds, outbounds and movements',
+        content: t('stockManagement'),
         disableBeacon: true,
         submenuName: 'StockManagment',
     },
     {
         target: '.submenu-single-item.Reports',
-        content: 'List of reports',
+        content: t('reports'),
         disableBeacon: true,
         submenuName: 'Reports',
     },
     {
         target: '.submenu-single-item.Tickets',
-        content: 'Contact support manager',
+        content: t('tickets'),
         disableBeacon: true,
         submenuName: 'Tickets',
     },

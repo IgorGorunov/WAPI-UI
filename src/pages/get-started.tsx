@@ -1,5 +1,6 @@
 import Head from "next/head";
 import GetStartedPage from "@/screens/GetStartedPage";
+import {GetStaticPropsContext} from "next";
 
 export default function GetStarted() {
     return (
@@ -13,4 +14,12 @@ export default function GetStarted() {
             <GetStartedPage />
         </>
     );
+}
+
+export async function getStaticProps({locale}: GetStaticPropsContext) {
+    return {
+        props: {
+            messages: (await import(`../../messages/${locale}.json`)).default
+        }
+    };
 }

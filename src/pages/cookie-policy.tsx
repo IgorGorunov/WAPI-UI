@@ -1,5 +1,6 @@
 import Head from "next/head";
 import CookiePolicyPage from "@/screens/CookiePolicyPage";
+import {GetStaticPropsContext} from "next";
 
 export default function Login() {
     return (
@@ -13,4 +14,12 @@ export default function Login() {
             <CookiePolicyPage />
         </>
     );
+}
+
+export async function getStaticProps({locale}: GetStaticPropsContext) {
+    return {
+        props: {
+            messages: (await import(`../../messages/${locale}.json`)).default
+        }
+    };
 }

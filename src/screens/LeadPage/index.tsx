@@ -16,29 +16,33 @@ import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsLeads} from "@/screens/LeadPage/leadPageTourGuideSteps.constants";
+import {useTranslations} from "next-intl";
 
-const getHeaderTitle = (userStatus: string) => {
+const getHeaderTitle = (t, userStatus: string) => {
     switch (userStatus) {
         case UserStatusType.Questionnaire:
-            return 'Feedback form';
+            return t('feedbackForm');
         case UserStatusType.Waiting:
-            return 'Data is currently under review';
+            return t('underReview');
         case UserStatusType.LegalNoPrices:
-            return 'Agreement';
+            return t('agreement');
         case UserStatusType.NoLegalPrices:
-            return 'Agreement';
+            return t('agreement');
         case UserStatusType.LegalPrices:
-            return 'Agreement';
+            return t('agreement');
         case UserStatusType.NoLegalNoPrices:
-            return 'Agreement';
+            return t('agreement');
         case UserStatusType.Rejected:
             return '';
         default:
-            return 'Required info';
+            return t('requiredInfo');
     }
 }
 
 const LeadPage = () => {
+    const t = useTranslations('LeadPage.titles');
+    const tGuide = useTranslations('LeadPage.tourGuide');
+
     const {token, getToken, userStatus, setUserStatus, logout} = useAuth();
     //const [curStatus, setCurStatus] = useState(getUserStatus() as UserStatusType);
     const Router = useRouter();
@@ -130,7 +134,7 @@ const LeadPage = () => {
         <Layout hasHeader hasFooter>
             {show && <div className="page-component lead-page lead-page__container">
                 {isLoading && <Loader/>}
-                <Header pageTitle={getHeaderTitle(userStatus)} toRight noMenu needTutorialBtn needNotifications={false} />
+                <Header pageTitle={getHeaderTitle(t, userStatus)} toRight noMenu needTutorialBtn needNotifications={false} />
 
                 {userStatus === UserStatusType.Questionnaire && questionnaireParams ?
                     <div className={`lead-page__questionnaire`}>
@@ -143,9 +147,8 @@ const LeadPage = () => {
                             <WaitingInfo />
                             : <p>Sorry...</p>
                 }
-
             </div>}
-            {isLeadApproved && runTour && tourGuideStepsLeads ? <TourGuide steps={tourGuideStepsLeads} run={runTour} pageName={TourGuidePages.Lead} /> : null}
+            {isLeadApproved && runTour && tourGuideStepsLeads ? <TourGuide steps={tourGuideStepsLeads(tGuide)} run={runTour} pageName={TourGuidePages.Lead} /> : null}
         </Layout>
     )
 }

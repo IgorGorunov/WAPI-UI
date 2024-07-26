@@ -70,10 +70,10 @@ const SimplePopup: React.FC<PopupPropsType> = ({ items, width, handleClose, hasC
     return (
         <>
             <div className={`simple-popup ${positionClass}  ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle} >
-                {hasCopyBtn && <button className='copy-btn' onClick={handleCopy}>{items.length > 1 ? 'copy all' : 'copy'}<Icon name='copy' /></button> }
-                {/*{!!handleClose ? (<a className="simple-popup__close" href="#" onClick={handleClose}>*/}
-                {/*    <Icon name='close' />*/}
-                {/*</a>) : null }*/}
+                {hasCopyBtn && <button className='copy-btn' onClick={handleCopy}>
+                    {items.length > 1 ? 'copy all' : 'copy'}
+                    <Icon name='copy' />
+                </button> }
                 <ul className={`simple-popup__list ${needScroll ? 'has-scroll' : ''}`}>
                     {items.map((item: PopupItem, index: number) => (
                         <li key={item.title + index} className="simple-popup__item">

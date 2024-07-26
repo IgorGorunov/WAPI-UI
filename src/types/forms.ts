@@ -21,8 +21,8 @@ export const enum FormFieldTypes {
 export type TextFieldType = string
 
 export type OptionType = {
-  value: string
-  label: string
+  value: string;
+  label: string | React.JSX.Element;
   extraInfo?: string;
   amount?: number;
   color?: string;

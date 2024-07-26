@@ -6,6 +6,12 @@
     font-weight: bold;
   }
 
+  .header-col {
+    display: inline-block;
+    font-weight: normal;
+    min-width: 100px;
+  }
+
   &__status-history {
     margin-top: 24px;
 

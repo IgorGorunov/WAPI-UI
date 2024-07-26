@@ -21,11 +21,11 @@ export const getProbableBuyoutValue = (row:Row<DeliveryRatesRowType>) => {
     return row.getValue<number>('totalInTransit')===0 ? '0.0%' : formatPercent((row.getValue<number>('delivered')+row.getValue<number>('inTransit')) / row.getValue<number>('totalInTransit')*100)+'%';
 }
 
-const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
+const resourceColumns = (t: any) => [
     {
         accessorKey: 'totalOrders',
-        header: () => <Tooltip title="All orders received" >
-            <span>Total</span>
+        header: () => <Tooltip title={t('DeliveryRate.totalOrdersHint')} >
+            <span>{t('DeliveryRate.totalOrders')}</span>
         </Tooltip>,
         //@ts-ignore
         aggregationFn: 'aggUnique',
@@ -40,8 +40,8 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'totalInTransit',
-        header: () => <Tooltip title="Orders ever been in transit" >
-            <span>Total in transit</span>
+        header: () => <Tooltip title={t('DeliveryRate.totalInTransitHint')} >
+            <span>{t('DeliveryRate.totalInTransit')}</span>
         </Tooltip>,
         //@ts-ignore
         aggregationFn: 'aggUnique',
@@ -54,8 +54,8 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'delivered',
-        header: () => <Tooltip title="Delivered to the final customer" >
-            <span>Delivered</span>
+        header: () => <Tooltip title={t('DeliveryRate.deliveredHint')} >
+            <span>{t('DeliveryRate.delivered')}</span>
         </Tooltip>,
         //aggregationFn: 'sum',
         //@ts-ignore
@@ -82,8 +82,8 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'deliveredWithFirstAttempt',
-        header: () => <Tooltip title="Delivered without trouble status" >
-            <span>Delivered with first attempt</span>
+        header: () => <Tooltip title={t('DeliveryRate.deliveredWithFirstAttemptHint')} >
+            <span>{t('DeliveryRate.deliveredWithFirstAttempt')}</span>
         </Tooltip>,
         aggregationFn: 'sum',
         size: 80,
@@ -95,12 +95,9 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'inTransit',
-        header: () => <Tooltip title="Orders currently in transit" >
-            <span>In transit</span>
+        header: () => <Tooltip title={t('DeliveryRate.inTransitHint')} >
+            <span>{t('DeliveryRate.inTransit')}</span>
         </Tooltip>,
-        // aggregatedCell: ({ getValue }) =>
-        //     Math.round(getValue<number>() * 100) / 100,
-        //aggregationFn: 'sum',
         //@ts-ignore
         aggregationFn: 'aggUnique',
         size: 80,
@@ -112,12 +109,9 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'returned',
-        header: () => <Tooltip title="Returns already confirmed by warehouse" >
-            <span>Returned to sender</span>
+        header: () => <Tooltip title={t('DeliveryRate.returnedHint')} >
+            <span>{t('DeliveryRate.returned')}</span>
         </Tooltip>,
-        // aggregatedCell: ({getValue}) =>
-        //     Math.round(getValue<number>() * 100) / 100,
-        //aggregationFn: 'sum',
         //@ts-ignore
         aggregationFn: 'aggUnique',
         size: 80,
@@ -129,8 +123,8 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'otherStatuses',
-        header: () => <Tooltip title="All orders except InTransit, Delivered, Returning, Returned" >
-            <span>Other statuses</span>
+        header: () => <Tooltip title={t('DeliveryRate.otherStatusesHint')} >
+            <span>{t('DeliveryRate.otherStatuses')}</span>
         </Tooltip>,
         //aggregationFn: 'sum',
         //@ts-ignore
@@ -144,8 +138,8 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'sale',
-        header: () => <Tooltip title="Average cheque amount" >
-            <span>Average sale (EUR)</span>
+        header: () => <Tooltip title={t('DeliveryRate.averageSaleEurHint')} >
+            <span>{t('DeliveryRate.averageSaleEur')}</span>
         </Tooltip>,
         aggregationFn: 'sum',
         size: 80,
@@ -160,8 +154,8 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'buyout',
-        header: () => <Tooltip title="Percentage of delivered orders among orders ever been in transit" >
-            <span>Buyout</span>
+        header: () => <Tooltip title={t('DeliveryRate.buyoutHint')} >
+            <span>{t('DeliveryRate.buyout')}</span>
         </Tooltip>,
         aggregationFn: 'sum',
         size: 80,
@@ -175,8 +169,8 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
     },
     {
         accessorKey: 'probableBuyout',
-        header: () => <Tooltip title="Buyout if all transit orders will be delivered" >
-            <span>Expected buyout</span>
+        header: () => <Tooltip title={t('DeliveryRate.expectedBuyoutHint')} >
+            <span>{t('DeliveryRate.expectedBuyout')}</span>
         </Tooltip>,
         aggregationFn: 'sum',
         size: 80,
@@ -189,56 +183,56 @@ const resourceColumns: ColumnDef<DeliveryRatesRowType>[] = [
         aggregatedCell: ({ row }) =>
             getProbableBuyoutValue(row),
     },
-];
+] as ColumnDef<DeliveryRatesRowType>[];
 
-const monthColumn: ColumnDef<DeliveryRatesRowType>[] = [
+const monthColumn = (t) => [
     {
         accessorKey: 'month',
-        header: () => <Tooltip title="Period - month">Period - month</Tooltip>,
+        header: () => <Tooltip title={t('DeliveryRate.periodMonthHint')}>{t('DeliveryRate.periodMonth')}</Tooltip>,
         cell: info => formatDateToShowMonthYear(info.getValue() as string),
         aggregationFn: 'count',
         size: 80,
         maxSize: 500,
     },
-];
+] as ColumnDef<DeliveryRatesRowType>[];
 
-const weekColumn: ColumnDef<DeliveryRatesRowType>[] = [
+const weekColumn = (t) => [
     {
         accessorKey: 'week',
-        header: () => <Tooltip title="Period - week">Period - week</Tooltip>,
+        header: () => <Tooltip title={t('DeliveryRate.periodWeekHint')}>{t('DeliveryRate.periodWeek')}</Tooltip>,
         cell: info => formatDateToWeekRange(info.getValue() as string),
         aggregationFn: 'count',
         size: 80,
         maxSize: 500,
     },
-];
+] as ColumnDef<DeliveryRatesRowType>[];
 
-const receiverCountryColumn: ColumnDef<DeliveryRatesRowType>[] = [
+const receiverCountryColumn = (t:any, tCountries: any) => [
     {
         accessorKey: 'receiverCountry',
         id: 'receiverCountry',
-        header: () => <Tooltip title="Receiver country" ><span>Country</span></Tooltip>,
-        cell: info => <span><span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.receiverCountry}</span>,
+        header: () => <Tooltip title={t('DeliveryRate.countryHint')} ><span>{t('DeliveryRate.country')}</span></Tooltip>,
+        cell: info => <span><span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.receiverCountryCode ? tCountries(info.row.original?.receiverCountryCode.toLowerCase()) : info.row.original.receiverCountry}</span>,
         aggregationFn: 'count',
         size: 110,
         maxSize: 500,
     },
-]
+] as ColumnDef<DeliveryRatesRowType>[];
 
-const productTypeColumn: ColumnDef<DeliveryRatesRowType>[] = [
+const productTypeColumn = (t) => [
     {
         accessorKey: 'productType',
-        header: () => <Tooltip title="Name of the product type" >Product type</Tooltip>,
+        header: () => <Tooltip title={t('DeliveryRate.productTypeHint')} >{t('DeliveryRate.productType')}</Tooltip>,
         size: 110,
         minSize: 100,
         maxSize: 500,
     } as ColumnDef<DeliveryRatesRowType>,
-];
+] as ColumnDef<DeliveryRatesRowType>[];
 
-const productColumn = (width: number) => [
+const productColumn = (t, width: number) => [
     {
         accessorKey: 'product',
-        header: () => <Tooltip title="Name of the product" >Product</Tooltip>,
+        header: () => <Tooltip title={t('DeliveryRate.productHint')} >{t('DeliveryRate.product')}</Tooltip>,
         size: width,
         maxSize: 500,
     } as ColumnDef<DeliveryRatesRowType>,
@@ -250,35 +244,35 @@ export const getDeliveryRateVariantByString = (variant: string, extraInfo: strin
     return DELIVERY_RATES_VARIANTS[fullVariantName];
 }
 
-export const getDeliveryRateVariantColumns = (variant: DELIVERY_RATES_VARIANTS) => {
+export const getDeliveryRateVariantColumns = (t: any, tCountries: any, variant: DELIVERY_RATES_VARIANTS) => {
     switch (variant) {
         case DELIVERY_RATES_VARIANTS.MONTH_COUNTRY_PRODUCT_TYPE:
-            return [...monthColumn, ...receiverCountryColumn, ...productTypeColumn, ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...monthColumn(t), ...receiverCountryColumn(t, tCountries), ...productTypeColumn(t), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.MONTH_COUNTRY:
-            return [...monthColumn, ...receiverCountryColumn, ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...monthColumn(t), ...receiverCountryColumn(t, tCountries), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.MONTH_COUNTRY_PRODUCT:
-            return [...monthColumn, ...receiverCountryColumn, ...productColumn(90), ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...monthColumn(t), ...receiverCountryColumn(t, tCountries), ...productColumn(t,90), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.MONTH_PRODUCT:
-            return [...monthColumn, ...productColumn(140), ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...monthColumn(t), ...productColumn(t,140), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.WEEK_COUNTRY_PRODUCT_TYPE:
-            return [...weekColumn, ...receiverCountryColumn, ...productTypeColumn, ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...weekColumn(t), ...receiverCountryColumn(t, tCountries), ...productTypeColumn(t), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.WEEK_COUNTRY:
-            return [...weekColumn, ...receiverCountryColumn, ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...weekColumn(t), ...receiverCountryColumn(t, tCountries), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.WEEK_COUNTRY_PRODUCT:
-            return [...weekColumn, ...receiverCountryColumn, ...productColumn(90), ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...weekColumn(t), ...receiverCountryColumn(t, tCountries), ...productColumn(t,90), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.WEEK_PRODUCT:
-            return [...weekColumn, ...productColumn(140), ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...weekColumn(t), ...productColumn(t,140), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.OFF_COUNTRY_PRODUCT_TYPE:
-            return [...receiverCountryColumn, ...productTypeColumn, ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...receiverCountryColumn(t, tCountries), ...productTypeColumn(t), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.OFF_COUNTRY:
-            return [...receiverCountryColumn, ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...receiverCountryColumn(t, tCountries), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.OFF_COUNTRY_PRODUCT:
-            return [...receiverCountryColumn, ...productColumn(90), ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...receiverCountryColumn(t, tCountries), ...productColumn(t,90), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
         case DELIVERY_RATES_VARIANTS.OFF_PRODUCT:
-            return [...productColumn(140), ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...productColumn(t,140), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
 
         default:
-            return [...monthColumn, ...receiverCountryColumn, ...productTypeColumn, ...resourceColumns] as ColumnDef<DeliveryRatesRowType>[];
+            return [...monthColumn(t), ...receiverCountryColumn(t, tCountries), ...productTypeColumn(t), ...resourceColumns(t)] as ColumnDef<DeliveryRatesRowType>[];
     }
 }
 

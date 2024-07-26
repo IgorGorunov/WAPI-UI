@@ -3,6 +3,7 @@ import React from "react";
 import "./styles.scss";
 import {UserContractType, UserPriceType} from "@/types/profile";
 import SinglePriceFile from "@/screens/ProfilePage/components/UserContractsAndPrices/SinglePriceFile";
+import {useTranslations} from "next-intl";
 
 export enum ContractPriceBlockType {
     CONTRACT = 'Contracts',
@@ -15,7 +16,7 @@ type ContractPriceBlockPropsType = {
 }
 
 const PriceContractBlock: React.FC<ContractPriceBlockPropsType> = ({list, type}) => {
-
+    const t = useTranslations('Profile.contractsAndPricesTab');
     return (
         <div className={`contracts-and-prices__block ${type.toLowerCase()}`}>
             <ul className="contracts-and-prices__block-list">
@@ -28,7 +29,7 @@ const PriceContractBlock: React.FC<ContractPriceBlockPropsType> = ({list, type})
                     >
                        <SinglePriceFile file={file} type={type}/>
                     </li>
-                )) : <p>No {type===ContractPriceBlockType.PRICE ? 'prices' : 'contracts'} to view</p>}
+                )) : <p>{type === ContractPriceBlockType.PRICE ? t('noPricesText') : t('noContractsText')}</p>}
             </ul>
         </div>
     );

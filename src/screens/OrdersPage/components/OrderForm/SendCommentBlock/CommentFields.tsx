@@ -1,17 +1,17 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 
-export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
+export const ReceiverFields = ({t, requiredFieldMessage, countries}: { t: any; requiredFieldMessage: string; countries: OptionType[];  }) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
         name: `receiver.country`,
-        label: 'Country',
+        label: t('receiverCountry'),
         placeholder: "",
         options: countries,
         rules: {
-            required: "Required field",
+            required: requiredFieldMessage,
         },
-        errorMessage: "Required field",
+        errorMessage: requiredFieldMessage,
         width: WidthType.w25,
         classNames: "",
     },
@@ -19,7 +19,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: `receiver.county`,
-        label: 'County',
+        label: t('receiverCounty'),
         placeholder: "",
         width: WidthType.w25,
         classNames: "",
@@ -28,12 +28,12 @@ export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: `receiver.city`,
-        label: 'City',
+        label: t('receiverCity'),
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: requiredFieldMessage,
         },
-        errorMessage: "Required field",
+        errorMessage: requiredFieldMessage,
         width: WidthType.w25,
         classNames: "",
     },
@@ -41,12 +41,12 @@ export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: `receiver.zip`,
-        label: 'Zip',
+        label: t('receiverZip'),
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: requiredFieldMessage,
         },
-        errorMessage: "Required field",
+        errorMessage: requiredFieldMessage,
         width: WidthType.w25,
         classNames: "",
     },
@@ -54,12 +54,12 @@ export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: `receiver.address`,
-        label: 'Address',
+        label: t('receiverAddress'),
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: requiredFieldMessage,
         },
-        errorMessage: "Required field",
+        errorMessage: requiredFieldMessage,
         width: WidthType.w50,
         classNames: "",
     },
@@ -67,12 +67,12 @@ export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: `receiver.phone`,
-        label: 'Phone',
+        label: t('receiverPhone'),
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: requiredFieldMessage,
         },
-        errorMessage: "Required field",
+        errorMessage: requiredFieldMessage,
         width: WidthType.w25,
         classNames: "",
     },
@@ -80,7 +80,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: `receiver.email`,
-        label: 'E-mail',
+        label: t('receiverEMail'),
         placeholder: "",
         // rules: {
         //     validate: {
@@ -89,7 +89,7 @@ export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
         //             "Please, enter valid email address",
         //     },
         // },
-        errorMessage: "Required field",
+        errorMessage: requiredFieldMessage,
         width: WidthType.w25,
         classNames: "",
         needToasts: false,
@@ -98,12 +98,12 @@ export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: `receiver.fullName`,
-        label: 'Full name',
+        label: t('receiverFullName'),
         placeholder: "",
         rules: {
-            required: "Required field",
+            required: requiredFieldMessage,
         },
-        errorMessage: "Required field",
+        errorMessage: requiredFieldMessage,
         width: WidthType.w50,
         classNames: "",
     },
@@ -118,26 +118,28 @@ export const ReceiverFields = ({countries}: { countries: OptionType[];  }) => [
     //},
 ];
 
-export const MainFields = () => [
-    {
-        fieldType: FormFieldTypes.TEXT,
-        type: "text",
-        name: `comment`,
-        label: 'Comment',
-        placeholder: "",
-        width: WidthType.w100,
-        classNames: "",
-    },
-];
+export const MainFields = (t:any) => {
+    return [
+        {
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: `comment`,
+            label: t('comment'),
+            placeholder: "",
+            width: WidthType.w100,
+            classNames: "",
+        },
+    ];
+}
 
-export const DateFields = (numberOfDisabledDays = 0) => [
+export const DateFields = (t: any, requiredFieldMessage, numberOfDisabledDays = 0) => [
     {
         fieldType: FormFieldTypes.DATE,
         type: "text",
         name: `deliveryDate.date`,
-        label: 'Delivery date',
+        label: t('deliveryDate'),
         rules: {
-            required: "Required field",
+            required: requiredFieldMessage,
         },
         placeholder: "",
         width: WidthType.w50,
@@ -151,7 +153,7 @@ export const DateFields = (numberOfDisabledDays = 0) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: `deliveryDate.hourFrom`,
-        label: 'from',
+        label: t('from'),
         placeholder: "HH:MM",
         width: WidthType.w25,
         classNames: "",
@@ -160,7 +162,7 @@ export const DateFields = (numberOfDisabledDays = 0) => [
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: `deliveryDate.hourTo`,
-        label: 'to',
+        label: t('to'),
         placeholder: "HH:MM",
         width: WidthType.w25,
         classNames: "",

@@ -2,17 +2,19 @@ import React from "react";
 import { StatusHistoryType} from "@/types/products";
 import "./styles.scss";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
+import {useTranslations} from "next-intl";
 type PropsType = {
     statusHistory?: StatusHistoryType[] ;
 };
 
 const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
+    const t = useTranslations('ProductsPage.productColumns.statusHistoryColumns');
     return (
         <div className="status-history">
             <div className="status-history__header">
-                <div className='date-column'>Period</div>
-                <div className='status-column'>Status</div>
-                <div className='comment-column'>Comment</div>
+                <div className='date-column'>{t('period')}</div>
+                <div className='status-column'>{t('status')}</div>
+                <div className='comment-column'>{t('comment')}</div>
             </div>
             <ul className="status-history__list">
                 {statusHistory &&

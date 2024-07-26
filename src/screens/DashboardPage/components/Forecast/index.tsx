@@ -1,6 +1,7 @@
 import React from "react";
 import { ForecastType } from "@/types/dashboard";
 import "./styles.scss";
+import {useTranslations} from "next-intl";
 
 type ForecastPropsType = {
   type?: ForecastType;
@@ -24,6 +25,8 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
     isError = false,
     errorMessage = 'Something went wrong!',
   } = props;
+
+  const t = useTranslations("Dashboard.forecast");
 
   const isGMV = type === "GMV";
   const amountPrefix = isGMV ? "€" : "";
@@ -51,13 +54,13 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
           className={`card forecast forecast__container ${isGMV ? "gmv" : "orders"}`}
       >
           <div className="forecast__wrapper">
-            <p className="title-h4 title">{isGMV ? "GMV" : "Orders"}</p>
+            <p className="title-h4 title">{isGMV ? t('gmv') : t('orders')}</p>
             {isError ? (<div className='forecast__error-message'>{errorMessage}</div>) : (<>
               <p className="forecast__main-amount">
                 {amountPrefix}
                 {Formatter.format(Math.floor(amountInPeriod)).replaceAll(",", " ")}
               </p>
-              <p className="mb">In period</p>
+              <p className="mb">{t('inPeriod')}</p>
               <div className="">
                 <div className="grid-row forecast__row">
                   <div className={`grid-col-2 forecast__col`}>
@@ -65,14 +68,14 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
                       {amountPrefix}
                       {amounts.beginOfMonth}
                     </p>
-                    <p className={`forecast__small-text`}>Month to date</p>
+                    <p className={`forecast__small-text`}>{t('monthToDate')}</p>
                   </div>
                   <div className={`grid-col-2 line forecast__col`}>
                     <p className={`forecast__amount`}>
                       {amountPrefix}
                       {amounts.beginOfYear}
                     </p>
-                    <p className={`forecast__small-text`}>Year to date</p>
+                    <p className={`forecast__small-text`}>{t('yearToDate')}</p>
                   </div>
                 </div>
                 <div className="grid-row forecast__row">
@@ -81,14 +84,14 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
                       {amountPrefix}
                       {amounts.forecastByMonth}
                     </p>
-                    <p className={`forecast__small-text`}>Month forecast</p>
+                    <p className={`forecast__small-text`}>{t('monthForecast')}</p>
                   </div>
                   <div className={`grid-col-2 line `}>
                     <p className={`forecast__amount`}>
                       {amountPrefix}
                       {amounts.forecastByYear}
                     </p>
-                    <p className={`forecast__small-text`}>Year forecast</p>
+                    <p className={`forecast__small-text`}>{t('yearForecast')}</p>
                   </div>
                 </div>
               </div>

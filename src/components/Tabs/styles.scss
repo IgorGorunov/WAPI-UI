@@ -5,10 +5,10 @@
 
     //background-color: white;
     display: flex;
-    justify-content: center;
+    //justify-content: center;
     align-items: center;
     list-style: none;
-    padding: 35px 30px;
+    padding: 35px 0 25px;
     overflow: auto;
 
     @media (max-width: $upToLaptop) {
@@ -16,8 +16,14 @@
       padding: 16px;
     }
 
-    &.with-h-divider {
-      border-bottom: 2px solid var(--border-color);
+    &.is-centered {
+      justify-content: center;
+    }
+
+    &-wrapper {
+      &.with-h-divider {
+        border-bottom: 2px solid var(--border-color);
+      }
     }
   }
 
@@ -108,11 +114,21 @@
         }
 
         @media (min-width: $laptop) {
-          //position: fixed;
-          //top: 24px;
-          //left: 50%;
-          //transform: translateX(-50%);
           z-index: 10;
+        }
+
+        &-wrapper {
+          width: 100%;
+
+          //margin-left: 56px;
+          //margin-right: 40px;
+          overflow: scroll;
+
+          @media(min-width: $laptop) {
+            padding-left: 72px;
+            padding-right: 48px;
+          }
+        ;
         }
       }
 

@@ -16,6 +16,7 @@ import StockMovementFormComponent
     from "@/screens/StockMovementsPage/components/StockMovementForm/StockMovementFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
+import {useTranslations} from "next-intl";
 
 type StockMovementFormType = {
     docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -25,11 +26,11 @@ type StockMovementFormType = {
 }
 
 const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=null, closeDocModal, closeModalOnSuccess}) => {
+    const t = useTranslations('StockMovements.docType');
 
     const [isLoading, setIsLoading] = useState(false);
     const { token, superUser, ui } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
-
 
     const [docData, setDocData] = useState<SingleStockMovementType|null>(null);
     const [docParameters, setDocParameters] = useState<StockMovementParamsType|null>(null);
@@ -102,7 +103,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
         {isLoading && <Loader />}
         <ToastContainer />
         {docParameters && (docUuid && docData || !docUuid) ? (
-            <Modal title={docNamesSingle[docType]} onClose={onClose} >
+            <Modal title={t(docType)} onClose={onClose} >
                 <StockMovementFormComponent
                     docType={docType}
                     docParameters={docParameters}

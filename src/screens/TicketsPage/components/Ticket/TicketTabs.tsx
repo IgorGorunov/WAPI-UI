@@ -1,20 +1,20 @@
 import {TabFieldType} from '@/types/tabs';
 
-export const TabTitles = (isNew: boolean) => {
-    return isNew ? ['Ticket info'] : ['Ticket info', 'Messages'];
+export const TabTitles = (t, isNew: boolean) => {
+    return isNew ? [t('ticketInfo')] : [t('ticketInfo'), t('messages')];
 }
 
-export const TabFields: TabFieldType[] = [
+export const TabFields = (t) => [
     {
-        tabName: 'Ticket info',
+        tabName: t('ticketInfo'),
         fieldName: 'topic'
     },
     {
-        tabName: 'Ticket info',
+        tabName: t('ticketInfo'),
         fieldName: 'subject'
     },
     {
-        tabName: 'Ticket info',
+        tabName: t('ticketInfo'),
         fieldName: 'description'
     },
-]
+] as TabFieldType[];

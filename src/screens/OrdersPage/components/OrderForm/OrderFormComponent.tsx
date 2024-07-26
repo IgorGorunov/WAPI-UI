@@ -48,8 +48,8 @@ import ConfirmModal from "@/components/ModalConfirm";
 import NotesList from "@/components/NotesList";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
-import {CommonHints} from "@/constants/commonHints";
+import {useTranslations} from "next-intl";
+import {useRouter} from "next/router";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -62,6 +62,16 @@ type OrderFormType = {
 }
 
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
+    const t = useTranslations('Fulfillment');
+    const tTabs = useTranslations('Fulfillment.orderTabs');
+    const tFields = useTranslations('Fulfillment.orderFields');
+    const tTabsInfo = useTranslations('Fulfillment.orderTabsInfo');
+    const tBtns = useTranslations('common.buttons');
+    const tCommon = useTranslations('common');
+    const tMessages = useTranslations('messages');
+
+    const {locale} = useRouter();
+
     const {notifications} = useNotifications();
 
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
@@ -121,14 +131,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const [commentHasBeenSent, setCommentHasBeenSent] = useState(orderData?.commentTodayWasSent || false);
     const handleShowCommentModal = () => {
         if (orderData && orderData.commentTodayWasSent || commentHasBeenSent) {
-            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: "Warning", subtitle: `Comment for this order has already been sent!
-            There needs to be at least 48 hours between comments for the same order.`, onClose: ()=>setShowStatusModal(false)})
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: tMessages('warningMessages.warning'), subtitle: `${tMessages('warningMessages.commentAlreadySent')}
+            ${tMessages('warningMessages.needs48hours')}`, onClose: ()=>setShowStatusModal(false)})
             setShowStatusModal(true);
         }
         else if (orderData && orderData.commentCourierServiceFunctionsList) {
             setShowSendCommentModal(true);
         } else {
-            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: "Warning", subtitle: `Sending comment for this order is unavailable!`, onClose: ()=>setShowStatusModal(false)})
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: tMessages('warningMessages.warning'), subtitle: tMessages('warningMessages.sendingCommentIsUnavailable'), onClose: ()=>setShowStatusModal(false)})
             setShowStatusModal(true);
         }
     }
@@ -145,7 +155,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     label: item.warehouse.trim(),
                     value: item.warehouse.trim()
                 } as OptionType))
-                .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
+                .sort((a, b) => a.label.toString().localeCompare(b.label as string)); // Сортировка по метке
         }
 
         return [];
@@ -361,7 +371,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 ),
             },
             {
-                title: 'SKU',
+                title: tTabsInfo('products.sku'),
                 dataIndex: 'sku',
                 key: 'sku',
                 minWidth: 100,
@@ -384,7 +394,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 ),
             },
             {
-                title: 'Product*',
+                title: `${tTabsInfo('products.product')}*`,
                 dataIndex: 'product',
                 width: '100%',
                 key: 'product',
@@ -414,12 +424,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 />
                             </div>
                         )}
-                        rules={{ required: 'filed is required' }}
+                        rules={{ required: tMessages('requiredField') }}
                     />
                 ),
             },
             {
-                title: 'Analogue',
+                title: tTabsInfo('products.analogue'),
                 dataIndex: 'analogue',
                 key: 'analogue',
                 width: 200,
@@ -444,7 +454,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 ),
             },
             {
-                title: 'Quantity*',
+                title: `${tTabsInfo('products.quantity')}*`,
                 dataIndex: 'quantity',
                 key: 'quantity',
                 minWidth: 50,
@@ -470,12 +480,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 />
                             </div>
                         )}
-                        rules={{ required: 'filed is required' }}
+                        rules={{ required: tMessages('requiredField') }}
                     />
                 ),
             },
             {
-                title: 'Price*',
+                title: `${tTabsInfo('products.price')}*`,
                 dataIndex: 'price',
                 key: 'price',
                 minWidth: 50,
@@ -501,12 +511,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 />
                             </div>
                         )}
-                        rules={{ required: 'filed is required' }}
+                        rules={{ required: tMessages('requiredField') }}
                     />
                 ),
             },
             {
-                title: 'Discount',
+                title: tTabsInfo('products.discount'),
                 dataIndex: 'discount',
                 key: 'discount',
                 minWidth: 50,
@@ -533,7 +543,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 ),
             },
             {
-                title: 'Tax',
+                title: tTabsInfo('products.tax'),
                 dataIndex: 'tax',
                 key: 'tax',
                 minWidth: 50,
@@ -556,7 +566,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 ),
             },
             {
-                title: 'Total',
+                title: tTabsInfo('products.total'),
                 dataIndex: 'total',
                 key: 'total',
                 minWidth: 60,
@@ -578,12 +588,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 />
                             </div>
                         )}
-                        // rules={{ required: 'filed is required' }}
+                        // rules={{ required: tMessages('requiredField') }}
                     />
                 ),
             },
             {
-                title: 'COD',
+                title: tTabsInfo('products.cod'),
                 dataIndex: 'cod',
                 key: 'cod',
                 minWidth: 50,
@@ -643,7 +653,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         label: courierService,
                         value: courierService
                     } as OptionType))
-                    .sort((a, b) => a.label.localeCompare(b.label)); // Сортировка по метке
+                    .sort((a, b) => a.label.toString().localeCompare(b.label as string)); // Сортировка по метке
             } else {
                 const filteredWarehouses = orderParameters.warehouses.filter(
                     (item: WarehouseType) => item.warehouse.trim() === warehouse.trim()
@@ -662,7 +672,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         label: courierService,
                         value: courierService
                     } as OptionType))
-                    .sort((a, b) => a.label.localeCompare(b.label));
+                    .sort((a, b) => a.label.toString().localeCompare(b.label as string));
             }
         }
         return [];
@@ -691,10 +701,10 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
 
-    const generalFields = useMemo(()=> GeneralFields(!orderData?.uuid), [orderData])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [warehouse]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions, countries, selectedWarehouse,selectedCourierService ])
-    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[countries, selectedWarehouse,selectedCourierService])
+    const generalFields = useMemo(()=> GeneralFields(tFields, !orderData?.uuid), [orderData, locale])
+    const detailsFields = useMemo(()=>DetailsFields({t: tFields, warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [warehouse, locale]);
+    const receiverFields = useMemo(()=>ReceiverFields({t: tFields, requiredFieldMessage: tMessages('requiredField'), validEmailMessage: tMessages('validEmail'), countries}),[curPickupPoints, pickupOptions, countries, selectedWarehouse,selectedCourierService, locale ])
+    const pickUpPointFields = useMemo(()=>PickUpPointFields({t: tFields, countries}),[countries, selectedWarehouse,selectedCourierService, locale])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
     const handleFilesChange = (files) => {
@@ -755,8 +765,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         updateTotalProducts();
     }
 
-    const tabTitleArray =  TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length), !!(orderData?.tickets && orderData.tickets.length));
-    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+    const tabTitleArray =  TabTitles(tTabs,!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length), !!(orderData?.tickets && orderData.tickets.length));
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields(tTabs));
 
     useEffect(() => {
         resetTabTables(tabTitleArray);
@@ -785,7 +795,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully canceled!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: tMessages('successMessages.orderIsCanceled'), onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -794,7 +804,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Order can not be canceled!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.errorCancelingOrder'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -818,11 +828,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 orderData: data
             };
             const res: ApiResponseType = await sendOrderData(superUser && ui ? {...requestData, ui} : requestData);
-            console.log('order res: ', res)
+
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully ${ orderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: `${ orderData?.uuid ? tMessages('successMessages.productIsEdited') : tMessages('successMessages.productIsCreated')}`, onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -831,7 +841,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.pleaseFixErrors'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -855,7 +865,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         const fieldNames = Object.keys(props);
 
         if (fieldNames.length > 0) {
-            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+            toast.warn(`${tMessages('errorMessages.validationError')} ${fieldNames.join(', ')}`, {
                 position: "top-right",
                 autoClose: 3000,
             });
@@ -888,7 +898,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <CardWithHelpIcon classNames='card order-info--general'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='general'/>
-                                General
+                                {tFields('generalCard')}
                             </h3>
                             <div className='grid-row'>
                                 <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors}
@@ -898,7 +908,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <CardWithHelpIcon classNames='card order-info--details'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='additional'/>
-                                Details
+                                {tFields('detailsCard')}
                             </h3>
                             <div className='grid-row check-box-bottom'>
                                 <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors}
@@ -910,7 +920,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <div className='card order-info--receiver'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='receiver'/>
-                                Receiver
+                                {tFields('receiverCard')}
                             </h3>
                             <div className='grid-row'>
                                 <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors}
@@ -920,7 +930,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <div className='card order-info--pick-up-point'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='general'/>
-                                Pick up point
+                                {tFields('pickUpPointCard')}
                             </h3>
                             <div className='grid-row'>
                                 <Controller
@@ -936,7 +946,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                             disabled={!!isDisabled}
                                             {...props}
                                             name='receiverPickUpID'
-                                            label='Code'
+                                            label={tFields('receiverPickUpID')}
                                             fieldType={curPickupPoints && curPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
                                             options={createPickupOptions()}
                                             placeholder={curPickupPoints && curPickupPoints.length ? 'Select' : ''}
@@ -958,7 +968,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <CardWithHelpIcon classNames="card min-height-600 order-info--products">
                             <h3 className='order-info__block-title '>
                                 <Icon name='goods'/>
-                                Products
+                                {tFields('productsCard')}
                             </h3>
                             <div className='grid-row mb-md'>
                                 <div className='order-info--cod-currency width-33 grid-row'>
@@ -969,7 +979,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                             <FieldBuilder
                                                 fieldType={FormFieldTypes.SELECT}
                                                 name='codCurrency'
-                                                label='COD currency'
+                                                label={tFields('codCurrency')}
                                                 {...field}
                                                 options={currencyOptions}
                                                 placeholder=""
@@ -977,13 +987,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                 errors={errors}
                                                 disabled={isDisabled}
                                                 width={WidthType.w50}
-                                                hint={OrderHints['codCurrency']}
+                                                hint={tFields('codCurrencyHint') || ''}
                                             />
                                         )}
                                         rules={{
                                             validate: (value) => {
                                                 if (checkOrderHasCod(products)) {
-                                                    return value ? true : 'This field is required';
+                                                    return value ? true : tMessages('requiredField');
                                                 }
                                                 return true;
                                             },
@@ -996,7 +1006,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                             <FieldBuilder
                                                 fieldType={FormFieldTypes.SELECT}
                                                 name='priceCurrency'
-                                                label='Price currency'
+                                                label={tFields('priceCurrency')}
                                                 {...field}
                                                 options={currencyOptions}
                                                 placeholder=""
@@ -1004,25 +1014,25 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                 errors={errors}
                                                 disabled={isDisabled}
                                                 width={WidthType.w50}
-                                                hint={OrderHints['priceCurrency']}
+                                                hint={tFields('priceCurrencyHint') || ''}
                                             />
                                         )}
-                                        rules={{required: 'Field is required'}}
+                                        rules={{required: tMessages('requiredField')}}
                                     />
                                 </div>
                                 <div className='order-info--order-btns width-67'>
                                     <div className='grid-row'>
                                         <div
                                             className='order-info--table-btns form-table--btns small-paddings width-100'>
-                                            <TutorialHintTooltip hint={OrderHints['selection'] || ''} forBtn >
+                                            <TutorialHintTooltip hint={tBtns('selectionHint',{docType: tBtns('selectionDocTypes.order')}) || ''} forBtn >
                                                 <Button type="button" icon='selection' iconOnTheRight
                                                     size={ButtonSize.SMALL} disabled={isDisabled}
                                                     variant={ButtonVariant.SECONDARY}
                                                     onClick={() => handleProductSelection()} classNames='selection-btn'>
-                                                    Add from List
+                                                    {tBtns('selection')}
                                                 </Button>
                                             </TutorialHintTooltip>
-                                            <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
+                                            <TutorialHintTooltip hint={tBtns('addRowHint') || ''} forBtn >
                                                 <Button type="button" icon='add-table-row' iconOnTheRight
                                                         size={ButtonSize.SMALL} disabled={isDisabled}
                                                         variant={ButtonVariant.SECONDARY}
@@ -1040,14 +1050,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                             cod: ''
                                                         })}
                                                 >
-                                                    Add by SKU
+                                                    {tBtns('addRow')}
                                                 </Button>
                                             </TutorialHintTooltip>
-                                            <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
+                                            <TutorialHintTooltip hint={tBtns('removeSelectedHint') || ''} forBtn >
                                                 <Button type="button" icon='remove-table-row' iconOnTheRight
                                                         size={ButtonSize.SMALL} disabled={isDisabled}
                                                         variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                                    Remove selected
+                                                    {tBtns('removeSelected')}
                                                 </Button>
                                             </TutorialHintTooltip>
                                         </div>
@@ -1069,7 +1079,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <div className="card min-height-600 order-info--history">
                             <h3 className='order-info__block-title'>
                                 <Icon name='bundle'/>
-                                Services
+                                {tFields('servicesCard')}
                             </h3>
                             <Services services={orderData?.services}/>
                         </div>
@@ -1079,7 +1089,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             <div className='card'>
                                 <h3 className='order-info__block-title'>
                                     <Icon name='history'/>
-                                    Status history
+                                    {tFields('statusHistoryCard')}
                                 </h3>
                                 <StatusHistory statusHistory={orderData?.statusHistory}/>
                             </div>
@@ -1089,7 +1099,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <div className="card min-height-600 order-info--sms-history">
                             <h3 className='order-info__block-title'>
                                 <Icon name='message'/>
-                                SMS history
+                                {tFields('smsHistoryCard')}
                             </h3>
                             <SmsHistory smsHistory={orderData?.smsHistory}/>
                         </div>
@@ -1098,7 +1108,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <div className="card min-height-600 order-info--claims">
                             <h3 className='order-info__block-title'>
                                 <Icon name='complaint'/>
-                                Claims
+                                {tFields('claimsCard')}
                             </h3>
                             <Claims claims={orderData.claims}/>
                         </div>
@@ -1107,7 +1117,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <div className="card min-height-600 order-info--tickets">
                             <h3 className='order-info__block-title'>
                                 <Icon name='ticket'/>
-                                Tickets
+                                {tFields('ticketsCard')}
                             </h3>
                             <DocumentTickets tickets={orderData.tickets}/>
                         </div>
@@ -1116,7 +1126,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <div className="card min-height-600 order-info--files">
                             <h3 className='order-info__block-title'>
                                 <Icon name='edit'/>
-                                Notes
+                                {tFields('notesCard')}
                             </h3>
                             <div className='notes'>
                                 <NotesList object={orderData?.uuid} notes={orderData?.notes} refetch={refetchDoc} />
@@ -1125,10 +1135,10 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     </div> : null}
                     <div key='files-tab' className='files-tab'>
                         <CardWithHelpIcon classNames="card min-height-600 order-info--files">
-                            <TutorialHintTooltip hint={OrderHints['files'] || ''} position='left' classNames='mb-md'>
+                            <TutorialHintTooltip hint={tFields('filesCardHint') || ''} position='left' classNames='mb-md'>
                                 <h3 className='order-info__block-title  title-small' >
                                     <Icon name='files'/>
-                                    Files
+                                    {tFields('filesCard')}
                                 </h3>
                             </TutorialHintTooltip>
                             <div className='dropzoneBlock'>
@@ -1143,32 +1153,29 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 <div className='form-submit-btn'>
                     {orderData && orderData.uuid ?
                         <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
-                                onClick={handleCreateTicket}>Create ticket</Button> : null}
+                                onClick={handleCreateTicket}>{tBtns('createTicket')}</Button> : null}
                     {orderData?.uuid && orderData?.canEdit ?
-                        <Button type='button' variant={ButtonVariant.PRIMARY} onClick={() => setShowConfirmModal(true)}>Cancel
-                            order</Button> : null}
+                        <Button type='button' variant={ButtonVariant.PRIMARY} onClick={() => setShowConfirmModal(true)}>{tBtns('cancelOrder')}</Button> : null}
                     {isDisabled && orderData?.canEdit && <Button type="button" disabled={false}
                                                                  onClick={() => setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))}
-                                                                 variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                    {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
-                    {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
-                    {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
+                                                                 variant={ButtonVariant.PRIMARY}>{tBtns('edit')}</Button>}
+                    {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>{tBtns('sendComment')}</Button>}
+                    {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>{tBtns('saveAsDraft')}</Button>}
+                    {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>{tBtns('send')}</Button>}
                     </div>
             </form>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
-            {showSendCommentModal && <Modal title={`Send comment for order ${orderData?.wapiTrackingNumber}`} onClose={()=>{setShowSendCommentModal(false)}} >
+            {showSendCommentModal && <Modal title={`${t('sendCommentFor')} ${orderData?.wapiTrackingNumber}`} onClose={()=>{setShowSendCommentModal(false)}} >
                 <SendComment orderData={orderData} countryOptions={countries} closeSendCommentModal={()=>setShowSendCommentModal(false)} onSuccess={()=>setCommentHasBeenSent(true)}/>
             </Modal>}
-            {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
-                {/*<ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>*/}
+            {showProductSelectionModal && <Modal title={tCommon('productSelection')} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
                 <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={preferredWarehouse} needOnlyOneWarehouse={false}/>
-
             </Modal>}
 
-            {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+            {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`${tCommon('documentTypes.Fulfillment')} ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
 
             {showConfirmModal && <ConfirmModal
-                actionText='cancel this order'
+                actionText={t('confirmCancelOrderText')}
                 onOk={handleConfirmCancelOrder}
                 onCancel={()=>setShowConfirmModal(false)}
             />}

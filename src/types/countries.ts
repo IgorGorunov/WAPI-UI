@@ -751,4 +751,10 @@ export const COUNTRIES = [
   {label: "Zimbabwe", value: "zw"}
 ];
 
+
+
 export type Country = keyof typeof CountryCodes;
+
+export type CountryCodeType = typeof CountryCodes[keyof typeof CountryCodes];
+
+export const countryCodesArray = COUNTRIES.map(item => item.value) as CountryCodes[];

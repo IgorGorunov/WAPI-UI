@@ -13,6 +13,7 @@ import Loader from "@/components/Loader";
 import AmazonPrepFormComponent from "./AmazonPrepFormComponent";
 import Modal from "@/components/Modal";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {useTranslations} from "next-intl";
 
 type AmazonPrepFormType = {
     docUuid?: string | null;
@@ -22,6 +23,7 @@ type AmazonPrepFormType = {
 
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, onCloseModalWithSuccess}) => {
+    const t = useTranslations('AmazonPrep');
     const { token, superUser, ui } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
@@ -93,7 +95,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
         {(isLoading || !amazonPrepOrderParameters) && <Loader />}
         <ToastContainer />
         {amazonPrepOrderParameters && (docUuid && amazonPrepOrderData || !docUuid) ?
-            <Modal title={`Amazon prep`} onClose={onClose} >
+            <Modal title={t('headerTitle')} onClose={onClose} >
                 <AmazonPrepFormComponent
                     amazonPrepOrderData={amazonPrepOrderData}
                     amazonPrepOrderParameters={amazonPrepOrderParameters}

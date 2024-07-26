@@ -11,8 +11,11 @@ import {ApiProtocolType, UserPriceType} from "@/types/profile";
 import {getApiProtocols, getUserContracts, getUserPrices} from "@/services/profile";
 import useAuth from "@/context/authContext";
 import UserContractsAndPrices from "./components/UserContractsAndPrices";
+import {useTranslations} from "next-intl";
 
 const ProfilePage = () => {
+    const tProfile = useTranslations('Profile');
+    const t = useTranslations('Profile.profileTabs');
     const {token, superUser, ui} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [apiProtocolsData, setApiProtocolsData] = useState<ApiProtocolType[]|null>(null);
@@ -47,23 +50,21 @@ const ProfilePage = () => {
     }, [token, ui]);
 
     useEffect(() => {
-
-
         fetchProfileData();
     }, []);
 
-    const tabTitles = ['User profile', 'Delivery protocols', 'Contracts and prices'].map(item=>({title: item}));
+    const tabTitles = [t('userProfile'), t('deliveryProtocols'), t('contractsAndPrices')].map(item=>({title: item}));
 
     return (
         <Layout hasFooter>
             <Head>
-                <title>Profile</title>
+                <title>{tProfile('headerTitle')}</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
             <div className="page-component profile-page">
                 {isLoading && <Loader />}
-                <Header pageTitle='Profile' toRight  />
+                <Header pageTitle={tProfile('headerTitle')} toRight  />
                 <div className='card profile-page__container'>
                     <Tabs id='profile-tabs' tabTitles={tabTitles} withHorizontalDivider>
                         <div key='profile-info-tab' className='profile-page-tab'>

@@ -4,6 +4,7 @@ import {formatDateStringToDisplayString} from "@/utils/date";
 import {TicketType} from "@/types/tickets";
 import Accordion from "@/components/Accordion";
 import TicketInfo from "./TicketInfo";
+import {useTranslations} from "next-intl";
 
 
 type DocTicketsPropsType = {
@@ -11,12 +12,12 @@ type DocTicketsPropsType = {
 };
 
 const DocumentTickets: React.FC<DocTicketsPropsType> = ({ tickets }) => {
-
+    const t= useTranslations('documentTickets');
     return (
         <div className="doc-tickets">
 
                 {tickets.map(item => (<div key={item.uuid + item.status} className='doc-tickets-wrapper'>
-                    <Accordion title={`Ticket #${item.number} from ${formatDateStringToDisplayString(item.date)}. Status: ${item.status}`}>
+                    <Accordion title={`${t('ticket')} #${item.number} ${t('from')} ${formatDateStringToDisplayString(item.date)}. ${t('status')}: ${item.status}`}>
                         <TicketInfo ticket={item}/>
                     </Accordion>
                 </div>))}

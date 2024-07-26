@@ -9,6 +9,7 @@ import {ToastContainer} from "@/components/Toast";
 import Modal from "@/components/Modal";
 import TicketComponent from "@/screens/TicketsPage/components/Ticket/TicketComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {useTranslations} from "next-intl";
 
 type TicketPropsType = {
     ticketUuid?: string;
@@ -19,7 +20,7 @@ type TicketPropsType = {
 };
 
 const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose}) => {
-
+    const t = useTranslations('common.documentTypes');
     const {token, superUser, ui} = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
@@ -96,7 +97,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
             {isLoading && <Loader/>}
             <ToastContainer/>
             {ticketParams && (ticketUuid && singleTicketData || !ticketUuid) ?
-                <Modal title={`Ticket`} onClose={onCloseModal} >
+                <Modal title={t('Ticket')} onClose={onCloseModal} >
                     <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid}  reFetchTicket={()=>{fetchSingleTicket(ticketUuid)}} onClose={onCloseModal}/>
                 </Modal>
                 : null}

@@ -1,22 +1,22 @@
 import {TourGuideStepType} from "@/types/tourGuide";
 
-export const tourGuideStepsLeads: TourGuideStepType[] = [
+export const tourGuideStepsLeads = (t) => [
     {
         target: '.tabs-block__tab-link.prices-tab',
-        content: 'Explore our pricing here - you can see basic price lists',
+        content: t('step1'),
         disableBeacon: true,
     },
     {
         target: '.tabs-block__tab-link.legal-documentation-tab',
-        content: 'Read a contract sample, fill in your contract details and click “Submit contract”',
+        content: t('step2'),
     },
     {
         target: '.tabs-block__tab-link.api-info-tab',
-        content: 'Check the ways to integrate with WAPI',
+        content: t('step3'),
     },
     // {
     //     target: '.tabs-block__tab-link.ui-tutorial-tab',
-    //     content: 'Refer to the UI tutorial for assistance',
+    //     content: t('step4'),
     // },
 
-];
+] as TourGuideStepType[];

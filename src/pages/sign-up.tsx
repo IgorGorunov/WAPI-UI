@@ -1,5 +1,6 @@
 import Head from "next/head";
 import SignUpPage from "@/screens/SignUpPage";
+import {GetStaticPropsContext} from "next";
 
 export default function SignUp() {
     return (
@@ -13,4 +14,12 @@ export default function SignUp() {
             <SignUpPage />
         </>
     );
+}
+
+export async function getStaticProps({locale}: GetStaticPropsContext) {
+    return {
+        props: {
+            messages: (await import(`../../messages/${locale}.json`)).default
+        }
+    };
 }

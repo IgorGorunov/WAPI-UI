@@ -4,6 +4,12 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: true,
 
+  //internationalization
+  i18n: {
+    locales: ['en', 'es', 'uk'],
+    defaultLocale: 'en'
+  },
+
   webpack(config) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>

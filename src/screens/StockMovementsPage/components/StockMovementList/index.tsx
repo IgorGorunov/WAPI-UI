@@ -24,6 +24,9 @@ import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 import SimplePopup from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import {MessageKeys, useTranslations} from "next-intl";
+import {itemRender} from "@/utils/pagination";
+import {PageOptions} from "@/constants/pagination";
 
 
 type StockMovementsListType = {
@@ -34,15 +37,6 @@ type StockMovementsListType = {
     setFilteredDocs: React.Dispatch<React.SetStateAction<StockMovementType[]>>;
     handleEditDoc(uuid: string): void;
 }
-
-const pageOptions = [
-    { value: '10', label: '10 per page' },
-    { value: '20', label: '20 per page' },
-    { value: '50', label: '50 per page' },
-    { value: '100', label: '100 per page' },
-    { value: '1000', label: '1000 per page' },
-    { value: '1000000', label: 'All' },
-];
 
 const getDocType = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
     if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS) {
@@ -57,6 +51,10 @@ const getDocType = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
 }
 
 const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, currentRange, setCurrentRange, setFilteredDocs, handleEditDoc }) => {
+    const t = useTranslations('StockMovements');
+    const tCommon = useTranslations('common');
+    const tCountries = useTranslations('countries');
+
     const isTouchDevice = useIsTouchDevice();
 
     const [current, setCurrent] = React.useState(1);
@@ -68,7 +66,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
-        label: 'Full text search',
+        label: tCommon('fullTextSearchLabel'),
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
@@ -126,7 +124,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         return [
             ...uniqueSenderCountries.map(senderCountry => ({
                 value: senderCountry,
-                label: Countries[senderCountry] as string || senderCountry,
+                label: tCountries(senderCountry.toLowerCase() as MessageKeys<any, any>) || senderCountry,
                 amount: calcOrderAmount('senderCountry', senderCountry)
             })),
         ].sort((option1, option2)=> {return option1.label > option2.label ? 1 : -1});
@@ -174,7 +172,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         return [
             ...uniqueReceiverCountries.map(receiverCountry => ({
                 value: receiverCountry,
-                label: Countries[receiverCountry] as string || receiverCountry,
+                label: tCountries(receiverCountry.toLowerCase() as MessageKeys<any, any>) as string || receiverCountry,
                 amount: calcOrderAmount('receiverCountry', receiverCountry),
             })),
         ].sort((option1, option2)=> {return option1.label > option2.label ? 1 : -1});
@@ -324,7 +322,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     maxWidth="50px"
                     contentPosition="center"
                     childrenBefore={
-                        <Tooltip title="Sender country ➔ Receiver country" >
+                        <Tooltip title={t('listColumns.countriesHint')} >
                             <span><Icon name={"car"}/></span>
                         </Tooltip>
                     }
@@ -355,7 +353,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             key: 'icon',
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title={`Current condition or state of ${getDocType(docType).substring(0, getDocType(docType).length - 1) }`}><span>Status</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.statusHint', {docTypeGenitive: t('docType.'+docType as MessageKeys<any, any>)})}><span>{t('listColumns.status')}</span></Tooltip>}/>,
             render: (text: string, record) => {
                 //const underlineColor = getUnderlineColor(record.status);
                 return (
@@ -385,7 +383,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.dateHint')}><span>{t('listColumns.date')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
@@ -397,7 +395,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn minWidth="70px" maxWidth="700px" contentPosition="start"  childrenBefore={<Tooltip title="Document identifier within the WAPI system"><span>Number</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="70px" maxWidth="700px" contentPosition="start"  childrenBefore={<Tooltip title={t('listColumns.numberHint')}><span>{t('listColumns.number')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
@@ -421,7 +419,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             },
         },
         {
-            title: <TitleColumn minWidth="120px" maxWidth="200px" contentPosition="start" childrenBefore={<Tooltip title="Document number in the seller's system"><span>Incoming #</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="120px" maxWidth="200px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.incomingNumberHint')}><span>{t('listColumns.incomingNumber')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
@@ -439,7 +437,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title="The source responsible for initiating the movement of products"><span>Sender</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="100px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.senderHint')}><span>{t('listColumns.sender')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
             ),
@@ -453,7 +451,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title="The recipient of products"><span>Receiver</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="100px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.receiverHint')}><span>{t('listColumns.receiver')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
             ),
@@ -466,7 +464,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Estimated arrival time"><span>ETA</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.etaHint')}><span>{t('listColumns.eta')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
@@ -480,7 +478,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         },
         {
             title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="center" childrenBefore={
-                <Tooltip title="Products" >
+                <Tooltip title={t('listColumns.productsHint')} >
                     <span><Icon name={"shopping-cart"}/></span>
                 </Tooltip>
             }/>,
@@ -538,16 +536,16 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Sender' filterState={filterSender} options={senderOptions} onClose={()=>setFilterSender([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)}}/>
-                    <CurrentFilters title='Sender country' filterState={filterSenderCountry} options={senderCountryOptions} onClose={()=>setFilterSenderCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)}}/>
-                    <CurrentFilters title='Receiver' filterState={filterReceiver} options={receiverOptions} onClose={()=>setFilterReceiver([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiver(true)}}/>
-                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                    <CurrentFilters title={tCommon('filters.status')} filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title={tCommon('filters.sender')} filterState={filterSender} options={senderOptions} onClose={()=>setFilterSender([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)}}/>
+                    <CurrentFilters title={tCommon('filters.senderCountry')} filterState={filterSenderCountry} options={senderCountryOptions} onClose={()=>setFilterSenderCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)}}/>
+                    <CurrentFilters title={tCommon('filters.receiver')} filterState={filterReceiver} options={receiverOptions} onClose={()=>setFilterReceiver([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiver(true)}}/>
+                    <CurrentFilters title={tCommon('filters.receiverCountry')} filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
                     <PageSizeSelector
-                        options={pageOptions}
+                        options={PageOptions(tCommon)}
                         value={pageSize}
                         onChange={(value: number) => handleChangePageSize(value)}
                     />
@@ -563,7 +561,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total {getDocType(docType)}:<span className='order-products-total__list-item__value'>{filteredDocs.length}</span></li>
+                        <li className='order-products-total__list-item'>{t(`total${docType}` as MessageKeys<any, any>, {docTypePluralGenitive: t('docTypePluralGenitive.'+docType as MessageKeys<any, any>).toLowerCase()})}:<span className='order-products-total__list-item__value'>{filteredDocs.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -575,15 +573,16 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     total={filteredDocs.length}
                     hideOnSinglePage
                     showSizeChanger={false}
+                    itemRender={itemRender(tCommon)}
                 />
             </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
-                <FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
-                <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
-                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                <FiltersBlock filterTitle={tCommon('filters.status')} filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle={tCommon('filters.sender')} filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
+                <FiltersBlock filterTitle={tCommon('filters.senderCountry')} isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
+                <FiltersBlock filterTitle={tCommon('filters.receiver')} filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
+                <FiltersBlock filterTitle={tCommon('filters.receiverCountry')} isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
         </div>
     );

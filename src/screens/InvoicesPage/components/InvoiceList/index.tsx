@@ -27,6 +27,8 @@ import {FILTER_TYPE} from "@/types/utility";
 import DateInput from "@/components/DateInput";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString} from "@/utils/date";
+import {useTranslations} from "next-intl";
+import {itemRender} from "@/utils/pagination";
 
 
 export const StatusColors = {
@@ -46,9 +48,10 @@ type InvoiceListType = {
 }
 
 const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurrentRange, setFilteredInvoices}) => {
+    const t = useTranslations("Invoices");
+    const tCommon = useTranslations('common');
 
     const [animating, setAnimating] = useState(false);
-
     const [isLoading, setIsLoading] = useState(false);
 
     //const Router = useRouter();
@@ -87,7 +90,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
-        label: 'Full text search',
+        label: tCommon('fullTextSearchLabel'),
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
@@ -229,7 +232,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
     const columns: ColumnType<InvoiceType>[] = useMemo(() => [
         // {
-        //     title: <TitleColumn title="Status" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
+        //     title: <TitleColumn title={t('listColumns.status')} minWidth="100px" maxWidth="100px" contentPosition="start"/>,
         //     render: (text: string, record) => {
         //         const underlineColor = getUnderlineColor(record.status);
         //         return (
@@ -475,8 +478,10 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                         contentPosition="center"
                         childrenBefore={
                             <span className="services-cell-style" onClick={()=> handleDownloadInvoice(record.uuid, 'preview')}>
-                        <Icon name="preview" />
-                        </span>}>
+                                <Icon name="preview" />
+                            </span>
+                        }
+                    >
                     </TableCell>
                 </div>
             ),
@@ -486,11 +491,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             onHeaderCell: (column: ColumnType<InvoiceType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
-            // onCell: (record) => {
-            //     return {
-            //         onClick: () => {handleDownloadInvoice(record.uuid)}
-            //     };
-            // },
             //responsive: ['lg'],
         },
 
@@ -517,12 +517,12 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedWarehouses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title={tCommon('filters.status')} filterState={filterStatus} options={transformedWarehouses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
                     <PageSizeSelector
-                        options={PageOptions}
+                        options={PageOptions(tCommon)}
                         value={pageSize}
                         onChange={(value: number) => handleChangePageSize(value)}
                     />
@@ -541,7 +541,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total invoices:<span className='order-products-total__list-item__value'>{invoices.length}</span></li>
+                        <li className='order-products-total__list-item'>{t('totalInvoices')}:<span className='order-products-total__list-item__value'>{invoices.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -553,11 +553,12 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     total={filteredInvoices.length}
                     hideOnSinglePage
                     showSizeChanger={false}
+                    itemRender={itemRender(tCommon)}
                 />
             </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={()=>setFilterStatus([])}>
-                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedWarehouses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle={tCommon('filters.status')} filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedWarehouses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
             </FiltersContainer>
         </div>
     );

@@ -1,12 +1,16 @@
 import React, {useEffect, useRef, useState} from "react";
-import { DateRange } from "react-date-range";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
+import {DateRange} from "@umakantp/react-date-range";
+import '@umakantp/react-date-range/dist/styles.css';
+import '@umakantp/react-date-range/dist/theme/default.css';
 import Button from "@/components/Button/Button";
 import { DateRangeType} from "@/types/dashboard";
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import {formatDateToString} from "@/utils/date";
+import { es, enGB } from 'date-fns/locale';
+import {useTranslations} from "next-intl";
+import {useRouter} from "next/router";
+import {LocalesAndLanguages} from "@/constants/translations";
 
 
 type DatepickerPropsType = {
@@ -16,7 +20,8 @@ type DatepickerPropsType = {
 };
 
 const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSave, onClose }) => {
-
+  const t = useTranslations('common');
+  const {locale} = useRouter();
   const [dateRange, setDateRange] = useState([
     {
       startDate: initialRange.startDate,
@@ -89,6 +94,7 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
                   </div>
               </div>
               <DateRange
+                  locale={LocalesAndLanguages[locale] || enGB}
                   ranges={dateRange}
                   onChange={handleSelect}
                   months={1}
@@ -100,7 +106,7 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
               />
           </div>
           <div className="button-container">
-              <Button icon="search" isFullWidth iconOnTheRight onClick={handleSave}>Search</Button>
+              <Button icon="search" isFullWidth iconOnTheRight onClick={handleSave}>{t('search')}</Button>
           </div>
       </div>
   );

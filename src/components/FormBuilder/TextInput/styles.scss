@@ -35,11 +35,13 @@
     }
 
   .error {
-      position: absolute;
-      bottom: -6px;
-      font-size: 10px;
-      color: var(--color-error);
-    }
+    position: absolute;
+    //bottom: -6px;
+    top: calc(100% - 10px);
+    font-size: 10px;
+    line-height: 1.1;
+    color: var(--color-error);
+  }
 
   .table-form-fields & {
     padding: 0;

@@ -1,36 +1,45 @@
 import {TourGuideStepType} from "@/types/tourGuide";
 
-export const tourGuideStepsInvoices: TourGuideStepType[] = [
-    {
-        target: '.balance-info-card.debt', //'.product-list__container',
-        content: 'Current total debt',
-        disableBeacon: true,
-    },
-    {
-        target: '.balance-info-card.overdue',
-        content: 'Current overdue debt',
-    },
-    {
-        target: '.balance-info-card.limit',
-        content: 'Overdue debt limit',
-    },
-    {
-        target: '.filter',
-        content: 'Click here to filter invoices by parameters',
-    },
-    {
-        target: '.date-input-field',
-        content: 'Click here to filter invoices by the period of time',
-    },
-    {
-        target: '.search-block',
-        content: 'Write data here to find information on the list below',
-    },
-    {
-        target: '.export-invoices',
-        content: 'Click here to export invoices into Excel  \n' +
-            'Note: All filters will be applied into export file',
-    },
-];
+export const tourGuideStepsInvoices = (t) => {
+    return [
+        {
+            target: '.balance-info-card.debt',
+            content: t('step1'),
+            disableBeacon: true,
+        },
+        {
+            target: '.balance-info-card.overdue',
+            content: t('step2'),
+        },
+        {
+            target: '.balance-info-card.limit',
+            content: t('step3'),
+        },
+        {
+            target: '.filter',
+            content: t('step4'),
+        },
+        {
+            target: '.date-input-field',
+            content: t('step5'),
+        },
+        {
+            target: '.search-block',
+            content: t('step6'),
+        },
+        {
+            target: '.export-invoices',
+            content: t('step7-1')+'  \n' +
+                t('step7-2'),
+        },
+    ] as TourGuideStepType[];
+}
 
-export const tourGuideStepsInvoicesNoDocs: TourGuideStepType[] = tourGuideStepsInvoices;
+export const tourGuideStepsInvoicesNoBalance = (t) => {
+    const steps = tourGuideStepsInvoices(t);
+    steps.shift();
+    steps.shift();
+    steps.shift();
+    steps[0].disableBeacon = true;
+    return steps;
+}

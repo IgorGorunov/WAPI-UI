@@ -30,7 +30,7 @@
     left: 0;
     background-color: rgba(0, 0, 0, 0.2);
     animation: fade 0.3s ease;
-    z-index: 2;
+    z-index: 10;
   }
 
 
@@ -66,6 +66,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
       padding: 12px 0;
 
       .toggle-switch-label-text {

@@ -16,6 +16,8 @@ import {
 import { Bar } from "react-chartjs-2";
 import "./styles.scss";
 import { PeriodType, PeriodTypes } from "@/types/dashboard";
+import {useTranslations} from "next-intl";
+import {MONTHS} from "@/constants/translations";
 
 ChartJS.register(
     CategoryScale,
@@ -62,6 +64,14 @@ function getBackgroundColor(value: number): string {
    }
 }
 
+const translateMonths = (t, text: string) => {
+  let translatedStr = text;
+  for (let i=0; i<12; i++) {
+    translatedStr = translatedStr.replaceAll(MONTHS[i], t(MONTHS[i]))
+  }
+  return translatedStr
+}
+
 
 let Diagram: React.FC<DashboardDataProps> = ({
   diagramData,
@@ -69,16 +79,21 @@ let Diagram: React.FC<DashboardDataProps> = ({
     setDiagramType
 }) => {
 
+  const t = useTranslations('Dashboard.diagram')
+  const tMonths = useTranslations('months');
+
   let chartRef = useRef<ChartJS<"bar", number[], string> | null>(null);
 
   let labels = diagramData && diagramData[diagramType]
-      ? diagramData[diagramType].map((item) => item.Key)
+      ? diagramData[diagramType].map((item) => translateMonths(tMonths, item.Key).replace("-", " - "))
       : [];
   let values = diagramData && diagramData[diagramType]
       ? diagramData[diagramType].map((item) => item.Value)
       : [];
 
   let backgroundColors = values.map(value => getBackgroundColor(value));
+
+  console.log('valuesssss', values, labels)
 
   let data = useMemo(
     () => ({
@@ -124,7 +139,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
             const tooltipItem = tooltipItems[0];
             if (tooltipItem) {
               const value = tooltipItem.formattedValue;
-              return `Orders ${value}`;
+              return `${t('orderNumberText')} ${value}`;
             }
           },
         },
@@ -181,7 +196,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
   return (
     <div className={`card dashboard-diagram__wrapper mb-md`}>
       <div className="dashboard-diagram__header">
-        <p className='title-h4'>Orders</p>
+        <p className='title-h4'>{t('title')}</p>
         <div className="dashboard-diagram__diagram-types">
           <div
             className={`dashboard-diagram__option ${
@@ -189,7 +204,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
             }`}
             onClick={() => setDiagramType("DAY")}
           >
-            Days
+            {t('filterDays')}
           </div>
           <div
             className={`dashboard-diagram__option ${
@@ -197,7 +212,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
             }`}
             onClick={() => setDiagramType("WEEK")}
           >
-            Weeks
+            {t('filterWeeks')}
           </div>
           <div
             className={`dashboard-diagram__option ${
@@ -205,7 +220,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
             }`}
             onClick={() => setDiagramType("MONTH")}
           >
-            Months
+            {t('filterMonths')}
           </div>
         </div>
       </div>

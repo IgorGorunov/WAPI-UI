@@ -38,18 +38,29 @@
     .ant-pagination-prev,
     .ant-pagination-next {
       height: 40px !important;
-      .ant-pagination-item-link {
+
+      .ant-pagination-item-link,
+      a {
+        display: flex;
         border-radius: 5px;
         background: var(--color-blue);
-        width: 106px !important;
+        min-width: 120px;
+
         @media (max-width: $mobile) {
           width: 40px !important;
+          min-width: 0;
+          font-size: 0;
         }
-        height: 40px !important;
-        padding: 0;
+        padding: 0 12px;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 900;
+        line-height: 40px;
+        color: var(--color-white);
+        //padding: 0;
         justify-content: center;
         align-items: center;
-        gap: 5px;
+        //gap: 5px;
         flex-shrink: 0;
         background-color: var(--color-blue) !important;
         box-shadow: 0 2px 5px 0 var(--color-blue) !important;
@@ -67,34 +78,42 @@
     }
   }
 
-  .custom-pagination .ant-pagination-prev .ant-pagination-item-link::before {
-    content: "← Previous";
-    @media (max-width: $mobile) {
-      content: "←";
+  .custom-pagination {
+    .ant-pagination-prev {
+      .ant-pagination-item-link::before,
+      a::before {
+        //content: "← Previous";
+        //@media (max-width: $mobile) {
+          content: "←";
+        display: inline-block;
+        color: #FFF;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 900;
+        line-height: 20px;
+        @media (min-width: $mobile) {
+          padding-right: 10px;
+        }
+      }
     }
-    display: inline-block;
-    color: #FFF;
-    font-feature-settings: 'clig' off, 'liga' off;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 900;
-    line-height: 20px;
-    padding-right: 10px;
-  }
 
-  .custom-pagination .ant-pagination-next .ant-pagination-item-link::before {
-    content: "Next →";
-    @media (max-width: $mobile) {
-      content: "→";
+    .ant-pagination-next {
+      .ant-pagination-item-link::before,
+      a::after {
+        content: "→";
+        display: inline-block;
+        color: #FFF;
+        font-feature-settings: 'clig' off, 'liga' off;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 900;
+        line-height: 20px;
+
+        @media (min-width: $mobile) {
+          padding-left: 10px;
+        }
+      }
     }
-    display: inline-block;
-    color: #FFF;
-    font-feature-settings: 'clig' off, 'liga' off;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 900;
-    line-height: 20px;
-    padding-left: 10px;
   }
 
   .table__container {

@@ -2,25 +2,27 @@ import React from "react";
 import {StockMovementServiceType} from "@/types/stockMovements";
 import "./styles.scss";
 import {formatDateStringToDisplayString} from "@/utils/date";
+import {useTranslations} from "next-intl";
 
 type PropsType = {
     services?: StockMovementServiceType[] ;
 };
 
 const Services: React.FC<PropsType> = ({ services }) => {
+    const t = useTranslations('StockMovements.docColumns.services')
 
     const totalSum = services && services.length ? services.reduce((acc, cur) => acc+cur.amountEuro, 0) : 0;
 
     return (
         <div className="stock-movement-service">
             <div className="stock-movement-service__header">
-                <div className='date-column'>Date</div>
-                <div className='column service-column'>Service</div>
-                <div className='column quantity-column'>Quantity</div>
-                <div className='column price-column'>Price</div>
-                <div className='column currency-column'>Currency</div>
-                <div className='column amount-column'>Amount</div>
-                <div className='column amount-euro-column'>Amount (EUR)</div>
+                <div className='date-column'>{t('date')}</div>
+                <div className='column service-column'>{t('service')}</div>
+                <div className='column quantity-column'>{t('quantity')}</div>
+                <div className='column price-column'>{t('price')}</div>
+                <div className='column currency-column'>{t('currency')}</div>
+                <div className='column amount-column'>{t('amount')}</div>
+                <div className='column amount-euro-column'>{t('amountEur')}</div>
             </div>
             <ul className="stock-movement-service-history__list">
                 {services &&
@@ -45,7 +47,7 @@ const Services: React.FC<PropsType> = ({ services }) => {
             </ul>
             <div className="stock-movement-service-total">
                 <ul className='stock-movement-service-total__list'>
-                    <li className='stock-movement-service-total__list-item'>Total Σ EUR: <span className='stock-movement-service-total__list-item__value'>{totalSum}</span></li>
+                    <li className='stock-movement-service-total__list-item'>{t('totalEur')}: <span className='stock-movement-service-total__list-item__value'>{totalSum}</span></li>
                 </ul>
             </div>
         </div>

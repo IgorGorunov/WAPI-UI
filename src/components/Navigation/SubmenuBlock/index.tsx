@@ -3,6 +3,7 @@ import Icon, {IconType} from "@/components/Icon";
 import Link from "next/link";
 import './styles.scss'
 import useAuth from "@/context/authContext";
+import {MessageKeys, useTranslations} from "next-intl";
 
 export type NavItemType = {
     title: string;
@@ -17,10 +18,11 @@ export type SubmenuBlockType = {
     submenuLink?: string;
     navItems: NavItemType[];
     handleClose?: ()=>void;
+    unreadAmount?: number;
 }
 
-const SubmenuBlock: React.FC<SubmenuBlockType> = ({submenuTitle, submenuIcon, navItems, handleClose}) => {
-
+const SubmenuBlock: React.FC<SubmenuBlockType> = ({submenuName, submenuTitle, submenuIcon, navItems, handleClose}) => {
+    const t = useTranslations('Navigation');
     const {isNavItemAccessible} = useAuth();
     const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
 
@@ -28,7 +30,7 @@ const SubmenuBlock: React.FC<SubmenuBlockType> = ({submenuTitle, submenuIcon, na
         <div className={`submenu-container ${submenuTitle.replaceAll(' ','')} ${isSubmenuOpen ? 'submenu-container-expanded' : ''}`}>
             <div className="submenu-header" onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}>
                 <Icon name={submenuIcon} style={{width: "30px", height: "30px"}} />
-                <span style={{marginLeft: "20px"}}>{submenuTitle}</span>
+                <span style={{marginLeft: "20px"}}>{t(submenuName as MessageKeys<any, any>)}</span>
                 {setIsSubmenuOpen ?
                     <span className="nav-arrow-icon"><Icon name="keyboard-arrow-up"/></span> :
                     <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
@@ -37,7 +39,7 @@ const SubmenuBlock: React.FC<SubmenuBlockType> = ({submenuTitle, submenuIcon, na
             <div className="submenu-items">
                 {navItems.map(navItem => (
                     isNavItemAccessible(navItem.name) ? <Link key={navItem.title} href={navItem.link} className="submenu-item" onClick={handleClose}>
-                        {navItem.title}
+                        {t(navItem.name as MessageKeys<any, any>)}
                         <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
                     </Link> : null
                 )) }

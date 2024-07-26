@@ -14,6 +14,7 @@ import {
 } from "@/types/notifications";
 import {getNotificationIconName} from "@/components/HeaderNotifications/NotificationsBlock";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import LanguageSwitcher from "../LanguageSelector";
 import SingleDocument from "@/components/SingleDocument";
 
 type HeaderType = {
@@ -62,6 +63,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
 
     return (
         <div className={`main-header`}>
+            {/*<LanguageSwitcher />*/}
             <div className='main-header__wrapper card'>
                 <div className='main-header__menu-block' onClick={handleClick}>
                     {!noMenu && <div className='main-header__icon'>

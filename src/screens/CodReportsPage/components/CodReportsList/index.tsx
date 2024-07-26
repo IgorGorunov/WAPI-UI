@@ -20,6 +20,8 @@ import Loader from "@/components/Loader";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
+import {itemRender} from "@/utils/pagination";
+import {useTranslations} from "next-intl";
 
 type CodReportsListType = {
     codReports: CodReportType[];
@@ -29,6 +31,8 @@ type CodReportsListType = {
 }
 
 const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, setCurrentRange, setFilteredCodReports}) => {
+    const t = useTranslations('CodReports');
+    const tCommon = useTranslations('common');
 
     const [animating, setAnimating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -153,7 +157,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     const columns: ColumnType<CodReportType>[] = useMemo(() => [
         {
             title: <TitleColumn
-                title="Number"
+                title={t('listColumns.number')}
                 minWidth="80px"
                 maxWidth="80px"
                 contentPosition="start"
@@ -170,7 +174,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         },
         {
             title: <TitleColumn
-                title="Date"
+                title={t('listColumns.date')}
                 minWidth="80px"
                 maxWidth="150px"
                 contentPosition="start"
@@ -187,7 +191,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         },
         {
             title: <TitleColumn
-                title="Amount"
+                title={t('listColumns.amount')}
                 minWidth="100px"
                 maxWidth="100px"
                 contentPosition="start"
@@ -228,7 +232,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         },
         {
             title: <TitleColumn
-                title="Period"
+                title={t('listColumns.period')}
                 minWidth="150px"
                 maxWidth="200px"
                 contentPosition="start"
@@ -246,7 +250,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         },
         {
             title: <TitleColumn
-                title="Orders count"
+                title={t('listColumns.orderCount')}
                 minWidth="80px"
                 maxWidth="150px"
                 contentPosition="start"
@@ -263,11 +267,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             responsive: ['md'],
         },
         {
-             title: <TitleColumn title="" minWidth="100px" maxWidth="800px" contentPosition="end"/>,
+             title: <TitleColumn title="" minWidth="35px" maxWidth="80px" contentPosition="end"/>,
             render: (text: string, record: CodReportType) => (
                 <TableCell
-                    minWidth="100px"
-                    maxWidth="800px"
+                    minWidth="35px"
+                    maxWidth="80px"
                     contentPosition="end"
                     childrenBefore={
                         <span className="lines-cell-style">
@@ -286,7 +290,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                     onClick: () => {handleDownloadCORReport(record.uuid)}
                 };
             },
-            responsive: ['lg'],
+            //responsive: ['lg'],
         },
     ], [handleHeaderCellClick]);
 
@@ -295,19 +299,10 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             {isLoading && <Loader />}
             <Head>
                 <title>Cod reports</title>
-                <meta name="cod reports" content="cod" />
+                <meta name={t('headerTitle')} content="COD" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
-            {/*<div className="date-filter-container">*/}
-            {/*    <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*/}
-            {/*    <Input*/}
-            {/*        placeholder="🔍 Search..."*/}
-            {/*        value={searchTerm}*/}
-            {/*        onChange={e => handleFilterChange(e.target.value)}*/}
-            {/*        className="search-input"*/}
-            {/*    />*/}
-            {/*</div>*/}
             <SearchContainer>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
@@ -317,7 +312,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             <div className="page-size-container">
                 <span className="page-size-text"></span>
                 <PageSizeSelector
-                    options={PageOptions}
+                    options={PageOptions(tCommon)}
                     value={pageSize}
                     onChange={(value: number) => handleChangePageSize(value)}
                 />
@@ -334,7 +329,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total COD reports:<span className='order-products-total__list-item__value'>{filteredCODReports.length}</span></li>
+                        <li className='order-products-total__list-item'>{t('totalCodReports')}:<span className='order-products-total__list-item__value'>{filteredCODReports.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -346,6 +341,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                     total={filteredCODReports.length}
                     hideOnSinglePage
                     showSizeChanger={false}
+                    itemRender={itemRender(tCommon)}
                 />
             </div>
         </div>

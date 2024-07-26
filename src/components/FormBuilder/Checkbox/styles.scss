@@ -100,8 +100,10 @@
 
   .error {
     position: absolute;
-    bottom: -16px;
+    //bottom: -16px;
+    top: calc(100% - 6px);
     font-size: 10px;
+    line-height: 1.1;
     color: var(--color-error);
   }
 }

@@ -14,6 +14,7 @@ interface TitleColumnProps {
 }
 
 const TitleColumn: React.FC<TitleColumnProps> = ({ title, minWidth, maxWidth, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children, className=''}) => {
+    if (className) console.log("it is classname: ", title, className)
     const style: React.CSSProperties = {
         display: 'flex',
         minWidth: minWidth,

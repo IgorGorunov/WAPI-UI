@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useRef, useState} from "react";
 import {
   DashboardPeriodType, DateRangeType,
   PeriodType,
@@ -9,6 +9,8 @@ import DatepickerComponent from '@/components/Datepicker';
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
+import {useTranslations} from "next-intl";
+import useOutsideClick from "@/hooks/useOutsideClick";
 
 export type PeriodFilterProps = {
   currentPeriod: DashboardPeriodType;
@@ -29,6 +31,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   const curPeriodType = currentPeriod.periodType;
 
   const {currentDate} = useAuth();
+  const t = useTranslations('Dashboard.periodFilter');
 
   const handleDay = () => {
     setShowCustom(false);
@@ -141,9 +144,12 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   const onCloseCustom = () => {
     setShowCustom(false);
   }
+  const datePickerRef = useRef<HTMLDivElement>(null);
+
+  useOutsideClick(datePickerRef, onCloseCustom);
 
   return (
-    <div className="period-filter period-filter__container">
+    <div className="period-filter period-filter__container " ref={datePickerRef}>
       <div onClick={() => setIsPeriodDropdownOpen(!isPeriodDropdownOpen)} className="period-filter__dropdown">
         <span className="nav-arrow-icon">  {selectedPeriodType} <Icon name="expand" className="icon-right"  /> </span>
       </div>
@@ -155,7 +161,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
           }`}
           onClick={handleDay}
         >
-          Day
+          {/*Day*/}
+          {t('day')}
         </li>
         <li
           key={PeriodTypes.WEEK}
@@ -164,7 +171,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
           }`}
           onClick={handleWeek}
         >
-          Week
+          {/*Week*/}
+          {t('week')}
         </li>
         <li
           key={PeriodTypes.MONTH}
@@ -173,7 +181,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
           }`}
           onClick={handleMonth}
         >
-          Month
+          {/*Month*/}
+          {t('month')}
         </li>
         <li
           key={PeriodTypes.QUARTER}
@@ -182,7 +191,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
           }`}
           onClick={handleQuarter}
         >
-          Quarter
+          {/*Quarter*/}
+          {t('quarter')}
         </li>
         <li
           key={PeriodTypes.YEAR}
@@ -191,7 +201,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
           }`}
           onClick={handleYear}
         >
-          Year
+          {/*Year*/}
+          {t('year')}
         </li>
         <li
           key={PeriodTypes.CUSTOM}
@@ -200,7 +211,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
           }`}
           onClick={handleCustom}
         >
-          Custom
+          {/*Custom*/}
+          {t('custom')}
         </li>
       </ul>
       <div className="period-filter__datepicker">

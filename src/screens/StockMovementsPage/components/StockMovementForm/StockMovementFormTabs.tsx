@@ -1,43 +1,48 @@
 import {TabFieldType} from '@/types/tabs';
 
-export const TabTitles = (objectExists: boolean, hasTickets=false) => {
-    const tabsArr = objectExists ? ['General', 'Products', 'Services', 'Status history'] : ['General', 'Products'];
-    if (hasTickets) {
-        tabsArr.push('Tickets');
+export const TabTitles = (t:any, objectExists: boolean, hasTickets=false) => {
+    const tabsArr = [t('general'), t('products')];
+    if (objectExists) {
+        tabsArr.push(t('services'));
+        tabsArr.push(t('statusHistory'));
     }
-    tabsArr.push('Files');
+
+    if (hasTickets) {
+        tabsArr.push(t('tickets'));
+    }
+    tabsArr.push(t('files'));
     return tabsArr;
 }
-export const TabFields: TabFieldType[] = [
+export const TabFields = (t:any) => [
     {
-        tabName: 'General',
+        tabName: t('general'),
         fieldName: 'incomingDate'
     },
     {
-        tabName: 'General',
+
+        tabName: t('general'),
         fieldName: 'incomingNumber'
     },
     {
-        tabName: 'General',
+        tabName: t('general'),
         fieldName: 'sender'
     },
     {
-        tabName: 'General',
+        tabName: t('general'),
         fieldName: 'senderCountry'
     },
     {
-        tabName: 'General',
+        tabName: t('general'),
         fieldName: 'receiver'
     },
     {
-        tabName: 'General',
+        tabName: t('general'),
         fieldName: 'receiverCountry'
     },
     {
-        tabName: 'Products',
+        tabName: t('products'),
         fieldName: 'products'
     },
-
-]
+] as TabFieldType[];
 
 

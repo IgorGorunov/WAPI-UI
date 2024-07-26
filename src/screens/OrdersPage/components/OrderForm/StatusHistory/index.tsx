@@ -4,12 +4,15 @@ import "./styles.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import {Countries} from "@/types/countries";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
+import {useTranslations} from "next-intl";
 
 type PropsType = {
     statusHistory?: OrderHistoryType[] ;
 };
 
 const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
+    const tFields = useTranslations('Fulfillment.orderFields');
+    const tColumns = useTranslations('Fulfillment.orderTabsInfo.statusHistory');
 
     const formatCommentMessage = (message: string) => {
         try {
@@ -18,32 +21,30 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
             if (Object.hasOwn(commentMessage, 'action')) {
                 //it is a comment
                 const action = commentMessage.action;
-                const displayedMessage = [`Action: ${action}`];
+                const displayedMessage = [`${tColumns('action')}: ${action}`];
 
                 if (Object.hasOwn(commentMessage, 'comment')) {
-                    displayedMessage.push(`Comment: ${commentMessage.comment}`);
+                    displayedMessage.push(`${tColumns('comment')}: ${commentMessage.comment}`);
                 }
 
                 if (Object.hasOwn(commentMessage, 'receiver')) {
-                    displayedMessage.push(`Receiver full name: ${commentMessage.receiver.fullName}`);
-                    displayedMessage.push(`Country: ${Countries[commentMessage?.receiver?.country] ? Countries[commentMessage?.receiver?.country] : commentMessage?.receiver?.country}`);
+                    displayedMessage.push(`${tColumns('receiverFullName')}: ${commentMessage.receiver.fullName}`);
+                    displayedMessage.push(`${tFields('receiverCountry')}: ${Countries[commentMessage?.receiver?.country] ? Countries[commentMessage?.receiver?.country] : commentMessage?.receiver?.country}`);
                     if (commentMessage?.receiver?.county) {
-                        displayedMessage.push(`County: ${commentMessage.receiver?.county}`);
+                        displayedMessage.push(`${tFields('receiverCounty')}: ${commentMessage.receiver?.county}`);
                     }
-                    displayedMessage.push(`City: ${commentMessage.receiver.city}`);
-                    displayedMessage.push(`Zip: ${commentMessage.receiver.zip || commentMessage.receiver.zipCode}`);
-                    displayedMessage.push(`Address: ${commentMessage.receiver.address}`);
-                    displayedMessage.push(`Phone: ${commentMessage.receiver.phone}`);
+                    displayedMessage.push(`${tFields('receiverCity')}: ${commentMessage.receiver.city}`);
+                    displayedMessage.push(`${tFields('receiverZip')}: ${commentMessage.receiver.zip || commentMessage.receiver.zipCode}`);
+                    displayedMessage.push(`${tFields('receiverAddress')}: ${commentMessage.receiver.address}`);
+                    displayedMessage.push(`${tFields('receiverPhone')}: ${commentMessage.receiver.phone}`);
                     if (commentMessage?.receiver?.email) {
-                        displayedMessage.push(`City: ${commentMessage.receiver.email}`);
+                        displayedMessage.push(`${tFields('receiverEMail')}: ${commentMessage.receiver.email}`);
                     }
                 }
 
                 if (Object.hasOwn(commentMessage, 'deliveryDate')) {
-                    displayedMessage.push(`Delivery date: ${commentMessage.deliveryDate.date} from ${commentMessage.deliveryDate.hourFrom} to ${commentMessage.deliveryDate.hourTo}`);
+                    displayedMessage.push(`${tColumns('deliveryDate')}: ${commentMessage.deliveryDate.date} from ${commentMessage.deliveryDate.hourFrom} to ${commentMessage.deliveryDate.hourTo}`);
                 }
-
-                // return displayedMessage.join(' \n')
 
                 return (
                     <>
@@ -68,13 +69,13 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
     return (
         <div className="order-status-history">
             <div className="order-status-history__header">
-                <div className='date-column'>Period / Status</div>
+                <div className='date-column'>{tColumns('date')}</div>
                 {/*<div className='column status--column'>Status</div>*/}
-                <div className='column tracking-number--column'>Tracking #</div>
-                <div className='column trouble-status--column'>Trouble status</div>
-                <div className='column event-column'>Event</div>
-                <div className='column location-column'>Location</div>
-                <div className='column comment--column'>Additional information</div>
+                <div className='column tracking-number--column'>{tColumns('trackingNumber')}</div>
+                <div className='column trouble-status--column'>{tColumns('troubleStatus')}</div>
+                <div className='column event-column'>{tColumns('event')}</div>
+                <div className='column location-column'>{tColumns('location')}</div>
+                <div className='column comment--column'>{tColumns('additionalInfo')}</div>
 
             </div>
             <ul className="order-status-history__list">

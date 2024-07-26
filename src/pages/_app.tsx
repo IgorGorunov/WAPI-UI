@@ -7,6 +7,8 @@ import {NotificationsProvider} from "@/context/notificationContext";
 import {TourGuideProvider} from "@/context/tourGuideContext";
 import { clarity } from 'react-microsoft-clarity';
 import {useEffect} from "react";
+import {useRouter} from "next/router";
+import {NextIntlClientProvider} from 'next-intl';
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -24,6 +26,8 @@ const inter = Inter({
 
 export default function App({ Component, pageProps }: AppProps) {
 
+  const router = useRouter();
+
   useEffect(() => {
     if (!clarity.hasStarted()) {
       clarity.init('mgi3bjcotp');
@@ -40,13 +44,19 @@ export default function App({ Component, pageProps }: AppProps) {
       `}</style>
 
       {
-        <NotificationsProvider>
-          <AuthProvider>
-            <TourGuideProvider>
-              <Component {...pageProps} />
-            </TourGuideProvider>
-          </AuthProvider>
-        </NotificationsProvider>
+        <NextIntlClientProvider
+            locale={router.locale}
+            messages={pageProps.messages}
+            timeZone="Europe/Vienna"
+        >
+          <NotificationsProvider>
+            <AuthProvider>
+              <TourGuideProvider>
+                <Component {...pageProps} />
+              </TourGuideProvider>
+            </AuthProvider>
+          </NotificationsProvider>
+        </NextIntlClientProvider>
       }
     </>
   );

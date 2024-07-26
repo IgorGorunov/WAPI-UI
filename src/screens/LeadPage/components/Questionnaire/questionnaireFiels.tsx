@@ -1,87 +1,86 @@
 import {FormFieldTypes, WidthType} from "@/types/forms";
 
-export const CompanyNameField = {
+export const CompanyNameField = (t, requiredFieldMessage) => ({
     fieldType: FormFieldTypes.TEXT,
     type: "text",
     name: 'companyName',
-    label: "Company name",
-    placeholder: "name of your company",
+    label: t('companyName'),
+    placeholder: t('companyNamePlaceholder'),
     width: WidthType.w50,
     classNames: "",
     rules: {
-        required: "Required field",
+        required: requiredFieldMessage,
     },
-    errorMessage: "Required field",
-};
+});
 
-export const CompanyWebpageField = {
+export const CompanyWebpageField = (t) => ({
     fieldType: FormFieldTypes.TEXT,
     type: "text",
     name: 'companyWebpage',
-    label: "Company webpage (optional)",
-    placeholder: "www.mycompany.com",
+    label: t('companyWebpage'),
+    placeholder: t('companyWebpagePlaceholder'),
     width: WidthType.w50,
     classNames: "",
-};
+});
 
-export const SalesVolumePerMonthField = {
+export const SalesVolumePerMonthField = (t, requiredFieldMessage) => ({
     fieldType: FormFieldTypes.NUMBER,
     type: "number",
     name: 'salesVolumePerMonth',
-    label: "Sales volume per month (number of orders)",
+    label: t('salesVolumePerMonth'),
     placeholder: '0',
     width: WidthType.w50,
     classNames: "",
     rules: {
-        required: "Required field",
+        required: requiredFieldMessage,
     },
-};
+});
 
-export const SkusField = {
+export const SkusField = (t, requiredFieldMessage) => ({
     fieldType: FormFieldTypes.NUMBER,
     type: "number",
     name: 'skus',
-    label: "Number of references (number of SKUs)",
+    label: t('skus'),
     placeholder: '0',
     width: WidthType.w50,
     classNames: "",
     rules: {
-        required: "Required field",
+        required: requiredFieldMessage,
     },
-};
+});
 
-export const DimensionsField = {
+export const DimensionsField = (t) => ({
     fieldType: FormFieldTypes.TEXT,
     type: "text",
     name: 'dimensionsOfLargestProduct',
-    label: "Dimensions of the largest product, mm",
+    label: t('dimensionsOfLargestProduct'),
     placeholder: "100x500x50",
     width: WidthType.w50,
     classNames: "",
-};
+});
 
-export const WeightField = {
+export const WeightField = (t) => ({
     fieldType: FormFieldTypes.NUMBER,
     type: "number",
     name: 'weightOfHeaviestProduct',
-    label: "Weight of the heaviest product, kg",
+    label: t('weightOfHeaviestProduct'),
     placeholder: "0",
     width: WidthType.w50,
     classNames: "",
-};
+});
 
-export const PackagingField = {
+export const PackagingField = (t) => ({
     fieldType: FormFieldTypes.TOGGLE,
     name: 'additionalPackagingForLastMileDelivery',
-    label: "Additional package is needed for last mile delivery",
+    label: t('additionalPackagingForLastMileDelivery'),
     width: WidthType.w50,
     classNames: "",
-};
+});
 
-export const CodField = {
+export const CodField = (t) => ({
     fieldType: FormFieldTypes.TOGGLE,
     name: 'needsCOD',
-    label: "Needs COD",
+    label: t('needsCOD'),
     width: WidthType.w50,
     classNames: "",
-};
+});

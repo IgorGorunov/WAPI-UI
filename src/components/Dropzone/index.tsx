@@ -11,10 +11,11 @@ import {ApiResponseType} from "@/types/api";
 import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import useAuth from "@/context/authContext";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {useTranslations} from "next-intl";
 
 const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=false, docUuid = '', showSend=false}) => {
     const { token, superUser, ui } = useAuth();
-
+    const t = useTranslations();
     const [isDragging, setIsDragging] = useState(false);
     const inputId = `file-input__${Date.now().toString()}`;
 
@@ -151,7 +152,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
                 if (res?.status === 200) {
                    //success
                     setAddedFiles([]);
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Files are successfully send`, onClose: ()=>setShowStatusModal(false)})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: t('messages.successMessages.success'), subtitle: t('messages.successMessages.successfulFilesSend'), onClose: ()=>setShowStatusModal(false)})
                     setShowStatusModal(true);
                 } else if (res && 'response' in res ) {
 
@@ -182,7 +183,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
                         <Icon name='upload'/>
                     </div>)}
                     <div onClick={openFileDialog} className='dropzone-title'>
-                        <p>Drop or paste files here</p>
+                        <p>{t('common.dropZoneText')}</p>
                         {hint ? <p className='hint'>{hint}</p> : null}
                     </div>
                     {files && files.length > 0 && (
@@ -191,7 +192,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
                 </div>
             </div>
             {(readOnly || showSend) && docUuid && addedFiles.length ?
-                <div className='dropzone__btns'><Button onClick={handleSendDocFile}>Send files</Button></div>
+                <div className='dropzone__btns'><Button onClick={handleSendDocFile}>{t('common.buttons.sendFiles')}</Button></div>
             : null}
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </div>

@@ -10,6 +10,7 @@ import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
 import ProductFormComponent from "@/screens/ProductsPage/components/ProductForm/ProductFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {useTranslations} from "next-intl";
 
 type ProductPropsType = {
     uuid?: string | null;
@@ -18,6 +19,8 @@ type ProductPropsType = {
     onCloseSuccess: ()=>void;
 }
 const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose, onCloseSuccess}) => {
+    const t = useTranslations('ProductsPage')
+
     const [productParams, setProductParams] = useState<ProductParamsType|null>(null);
     const [productData, setProductData] = useState<SingleProductType|null>(null);
     const [productsList, setProductsList] = useState<ProductType[]|null>(products);
@@ -134,7 +137,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
         {isLoading && <Loader />}
         <ToastContainer />
         { productParams && (uuid && productData || !uuid) && (productsList !== null) ?
-            <Modal title={`${productData ? 'Product': 'Product'}`} onClose={onCloseModal} >
+            <Modal title={t('productModalTitle')} onClose={onCloseModal} >
                 <ProductFormComponent
                     productParams={productParams}
                     productData={productData}

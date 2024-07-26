@@ -7,10 +7,10 @@ import {formatNumbers} from "@/screens/ReportPage/utils";
 import {Tooltip} from "antd";
 
 
-const resourceColumns: ColumnDef<ReportSalesRowType>[] = [
+const resourceColumns = (t) => [
     {
         accessorKey: 'quantity',
-        header: () => <Tooltip title="Items sold" ><span>Product quantity</span></Tooltip>,
+        header: () => <Tooltip title={t("ReportSales.quantityHint")} ><span>{t("ReportSales.quantity")}</span></Tooltip>,
         aggregationFn: 'sum',
         size: 80,
         maxSize: 400,
@@ -21,7 +21,7 @@ const resourceColumns: ColumnDef<ReportSalesRowType>[] = [
     },
     {
         accessorKey: 'wapiTrackingNumber',
-        header: ()=> <Tooltip title="Quantity of orders" ><span>Orders count</span></Tooltip>,
+        header: ()=> <Tooltip title={t("ReportSales.countHint")} ><span>{t("ReportSales.count")}</span></Tooltip>,
         aggregationFn: 'sum',
         size: 80,
         maxSize: 400,
@@ -32,7 +32,7 @@ const resourceColumns: ColumnDef<ReportSalesRowType>[] = [
     },
     {
         accessorKey: 'saleEuro',
-        header: ()=> <Tooltip title="Sales (euro)" ><span>Sales (euro)</span></Tooltip>,
+        header: ()=> <Tooltip title={t("ReportSales.saleEuroHint")} ><span>{t("ReportSales.saleEuro")}</span></Tooltip>,
         aggregationFn: 'sum',
         size: 80,
         maxSize: 400,
@@ -41,88 +41,88 @@ const resourceColumns: ColumnDef<ReportSalesRowType>[] = [
         aggregatedCell: ({ getValue }) =>
             formatNumbers(getValue<number>()),
     },
-];
+] as ColumnDef<ReportSalesRowType>[];
 
-const dimensionColumns: ColumnDef<ReportSalesRowType>[] = [
+const dimensionColumns = (t, tCountries) =>[
     {
         accessorKey: 'receiverCountry',
         id: 'receiverCountry',
-        header: () => <Tooltip title="Receiver country" ><span>Country</span></Tooltip>,
-        cell: info => <span><span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.receiverCountry}</span>,
+        header: () => <Tooltip title={t("ReportSales.receiverCountryHint")} ><span>{t("ReportSales.receiverCountry")}</span></Tooltip>,
+        cell: info => <span><span className={`fi fi-${info.row.original.receiverCountryCode ? info.row.original?.receiverCountryCode.toLowerCase() : ''} flag-icon`}></span>{info.row.original.receiverCountryCode ? tCountries(info.row.original?.receiverCountryCode.toLowerCase()) : info.row.original.receiverCountry}</span>,
         aggregationFn: 'count',
         size: 100,
         maxSize: 500,
     },
     {
         accessorKey: 'product',
-        header: () => <Tooltip title="Name of the product + [SKU]" ><span>Product <span className='product-sku-header'>[SKU]</span> </span></Tooltip>,
+        header: () => <Tooltip title={t("ReportSales.productHint")} ><span>{t("ReportSales.product")} <span className='product-sku-header'>{t("ReportSales.productSKU")}</span> </span></Tooltip>,
         cell: info => <><span>{`${info.row.original.product}`}</span>{info.row.original.sku ? <span className='product-sku'>{` [${info.row.original.sku}] `}</span> : ''}</>,
         size: 90,
         maxSize: 500,
     },
     {
         accessorKey: 'order',
-        header: () => <Tooltip title="Wapi tracking number" ><span>Order</span></Tooltip>,
+        header: () => <Tooltip title={t("ReportSales.orderHint")} ><span>{t("ReportSales.order")}</span></Tooltip>,
         size: 90,
     },
     {
         accessorKey: 'price',
-        header: () => <Tooltip title="Price of one product unit" ><span>Price</span></Tooltip>,
+        header: () => <Tooltip title={t("ReportSales.priceHint")} ><span>{t("ReportSales.price")}</span></Tooltip>,
         cell: info => <span className='price-column'><span>{`${info.row.original.price}`}</span><span className='currency'>{`${getSymbolFromCurrency(info.row.original.currency) || ''}`}</span></span>,
         size: 50,
         maxSize: 90,
     },
-];
+] as ColumnDef<ReportSalesRowType>[];
 
 
-export const columns_Month_Country_Product_Order: ColumnDef<ReportSalesRowType>[] = [
+export const columns_Month_Country_Product_Order = (t, tCountries) => [
     {
         accessorKey: 'month',
-        header: () => <Tooltip title="Period - month">Period - month</Tooltip> ,
+        header: () => <Tooltip title={t("ReportSales.periodMonthHint")}>{t("ReportSales.periodMonth")}</Tooltip> ,
         cell: info => formatDateToShowMonthYear(info.getValue() as string),
         aggregationFn: 'count',
         size: 80,
         maxSize: 500,
     },
-    ...dimensionColumns,
-    ...resourceColumns,
+    ...dimensionColumns(t, tCountries),
+    ...resourceColumns(t),
 
-];
+] as ColumnDef<ReportSalesRowType>[];
 
-export const columns_Week_Country_Product_Order: ColumnDef<ReportSalesRowType>[] = [
+export const columns_Week_Country_Product_Order = (t, tCountries) => [
     {
         accessorKey: 'week',
-        header: () => <Tooltip title="Period - week">Period - week</Tooltip>,
+        header: () => <Tooltip title={t("ReportSales.periodWeekHint")}>{t("ReportSales.periodWeek")}</Tooltip>,
         cell: info => formatDateToWeekRange(info.getValue() as string),
         aggregationFn: 'count',
         size: 80,
         maxSize: 500,
     },
-    ...dimensionColumns,
-    ...resourceColumns,
+    ...dimensionColumns(t, tCountries),
+    ...resourceColumns(t),
+] as ColumnDef<ReportSalesRowType>[];
+
+export const columns_Off_Country_Product_Order = (t, tCountries) => [
+    ...dimensionColumns(t, tCountries),
+    ...resourceColumns(t),
 ];
 
-export const columns_Off_Country_Product_Order: ColumnDef<ReportSalesRowType>[] = [
-    ...dimensionColumns,
-    ...resourceColumns,
-];
-
-export const getReportSalesVariantColumns = (variant: REPORT_SALES_VARIANTS) => {
+export const getReportSalesVariantColumns = (t: any, tCountries:any, variant: REPORT_SALES_VARIANTS) => {
     switch (variant) {
         case REPORT_SALES_VARIANTS.MONTH_COUNTRY_PRODUCT_ORDER:
-            return columns_Month_Country_Product_Order;
+            return columns_Month_Country_Product_Order(t, tCountries);
         case REPORT_SALES_VARIANTS.WEEK_COUNTRY_PRODUCT_ORDER:
-            return columns_Week_Country_Product_Order;
+            return columns_Week_Country_Product_Order(t, tCountries);
         case REPORT_SALES_VARIANTS.OFF_COUNTRY_PRODUCT_ORDER:
-            return columns_Off_Country_Product_Order;
+            return columns_Off_Country_Product_Order(t, tCountries);
         case REPORT_SALES_VARIANTS.MONTH_PRODUCT_COUNTRY_ORDER:
-            return columns_Month_Country_Product_Order;
+            return columns_Month_Country_Product_Order(t, tCountries);
         case REPORT_SALES_VARIANTS.WEEK_PRODUCT_COUNTRY_ORDER:
-            return columns_Week_Country_Product_Order;
+            return columns_Week_Country_Product_Order(t, tCountries);
         case REPORT_SALES_VARIANTS.OFF_PRODUCT_COUNTRY_ORDER:
-            return columns_Off_Country_Product_Order;
+            return columns_Off_Country_Product_Order(t, tCountries);
         default:
-            return columns_Month_Country_Product_Order;
+            return columns_Month_Country_Product_Order(t, tCountries);
     }
 }
 

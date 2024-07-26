@@ -15,7 +15,7 @@ const TextField: React.FC<FieldPropsType> = ({
          // ...props
     }) => {
     return (
-        <div className="form-control">
+        <div className="form-control-simple-input">
             <label htmlFor={name}>{label}</label>
             <input
                 id={name}

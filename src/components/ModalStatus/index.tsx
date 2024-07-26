@@ -46,10 +46,6 @@ const ModalStatus:React.FC<ModalStatusType> = ({statusModalType=STATUS_MODAL_TYP
         }
     }, []);
 
-    console.log('multipleObjectsErrorText', multipleObjectsErrorText);
-
-
-
     const modalContent = (
         <div className={`status-modal-overlay } ${classNames ? classNames : ''}`}>
             <div className="status-modal-wrapper" >

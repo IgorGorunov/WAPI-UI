@@ -5,11 +5,14 @@ import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import Icon from "@/components/Icon";
 import Button from "@/components/Button/Button";
+import {useTranslations} from "next-intl";
 
 const GetStartedPage: React.FC = () => {
-
+    const t = useTranslations('GetStartedPage');
 
     const router = useRouter();
+
+    console.log('locale: ', router.locale)
 
     const handleSignUp = async() => {
         await router.push(Routes.SignUp);
@@ -20,14 +23,29 @@ const GetStartedPage: React.FC = () => {
         <Layout hasFooter isWide >
             <div className="page-component get-started-page">
                 <div className="get-started-page__container">
-                    <h1  className="get-started-page__main-title">
-                        <span>Welcome to the WAPI system,</span><br/>
-                        <span>where business owners extend their reach</span><br/>
-                        <span>into new markets with their products</span>
+                    <h1 className="get-started-page__main-title">
+                        {/*<span>Welcome to the WAPI system,</span><br/>*/}
+                        {/*<span>where business owners extend their reach</span><br/>*/}
+                        {/*<span>into new markets with their products</span>*/}
+                        <span>{t('title1')}</span><br/>
+                        <span>{t('title2')}</span><br/>
+                        <span>{t('title3')}</span>
                     </h1>
 
                     <div className="card get-started-page__main-block-wrapper">
-                        <h2 className="get-started-page__sub-title">Why you should <span className='text-bold'>register</span>? Here's how it <span className='text-bold'>benefits</span> you:
+                        {/*<h2 className="get-started-page__sub-title">*/}
+                        {/*    Why you should*/}
+                        {/*    <span className='text-bold'>register</span>*/}
+                        {/*    ? Here's how it*/}
+                        {/*    <span className='text-bold'>benefits</span>*/}
+                        {/*    you:*/}
+                        {/*</h2>*/}
+                        <h2 className="get-started-page__sub-title">
+                            {t('subtitle1')}
+                            <span className='text-bold'>{t('subtitle2')}</span>
+                            {t('subtitle3')}
+                            <span className='text-bold'>{t('subtitle4')}</span>
+                            {t('subtitle5')}
                         </h2>
                         <div className="get-started-page__main-block">
                             <div className="get-started-page__text-block">
@@ -35,11 +53,10 @@ const GetStartedPage: React.FC = () => {
                                     <div className="get-started-page__text-block--icon">
                                         <Icon name='shopping-outline'/>
                                     </div>
-                                    <h3>Efficient Order Management</h3>
+                                    <h3>{t('cards.card1.title')}</h3>
                                 </div>
                                 <div className="get-started-page__text-block--text">
-                                    <p>Seamlessly place and oversee orders in real-time. Stay updated on order progress
-                                        and status, anytime, anywhere.</p>
+                                    <p>{t('cards.card1.text')}</p>
                                 </div>
                             </div>
                             <div className="get-started-page__text-block">
@@ -47,11 +64,10 @@ const GetStartedPage: React.FC = () => {
                                     <div className="get-started-page__text-block--icon">
                                         <Icon name='fin-transparency'/>
                                     </div>
-                                    <h3>Financial Transparency</h3>
+                                    <h3>{t('cards.card2.title')}</h3>
                                 </div>
                                 <div className="get-started-page__text-block--text">
-                                    <p>Gain instant access to financial conditions and the outcomes of completed
-                                        transactions in real-time, empowering informed decision-making.</p>
+                                    <p>{t('cards.card2.text')}</p>
                                 </div>
                             </div>
                             <div className="get-started-page__text-block">
@@ -59,12 +75,10 @@ const GetStartedPage: React.FC = () => {
                                     <div className="get-started-page__text-block--icon">
                                         <Icon name='clock'/>
                                     </div>
-                                    <h3>24/7 Accessibility</h3>
+                                    <h3>{t('cards.card3.title')}</h3>
                                 </div>
                                 <div className="get-started-page__text-block--text">
-                                    <p>Access the system round-the-clock, saving valuable time by creating tickets at
-                                        your convenience. Enjoy the perks of managing your account without the need for
-                                        phone calls.</p>
+                                    <p>{t('cards.card3.text')}</p>
                                 </div>
                             </div>
                             <div className="get-started-page__text-block">
@@ -72,13 +86,11 @@ const GetStartedPage: React.FC = () => {
                                     <div className="get-started-page__text-block--icon">
                                         <Icon name='analytics'/>
                                     </div>
-                                    <h3>Insightful Analytics</h3>
+                                    <h3>{t('cards.card4.title')}</h3>
                                 </div>
                                 <div className="get-started-page__text-block--text">
                                     {/*<h3>Insightful Analytics</h3>*/}
-                                    <p>Access vital reports tailored to your needs. Customize criteria and filters
-                                        to
-                                        delve into the analytics that matter most to you.</p>
+                                    <p>{t('cards.card4.text')}</p>
 
                                 </div>
                             </div>
@@ -87,15 +99,14 @@ const GetStartedPage: React.FC = () => {
                                     <div className="get-started-page__text-block--icon">
                                         <Icon name='gala-settings'/>
                                     </div>
-                                    <h3>Rapid Product Discovery</h3>
+                                    <h3>{t('cards.card5.title')}</h3>
                                 </div>
                                 <div className="get-started-page__text-block--text">
-                                    <p>Effortlessly locate products through intuitive search tools, filters, and
-                                        comprehensive product views.</p>
+                                    <p>{t('cards.card5.text')}</p>
                                 </div>
                             </div>
                             <div className="get-started-page__text-block with-btn">
-                                <Button classNames='get-started-page__text-block--btn' onClick={handleSignUp}>Get started</Button>
+                                <Button classNames='get-started-page__text-block--btn' onClick={handleSignUp}>{t('getStartedBtn')}</Button>
                             </div>
                         </div>
                     </div>

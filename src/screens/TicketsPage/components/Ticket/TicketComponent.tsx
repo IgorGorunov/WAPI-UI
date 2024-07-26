@@ -22,6 +22,8 @@ import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {TicketHints} from "@/screens/TicketsPage/ticketHints.constants";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {useTranslations} from "next-intl";
+import {useRouter} from "next/router";
 
 type TicketPropsType = {
     subjectType?: string | null;
@@ -36,6 +38,13 @@ type TicketPropsType = {
 };
 
 const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose, reFetchTicket}) => {
+    const t = useTranslations('Tickets');
+    const tTabs = useTranslations('Tickets.ticketTabs');
+    const tFields = useTranslations('Tickets.ticketFields');
+    const tCommon = useTranslations('common');
+    const tMessages = useTranslations('messages');
+
+    const {locale} = useRouter();
 
     const {token, superUser, ui} = useAuth();
 
@@ -90,12 +99,12 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
         return ticketParams && ticketParams.topics && ticketParams.topics.length ? ticketParams.topics.map(item => ({label: item, value: item})) : [];
     },[ticketParams]);
 
-    const createTicketFields = useMemo(() => CreateTicketFields(topicOptions, subjectUuid), [topicOptions, subjectUuid]);
+    const createTicketFields = useMemo(() => CreateTicketFields(tFields, tMessages('requiredField'), topicOptions, subjectUuid), [topicOptions, subjectUuid, locale]);
 
     //tabs
-    const tabTitleArray =  TabTitles(!ticketUuid && !singleTicketData);
+    const tabTitleArray =  TabTitles(tTabs, !ticketUuid && !singleTicketData);
 
-    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields(tTabs));
 
     useEffect(() => {
         resetTabTables(tabTitleArray);
@@ -144,7 +153,6 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
             };
 
             const res: ApiResponseType = await createTicket(superUser && ui ? {...requestData, ui} : requestData);
-            console.log('ticket res: ', res)
             if (res && "status" in res) {
                 if (res?.status === 200 && res?.data) {
                     //success
@@ -198,10 +206,10 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                             }
                         </div>
                         <CardWithHelpIcon classNames="card ticket--files">
-                            <TutorialHintTooltip hint={TicketHints['files'] || ''} position='left' >
+                            <TutorialHintTooltip hint={tFields('filesHint')} position='left' classNames='mb-md'>
                                 <h3 className='ticket__block-title title-small'>
                                     <Icon name='files'/>
-                                    Files
+                                    {tFields('files')}
                                 </h3>
                             </TutorialHintTooltip>
                             <div className='dropzoneBlock'>
@@ -221,11 +229,11 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                 </Tabs>
 
                 {isTicketNew && <div className='ticket--info-form-btns'>
-                    <Button type="submit" variant={ButtonVariant.PRIMARY}>Create ticket</Button>
-                    <Button type="button" variant={ButtonVariant.SECONDARY} onClick={handleCancel}>Cancel</Button>
+                    <Button type="submit" variant={ButtonVariant.PRIMARY}>{tCommon('buttons.createTicket')}</Button>
+                    <Button type="button" variant={ButtonVariant.SECONDARY} onClick={handleCancel}>{tCommon('buttons.cancel')}</Button>
                 </div>}
                 {singleTicketData && singleTicketData.status==='Resolved' ? <div className='ticket--info-form-btns'>
-                    <Button type="button" variant={ButtonVariant.PRIMARY} onClick={handleReopenTicket}>Reopen ticket</Button>
+                    <Button type="button" variant={ButtonVariant.PRIMARY} onClick={handleReopenTicket}>{tCommon('buttons.reopenTicket')}</Button>
                 </div> : null}
             </form>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

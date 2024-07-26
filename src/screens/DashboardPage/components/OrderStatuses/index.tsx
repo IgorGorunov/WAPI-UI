@@ -1,6 +1,7 @@
 import React from "react";
 import StatusBar from "./StatusBar";
 import "./styles.scss";
+import {useTranslations} from "next-intl";
 
 export const enum GroupStatuses {
   "Ready for dispatch" = 'Ready for dispatch',
@@ -49,10 +50,8 @@ export type OrderStatusesPropsType = {
   ordersByStatuses: GroupOrderStatusType[];
 };
 
-const OrderStatuses: React.FC<OrderStatusesPropsType> = ({
-                                                           ordersByStatuses,
-                                                         }) => {
-
+const OrderStatuses: React.FC<OrderStatusesPropsType> = ({ordersByStatuses}) => {
+  const t = useTranslations('Dashboard.ordersByStatuses');
   let maxAmount = 0;
   if (ordersByStatuses) {
       for (let i = 0; i < ordersByStatuses.length; i++) {
@@ -64,7 +63,7 @@ const OrderStatuses: React.FC<OrderStatusesPropsType> = ({
 
   return (
       <div className={`card order-statuses order-statuses__container`}>
-        <p className="title-h4 title">Orders by statuses</p>
+        <p className="title-h4 title">{t('title')}</p>
           {ordersByStatuses && ordersByStatuses.sort((a,b)=>GroupStatusesOrder[a.status]>GroupStatusesOrder[b.status] ? 1 : -1 ).map((item: GroupOrderStatusType) => (
               <StatusBar
                   key={item.status}

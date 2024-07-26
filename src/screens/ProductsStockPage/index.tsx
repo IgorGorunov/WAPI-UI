@@ -16,9 +16,12 @@ import {
     tourGuideStepsProductsStock,
     tourGuideStepsProductsStockNoDocs
 } from "./productsStockTourGuideSteps.constants";
+import {useTranslations} from "next-intl";
 
 const ProductsStockPage = () => {
-
+    const t = useTranslations('ProductStockPage');
+    const tGuide = useTranslations('ProductStockPage.tourGuide')
+    const tBtn = useTranslations("common.buttons");
     const { token, superUser, ui } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
@@ -87,17 +90,17 @@ const ProductsStockPage = () => {
         }
     }, [isLoading]);
 
-    const [steps, setSteps] = useState(tourGuideStepsProductsStockNoDocs);
+    const [steps, setSteps] = useState(tourGuideStepsProductsStockNoDocs(tGuide));
     useEffect(() => {
-        setSteps(productsData?.length ? tourGuideStepsProductsStock : tourGuideStepsProductsStockNoDocs);
+        setSteps(productsData?.length ? tourGuideStepsProductsStock(tGuide) : tourGuideStepsProductsStockNoDocs(tGuide));
     }, [productsData]);
 
     return (
         <Layout hasHeader hasFooter>
             <div className="products-stock__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Products stock' toRight needTutorialBtn >
-                    <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle={t('headerTitle')} toRight needTutorialBtn >
+                    <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>{tBtn('exportList')}</Button>
                 </Header>
                 {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setWarehouseForExport={setWarehouseForReport}/>}
                 {productsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.ProductsStock} /> : null}

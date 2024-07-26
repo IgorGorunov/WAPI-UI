@@ -12,34 +12,35 @@ import Loader from "@/components/Loader";
 import {sendInboundFiles} from "@/services/stockMovements";
 import {ImportFilesType} from "@/types/importFiles";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import {useTranslations} from "next-intl";
 
-const getFileData = (importType: ImportFilesType) => {
+const getFileData = (importType: ImportFilesType, t) => {
    switch (importType) {
        case ImportFilesType.ORDERS:
            return {
                downloadFileName: 'Orders mass upload file.xlsx',
                sendFileFunction: sendOrderFiles,
-               title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
+               title: t('ordersTitle'),
            }
        case ImportFilesType.PRODUCTS:
            return {
                downloadFileName: 'Master data.xlsx',
                sendFileFunction: sendProductFiles,
-               title: `To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system.
-               After uploading a document, you need to send draft products for approve (open a product and click "Send")`,
+               title: `${t('productsTitle1')}
+               ${t('productsTitle2')}`,
            }
        case ImportFilesType.STOCK_MOVEMENTS_PRODUCTS:
            return {
                downloadFileName: 'Products import.xlsx',
                sendFileFunction: sendInboundFiles,
-               title: 'To upload products in the document it is necessary to download the master data draft file, fill it with data and then upload back to system',
+               title: t('stockMovementsTitle'),
            }
 
        default:
            return {
                downloadFileName: 'Orders mass upload file.xlsx',
                sendFileFunction: sendOrderFiles,
-               title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
+               title: t('ordersTitle'),
            }
    }
 }
@@ -51,6 +52,9 @@ type ImportFilesBlockType = {
     setResponseData?: (res: ApiResponseType)=>void;
 }
 const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
+    const t = useTranslations('importFilesBlock');
+    const tBtns = useTranslations('common.buttons');
+    const tMessages = useTranslations('messages')
     const { token, superUser, ui } = useAuth();
     const [selectedFilesImport, setSelectedFilesImport] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
@@ -58,7 +62,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
         setSelectedFilesImport(files);
     };
 
-    const fileData = useMemo(()=>getFileData(importFilesType),[]);
+    const fileData = useMemo(()=>getFileData(importFilesType, t),[]);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -103,7 +107,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                 if (res && "status" in res) {
                     if (res?.status === 200) {
                         //success
-                        setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Files are sent successfully!`, onClose: closeSuccessModal})
+                        setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: tMessages("successMessages.successfulFileUpload"), onClose: closeSuccessModal})
                         setShowStatusModal(true);
                     }
                 } else if (res && 'response' in res ) {
@@ -112,7 +116,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                     if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                         const errorMessages = errResponse?.data.errorMessage;
 
-                        setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                        setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages("errorMessages.error"), subtitle: tMessages('errorMessages.pleaseFixErrors'), text: errorMessages, onClose: closeErrorModal})
                         setShowStatusModal(true);
                     }
                 }
@@ -123,7 +127,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                 setIsLoading(false);
             }
         } else {
-            setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: ["I haven't uploaded any files to send"], onClose: closeErrorModal})
+            setModalStatusInfo({ title: tMessages("errorMessages.error"), subtitle: tMessages('errorMessages.pleaseFixErrors'), text: [tMessages('errorMessages.noFilesToUpload')], onClose: closeErrorModal})
             setShowStatusModal(true);
         }
     }
@@ -134,9 +138,9 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
             <p className='import-files__title'>
                 {fileData.title}
             </p>
-            <Button icon='download-file' iconOnTheRight onClick={downloadFile}>Download sample</Button>
+            <Button icon='download-file' iconOnTheRight onClick={downloadFile}>{tBtns('downloadSample')}</Button>
             <DropZone readOnly={false} files={selectedFilesImport} onFilesChange={handleFilesChange} />
-            <Button  onClick={sendFiles}>Send</Button>
+            <Button  onClick={sendFiles}>{tBtns('send')}</Button>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </div>
     );

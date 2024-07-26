@@ -1,7 +1,10 @@
 import React, {useState, forwardRef, useRef} from "react";
-import { Calendar } from "react-date-range";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
+// import { Calendar } from "react-date-range";
+// import "react-date-range/dist/styles.css";
+// import "react-date-range/dist/theme/default.css";
+import { Calendar } from "@umakantp/react-date-range";
+import '@umakantp/react-date-range/dist/styles.css'; // main style file
+import '@umakantp/react-date-range/dist/theme/default.css'; // theme css file
 import "./styles.scss";
 import { FieldPropsType } from "@/types/forms";
 import {addWorkingDays, formatDateToDisplayString} from '@/utils/date'

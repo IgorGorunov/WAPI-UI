@@ -27,4 +27,8 @@
   background: #5380F5;
   color: white;
   cursor: pointer;
+
+  @media(max-width: $upToTablet) {
+    padding: 5px 1px;
+  }
 }

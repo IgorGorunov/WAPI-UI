@@ -23,6 +23,9 @@ import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import SimplePopup, {PopupItem} from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import {useTranslations} from "next-intl";
+import {itemRender} from "@/utils/pagination";
+import {useRouter} from "next/router";
 
 type ProductListType = {
     products: ProductType[];
@@ -47,17 +50,23 @@ const statusFilter = [
 //     { value: 'Pending', label: 'Pending (send to approve)' , color: '#FFA500'},
 // ];
 
-const extraStatusHints = {
-    'Draft' : ' - needs to be send for approve',
-}
+
 
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setProductsData, handleEditProduct, reFetchData}) => {
 
     //const {token, superUser, ui} = useAuth();
+    const t = useTranslations('ProductsPage');
+    const tCommon = useTranslations('common');
+
+    const { locale } = useRouter();
 
     const isTouchDevice = useIsTouchDevice();
     const [animating, setAnimating] = useState(false);
     //const [isLoading, setIsLoading] = useState(false);
+
+    const extraStatusHints = {
+        'Draft' : ` - ${t('draftStatusHint')}`,
+    }
 
     // Popup
     const getPopupItems = useCallback((hoveredProduct) => {
@@ -100,7 +109,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
-        label: 'Full text search',
+        label: tCommon('fullTextSearchLabel'),
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
@@ -421,7 +430,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         },
 
         {
-            title: <TitleColumn minWidth="120px" maxWidth="200px" contentPosition="start" childrenBefore={<Tooltip title="A unique code for tracking each product in inventory"><span>SKU</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="120px" maxWidth="200px" contentPosition="start" childrenBefore={<Tooltip title={t('productListColumns.skuHint')}><span>{t('productListColumns.sku')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="120px" maxWidth="200px" contentPosition="start"/>
             ),
@@ -434,7 +443,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['sm'],
         },
         {
-            title: <TitleColumn title="Name" minWidth="150px" maxWidth="500px" contentPosition="start" />,
+            title: <TitleColumn title={t('productListColumns.name')} minWidth="150px" maxWidth="500px" contentPosition="start" />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="150px" maxWidth="500px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
@@ -451,7 +460,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             },
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="center" childrenBefore={<Tooltip title="Length, width, and height in millimeters"><span>Dimension | mm</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="center" childrenBefore={<Tooltip title={t('productListColumns.dimensionsHint')}><span>{t('productListColumns.dimension')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="center"/>
             ),
@@ -464,7 +473,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Weight | kg" minWidth="80px" maxWidth="80px" contentPosition="center"/>,
+            title: <TitleColumn title={t('productListColumns.weight')} minWidth="80px" maxWidth="80px" contentPosition="center"/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center"/>
             ),
@@ -477,7 +486,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="300px" contentPosition="start" childrenBefore={<Tooltip title="Alternative names"><span>Aliases</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="100px" maxWidth="300px" contentPosition="start" childrenBefore={<Tooltip title={t('productListColumns.aliasesHint')}><span>{t('productListColumns.aliases')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
@@ -490,7 +499,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="Barcodes" minWidth="100px" maxWidth="300px" contentPosition="start"/>,
+            title: <TitleColumn title={t('productListColumns.barcodes')} minWidth="100px" maxWidth="300px" contentPosition="start"/>,
             render: (text: string) => (
                 <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
@@ -503,7 +512,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="90px" maxWidth="90px" contentPosition="center" childrenBefore={<Tooltip title="Available products for new orders"><span>Available</span></Tooltip>} />,
+            title: <TitleColumn minWidth="90px" maxWidth="90px" contentPosition="center" childrenBefore={<Tooltip title={t('productListColumns.availableHint')}><span>{t('productListColumns.available')}</span></Tooltip>} />,
             render: (text: string, record: ProductType) => (
                 <TableCell
                     minWidth="90px"
@@ -531,7 +540,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
             }),
         },
-        ], [handleHeaderCellClick]);   //], [handleHeaderCellClick, isAllSelected]);
+        ], [handleHeaderCellClick, locale]);   //], [handleHeaderCellClick, isAllSelected]);
 
     return (
         <div className='table'>
@@ -555,7 +564,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             </SearchContainer>
 
             <div className='product-list__notice'>
-                <p>Before sending a new product to our warehouse, please wait until the product receives "Approved" status</p>
+                <p>{t('infoText')}</p>
             </div>
 
             {/*<Accordion title={'Extra actions'} classNames='extra-actions'>*/}
@@ -570,7 +579,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
                     <CurrentFilters
-                        title='Status'
+                        title={tCommon('filters.status')}
                         filterState={filterStatus}
                         options={transformedStatuses}
                         onClose={() => setFilterStatus([])} onClick={() => {
@@ -581,7 +590,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
                     <PageSizeSelector
-                        options={PageOptions}
+                        options={PageOptions(tCommon)}
                         value={pageSize}
                         onChange={(value: number) => handleChangePageSize(value)}
                     />
@@ -602,7 +611,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     />
                     <div className="order-products-total">
                         <ul className='order-products-total__list'>
-                            <li className='order-products-total__list-item'>Total products:<span
+                            <li className='order-products-total__list-item'>{t('totalProducts')}:<span
                                 className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
                         </ul>
                     </div>
@@ -616,11 +625,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     total={filteredProducts.length}
                     hideOnSinglePage
                     showSizeChanger={false}
+                    itemRender={itemRender(tCommon)}
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible}
                               onClearFilters={() => setFilterStatus([])}>
-                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE}
+                <FiltersBlock filterTitle={tCommon('filters.status')} filterType={FILTER_TYPE.COLORED_CIRCLE}
                               filterOptions={transformedStatuses} filterState={filterStatus}
                               setFilterState={setFilterStatus} isOpen={isOpenFilterStatus}
                               setIsOpen={setIsOpenFilterStatus}/>

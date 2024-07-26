@@ -8,11 +8,14 @@ import {ApiResponseType} from "@/types/api";
 import {getPricesInfo, sendSignNDA} from "@/services/leads";
 import useAuth from "@/context/authContext";
 import PricesBlock from "./PricesBlock";
+import {useTranslations} from "next-intl";
 
 type PricesPropsType = {
 }
 
 const Prices: React.FC<PricesPropsType> = () => {
+    const t = useTranslations('LeadPage.approvedLeadInfo');
+;
     const {token, userStatus, setUserStatus} = useAuth();
     const [showPrices, setShowPrices] = useState(userStatus === UserStatusType.NoLegalPrices || userStatus === UserStatusType.LegalPrices);
     const [showNDA, setShowNDA] = useState(false);
@@ -78,12 +81,12 @@ const Prices: React.FC<PricesPropsType> = () => {
             <div className={`prices-info-wrapper`}>
                 {showPrices ? curPrices ? (
                     <PricesBlock prices={curPrices} />
-                ) : null : <Button onClick={()=>setShowNDA(true)}>Explore our pricing options</Button>}
+                ) : null : <Button onClick={()=>setShowNDA(true)}>{t('ourOptions')}</Button>}
             </div>
 
 
             {showNDA ? (
-                <Modal title={`To access our pricing, kindly sign the Non-Disclosure Agreement (NDA).`} onClose={()=>setShowNDA(false)} >
+                <Modal title={t('ndaModalTitle')} onClose={()=>setShowNDA(false)} >
                     <NDA handleSignNDA={handleSignNDA} />
                 </Modal>
             ) : null}

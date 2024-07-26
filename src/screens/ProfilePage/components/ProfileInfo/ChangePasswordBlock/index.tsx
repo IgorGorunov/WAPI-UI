@@ -11,12 +11,17 @@ import {ApiResponseType} from "@/types/api";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import {FormBuilderType, FormFieldTypes, WidthType} from "@/types/forms";
+import {useTranslations} from "next-intl";
 
 type ChangePasswordPropsType = {
     onClose: ()=>void;
 }
 
 const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
+    const t = useTranslations('Profile.profileTab');
+    const tMessages = useTranslations('messages');
+    const tBtns = useTranslations('common.buttons');
+
     const {token, superUser, ui} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -40,37 +45,36 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
     const newPassword = watch('newPassword');
     const confirmPassword = watch('confirmPassword');
 
-    const changePasswordFormFields: FormBuilderType[] = [
+    const changePasswordFormFields = (t) => [
         {
             fieldType: FormFieldTypes.TEXT,
             type: "password",
             name: "currentPassword",
-            label: "Current password",
+            label: t('currentPassword'),
             placeholder: "********",
             rules: {
-                required:  "Please, enter valid password!",
+                required:  t('validPasswordError'),
                 minLength: {
                     value: 3,
                     message: "Password has to be at least 3 symbols!"
                 },
             },
-            errorMessage: "Please, enter valid password!",
             width: WidthType.w100,
         },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "password",
             name: "newPassword",
-            label: "New password",
+            label: t('newPassword'),
             placeholder: "********",
             rules: {
-                required:  "Please, enter valid password!",
+                required:  t('validPasswordError'),
                 minLength: {
                     value: 3,
                     message: "Password has to be at least 3 symbols!"
                 },
+                // validate: (value) => (value === confirmPassword) || !confirmPassword || t('passwordsDontMatchError'),
             },
-            errorMessage: "Please, enter valid password!",
             width: WidthType.w100,
             needToasts: false,
         },
@@ -78,21 +82,20 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
             fieldType: FormFieldTypes.TEXT,
             type: "password",
             name: "confirmPassword",
-            label: "Confirm new password",
+            label: t('confirmNewPassword'),
             placeholder: "********",
             rules: {
-                required:  "Please, enter valid password!",
+                required:  t('validPasswordError'),
                 minLength: {
                     value: 3,
                     message: "Password has to be at least 3 symbols!"
                 },
-                validate: (value) => value === newPassword || 'Passwords do not match',
+                validate: (value) => value === newPassword || t('passwordsDontMatchError'),
             },
-            errorMessage: "Please, enter valid password!",
             width: WidthType.w100,
             needToasts: false,
         },
-    ];
+    ] as FormBuilderType[];
 
     const handleFormSubmit = async (data: any) => {
         try {
@@ -102,7 +105,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
 
             if (res?.status === 200) {
                 //display success modal
-                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Password is changed successfully!`, onClose: closeSuccessModal})
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: tMessages('successMessages.passwordChanged'), onClose: closeSuccessModal})
                 setShowStatusModal(true);
 
             } else  if (res && 'response' in res ) {
@@ -112,7 +115,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title:tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.pleaseFixErrors'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -127,7 +130,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
         <div className={`change-password`}>
             {isLoading && <Loader />}
             <form className='change-password-form' onSubmit={handleSubmit(handleFormSubmit)}>
-                {changePasswordFormFields.map((curField: any ) => (
+                {changePasswordFormFields(t).map((curField: any ) => (
 
                     <div key={curField.name} className='grid-row'>
                         <Controller
@@ -155,7 +158,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
                         type="submit"
                         disabled={isLoading}
                     >
-                        Submit
+                        {tBtns('submit')}
                     </Button>
                 </div>
             </form>

@@ -1,8 +1,9 @@
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
+
   return (
-    <Html lang="en">
+    <Html >
       <Head />
       <body>
         <Main />
@@ -11,6 +12,36 @@ export default function Document() {
     </Html>
   );
 }
+
+    // export async function getStaticProps({locale}: GetStaticPropsContext) {
+    //     return {
+    //         props: {
+    //             messages: (await import(`../../messages/${locale}.json`)).default
+    //         }
+    //     };
+    // }
+
+// class MyDocument extends Document {
+//     static async getInitialProps(context) {
+//         const initialProps = await Document.getInitialProps(context);
+//         return { ...initialProps };
+//     }
+//
+//     render() {
+//         return (
+//             //<Html lang={this.props.locale || 'en'}>
+//             <Html>
+//                 <Head />
+//                 <body>
+//                     <Main />
+//                     <NextScript />
+//                 </body>
+//             </Html>
+//         );
+//     }
+// }
+//
+// export default MyDocument;
 
 {
   /* <><div className={styles.description}>

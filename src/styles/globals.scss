@@ -350,7 +350,11 @@ button {
 
 .mb-md {
   margin-bottom: 24px;
-} 
+}
+
+.no-pb {
+  padding-bottom: 0;
+}
 
 .react-calendar {
   background-color: #7D8FB3;
@@ -492,6 +496,14 @@ input[type="date"]::before {
   }
 }
 
+.needs-breaks {
+  word-break: break-word;
+
+  span {
+    word-break: break-word;
+  }
+}
+
 .tour-guide {
   svg {
     width: 24px;
@@ -533,6 +545,14 @@ input[type="date"]::before {
       opacity: 0;
       background-color: var(--color-dark-blue);
       animation: fadeIn 1s forwards;
+    }
+  }
+
+  &.is-empty {
+    .ant-popover-arrow {
+      &:before {
+        content: none;
+      }
     }
   }
 }

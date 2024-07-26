@@ -10,8 +10,11 @@ import UserList, {UserType} from "@/components/ProfileDropdown/UserList";
 import {ApiResponseType} from "@/types/api";
 import {getUserList} from "@/services/auth";
 import Loader from "@/components/Loader";
+import {useTranslations} from "next-intl";
 
 const ProfileDropdown = () => {
+    const t = useTranslations('profileDropdown');
+
     const { token, userName, logout, userStatus, superUser } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +33,6 @@ const ProfileDropdown = () => {
             );
 
             if (res && "data" in res) {
-                console.log('res users: ', res.data)
                 setUsers(res.data);
             } else {
                 console.error("API did not return expected data");
@@ -50,8 +52,8 @@ const ProfileDropdown = () => {
 
 
     const handleLogOut = async() => {
-        logout();
         await Router.push(Routes.Login);
+        logout();
     }
 
     const handleUserList = () => {
@@ -70,14 +72,15 @@ const ProfileDropdown = () => {
                     </button>
                     {isOpen && (
                         <ul className="profile-dropdown__menu card">
-                            <li key='profile' className="profile-dropdown__menu-item"> <button className="profile-dropdown__menu-item-btn" onClick={handleOpenProfile}><Icon name='profile' /> Profile</button></li>
+                            <li key='profile' className="profile-dropdown__menu-item"> <button className="profile-dropdown__menu-item-btn" onClick={handleOpenProfile}><Icon name='profile' />{t('profile')}</button></li>
                             {superUser ? <li key='user-list' className="profile-dropdown__menu-item">
-                                <button className="profile-dropdown__menu-item-btn" onClick={handleUserList}><Icon
-                                    name='lines'/>Switch user
+                                <button className="profile-dropdown__menu-item-btn" onClick={handleUserList}>
+                                    <Icon name='lines'/>
+                                    {t('switchUser')}
                                 </button>
                             </li> : null}
                             <li key='logout' className="profile-dropdown__menu-item">
-                                <button className="profile-dropdown__menu-item-btn" onClick={handleLogOut}><Icon name='exit' /> Log out</button></li>
+                                <button className="profile-dropdown__menu-item-btn" onClick={handleLogOut}><Icon name='exit' /> {t('logOut')}</button></li>
                         </ul>
                     )}
                 </>

@@ -4,8 +4,10 @@ import Button from "../../../components/Button/Button";
 import "./styles.scss";
 import Router from "next/router";
 import {Routes} from "@/types/routes";
+import {useTranslations} from "next-intl";
 
 const SignUpBlock: React.FC = () => {
+    const t = useTranslations('Login');
   const handleClick = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
 
@@ -15,10 +17,10 @@ const SignUpBlock: React.FC = () => {
   return (
     <div className={`card signup-container`}>
       <h2 className="signup-title">
-        Are you looking for enrollment?
+          {t('notRegisteredText')}
       </h2>
       <Button onClick={handleClick}>
-        Sign up
+          {t('signUp')}
       </Button>
     </div>
   );

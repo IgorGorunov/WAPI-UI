@@ -39,6 +39,8 @@ import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import {ProductDimensionsHints, ProductOtherHints} from "@/screens/ProductsPage/productsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {CommonHints} from "@/constants/commonHints";
+import {useTranslations} from "next-intl";
+import {useRouter} from "next/router";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -59,6 +61,12 @@ type ProductPropsType = {
     refetchDoc: ()=>void;
 }
 const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal, refetchDoc}) => {
+    const tColumns = useTranslations("ProductsPage.productColumns");
+    const tCommon = useTranslations('common');
+    const tMessages = useTranslations('messages');
+    const tTabs = useTranslations("ProductsPage.productTabs");
+    const tForm = useTranslations('ProductsPage.productFields');
+    const {locale} = useRouter();
     const {notifications} = useNotifications();
 
     const orderIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved') ;
@@ -286,7 +294,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: <TutorialHintTooltip hint={ProductDimensionsHints['name'] || ''}><div>Name *</div></TutorialHintTooltip>,
+                title: <TutorialHintTooltip hint={tColumns('unitsOfMeasure.nameHint') || ''}><div>{tColumns('unitsOfMeasure.name')} *</div></TutorialHintTooltip>,
                 dataIndex: 'name',
                 width: '100%',
                 key: 'name',
@@ -313,7 +321,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Quantity *',
+                title: `${tColumns('unitsOfMeasure.quantity')} *`,
                 dataIndex: 'coefficient',
                 key: 'coefficient',
                 responsive: ['md'] as ResponsiveBreakpoint[],
@@ -339,7 +347,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Width | mm *',
+                title: `${tColumns('unitsOfMeasure.width')} *`,
                 dataIndex: 'width',
                 key: 'width',
                 responsive: ['lg'] as ResponsiveBreakpoint[],
@@ -364,7 +372,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Length | mm *',
+                title: `${tColumns('unitsOfMeasure.length')} *`,
                 dataIndex: 'length',
                 key: 'length',
                 responsive: ['lg'] as ResponsiveBreakpoint[],
@@ -389,7 +397,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Height | mm *',
+                title: `${tColumns('unitsOfMeasure.height')} *`,
                 dataIndex: 'height',
                 key: 'height',
                 responsive: ['lg'] as ResponsiveBreakpoint[],
@@ -414,7 +422,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Weight gross | kg *',
+                title: `${tColumns('unitsOfMeasure.weightGross')} *`,
                 dataIndex: 'weightGross',
                 key: 'weightGross',
                 responsive: ['sm'] as ResponsiveBreakpoint[],
@@ -439,7 +447,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Weight net | kg',
+                title: `${tColumns('unitsOfMeasure.weightNet')}`,
                 dataIndex: 'Weight net',
                 key: 'weightNet',
                 responsive: ['sm'] as ResponsiveBreakpoint[],
@@ -531,7 +539,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Barcode',
+                title: `${tColumns('barcodesColumns.barcode')}`,
                 dataIndex: 'barcode',
                 width: '100%',
                 key: 'barcode',
@@ -619,7 +627,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Alias',
+                title: `${tColumns('aliasesColumns.alias')}`,
                 dataIndex: 'alias',
                 width: '100%',
                 key: 'alias',
@@ -707,7 +715,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Product *',
+                title: `${tColumns('bundleKitColumns.product')} *`,
                 dataIndex: 'uuid',
                 width: '100%',
                 key: 'uuid',
@@ -734,7 +742,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Quantity *',
+                title: `${tColumns('bundleKitColumns.quantity')} *`,
                 dataIndex: 'quantity',
                 key: 'quantity',
                 render: (text, record, index) => (
@@ -825,7 +833,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Analogue',
+                title: `${tColumns('analoguesColumns.analogue')}`,
                 dataIndex: 'analogue',
                 width: '100%',
                 key: 'analogue',
@@ -888,8 +896,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         productNotifications = notifications.filter(item => item.objectUuid === productData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
     }
 
-    const tabTitleArray =  TabTitles(!!productData?.uuid, !!(productData?.tickets && productData.tickets.length));
-    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+    const tabTitleArray =  TabTitles(tTabs, !!productData?.uuid, !!(productData?.tickets && productData.tickets.length));
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields(tTabs));
 
     useEffect(() => {
         resetTabTables(tabTitleArray);
@@ -910,7 +918,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Product is successfully ${ productData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: `${ productData?.uuid ? tMessages('successMessages.productIsEdited') : tMessages('successMessages.productIsCreated')}`, onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -919,7 +927,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.pleaseFixErrors'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -950,11 +958,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         updateTabTitles(fieldNames);
     };
 
-    const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr, isNew: !productData?.uuid}), [COUNTRIES])
-    const skuFields = useMemo(()=>FormFieldsSKU(), []);
-    const warehouseFields = useMemo(()=>FormFieldsWarehouse({typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial:createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements)}),[productParams])
-    const additionalFields = useMemo(()=> FormFieldsAdditional1({whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking)}), [])
-    const additionalCheckboxes = useMemo(()=>FormFieldsAdditional2(), []);
+    const generalFields = useMemo(()=> FormFieldsGeneral({t:tForm, requiredFieldText: tMessages('requiredField') ,countries: countryArr, isNew: !productData?.uuid}), [COUNTRIES, locale])
+    const skuFields = useMemo(()=>FormFieldsSKU(tForm, tMessages('requiredField')), [locale]);
+    const warehouseFields = useMemo(()=>FormFieldsWarehouse({t: tForm, requiredFieldText: tMessages('requiredField'), typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial:createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements)}),[productParams, locale])
+    const additionalFields = useMemo(()=> FormFieldsAdditional1({t: tForm, whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking)}), [locale])
+    const additionalCheckboxes = useMemo(()=>FormFieldsAdditional2(tForm), [locale]);
 
 
     return <div className='product-info'>
@@ -966,7 +974,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <CardWithHelpIcon classNames='card product-info--general'>
                         <h3 className='product-info__block-title'>
                             <Icon name='general' />
-                            General
+                            {tForm('generalCard')}
                         </h3>
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
@@ -975,7 +983,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <CardWithHelpIcon classNames='card product-info--sku'>
                         <h3 className='product-info__block-title'>
                             <Icon name='sku' />
-                            SKU
+                            {tForm('skuCard')}
                         </h3>
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors} isDisabled={isDisabled}/>
@@ -984,7 +992,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <CardWithHelpIcon classNames='card product-info--warehouse'>
                         <h3 className='product-info__block-title'>
                             <Icon name='warehouse' />
-                            Warehouse
+                            {tForm('warehouseCard')}
                         </h3>
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={warehouseFields} errors={errors} isDisabled={isDisabled} />
@@ -993,7 +1001,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <CardWithHelpIcon classNames='card product-info--additional'>
                         <h3 className='product-info__block-title'>
                             <Icon name='additional' />
-                            Additional
+                            {tForm('additionalCard')}
                         </h3>
 
                         <div className='additional-selects grid-row'>
@@ -1009,7 +1017,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <CardWithHelpIcon classNames="card min-height-600 product-info--unitOfMeasures">
                         <h3 className='product-info__block-title'>
                             <Icon name='dimensions' />
-                            Dimensions
+                            {tForm('dimensionsCard')}
                         </h3>
                         <div className='product-info--unitOfMeasures-select'>
                             <div className='grid-row'>
@@ -1021,29 +1029,29 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                         <FieldBuilder
                                             fieldType={FormFieldTypes.SELECT}
                                             name='unitOfMeasure'
-                                            label='Default unit'
+                                            label={tForm('unitOfMeasure')}
                                             {...field}
                                             options={getOptions() || []}
-                                            placeholder="Select Name"
+                                            placeholder={tCommon('selectName')}
                                             width={WidthType.w33}
                                             errorMessage={error?.message}
                                             errors={errors}
                                             isRequired={true}
-                                            hint={ProductDimensionsHints['unitOfMeasure'] || ''}
+                                            hint={tForm('unitOfMeasureHint')}
                                         />
                                     )}
                                     rules={{ required: 'Field is required' }}
                                 />
                                 {/*</div>*/}
                                 <div className='product-info--table-btns width-67' aria-disabled={orderIsApproved}>
-                                    <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.addRowHint') || ''} forBtn >
                                         <Button classNames='add-unit-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
-                                            Add
+                                            {tCommon('buttons.addRow')}
                                         </Button>
                                     </TutorialHintTooltip>
-                                    <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.removeSelectedHint') || ''} forBtn >
                                         <Button classNames='remove-unit-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
-                                            Remove selected
+                                            {tCommon('buttons.removeSelected')}
                                         </Button>
                                     </TutorialHintTooltip>
 
@@ -1065,12 +1073,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <CardWithHelpIcon classNames="card min-height-600 product-info--barcodes">
                         <h3 className='product-info__block-title title-small'>
                             <Icon name='barcodes'/>
-                            Barcodes
+                            {tForm('barcodesCard')}
                         </h3>
                         <div className='product-info--barcodes-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.addRowHint') || ''} forBtn >
                                         <Button classNames='add-barcode-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL}
                                                 disabled={isDisabled} variant={ButtonVariant.SECONDARY}
                                                 onClick={() => appendBarcode({
@@ -1078,13 +1086,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                                     selected: false,
                                                     barcode: ''
                                                 })}>
-                                            Add
+                                            {tCommon('buttons.addRow')}
                                         </Button>
                                     </TutorialHintTooltip>
-                                    <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.removeSelectedHint') || ''} forBtn >
                                         <Button classNames='remove-barcode-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL}
                                                 disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
-                                            Remove selected
+                                            {tCommon('buttons.removeSelected')}
                                         </Button>
                                     </TutorialHintTooltip>
 
@@ -1104,23 +1112,23 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 </div>
                 <div className="aliases-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--aliases">
-                        <TutorialHintTooltip hint={ProductOtherHints['aliases'] || ''} position='left' >
+                        <TutorialHintTooltip hint={tForm('aliasesCardHint') || ''} position='left' >
                             <h3 className='product-info__block-title title-small'>
                                 <Icon name='aliases' />
-                                Aliases
+                                {tForm('aliasesCard')}
                             </h3>
                         </TutorialHintTooltip>
                         <div className='product-info--aliases-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.addRowHint') || ''} forBtn >
                                         <Button classNames='add-alias-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
-                                            Add
+                                            {tCommon('buttons.addRow')}
                                         </Button>
                                     </TutorialHintTooltip>
-                                    <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.removeSelectedHint') || ''} forBtn >
                                         <Button classNames='remove-alias-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
-                                            Remove selected
+                                            {tCommon('buttons.removeSelected')}
                                         </Button>
                                     </TutorialHintTooltip>
                                 </div>
@@ -1139,23 +1147,23 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 </div>
                 <div className="bundles-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--bundleKit">
-                        <TutorialHintTooltip hint={ProductOtherHints['virtualBundleKit'] || ''} position='left' >
+                        <TutorialHintTooltip hint={tForm('bundleCardHint') || ''} position='left' >
                             <h3 className='product-info__block-title title-small'>
                                 <Icon name='bundle' />
-                                Bundle kit
+                                {tForm('bundleCard')}
                             </h3>
                         </TutorialHintTooltip>
                         <div className='product-info--bundles-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.addRowHint') || ''} forBtn >
                                         <Button classNames='add-bundle-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:'' })}>
-                                            Add
+                                            {tCommon('buttons.addRow')}
                                         </Button>
                                     </TutorialHintTooltip>
-                                    <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.removeSelectedHint') || ''} forBtn >
                                         <Button classNames='remove-bundle-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
-                                            Remove selected
+                                            {tCommon('buttons.removeSelected')}
                                         </Button>
                                     </TutorialHintTooltip>
                                 </div>
@@ -1174,23 +1182,23 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 </div>
                 <div className="analogues-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--analogues">
-                        <TutorialHintTooltip hint={ProductOtherHints['analogues'] || ''} position='left' >
+                        <TutorialHintTooltip hint={tForm('analoguesCardHint') || ''} position='left' >
                             <h3 className='product-info__block-title title-small'>
                                 <Icon name='analogues' />
-                                Analogues
+                                {tForm('analoguesCard')}
                             </h3>
                         </TutorialHintTooltip>
                         <div className='product-info--analogues-btns'>
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
-                                    <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.addRowHint') || ''} forBtn >
                                         <Button classNames='add-analogue-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY}  onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
-                                            Add
+                                            {tCommon('buttons.addRow')}
                                         </Button>
                                     </TutorialHintTooltip>
-                                    <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
+                                    <TutorialHintTooltip hint={tCommon('buttons.removeSelectedHint') || ''} forBtn >
                                         <Button classNames='remove-analogue-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
-                                            Remove selected
+                                            {tCommon('buttons.removeSelected')}
                                         </Button>
                                     </TutorialHintTooltip>
                                 </div>
@@ -1210,7 +1218,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <div className="card min-height-600 product-info--status-history">
                         <h3 className='product-info__block-title'>
                             <Icon name='history' />
-                            Status history
+                            {tForm('statusHistoryCard')}
                         </h3>
                         <StatusHistory statusHistory={productData?.statusHistory} />
                     </div>
@@ -1219,17 +1227,17 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <div className="card min-height-600 product-info--tickets">
                         <h3 className='product-info__block-title'>
                             <Icon name='ticket' />
-                            Tickets
+                            {tForm('statusHistoryCard')}
                         </h3>
                         <DocumentTickets tickets={productData.tickets}/>
                     </div>
                 </div> : null}
                 <div className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 product-info--files">
-                        <TutorialHintTooltip hint={ProductOtherHints['files'] || ''} position='left' >
+                        <TutorialHintTooltip hint={tForm('filesCardHint') || ''} position='left' classNames='mb-md'>
                             <h3 className='product-info__block-title title-small'>
                                 <Icon name='files' />
-                                Files
+                                {tForm('filesCard')}
                             </h3>
                         </TutorialHintTooltip>
                         <div className='dropzoneBlock'>
@@ -1239,11 +1247,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 </div>
             </Tabs>
             <div className='form-submit-btn'>
-                {productData && productData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
-                {(!isDisabled && !orderIsApproved || orderIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
-                {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
+                {productData && productData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>{tCommon('buttons.createTicket')}</Button> : null}
+                {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>{tCommon('buttons.edit')}</Button>}
+                {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>{tCommon('buttons.saveAsDraft')}</Button>}
+                {(!isDisabled && !orderIsApproved || orderIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>{tCommon('buttons.sendToApprove')}</Button>}
+                {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>{tCommon('buttons.send')}</Button>}
 
             </div>
         </form>

@@ -3,8 +3,11 @@ import LogoWAPI from "@/assets/icons/LogoWAPI.svg";
 import "./styles.scss";
 import Link from "next/link";
 import {Routes} from "@/types/routes";
+import {useTranslations} from "next-intl";
 
 const Footer: React.FC = () => {
+  const t = useTranslations('Footer');
+
   return (
     <div className="footer">
       <div className="footer-wrapper">
@@ -13,18 +16,17 @@ const Footer: React.FC = () => {
             <LogoWAPI />
           </div>
           <p className="copyright">
-            ©2024 all rights reserved by – WAPI OÜ
+            {`©2024 ${t('allRightsReservedBy')}`}
           </p>
           <p className="address">
-            Kadaka tee 7, Mustamae linnaosa, Tallinn, 12915 Estonia WAPI OÜ, Reg
-            no. 14699305
+            {t('address')}
           </p>
         </div>
         <div className="footer-right">
           <ul className="footer-links">
             <li><a className='is-footer-link' href="mailto:info@wapi.com">info@wapi.com</a></li>
-            <li><Link className='is-footer-link' href={Routes.PrivacyPolicy}>Privacy Policy</Link></li>
-            <li><Link className='is-footer-link' href={Routes.CookiePolicy}>Cookie Policy</Link></li>
+            <li><Link className='is-footer-link' href={Routes.PrivacyPolicy}>{t('privacyPolicy')}</Link></li>
+            <li><Link className='is-footer-link' href={Routes.CookiePolicy}>{t('cookiePolicy')}</Link></li>
           </ul>
         </div>
       </div>

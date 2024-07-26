@@ -43,11 +43,10 @@ import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
-import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-import {docNamesSingle} from "@/screens/StockMovementsPage";
-import {CommonHints} from "@/constants/commonHints";
 import useNotifications from "@/context/notificationContext";
+import {MessageKeys, useTranslations} from "next-intl";
+import {useRouter} from "next/router";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -63,6 +62,16 @@ type StockMovementFormType = {
 }
 
 const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc}) => {
+    const t = useTranslations('StockMovements');
+    const tTypes = useTranslations('StockMovements.docType');
+    const tTabs = useTranslations('StockMovements.docTabs');
+    const tFields = useTranslations('StockMovements.docFields');
+    const tColumns = useTranslations('StockMovements.docColumns');
+    const tMessages = useTranslations('messages');
+    const tCommon = useTranslations('common');
+
+    const {locale} = useRouter();
+
     const [isDisabled, setIsDisabled] = useState(!!docData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
@@ -172,7 +181,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     const checkSelectedProductValue = (selectedValue) => {
         //console.log('selected val:', selectedValue, productOptions.filter(item=>item.value===selectedValue))
-
     }
 
     const setQuantityActual = (record: SingleOrderProductFormType, index: number) => {
@@ -228,8 +236,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             },
             {
                 // title: 'Product*',
-                title: <Tooltip title="Select the product" >
-                            <span>Product*</span>
+                title: <Tooltip title={tColumns('products.productHint')} >
+                            <span>{tColumns('products.product')}*</span>
                        </Tooltip>,
                 dataIndex: 'product',
                 width: '100%',
@@ -264,8 +272,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             },
             {
                 //title: 'Quantity plan*',
-                title: <Tooltip title="Quantity of the product in pcs" >
-                    <span>Quantity plan*</span>
+                title: <Tooltip title={tColumns('products.quantityPlanHint')} >
+                    <span>{tColumns('products.quantityPlan')}*</span>
                 </Tooltip>,
                 dataIndex: 'quantityPlan',
                 key: 'quantityPlan',
@@ -298,7 +306,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 ),
             },
             {
-                title: 'Quantity actual*',
+                title: `${tColumns('products.quantityActual')}*`,
                 dataIndex: 'quantity',
                 key: 'quantity',
                 minWidth: 50,
@@ -331,7 +339,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 ),
             },
             {
-                title: 'Unit of measure',
+                title: tColumns('products.unitOfMeasure'),
                 dataIndex: 'unitOfMeasure',
                 key: 'unitOfMeasure',
                 minWidth: 70,
@@ -363,8 +371,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             },
             {
                 //title: 'Quality',
-                title: <Tooltip title="Quality of the product" >
-                    <span>Quality*</span>
+                title: <Tooltip title={tColumns('products.qualityHint')} >
+                    <span>{tColumns('products.quality')}</span>
                 </Tooltip>,
                 dataIndex: 'quality',
                 key: 'quality',
@@ -489,9 +497,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
 
     //form fields
-    const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType, !!(docData?.uuid && !docData.canEdit && !isFinished)), [docData])
-    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished), senderHide: !!docData?.senderHide, receiverHide: !!docData?.receiverHide, sender: sender, receiver:receiver, isSenderDisabled: isSenderDisabled }), [docData, products, sender, receiver, isSenderDisabled]);
-    //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
+    const generalFields = useMemo(()=> GeneralFields(tFields, tTypes, tMessages('requiredField'), !docData?.uuid, docType, !!(docData?.uuid && !docData.canEdit && !isFinished)), [docData, locale])
+    const detailsFields = useMemo(()=>DetailsFields({t: tFields, tTypes, requiredFieldMessage: tMessages('requiredField'), newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished), senderHide: !!docData?.senderHide, receiverHide: !!docData?.receiverHide, sender: sender, receiver:receiver, isSenderDisabled: isSenderDisabled }), [docData, products, sender, receiver, isSenderDisabled, locale]);
 
 
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(docData?.attachedFiles || []);
@@ -533,8 +540,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             addImportedProducts(importResponse?.data?.data || importResponse?.data || []);
 
             //show success message
-            const modalSubTitle = importType === 'fillByStock' ? 'Document filled by stock successfully' : 'Products are successfully imported';
-            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: modalSubTitle, onClose: ()=>closeSuccessModal(true)})
+            //const modalSubTitle = importType === 'fillByStock' ? 'Document filled by stock successfully' : 'Products are successfully imported';
+            const modalSubTitle = tMessages('successMessages.productsAreImported');
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle: modalSubTitle, onClose: ()=>closeSuccessModal(true)})
             setShowStatusModal(true);
         } else {
             //there are errors
@@ -545,9 +553,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             //show error message
             const errorMessages = importResponse?.response?.data?.errorMessage || [];
 
-            setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR,title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+            setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.pleaseFixErrors'), text: errorMessages, onClose: closeErrorModal})
             setShowStatusModal(true);
-
         }
     }, [importResponse]);
 
@@ -570,8 +577,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //     setShowFillModal(true)
     // }
 
-    const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length));
-    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+    const tabTitleArray =  TabTitles(tTabs, !!docData?.uuid, !!(docData?.tickets && docData?.tickets.length));
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields(tTabs));
 
     useEffect(() => {
         resetTabTables(tabTitleArray);
@@ -614,7 +621,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Document is successfully ${ docData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: tMessages('successMessages.success'), subtitle:  docData?.uuid ? tMessages('successMessages.documentIsEdited') : tMessages('successMessages.documentIsCreated'), onClose: closeSuccessModal})
                     setShowStatusModal(true);
                 }
             } else if (res && 'response' in res ) {
@@ -623,7 +630,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tMessages('errorMessages.error'), subtitle: tMessages('errorMessages.pleaseFixErrors'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -646,7 +653,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         const fieldNames = Object.keys(props);
 
         if (fieldNames.length > 0) {
-            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+            toast.warn(`${tMessages('errorMessages.validationError')}: ${fieldNames.join(', ')}`, {
                 position: "top-right",
                 autoClose: 3000,
             });
@@ -665,7 +672,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     <CardWithHelpIcon classNames='card stock-movement--general'>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='general' />
-                            General
+                            {tFields('generalCard')}
                         </h3>
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
@@ -674,7 +681,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     <CardWithHelpIcon classNames='card stock-movement--details'>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='additional' />
-                            Details
+                            {tFields('detailsCard')}
                         </h3>
                         <div className='grid-row '>
                             <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors} isDisabled={isDisabled}/>
@@ -686,7 +693,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     <CardWithHelpIcon classNames="card min-height-600 stock-movement--products">
                         <h3 className='stock-movement__block-title '>
                             <Icon name='goods' />
-                            Products
+                            {tFields('productsCard')}
                         </h3>
                         <div className='grid-row mb-md'>
                             <div className='stock-movement--btns width-100'>
@@ -695,22 +702,22 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                         {/*{(isOutboundOrStockMovement) ? <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >*/}
                                         {/*    <Button type="button" icon="fill-doc" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || !sender} onClick={handleFillByStock}>Fill by stock</Button>*/}
                                         {/*</TutorialHintTooltip> : null}*/}
-                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >
-                                            <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
+                                        <TutorialHintTooltip hint={tCommon('buttons.importFromXlsHint')} forBtn >
+                                            <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>{tCommon('buttons.importFromXls')}</Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['selection'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={tCommon('buttons.selectionHint',{docType: t('docType.'+docType as MessageKeys<any, any>)})} forBtn >
                                             <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
-                                                Add from List
+                                                {tCommon('buttons.selection')}
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={tCommon('buttons.addRowHint')} forBtn >
                                             <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
-                                                Add by SKU
+                                                {tCommon('buttons.addBySKU')}
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
+                                        <TutorialHintTooltip hint={tCommon('buttons.removeSelectedHint')} forBtn >
                                             <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
-                                                Remove selected
+                                                {tCommon('buttons.addRow')}
                                             </Button>
                                         </TutorialHintTooltip>
                                     </div>
@@ -726,7 +733,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             />
                         </div>
                         <div className='grid-row stock-movement--products-total'>
-                            {/*<FormFieldsBlock control={control} fieldsArray={productsTotalFields} errors={errors} isDisabled={isDisabled}/>*/}
                             <ProductsTotal weightGross={docData?.weightGross || 0} weightNet={docData?.weightNet|| 0} volume={docData?.volume || 0} palletAmount={docData?.palletAmount || 0} packages={docData?.packages || 0} />
                         </div>
                     </CardWithHelpIcon>
@@ -735,7 +741,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     <div className="card min-height-600 stock-movement--history">
                         <h3 className='stock-movement__block-title'>
                             <Icon name='bundle' />
-                            Services
+                            {tFields('servicesCard')}
                         </h3>
                         <Services services={docData?.services} />
                     </div>
@@ -744,7 +750,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     <div className="card min-height-600 stock-movement--history">
                         <h3 className='stock-movement__block-title'>
                             <Icon name='history' />
-                            Status history
+                            {tFields('statusHistoryCard')}
                         </h3>
                         <StatusHistory statusHistory={docData?.statusHistory} />
                     </div>
@@ -753,18 +759,17 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     <div className="card min-height-600 stock-movement--tickets">
                         <h3 className='stock-movement__block-title'>
                             <Icon name='ticket' />
-                            Tickets
+                            {tFields('ticketsCard')}
                         </h3>
                         <DocumentTickets tickets={docData.tickets}/>
                     </div>
                 </div> : null}
                 <div key='files-tab' className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 stock-movement--files">
-                    {/*<div className="card min-height-600 stock-movement--products">*/}
-                        <TutorialHintTooltip hint={StockMovementsHints('')['files'] || ''} position='left' >
+                        <TutorialHintTooltip hint={tFields('filesCardHint')} position='left' >
                             <h3 className='stock-movement__block-title title-small'>
                                 <Icon name='files' />
-                                Files
+                                {tFields('filesCard')}
                             </h3>
                         </TutorialHintTooltip>
                         <div className='dropzoneBlock'>
@@ -775,16 +780,16 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             </Tabs>
 
             <div className='form-submit-btn'>
-                {docData && docData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                {isDisabled && docData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(docData?.canEdit || !docData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
-                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
-                {isDisabled && docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !docData?.canEdit && !isFinished && <Button type="submit" onClick={()=>setIsJustETA(true)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
+                {docData && docData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>{tCommon('buttons.createTicket')}</Button> : null}
+                {isDisabled && docData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(docData?.canEdit || !docData?.uuid))} variant={ButtonVariant.PRIMARY}>{tCommon('buttons.edit')}</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>{tCommon('buttons.saveAsDraft')}</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>{tCommon('buttons.save')}</Button>}
+                {isDisabled && docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !docData?.canEdit && !isFinished && <Button type="submit" onClick={()=>setIsJustETA(true)}  variant={ButtonVariant.PRIMARY}>{tCommon('buttons.send')}</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         {showImportModal &&
-            <Modal title={`Import xls`} onClose={onImportModalClose} >
+            <Modal title={tCommon('buttons.importXls')} onClose={onImportModalClose} >
                 <ImportFilesBlock file='Products import.xlsx' importFilesType={ImportFilesType.STOCK_MOVEMENTS_PRODUCTS} setResponseData={setImportResponse} closeModal={()=>setShowImportModal(false)}/>
             </Modal>
         }
@@ -793,7 +798,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         {/*        <FillByStock qualityList={docParameters?.quality} warehouse={sender} setResponseData={setImportResponse} onClose={()=>setShowFillModal(false)}/>*/}
         {/*    </Modal>*/}
         {/*}*/}
-        {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
+        {showProductSelectionModal && <Modal title={tCommon('productSelection')} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
             <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={isOutboundOrStockMovement ? sender : ""} needWarehouses={isOutboundOrStockMovement}/>
         </Modal>}
         {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}

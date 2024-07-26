@@ -19,8 +19,12 @@ import {
     tourGuideStepsCodReports,
     tourGuideStepsCodReportsNoDocs
 } from "./codReportTourGuideSteps.constants";
+import {useTranslations} from "next-intl";
 
 const CodReportsPage = () => {
+    const t = useTranslations('CodReports');
+    const tGuide = useTranslations('CodReports.tourGuide');
+    const tBtns = useTranslations('common.buttons');
 
     const { token, currentDate, superUser, ui } = useAuth();
 
@@ -120,31 +124,31 @@ const CodReportsPage = () => {
 
     const [steps, setSteps] = useState([]);
     useEffect(() => {
-        setSteps(codReportsData?.length ? tourGuideStepsCodReports : tourGuideStepsCodReportsNoDocs);
+        setSteps(tourGuideStepsCodReports(tGuide));
     }, [codReportsData]);
 
     return (
         <Layout hasHeader hasFooter>
             <div className="cod-reports__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='COD reports' toRight needTutorialBtn >
-                    <Button classNames='export-file' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle={t('headerTitle')} toRight needTutorialBtn >
+                    <Button classNames='export-file' icon="download-file" iconOnTheRight onClick={handleExportXLS}>{tBtns('exportList')}</Button>
                 </Header>
                 {CODIndicators ? (
                     <div className="grid-row indicator-info-block has-cards-block">
                         {CODIndicators.yearAmount && CODIndicators.yearAmount.length ? (
                             <div className='width-33 grid-col-33'>
-                                <CODIndicatorsCard title={"Year to date"} type="amount" indicatorsArray={CODIndicators.yearAmount} classNames='year' />
+                                <CODIndicatorsCard title={t('yearToDate')} type="amount" indicatorsArray={CODIndicators.yearAmount} classNames='year' />
                             </div>
                         ) : null}
                         {CODIndicators.monthAmount && CODIndicators.monthAmount.length ? (
                             <div className='width-33  grid-col-33'>
-                                <CODIndicatorsCard title={"Month to date"} type="amount" indicatorsArray={CODIndicators.monthAmount} classNames='month' />
+                                <CODIndicatorsCard title={t('monthToDate')} type="amount" indicatorsArray={CODIndicators.monthAmount} classNames='month' />
                             </div>
                         ) : null}
                         {CODIndicators.currentAmount ? (
                             <div className='width-33 grid-col-33'>
-                                <CODIndicatorsCard title={"Current period"} type="amount" indicatorsArray={CODIndicators.currentAmount} classNames='current' />
+                                <CODIndicatorsCard title={t('currentPeriod')} type="amount" indicatorsArray={CODIndicators.currentAmount} classNames='current' />
                             </div>
                         ) : null}
                     </div>

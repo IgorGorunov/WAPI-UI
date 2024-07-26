@@ -4,6 +4,7 @@ import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 import {ChatMessageType} from "@/types/tickets";
 import MessageFile from "./MessageFile";
 import {splitMessage} from "@/utils/textMessage";
+import {useTranslations} from "next-intl";
 
 type MessagePropsType = {
     message: ChatMessageType;
@@ -43,10 +44,11 @@ const wrapEmojisInSpan = (text) => {
 
 
 const Message: React.FC<MessagePropsType> = ({message}) => {
+    const t = useTranslations('Tickets');
     return (
         <div className="single-message-block">
             <div className={`single-message ${message.author === 'UI' ? 'UI-User' : 'User-UI'}`}>
-                <div className={`single-message__user-name`}>{message.author === 'UI' ? 'You' : message.author}</div>
+                <div className={`single-message__user-name`}>{message.author === 'UI' ? t('you') : message.author}</div>
                 <div className={`single-message__text `}>{splitMessage(message.message).map((item, index) => (
                         <React.Fragment key={`${item}_${index}`}>{item}</React.Fragment>
                     ))}

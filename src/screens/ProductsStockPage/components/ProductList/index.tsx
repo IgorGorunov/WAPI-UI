@@ -18,10 +18,12 @@ import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
 import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
-import {Countries} from "@/types/countries";
 import FiltersContainer from "@/components/FiltersContainer";
 import SimplePopup from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import {MessageKeys, useTranslations} from "next-intl";
+import {itemRender} from "@/utils/pagination";
+import {useRouter} from "next/router";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -30,6 +32,13 @@ type ProductListType = {
 }
 
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setWarehouseForExport}) => {
+    const t = useTranslations('ProductStockPage')
+    const tCommon = useTranslations('common')
+    const tColumns = useTranslations('ProductStockPage.listColumns')
+    const tCountries = useTranslations('countries')
+
+    const {locale} = useRouter();
+
     const [animating, setAnimating] = useState(false);
     const isTouchDevice = useIsTouchDevice();
 
@@ -109,7 +118,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const transformedCountries = useMemo(() => ([
         ...uniqueCountries.map(country => ({
             value: country,
-            label: Countries[country] || country,
+            label: tCountries(country.toLowerCase() as MessageKeys<string, any>) || country,
             amount: calcOrderAmount('country', country),
         }))
     ]), [uniqueCountries]);
@@ -126,7 +135,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
-        label: 'Full text search',
+        label: tCommon('fullTextSearchLabel'),
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
@@ -213,7 +222,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 maxWidth="40px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="Code of warehouse" >
+                    <Tooltip title={tColumns('warehouseHint')} >
                         <span><Icon name={"warehouse"}/></span>
                     </Tooltip>
                 }
@@ -229,7 +238,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title="A unique code for tracking each product in inventory"><span>SKU</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="80px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title={tColumns('skuHint')}><span>{tColumns('sku')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="120px"  contentPosition="start"/>
             ),
@@ -242,7 +251,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Name" minWidth="150px" maxWidth="500px"  contentPosition="start"/>,
+            title: <TitleColumn title={tColumns('name')} minWidth="150px" maxWidth="500px"  contentPosition="start"/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="150px" maxWidth="500px"  contentPosition="start"/>
             ),
@@ -254,7 +263,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px"  contentPosition="center" childrenBefore={<Tooltip title="Available products for new orders"><span>Available</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px"  contentPosition="center" childrenBefore={<Tooltip title={tColumns('availableHint')}><span>{tColumns('available')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="center"/>
             ),
@@ -266,9 +275,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products that were reserved for orders or movements"><span>Reserve</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="40px" maxWidth="60px" contentPosition="center" childrenBefore={<Tooltip title={tColumns('reserveHint')}><span>{tColumns('reserve')}</span></Tooltip>} className="needs-breaks"/>,
             render: (text: number, record: ProductStockType) =>  (
-                <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
+                <TableCell minWidth="40px" maxWidth="60px" contentPosition="center"
                     childrenBefore={
                         <Popover
                             content={record.reserved ? <SimplePopup
@@ -296,9 +305,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Damaged products"><span>Damaged</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="40px" maxWidth="65px" contentPosition="center" childrenBefore={<Tooltip title={tColumns('damagedHint')}><span>{tColumns('damaged')}</span></Tooltip>} className="needs-breaks"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="65px" contentPosition="center"/>
             ),
             dataIndex: 'damaged',
             key: 'damaged',
@@ -309,9 +318,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products past usability"><span>Expired</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="40px" maxWidth="65px" contentPosition="center" childrenBefore={<Tooltip title={tColumns('expiredHint')}><span>{tColumns('expired')}</span></Tooltip>} className="needs-breaks"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="65px" contentPosition="center"/>
             ),
             dataIndex: 'expired',
             key: 'expired',
@@ -322,9 +331,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products that are being returned to the warehouse"><span>Returning</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="40px" maxWidth="65px" contentPosition="center" childrenBefore={<Tooltip title={tColumns('returningHint')}><span>{tColumns('returning')}</span></Tooltip>} className="needs-breaks"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="65px" contentPosition="center"/>
             ),
             dataIndex: 'forPlacement',
             key: 'forPlacement',
@@ -335,9 +344,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products currently in transit in stock movements"><span>On shipping</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="40px" maxWidth="65px" contentPosition="center" childrenBefore={<Tooltip title={tColumns('onShippingHint')}><span>{tColumns('onShipping')}</span></Tooltip>} className="needs-breaks"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="65px" contentPosition="center"/>
             ),
             dataIndex: 'onShipping',
             key: 'onShipping',
@@ -348,9 +357,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="All stock including all product statuses"><span>Total</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="40px" maxWidth="65px" contentPosition="center" childrenBefore={<Tooltip title={tColumns('totalHint')}><span>{tColumns('total')}</span></Tooltip>} className="needs-breaks"/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="65px" contentPosition="center"/>
             ),
             dataIndex: 'total',
             key: 'total',
@@ -360,7 +369,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
             responsive: ['md'],
         },
-    ], [handleHeaderCellClick]);
+    ], [handleHeaderCellClick, locale]);
 
     return (
         <div className='product-stock-list table'>
@@ -381,13 +390,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}} />
-                    <CurrentFilters title='Country' filterState={filterCountry} options={transformedCountries} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />
+                    <CurrentFilters title={tCommon('filters.warehouse')} filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}} />
+                    <CurrentFilters title={tCommon('filters.country')} filterState={filterCountry} options={transformedCountries} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
                     <PageSizeSelector
-                        options={PageOptions}
+                        options={PageOptions(tCommon)}
                         value={pageSize}
                         onChange={(value: number) => handleChangePageSize(value)}
                     />
@@ -406,7 +415,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total products:<span className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
+                        <li className='order-products-total__list-item'>{t('totalProducts')}:<span className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -418,12 +427,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     total={filteredProducts.length}
                     hideOnSinglePage
                     showSizeChanger={false}
+                    itemRender={itemRender(tCommon)}
                 />
             </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>
+                <FiltersBlock filterTitle={tCommon('filters.warehouse')} filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle={tCommon('filters.country')} isCountry={true} filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>
             </FiltersContainer>
         </div>
     );

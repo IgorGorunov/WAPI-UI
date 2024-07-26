@@ -13,6 +13,7 @@ import Modal from "@/components/Modal";
 import Loader from "@/components/Loader";
 import OrderFormComponent from "@/screens/OrdersPage/components/OrderForm/OrderFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {useTranslations} from "next-intl";
 
 type OrderFormType = {
     orderUuid?: string;
@@ -21,7 +22,7 @@ type OrderFormType = {
 }
 
 const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOrderModalOnSuccess}) => {
-
+    const t = useTranslations('common.documentTypes');
     const [isLoading, setIsLoading] = useState(false);
 
     const { token, superUser, ui } = useAuth();
@@ -91,7 +92,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
         {(isLoading || !orderParameters) && <Loader />}
         <ToastContainer />
         {orderParameters && (orderUuid && orderData || !orderUuid) ?
-            <Modal title={`Order`} onClose={onClose} >
+            <Modal title={t('Fulfillment')} onClose={onClose} >
                 <OrderFormComponent
                     orderData={orderData}
                     orderParameters={orderParameters}

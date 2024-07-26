@@ -22,15 +22,6 @@ const Modal: React.FC<ModalType> = ({ title, children, needTutorial=false, onClo
         onClose();
     };
 
-    // useEffect(() => {
-    //     const modalWrapper = modalWrapperRef.current;
-    //
-    //     if (modalWrapper) {
-    //         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    //         modalWrapper.style.top = `${scrollTop + 20}px`;
-    //     }
-    // }, []);
-
     const [isTutorial, setIsTutorial] = useState(false);
 
     const modalContent = (

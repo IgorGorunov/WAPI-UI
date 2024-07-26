@@ -10,8 +10,12 @@ import Loader from "@/components/Loader";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Link from "next/link";
 import {Routes} from "@/types/routes";
+import {useTranslations} from "next-intl";
 
 const ConfirmEmailPage = () => {
+    const t = useTranslations('ConfirmEmailPage');
+    const tMessages = useTranslations('messages');
+
     const router = useRouter();
 
     const [confirmToken, setConfirmToken] = useState('');
@@ -57,7 +61,7 @@ const ConfirmEmailPage = () => {
 
                             setModalStatusInfo({
                                 statusModalType: STATUS_MODAL_TYPES.ERROR,
-                                title: "Error",
+                                title: tMessages('errorMessages.error'),
                                 text: errorMessages,
                                 onClose: closeErrorModal
                             })
@@ -90,20 +94,20 @@ const ConfirmEmailPage = () => {
                 {isLoading && <Loader />}
                 {isLoaded ?
                     <div className='email-confirm-page__success'>
-                        <p className='email-confirm-page__success-title'>Almost there! Your email confirmation is complete!</p>
-                        <p className='email-confirm-page__success-text-title'>Next steps:</p>
+                        <p className='email-confirm-page__success-title'>{t('title')}</p>
+                        <p className='email-confirm-page__success-text-title'>{t('nextSteps')}</p>
                         <div className='email-confirm-page__success-text-wrapper'>
-                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>Step 1:</span> You'll soon receive an email with your login details.</p>
-                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>Step 2:</span> Please sign in using these credentials.</p>
-                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>Step 3:</span> Ready to explore? Let's go!</p>
+                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>{t('step')} 1:</span> {t('step1')}</p>
+                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>{t('step')} 2:</span> {t('step2')}</p>
+                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>{t('step')} 3:</span> {t('step3')}</p>
                         </div>
-                        <div className='email-confirm-page__success-btns'>Proceed to <Link
-                            href={Routes.Login}>Login</Link></div>
+                        <div className='email-confirm-page__success-btns'>{t('proceedTo')} <Link
+                            href={Routes.Login}>{t('login')}</Link></div>
                     </div>
                     : hasError ?
                         <div className='email-confirm-page__success'>
                             <div className='email-confirm-page__success-btns'>
-                                Proceed to <Link href={Routes.Login}>Login</Link>
+                                {t('proceedTo')} <Link href={Routes.Login}>{t('login')}</Link>
                             </div>
                         </div>
                         : null

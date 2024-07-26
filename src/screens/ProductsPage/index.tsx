@@ -20,10 +20,13 @@ import {ImportFilesType} from "@/types/importFiles";
 import TourGuide from "@/components/TourGuide";
 import useTourGuide from "@/context/tourGuideContext";
 import {tourGuideStepsProduct, tourGuideStepsProductNoDocs} from "./productListTourGuideSteps.constants";
-import {TourGuidePages} from "@/types/tourGuide";
+import {TourGuidePages, TourGuideStepType} from "@/types/tourGuide";
+import {useTranslations} from "next-intl";
 
 const ProductsPage = () => {
     const Router = useRouter();
+    const t = useTranslations('ProductsPage');
+    const tBtn = useTranslations('common.buttons');
     const { token, superUser, ui } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
@@ -44,9 +47,11 @@ const ProductsPage = () => {
         }
     }, [isLoading]);
 
-    const [steps, setSteps] = useState([]);
+    const tt = useTranslations('ProductsPage.tourGuide');
+    const [steps, setSteps] = useState(tourGuideStepsProduct(tt) as TourGuideStepType[]);
+
     useEffect(() => {
-        setSteps(productsData?.length ? tourGuideStepsProduct : tourGuideStepsProductNoDocs);
+        setSteps(productsData?.length ? tourGuideStepsProduct(tt) as TourGuideStepType[] : tourGuideStepsProductNoDocs(tt) as TourGuideStepType[]);//tourGuideStepsProductNoDocs());
     }, [productsData]);
 
     //import files modal
@@ -166,12 +171,10 @@ const ProductsPage = () => {
         <Layout hasFooter>
             <div className="products-page__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Products' toRight needTutorialBtn>
-                {/*<Header pageTitle='Products' toRight >*/}
-                    {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
-                    <Button classNames='add-product' icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
-                    <Button classNames='import-products' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                    <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle={t('headerTitle')} toRight needTutorialBtn>
+                    <Button classNames='add-product' icon="add" iconOnTheRight onClick={handleAddProduct}>{t('addProductBtn')}</Button>
+                    <Button classNames='import-products' icon="import-file" iconOnTheRight onClick={handleImportXLS}>{tBtn('importXls')}</Button>
+                    <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>{tBtn('exportList')}</Button>
                 </Header>
                 {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setProductsData={setProductsData} handleEditProduct={handleEditProduct} reFetchData={fetchData}/>}
             </div>
@@ -179,7 +182,7 @@ const ProductsPage = () => {
                 <ProductForm uuid={uuid} products={productsAsOptions} onClose={onModalClose} onCloseSuccess={()=>{setShowModal(false);fetchData();}} />
             }
             {showImportModal &&
-                <Modal title={`Import xls`} onClose={onImportModalClose} >
+                <Modal title={tBtn('importXls')} onClose={onImportModalClose} >
                     <ImportFilesBlock file='Master data.xlsx' importFilesType={ImportFilesType.PRODUCTS} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }

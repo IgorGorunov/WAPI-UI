@@ -1,55 +1,61 @@
 import {TabFieldType} from '@/types/tabs';
 
-export const TabTitles = (objectExists: boolean, hasTickets=false) => {
-    const tabsArr = objectExists ? ['General', 'Delivery info', 'Products', 'Pallets', 'Services', 'Status history'] : ['General', 'Delivery info', 'Products'];
+export const TabTitles = (t: any, objectExists: boolean, hasTickets=false) => {
+    const tabsArr = [t('general'), t('deliveryInfo'), t('products')];
 
-    if (hasTickets) {
-        tabsArr.push('Tickets');
+    if (objectExists) {
+        tabsArr.push(t('pallets'));
+        tabsArr.push(t('services'));
+        tabsArr.push(t('statusHistory'));
     }
 
-    tabsArr.push('Files');
+    if (hasTickets) {
+        tabsArr.push(t('tickets'));
+    }
+
+    tabsArr.push(t('files'));
 
     return tabsArr;
 };
-export const TabFields: TabFieldType[] = [
+export const TabFields = (t) => [
     {
-        tabName: 'General',
+        tabName: t('general'),
         fieldName: 'date'
     },
     {
-        tabName: 'Delivery info',
+        tabName: t('deliveryInfo'),
         fieldName: 'asnNumber',
     },
     {
-        tabName: 'Delivery info',
+        tabName: t('deliveryInfo'),
         fieldName: 'warehouse',
     },
     {
-        tabName: 'Delivery info',
+        tabName: t('deliveryInfo'),
         fieldName: 'receiverCountry'
     },
     {
-        tabName: 'Delivery info',
+        tabName: t('deliveryInfo'),
         fieldName: 'receiverCity'
     },
     {
-        tabName: 'Delivery info',
+        tabName: t('deliveryInfo'),
         fieldName: 'receiverZip'
     },
     {
-        tabName: 'Delivery info',
+        tabName: t('deliveryInfo'),
         fieldName: 'receiverAddress'
     },
     {
-        tabName: 'Delivery info',
+        tabName: t('deliveryInfo'),
         fieldName: 'receiverPhone'
     },
     {
-        tabName: 'Delivery info',
+        tabName: t('deliveryInfo'),
         fieldName: 'receiverFullName'
     },
 
 
-]
+] as TabFieldType[]
 
 

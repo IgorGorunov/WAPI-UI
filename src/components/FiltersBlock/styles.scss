@@ -20,6 +20,10 @@
       border-bottom: 2px solid var(--border-color);
     }
 
+    &-text {
+      text-align: start;
+    }
+
   }
 
   &__options {

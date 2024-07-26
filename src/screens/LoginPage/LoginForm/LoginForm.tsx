@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {authenticate, authenticateWithOneTimeToken} from "@/services/auth";
-import Router from "next/router";
+import Router, {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import useAuth from "@/context/authContext";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
@@ -10,7 +10,8 @@ import "./styles.scss";
 import {UserStatusType} from "@/types/leads";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
-import {formFields} from "./LoginFormFields.constants";
+import {formFields as formFieldsFn} from "./LoginFormFields.constants";
+import {useTranslations} from "next-intl";
 
 type LoginFormPropsType = {
   oneTimeToken?: string;
@@ -18,10 +19,15 @@ type LoginFormPropsType = {
 }
 
 const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}) => {
+  const t = useTranslations('Login');
+  const {locale} = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
   const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile, setIsSuperUser } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
+
+  const formFields = useMemo(()=>formFieldsFn(t), [locale]);
 
   const setAuthData = async(authData) => {
     const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile, superUser } = authData;
@@ -76,9 +82,6 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
   }, [oneTimeToken]);
 
 
-
-
-
   const {
     control,
     handleSubmit,
@@ -105,7 +108,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
       if (res?.status === 200) {
         await setAuthData(res.data)
       } else if (res?.response?.status === 401) {
-        setError("Wrong login or password");
+        setError(t('wrongCredentialsError'));
       }
     } catch (err) {
       console.error(err);
@@ -143,14 +146,14 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
         ))}
         {error && <p className="login-error">{error}</p>}
         <div className="login-submit-block">
-          <p id='login-recovery-link' className="login-recovery-link">Password recovery</p>
+          <p id='login-recovery-link' className="login-recovery-link">{t('passwordRecovery')}</p>
           <Button
             type="submit"
             icon={"arrow-right"}
             iconOnTheRight={true}
             disabled={isLoading}
           >
-            Sign in
+            {t('signInBtn')}
           </Button>
         </div>
       </form>

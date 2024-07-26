@@ -13,7 +13,7 @@ export const StockMovementsHints = (docType: string) => ({
 
     // products
     importProducts: 'Click here to import products from Excel file',
-    selection: `Click here to choose multiple products for the  ${docType.toLowerCase()}`,
+    selection: `Click here to choose multiple products for the ${docType.toLowerCase()}`,
     // addProduct: `Add a product to the ${docType.toLowerCase()} one by one`,
     // removeSelected: 'Delete chosen products',
 

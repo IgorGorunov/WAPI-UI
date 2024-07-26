@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useMemo} from "react";
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
@@ -7,9 +7,12 @@ import Header from "@/components/Header";
 import "./styles.scss";
 
 import ReportsBlock from "@/screens/ReportsListPage/ReportComponents/ReportsBlock";
-import {reportBlocks} from "@/screens/ReportsListPage/reports.constants";
+import {reportBlocks as reportBlocksFn} from "@/screens/ReportsListPage/reports.constants";
+import {useTranslations} from "next-intl";
 
 const ReportsListPage:React.FC = () => {
+    const t = useTranslations('Reports');
+
     const Router = useRouter();
     const { token } = useAuth();
 
@@ -17,12 +20,12 @@ const ReportsListPage:React.FC = () => {
         if (!token) Router.push(Routes.Login);
     }, []);
 
+    const reportBlocks = useMemo(()=>reportBlocksFn(t), [Router.locale]);
+
     return (
         <Layout hasFooter>
             <div className="page-container reports-list-page__container">
-                <Header pageTitle='Reports' toRight >
-
-                </Header>
+                <Header pageTitle={t('headerTitle')} toRight />
 
                 <div className='reports-list'>
                     {reportBlocks.map((item, index) =>(

@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import DashboardPage from "@/screens/DashboardPage";
 import AuthChecker from "@/components/AuthChecker";
+import {GetStaticPropsContext} from "next";
 
 export default function Home() {
 
@@ -18,4 +19,12 @@ export default function Home() {
         </AuthChecker>
     </>
   );
+}
+
+export async function getStaticProps({locale}: GetStaticPropsContext) {
+    return {
+        props: {
+            messages: (await import(`../../messages/${locale}.json`)).default
+        }
+    };
 }

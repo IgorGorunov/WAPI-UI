@@ -25,6 +25,9 @@ import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import SimplePopup from "@/components/SimplePopup";
+import {MessageKeys, useTranslations} from "next-intl";
+import {itemRender} from "@/utils/pagination";
+import {PageOptions} from "@/constants/pagination";
 
 
 type AmazonPrepListType = {
@@ -45,6 +48,10 @@ const pageOptions = [
 ];
 
 const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, currentRange, setCurrentRange, setFilteredAmazonPrepOrders,handleEditAmazonPrepOrder}) => {
+    const t = useTranslations('AmazonPrep')
+    const tCommon = useTranslations('common');
+    const tCountry = useTranslations('countries');
+
     const isTouchDevice = useIsTouchDevice();
 
     const [current, setCurrent] = React.useState(1);
@@ -64,7 +71,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
-        label: 'Full text search',
+        label: tCommon('fullTextSearchLabel'),
         checked: fullTextSearch,
         onChange: ()=>{setFullTextSearch(prevState => !prevState)},
         classNames: 'full-text-search-toggle',
@@ -132,7 +139,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     const transformedReceiverCountries = useMemo(() => ([
         ...uniqueReceiverCountries.map(country => ({
             value: country,
-            label: Countries[country] as string || country,
+            label: tCountry(country.toLowerCase() as MessageKeys<any, any>) || country,
             amount: calcOrderAmount('receiverCountry', country),
         }))
     ]), [uniqueReceiverCountries]);
@@ -249,7 +256,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon  name={"car"}/></Tooltip>}>
+                    childrenBefore={<Tooltip title={t('listColumns.countriesHint')}> <Icon  name={"car"}/></Tooltip>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
@@ -295,7 +302,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="" minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Current condition or state of an order"><span>Status</span></Tooltip>}
+            title: <TitleColumn title="" minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.statusHint')}><span>{t('listColumns.status')}</span></Tooltip>}
                     />,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
@@ -324,7 +331,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.dateHint')}><span>{t('listColumns.date')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"  />
             ),
@@ -336,7 +343,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Order identifier within the WAPI system"><span>WH number</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.whNumberHint')}><span>{t('listColumns.whNumber')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
@@ -353,7 +360,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             },
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Amazon Shipment Notification Number"><span>ASN</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.asnHint')}><span>{t('listColumns.asn')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
             ),
@@ -371,7 +378,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Unique code for order identification in the seller's system"><span>Order ID</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.orderIdHint')}><span>{t('listColumns.orderId')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
             ),
@@ -384,7 +391,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Code of warehouse"><span>Warehouse</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.warehouseHint')}><span>{t('listColumns.warehouse')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
@@ -397,7 +404,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Service responsible for transporting and delivering packages"><span>Courier</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title={t('listColumns.courierHint')}><span>{t('listColumns.courier')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
@@ -410,7 +417,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Type of Amazon Prep Order: LTL or SPD"><span>Method</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title={t('listColumns.methodHint')}><span>{t('listColumns.method')}</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
@@ -428,7 +435,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 maxWidth="50px"
                 contentPosition="center"
                 childrenBefore={
-                    <Tooltip title="Products" >
+                    <Tooltip title={t('listColumns.productsHint')} >
                         <span><Icon name={"shopping-cart"}/></span>
                     </Tooltip>
                 }
@@ -464,8 +471,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     return (
         <div className="table">
             <Head>
-                <title>Orders</title>
-                <meta name="orders" content="orders" />
+                <title>{t('headerTitle')}</title>
+                <meta name="amazon prep" content="amazon prep" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
             </Head>
@@ -480,14 +487,14 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
-                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                    <CurrentFilters title={tCommon('filters.status')} filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title={tCommon('filters.warehouse')} filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
+                    <CurrentFilters title={tCommon('filters.receiverCountry')} filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
                     <PageSizeSelector
-                        options={pageOptions}
+                        options={PageOptions(tCommon)}
                         value={pageSize}
                         onChange={(value: number) => handleChangePageSize(value)}
                     />
@@ -504,7 +511,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total amazon preps:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                        <li className='order-products-total__list-item'>{t('totalOrders')}:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -516,13 +523,14 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     total={filteredOrders.length}
                     hideOnSinglePage
                     showSizeChanger={false}
+                    itemRender={itemRender(tCommon)}
                 />
              </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                <FiltersBlock filterTitle={tCommon('filters.status')} filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle={tCommon('filters.warehouse')} filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle={tCommon('filters.receiverCountry')} isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
 
         </div>

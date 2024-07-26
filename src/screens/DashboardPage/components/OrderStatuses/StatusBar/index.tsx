@@ -38,7 +38,7 @@ const StatusBar: React.FC<StatusBarPropsType> = ({groupStatus, maxAmount}) => {
                 />}
                 trigger={isTouchDevice ? 'click' : 'hover'}
                 placement="right"
-                overlayClassName="doc-list-popover"
+                overlayClassName={`doc-list-popover ${popupItems.length === 0 ? 'is-empty' : ''}`}
             >
                 <div className="status-bar__label">
                     {groupStatus.status}

@@ -3,6 +3,10 @@
   align-items: center;
   padding-bottom: 12px;
 
+  .no-pb & {
+    padding-bottom: 0;
+  }
+
   &__wrapper {
     //align-self: flex-end;
   }

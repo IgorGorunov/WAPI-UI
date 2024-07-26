@@ -22,9 +22,14 @@ import {
     tourGuideStepsTickets,
     tourGuideStepsTicketsNoDocs
 } from "./ticketsTourGuideSteps.constants";
+import {useTranslations} from "next-intl";
 
 
 const TicketsPage = () => {
+    const t = useTranslations('Tickets');
+    const tCommon = useTranslations('common');
+    const tGuide = useTranslations('Reports.tourGuide');
+
     const {token, currentDate, superUser, ui} = useAuth();
 
     const today = currentDate;
@@ -38,7 +43,6 @@ const TicketsPage = () => {
 
     const [isTicketNew, setIsTicketNew] = useState(true);
 
-//
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     //modal
@@ -137,7 +141,7 @@ const TicketsPage = () => {
 
     const [steps, setSteps] = useState([]);
     useEffect(() => {
-        setSteps(ticketsData?.length ? tourGuideStepsTickets : tourGuideStepsTicketsNoDocs);
+        setSteps(ticketsData?.length ? tourGuideStepsTickets(tGuide) : tourGuideStepsTicketsNoDocs(tGuide));
     }, [ticketsData]);
 
 
@@ -145,14 +149,14 @@ const TicketsPage = () => {
         <Layout hasHeader hasFooter>
             <div className="page-component tickets-page tickets-page__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Tickets' toRight needTutorialBtn >
-                    <Button classNames='add-ticket' icon="add" iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button>
+                <Header pageTitle={t('headerTitle')} toRight needTutorialBtn >
+                    <Button classNames='add-ticket' icon="add" iconOnTheRight onClick={handleCreateTicket}>{tCommon('buttons.createTicket')}</Button>
                 </Header>
 
                 {ticketsData && <TicketList tickets={ticketsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod}  handleEditTicket={handleEditTicket} />}
             </div>
             {showTicketModal && (singleTicketUuid || isTicketNew) &&
-                <Modal title={`Ticket`} onClose={handleTicketModalClose} >
+                <Modal title={tCommon('documentTypes.Ticket')} onClose={handleTicketModalClose} >
                     <Ticket ticketUuid={singleTicketUuid} onClose={handleTicketModalClose}/>
                 </Modal>
             }

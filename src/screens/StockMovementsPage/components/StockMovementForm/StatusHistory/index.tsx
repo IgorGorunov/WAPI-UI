@@ -2,22 +2,21 @@ import React from "react";
 import "./styles.scss";
 import {StockMovementHistoryType} from "@/types/stockMovements";
 import {formatDateStringToDisplayString, formatDateTimeToStringWithDot} from "@/utils/date";
+import {useTranslations} from "next-intl";
 
 type PropsType = {
     statusHistory?: StockMovementHistoryType[] ;
 };
 
 const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
-
+    const t = useTranslations('StockMovements.docColumns.statusHistory');
     return (
         <div className="stock-movement-status-history">
             <div className="stock-movement-status-history__header">
-                <div className='date-column'>Period</div>
-                <div className='column status-column'>Status</div>
-                {/*<div className='column etd-column'>ETD</div>*/}
-                <div className='column eta-column'>ETA</div>
-                {/*<div className='column freight-supplier-column'>Freight supplier</div>*/}
-                <div className='column statusAdditionalInfo-column'>Status additional info</div>
+                <div className='date-column'>{t('period')}</div>
+                <div className='column status-column'>{t('status')}</div>
+                <div className='column eta-column'>{t('eta')}</div>
+                <div className='column statusAdditionalInfo-column'>{t('additionalIngo')}</div>
 
             </div>
             <ul className="stock-movement-status-history__list">
@@ -33,9 +32,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                             <div className='column status-column'>
                                 {status.status}
                             </div>
-                            {/*<div className='column etd-column'>{status.estimatedTimeDepartures}</div>*/}
                             <div className='column eta-column'>{formatDateStringToDisplayString(status.estimatedTimeArrives)}</div>
-                            {/*<div className='column freight-supplier-column'>{status.freightSupplier}</div>*/}
                             <div className='column statusAdditionalInfo-column'>{status.statusAdditionalInfo}</div>
                         </li>
                     ))}

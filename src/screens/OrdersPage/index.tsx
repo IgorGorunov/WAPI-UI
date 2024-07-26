@@ -21,8 +21,13 @@ import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsOrders, tourGuideStepsOrdersNoDocs} from "./ordersTourGuideSteps.constants";
 import {ApiResponseType} from "@/types/api";
+import {useTranslations} from "next-intl";
 
 const OrdersPage = () => {
+    const t = useTranslations('Fulfillment');
+    const tBtn = useTranslations('common.buttons');
+    const tTourGuide = useTranslations('Fulfillment.tourGuide');
+
     const Router = useRouter();
     const { token, currentDate, superUser, ui } = useAuth();
 
@@ -56,7 +61,7 @@ const OrdersPage = () => {
 
     const [steps, setSteps] = useState([]);
     useEffect(() => {
-        setSteps(ordersData?.length ? tourGuideStepsOrders : tourGuideStepsOrdersNoDocs);
+        setSteps(ordersData?.length ? tourGuideStepsOrders(tTourGuide) : tourGuideStepsOrdersNoDocs(tTourGuide));
     }, [ordersData]);
 
     //import files modal
@@ -156,10 +161,10 @@ const OrdersPage = () => {
         <Layout hasHeader hasFooter>
             <div className="page-component orders-page__container">
                 {isLoading && (<Loader />)}
-                <Header pageTitle='Fulfillment' toRight needTutorialBtn >
-                    <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
-                    <Button classNames='import-orders' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                    <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle={t('headerTitle')} toRight needTutorialBtn >
+                    <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddOrder}>{t('addOrder')}</Button>
+                    <Button classNames='import-orders' icon="import-file" iconOnTheRight onClick={handleImportXLS}>{tBtn('importXls')}</Button>
+                    <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>{tBtn('exportList')}</Button>
                 </Header>
 
                 {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} handleRefresh={()=>fetchData()}/>}
@@ -168,7 +173,7 @@ const OrdersPage = () => {
                 <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={()=>{onOrderModalClose(); fetchData(); }}/>
             }
             {showImportModal &&
-                <Modal title={`Import xls`} onClose={onImportModalClose} >
+                <Modal title={tBtn('importXls')} onClose={onImportModalClose} >
                     <ImportFilesBlock file='OrderTemplate.xlsx' importFilesType={ImportFilesType.ORDERS} closeModal={()=>setShowImportModal(false)}/>
                 </Modal>
             }

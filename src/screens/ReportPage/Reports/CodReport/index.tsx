@@ -6,10 +6,10 @@ import {formatDateStringToDisplayString} from "@/utils/date";
 import {Tooltip} from "antd";
 
 
-const resourceColumns: ColumnDef<CodReportRowType>[] = [
+const resourceColumns = (t: any) => [
     {
         accessorKey: 'codAmount',
-        header: () => <Tooltip title="Means all COD for selected orders" ><span>Total COD amount</span></Tooltip>,
+        header: () => <Tooltip title={t('ReportCodCheck.totalCodHint')} ><span>{t('ReportCodCheck.totalCod')}</span></Tooltip>,
         size: 80,
         maxSize: 400,
         cell: ({getValue }) =>
@@ -18,7 +18,7 @@ const resourceColumns: ColumnDef<CodReportRowType>[] = [
     },
     {
         accessorKey: 'reported',
-        header: () => <Tooltip title="COD amount reported for payment to customer" ><span>COD reported</span></Tooltip>,
+        header: () => <Tooltip title={t('ReportCodCheck.codReportedHint')} ><span>{t('ReportCodCheck.codReported')}</span></Tooltip>,
         size: 80,
         maxSize: 400,
         cell: ({getValue }) =>
@@ -26,63 +26,63 @@ const resourceColumns: ColumnDef<CodReportRowType>[] = [
     },
     {
         accessorKey: 'codBalance',
-        header: () => <Tooltip title="Expected COD for orders in transit" ><span>COD balance</span></Tooltip>,
+        header: () => <Tooltip title={t('ReportCodCheck.codBalanceHint')} ><span>{t('ReportCodCheck.codBalance')}</span></Tooltip>,
         size: 80,
         maxSize: 400,
         cell: ({getValue }) =>
             <span className='centered-cell'>{formatNumbers(getValue<number>())}</span>,
     },
 
-];
+] as  ColumnDef<CodReportRowType>[];
 
-const documentColumns: ColumnDef<CodReportRowType>[] = [
+const documentColumns = (t: any) => [
     {
         accessorKey: 'order',
-        header: () => <Tooltip title="Wapi tracking number">Order</Tooltip> ,
+        header: () => <Tooltip title={t('ReportCodCheck.orderHint')}>{t('ReportCodCheck.order')}</Tooltip> ,
         size: 90,
         maxSize: 500,
     },
     {
         accessorKey: 'status',
-        header: () => <Tooltip title="Order status">Order status</Tooltip>,
+        header: () => <Tooltip title={t('ReportCodCheck.orderStatusHint')}>{t('ReportCodCheck.orderStatus')}</Tooltip>,
         size: 90,
         maxSize: 500,
     },
     {
         accessorKey: 'codReport',
-        header: () => <Tooltip title="COD report name">COD report</Tooltip>,
+        header: () => <Tooltip title={t('ReportCodCheck.codReportHint')}>{t('ReportCodCheck.codReport')}</Tooltip>,
         size: 80,
         maxSize: 500,
     },
     {
         accessorKey: 'deliveryDate',
-        header: () => <Tooltip title="Delivery date">Delivery date</Tooltip>,
+        header: () => <Tooltip title={t('ReportCodCheck.deliveryDate')}>{t('ReportCodCheck.deliveryDate')}</Tooltip>,
         size: 70,
         maxSize: 500,
         cell: ({getValue }) => getValue<string>() ? formatDateStringToDisplayString(getValue<string>()) : '',
     },
     {
         accessorKey: 'currency',
-        header: () => <Tooltip title="COD currency">Currency</Tooltip>,
+        header: () => <Tooltip title={t('ReportCodCheck.currencyHint')}>{t('ReportCodCheck.currency')}</Tooltip>,
         size: 70,
         maxSize: 500,
         cell: ({getValue }) =><span className='centered-cell'>{getValue<string>()}</span>,
     },
-]
+] as ColumnDef<CodReportRowType>[]
 
-export const columns_VARIANT: ColumnDef<CodReportRowType>[] = [
-    ...documentColumns,
-    ...resourceColumns,
-];
+export const columns_VARIANT = (t) => [
+    ...documentColumns(t),
+    ...resourceColumns(t),
+] as ColumnDef<CodReportRowType>[];
 
 
-export const getCodReportVariantColumns = (variant: COD_REPORT_VARIANTS) => {
+export const getCodReportVariantColumns = (t: any, variant: COD_REPORT_VARIANTS) => {
 
     switch (variant) {
         case COD_REPORT_VARIANTS.OFF:
-            return columns_VARIANT;
+            return columns_VARIANT(t);
         case COD_REPORT_VARIANTS.COD_REPORT:
-            return columns_VARIANT;
+            return columns_VARIANT(t);
 
         default:
             return [];

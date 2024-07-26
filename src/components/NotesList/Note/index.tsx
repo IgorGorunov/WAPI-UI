@@ -9,12 +9,15 @@ import {ApiResponseType} from "@/types/api";
 import {sendNote} from "@/services/notes";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {useTranslations} from "next-intl";
 
 type NotePropsType = {
     uuid: string;
     onCloseOnSuccess?: ()=>void;
 }
 const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
+    const t = useTranslations('Fulfillment.orderTabsInfo.notes');
+    const tErrors = useTranslations('messages.errorMessages');
 
     const { token, superUser, ui } = useAuth();
     const [noteText, setNoteText] = useState('');
@@ -44,7 +47,7 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
 
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Something went wrong!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: tErrors('error'), subtitle: tErrors('somethingWentWrong'), text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }
@@ -60,7 +63,7 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
             <div className='grid-row'>
                 <FieldBuilder
                     name='note'
-                    label='Note'
+                    label={t('note')}
                     fieldType={FormFieldTypes.TEXT_AREA}
                     isRequired={true}
                     value={noteText}
@@ -75,7 +78,7 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
                     disabled={isLoading || !noteText}
                     onClick={handleSubmit}
                 >
-                   Create note
+                    {t('createNote')}
                 </Button>
             </div>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

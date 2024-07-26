@@ -42,12 +42,19 @@ import {
     tourGuideStepsReports,
     tourGuideStepsReportsWithoutVariants
 } from "./reportTourGuideSteps.constants";
+import {MessageKeys, useTranslations} from "next-intl";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
 }
 
 const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
+    const t = useTranslations('Reports');
+    const tVariants = useTranslations('Reports.reportVariants');
+    const tGuide = useTranslations('Reports.tourGuide');
+    const tCountries = useTranslations('countries');
+    const tFilters = useTranslations('common.filters');
+
     const Router = useRouter();
     const { token, currentDate, getToken, superUser, ui } = useAuth();
 
@@ -65,7 +72,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         if (reportType && !isReportWatched(reportType)) {
             if (!isLoading) {
                 setTimeout(() => setRunTour(true), 1000);
-                console.log('steps: ', tourGuideStepsReports, tourGuideStepsReportsWithoutVariants)
             }
         }
     }, [isLoading]);
@@ -177,7 +183,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         const countryOptions = [
             ...uniqueCountries.map(country => ({
                 value: country,
-                label: Countries[country] as string || country,
+                label: tCountries(country.toLowerCase() as MessageKeys<any, any>) || country,
             }))
         ];
 
@@ -208,7 +214,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         return [
             ...uniqueReceiverCountries.map(country => ({
                 value: country,
-                label: Countries[country] as string || country,
+                label: tCountries(country.toLowerCase() as MessageKeys<any, any>) || country,
             }))
         ];
     }, [reportParams])
@@ -349,11 +355,14 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
 
     //variants
-    const reportVariants = getVariantOptionsByReportType(reportType);
+    const reportVariants = getVariantOptionsByReportType(tVariants, reportType);
 
     const [periodVariantType, setPeriodVariantType] = useState<string>('OFF');
-    const periodVariantOptions =
-        [{label: 'Off', value: 'OFF'},{label: 'Month', value: 'MONTH'},{label: 'Week', value: 'WEEK'}];
+    const periodVariantOptions = [
+        {label: t('reportGroupPeriods.OFF'), value: 'OFF'},
+        {label: t('reportGroupPeriods.MONTH'), value: 'MONTH'},
+        {label: t('reportGroupPeriods.WEEK'), value: 'WEEK'}
+    ];
 
     const [curVariant, setCurVariant] = useState<string>(reportVariants.length ? reportVariants[0].value : '');
 
@@ -378,7 +387,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         <Layout hasFooter>
             <div className="page-container report-page report-page__container">
                 {(isLoading || isCalculating)&& (<Loader />)}
-                <Header pageTitle={REPORT_TITLES[reportType]} toRight needTutorialBtn />
+                <Header pageTitle={t('reportTitles.'+reportType as MessageKeys<any, any>)} toRight needTutorialBtn />
 
                 {/*filters , search , + */}
                 <SearchContainer>
@@ -388,12 +397,12 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                         <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
                         {/*<FieldBuilder {...fullTextSearchField} />*/}
                     </div>
-                    <Button classNames='generate-report-btn' onClick={handleGenerateReport}>Generate</Button>
+                    <Button classNames='generate-report-btn' onClick={handleGenerateReport}>{t('generate')}</Button>
                 </SearchContainer>
                 {reportType !== REPORT_TYPES.SALE_DYNAMIC
                     ? <div className='variant-container'>
                         <div className='variant-container__wrapper'>
-                            <p className='variant-container__period-type-title'>Variant:</p>
+                            <p className='variant-container__period-type-title'>{t('variant')}:</p>
                             {reportType===REPORT_TYPES.DELIVERY_RATES || reportType === REPORT_TYPES.REPORT_SALES ? (
                                     <div className='variant-container__period-type-wrapper'>
                                         <RadioSwitch name='periodVariantType' value={periodVariantType} onChange={(val)=>setPeriodVariantType(val as string)} options={periodVariantOptions} />
@@ -408,13 +417,13 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                 {/* report variants */}
                 <div className='filter-info-container'>
                     <div className='current-filter-container'>
-                        <CurrentFilters title='Country' filterState={filterCountry} options={reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />
-                        <CurrentFilters title='Country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
-                        <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={warehouseOptions} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
-                        <CurrentFilters title='Courier service' filterState={filterCourierService} options={countryOptions} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierService(true)}}/>
-                        <CurrentFilters title='Product' filterState={filterProduct} options={productOptions} onClose={()=>setFilterProduct([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterProduct(true)}}/>
-                        <CurrentFilters title='Product type' filterState={filterProductType} options={productTypeOptions} onClose={()=>setFilterProductType([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterProductType(true)}}/>
-                        <CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}}/>
+                        <CurrentFilters title={tFilters('country')} filterState={filterCountry} options={reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />
+                        <CurrentFilters title={tFilters('country')} filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                        <CurrentFilters title={tFilters('warehouse')} filterState={filterWarehouse} options={warehouseOptions} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
+                        <CurrentFilters title={tFilters('courierService')} filterState={filterCourierService} options={countryOptions} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierService(true)}}/>
+                        <CurrentFilters title={tFilters('product')} filterState={filterProduct} options={productOptions} onClose={()=>setFilterProduct([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterProduct(true)}}/>
+                        <CurrentFilters title={tFilters('productType')} filterState={filterProductType} options={productTypeOptions} onClose={()=>setFilterProductType([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterProductType(true)}}/>
+                        <CurrentFilters title={tFilters('status')} filterState={filterStatus} options={statusOptions} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}}/>
                     </div>
 
                 </div>
@@ -428,14 +437,12 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                     {/*    </Tooltip>*/}
                     {/*</div> : null}*/}
                     <div className={`report-results ${isCurrentRangeChanged ? 'need-rerender' : ''}`}>
-                        {isCurrentRangeChanged && !noData && <div className='need-rerender-overlay'><p className='need-rerender-text'>Please, run "Generate"!</p></div>}
+                        {isCurrentRangeChanged && !noData && <div className='need-rerender-overlay'><p className='need-rerender-text'>{t('runGenerate')}</p></div>}
 
                         {!noData && collapsedData ? <>
                             <div className='report-hint'>
-                                <Tooltip title={`To see what each column means, hover over its name. 
-                                    To sort the report by column, click on the column name. 
-                                    To sort by multiple columns, press Shift and click on the column names.`} >
-                                    <span className='hint-icon'>Hint<Icon name='question' /></span>
+                                <Tooltip title={t('reportHint')} >
+                                    <span className='hint-icon'>{t('hint')}<Icon name='question' /></span>
                                 </Tooltip>
                                 </div>
                                 <ReportTable
@@ -451,25 +458,25 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                                 />
                             </> :
                             <div className='report-generate-hint'>
-                                Please select a period, variant and click on the Generate button
+                                {t('selectAPeriod')}
                             </div>
                         }
                     </div>
                 </div>
 
                 <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                    {isFilterVisibleByReportType(reportType, 'country') && <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>}
-                    {isFilterVisibleByReportType(reportType, 'receiverCountry') && <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>}
-                    {isFilterVisibleByReportType(reportType, 'warehouse') && <FiltersBlock filterTitle='Warehouse' filterOptions={warehouseOptions} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>}
-                    {isFilterVisibleByReportType(reportType, 'courierService') && <FiltersBlock filterTitle='Courier service' filterOptions={courierServiceOptions} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierService} setIsOpen={setIsOpenFilterCourierService}/>}
-                    {isFilterVisibleByReportType(reportType, 'product') && <FiltersBlock filterTitle='Product' filterOptions={productOptions} filterState={filterProduct} setFilterState={setFilterProduct} isOpen={isOpenFilterProduct} setIsOpen={setIsOpenFilterProduct}/>}
-                    {isFilterVisibleByReportType(reportType, 'productType') && <FiltersBlock filterTitle='Product type' filterOptions={productTypeOptions} filterState={filterProductType} setFilterState={setFilterProductType} isOpen={isOpenFilterProductType} setIsOpen={setIsOpenFilterProductType}/>}
-                    {isFilterVisibleByReportType(reportType, 'status') && <FiltersBlock filterTitle='Status' filterOptions={statusOptions} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>}
+                    {isFilterVisibleByReportType(reportType, 'country') && <FiltersBlock filterTitle={tFilters('country')} isCountry={true} filterOptions={reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>}
+                    {isFilterVisibleByReportType(reportType, 'receiverCountry') && <FiltersBlock filterTitle={tFilters('country')} isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>}
+                    {isFilterVisibleByReportType(reportType, 'warehouse') && <FiltersBlock filterTitle={tFilters('warehouse')} filterOptions={warehouseOptions} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>}
+                    {isFilterVisibleByReportType(reportType, 'courierService') && <FiltersBlock filterTitle={tFilters('courierService')} filterOptions={courierServiceOptions} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierService} setIsOpen={setIsOpenFilterCourierService}/>}
+                    {isFilterVisibleByReportType(reportType, 'product') && <FiltersBlock filterTitle={tFilters('product')} filterOptions={productOptions} filterState={filterProduct} setFilterState={setFilterProduct} isOpen={isOpenFilterProduct} setIsOpen={setIsOpenFilterProduct}/>}
+                    {isFilterVisibleByReportType(reportType, 'productType') && <FiltersBlock filterTitle={tFilters('productType')} filterOptions={productTypeOptions} filterState={filterProductType} setFilterState={setFilterProductType} isOpen={isOpenFilterProductType} setIsOpen={setIsOpenFilterProductType}/>}
+                    {isFilterVisibleByReportType(reportType, 'status') && <FiltersBlock filterTitle={tFilters('status')} filterOptions={statusOptions} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>}
                 </FiltersContainer>
 
 
             </div>
-            {runTour && tourGuideStepsReports ? <TourGuide steps={reportType===REPORT_TYPES.SALE_DYNAMIC ? tourGuideStepsReportsWithoutVariants: tourGuideStepsReports} run={runTour} pageName={TourGuidePages[`Report_${reportType}`]} /> : null}
+            {runTour && tourGuideStepsReports ? <TourGuide steps={reportType===REPORT_TYPES.SALE_DYNAMIC ? tourGuideStepsReportsWithoutVariants(tGuide): tourGuideStepsReports(tGuide)} run={runTour} pageName={TourGuidePages[`Report_${reportType}`]} /> : null}
         </Layout>
 
 

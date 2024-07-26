@@ -76,36 +76,36 @@ export const getVariantByReportType = (reportType: REPORT_TYPES, variant: string
     }
 }
 
-export const getVariantColumnsByReportType = (reportType: REPORT_TYPES, variant: AllVariantsType, resourceNames: string[]) => {
+export const getVariantColumnsByReportType = (t:any, tCountries: any, reportType: REPORT_TYPES, variant: AllVariantsType, resourceNames: string[]) => {
 
     switch (reportType) {
         case REPORT_TYPES.PRODUCTS_ON_STOCKS:
-            return getProductsOnStocksVariantColumns(variant as PRODUCTS_ON_STOCKS_VARIANTS);
+            return getProductsOnStocksVariantColumns(t, variant as PRODUCTS_ON_STOCKS_VARIANTS);
         case REPORT_TYPES.DELIVERY_RATES:
-            return getDeliveryRateVariantColumns(variant as DELIVERY_RATES_VARIANTS);
+            return getDeliveryRateVariantColumns(t, tCountries, variant as DELIVERY_RATES_VARIANTS);
         case REPORT_TYPES.REPORT_SALES:
-            return getReportSalesVariantColumns(variant as REPORT_SALES_VARIANTS);
+            return getReportSalesVariantColumns(t, tCountries, variant as REPORT_SALES_VARIANTS);
         case REPORT_TYPES.SALE_DYNAMIC:
-            return getSaleDynamicVariantColumns(variant as SALE_DYNAMIC_VARIANTS, resourceNames);
+            return getSaleDynamicVariantColumns(t, tCountries, variant as SALE_DYNAMIC_VARIANTS, resourceNames);
         case REPORT_TYPES.COD_REPORT:
-            return getCodReportVariantColumns(variant as COD_REPORT_VARIANTS);
+            return getCodReportVariantColumns(t, variant as COD_REPORT_VARIANTS);
 
         default:
             return null;
     }
 }
-export const getVariantOptionsByReportType = (reportType: REPORT_TYPES) => {
+export const getVariantOptionsByReportType = (t, reportType: REPORT_TYPES) => {
     switch (reportType) {
         case REPORT_TYPES.PRODUCTS_ON_STOCKS :
-            return Object.keys(PRODUCTS_ON_STOCKS_VARIANTS).map(item => ({value: item.toString(), label: PRODUCTS_ON_STOCKS_VARIANTS[item],}))
+            return Object.keys(PRODUCTS_ON_STOCKS_VARIANTS).map(item => ({value: item.toString(), label: t("ProductsOnStock."+item),}))
         case REPORT_TYPES.DELIVERY_RATES :
-            return Object.keys(DELIVERY_RATES_PARTIAL_VARIANTS).map(item => ({value: item.toString(), label: DELIVERY_RATES_PARTIAL_VARIANTS[item],}))
+            return Object.keys(DELIVERY_RATES_PARTIAL_VARIANTS).map(item => ({value: item.toString(), label: t("DeliveryRate."+item),}))
         case REPORT_TYPES.REPORT_SALES :
-            return Object.keys(REPORT_SALES_PARTIAL_VARIANTS).map(item => ({value: item.toString(), label: REPORT_SALES_PARTIAL_VARIANTS[item],}))
+            return Object.keys(REPORT_SALES_PARTIAL_VARIANTS).map(item => ({value: item.toString(), label: t("ReportSales."+item),}))
         case REPORT_TYPES.SALE_DYNAMIC :
-            return Object.keys(SALE_DYNAMIC_VARIANTS).map(item => ({value: item.toString(), label: SALE_DYNAMIC_VARIANTS[item],}))
+            return Object.keys(SALE_DYNAMIC_VARIANTS).map(item => ({value: item.toString(), label: t("ReportSaleDynamic."+item),}))
         case REPORT_TYPES.COD_REPORT:
-            return Object.keys(COD_REPORT_VARIANTS).map(item => ({value: item.toString(), label: COD_REPORT_VARIANTS[item],}))
+            return Object.keys(COD_REPORT_VARIANTS).map(item => ({value: item.toString(), label: t("ReportCodCheck."+item),}))
 
         default:
             return [];

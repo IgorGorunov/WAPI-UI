@@ -8,6 +8,8 @@ import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import {Routes} from "@/types/routes";
 import CookieConsent from "@/components/CookieConsent";
+import {MessageKeys, useTranslations} from "next-intl";
+import LanguageSelector from "@/components/LanguageSelector";
 //import { clarity } from 'react-microsoft-clarity';
 
 type Props = {
@@ -22,6 +24,7 @@ const Layout: React.FC<Props> = ({
   isWide = false,
   children,
 }) => {
+    const t = useTranslations('messages.errorMessages');
     const router = useRouter();
     const {logout, isCookieConsentReceived} = useAuth();
     const [showCookieConsent, setShowCookieConsent] = useState(false);
@@ -31,8 +34,9 @@ const Layout: React.FC<Props> = ({
 
     useEffect(() => {
         setInterceptorErrorCallback((title:string, message: string)=> {
-            setApiErrorTitle(title);
-            setApiErrorText(message);
+            console.log('error1234456', title, message);
+            setApiErrorTitle(t(title as MessageKeys<any, any>));
+            setApiErrorText(t(message as MessageKeys<any, any>));
         });
 
         setInterceptorRedirectCallback(async()=>{
@@ -66,8 +70,9 @@ const Layout: React.FC<Props> = ({
     }, [isCookieConsentReceived]);
 
   return (
-      <div className="main">
+      <div className={`main lang-${router.locale}`}>
           <div className={`main-content ${isWide ? 'is-wide' : ''}`}>
+              <LanguageSelector />
               {children}
           </div>
           {hasFooter && <Footer/>}

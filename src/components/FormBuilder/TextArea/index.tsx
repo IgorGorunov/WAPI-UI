@@ -31,7 +31,7 @@ const TextArea= forwardRef<HTMLTextAreaElement, FieldPropsType>(({
 
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
-            <div className={`form-control ${classNames ? classNames : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
+            <div className={`form-control-text-area ${classNames ? classNames : ""} ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
             {label && <label htmlFor={name}>{label}</label>}
             <textarea
                 id={name}

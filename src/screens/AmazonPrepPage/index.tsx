@@ -18,8 +18,13 @@ import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsAmazonPrep, tourGuideStepsAmazonPrepNoDocs} from "./amazomPrepTourGuideSteps.constants";
+import {useTranslations} from "next-intl";
 
 const AmazonPrepPage = () => {
+    const t = useTranslations('AmazonPrep');
+    const tBtns = useTranslations('common.buttons');
+    const tTourGuide = useTranslations('AmazonPrep.tourGuide');
+
     const {token, currentDate, superUser, ui} = useAuth();
 
     const today = currentDate;
@@ -44,7 +49,7 @@ const AmazonPrepPage = () => {
 
     const [steps, setSteps] = useState([]);
     useEffect(() => {
-        setSteps(amazonPrepOrdersData?.length ? tourGuideStepsAmazonPrep : tourGuideStepsAmazonPrepNoDocs);
+        setSteps(amazonPrepOrdersData?.length ? tourGuideStepsAmazonPrep(tTourGuide) : tourGuideStepsAmazonPrepNoDocs(tTourGuide));
     }, [amazonPrepOrdersData]);
 
     //single order data
@@ -59,9 +64,9 @@ const AmazonPrepPage = () => {
         try {
             setIsLoading(true);
             setAmazonPrepOrdersData([]);
-            const requesData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
+            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
 
-            const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requesData, ui} : requesData);
+            const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setAmazonPrepOrdersData(res.data);
@@ -129,9 +134,9 @@ const AmazonPrepPage = () => {
         <Layout hasHeader hasFooter>
             <div className="amazon-prep-page__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Amazon Prep' toRight needTutorialBtn >
-                    <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddAmazonPrepOrder}>Add order</Button>
-                    <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle={t('headerTitle')} toRight needTutorialBtn >
+                    <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddAmazonPrepOrder}>{t('addOrder')}</Button>
+                    <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>{tBtns('exportList')}</Button>
                 </Header>
                 {amazonPrepOrdersData && <AmazonPrepList amazonPrepOrders={amazonPrepOrdersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredAmazonPrepOrders={setFilteredAmazonPrepOrders} handleEditAmazonPrepOrder={handleEditAmazonPrepOrder} />}
             </div>

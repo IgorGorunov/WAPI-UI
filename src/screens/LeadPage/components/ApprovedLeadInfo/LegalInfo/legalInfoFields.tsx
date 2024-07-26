@@ -4,182 +4,169 @@ import {COUNTRIES} from "@/types/countries";
 
 
 //countries
-const alCountries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
+const alCountries = (t) =>COUNTRIES.map(item => ({label: t(item.value), value: item.value.toUpperCase()}));
 
-export const companyInfoFields  = [
+export const companyInfoFields  = (t, tMessages) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'companyName',
-        label: "Company name",
+        label: t('companyName'),
         width: WidthType.w50,
         classNames: "",
         rules: {
-            required: "Required field",
+            required: tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'regNo',
-        label: "Reg. No.",
+        label: t('regNo'),
         width: WidthType.w25,
         classNames: "",
         rules: {
-            required: "Required field",
+            required:  tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
         name: 'registrationCountry',
-        label: "Reg. country",
+        label: t('registrationCountry'),
         width: WidthType.w25,
-        options: alCountries,
+        options: alCountries(t),
         classNames: "",
         rules: {
-            required: "Required field",
+            required:  tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'legalAddress',
-        label: "Legal address",
+        label: t('legalAddress'),
         width: WidthType.w75,
         classNames: "",
         rules: {
-            required: "Required field",
+            required:  tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'vatNo',
-        label: "VAT No.",
+        label: t('vatNo'),
         width: WidthType.w25,
         classNames: "",
         rules: {
-            required: "Required field",
+            required:  tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
 ];
 
-export const bankInfoFields = [
+export const bankInfoFields = (t, tMessages) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'bank',
-        label: "Bank",
+        label: t('bank'),
         width: WidthType.w50,
         classNames: "",
         rules: {
-            required: "Required field",
+            required: tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'accountNo',
-        label: "Account No.",
+        label: t('accountNo'),
         width: WidthType.w33,
         classNames: "",
         rules: {
-            required: "Required field",
+            required: tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'swiftCode',
-        label: "SWIFT code",
+        label: t('swiftCode'),
         width: WidthType.w17,
         classNames: "",
         rules: {
-            required: "Required field",
+            required: tMessages('requiredField'),
             // validate: {
             //     matchPattern: (v) =>
             //         /^[A-Z]{4}[-]{0,1}[A-Z]{2}[-]{0,1}[A-Z0-9]{2}[-]{0,1}[0-9]{3}$/.test(v) ||
             //         "Please, enter valid SWIFT code",
             // },
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'bankAddress',
-        label: "Bank address",
+        label: t('bankAddress'),
         width: WidthType.w100,
         classNames: "",
         rules: {
-            required: "Required field",
+            required: tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
 
 ]
 
-export const otherInfoFields = [
+export const otherInfoFields = (t, tMessages) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'representedBy',
-        label: "Represented by",
+        label: t('representedBy'),
         width: WidthType.w50,
         classNames: "",
         rules: {
-            required: "Required field",
+            required: tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'actingOnTheBasisOf',
-        label: "Acting on the basis of",
+        label: t('actingOnTheBasisOf'),
         width: WidthType.w50,
         classNames: "",
         rules: {
-            required: "Required field",
+            required: tMessages('requiredField'),
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.PHONE_NUMBER,
         type: "text",
         name: 'phoneNumber',
-        label: "Phone number",
+        label: t('phoneNumber'),
         width: WidthType.w50,
         classNames: "",
         rules: {
-            required: "Phone number is required!",
-            validate: value => isPhoneValid(value) || 'Please, enter valid phone number',
+            required: tMessages('requiredField'),
+            validate: value => isPhoneValid(value) || tMessages('validPhoneNumber'),
         },
-        errorMessage: "Required field",
     },
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'contractEmail',
-        label: "Email (for sending contract to be signed)",
+        label: t('contractEmail'),
         width: WidthType.w50,
         classNames: "",
         rules: {
-            required: "Required field",
+            required: tMessages('requiredField'),
             validate: {
                 matchPattern: (v) =>
                     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) ||
-                    "Please, enter valid email address",
+                    tMessages('validEmail'),
             },
         },
-        errorMessage: "Required field",
     },
 ];

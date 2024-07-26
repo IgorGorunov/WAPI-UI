@@ -48,7 +48,8 @@
 
   &.phone-number {
     .error {
-      bottom: -10px;
+      //bottom: -10px;
+      top: calc(100% - 6px);
     }
   }
 

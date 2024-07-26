@@ -35,13 +35,18 @@
 
 
       &--title {
-        flex: 0 0 60px;
+        flex: 0 0 80px;
         font-weight: bold;
+
+        @media (max-width: $upToTablet) OR ( min-width: $desktop) {
+          flex: 0 0 125px;
+        }
       }
 
       &--value {
         flex: 1 1 auto;
         display: flex;
+        align-items: end;
         gap: 16px;
       }
 
@@ -69,7 +74,7 @@
         &-title {
           font-size: 14px;
           font-weight: bold;
-          margin-bottom: 12px;
+          margin-bottom: 24px;
         }
       }
     }

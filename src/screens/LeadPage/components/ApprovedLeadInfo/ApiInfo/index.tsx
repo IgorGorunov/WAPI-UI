@@ -1,9 +1,10 @@
 import React from "react";
 import "./styles.scss";
 import Icon from "@/components/Icon";
+import {useTranslations} from "next-intl";
 
 const ApiInfo:React.FC = () => {
-
+    const t = useTranslations('LeadPage.approvedLeadInfo.apiInfo');
     const handleDownload = async () => {
         const res = await fetch(`/WAPI capabilities for order processing.pdf`);
         const blob = await res.blob();
@@ -15,7 +16,6 @@ const ApiInfo:React.FC = () => {
         a.click();
         document.body.removeChild(a);
     }
-
 
     const handlePreview = async() => {
         if (window !== undefined) {
@@ -35,7 +35,7 @@ const ApiInfo:React.FC = () => {
                 <button className='api-documentation__action-btn' onClick={handleDownload}><Icon name='download-file'/>
                 </button>
                 <button className='api-documentation__action-btn' onClick={handlePreview}><Icon name='preview'/></button>
-                <p className='api-documentation__name'>WAPI capabilities for order processing</p>
+                <p className='api-documentation__name'>{t('apiInfoBtn')}</p>
             </div>
 
 

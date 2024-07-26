@@ -19,6 +19,7 @@ import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {getProductSelection} from "@/services/productSelection";
 import {aggregateTableData} from "@/utils/aggregateTable";
+import {useTranslations} from "next-intl";
 
 
 export type SelectedProductType = {
@@ -47,6 +48,9 @@ const getWarehouseCountry = (productList:ProductsSelectionType[], warehouse: str
 }
 
 const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, handleAddSelection, selectedDocWarehouse, needWarehouses=true, needOnlyOneWarehouse=true}) => {
+    const t = useTranslations('productSelection');
+    const tCommon = useTranslations('common');
+
     const [filteredProducts, setFilteredProducts]  = useState<ProductsSelectionType[]>([]);
     const {token, superUser, ui} = useAuth();
     const [productList, setProductList]  = useState<ProductsSelectionType[]>([]);
@@ -69,7 +73,6 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                 if (needWarehouses) {
                     setFilteredProducts(selectedDocWarehouse ? getFilteredProducts(selectedDocWarehouse, searchTerm, resp.data) : resp.data);
                 } else {
-
                     const res = await aggregateTableData(resp.data, ['uuid', 'name', 'sku','aliases','barcodes'], ['available'], ['warehouse','country','weightNet','weightGross','volumeWeight','volume'], [])
                     setFilteredProducts(res.map(item => ({...item, warehouse: '', key: item.uuid})) as ProductsSelectionType[]);
                 }
@@ -127,7 +130,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                         {
                             key: product.key,
                             product: product.product,
-                            name: '123',
+                            name: product.product,
                             quantity: product.quantity || '',
                             warehouse: selectedWarehouse || '',
                         }))
@@ -145,7 +148,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearchSelection',
-        label: 'Full text search',
+        label: tCommon('fullTextSearchLabel'),
         checked: fullTextSearchSelection,
         onChange: ()=>{setFullTextSearchSelection(prevState => !prevState);},
         classNames: 'full-text-search-toggle',
@@ -198,58 +201,48 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         }
     }
 
+    console.log('ccc', filteredProducts)
+
     //columns
     const allProductsColumnsWithFilter: TableColumnProps<ProductsSelectionType>[]  = [
         {
-            title: <TitleColumn title="Product name" minWidth="100px" maxWidth="300px" contentPosition="start"/>,
+            title: <TitleColumn title={t('listColumns.productName')} minWidth="100px" maxWidth="300px" contentPosition="start"/>,
             render: (text: string, record: ProductsSelectionType) => (
                 <TableCell value={record.name} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
             dataIndex: 'uuid',
             key: 'uuid',
             sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
         },
         {
-            title: <TitleColumn title="SKU" minWidth="80px" maxWidth="150px" contentPosition="start"/>,
+            title: <TitleColumn title={t('listColumns.sku')} minWidth="80px" maxWidth="150px" contentPosition="start"/>,
             render: (text: string, record: ProductsSelectionType) => (
                 <TableCell value={text} minWidth="80px" maxWidth="150px" contentPosition="start"/>
             ),
             dataIndex: 'sku',
             key: 'sku',
             sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
         },
         {
-            title: <TitleColumn title="Aliases" minWidth="100px" maxWidth="250px" contentPosition="start"/>,
+            title: <TitleColumn title={t('listColumns.aliases')} minWidth="100px" maxWidth="250px" contentPosition="start"/>,
             render: (text: string, record: ProductsSelectionType) => (
                 <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="250px" contentPosition="start"/>
             ),
             dataIndex: 'aliases',
             key: 'aliases',
             sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
         },
         {
-            title: <TitleColumn title="Barcodes" minWidth="100px" maxWidth="250px" contentPosition="start"/>,
+            title: <TitleColumn title={t('listColumns.barcodes')} minWidth="100px" maxWidth="250px" contentPosition="start"/>,
             render: (text: string, record: ProductsSelectionType) => (
                 <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="250px" contentPosition="start"/>
             ),
             dataIndex: 'barcodes',
             key: 'barcodes',
             sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
         },
         {
-            title: <TitleColumn title="Warehouse" minWidth="70px" maxWidth="70px" contentPosition="start"/>,
+            title: <TitleColumn title={t('listColumns.warehouse')} minWidth="70px" maxWidth="70px" contentPosition="start"/>,
             render: (text: string, record: ProductsSelectionType) => (
                 <TableCell
                     // value={text}
@@ -258,7 +251,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                     contentPosition="start"
                     childrenBefore={
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <span className={`fi fi-${record.country.toLowerCase()} flag-icon`}></span>
+                            {typeof record?.country === 'string' ? <span className={`fi fi-${record.country.toLowerCase()} flag-icon`}></span> : null}
                             {/*<div style={{ fontSize: '8px' }}>{record.country}</div>*/}
                             {text}
                         </div>
@@ -268,21 +261,15 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
             dataIndex: 'warehouse',
             key: 'warehouse',
             sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
         },
         {
-            title: <TitleColumn title="Available" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
+            title: <TitleColumn title={t('listColumns.available')} minWidth="60px" maxWidth="60px" contentPosition="start"/>,
             render: (text: string, record: ProductsSelectionType) => (
                 <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="center"/>
             ),
             dataIndex: 'available',
             key: 'available',
             sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
         },
         {
             title: '',
@@ -296,84 +283,13 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         },
     ];
 
-    const allProductsColumnsWithoutFilter: TableColumnProps<ProductsSelectionType>[]  = [
-        {
-            title: <TitleColumn title="Product name" minWidth="100px" maxWidth="300px" contentPosition="start"/>,
-            render: (text: string, record: ProductsSelectionType) => (
-                <TableCell value={record.name} minWidth="100px" maxWidth="300px" contentPosition="start"/>
-            ),
-            dataIndex: 'uuid',
-            key: 'uuid',
-            sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
-        },
-        {
-            title: <TitleColumn title="SKU" minWidth="80px" maxWidth="150px" contentPosition="start"/>,
-            render: (text: string, record: ProductsSelectionType) => (
-                <TableCell value={text} minWidth="80px" maxWidth="150px" contentPosition="start"/>
-            ),
-            dataIndex: 'sku',
-            key: 'sku',
-            sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
-        },
-        {
-            title: <TitleColumn title="Aliases" minWidth="100px" maxWidth="250px" contentPosition="start"/>,
-            render: (text: string, record: ProductsSelectionType) => (
-                <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="250px" contentPosition="start"/>
-            ),
-            dataIndex: 'aliases',
-            key: 'aliases',
-            sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
-        },
-        {
-            title: <TitleColumn title="Barcodes" minWidth="100px" maxWidth="250px" contentPosition="start"/>,
-            render: (text: string, record: ProductsSelectionType) => (
-                <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="250px" contentPosition="start"/>
-            ),
-            dataIndex: 'barcodes',
-            key: 'barcodes',
-            sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
-        },
-        {
-            title: <TitleColumn title="Available" minWidth="60px" maxWidth="60px" contentPosition="start"/>,
-            render: (text: string, record: ProductsSelectionType) => (
-                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="center"/>
-            ),
-            dataIndex: 'available',
-            key: 'available',
-            sorter: true,
-            // onHeaderCell: (column: ColumnType<OrderType>) => ({
-            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            // }),
-        },
-        {
-            title: '',
-            key: 'action',
-            width: 30,
-            render: (text, record, index) => (
-                <button className='action-btn add-type' onClick={() => addProduct(record)}>
-                    <Icon name='add-table-row' />
-                </button>
-            ),
-        },
-    ];
+    const allProductsColumnsWithoutFilter = [...allProductsColumnsWithFilter.slice(0,4), ...allProductsColumnsWithFilter.slice(5) ]
 
     const getSelectedProductColumns = (control: any) => {
         return [
 
             {
-                title: 'Product',
+                title: t('listColumns.product'),
                 dataIndex: 'product',
                 width: '100%',
                 key: 'product',
@@ -402,7 +318,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                 ),
             },
             {
-                title: 'Quantity',
+                title: t('listColumns.quantity'),
                 dataIndex: 'quantity',
                 key: 'quantity',
                 minWidth: 0,
@@ -460,7 +376,6 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                     : null
                 }
                 <div className="product-selection__search">
-
                     <SearchContainer>
                         <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => {
                             setSearchTerm("");
@@ -479,10 +394,10 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                         />
                     </div>
                     <div className="product-selection__select-all-btn">
-                        <Button icon='add-table-row' onClick={handleSelectAll}> Select all </Button>
+                        <Button icon='add-table-row' onClick={handleSelectAll}> {tCommon('buttons.selectAll')} </Button>
                     </div>
                 <div className='product-selection__table-title title-h4'>
-                    Selected into document products:
+                    {t('selectedProductsText')}:
                 </div>
                 <div
                     className='card table form-table table-form-fields product-selection__selected product-selection__table'>
@@ -495,8 +410,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                     />
                 </div>
                 <div className='product-selection__buttons'>
-                    <Button onClick={() => handleAddSelection(selectedProducts as SelectedProductType[])}>Add to
-                        document</Button>
+                    <Button onClick={() => handleAddSelection(selectedProducts as SelectedProductType[])}>{tCommon('buttons.addToDocument')}</Button>
                 </div>
             </div>
         </div>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Country } from "@/types/countries";
+import {Country, CountryCodeType} from "@/types/countries";
 import CountryList from "./CountryList";
 import "./styles.scss";
+import {useTranslations} from "next-intl";
 
 export type OrderByCountryType = {
   ordersCount: number;
@@ -18,10 +19,10 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
   departure,
 }) => {
   const [activeTab, setActiveTab] = useState(0);
-
+  const t = useTranslations('Dashboard.ordersByCountries')
   return (
     <div className={`orders-by-country orders-by-country__container card mb-md`}>
-      <p className="title-h4 title">Orders by countries</p>
+      <p className="title-h4 title">{t('title')}</p>
       <div className="orders-by-country__wrapper">
         <ul className="orders-by-country__tablist" role="tablist">
           <li
@@ -43,7 +44,8 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
                 setActiveTab(0);
               }}
             >
-              By country of departure
+              {/*By country of departure*/}
+              {t('tabTitle1')}
             </a>
           </li>
           <li
@@ -66,7 +68,8 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
               }}
 
             >
-              By country of arrival
+              {/*By country of arrival*/}
+              {t('tabTitle2')}
             </a>
           </li>
         </ul>

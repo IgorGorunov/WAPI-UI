@@ -25,6 +25,7 @@ import {
     tourGuideStepsStockMovements,
     tourGuideStepsStockMovementsNoDocs
 } from "@/screens/StockMovementsPage/stockMovementsTourGuideSteps.constants";
+import {MessageKeys, useTranslations} from "next-intl";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
@@ -45,6 +46,12 @@ export const docNamesSingle = {
 }
 
 const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
+    const t = useTranslations('StockMovements');
+    const tDocTypePlural = useTranslations('StockMovements.docTypePlural');
+    const tDocTypePluralShort = useTranslations('StockMovements.docTypePluralShort');
+    const tDocTypeSingle = useTranslations('StockMovements.docType');
+    const tGuide = useTranslations('StockMovements.tourGuide');
+    const tBtns = useTranslations('common.buttons');
 
     const Router = useRouter();
     const { token, currentDate, superUser, ui } = useAuth();
@@ -143,7 +150,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
     }, [isLoading, docType]);
 
     useEffect(() => {
-        setSteps(stockMovementData?.length ? tourGuideStepsStockMovements(docNamesSingle[docType].toLowerCase()) : tourGuideStepsStockMovementsNoDocs(docNamesSingle[docType].toLowerCase()))
+        setSteps(stockMovementData?.length ? tourGuideStepsStockMovements(tGuide, docType) : tourGuideStepsStockMovementsNoDocs(tGuide, docType))
     }, [stockMovementData]);
 
 
@@ -151,9 +158,9 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
         <Layout hasHeader hasFooter>
             <div className="stock-movement-page__container">
                 {isLoading && <Loader />}
-                <Header pageTitle={docNamesPlural[docType]} toRight needTutorialBtn >
-                    <Button classNames='add-doc' icon="add" iconOnTheRight onClick={handleAddOrder}>Add</Button>
-                    <Button classNames='export-docs' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+                <Header pageTitle={tDocTypePlural(docType as MessageKeys<any, any>)} toRight needTutorialBtn >
+                    <Button classNames='add-doc' icon="add" iconOnTheRight onClick={handleAddOrder}>{tBtns('addDoc')}</Button>
+                    <Button classNames='export-docs' icon="download-file" iconOnTheRight onClick={handleExportXLS}>{tBtns('exportList')}</Button>
                 </Header>
 
                 {stockMovementData && <StockMovementList docType={docType} docs={stockMovementData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredDocs={setFilteredDocs} handleEditDoc={handleEditStockMovement} />}
