@@ -5,11 +5,15 @@ import "./styles.scss";
 import Router from "next/router";
 import {Routes} from "@/types/routes";
 
-const SignUpBlock: React.FC = () => {
+type SignUpPropsType = {
+    utmQuery?: any;
+}
+
+const SignUpBlock: React.FC<SignUpPropsType> = ({utmQuery}) => {
+
   const handleClick = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-
-    await Router.push(Routes.SignUp);
+    await Router.push({pathname: Routes.SignUp, query: utmQuery || {}});
   };
 
   return (

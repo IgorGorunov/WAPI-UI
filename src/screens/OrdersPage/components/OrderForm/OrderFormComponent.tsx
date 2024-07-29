@@ -818,7 +818,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 orderData: data
             };
             const res: ApiResponseType = await sendOrderData(superUser && ui ? {...requestData, ui} : requestData);
-            console.log('order res: ', res)
+            //console.log('order res: ', res)
             if (res && "status" in res) {
                 if (res?.status === 200) {
                     //success

@@ -5,6 +5,7 @@ import Head from "next/head";
 import SignUpForm from "@/screens/SignUpPage/SignUpForm";
 
 const SignUpPage = () => {
+
     return (
         <Layout hasFooter>
             <Head>

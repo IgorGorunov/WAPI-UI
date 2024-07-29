@@ -347,7 +347,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
 
     useEffect(() => {
-        console.log('filtered: ', filteredOrders)
+        //console.log('filtered: ', filteredOrders)
     }, [filteredOrders]);
 
     useEffect(() => {

@@ -65,7 +65,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         if (reportType && !isReportWatched(reportType)) {
             if (!isLoading) {
                 setTimeout(() => setRunTour(true), 1000);
-                console.log('steps: ', tourGuideStepsReports, tourGuideStepsReportsWithoutVariants)
             }
         }
     }, [isLoading]);
