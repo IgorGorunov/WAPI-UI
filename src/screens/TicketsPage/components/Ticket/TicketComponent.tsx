@@ -144,7 +144,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
             };
 
             const res: ApiResponseType = await createTicket(superUser && ui ? {...requestData, ui} : requestData);
-            console.log('ticket res: ', res)
+            //console.log('ticket res: ', res)
             if (res && "status" in res) {
                 if (res?.status === 200 && res?.data) {
                     //success

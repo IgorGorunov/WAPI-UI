@@ -50,11 +50,7 @@ const ApiProtocols: React.FC<ApiProtocolsPropsType> = ({apiProtocols}) => {
     const fileHierarchy = useMemo(()=>getHierarchicalFileStructure(apiProtocols || []), [apiProtocols]);
 
 
-    console.log('hierarchy: ', getHierarchicalFileStructure(apiProtocols ? apiProtocols : []))
-
-
-
-
+    //console.log('hierarchy: ', getHierarchicalFileStructure(apiProtocols ? apiProtocols : []))
 
 
     return (

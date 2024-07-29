@@ -7,6 +7,7 @@ const signUp = async (
             phone: string;
             email: string;
         }
+        utm: any;
     }
 ) => {
     try {

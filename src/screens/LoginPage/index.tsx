@@ -12,6 +12,7 @@ const LoginPage = () => {
     const router = useRouter();
 
     const [oneTimeToken, setOneTimeToken] = useState<string>('');
+    const [utmQuery, setUtmQuery] = useState<any>({});
 
     useEffect(() => {
         setOneTimeToken('');
@@ -25,6 +26,15 @@ const LoginPage = () => {
     useEffect(() => {
         const { oneTimeToken } = router.query;
         setOneTimeToken(Array.isArray(oneTimeToken) ? (oneTimeToken.length ? oneTimeToken[0] : '') : oneTimeToken);
+
+        const query = router.query;
+        const utmQuery = {};
+        const keys = Object.keys(query).filter(key => key!=='oneTimeToken');
+        keys.map(key => {
+            utmQuery[key.replace('amp;','')]=query[key];
+        })
+
+        setUtmQuery(utmQuery);
     }, [router.query]);
 
     return (
@@ -42,7 +52,7 @@ const LoginPage = () => {
                 </div>
 
                 <LoginForm oneTimeToken={oneTimeToken} setOneTimeToken={setOneTimeToken} />
-                <SignUpBlock />
+                <SignUpBlock utmQuery={utmQuery} />
             </div>
         </Layout>
     );

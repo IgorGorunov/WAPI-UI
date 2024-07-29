@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {Routes} from "@/types/routes";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
@@ -11,12 +11,29 @@ import {ApiResponseType} from "@/types/api";
 import {signUp} from "@/services/signUp";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
-import Router from "next/router";
+import Router, {useRouter} from "next/router";
 
-const SignUpForm: React.FC = () => {
+type SignUpFormPropsType = {
+    utm?: any;
+}
+const SignUpForm: React.FC<SignUpFormPropsType> = ({utm}) => {
+    const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [utmQuery, setUtmQuery] = useState<any>({});
+
+    //getting uuid from query
+    useEffect(() => {
+        const query = router.query;
+        const utmQuery = {};
+        const keys = Object.keys(query).filter(key => key!=='oneTimeToken');
+        keys.map(key => {
+            utmQuery[key.replace('amp;','')]=query[key];
+        })
+
+        setUtmQuery(utmQuery);
+    }, [router.query]);
 
     const {
         control,
@@ -37,9 +54,9 @@ const SignUpForm: React.FC = () => {
         setShowStatusModal(false);
     }, [])
 
-
     const handleFormSubmit = async (data: any) => {
-        const lead = {lead: data};
+        const lead = {lead: data, utm: utm || utmQuery};
+
         try {
             setIsLoading(true);
             setError(null);

@@ -30,7 +30,7 @@ const ProfileDropdown = () => {
             );
 
             if (res && "data" in res) {
-                console.log('res users: ', res.data)
+                //console.log('res users: ', res.data)
                 setUsers(res.data);
             } else {
                 console.error("API did not return expected data");

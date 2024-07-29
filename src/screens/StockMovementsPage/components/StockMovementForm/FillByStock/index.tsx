@@ -57,7 +57,6 @@ const FillByStock: React.FC<PropsType> = ({ qualityList, onClose, setResponseDat
     }, [])
 
     const onSubmitForm = async(data) => {
-        console.log('send data: ', data);
 
         setIsLoading(true);
         try {
@@ -67,7 +66,7 @@ const FillByStock: React.FC<PropsType> = ({ qualityList, onClose, setResponseDat
                 quality: data.quality.filter(item => item.enable).map(item=>item.quality),
             };
 
-            console.log('data: ', requestData)
+            //console.log('data: ', requestData)
 
             const res: ApiResponseType = await fillInboundByStock(superUser && ui ? {...requestData, ui} : requestData);
 
