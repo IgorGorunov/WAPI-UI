@@ -73,6 +73,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         return orders.filter(order => order.lastTroubleStatus.length).length || 0;
     },[orders]);
 
+    const calcOrderWithoutTroubleStatuses = useCallback(() => {
+        return orders.filter(order => order.troubleStatuses.length===0).length || 0;
+    },[orders]);
+
     const calcOrderWithClaims = useCallback(() => {
         return orders.filter(order => order.claimsExist).length || 0;
     },[orders]);
@@ -114,6 +118,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }, [orders]);
     uniqueStatuses.sort();
     const transformedTroubleStatuses = useMemo(() => ([
+        {
+            value: '-NO trouble statuses-',
+            label: '-Never had trouble statuses-',
+            amount: calcOrderWithoutTroubleStatuses(),
+        },
         {
             value: '-All trouble statuses-',
             label: '-All trouble statuses-',
@@ -319,7 +328,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             const matchesStatus = !filterStatus.length ||
                 (filterStatus.includes(order.status));
             const matchesTroubleStatus = !filterTroubleStatus.length || (filterTroubleStatus.includes('-All trouble statuses-') && order.lastTroubleStatus.length) ||
-                filterTroubleStatus.includes(order.lastTroubleStatus);
+                (filterTroubleStatus.includes('-NO trouble statuses-') && order.troubleStatuses.length === 0) || filterTroubleStatus.includes(order.lastTroubleStatus);
             const matchesClaims = !filterClaims.length || (filterClaims.includes('With claims') && order.claimsExist) ||
                 (filterClaims.includes('Without claims') && !order.claimsExist);
             const matchesCommentsToCourierService = !filterCommentsToCourierService.length || (filterCommentsToCourierService.includes('With comments') && order.commentToCourierServiceExist) ||
