@@ -148,6 +148,7 @@ const OrdersPage = () => {
             receiverEMail: item.receiverEMail,
             receiverPhone: item.receiverPhone,
             lastUpdateDate: item.lastUpdateDate.split("T").join(" "),
+            lastTroubleStatus: `${item.lastTroubleStatus ? item.troubleStatuses[item.troubleStatuses.length -1].period.split("T").join(" ")+'  '+item.lastTroubleStatus : ""}`
         }));
         exportFileXLS(filteredData, "Orders");
     }
