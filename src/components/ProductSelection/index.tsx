@@ -71,6 +71,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                 } else {
 
                     const res = await aggregateTableData(resp.data, ['uuid', 'name', 'sku','aliases','barcodes'], ['available'], ['warehouse','country','weightNet','weightGross','volumeWeight','volume'], [])
+                    setProductList(res.map(item => ({...item, warehouse: '', key: item.uuid})) as ProductsSelectionType[]);
                     setFilteredProducts(res.map(item => ({...item, warehouse: '', key: item.uuid})) as ProductsSelectionType[]);
                 }
             } else {
