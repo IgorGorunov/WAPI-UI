@@ -1240,7 +1240,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             </Tabs>
             <div className='form-submit-btn'>
                 {productData && productData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                {isDisabled && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {isDisabled && !orderIsApproved && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
                 {(!isDisabled && !orderIsApproved || orderIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
                 {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
