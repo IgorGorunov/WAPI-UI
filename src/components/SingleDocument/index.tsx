@@ -8,7 +8,7 @@ import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 
 type SingleDocPropsType = {
-    type: NOTIFICATION_OBJECT_TYPES;
+    type: NOTIFICATION_OBJECT_TYPES | undefined;
     uuid?: string;
     onClose: ()=>void;
     onSuccessClose?: ()=>void;
