@@ -307,7 +307,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const filteredOrders = useMemo(() => {
         //setCurrent(1);
-
         return orders.filter(order => {
 
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
@@ -482,13 +481,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                     overlayClassName="doc-list-popover"
                                 >
                                     <div style={{
-                                            minHeight: '8px',
-                                            minWidth: '8px',
-                                            backgroundColor: 'red',
-                                            borderRadius: '50%',
-                                            display: 'inline-block',
-                                            alignSelf: 'center',
-                                        }} />
+                                        minHeight: '8px',
+                                        minWidth: '8px',
+                                        backgroundColor: 'red',
+                                        borderRadius: '50%',
+                                        display: 'inline-block',
+                                        alignSelf: 'center',
+                                    }} />
                                 </Popover>
                             )
                         }
@@ -539,13 +538,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                     overlayClassName="doc-list-popover"
                                 >
                                     <div style={{
-                                            minHeight: '8px',
-                                            minWidth: '8px',
-                                            backgroundColor: 'red',
-                                            borderRadius: '50%',
-                                            display: 'inline-block',
-                                            alignSelf: 'center',
-                                        }} />
+                                        minHeight: '8px',
+                                        minWidth: '8px',
+                                        backgroundColor: 'red',
+                                        borderRadius: '50%',
+                                        display: 'inline-block',
+                                        alignSelf: 'center',
+                                    }} />
+
                                 </Popover>
                             )
                         }
@@ -553,8 +553,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     </TableCell>
                 );
             },
-            dataIndex: 'troubleStatus',
-            key: 'troubleStatus',
+            dataIndex: 'troubleStatusesExist',
+            key: 'troubleStatusesExist',
             sorter: false,
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),

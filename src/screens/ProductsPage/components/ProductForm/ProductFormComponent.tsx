@@ -150,9 +150,20 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         }))
                     : [
                         {
-                            key: `unit-${Date.now().toString()}`,
+                            key: `unit-psc-${Date.now().toString()}`,
                             selected: false,
                             name: 'pcs',
+                            coefficient: '1',
+                            width: '',
+                            length: '',
+                            height:  '',
+                            weightGross: '',
+                            weightNet: '',
+                        },
+                        {
+                            key: `unit-box-${Date.now().toString()}`,
+                            selected: false,
+                            name: 'box',
                             coefficient: '1',
                             width: '',
                             length: '',
@@ -1244,7 +1255,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
                 {(!isDisabled && !orderIsApproved || orderIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
                 {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
-
             </div>
         </form>
 
