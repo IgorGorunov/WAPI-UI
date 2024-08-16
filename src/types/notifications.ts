@@ -35,6 +35,7 @@ export type NotificationType = {
     objectUuid: string;
     direction?: ChatMessageDirectionType;
     sender?: string;
+    topic?: string;
 }
 
 export type NotificationResponseType = {
