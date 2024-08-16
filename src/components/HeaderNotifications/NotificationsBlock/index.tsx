@@ -205,6 +205,10 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                                                     onClick={() => handleNotificationClick(item)}>
                                                     <div className='notification-title'>{item.title ? item.title : formatMessage(item.message, 100)}</div>
                                                     <div className='notification-period'>{formatDateTimeToStringWithDotWithoutSeconds(item.period)}</div>
+                                                    {item.topic || item.objectType===NOTIFICATION_OBJECT_TYPES.Ticket ? (
+                                                            <div className='notification-topic'><span>Topic: </span>{item.topic}</div>)
+                                                        : null
+                                                    }
                                                     <div className='notification-message'> {formatMessage(item.message, 200)}</div>
                                                     <div className={`notification-icon type-${item.type}`}>
                                                         <Icon name={getNotificationIconName(item.type) as IconType} />

@@ -97,12 +97,18 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const [searchTerm, setSearchTerm] = useState('');
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
+    const handleFullTextSearchChange = () => {
+        setFullTextSearch(prevState => !prevState)
+        if (searchTerm) {
+            setCurrent(1);
+        }
+    }
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
         label: 'Full text search',
         checked: fullTextSearch,
-        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        onChange: handleFullTextSearchChange,
         classNames: 'full-text-search-toggle',
         hideTextOnMobile: true,
     }
@@ -112,6 +118,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     },[products]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
+    const handleFilterStatusChange = (newStatuses: string[]) => {
+        setFilterStatus(newStatuses);
+        setCurrent(1);
+    }
     const uniqueStatuses = useMemo(() => {
         const statuses = products.map(invoice => invoice.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
@@ -142,10 +152,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
     const handleFilterChange = (newSearchTerm :string) => {
         setSearchTerm(newSearchTerm);
+        setCurrent(1);
     };
 
     const filteredProducts = useMemo(() => {
-        setCurrent(1);
+        //setCurrent(1);
         const searchTermLower = searchTerm.toLowerCase();
         const filtered = products.filter(product => {
             const matchesSearch = !searchTerm || Object.keys(product).some(key => {
@@ -573,7 +584,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                         title='Status'
                         filterState={filterStatus}
                         options={transformedStatuses}
-                        onClose={() => setFilterStatus([])} onClick={() => {
+                        onClose={() => handleFilterStatusChange([])} onClick={() => {
                         setIsFiltersVisible(true);
                         setIsOpenFilterStatus(true)
                     }}/>
@@ -619,10 +630,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible}
-                              onClearFilters={() => setFilterStatus([])}>
+                              onClearFilters={() => handleFilterStatusChange([])}>
                 <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE}
                               filterOptions={transformedStatuses} filterState={filterStatus}
-                              setFilterState={setFilterStatus} isOpen={isOpenFilterStatus}
+                              setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus}
                               setIsOpen={setIsOpenFilterStatus}/>
             </FiltersContainer>
             {/*{showConfirmModal && <ModalConfirm actionText={`to change status of ${selectedProducts.length} product${selectedProducts.length>1 ?'s':''}`} onOk={handleStatusChange} onCancel={()=>setShowConfirmModal(false)} />}*/}

@@ -81,5 +81,12 @@ export const enum ChatMessageDirectionType {
     FromUser = 'UI-User',
 }
 
+export type BasicDocListQueryType = {
+    page?: number;
+    pageSize?: number;
+    periodStart?: string;
+    periodEnd?: string;
+}
+
 
 

@@ -61,12 +61,18 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }, []);
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
+    const handleFullTextSearchChange = () => {
+        setFullTextSearch(prevState => !prevState)
+        if (searchTerm) {
+            setCurrent(1);
+        }
+    }
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
         label: 'Full text search',
         checked: fullTextSearch,
-        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        onChange: handleFullTextSearchChange,
         classNames: 'full-text-search-toggle',
         hideTextOnMobile: true,
     }
@@ -81,6 +87,10 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     },[amazonPrepOrders]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
+    const handleFilterStatusChange = (newStatuses: string[]) => {
+        setFilterStatus(newStatuses);
+        setCurrent(1);
+    }
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
         const statuses = amazonPrepOrders.map(order => order.status);
@@ -102,6 +112,10 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     // }, [uniqueStatuses]);
 
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
+    const handleFilterWarehouseChange = (newValue: string[]) => {
+        setFilterWarehouse(newValue);
+        setCurrent(1);
+    }
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
         const warehouses = amazonPrepOrders.map(order => order.warehouse);
@@ -123,6 +137,10 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     // }, [uniqueWarehouses]);
 
     const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
+    const handleFilterReceiverCountryChange = (newValue: string[]) => {
+        setFilterReceiverCountry(newValue);
+        setCurrent(1);
+    }
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = amazonPrepOrders.map(order => order.receiverCountry);
@@ -148,6 +166,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         setFilterWarehouse([]);
         setFilterReceiverCountry([]);
 
+        setCurrent(1);
         //close filter modal
         //setIsFiltersVisible(false);
     }
@@ -171,6 +190,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
     const handleFilterChange = (newSearchTerm :string) => {
         setSearchTerm(newSearchTerm);
+        setCurrent(1)
     };
 
     const [sortColumn, setSortColumn] = useState<keyof AmazonPrepOrderType | null>(null);
@@ -184,7 +204,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
 
     const filteredOrders = useMemo(() => {
-        setCurrent(1);
+        //setCurrent(1);
 
         return amazonPrepOrders.filter(order => {
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
@@ -480,9 +500,9 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
-                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>handleFilterWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
+                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -520,9 +540,9 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
              </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={handleFilterWarehouseChange} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
 
         </div>

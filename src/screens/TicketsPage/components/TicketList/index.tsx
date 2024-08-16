@@ -49,13 +49,31 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
+    // useEffect(() => {
+    //     const {page, pageSize, periodStart, periodEnd} = query;
+    //     if (pageSize) {
+    //         setPageSize(+pageSize);
+    //     }
+    //     if (page) {
+    //         setCurrent(+page);
+    //     }
+    // }, [query]);
+
+
     const [fullTextSearch, setFullTextSearch] = useState(true);
+    const handleFullTextSearchChange = () => {
+        setFullTextSearch(prevState => !prevState)
+        if (searchTerm) {
+            setCurrent(1);
+            //setQuery({addParams: {page:1}})
+        }
+    }
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
         label: 'Full text search',
         checked: fullTextSearch,
-        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        onChange: handleFullTextSearchChange,
         classNames: 'full-text-search-toggle',
         hideTextOnMobile: true,
     }
@@ -66,6 +84,11 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
+    const handleFilterStatusChange = (newStatuses: string[]) => {
+        setFilterStatus(newStatuses);
+        setCurrent(1);
+        //setQuery({addParams: {page:1}})
+    }
     const uniqueStatuses = useMemo(() => {
         const statuses = tickets.map(order => order.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
@@ -87,6 +110,11 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     // }, [uniqueStatuses]);
 
     const [filterTopic, setFilterTopic] = useState<string[]>([]);
+    const handleFilterTopicChange = (newTopics: string[]) => {
+        setFilterTopic(newTopics);
+        setCurrent(1);
+        //setQuery({addParams: {page:1}})
+    }
     const uniqueTopics = useMemo(() => {
         const topics = tickets.map(order => order.topic);
         return Array.from(new Set(topics)).filter(topic => topic).sort();
@@ -100,6 +128,11 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     ]), [uniqueTopics]);
 
     const [filterNewMessages, setFilterNewMessages] = useState<string[]>([]);
+    const handleFilterNewMessagesChange = (newMessages: string[]) => {
+        setFilterNewMessages(newMessages);
+        setCurrent(1);
+        //setQuery({addParams: {page:1}})
+    }
     const newMessagesOptions = useMemo(() => ([
         {
             value: 'Has new messages',
@@ -120,6 +153,9 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         setFilterStatus([]);
         setFilterTopic([]);
         setFilterNewMessages([]);
+
+        setCurrent(1);
+        //setQuery({addParams: {page:1}})
         //close filter modal
         //setIsFiltersVisible(false);
     }
@@ -130,15 +166,20 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             setCurrent(page);
             setAnimating(false);
         }, 500);
+        //setQuery({addParams: {page: page}});
     };
 
     const handleChangePageSize = (size: number) => {
         setPageSize(size);
         setCurrent(1);
+
+        //setQuery({addParams: {page:1, pageSize: size}});
     };
 
     const handleFilterChange = (newSearchTerm :string) => {
         setSearchTerm(newSearchTerm);
+        setCurrent(1);
+        //setQuery({addParams: {page:1}})
     };
 
     const [sortColumn, setSortColumn] = useState<keyof TicketType | null>(null);
@@ -152,7 +193,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
 
     const filteredOrders = useMemo(() => {
-        setCurrent(1);
+        //setCurrent(1);
 
         return tickets.filter(ticket => {
 
@@ -187,10 +228,16 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [tickets, searchTerm, filterStatus, filterNewMessages, sortColumn, sortDirection, fullTextSearch]);
+    }, [tickets, searchTerm, filterStatus, filterTopic, filterNewMessages, sortColumn, sortDirection, fullTextSearch, currentRange]);
+
+    useEffect(() => {
+        console.log('tickets changed')
+    }, [tickets]);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
         setCurrentRange(newRange);
+        setCurrent(1);
+        //setQuery({addParams: {page: 1, periodStart:formatDateToString(newRange.startDate), periodEnd:formatDateToString(newRange.endDate)}})
     };
 
     //filters
@@ -396,10 +443,12 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         }
     }, [router.query]);
 
+    //const setQuery = createSetQueryFunction(router, '/tickets');
+
     return (
         <div className="table order-list">
             <Head>
-                <title>Orders</title>
+                <title>Tickets</title>
                 <meta name="orders" content="orders" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/logo.png" type="image/png"/>
@@ -415,9 +464,9 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Topic' filterState={filterTopic} options={topicOptions} onClose={()=>setFilterTopic([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />
-                    <CurrentFilters title='New messages' filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>setFilterNewMessages([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />
+                    <CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Topic' filterState={filterTopic} options={topicOptions} onClose={()=>handleFilterTopicChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />
+                    <CurrentFilters title='New messages' filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>handleFilterNewMessagesChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -456,12 +505,12 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={statusOptions} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Topic' filterOptions={topicOptions} filterState={filterTopic} setFilterState={setFilterTopic} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>
-                <FiltersBlock filterTitle='New messages' filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={setFilterNewMessages} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>
+                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={statusOptions} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle='Topic' filterOptions={topicOptions} filterState={filterTopic} setFilterState={handleFilterTopicChange} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>
+                <FiltersBlock filterTitle='New messages' filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={handleFilterNewMessagesChange} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>
             </FiltersContainer>
         </div>
     );
 };
 
-export default React.memo(TicketList);
+export default TicketList;

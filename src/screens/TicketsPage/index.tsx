@@ -29,8 +29,35 @@ const TicketsPage = () => {
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
-    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
+    const [curPeriod, setCurrentPeriod] = useState<DateRangeType >({startDate: firstDay, endDate: today})
+
+    //const [isQueryChecked, setIsQueryChecked] = useState(false);
     const Router = useRouter();
+    const query = Router.query;
+
+    useEffect(() => {
+        const { uuid, periodStart, periodEnd } = query;
+
+        if (uuid) {
+            handleEditTicket(Array.isArray(uuid) ? uuid[0] : uuid);
+            //Router.replace('/tickets');
+            delete query.uuid;
+            Router.replace({pathname: '/tickets', query: {...query}}, undefined, {shallow: true});
+        }
+
+        // if (periodStart && periodEnd) {
+        //     console.log('set period')
+        //     setCurrentPeriod({startDate: new Date(periodStart as string), endDate: new Date(periodEnd as string)})
+        // } else {
+        //     setCurrentPeriod({startDate: firstDay, endDate: today})
+        // }
+        //
+        // if (!isQueryChecked) {
+        //     setIsQueryChecked(true);
+        // }
+
+    }, [query]);
+
 
     const [ticketsData, setTicketsData] = useState<TicketType[] | null>(null);
     const [singleTicketUuid, setSingleTicketUuid] = useState<string|null>(null);
@@ -79,7 +106,6 @@ const TicketsPage = () => {
         }
     }, [token,curPeriod]);
 
-
     useEffect(() => {
         fetchTickets();
     }, [token, curPeriod]);
@@ -104,18 +130,6 @@ const TicketsPage = () => {
 
     }
 
-    useEffect(() => {
-        const { uuid } = Router.query;
-
-        if (uuid) {
-            handleEditTicket(Array.isArray(uuid) ? uuid[0] : uuid);
-            Router.replace('/tickets');
-        }
-    }, [Router.query]);
-
-    // useEffect(() => {
-    //     fetchTickets();
-    // }, [notifications]);
 
     const handleCreateTicket = (
     ) => {
