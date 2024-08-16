@@ -55,12 +55,18 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [searchTerm, setSearchTerm] = useState('');
 
     const [fullTextSearch, setFullTextSearch] = useState(false);
+    const handleFullTextSearchChange = () => {
+        setFullTextSearch(prevState => !prevState)
+        if (searchTerm) {
+            setCurrent(1);
+        }
+    }
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
         label: 'Full text search',
         checked: fullTextSearch,
-        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        onChange: handleFullTextSearchChange,
         classNames: 'full-text-search-toggle',
         hideTextOnMobile: true,
     }
@@ -90,6 +96,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     },[orders]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
+    const handleFilterStatusChange = (newStatuses: string[]) => {
+        setFilterStatus(newStatuses);
+        setCurrent(1);
+    }
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
         const statuses = orders.map(order => order.status);
@@ -111,7 +121,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     // }, [uniqueStatuses]);
 
     const [filterTroubleStatus, setFilterTroubleStatus] = useState<string[]>([]);
-
+    const handleFilterTroubleStatusChange = (newValue: string[]) => {
+        setFilterTroubleStatus(newValue);
+        setCurrent(1);
+    }
     const uniqueTroubleStatuses = useMemo(() => {
         const statuses = orders.map(order => order.lastTroubleStatus);
         return Array.from(new Set(statuses)).filter(status => status).sort();
@@ -142,6 +155,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     // }, [uniqueTroubleStatuses]);
 
     const [filterClaims, setFilterClaims] = useState<string[]>([]);
+    const handleFilterClaimsChange = (newValue: string[]) => {
+        setFilterClaims(newValue);
+        setCurrent(1);
+    }
     const claimFilterOptions = useMemo(() => ([
         {
             value: 'With claims',
@@ -156,6 +173,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     ]), [orders]);
 
     const [filterCommentsToCourierService, setFilterCommentsToCourierService] = useState<string[]>([]);
+    const handleFilterCommentsToCourierServiceChange = (newValue: string[]) => {
+        setFilterCommentsToCourierService(newValue);
+        setCurrent(1);
+    }
     const commentToCourierServiceFilterOptions = useMemo(() => ([
         {
             value: 'With comments',
@@ -170,6 +191,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     ]), [orders]);
 
     const [filterSelfCollect, setFilterSelfCollect] = useState<string[]>([]);
+    const handleFilterSelfCollectChange = (newValue: string[]) => {
+        setFilterSelfCollect(newValue);
+        setCurrent(1);
+    }
     const selfCollectFilterOptions = useMemo(() => ([
         {
             value: 'Self collect',
@@ -184,6 +209,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     ]), [orders]);
 
     const [filterSentSMS, setFilterSentSMS] = useState<string[]>([]);
+    const handleFilterSentSMSChange = (newValue: string[]) => {
+        setFilterSentSMS(newValue);
+        setCurrent(1);
+    }
     const sentSMSFilterOptions = useMemo(() => ([
         {
             value: 'SMS was sent',
@@ -198,6 +227,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     ]), [orders]);
 
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
+    const handleFilterWarehouseChange = (newValue: string[]) => {
+        setFilterWarehouse(newValue);
+        setCurrent(1);
+    }
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
         const warehouses = orders.map(order => order.warehouse);
@@ -219,6 +252,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     // }, [uniqueWarehouses]);
 
     const [filterCourierService, setFilterCourierService] = useState<string[]>([]);
+    const handleFilterCourierServiceChange = (newValue: string[]) => {
+        setFilterCourierService(newValue);
+        setCurrent(1);
+    }
     // const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = useMemo(() => {
         const courierServices = orders.map(order => order.courierService);
@@ -240,6 +277,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     // }, [uniqueCourierServices]);
 
     const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
+    const handleFilterReceiverCountryChange = (newValue: string[]) => {
+        setFilterReceiverCountry(newValue);
+        setCurrent(1);
+    }
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = orders.map(order => order.receiverCountry);
@@ -270,6 +311,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setFilterCommentsToCourierService([])
         setFilterSelfCollect([]);
         setFilterSentSMS([]);
+
+        setCurrent(1);
         //close filter modal
         //setIsFiltersVisible(false);
     }
@@ -293,6 +336,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const handleFilterChange = (newSearchTerm :string) => {
         setSearchTerm(newSearchTerm);
+        setCurrent(1)
     };
 
     const [sortColumn, setSortColumn] = useState<keyof OrderType | null>(null);
@@ -831,15 +875,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>setFilterTroubleStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
-                    <CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>setFilterClaims([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
-                    <CurrentFilters title='Comment to courier service' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>setFilterCommentsToCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />
-                    <CurrentFilters title='Self collect' filterState={filterSelfCollect} options={selfCollectFilterOptions} onClose={()=>setFilterSelfCollect([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)}} />
-                    <CurrentFilters title='Sent SMS' filterState={filterSentSMS} options={sentSMSFilterOptions} onClose={()=>setFilterSentSMS([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)}} />
-                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
-                    <CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>
-                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>handleFilterTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
+                    <CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>handleFilterClaimsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
+                    <CurrentFilters title='Comment to courier service' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>handleFilterCommentsToCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />
+                    <CurrentFilters title='Self collect' filterState={filterSelfCollect} options={selfCollectFilterOptions} onClose={()=>handleFilterSelfCollectChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)}} />
+                    <CurrentFilters title='Sent SMS' filterState={filterSentSMS} options={sentSMSFilterOptions} onClose={()=>handleFilterSentSMSChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)}} />
+                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>handleFilterWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
+                    <CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>handleFilterCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>
+                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -876,15 +920,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={setFilterTroubleStatus} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
-                <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={setFilterClaims} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
-                <FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={setFilterCommentsToCourierService} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>
-                <FiltersBlock filterTitle='Self collect' filterOptions={selfCollectFilterOptions} filterState={filterSelfCollect} setFilterState={setFilterSelfCollect} isOpen={isOpenFilterSelfCollect} setIsOpen={setIsOpenFilterSelfCollect}/>
-                <FiltersBlock filterTitle='Sent SMS' filterOptions={sentSMSFilterOptions} filterState={filterSentSMS} setFilterState={setFilterSentSMS} isOpen={isOpenFilterSentSMS} setIsOpen={setIsOpenFilterSentSMS}/>
-                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
-                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={handleFilterTroubleStatusChange} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
+                <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={handleFilterClaimsChange} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
+                <FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={handleFilterCommentsToCourierServiceChange} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>
+                <FiltersBlock filterTitle='Self collect' filterOptions={selfCollectFilterOptions} filterState={filterSelfCollect} setFilterState={handleFilterSelfCollectChange} isOpen={isOpenFilterSelfCollect} setIsOpen={setIsOpenFilterSelfCollect}/>
+                <FiltersBlock filterTitle='Sent SMS' filterOptions={sentSMSFilterOptions} filterState={filterSentSMS} setFilterState={handleFilterSentSMSChange} isOpen={isOpenFilterSentSMS} setIsOpen={setIsOpenFilterSentSMS}/>
+                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={handleFilterWarehouseChange} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
+                <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={handleFilterCourierServiceChange} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
+                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
         </div>
     );

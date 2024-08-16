@@ -39,7 +39,7 @@ const TicketInfoBlock: React.FC<TicketInfoPropsType> = ({ticketData }) => {
                 </> : null}
             </div>
 
-            {displayDocModal && ticketData.subjectType && ticketData.subjectUuid ? (
+            {displayDocModal && ticketData.subjectUuid ? (
                 <SingleDocument type={NOTIFICATION_OBJECT_TYPES[ticketData.subjectType]} uuid={ticketData.subjectUuid} onClose={handleClose} />
             ) : null}
         </div>

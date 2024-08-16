@@ -65,12 +65,18 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     const [searchTerm, setSearchTerm] = useState('');
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
+    const handleFullTextSearchChange = () => {
+        setFullTextSearch(prevState => !prevState)
+        if (searchTerm) {
+            setCurrent(1);
+        }
+    }
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
         label: 'Full text search',
         checked: fullTextSearch,
-        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        onChange: handleFullTextSearchChange,
         classNames: 'full-text-search-toggle',
         hideTextOnMobile: true,
     }
@@ -95,6 +101,10 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     },[docs]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
+    const handleFilterStatusChange = (newStatuses: string[]) => {
+        setFilterStatus(newStatuses);
+        setCurrent(1);
+    }
     const uniqueStatuses = useMemo(() => {
         const statuses = docs.map(order => order.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
@@ -116,6 +126,10 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
     //SenderCountry
     const [filterSenderCountry, setFilterSenderCountry] = useState<string[]>([]);
+    const handleFilterSenderCountryChange = (newValue: string[]) => {
+        setFilterSenderCountry(newValue);
+        setCurrent(1);
+    }
     const uniqueSenderCountries = useMemo(() => {
         const senderCountries = docs.map(doc => doc.senderCountry);
         return Array.from(new Set(senderCountries)).filter(senderCountry => senderCountry);
@@ -140,6 +154,10 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
     //Sender
     const [filterSender, setFilterSender] = useState<string[]>([]);
+    const handleFilterSenderChange = (newValue: string[]) => {
+        setFilterSender(newValue);
+        setCurrent(1);
+    }
     const uniqueSenders = useMemo(() => {
         const senders = docs.map(doc => doc.sender);
         return Array.from(new Set(senders)).filter(sender => sender).sort();
@@ -164,6 +182,10 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
     //ReceiverCountry
     const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
+    const handleFilterReceiverCountryChange = (newValue: string[]) => {
+        setFilterReceiverCountry(newValue);
+        setCurrent(1);
+    }
     const uniqueReceiverCountries = useMemo(() => {
         const receiverCountries = docs.map(doc => doc.receiverCountry);
         return Array.from(new Set(receiverCountries)).filter(receiverCountry => receiverCountry);
@@ -188,6 +210,10 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
     //Receiver
     const [filterReceiver, setFilterReceiver] = useState<string[]>([]);
+    const handleFilterReceiverChange = (newValue: string[]) => {
+        setFilterReceiver(newValue);
+        setCurrent(1);
+    }
     const uniqueReceivers = useMemo(() => {
         const receivers = docs.map(doc => doc.receiver);
         return Array.from(new Set(receivers)).filter(receiver => receiver).sort();
@@ -228,6 +254,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
     const handleFilterChange = (newSearchTerm :string) => {
         setSearchTerm(newSearchTerm);
+        setCurrent(1)
     };
 
     const [sortColumn, setSortColumn] = useState<keyof StockMovementType | null>(null);
@@ -241,7 +268,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
 
     const filteredDocs = useMemo(() => {
-        setCurrent(1);
+        //setCurrent(1);
 
         return docs.filter(doc => {
 
@@ -299,6 +326,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         setFilterReceiver([]);
         setFilterReceiverCountry([]);
 
+        setCurrent(1);
         //close filter modal
         //setIsFiltersVisible(false);
     }
@@ -531,18 +559,18 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
-                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{handleFilterChange("");}} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Sender' filterState={filterSender} options={senderOptions} onClose={()=>setFilterSender([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)}}/>
-                    <CurrentFilters title='Sender country' filterState={filterSenderCountry} options={senderCountryOptions} onClose={()=>setFilterSenderCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)}}/>
-                    <CurrentFilters title='Receiver' filterState={filterReceiver} options={receiverOptions} onClose={()=>setFilterReceiver([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiver(true)}}/>
-                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <CurrentFilters title='Sender' filterState={filterSender} options={senderOptions} onClose={()=>handleFilterSenderChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)}}/>
+                    <CurrentFilters title='Sender country' filterState={filterSenderCountry} options={senderCountryOptions} onClose={()=>handleFilterSenderCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)}}/>
+                    <CurrentFilters title='Receiver' filterState={filterReceiver} options={receiverOptions} onClose={()=>handleFilterReceiverChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiver(true)}}/>
+                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -579,11 +607,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={setFilterSender} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
-                <FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={setFilterSenderCountry} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
-                <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={setFilterReceiver} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
-                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={handleFilterSenderChange} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
+                <FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={handleFilterSenderCountryChange} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
+                <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={handleFilterReceiverChange} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
+                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
             </FiltersContainer>
         </div>
     );

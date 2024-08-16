@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { Icon } from "../Icon";
 import "./styles.scss";
 import {DateRangeType} from "@/types/dashboard";
@@ -19,6 +19,10 @@ const DateInput: React.FC<DateInputType> = ({currentRange, handleRangeChange}) =
     const handleDateInputClick = () => {
         setShowDateInput(prevSate => !prevSate);
     }
+
+    useEffect(() => {
+        setCurRange(currentRange);
+    }, [currentRange]);
 
     const handleDateState = (periodRange: DateRangeType) => {
         setCurRange(periodRange);
