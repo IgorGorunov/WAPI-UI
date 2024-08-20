@@ -25,7 +25,7 @@ const ConfirmModal:React.FC<ConfirmModalType> = ({ actionText='', onOk, onCancel
     const modalContent = (
         <div className={`confirm-modal-overlay ${classNames ? classNames : ''}`}>
             <div className="confirm-modal-wrapper">
-                <p>Are you sure you want to {actionText}?</p>
+                <p>Are you sure you want to {actionText}</p>
                 <div className='confirm-modal__btns'>
                     <Button variant={ButtonVariant.PRIMARY} onClick={onOk}>Yes</Button>
                     <Button variant={ButtonVariant.SECONDARY} onClick={onCancel}>No</Button>

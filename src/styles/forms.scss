@@ -89,6 +89,12 @@
       }
     }
 
+    &-row {
+      &.is-disabled {
+        background-color: var(--color-light-gray) !important;
+      }
+    }
+
     &-cell {
       padding: 8px !important;
     }

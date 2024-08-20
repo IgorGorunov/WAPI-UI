@@ -134,7 +134,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
         {isLoading && <Loader />}
         <ToastContainer />
         { productParams && (uuid && productData || !uuid) && (productsList !== null) ?
-            <Modal title={`${productData ? 'Product': 'Product'}`} onClose={onCloseModal} >
+            <Modal title={`${productData ? 'Product': 'Product'}`} onClose={onCloseModal} classNames='document-modal'>
                 <ProductFormComponent
                     productParams={productParams}
                     productData={productData}

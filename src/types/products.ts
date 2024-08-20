@@ -62,7 +62,7 @@ export type ProductParamsType = {
 export type UnitOfMeasuresType = {
     height: number;
     length: number;
-    name: number;
+    name: string;
     coefficient: number;
     volume: number;
     weightGross: number;
@@ -109,6 +109,7 @@ export type SingleProductType = {
     specialTemperatureControl: string;
     typeOfStorage: string;
     unitOfMeasure: string;
+    withoutMasterCartonData?: boolean;
     unitOfMeasures: UnitOfMeasuresType[];
     whoProvideExtraPacking: string;
     aliases: string[];
@@ -119,7 +120,20 @@ export type SingleProductType = {
     statusHistory: StatusHistoryType[];
     canEdit: boolean;
     tickets?: TicketType[];
-}
+};
+
+export type UnitOfMeasureFormType = {
+    key: string;
+    selected?: boolean;
+    isDisabled?: boolean;
+    name: string;
+    coefficient: string;
+    width: string;
+    length: string;
+    height:  string;
+    weightGross: string;
+    weightNet: string;
+};
 
 export type SingleProductFormType = {
     uuid?: string;
@@ -146,17 +160,8 @@ export type SingleProductFormType = {
     specialTemperatureControl: string;
     typeOfStorage: string;
     unitOfMeasure: string;
-    unitOfMeasures: {
-        key: string;
-        selected: boolean;
-        name: string;
-        coefficient: string;
-        width: string;
-        length: string;
-        height:  string;
-        weightGross: string;
-        weightNet: string;
-    }[];
+    withoutMasterCartonData?: boolean;
+    unitOfMeasures: UnitOfMeasureFormType[];
     whoProvidesPackagingMaterial: string;
     aliases: {
         key: string;

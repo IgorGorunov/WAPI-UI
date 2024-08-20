@@ -15,6 +15,7 @@
   &-wrapper {
     position: absolute;
     top: 50vh;
+    max-width: 400px;
     transform: translateY(-50%);
     background-color: var(--color-white);
     padding: 36px;
