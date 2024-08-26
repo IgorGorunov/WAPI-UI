@@ -67,6 +67,7 @@
     background-color: var(--color-modal-bg);
     box-shadow: 0 2px 5px 0 var(--color-gray2);
     animation: animate 0.3s ease;
+    z-index: 1;
 
     &-item {
       padding: 4px 0;
