@@ -102,7 +102,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
         {isLoading && <Loader />}
         <ToastContainer />
         {docParameters && (docUuid && docData || !docUuid) ? (
-            <Modal title={docNamesSingle[docType]} onClose={onClose} >
+            <Modal title={docNamesSingle[docType]} onClose={onClose} classNames='document-modal'>
                 <StockMovementFormComponent
                     docType={docType}
                     docParameters={docParameters}

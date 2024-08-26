@@ -4,7 +4,11 @@ import {FormFieldTypes, WidthType} from "@/types/forms";
 import {COUNTRIES} from "@/types/countries";
 import "./styles.scss";
 import useAuth from "@/context/authContext";
-import {ProductParamsType, SingleProductFormType, SingleProductType} from "@/types/products";
+import {
+    ProductParamsType,
+    SingleProductFormType,
+    SingleProductType
+} from "@/types/products";
 import {
     FormFieldsAdditional1,
     FormFieldsAdditional2,
@@ -39,6 +43,7 @@ import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import {ProductDimensionsHints, ProductOtherHints} from "@/screens/ProductsPage/productsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {CommonHints} from "@/constants/commonHints";
+import ConfirmModal from "@/components/ModalConfirm";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -134,6 +139,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             packingBox: productData?.packingBox,
             hazmat: productData?.hazmat,
             unitOfMeasure: productData?.unitOfMeasure || 'pcs',
+            withoutMasterCartonData: productData?.withoutMasterCartonData || productData?.unitOfMeasures.length<=1 || false,
             unitOfMeasures:
                 productData && productData.unitOfMeasures
                     ? productData.unitOfMeasures.map((unit, index) => (
@@ -163,8 +169,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         {
                             key: `unit-box-${Date.now().toString()}`,
                             selected: false,
-                            name: 'box',
-                            coefficient: '1',
+                            name: 'master carton',
+                            coefficient: '',
                             width: '',
                             length: '',
                             height:  '',
@@ -228,6 +234,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const { append: appendBundle, remove: removeBundle } = useFieldArray({ control, name: 'bundleKit' });
     const { append: appendAnalogue, remove: removeAnalogue } = useFieldArray({ control, name: 'analogues' });
     const unitOfMeasures = watch('unitOfMeasures');
+    const unitOfMeasure = watch('unitOfMeasure');
+    const withoutMasterCartonData = watch('withoutMasterCartonData');
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState<string[]>([]);
 
 
@@ -236,13 +244,31 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         return unitOfMeasureOptions.map((item) => ({ value: item, label: item }));
     };
 
+    const getBoxes = useCallback((arr) => {
+        return arr.filter(item => item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton'));
+    },[]);
+
+    const getPieces = (arr) => {
+        return arr.filter(item => !(item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton')));
+    }
+
     useEffect(() => {
         // Update the select options when the unitOfMeasures array changes
         const names: string[] = unitOfMeasures.map((row) => row.name as string);
-        setUnitOfMeasureOptions(names);
-    }, [unitOfMeasures, setUnitOfMeasureOptions]);
+        if (withoutMasterCartonData) {
+            const pieces = getPieces(unitOfMeasures);
+            setUnitOfMeasureOptions(pieces.map(item => item.name as string))
+            if (unitOfMeasure && pieces.length && !pieces.filter(item => item.name == (unitOfMeasure as string)).length) {
+                setValue('unitOfMeasure', '');
+            }
+        } else {
+            setUnitOfMeasureOptions(names);
+        }
 
-    const [selectAllUnits, setSelectAllUnits] = useState(false);
+    }, [setUnitOfMeasureOptions, getPieces, unitOfMeasures, withoutMasterCartonData]);
+
+
+    //const [selectAllUnits, setSelectAllUnits] = useState(false);
 
     const handleUnitNameChange = (newValue: string, index: number) => {
         // Update the unitOfMeasureOptions based on the changed "Unit Name"
@@ -253,49 +279,85 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         });
     };
 
+    const removeMasterCarton = () => {
+        const newUnitsArr = getPieces(unitOfMeasures);
+        setValue('unitOfMeasures', newUnitsArr);
+    }
+
+    //confirm to remove master carton data
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const handleConfirmToRemoveMasterCarton = () => {
+        setShowConfirmModal(false);
+        const boxes = getBoxes(unitOfMeasures);
+        if (boxes.length) {
+            setValue('withoutMasterCartonData', true);
+            removeMasterCarton();
+        }
+
+    }
+
+    const handleMasterCartonDataChange = (val: React.ChangeEvent<HTMLInputElement>, onChange) => {
+        const boxes = getBoxes(unitOfMeasures);
+
+        if (val.target.checked) {
+            if (boxes.length && (boxes[0].coefficient || boxes[0].width || boxes[0].length || boxes[0].weightGross)) {
+                setShowConfirmModal(true);
+            } else {
+                onChange(val);
+                removeMasterCarton();
+            }
+        } else {
+            onChange(val);
+            if (unitOfMeasures.length <=1 && !boxes.length) {
+                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })
+            }
+
+        }
+    }
+
     const getUnitsColumns = (control: any) => {
         return [
-            {
-                title: (
-                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
-                        <FieldBuilder
-                            name={'selectedAllUnits'}
-                            fieldType={FormFieldTypes.CHECKBOX}
-                            checked ={selectAllUnits}
-                            disabled={isDisabled || orderIsApproved}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setSelectAllUnits(e.target.checked);
-                                // Update the values of all checkboxes in the form when "Select All" is clicked
-                                const values = getValues();
-                                const fields = values.unitOfMeasures;
-                                fields &&
-                                fields.forEach((field, index) => {
-                                    setValue(`unitOfMeasures.${index}.selected`, e.target.checked);
-                                });
-                            }}
-                        /></div>
-
-                ),
-                dataIndex: 'selected',
-                width: '40px',
-                key: 'selected',
-                render: (text, record, index) => (
-                    <Controller
-                        name={`unitOfMeasures.${index}.selected`}
-                        control={control}
-                        render={({ field }) => (
-                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
-                                <FieldBuilder
-                                    name={'unitOfMeasures.${index}.selected'}
-                                    fieldType={FormFieldTypes.CHECKBOX}
-                                    {...field}
-                                    disabled={isDisabled  || orderIsApproved}
-                                />
-                            </div>
-                        )}
-                    />
-                ),
-            },
+            // {
+            //     title: (
+            //         <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+            //             <FieldBuilder
+            //                 name={'selectedAllUnits'}
+            //                 fieldType={FormFieldTypes.CHECKBOX}
+            //                 checked ={selectAllUnits}
+            //                 disabled={isDisabled || orderIsApproved}
+            //                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            //                     setSelectAllUnits(e.target.checked);
+            //                     // Update the values of all checkboxes in the form when "Select All" is clicked
+            //                     const values = getValues();
+            //                     const fields = values.unitOfMeasures;
+            //                     fields &&
+            //                     fields.forEach((field, index) => {
+            //                         setValue(`unitOfMeasures.${index}.selected`, e.target.checked);
+            //                     });
+            //                 }}
+            //             /></div>
+            //
+            //     ),
+            //     dataIndex: 'selected',
+            //     width: '40px',
+            //     key: 'selected',
+            //     render: (text, record, index) => (
+            //         <Controller
+            //             name={`unitOfMeasures.${index}.selected`}
+            //             control={control}
+            //             render={({ field }) => (
+            //                 <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+            //                     <FieldBuilder
+            //                         name={'unitOfMeasures.${index}.selected'}
+            //                         fieldType={FormFieldTypes.CHECKBOX}
+            //                         {...field}
+            //                         disabled={isDisabled  || orderIsApproved}
+            //                     />
+            //                 </div>
+            //             )}
+            //         />
+            //     ),
+            // },
             {
                 title: <TutorialHintTooltip hint={ProductDimensionsHints['name'] || ''}><div>Name *</div></TutorialHintTooltip>,
                 dataIndex: 'name',
@@ -319,7 +381,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     onlyAllowedSymbols={true}
                                 /></div>
                         )}
-                        rules={{required: "Required field",}}
+                        rules={{required: "Required field"}}
                     />
                 ),
             },
@@ -327,13 +389,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 title: 'Quantity *',
                 dataIndex: 'coefficient',
                 key: 'coefficient',
-                responsive: ['md'] as ResponsiveBreakpoint[],
+                //responsive: ['md'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].coefficient`}
                         control={control}
                         render={({ field , fieldState: {error}}) => (
-                            <div style={{maxWidth: '110px'}}>
+                            <div style={{maxWidth: '100px'}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -345,7 +407,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 /></div>
 
                         )}
-                        rules={{ required: 'filed is required' }}
+                        rules={{ required: "Required field" }}
                     />
                 ),
             },
@@ -353,7 +415,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 title: 'Width | mm *',
                 dataIndex: 'width',
                 key: 'width',
-                responsive: ['lg'] as ResponsiveBreakpoint[],
+                //responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].width`}
@@ -370,7 +432,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: 'filed is required' }}
+                        rules={{ required: "Required field" }}
                     />
                 ),
             },
@@ -378,7 +440,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 title: 'Length | mm *',
                 dataIndex: 'length',
                 key: 'length',
-                responsive: ['lg'] as ResponsiveBreakpoint[],
+                //responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].length`}
@@ -395,7 +457,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: 'filed is required' }}
+                        rules={{ required: "Required field" }}
                     />
                 ),
             },
@@ -403,7 +465,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 title: 'Height | mm *',
                 dataIndex: 'height',
                 key: 'height',
-                responsive: ['lg'] as ResponsiveBreakpoint[],
+                //responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].height`}
@@ -420,7 +482,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: 'filed is required' }}
+                        rules={{ required: "Required field" }}
                     />
                 ),
             },
@@ -428,7 +490,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 title: 'Weight gross | kg *',
                 dataIndex: 'weightGross',
                 key: 'weightGross',
-                responsive: ['sm'] as ResponsiveBreakpoint[],
+                //responsive: ['sm'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
                         name={`unitOfMeasures[${index}].weightGross`}
@@ -445,7 +507,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: 'filed is required' }}
+                        rules={{ required: "Required field" }}
                     />
                 ),
             },
@@ -471,24 +533,24 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     />
                 ),
             },
-            {
-                title: '',
-                key: 'action',
-                minWidth: 500,
-                render: (text, record, index) => (
-                    <button disabled={isDisabled || orderIsApproved} className='action-btn' onClick={() => removeUnits(index)}>
-                        <Icon name='waste-bin' />
-                    </button>
-                ),
-            },
+            // {
+            //     title: '',
+            //     key: 'action',
+            //     minWidth: 500,
+            //     render: (text, record, index) => (
+            //         <button disabled={checkMasterCarton(record) || isDisabled || orderIsApproved} className='action-btn' onClick={() => removeUnits(index)}>
+            //             <Icon name='waste-bin' />
+            //         </button>
+            //     ),
+            // },
         ];
     }
 
-    const removeDimensions = () => {
-        const newUnitsArr = unitOfMeasures.filter(item => !item.selected);
-        setValue('unitOfMeasures', newUnitsArr);
-        setSelectAllUnits(false);
-    }
+    // const removeDimensions = () => {
+    //     const newUnitsArr = unitOfMeasures.filter(item => !item.selected);
+    //     setValue('unitOfMeasures', newUnitsArr);
+    //     setSelectAllUnits(false);
+    // }
 
 
     //Barcodes
@@ -1041,35 +1103,57 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                             errors={errors}
                                             isRequired={true}
                                             hint={ProductDimensionsHints['unitOfMeasure'] || ''}
+                                            disabled={isDisabled}
                                         />
                                     )}
                                     rules={{ required: 'Field is required' }}
                                 />
                                 {/*</div>*/}
-                                <div className='product-info--table-btns width-67' aria-disabled={orderIsApproved}>
-                                    <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
-                                        <Button classNames='add-unit-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>
-                                            Add
-                                        </Button>
-                                    </TutorialHintTooltip>
-                                    <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
-                                        <Button classNames='remove-unit-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>
-                                            Remove selected
-                                        </Button>
-                                    </TutorialHintTooltip>
+                                {/*<div className='product-info--table-btns width-67' aria-disabled={orderIsApproved}>*/}
+                                {/*    <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >*/}
+                                {/*        <Button classNames='add-unit-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>*/}
+                                {/*            Add*/}
+                                {/*        </Button>*/}
+                                {/*    </TutorialHintTooltip>*/}
+                                {/*    <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >*/}
+                                {/*        <Button classNames='remove-unit-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>*/}
+                                {/*            Remove selected*/}
+                                {/*        </Button>*/}
+                                {/*    </TutorialHintTooltip>*/}
 
-                                </div>
+                                {/*</div>*/}
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields form-table ' aria-disabled={orderIsApproved}>
+                        <div className='product-info--table table-form-fields form-table product-info--dimensions has-scroll' aria-disabled={orderIsApproved}>
                             <Table
                                 columns={getUnitsColumns(control)}
                                 dataSource={getValues('unitOfMeasures')?.map((field) => ({ key: field.name, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
+                                //rowClassName={(record)=>{return (checkMasterCarton(record) ? 'is-disabled' : '')}}
                             />
 
                         </div>
+                        {orderIsApproved || productData && productData.unitOfMeasures.length>1 ? null :  <Controller
+                            name="withoutMasterCartonData"
+                            control={control}
+                            render={({ field , fieldState: {error}}) => (
+                                <FieldBuilder
+                                    fieldType={FormFieldTypes.TOGGLE}
+                                    name='withoutMasterCartonData'
+                                    label="Product doesn't have master carton data"
+                                    {...field}
+                                    width={WidthType.w100}
+                                    errorMessage={error?.message}
+                                    errors={errors}
+                                    isRequired={true}
+                                    disabled={isDisabled}
+                                    onChange={(val: React.ChangeEvent<HTMLInputElement>)=>{handleMasterCartonDataChange(val, field.onChange); }}
+                                    //hint={ProductDimensionsHints['unitOfMeasure'] || ''}
+                                />
+                            )}
+                            //rules={{ required: 'Field is required' }}
+                        /> }
                     </CardWithHelpIcon>
                 </div>
                 <div className="barcodes-tab">
@@ -1257,7 +1341,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
             </div>
         </form>
-
+        {showConfirmModal && <ConfirmModal
+            actionText={`remove data about master carton? It's data will be cleared and row will be removed.`}
+            onOk={handleConfirmToRemoveMasterCarton}
+            onCancel={()=>setShowConfirmModal(false)}
+        />}
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
 

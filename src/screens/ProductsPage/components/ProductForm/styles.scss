@@ -93,6 +93,12 @@
     }
   }
 
+  &--dimensions.form-table{
+    margin: 0;
+    overflow: scroll;
+    min-height: 172px;
+  }
+
   .ant-table {
     &-thead {
       .ant-table-cell {

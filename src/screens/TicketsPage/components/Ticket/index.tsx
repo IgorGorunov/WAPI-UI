@@ -96,7 +96,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
             {isLoading && <Loader/>}
             <ToastContainer/>
             {ticketParams && (ticketUuid && singleTicketData || !ticketUuid) ?
-                <Modal title={`Ticket`} onClose={onCloseModal} >
+                <Modal title={`Ticket`} onClose={onCloseModal} classNames='document-modal'>
                     <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid}  reFetchTicket={()=>{fetchSingleTicket(ticketUuid)}} onClose={onCloseModal}/>
                 </Modal>
                 : null}

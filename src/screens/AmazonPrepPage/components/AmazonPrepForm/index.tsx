@@ -93,7 +93,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
         {(isLoading || !amazonPrepOrderParameters) && <Loader />}
         <ToastContainer />
         {amazonPrepOrderParameters && (docUuid && amazonPrepOrderData || !docUuid) ?
-            <Modal title={`Amazon prep`} onClose={onClose} >
+            <Modal title={`Amazon prep`} onClose={onClose} classNames='document-modal'>
                 <AmazonPrepFormComponent
                     amazonPrepOrderData={amazonPrepOrderData}
                     amazonPrepOrderParameters={amazonPrepOrderParameters}

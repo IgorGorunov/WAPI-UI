@@ -8,6 +8,15 @@
   @media (max-width: $upToLaptop) {
     width: 100%;
   }
+
+  .document-modal & {
+    width: calc(100% - 32px);
+
+    @media (min-width: $upToDesktop) {
+      max-width: 100%;
+      width: auto;
+    }
+  }
 }
 
 .modal {
