@@ -41,6 +41,12 @@ const formatDateStringToDisplayString = (dateString: string) => {
     return formatDateToDisplayString(new Date(dateString));
 }
 
+const formatDateToDisplayStringWithTime = (selectedDate: Date) => {
+    const date = formatDateToDisplayString(selectedDate);
+    const time = formatTimeStringFromString(selectedDate.toString());
+    return `${date}  ${time}`//formatDateToDisplayString(new Date(dateString));
+}
+
 const formatTimeStringFromString = (dateString: string) => {
     let d = new Date(dateString);
     const hours = d.getHours().toString();
@@ -116,7 +122,15 @@ const addWorkingDays = (days: number, time='0') => {
     return result;
 }
 
+export const addCurrentTimeToDate = (date: Date) => {
+    const curDay = new Date();
+    return new Date(date.getFullYear(), date.getMonth(), date.getDay(), curDay.getHours(), curDay.getMinutes());
+}
 
+export const setTimeToDate = (date: Date, time: string) => {
+    const [hours, minutes] = time ? time.split(':') : [0,0];
+    return new Date(date.getFullYear(), date.getMonth(), date.getDay(), +hours, +minutes);
+}
 
 export {
     formatDateToString,
@@ -124,6 +138,7 @@ export {
     formatDateStringToDisplayString,
     getFirstDayOfMonth,
     formatDateToDisplayString,
+    formatDateToDisplayStringWithTime,
     formatTimeStringFromString,
     getFirstDayOfYear,
     getLastFewDays,
@@ -131,4 +146,5 @@ export {
     formatDateToWeekRange,
     formatDateTimeToStringWithDotWithoutSeconds,
     addWorkingDays,
+
 }

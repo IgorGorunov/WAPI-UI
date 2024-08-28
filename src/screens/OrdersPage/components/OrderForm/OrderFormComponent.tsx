@@ -42,7 +42,7 @@ import useNotifications from "@/context/notificationContext";
 import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 import SingleDocument from "@/components/SingleDocument";
 import DocumentTickets from "@/components/DocumentTickets";
-import {formatDateStringToDisplayString} from "@/utils/date";
+import {addCurrentTimeToDate, formatDateStringToDisplayString} from "@/utils/date";
 import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import ConfirmModal from "@/components/ModalConfirm";
 import NotesList from "@/components/NotesList";
@@ -159,7 +159,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         courierService: orderData?.courierService || '',
         courierServiceTrackingNumber: orderData?.courierServiceTrackingNumber || '',
         courierServiceTrackingNumberCurrent: orderData?.courierServiceTrackingNumberCurrent || '',
-        date: orderData?.date || currentDate.toISOString(),
+        date: orderData?.date || addCurrentTimeToDate(currentDate).toISOString(),
         incomingDate: orderData?.incomingDate || '',
         preferredCourierService: orderData?.preferredCourierService || '',
         preferredCourierServiceMandatory: orderData?.preferredCourierServiceMandatory || false,

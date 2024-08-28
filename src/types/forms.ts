@@ -8,6 +8,7 @@ export const enum FormFieldTypes {
   SELECT = 'select',
   TEXT = 'text',
   DATE = 'date',
+  DATE_TIME = 'date-time',
   CHECKBOX = 'checkbox',
   RADIO = 'radio-switch',
   OTHER = 'other',
