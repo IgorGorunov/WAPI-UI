@@ -17,6 +17,7 @@ const formComponentsMap = {
   [FormFieldTypes.TEXT]: TextField,
   [FormFieldTypes.NUMBER]: TextField,
   [FormFieldTypes.DATE]: SingleDateInput,
+  [FormFieldTypes.DATE_TIME]: SingleDateInput,
   [FormFieldTypes.SELECT]: SelectField,
   [FormFieldTypes.CHECKBOX]: Checkbox,
   [FormFieldTypes.RADIO]: RadioSwitch,

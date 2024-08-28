@@ -1,10 +1,18 @@
 import React, {useState, forwardRef, useRef} from "react";
-import { Calendar } from "react-date-range";
+import { Calendar} from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+
+import TimePicker from 'react-time-picker';
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
+
 import "./styles.scss";
 import { FieldPropsType } from "@/types/forms";
-import {addWorkingDays, formatDateToDisplayString} from '@/utils/date'
+import {
+    addWorkingDays, formatDateToDisplayString,
+    formatDateToDisplayStringWithTime, setTimeToDate
+} from '@/utils/date'
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
@@ -50,11 +58,25 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
     const [selectedDate, setSelectedDate] = useState(getDate(value as string));
     const [showCalendar, setShowCalendar] = useState(false);
 
+    const curDate = new Date();
+    const [selectedTime, setSelectedTime] = useState(`${curDate.getHours()}:${curDate.getMinutes()}`);
+
+
     const handleDateSelect = (date) => {
-        setSelectedDate(date);
+        const newDate = setTimeToDate(date, type==='date-time' ? selectedTime : '0:0');
+        setSelectedDate(newDate);
         setShowCalendar(false);
 
-        if (onChange) onChange(date.toISOString());
+        if (onChange) onChange(newDate.toISOString());
+    };
+
+    const handleTimeSelect = (time: string) => {
+        setSelectedTime(time);
+        const newDate = setTimeToDate(selectedDate, time);
+        setSelectedDate(newDate);
+        //setShowCalendar(false);
+
+        if (onChange) onChange(newDate.toISOString());
     };
 
     const handleCloseDatePicker = () => {
@@ -95,11 +117,18 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                                 color="#5380F5"
                                 disabledDay={disableDays}
                             />
+                            {type==='date-time' ? <div className='time-picker-wrapper'> <Icon name='clock' /><TimePicker
+                                value={selectedTime}
+                                disableClock={true}
+                                onChange={(val)=>{console.log('got time:', val);handleTimeSelect(val)}}
+                            /></div> : null}
                         </div>}
                     <div className='date-input__wrapper'>
                         <input
                             type="text"
-                            value={formatDateToDisplayString(selectedDate)} readOnly onClick={()=>setShowCalendar((prevState) => !prevState)}
+                            //value={formatDateToDisplayString(selectedDate)}
+                            value = {type==='date' ? formatDateToDisplayString(selectedDate) : formatDateToDisplayStringWithTime(selectedDate)}
+                            readOnly onClick={()=>setShowCalendar((prevState) => !prevState)}
                             id={name}
                             placeholder={placeholder}
                             disabled={disabled}

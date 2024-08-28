@@ -106,4 +106,46 @@
   }
 }
 
+.time-picker-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
+.react-time-picker {
+  &__wrapper {
+    border: none;
+  }
+
+  &__clock-button,
+  &__clear-button,
+  &__clock {
+    display: none;
+  }
+
+
+  input {
+    padding: 0;
+    font-size: 13px;
+    box-shadow: none;
+    color: var(--color-gray) !important;
+    background: none !important;
+    cursor: pointer;
+  }
+
+  &__inputGroup {
+    &__divider {
+      display: inline-block;
+      padding: 0 8px;
+    }
+    &__leadingZero {
+      font-size: 13px;
+      color: var(--color-gray);
+      padding-right: 2px;
+    }
+  }
+
+}
+
 
