@@ -248,9 +248,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         return arr.filter(item => item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton'));
     },[]);
 
-    const getPieces = (arr) => {
+    const getPieces = useCallback((arr) => {
         return arr.filter(item => !(item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton')));
-    }
+    },[]);
 
     useEffect(() => {
         // Update the select options when the unitOfMeasures array changes
