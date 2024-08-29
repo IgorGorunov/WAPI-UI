@@ -707,7 +707,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     disabled={isDisabled}
-                                    onlyAllowedSymbols={true}
+                                    onlyAllowedSymbols={false}
                                 /></div>
                         )}
                     />
