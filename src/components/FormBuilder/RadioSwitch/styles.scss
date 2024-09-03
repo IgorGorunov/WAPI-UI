@@ -4,7 +4,14 @@
   padding-bottom: 12px;
 
   &__wrapper {
+    display: block;
+    padding-top: 10px;
     //align-self: flex-end;
+  }
+
+  &-label {
+    display: block;
+    margin-bottom: 8px;
   }
 
   &__option {

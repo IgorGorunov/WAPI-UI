@@ -37,6 +37,21 @@
     }
   }
 
+  &--helper-text p {
+    line-height: normal;
+  }
+
+  .delivery-type-hint {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    p {
+      font-size: 10px;
+      font-weight: bold;
+      line-height: normal;
+    }
+  }
+
   @media (max-width: $mobile) {
     .general-tab,
     .delivery-tab {
