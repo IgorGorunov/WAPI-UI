@@ -109,13 +109,12 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
             };
             const res: ApiResponseType = await sendOrderComment(superUser && ui ? {...requestData, ui} : requestData);
 
-            if (res && "status" in res) {
-                if (res?.status === 200) {
-                    //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Comment is sent successfully!`, onClose: closeSuccessModal})
-                    onSuccess();
-                    setShowStatusModal(true);
-                }
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Comment is sent successfully!`, onClose: closeSuccessModal})
+                onSuccess();
+                setShowStatusModal(true);
+
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
 

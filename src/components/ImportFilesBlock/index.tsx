@@ -100,12 +100,11 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                     return;
                 }
 
-                if (res && "status" in res) {
-                    if (res?.status === 200) {
-                        //success
-                        setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Files are sent successfully!`, onClose: closeSuccessModal})
-                        setShowStatusModal(true);
-                    }
+                if (res && "status" in res && res?.status === 200) {
+                    //success
+                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Files are sent successfully!`, onClose: closeSuccessModal})
+                    setShowStatusModal(true);
+
                 } else if (res && 'response' in res ) {
                     const errResponse = res.response;
 

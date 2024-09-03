@@ -51,14 +51,13 @@ const Prices: React.FC<PricesPropsType> = () => {
                 }
             );
 
-            if (res && "status" in res) {
-                if (res?.status === 200) {
-                    //success
-                    setShowNDA(false);
-                    setShowPrices(true);
-                    setUserStatus(userStatus === UserStatusType.NoLegalNoPrices ? UserStatusType.NoLegalPrices : UserStatusType.LegalPrices);
-                    //setStatus(status === UserStatusType.NoLegalNoPrices ? UserStatusType.NoLegalPrices : UserStatusType.LegalPrices);
-                }
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                setShowNDA(false);
+                setShowPrices(true);
+                setUserStatus(userStatus === UserStatusType.NoLegalNoPrices ? UserStatusType.NoLegalPrices : UserStatusType.LegalPrices);
+                //setStatus(status === UserStatusType.NoLegalNoPrices ? UserStatusType.NoLegalPrices : UserStatusType.LegalPrices);
+
             } else if (res && 'response' in res ) {
                 //error
             }

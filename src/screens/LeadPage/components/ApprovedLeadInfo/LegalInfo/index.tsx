@@ -86,13 +86,12 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
                 }
             );
 
-            if (res && "status" in res) {
-                if (res?.status === 200) {
-                    //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Thank you for submitting information to fill the contract! `, text: ['We will reach out for any necessary additional information.'], onClose: closeSuccessModal, disableAutoClose: true})
-                    setShowStatusModal(true);
-                    setIsDisabled(true);
-                }
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Thank you for submitting information to fill the contract! `, text: ['We will reach out for any necessary additional information.'], onClose: closeSuccessModal, disableAutoClose: true})
+                setShowStatusModal(true);
+                setIsDisabled(true);
+
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
 
