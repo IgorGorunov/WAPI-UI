@@ -671,12 +671,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         try {
             const res = isJustETA ? await sendJustETA(data) : await sendDocument(data);
 
-            if (res && "status" in res) {
-                if (res?.status === 200) {
-                    //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Document is successfully ${ docData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
-                    setShowStatusModal(true);
-                }
+            console.log('res:', res);
+
+            if (res && "status" in res && res?.status === 20) {
+                //success
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Document is successfully ${ docData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                setShowStatusModal(true);
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
 
@@ -689,8 +689,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             }
 
         } catch (error) {
+            console.log('12121212');
             console.error("Error fetching data:", error);
         } finally {
+            console.log('aaaaaaaa')
             setIsLoading(false);
             setIsJustETA(false);
         }
