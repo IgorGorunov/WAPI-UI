@@ -9,7 +9,7 @@ import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
 import {DetailsFields, GeneralFields} from "./StockMovementFormFields";
 import {TabFields, TabTitles} from "./StockMovementFormTabs";
-import {FormFieldTypes} from "@/types/forms";
+import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
@@ -48,6 +48,7 @@ import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
 import useNotifications from "@/context/notificationContext";
+import {camelCaseToSentence} from "@/utils/textMessage";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -61,6 +62,9 @@ type StockMovementFormType = {
     closeDocModal: ()=>void;
     refetchDoc: ()=>void;
 }
+
+const CONTAINER = 'Container';
+const transportationTypesDefault = [CONTAINER,'FullTrack', 'PalletsOrBoxes'];
 
 const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc}) => {
     const [isDisabled, setIsDisabled] = useState(!!docData?.uuid);
@@ -95,13 +99,19 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     //form
-    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors} = useForm({
+    const {control, handleSubmit,trigger, formState: { errors }, getValues, setValue, watch, clearErrors} = useForm({
         mode: 'onSubmit',
         defaultValues: {
             //date: docData?.date || currentDate.toISOString(),
             number: docData?.number || '',
             incomingDate: docData?.incomingDate || currentDate.toISOString(),
             incomingNumber: docData?.incomingNumber || '',
+            deliveryMethod: docData?.deliveryMethod || '',
+            transportationType: docData?.transportationType || '',
+            container20Amount: docData?.container20Amount || 0,
+            container40Amount: docData?.container40Amount || 0,
+            labelingNeeds: docData?.labelingNeeds || false,
+            mixedCarton: docData?.mixedCarton || false,
             sender: docData?.sender || (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE ? 'Customer' : ''),
             senderCountry: docData?.senderCountry || '',
             receiver: docData?.receiver || (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE ? 'Customer' : ''),
@@ -174,6 +184,25 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         //console.log('selected val:', selectedValue, productOptions.filter(item=>item.value===selectedValue))
 
     }
+
+    //deliveryMethodOptions
+    //const deliveryMethodOptions = useMemo(()=>docParameters?.deliveryMethod.map(item => ({label: item, value: item})),[docParameters]);
+    const deliveryMethodOptions = useMemo(()=>['PLL','SPD'].map(item => ({label: item, value: item} as OptionType)),[]);
+    const container20 = watch('container20Amount');
+    const container40 = watch('container40Amount');
+
+    useEffect(() => {
+        if (container20 || container40) {
+            trigger('container20Amount');
+            trigger('container40Amount');
+        }
+
+    }, [container20, container40]);
+
+
+    //transportation type
+    const transportationTypeOptions = useMemo(()=>transportationTypesDefault.map(item => ({label: camelCaseToSentence(item), value: item} as OptionType)),[]);
+    const transportationType = watch('transportationType');
 
     const setQuantityActual = (record: SingleOrderProductFormType, index: number) => {
         const product = getValues('products')[index];
@@ -489,8 +518,37 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
 
     //form fields
-    const generalFields = useMemo(()=> GeneralFields(!docData?.uuid, docType, !!(docData?.uuid && !docData.canEdit && !isFinished)), [docData])
-    const detailsFields = useMemo(()=>DetailsFields({newObject: !docData?.uuid, docType: docType, countryOptions: allCountries, senderOptions, receiverOptions, onSenderChange, onReceiverChange, canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished), senderHide: !!docData?.senderHide, receiverHide: !!docData?.receiverHide, sender: sender, receiver:receiver, isSenderDisabled: isSenderDisabled }), [docData, products, sender, receiver, isSenderDisabled]);
+    const generalFields = useMemo(()=> GeneralFields(
+        {
+            newObject: !docData?.uuid,
+            docType: docType,
+            canEditATA: !!(docData?.uuid && !docData.canEdit && !isFinished),
+            // transportationTypeOptions: transportationTypeOptions,
+            // isContainer: (transportationType === 'Container'),
+            // deliveryMethodOptions: deliveryMethodOptions,
+            // container20Value: container20,
+            // container40Value: container40,
+        }
+    ), [docData]);
+
+    const detailsFields = useMemo(()=>DetailsFields(
+        {
+            newObject: !docData?.uuid,
+            docType: docType,
+            countryOptions: allCountries,
+            senderOptions, receiverOptions,
+            onSenderChange, onReceiverChange,
+            canEditETA:!!(docData?.uuid && !docData.canEdit && !isFinished),
+            senderHide: !!docData?.senderHide,
+            receiverHide: !!docData?.receiverHide,
+            sender: sender, receiver:receiver,
+            isSenderDisabled: isSenderDisabled,
+            transportationTypeOptions: transportationTypeOptions,
+            isContainer: (transportationType === CONTAINER),
+            deliveryMethodOptions: deliveryMethodOptions,
+            container20Value: container20,
+            container40Value: container40,
+        }), [docData, products, sender, receiver, isSenderDisabled, transportationType, container20, container40]);
     //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
 
 
@@ -602,11 +660,13 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         clearTabTitles();
         setIsLoading(true);
 
-
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
-
-        data.products.forEach(item => item.quality = item.quality || 'Saleable')
+        data.products.forEach(item => item.quality = item.quality || 'Saleable');
+        if (data?.transportationType !== CONTAINER) {
+            data.container20Amount = 0;
+            data.container40Amount = 0;
+        }
 
         try {
             const res = isJustETA ? await sendJustETA(data) : await sendDocument(data);

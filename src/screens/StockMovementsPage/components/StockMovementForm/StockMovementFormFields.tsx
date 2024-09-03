@@ -3,63 +3,83 @@ import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 
-export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TYPE, canEditATA: boolean) => {
+export const GeneralFields = (
+    {
+        newObject,
+        docType,
+        canEditATA,
+        // transportationTypeOptions,
+        // isContainer,
+        // deliveryMethodOptions,
+        // container20Value = 0,
+        // container40Value = 0
+    }: {
+        newObject: boolean;
+        docType: STOCK_MOVEMENT_DOC_TYPE;
+        canEditATA: boolean;
+        // transportationTypeOptions: OptionType[];
+        // isContainer: boolean;
+        // deliveryMethodOptions: OptionType[];
+        // container20Value: number;
+        // container40Value: number;
+    }
+) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
     const docTypeSingle = docNamesSingle[docType];
     const docHintsObj = StockMovementsHints(docTypeSingle);
 
     return [
-            {
-                fieldType: FormFieldTypes.TEXT,
-                type: "text",
-                name: 'number',
-                label: "Number",
-                placeholder: "",
-                disabled: true,
-                width: WidthType.w17,
-                classNames: "",
-                isDisplayed: !newObject,
-                hint: docHintsObj['number'] || '',
-            },
-            {
-                fieldType: FormFieldTypes.TEXT,
-                type: "text",
-                name: 'incomingNumber',
-                label: "Incoming number",
-                placeholder: "",
-                width: newObject ? WidthType.w33 : WidthType.w17,
-                classNames: "",
-                hint: docHintsObj['incomingNumber'] || '',
-            },
-            {
-                fieldType: FormFieldTypes.DATE,
-                type: "date",
-                name: 'estimatedTimeArrives',
-                label: 'ETA',
-                disabled: !isInbound,
-                notDisable: isInbound && canEditATA,
-                placeholder: "",
-                width: WidthType.w17,
-                classNames: "calendar-to-right",
-                rules: {
-                    required: isInbound ? "Required field" : false,
-                    validate: value => {
-                        if (!isInbound) return true;
+        {
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: 'number',
+            label: "Number",
+            placeholder: "",
+            disabled: true,
+            width: WidthType.w17,
+            classNames: "",
+            isDisplayed: !newObject,
+            hint: docHintsObj['number'] || '',
+        },
+        {
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: 'incomingNumber',
+            label: "Incoming number",
+            placeholder: "",
+            width: newObject ? WidthType.w33 : WidthType.w17,
+            classNames: "",
+            hint: docHintsObj['incomingNumber'] || '',
+        },
+        {
+            fieldType: FormFieldTypes.DATE,
+            type: "date",
+            name: 'estimatedTimeArrives',
+            label: 'ETA',
+            disabled: !isInbound,
+            notDisable: isInbound && canEditATA,
+            placeholder: "",
+            width: WidthType.w17,
+            classNames: "calendar-to-right",
+            rules: {
+                required: isInbound ? "Required field" : false,
+                validate: value => {
+                    if (!isInbound) return true;
 
-                        const selectedDate = new Date(value);
-                        const year2000 = new Date('2000-01-01');
+                    const selectedDate = new Date(value);
+                    const year2000 = new Date('2000-01-01');
 
-                        if (selectedDate < year2000) {
-                            return 'Required field';
-                        }
-
-                        return true; // Validation passed
+                    if (selectedDate < year2000) {
+                        return 'Required field';
                     }
-                },
-                errorMessage: "Required field",
-                isClearable: true,
-                hint: docHintsObj['estimatedTimeArrives'] || '',
+
+                    return true; // Validation passed
+                }
             },
+            errorMessage: "Required field",
+            isClearable: false,
+            hint: docHintsObj['estimatedTimeArrives'] || '',
+        },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
@@ -84,6 +104,8 @@ export const GeneralFields = (newObject: boolean, docType: STOCK_MOVEMENT_DOC_TY
             isDisplayed: !newObject,
             hint: docHintsObj['statusAdditionalInfo'] || '',
         },
+
+
     ];
 }
 
@@ -102,6 +124,11 @@ export const DetailsFields = (
         sender,
         receiver,
         isSenderDisabled,
+        transportationTypeOptions,
+        isContainer,
+        deliveryMethodOptions,
+        container20Value = 0,
+        container40Value = 0
     }:{
         newObject: boolean,
         docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -115,7 +142,12 @@ export const DetailsFields = (
         senderHide: boolean;
         sender: string;
         receiver: string;
-        isSenderDisabled?: boolean
+        isSenderDisabled?: boolean;
+        transportationTypeOptions: OptionType[];
+        isContainer: boolean;
+        deliveryMethodOptions: OptionType[];
+        container20Value: number;
+        container40Value: number;
     }
 ) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
@@ -206,6 +238,119 @@ export const DetailsFields = (
             notDisable: isInbound && canEditETA,
             //isDisplayed: !newObject,
             hint: docHintsObj['courierServiceTrackingNumber'] || '',
+        },
+        {
+            name: 'grid-13',
+            fieldType: FormFieldTypes.GRID,
+            width: WidthType.w100,
+            isDisplayed: isInbound,
+            classNames: 'grid-no-wrap',
+            fields: [
+                {
+                    fieldType: FormFieldTypes.SELECT,
+                    type: "text",
+                    name: 'transportationType',
+                    label: 'Transportation type',
+                    options: transportationTypeOptions || [],
+                    placeholder: "",
+                    rules: {
+                        required: isInbound ? "Required field" : false,
+                    },
+                    errorMessage: "Required field",
+                    isDisplayed: isInbound,
+                    width: WidthType.w25,
+                    classNames: "",
+                    hint: docHintsObj['transportationType'] || '',
+                },
+                {
+                    fieldType: FormFieldTypes.RADIO,
+                    type: "text",
+                    name: 'deliveryMethod',
+                    label: 'Delivery method',
+                    isDisplayed: isInbound,
+                    options: deliveryMethodOptions,
+                    placeholder: "",
+                    width: WidthType.w25,
+                    rules: {
+                        required: isInbound ? "Required field" : false,
+                    },
+                    errorMessage: "Required field",
+                    isClearable: false,
+                    hint: docHintsObj['deliveryMethod'] || '',
+                },
+                {
+                    fieldType: FormFieldTypes.TOGGLE,
+                    name: 'labelingNeeds',
+                    label: "Needs labeling",
+                    width: WidthType.w25,
+                    isDisplayed: isInbound,
+                    classNames: "",
+                    hint: docHintsObj['labelingNeeds'] || '',
+                },
+                {
+                    fieldType: FormFieldTypes.TOGGLE,
+                    name: 'mixedCarton',
+                    label: "Mixed carton",
+                    width: WidthType.w25,
+                    isDisplayed: isInbound,
+                    classNames: "",
+                    hint: docHintsObj['mixedCarton'] || '',
+                },
+
+                {
+                    fieldType: FormFieldTypes.NUMBER,
+                    type: "number",
+                    name: 'container20Amount',
+                    label: 'Container20 amount',
+                    placeholder: "0",
+                    width: WidthType.w25,
+                    rules: {
+                        //required: isInbound ? 'Required field...' : false,
+                        validate: value => {
+                            if (!isInbound || !isContainer) return true;
+
+                            if (value <= 0 && container40Value <= 0) {
+                                return 'Fill at least one container amount';
+                            }
+                        },
+                    },
+                    classNames: "",
+                    isDisplayed: isContainer,
+                    hint: docHintsObj['container20Amount'] || '',
+                },
+                {
+                    fieldType: FormFieldTypes.NUMBER,
+                    type: "number",
+                    name: 'container40Amount',
+                    label: 'Container40 amount',
+                    placeholder: "0",
+                    width: WidthType.w25,
+                    rules: {
+                        //required: isInbound ? 'Required field...' : false,
+                        validate: value => {
+                            if (!isInbound || !isContainer) return true;
+
+                            if (value<=0 && container20Value <= 0) {
+                                return 'Fill at least one container amount';
+                            }
+
+                            return true; // Validation passed
+                        }
+                    },
+                    classNames: "",
+                    isDisplayed: isContainer,
+                    hint: docHintsObj['container40Amount'] || '',
+                },
+                {
+                    fieldType: FormFieldTypes.OTHER,
+                    type: "text",
+                    name: 'deliveryTypeHint',
+                    isDisplayed: isContainer,
+                    otherComponent: <p>Please remember to book your delivery day and time slot at least 5 business days in advance. During the high season (September to December), we recommend booking as early as possible to ensure your delivery is accepted by the warehouse.</p>,
+                    width: WidthType.w100,
+                    classNames: 'delivery-type-hint'
+                }
+            ],
         },
         {
             fieldType: FormFieldTypes.TEXT_AREA,

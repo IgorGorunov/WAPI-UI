@@ -71,6 +71,12 @@ export type SingleStockMovementType = {
     number: string;
     incomingDate: string;
     incomingNumber: string;
+    deliveryMethod?: string;
+    transportationType?: string;
+    container20Amount?: number;
+    container40Amount?: number;
+    labelingNeeds?: boolean;
+    mixedCarton?: boolean;
     packages: number;
     palletAmount: number;
     sender: string;
@@ -130,6 +136,12 @@ export type SingleStockMovementFormType = {
     incomingDate: string;
     number: string;
     incomingNumber: string;
+    deliveryMethod?: string;
+    transportationType?: string;
+    container20Amount?: number;
+    container40Amount?: number;
+    labelingNeeds?: boolean;
+    mixedCarton?: boolean;
     sender: string;
     senderCountry: string;
     receiver: string;

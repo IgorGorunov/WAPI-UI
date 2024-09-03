@@ -1,4 +1,5 @@
-export const StockMovementsHints = (docType: string) => ({
+export const StockMovementsHints = (docType = '') => {
+    return {
     number: '',
     incomingNumber: `${docType} number in your system (or just convenient for you)`,
     estimatedTimeArrives: `Estimated time of arrival`,
@@ -10,6 +11,12 @@ export const StockMovementsHints = (docType: string) => ({
     receiverCountry: ``,
     courierServiceTrackingNumber: `Tracking number of your shipment`,
     comment: `Important details for us to know regarding your ${docType.toLowerCase()}`,
+    deliveryMethod: '',
+    transportationType: ``,
+    labelingNeeds: ``,
+    mixedCarton: `Multiple SKUs combined in one pallet or carton`,
+    container20Amount: ``,
+    container40Amount: ``,
 
     // products
     importProducts: 'Click here to import products from Excel file',
@@ -18,4 +25,4 @@ export const StockMovementsHints = (docType: string) => ({
     // removeSelected: 'Delete chosen products',
 
     files: 'Put here the following files: packing list/shipment labels/CRMs/photos and other documents',
-});
+}};
