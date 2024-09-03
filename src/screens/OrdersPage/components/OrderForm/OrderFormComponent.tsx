@@ -819,12 +819,10 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             };
             const res: ApiResponseType = await sendOrderData(superUser && ui ? {...requestData, ui} : requestData);
             //console.log('order res: ', res)
-            if (res && "status" in res) {
-                if (res?.status === 200) {
-                    //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully ${ orderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
-                    setShowStatusModal(true);
-                }
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully ${ orderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                setShowStatusModal(true);
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
 
