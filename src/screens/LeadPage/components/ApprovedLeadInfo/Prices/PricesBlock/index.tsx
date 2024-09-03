@@ -40,12 +40,10 @@ const PricesBlock: React.FC<PricesBlockPropsType> = ({prices}) => {
                 }
             );
 
-            if (res && "status" in res) {
-                if (res?.status === 200) {
-                    //success
-                    res.data.map(file => handleDownload(file));
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                res.data.map(file => handleDownload(file));
 
-                }
             } else if (res && 'response' in res ) {
 
             }

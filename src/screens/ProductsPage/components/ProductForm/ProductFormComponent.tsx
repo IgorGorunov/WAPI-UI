@@ -980,12 +980,10 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             };
             const res: ApiResponse = await sendProductInfo(superUser && ui ? {...requestData, ui} : requestData);
 
-            if (res && "status" in res) {
-                if (res?.status === 200) {
-                    //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Product is successfully ${ productData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
-                    setShowStatusModal(true);
-                }
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Product is successfully ${ productData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                setShowStatusModal(true);
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
 

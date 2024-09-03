@@ -70,12 +70,11 @@ const FillByStock: React.FC<PropsType> = ({ qualityList, onClose, setResponseDat
 
             const res: ApiResponseType = await fillInboundByStock(superUser && ui ? {...requestData, ui} : requestData);
 
-            if (res && "status" in res) {
-                if (res?.status === 200) {
-                    //success
-                    setResponseData(res);
-                    onClose();
-                }
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                setResponseData(res);
+                onClose();
+
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
 
