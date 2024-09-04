@@ -673,7 +673,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
             console.log('res:', res);
 
-            if (res && "status" in res && res?.status === 20) {
+            if (res && "status" in res && res?.status === 200) {
                 //success
                 setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Document is successfully ${ docData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
                 setShowStatusModal(true);
