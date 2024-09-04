@@ -576,6 +576,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                             description: orderItem.troubleStatus + ': ' + orderItem.additionalInfo,
                                         }))}
                                         width={500}
+                                        needScroll={true}
                                     /> : null}
                                     trigger={isTouchDevice ? 'click' : 'hover'}
                                     placement="right"
