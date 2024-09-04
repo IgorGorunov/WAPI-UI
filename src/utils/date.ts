@@ -129,7 +129,7 @@ export const addCurrentTimeToDate = (date: Date) => {
 
 export const setTimeToDate = (date: Date, time: string) => {
     const [hours, minutes] = time ? time.split(':') : [0,0];
-    return new Date(date.getFullYear(), date.getMonth(), date.getDay(), +hours, +minutes);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hours, +minutes);
 }
 
 export {
