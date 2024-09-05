@@ -98,8 +98,13 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         setShowTicketForm(true)
     }
 
+    //tab titles
+    const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length));
+    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+
+
     //form
-    const {control, handleSubmit,trigger, formState: { errors }, getValues, setValue, watch, clearErrors} = useForm({
+    const {control, handleSubmit, setError, trigger, formState: { errors }, getValues, setValue, watch, clearErrors} = useForm({
         mode: 'onSubmit',
         defaultValues: {
             //date: docData?.date || currentDate.toISOString(),
@@ -516,6 +521,14 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         docNotifications = notifications.filter(item => item.objectUuid === docData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
     }
 
+    useEffect(() => {
+        if (products.length) {
+            clearErrors('products');
+            //trigger();
+            //updateTabTitles([...tabTitles.filter(item=> item.title !='products' ).map(item=>item.title)])
+        }
+    }, [products]);
+
 
     //form fields
     const generalFields = useMemo(()=> GeneralFields(
@@ -628,8 +641,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //     setShowFillModal(true)
     // }
 
-    const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length));
-    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
 
     useEffect(() => {
         resetTabTables(tabTitleArray);
@@ -658,6 +669,13 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     const onSubmitForm = async (data) => {
         clearTabTitles();
+        clearErrors();
+        if (data.products.length === 0) {
+            setError("products", { type: "manual", message: "Document needs to have at least one product" });
+            updateTabTitles(['products']);
+            return;
+        }
+
         setIsLoading(true);
 
         data.draft = isDraft;
@@ -689,10 +707,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             }
 
         } catch (error) {
-            console.log('12121212');
             console.error("Error fetching data:", error);
         } finally {
-            console.log('aaaaaaaa')
             setIsLoading(false);
             setIsJustETA(false);
         }
@@ -706,6 +722,11 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         }
 
         const fieldNames = Object.keys(props);
+
+        if (products.length === 0) {
+            fieldNames.push('products');
+            setError("products", { type: "manual", message: "Document needs to have at least one product" });
+        }
 
         if (fieldNames.length > 0) {
             toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
@@ -785,7 +806,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                 dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
+                                className={errors.products ? 'has-error-decor' : ''}
                             />
+                            {errors.products && <p className={'error-message'}>{errors.products.message}</p>}
+
                         </div>
                         <div className='grid-row stock-movement--products-total'>
                             {/*<FormFieldsBlock control={control} fieldsArray={productsTotalFields} errors={errors} isDisabled={isDisabled}/>*/}

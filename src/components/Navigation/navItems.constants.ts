@@ -28,7 +28,7 @@ export const navBlocks = (unreadAmount: number = 0) => ([
                 link: '/orders',
             },
             {
-                title: 'Amazon Prep',
+                title: 'B2B',
                 name: "Orders/AmazonPrep",
                 link: '/amazonPrep',
             }

@@ -492,6 +492,20 @@ input[type="date"]::before {
   }
 }
 
+.error-message {
+  //margin-top: 6px;
+  padding: 0 5px;
+  font-size: 12px;
+  //font-weight: bold;
+  color: var(--color-error);
+  //text-align: center;
+}
+
+.has-error-decor {
+  border: 2px solid red;
+  border-radius: 5px;
+}
+
 .tour-guide {
   svg {
     width: 24px;

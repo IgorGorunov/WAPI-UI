@@ -129,7 +129,7 @@ const AmazonPrepPage = () => {
         <Layout hasHeader hasFooter>
             <div className="amazon-prep-page__container">
                 {isLoading && <Loader />}
-                <Header pageTitle='Amazon Prep' toRight needTutorialBtn >
+                <Header pageTitle='B2B' toRight needTutorialBtn >
                     <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddAmazonPrepOrder}>Add order</Button>
                     <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
