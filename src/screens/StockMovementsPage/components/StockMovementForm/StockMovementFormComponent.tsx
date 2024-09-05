@@ -670,7 +670,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const onSubmitForm = async (data) => {
         clearTabTitles();
         clearErrors();
-        if (data.products.length === 0) {
+        if (data.products.length === 0 && !isDraft && !isJustETA) {
             setError("products", { type: "manual", message: "Document needs to have at least one product" });
             updateTabTitles(['products']);
             return;
