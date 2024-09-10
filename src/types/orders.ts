@@ -71,6 +71,7 @@ export type OrderType = {
     selfCollect: boolean;
     sentSMS: {}[];
     sentSMSExist: boolean;
+    logisticComment: string;
 }
 
 export type ProductInfoType = {
@@ -172,6 +173,7 @@ export type SingleOrderType = {
     notes: NoteType[];
     commentTodayWasSent: boolean;
     nextAvailableDayAfterDays: number;
+    logisticComment: string;
 }
 
 export type OrderProductType = {

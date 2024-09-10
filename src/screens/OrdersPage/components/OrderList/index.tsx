@@ -95,6 +95,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         return orders.filter(order => order[property] === value).length || 0;
     },[orders]);
 
+    const calcOrderWithLogisticComment = useCallback(()=> {
+        return orders.filter(order => !!order.logisticComment).length || 0;
+    }, [orders])
+
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const handleFilterStatusChange = (newStatuses: string[]) => {
         setFilterStatus(newStatuses);
@@ -169,6 +173,24 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             value: 'Without claims',
             label: 'Without claims',
             amount: (orders.length - calcOrderWithClaims()),
+        },
+    ]), [orders]);
+
+    const [filterLogisticComment, setFilterLogisticComment] = useState<string[]>([]);
+    const handleFilterLogisticCommentChange = (newValue: string[]) => {
+        setFilterLogisticComment(newValue);
+        setCurrent(1);
+    }
+    const logisticCommentFilterOptions = useMemo(() => ([
+        {
+            value: 'With order issue',
+            label: 'With order issue',
+            amount:  calcOrderWithLogisticComment(),
+        },
+        {
+            value: 'Without order issue',
+            label: 'Without order issue',
+            amount: (orders.length - calcOrderWithLogisticComment()),
         },
     ]), [orders]);
 
@@ -305,6 +327,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setFilterStatus([]);
         setFilterTroubleStatus([]);
         setFilterClaims([]);
+        setFilterLogisticComment([]);
         setFilterWarehouse([]);
         setFilterCourierService([]);
         setFilterReceiverCountry([]);
@@ -374,6 +397,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 (filterTroubleStatus.includes('-NO trouble statuses-') && order.troubleStatuses.length === 0) || filterTroubleStatus.includes(order.lastTroubleStatus);
             const matchesClaims = !filterClaims.length || (filterClaims.includes('With claims') && order.claimsExist) ||
                 (filterClaims.includes('Without claims') && !order.claimsExist);
+            const matchesLogisticComment = !filterLogisticComment.length || (filterLogisticComment.includes('With order issue') && !!order.logisticComment) ||
+                (filterClaims.includes('Without order issue') && !order.logisticComment);
             const matchesCommentsToCourierService = !filterCommentsToCourierService.length || (filterCommentsToCourierService.includes('With comments') && order.commentToCourierServiceExist) ||
                 (filterCommentsToCourierService.includes('Without comments') && !order.commentToCourierServiceExist);
             const matchesSelfCollect = !filterSelfCollect.length || (filterSelfCollect.includes('Self collect') && order.selfCollect) ||
@@ -386,7 +411,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 filterCourierService.map(item=>item.toLowerCase()).includes(order.courierService.toLowerCase());
             const matchesReceiverCountry = !filterReceiverCountry.length ||
                 filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
-            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesClaims && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
+            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -395,7 +420,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
+    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
 
 
     useEffect(() => {
@@ -404,7 +429,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     useEffect(() => {
         setCurrent(1)
-    }, [searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
+    }, [searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterLogisticComment, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
     //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
@@ -421,6 +446,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
     const [isOpenFilterTroubleStatus, setIsOpenFilterTroubleStatus] = useState(false);
     const [isOpenFilterClaim, setIsOpenFilterClaim] = useState(false);
+    const [isOpenFilterLogisticComment, setIsOpenFilterLogisticComment] = useState(false);
     const [isOpenFilterCommentToCourierService, setIsOpenFilterCommentToCourierService] = useState(false);
     const [isOpenFilterSelfCollect, setIsOpenFilterSelfCollect] = useState(false);
     const [isOpenFilterSentSMS, setIsOpenFilterSentSMS] = useState(false);
@@ -600,6 +626,61 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             },
             dataIndex: 'troubleStatusesExist',
             key: 'troubleStatusesExist',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+            responsive: ['lg'],
+        },
+        {
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="40px"
+                maxWidth="46px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="If order has Order issues" >
+                        <span>Order issue</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="40px"
+                        maxWidth="46px"
+                        contentPosition="center"
+                        childrenBefore={
+                            !!record.logisticComment && (
+                                <Popover
+                                    content={<SimplePopup
+                                        items={[{
+                                            title: '',
+                                            description: record.logisticComment,
+                                        }] as PopupItem[]}
+                                    />}
+                                    trigger={isTouchDevice ? 'click' : 'hover'}
+                                    placement="right"
+                                    overlayClassName="doc-list-popover"
+                                >
+                                    <div style={{
+                                        minHeight: '8px',
+                                        minWidth: '8px',
+                                        backgroundColor: 'red',
+                                        borderRadius: '50%',
+                                        display: 'inline-block',
+                                        alignSelf: 'center',
+                                    }} />
+                                </Popover>
+                            )
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'logisticComment',
+            key: 'logisticComment',
             sorter: false,
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
@@ -879,6 +960,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
                     <CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>handleFilterTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
                     <CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>handleFilterClaimsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
+                    <CurrentFilters title='Order issues' filterState={filterLogisticComment} options={logisticCommentFilterOptions} onClose={()=>handleFilterLogisticCommentChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}} />
                     <CurrentFilters title='Comment to courier service' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>handleFilterCommentsToCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />
                     <CurrentFilters title='Self collect' filterState={filterSelfCollect} options={selfCollectFilterOptions} onClose={()=>handleFilterSelfCollectChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)}} />
                     <CurrentFilters title='Sent SMS' filterState={filterSentSMS} options={sentSMSFilterOptions} onClose={()=>handleFilterSentSMSChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)}} />
@@ -924,6 +1006,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle='Trouble status' filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={handleFilterTroubleStatusChange} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
                 <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={handleFilterClaimsChange} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
+                <FiltersBlock filterTitle='Order issues' filterOptions={logisticCommentFilterOptions} filterState={filterLogisticComment} setFilterState={handleFilterLogisticCommentChange} isOpen={isOpenFilterLogisticComment} setIsOpen={setIsOpenFilterLogisticComment}/>
                 <FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={handleFilterCommentsToCourierServiceChange} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>
                 <FiltersBlock filterTitle='Self collect' filterOptions={selfCollectFilterOptions} filterState={filterSelfCollect} setFilterState={handleFilterSelfCollectChange} isOpen={isOpenFilterSelfCollect} setIsOpen={setIsOpenFilterSelfCollect}/>
                 <FiltersBlock filterTitle='Sent SMS' filterOptions={sentSMSFilterOptions} filterState={filterSentSMS} setFilterState={handleFilterSentSMSChange} isOpen={isOpenFilterSentSMS} setIsOpen={setIsOpenFilterSentSMS}/>
