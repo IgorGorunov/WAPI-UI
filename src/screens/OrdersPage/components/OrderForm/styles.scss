@@ -43,6 +43,27 @@
     }
   }
 
+  &--logistic-comment {
+    &-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 6px;
+      padding: 0 4px;
+      border: 1px solid var(--color-dark-red);
+      border-radius: 8px;
+
+      @media (min-width: $laptop) {
+        margin-bottom: 16px;
+      }
+    }
+
+    &-text {
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--color-dark-red);
+    }
+  }
+
   @media (max-width: $mobile) {
     .general-tab,
     .delivery-tab {
