@@ -91,6 +91,7 @@ export type SingleOrderProductType = {
     total: number;
     unfoldBundle?: boolean;
     unitOfMeasure?: string;
+    connectionKey?: string | number;
 }
 
 export type OrderHistoryType = {
@@ -254,6 +255,7 @@ export type SingleOrderProductFormType = {
     tax: string | number;
     total: string | number;
     cod: string | number;
+    connectionKey?: string | number;
 };
 
     export type SingleOrderFormType = {

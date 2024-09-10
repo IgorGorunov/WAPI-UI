@@ -203,6 +203,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         tax: product.tax || '',
                         total: product.total || '',
                         cod: product.cod || '',
+                        connectionKey: product?.connectionKey || '',
                     }))
                 : [],
     }),[orderData]);
@@ -746,7 +747,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         cod: 0,
                         tax: 0,
                         discount: 0,
-                        total: 0
+                        total: 0,
+                        connectionKey: '',
                     }
                 );
             }
@@ -1035,7 +1037,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                             discount: '',
                                                             tax: '',
                                                             total: '',
-                                                            cod: ''
+                                                            cod: '',
+                                                            connectionKey: '',
                                                         })}
                                                 >
                                                     Add by SKU
