@@ -124,7 +124,7 @@ const addWorkingDays = (days: number, time='0') => {
 
 export const addCurrentTimeToDate = (date: Date) => {
     const curDay = new Date();
-    return new Date(date.getFullYear(), date.getMonth(), date.getDay(), curDay.getHours(), curDay.getMinutes());
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), curDay.getHours(), curDay.getMinutes());
 }
 
 export const setTimeToDate = (date: Date, time: string) => {
