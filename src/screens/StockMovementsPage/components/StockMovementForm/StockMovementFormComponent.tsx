@@ -7,7 +7,7 @@ import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
-import {DetailsFields, GeneralFields} from "./StockMovementFormFields";
+import {CargoFields, DetailsFields, GeneralFields} from "./StockMovementFormFields";
 import {TabFields, TabTitles} from "./StockMovementFormTabs";
 import {FormFieldTypes, OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
@@ -48,7 +48,6 @@ import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
 import useNotifications from "@/context/notificationContext";
-import {camelCaseToSentence} from "@/utils/textMessage";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -63,8 +62,26 @@ type StockMovementFormType = {
     refetchDoc: ()=>void;
 }
 
-const CONTAINER = 'Container';
-const transportationTypesDefault = [CONTAINER,'FullTrack', 'PalletsOrBoxes'];
+export enum DELIVERY_METHODS {
+    CONTAINER ='Container',
+    FULL_TRACK = 'Full track',
+    PLL = 'PLL',
+    CARTONS = 'Cartons'
+}
+
+//const deliveryTypesDefault = [CONTAINER,'FullTrack', 'PLL', 'Cartons'];
+const deliveryMethodOptions = [
+    {value: DELIVERY_METHODS.CONTAINER, label: 'Container'},
+    {value: DELIVERY_METHODS.FULL_TRACK, label: 'Full track'},
+    {value: DELIVERY_METHODS.PLL, label: 'PLL'},
+    {value: DELIVERY_METHODS.CARTONS, label: 'Cartons'}
+];
+
+const deliveryTypeOptions: OptionType[] = [
+    {value: 'Standart', label: 'WAPI Standart'},
+    {value: 'Express', label: 'WAPI Express'},
+    {value: 'Customer Carrier', label: 'Customer Carrier'}
+]
 
 const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc}) => {
     const [isDisabled, setIsDisabled] = useState(!!docData?.uuid);
@@ -111,10 +128,15 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             number: docData?.number || '',
             incomingDate: docData?.incomingDate || currentDate.toISOString(),
             incomingNumber: docData?.incomingNumber || '',
+            deliveryType: docData?.deliveryType || '',
             deliveryMethod: docData?.deliveryMethod || '',
-            transportationType: docData?.transportationType || '',
             container20Amount: docData?.container20Amount || 0,
             container40Amount: docData?.container40Amount || 0,
+            palletsAmount: docData?.palletsAmount || 0,
+            cartonsAmount: docData?.cartonsAmount || 0,
+            volume: docData?.volume,
+            weightTotalGross: docData?.weightTotalGross,
+            weightTotalNet: docData?.weightTotalNet,
             labelingNeeds: docData?.labelingNeeds || false,
             mixedCarton: docData?.mixedCarton || false,
             sender: docData?.sender || (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE ? 'Customer' : ''),
@@ -192,9 +214,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     //deliveryMethodOptions
     //const deliveryMethodOptions = useMemo(()=>docParameters?.deliveryMethod.map(item => ({label: item, value: item})),[docParameters]);
-    const deliveryMethodOptions = useMemo(()=>['PLL','SPD'].map(item => ({label: item, value: item} as OptionType)),[]);
+    //const deliveryMethodOptions = useMemo(()=>['PLL','SPD'].map(item => ({label: item, value: item} as OptionType)),[]);
+    const deliveryMethod = watch('deliveryMethod');
     const container20 = watch('container20Amount');
     const container40 = watch('container40Amount');
+    const palletsAmount = watch('palletsAmount');
+    const cartonsAmount = watch('cartonsAmount');
 
     useEffect(() => {
         if (container20 || container40) {
@@ -204,10 +229,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     }, [container20, container40]);
 
-
-    //transportation type
-    const transportationTypeOptions = useMemo(()=>transportationTypesDefault.map(item => ({label: camelCaseToSentence(item), value: item} as OptionType)),[]);
-    const transportationType = watch('transportationType');
 
     const setQuantityActual = (record: SingleOrderProductFormType, index: number) => {
         const product = getValues('products')[index];
@@ -536,11 +557,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             newObject: !docData?.uuid,
             docType: docType,
             canEditATA: !!(docData?.uuid && !docData.canEdit && !isFinished),
-            // transportationTypeOptions: transportationTypeOptions,
-            // isContainer: (transportationType === 'Container'),
-            // deliveryMethodOptions: deliveryMethodOptions,
-            // container20Value: container20,
-            // container40Value: container40,
         }
     ), [docData]);
 
@@ -556,13 +572,21 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             receiverHide: !!docData?.receiverHide,
             sender: sender, receiver:receiver,
             isSenderDisabled: isSenderDisabled,
-            transportationTypeOptions: transportationTypeOptions,
-            isContainer: (transportationType === CONTAINER),
+        }), [docData, products, sender, receiver, isSenderDisabled]);
+    //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
+
+    const cargoFields = useMemo(()=>CargoFields(
+        {
+            newObject: !docData?.uuid,
+            docType: docType,
+            deliveryTypeOptions,
+            deliveryMethod,
             deliveryMethodOptions: deliveryMethodOptions,
             container20Value: container20,
             container40Value: container40,
-        }), [docData, products, sender, receiver, isSenderDisabled, transportationType, container20, container40]);
-    //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
+            palletsAmount,
+            cartonsAmount,
+        }), [docData, deliveryMethod, container20, container40, palletsAmount, cartonsAmount]);
 
 
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(docData?.attachedFiles || []);
@@ -681,15 +705,18 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
         data.products.forEach(item => item.quality = item.quality || 'Saleable');
-        if (data?.transportationType !== CONTAINER) {
+
+        if (data?.deliveryMethod !== DELIVERY_METHODS.CONTAINER) {
+
             data.container20Amount = 0;
             data.container40Amount = 0;
+        }
+        if (data?.deliveryMethod === DELIVERY_METHODS.CARTONS) {
+            data.palletsAmount = 0;
         }
 
         try {
             const res = isJustETA ? await sendJustETA(data) : await sendDocument(data);
-
-            console.log('res:', res);
 
             if (res && "status" in res && res?.status === 200) {
                 //success
@@ -743,24 +770,39 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
             <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
-            <Tabs id='stock-movement-tabs' tabTitles={tabTitles} classNames='inside-modal' notifications={docNotifications}>
+            <Tabs id='stock-movement-tabs' tabTitles={tabTitles} classNames='inside-modal'
+                  notifications={docNotifications}>
                 <div key='general-tab' className='general-tab'>
                     <CardWithHelpIcon classNames='card stock-movement--general'>
                         <h3 className='stock-movement__block-title'>
-                            <Icon name='general' />
+                            <Icon name='general'/>
                             General
                         </h3>
                         <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
+                            <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors}
+                                             isDisabled={isDisabled}/>
                         </div>
                     </CardWithHelpIcon>
                     <CardWithHelpIcon classNames='card stock-movement--details'>
                         <h3 className='stock-movement__block-title'>
-                            <Icon name='additional' />
+                            <Icon name='additional'/>
                             Details
                         </h3>
                         <div className='grid-row '>
-                            <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors} isDisabled={isDisabled}/>
+                            <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors}
+                                             isDisabled={isDisabled}/>
+                        </div>
+                    </CardWithHelpIcon>
+                </div>
+                <div key='cargo-tab' className='cargo-tab'>
+                    <CardWithHelpIcon classNames='card stock-movement--cargo'>
+                        <h3 className='stock-movement__block-title'>
+                            <Icon name='shipping'/>
+                            Cargo info
+                        </h3>
+                        <div className='grid-row'>
+                            <FormFieldsBlock control={control} fieldsArray={cargoFields} errors={errors}
+                                             isDisabled={isDisabled}/>
                         </div>
                     </CardWithHelpIcon>
                 </div>
@@ -768,31 +810,53 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 <div key='product-tab' className='product-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 stock-movement--products">
                         <h3 className='stock-movement__block-title '>
-                            <Icon name='goods' />
+                            <Icon name='goods'/>
                             Products
                         </h3>
                         <div className='grid-row mb-md'>
                             <div className='stock-movement--btns width-100'>
                                 <div className='grid-row'>
-                                    <div className='stock-movement--table-btns form-table--btns small-paddings width-100'>
+                                    <div
+                                        className='stock-movement--table-btns form-table--btns small-paddings width-100'>
                                         {/*{(isOutboundOrStockMovement) ? <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >*/}
                                         {/*    <Button type="button" icon="fill-doc" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || !sender} onClick={handleFillByStock}>Fill by stock</Button>*/}
                                         {/*</TutorialHintTooltip> : null}*/}
-                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >
-                                            <Button type="button" icon="import-file" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} onClick={handleImportXLS}>Import from xls</Button>
+                                        <TutorialHintTooltip
+                                            hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''}
+                                            forBtn>
+                                            <Button type="button" icon="import-file" iconOnTheRight
+                                                    size={ButtonSize.SMALL} disabled={isDisabled}
+                                                    onClick={handleImportXLS}>Import from xls</Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['selection'] || ''} forBtn >
-                                            <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
+                                        <TutorialHintTooltip
+                                            hint={StockMovementsHints(docNamesSingle[docType])['selection'] || ''}
+                                            forBtn>
+                                            <Button type="button" icon='selection' iconOnTheRight
+                                                    size={ButtonSize.SMALL} disabled={isDisabled}
+                                                    variant={ButtonVariant.SECONDARY}
+                                                    onClick={() => handleProductSelection()} classNames='selection-btn'>
                                                 Add from List
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
-                                            <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '',quantityPlan:'', quantity:'', unitOfMeasure:'pcs', quality: 'Saleable' })}>
+                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn>
+                                            <Button type="button" icon='add-table-row' iconOnTheRight
+                                                    size={ButtonSize.SMALL} disabled={isDisabled}
+                                                    variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({
+                                                key: `product-${Date.now().toString()}`,
+                                                selected: false,
+                                                product: '',
+                                                quantityPlan: '',
+                                                quantity: '',
+                                                unitOfMeasure: 'pcs',
+                                                quality: 'Saleable'
+                                            })}>
                                                 Add by SKU
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
-                                            <Button type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
+                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn>
+                                            <Button type="button" icon='remove-table-row' iconOnTheRight
+                                                    size={ButtonSize.SMALL} disabled={isDisabled}
+                                                    variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
                                                 Remove selected
                                             </Button>
                                         </TutorialHintTooltip>
@@ -803,7 +867,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         <div className='stock-movement--table table-form-fields form-table'>
                             <Table
                                 columns={getProductColumns(control)}
-                                dataSource={getValues('products')?.map((field, index) => ({ key: field.product+'-'+index, ...field })) || []}
+                                dataSource={getValues('products')?.map((field, index) => ({key: field.product + '-' + index, ...field})) || []}
                                 pagination={false}
                                 rowKey="key"
                                 className={errors.products ? 'has-error-decor' : ''}
@@ -813,32 +877,35 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         </div>
                         <div className='grid-row stock-movement--products-total'>
                             {/*<FormFieldsBlock control={control} fieldsArray={productsTotalFields} errors={errors} isDisabled={isDisabled}/>*/}
-                            <ProductsTotal weightGross={docData?.weightGross || 0} weightNet={docData?.weightNet|| 0} volume={docData?.volume || 0} palletAmount={docData?.palletAmount || 0} packages={docData?.packages || 0} />
+                            <ProductsTotal weightGross={docData?.weightTotalGross || 0}
+                                           weightNet={docData?.weightTotalNet || 0} volume={docData?.volume || 0}
+                                           palletAmount={docData?.palletsAmount || 0}
+                                           packages={docData?.cartonsAmount || 0}/>
                         </div>
                     </CardWithHelpIcon>
                 </div>
                 {docData?.uuid && <div key='services-tab' className='services-tab'>
                     <div className="card min-height-600 stock-movement--history">
                         <h3 className='stock-movement__block-title'>
-                            <Icon name='bundle' />
+                            <Icon name='bundle'/>
                             Services
                         </h3>
-                        <Services services={docData?.services} />
+                        <Services services={docData?.services}/>
                     </div>
                 </div>}
                 {docData?.uuid && <div key='status-history-tab' className='status-history-tab'>
                     <div className="card min-height-600 stock-movement--history">
                         <h3 className='stock-movement__block-title'>
-                            <Icon name='history' />
+                            <Icon name='history'/>
                             Status history
                         </h3>
-                        <StatusHistory statusHistory={docData?.statusHistory} />
+                        <StatusHistory statusHistory={docData?.statusHistory}/>
                     </div>
                 </div>}
                 {docData?.uuid && docData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
                     <div className="card min-height-600 stock-movement--tickets">
                         <h3 className='stock-movement__block-title'>
-                            <Icon name='ticket' />
+                            <Icon name='ticket'/>
                             Tickets
                         </h3>
                         <DocumentTickets tickets={docData.tickets}/>
@@ -846,26 +913,36 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 </div> : null}
                 <div key='files-tab' className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 stock-movement--files">
-                    {/*<div className="card min-height-600 stock-movement--products">*/}
-                        <TutorialHintTooltip hint={StockMovementsHints('')['files'] || ''} position='left' >
+                        {/*<div className="card min-height-600 stock-movement--products">*/}
+                        <TutorialHintTooltip hint={StockMovementsHints('')['files'] || ''} position='left'>
                             <h3 className='stock-movement__block-title title-small'>
-                                <Icon name='files' />
+                                <Icon name='files'/>
                                 Files
                             </h3>
                         </TutorialHintTooltip>
                         <div className='dropzoneBlock'>
-                            <DropZone readOnly={!!isDisabled} files={selectedFiles} docUuid={docData?.canEdit ? '' : docData?.uuid} onFilesChange={handleFilesChange} />
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles}
+                                      docUuid={docData?.canEdit ? '' : docData?.uuid}
+                                      onFilesChange={handleFilesChange}/>
                         </div>
                     </CardWithHelpIcon>
                 </div>
             </Tabs>
 
             <div className='form-submit-btn'>
-                {docData && docData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                {isDisabled && docData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(docData?.canEdit || !docData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
-                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
-                {isDisabled && docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !docData?.canEdit && !isFinished && <Button type="submit" onClick={()=>setIsJustETA(true)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
+                {docData && docData.uuid ?
+                    <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
+                            onClick={handleCreateTicket}>Create ticket</Button> : null}
+                {isDisabled && docData?.canEdit && <Button type="button" disabled={false}
+                                                           onClick={() => setIsDisabled(!(docData?.canEdit || !docData?.uuid))}
+                                                           variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY}
+                                        onClick={() => setIsDraft(true)}>Save as draft</Button>}
+                {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={() => setIsDraft(false)}
+                                        variant={ButtonVariant.PRIMARY}>Send</Button>}
+                {isDisabled && docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !docData?.canEdit && !isFinished &&
+                    <Button type="submit" onClick={() => setIsJustETA(true)}
+                            variant={ButtonVariant.PRIMARY}>Send</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

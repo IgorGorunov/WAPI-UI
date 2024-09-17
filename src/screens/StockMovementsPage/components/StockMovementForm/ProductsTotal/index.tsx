@@ -18,7 +18,7 @@ const ProductsTotal: React.FC<PropsType> = ({ weightGross=0, weightNet=0,volume=
                {weightNet ? <li key='weightNet' className='stock-movement-total__list-item'>Weight total net, kg :<span className='stock-movement-total__list-item__value'>{weightNet}</span></li> : null}
                {volume ? <li key='volume' className='stock-movement-total__list-item'>Volume, m3 :<span className='stock-movement__list-item__value'>{volume}</span></li> : null}
                {palletAmount ? <li key='palletAmount'  className='stock-movement-total__list-item'>Pallets :<span className='stock-movement-total__list-item__value'>{palletAmount}</span></li> : null}
-               {packages ? <li key='packages'  className='stock-movement-total__list-item'>Packages :<span className='stock-movement-total__list-item__value'>{packages}</span></li> : null}
+               {packages ? <li key='packages'  className='stock-movement-total__list-item'>Cartons :<span className='stock-movement-total__list-item__value'>{packages}</span></li> : null}
            </ul>
         </div>
     );
