@@ -151,6 +151,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         return [];
     }, [orderParameters?.warehouses]);
 
+    const now = new Date();
+    console.log('ksjdflsfaejhflaehf', currentDate, now, currentDate > now, '---', addCurrentTimeToDate(currentDate).toISOString())
+
     //form
     const defaultFormValues = useMemo(() => ({
         clientOrderID: orderData?.clientOrderID || '',
@@ -159,6 +162,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         courierService: orderData?.courierService || '',
         courierServiceTrackingNumber: orderData?.courierServiceTrackingNumber || '',
         courierServiceTrackingNumberCurrent: orderData?.courierServiceTrackingNumberCurrent || '',
+        //date: orderData?.date || addCurrentTimeToDate(currentDate).toISOString(),
         date: orderData?.date || addCurrentTimeToDate(currentDate).toISOString(),
         incomingDate: orderData?.incomingDate || '',
         preferredCourierService: orderData?.preferredCourierService || '',

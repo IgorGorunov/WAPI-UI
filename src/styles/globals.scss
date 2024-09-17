@@ -319,6 +319,12 @@ button {
   }
 }
 
+.align-right {
+  .grid-row {
+    justify-content: flex-end;
+  }
+}
+
 .grid-inner-row {
   width: 100%;
 }

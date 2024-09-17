@@ -52,6 +52,16 @@
     }
   }
 
+  .cargo-volume-hint {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    p {
+      font-size: 10px;
+      line-height: normal;
+    }
+  }
+
   @media (max-width: $mobile) {
     .general-tab,
     .delivery-tab {

@@ -2,6 +2,7 @@ import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
+import {DELIVERY_METHODS} from "./StockMovementFormComponent";
 
 export const GeneralFields = (
     {
@@ -124,11 +125,6 @@ export const DetailsFields = (
         sender,
         receiver,
         isSenderDisabled,
-        transportationTypeOptions,
-        isContainer,
-        deliveryMethodOptions,
-        container20Value = 0,
-        container40Value = 0
     }:{
         newObject: boolean,
         docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -143,11 +139,6 @@ export const DetailsFields = (
         sender: string;
         receiver: string;
         isSenderDisabled?: boolean;
-        transportationTypeOptions: OptionType[];
-        isContainer: boolean;
-        deliveryMethodOptions: OptionType[];
-        container20Value: number;
-        container40Value: number;
     }
 ) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
@@ -240,63 +231,94 @@ export const DetailsFields = (
             hint: docHintsObj['courierServiceTrackingNumber'] || '',
         },
         {
+            fieldType: FormFieldTypes.TEXT_AREA,
+            type: "text",
+            name: 'comment',
+            label: 'Comment',
+            placeholder: "",
+            //disabled: true,
+            width: WidthType.w100,
+            classNames: "",
+            hint: docHintsObj['comment'] || '',
+        },
+
+    ];
+}
+
+export const CargoFields = (
+    {
+        newObject,
+        docType,
+        deliveryTypeOptions,
+        deliveryMethod,
+        deliveryMethodOptions,
+        container20Value = 0,
+        container40Value = 0,
+        palletsAmount = 0,
+        cartonsAmount = 0
+    }:{
+        newObject: boolean,
+        docType: STOCK_MOVEMENT_DOC_TYPE,
+        deliveryTypeOptions: OptionType[];
+        deliveryMethod: string,
+        deliveryMethodOptions: OptionType[];
+        container20Value: number;
+        container40Value: number;
+        palletsAmount: number;
+        cartonsAmount: number;
+    }
+) => {
+    const isLogisticService = docType === STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE;
+
+    const isContainer = deliveryMethod === DELIVERY_METHODS.CONTAINER;
+    const isPallets = deliveryMethod === DELIVERY_METHODS.PLL;
+    const isFullTrack = deliveryMethod === DELIVERY_METHODS.FULL_TRACK;
+    const isCartons = deliveryMethod === DELIVERY_METHODS.CARTONS;
+    const isEmpty = !deliveryMethod;
+
+    const docTypeSingle = docNamesSingle[docType];
+    const docHintsObj = StockMovementsHints(docTypeSingle);
+
+    return [
+        {
+            fieldType: FormFieldTypes.RADIO,
+            type: "text",
+            name: 'deliveryType',
+            label: 'Delivery type',
+            //isDisplayed: isInbound,
+            options: deliveryTypeOptions,
+            placeholder: "",
+            width: WidthType.w50,
+            rules: {
+                required: "Required field",
+            },
+            errorMessage: "Required field",
+            isClearable: true,
+            hint: docHintsObj['deliveryType'] || '',
+        },
+        {
             name: 'grid-13',
             fieldType: FormFieldTypes.GRID,
             width: WidthType.w100,
-            isDisplayed: isInbound,
+            //isDisplayed: isInbound,
             classNames: 'grid-no-wrap',
             fields: [
                 {
                     fieldType: FormFieldTypes.SELECT,
                     type: "text",
-                    name: 'transportationType',
-                    label: 'Transportation type',
-                    options: transportationTypeOptions || [],
-                    placeholder: "",
-                    rules: {
-                        required: isInbound ? "Required field" : false,
-                    },
-                    errorMessage: "Required field",
-                    isDisplayed: isInbound,
-                    width: WidthType.w25,
-                    classNames: "",
-                    hint: docHintsObj['transportationType'] || '',
-                },
-                {
-                    fieldType: FormFieldTypes.RADIO,
-                    type: "text",
                     name: 'deliveryMethod',
                     label: 'Delivery method',
-                    isDisplayed: isInbound,
+                    //isDisplayed: isInbound,
                     options: deliveryMethodOptions,
                     placeholder: "",
-                    width: WidthType.w25,
+                    width: WidthType.w50,
                     rules: {
-                        required: isInbound ? "Required field" : false,
+                        required: !isLogisticService ? "Required field" : false,
                     },
                     errorMessage: "Required field",
-                    isClearable: false,
+                    isClearable: true,
                     hint: docHintsObj['deliveryMethod'] || '',
                 },
-                {
-                    fieldType: FormFieldTypes.TOGGLE,
-                    name: 'labelingNeeds',
-                    label: "Needs labeling",
-                    width: WidthType.w25,
-                    isDisplayed: isInbound,
-                    classNames: "",
-                    hint: docHintsObj['labelingNeeds'] || '',
-                },
-                {
-                    fieldType: FormFieldTypes.TOGGLE,
-                    name: 'mixedCarton',
-                    label: "Mixed carton",
-                    width: WidthType.w25,
-                    isDisplayed: isInbound,
-                    classNames: "",
-                    hint: docHintsObj['mixedCarton'] || '',
-                },
-
                 {
                     fieldType: FormFieldTypes.NUMBER,
                     type: "number",
@@ -307,7 +329,7 @@ export const DetailsFields = (
                     rules: {
                         //required: isInbound ? 'Required field...' : false,
                         validate: value => {
-                            if (!isInbound || !isContainer) return true;
+                            if (!isContainer) return true;
 
                             if (value <= 0 && container40Value <= 0) {
                                 return 'Fill at least one container amount';
@@ -315,7 +337,7 @@ export const DetailsFields = (
                         },
                     },
                     classNames: "",
-                    isDisplayed: isContainer,
+                    isDisplayed: isContainer || isEmpty,
                     hint: docHintsObj['container20Amount'] || '',
                 },
                 {
@@ -328,7 +350,8 @@ export const DetailsFields = (
                     rules: {
                         //required: isInbound ? 'Required field...' : false,
                         validate: value => {
-                            if (!isInbound || !isContainer) return true;
+                            //if (!isInbound || !isContainer) return true;
+                            if (!isContainer) return true;
 
                             if (value<=0 && container20Value <= 0) {
                                 return 'Fill at least one container amount';
@@ -338,7 +361,7 @@ export const DetailsFields = (
                         }
                     },
                     classNames: "",
-                    isDisplayed: isContainer,
+                    isDisplayed: isContainer || isEmpty,
                     hint: docHintsObj['container40Amount'] || '',
                 },
                 {
@@ -351,17 +374,139 @@ export const DetailsFields = (
                     classNames: 'delivery-type-hint'
                 }
             ],
+
         },
         {
-            fieldType: FormFieldTypes.TEXT_AREA,
-            type: "text",
-            name: 'comment',
-            label: 'Comment',
-            placeholder: "",
-            //disabled: true,
-            width: WidthType.w100,
+            name: 'grid-14',
+            fieldType: FormFieldTypes.GRID,
+            width: WidthType.w50,
+            //isDisplayed: isInbound,
+            classNames: `grid-no-wrap ${isCartons ? 'align-right' : ''}`,
+            fields: [
+                {
+                    fieldType: FormFieldTypes.NUMBER,
+                    type: "number",
+                    name: 'palletsAmount',
+                    label: 'Pallet amount, pcs',
+                    placeholder: "0",
+                    width: WidthType.w50,
+                    rules: {
+                        //required: isInbound ? 'Required field...' : false,
+                        validate: value => {
+                            //if (!isInbound || !isContainer) return true;
+                            if (!isPallets && !isFullTrack) return true;
+
+                            if (isFullTrack && value<=0 && cartonsAmount <= 0) {
+                                return 'Fill the amount of pallets or cartons (or both)';
+                            }
+
+                            if (isPallets && value <= 0) {
+                                return 'Fill the amount of pallets';
+                            }
+
+                            return true; // Validation passed
+                        }
+                    },
+                    isDisplayed: !isCartons,
+                    classNames: "",
+                    hint: docHintsObj['pallets'] || '',
+                },
+                {
+                    fieldType: FormFieldTypes.NUMBER,
+                    type: "number",
+                    name: 'cartonsAmount',
+                    label: 'Cartons, pcs',
+                    placeholder: "0",
+                    width: WidthType.w50,
+                    rules: {
+                        //required: isInbound ? 'Required field...' : false,
+                        validate: value => {
+                            //if (!isInbound || !isContainer) return true;
+                            if (!isCartons && !isFullTrack) return true;
+
+                            if (isCartons && value <= 0) {
+                                return 'Fill the amount of cartons';
+                            }
+
+                            if (isFullTrack && value<=0 && palletsAmount <= 0) {
+                                return 'Fill the amount of pallets or cartons (or both)';
+                            }
+
+                            return true;
+                        }
+                    },
+                    classNames: "",
+                    hint: docHintsObj['pallets'] || '',
+                },
+            ],
+        },
+        {
+            fieldType: FormFieldTypes.TOGGLE,
+            name: 'labelingNeeds',
+            label: "Needs labeling",
+            width: WidthType.w25,
+            //isDisplayed: isInbound,
             classNames: "",
-            hint: docHintsObj['comment'] || '',
+            hint: docHintsObj['labelingNeeds'] || '',
+        },
+        {
+            fieldType: FormFieldTypes.TOGGLE,
+            name: 'mixedCarton',
+            label: "Mixed carton",
+            width: WidthType.w25,
+            //isDisplayed: isInbound,
+            classNames: "",
+            hint: docHintsObj['mixedCarton'] || '',
+        },
+        {
+            name: 'grid-15',
+            fieldType: FormFieldTypes.GRID,
+            width: WidthType.w100,
+            //isDisplayed: isInbound,
+            classNames: `grid-no-wrap`,
+            fields: [
+                {
+                    fieldType: FormFieldTypes.NUMBER,
+                    type: "number",
+                    name: 'volume',
+                    label: 'Volume, m3',
+                    placeholder: "0",
+                    width: WidthType.w25,
+
+                    classNames: "",
+                    hint: docHintsObj['volume'] || '',
+                },
+                {
+                    fieldType: FormFieldTypes.NUMBER,
+                    type: "number",
+                    name: 'weightTotalGross',
+                    label: 'Total weight gross, kg',
+                    placeholder: "0",
+                    width: WidthType.w25,
+
+                    classNames: "",
+                    hint: docHintsObj['weightTotalGross'] || '',
+                },
+                {
+                    fieldType: FormFieldTypes.NUMBER,
+                    type: "number",
+                    name: 'weightTotalNet',
+                    label: 'Total weight net, kg',
+                    placeholder: "0",
+                    width: WidthType.w25,
+
+                    classNames: "",
+                    hint: docHintsObj['weightTotalNet'] || '',
+                },
+                {
+                    fieldType: FormFieldTypes.OTHER,
+                    type: "text",
+                    name: 'cargoVolumeHint',
+                    otherComponent: <p>If you dont have info about volume and weight, it will be approximately calculated based on the products specified in the document. </p>,
+                    width: WidthType.w100,
+                    classNames: 'cargo-volume-hint'
+                }
+            ],
         },
 
     ];

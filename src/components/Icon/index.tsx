@@ -94,6 +94,7 @@ import Settings from '@/assets/icons/settings.svg'
 import FillDoc from '@/assets/icons/fillDoc.svg'
 import LightningBolt from '@/assets/icons/lightning-bolt.svg'
 import Warning from '@/assets/icons/warning.svg'
+import Shipping from '@/assets/icons/shipping.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -190,6 +191,7 @@ export const icons = {
   'fill-doc': FillDoc,
   'lightning-bolt': LightningBolt,
   'warning': Warning,
+  'shipping': Shipping,
 };
 
 export type IconType = keyof typeof icons;
