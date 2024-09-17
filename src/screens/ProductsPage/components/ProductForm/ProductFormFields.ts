@@ -100,7 +100,7 @@ export const FormFieldsGeneral = ({countries, isNew=false}: { countries: OptionT
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: 'fullName',
-            label: "Full name",
+            label: "Description",
             placeholder: "",
             rules: {
                 required: "Required field",
