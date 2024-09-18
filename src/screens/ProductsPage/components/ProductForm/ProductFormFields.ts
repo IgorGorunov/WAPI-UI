@@ -277,7 +277,7 @@ export const FormFieldsAdditional2 = () => [
         {
             fieldType: FormFieldTypes.TOGGLE,
             name: 'packingBox',
-            label: "Packing box",
+            label: "Product is a box",
             width: WidthType.w17,
             classNames: "",
             hint: ProductHints['packingBox'] || '',
