@@ -48,8 +48,8 @@ const InvoicesPage = () => {
                 const res: ApiResponse = await getInvoices(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
-                    setInvoicesData(res.data);
-                    setFilteredInvoices(res.data);
+                    setInvoicesData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
+                    setFilteredInvoices(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
                     setIsLoading(false);
                 } else {
                     console.error("API did not return expected data");

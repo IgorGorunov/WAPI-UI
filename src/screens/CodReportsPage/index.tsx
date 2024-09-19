@@ -47,8 +47,8 @@ const CodReportsPage = () => {
                 const res: ApiResponse = await getCodReports(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
-                    setCodReportsData(res.data);
-                    setFilteredCodReports(res.data);
+                    setCodReportsData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
+                    setFilteredCodReports(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
                     setIsLoading(false);
                 } else {
                     console.error("API did not return expected data");

@@ -64,7 +64,7 @@ const AmazonPrepPage = () => {
             const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requesData, ui} : requesData);
 
             if (res && "data" in res) {
-                setAmazonPrepOrdersData(res.data);
+                setAmazonPrepOrdersData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
                 setIsLoading(false);
             } else {
                 console.error("API did not return expected data");
