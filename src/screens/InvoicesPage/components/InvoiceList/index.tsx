@@ -355,107 +355,107 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             }),
             responsive: ['md'],
         },
-        // {
-        //     title: <TitleColumn
-        //         title="Overdue"
-        //         minWidth="80px"
-        //         maxWidth="80px"
-        //         contentPosition="start"
-        //     />,
-        //     render: (text: string) => (
-        //         <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
-        //     ),
-        //     dataIndex: 'overdue',
-        //     key: 'overdue',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-        //     }),
-        //     responsive: ['md'],
-        // },
-        // {
-        //     title: <TitleColumn
-        //         title="Paid"
-        //         minWidth="75px"
-        //         maxWidth="75px"
-        //         contentPosition="start"
-        //     />,
-        //     render: (text: string, record) => {
-        //         const isNegative = parseFloat(text) < 0;
-        //         const textColor = isNegative && record.debt !== 0 ? '#29CC39' : undefined;
-        //         if (record.currency) {
-        //             const currencySymbol = getSymbolFromCurrency(record.currency);
-        //             return (
-        //                 <TableCell
-        //                     value={`${text} ${currencySymbol}`}
-        //                     minWidth="75px"
-        //                     maxWidth="75px"
-        //                     contentPosition="start"
-        //                     textColor={textColor}>
-        //                 </TableCell>
-        //             );
-        //         } else {
-        //             return (
-        //                 <TableCell
-        //                     value={'-'}
-        //                     minWidth="75px"
-        //                     maxWidth="75px"
-        //                     contentPosition="start"
-        //                     textColor={textColor}>
-        //                 </TableCell>
-        //             );
-        //         }
-        //     },
-        //     dataIndex: 'paid',
-        //     key: 'paid',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-        //     }),
-        //     responsive: ['md'],
-        // },
-        //
-        // {
-        //     title: <TitleColumn
-        //         title="Debt"
-        //         minWidth="75px"
-        //         maxWidth="75px"
-        //         contentPosition="start"
-        //     />,
-        //     render: (text: string, record) => {
-        //         const isNegative = parseFloat(text) < 0;
-        //         const textColor = isNegative && record.debt !== 0 ? '#29CC39' : undefined;
-        //         if (record.currency) {
-        //             const currencySymbol = getSymbolFromCurrency(record.currency);
-        //             return (
-        //                 <TableCell
-        //                     value={`${text} ${currencySymbol}`}
-        //                     minWidth="75px"
-        //                     maxWidth="75px"
-        //                     contentPosition="start"
-        //                     textColor={textColor}>
-        //                 </TableCell>
-        //             );
-        //         } else {
-        //             return (
-        //                 <TableCell
-        //                     value={'-'}
-        //                     minWidth="75px"
-        //                     maxWidth="75px"
-        //                     contentPosition="start"
-        //                     textColor={textColor}>
-        //                 </TableCell>
-        //             );
-        //         }
-        //     },
-        //     dataIndex: 'debt',
-        //     key: 'debt',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-        //     }),
-        //     responsive: ['md'],
-        // },
+        {
+            title: <TitleColumn
+                title="Overdue"
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="start"
+            />,
+            render: (text: string) => (
+                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
+            ),
+            dataIndex: 'overdue',
+            key: 'overdue',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+            responsive: ['md'],
+        },
+        {
+            title: <TitleColumn
+                title="Paid"
+                minWidth="75px"
+                maxWidth="75px"
+                contentPosition="start"
+            />,
+            render: (text: string, record) => {
+                const isNegative = parseFloat(text) < 0;
+                const textColor = isNegative && record.debt !== 0 ? '#29CC39' : undefined;
+                if (record.currency) {
+                    const currencySymbol = getSymbolFromCurrency(record.currency);
+                    return (
+                        <TableCell
+                            value={`${text} ${currencySymbol}`}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="start"
+                            textColor={textColor}>
+                        </TableCell>
+                    );
+                } else {
+                    return (
+                        <TableCell
+                            value={'-'}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="start"
+                            textColor={textColor}>
+                        </TableCell>
+                    );
+                }
+            },
+            dataIndex: 'paid',
+            key: 'paid',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+            responsive: ['md'],
+        },
+
+        {
+            title: <TitleColumn
+                title="Debt"
+                minWidth="75px"
+                maxWidth="75px"
+                contentPosition="start"
+            />,
+            render: (text: string, record) => {
+                const isNegative = parseFloat(text) < 0;
+                const textColor = isNegative && record.debt !== 0 ? '#29CC39' : undefined;
+                if (record.currency) {
+                    const currencySymbol = getSymbolFromCurrency(record.currency);
+                    return (
+                        <TableCell
+                            value={`${text} ${currencySymbol}`}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="start"
+                            textColor={textColor}>
+                        </TableCell>
+                    );
+                } else {
+                    return (
+                        <TableCell
+                            value={'-'}
+                            minWidth="75px"
+                            maxWidth="75px"
+                            contentPosition="start"
+                            textColor={textColor}>
+                        </TableCell>
+                    );
+                }
+            },
+            dataIndex: 'debt',
+            key: 'debt',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+            responsive: ['md'],
+        },
         {
             title: <TitleColumn title="" minWidth="80px" maxWidth="130px" contentPosition="start"/>,
             render: (text: string, record: InvoiceType) => (
