@@ -23,7 +23,7 @@ const BalanceInfoCard: React.FC<BalanceIfoCartPropsType> = (props) => {
     const Formatter = Intl.NumberFormat();
     const formatAmount = (amount: number, currency: string) => {
         const currencySymbol = getSymbolFromCurrency(currency) || '';
-        const debtAmount = Formatter.format(amount).replaceAll(",", ".");
+        const debtAmount = Formatter.format(amount).replaceAll(",", " ");
 
         return `${currencySymbol} ${debtAmount}`;
     }
