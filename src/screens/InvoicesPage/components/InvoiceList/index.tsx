@@ -223,45 +223,45 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         setFilteredInvoices(filteredInvoices)
     }, [filteredInvoices]);
 
-    // const getUnderlineColor = useCallback((statusText: string) => {
-    //     return StatusColors[statusText] || 'black';
-    // }, []);
+    const getUnderlineColor = useCallback((statusText: string) => {
+        return StatusColors[statusText] || 'black';
+    }, []);
 
     const columns: ColumnType<InvoiceType>[] = useMemo(() => [
-        // {
-        //     title: <TitleColumn title="Status" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
-        //     render: (text: string, record) => {
-        //         const underlineColor = getUnderlineColor(record.status);
-        //         return (
-        //             <TableCell
-        //                 minWidth="100px"
-        //                 maxWidth="100px"
-        //                 contentPosition="start"
-        //                 value={text}
-        //                 childrenBefore={
-        //                     <span style={{
-        //                         borderBottom: `2px solid ${underlineColor}`,
-        //                         display: 'inline-block',
-        //                         borderRadius: '50%',
-        //                         width: '16px',
-        //                         height: '16px',
-        //                         backgroundColor: underlineColor,
-        //                         marginRight: '5px',
-        //                         justifyContent: 'center',}}
-        //                     >
-        //                 </span>
-        //                 }
-        //             >
-        //             </TableCell>
-        //         );
-        //     },
-        //     dataIndex: 'status',
-        //     key: 'status',
-        //     sorter: true,
-        //     onHeaderCell: (column: ColumnType<InvoiceType>) => ({
-        //         onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
-        //     }),
-        // },
+        {
+            title: <TitleColumn title="Status" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
+            render: (text: string, record) => {
+                const underlineColor = getUnderlineColor(record.status);
+                return (
+                    <TableCell
+                        minWidth="100px"
+                        maxWidth="100px"
+                        contentPosition="start"
+                        value={text}
+                        childrenBefore={
+                            <span style={{
+                                borderBottom: `2px solid ${underlineColor}`,
+                                display: 'inline-block',
+                                borderRadius: '50%',
+                                width: '16px',
+                                height: '16px',
+                                backgroundColor: underlineColor,
+                                marginRight: '5px',
+                                justifyContent: 'center',}}
+                            >
+                        </span>
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'status',
+            key: 'status',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+        },
         {
             title: <TitleColumn
                 title="Number"
