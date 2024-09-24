@@ -19,7 +19,7 @@ const RadioSwitch = forwardRef<HTMLDivElement, FieldPropsType>(({
 
     const [curValue, setCurValue] = useState(value || options.length ? options[0].value : '');
 
-    const handleChange = useCallback((selectedOption) => {
+    const handleChange = (selectedOption) => {
         if (!disabled) {
             setCurValue(selectedOption);
 
@@ -27,7 +27,8 @@ const RadioSwitch = forwardRef<HTMLDivElement, FieldPropsType>(({
                 onChange(selectedOption);
             }
         }
-    } ,[] )
+    };
+
     useEffect(() => {
         if (!value && options && options.length) {
             onChange(options[0].value);
