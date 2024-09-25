@@ -1319,14 +1319,21 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 </div> : null}
                 <div className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 product-info--files">
-                        <TutorialHintTooltip hint={ProductOtherHints['files'] || ''} position='left' >
+                        <TutorialHintTooltip hint={ProductOtherHints['files'] || ''} position='left' classNames='mb-md' >
                             <h3 className='product-info__block-title title-small'>
                                 <Icon name='files' />
                                 Files
                             </h3>
                         </TutorialHintTooltip>
                         <div className='dropzoneBlock'>
-                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={productData?.canEdit ? '' : productData?.uuid} />
+                            <DropZone
+                                readOnly={!!isDisabled}
+                                files={selectedFiles}
+                                onFilesChange={handleFilesChange}
+                                docUuid={productData?.canEdit ? '' : productData?.uuid}
+                                allowOnlyFormats={['png', 'jpeg', 'pdf']}
+                                hint={'The supported file formats: PNG, JPEG, PDF'}
+                            />
                         </div>
                     </CardWithHelpIcon>
                 </div>

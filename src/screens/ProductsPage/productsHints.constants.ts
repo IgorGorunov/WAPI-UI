@@ -26,7 +26,7 @@ export const ProductOtherHints = {
     aliases: 'Alternative names of the product',
     virtualBundleKit: 'If the product is a set and should be break down into several products, specify the products and quantities here',
     analogues: 'If the product is out of stock, the system will take its analogue (specify it here)',
-    files: 'Any files related to the product (e.g., pictures or certificates)',
+    files: 'Any files related to the product (e.g., pictures or certificates). The supported file formats: PNG, JPEG, PDF',
 
     // 'add-barcode-btn': 'Add barcode',
     // 'remove-barcode-btn': 'Delete a chosen barcode',

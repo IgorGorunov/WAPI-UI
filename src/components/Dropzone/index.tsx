@@ -11,8 +11,9 @@ import {ApiResponseType} from "@/types/api";
 import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import useAuth from "@/context/authContext";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {toast, ToastContainer} from "@/components/Toast";
 
-const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=false, docUuid = '', showSend=false}) => {
+const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=false, docUuid = '', showSend=false, allowOnlyFormats= [] as string[]}) => {
     const { token, superUser, ui } = useAuth();
 
     const [isDragging, setIsDragging] = useState(false);
@@ -39,7 +40,13 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
                 const arrayBuffer = await readFileAsArrayBuffer(file);
                 const base64String = arrayBufferToBase64(arrayBuffer);
 
-                if (banCSV && file.name.split('.').pop().toLowerCase() === 'csv') {
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                if (banCSV && fileExtension === 'csv' || allowOnlyFormats.length && !allowOnlyFormats.includes(fileExtension)) {
+                    toast.warn(`${fileExtension.toUpperCase()} files aren't allowed!`, {
+                        position: "top-right",
+                        autoClose: 2000,
+                    });
                     return null;
                 }
 
@@ -76,7 +83,12 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
             if (item.kind === 'file') {
                 const file = item.getAsFile();
                 if (!file) continue;
-                if (banCSV && file.name.split('.').pop().toLowerCase() === 'csv') {
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                if (banCSV && fileExtension === 'csv' || allowOnlyFormats.length && !allowOnlyFormats.includes(fileExtension)) {
+                    toast.warn(`${fileExtension.toUpperCase()} files aren't allowed!`, {
+                        position: "top-right",
+                        autoClose: 2000,
+                    });
                     continue;
                 }
                 e.preventDefault();
@@ -170,6 +182,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
 
     return (
         <div className='dropzone-wrapper'>
+            <ToastContainer />
             <div onClick={handleDivClick} onPaste={onPaste} className={`dropzone-container ${readOnly ? 'read-only' : ''}`}>
                 {isDragging && <Loader/>}
                 <div
