@@ -9,11 +9,11 @@ export const ProductHints = {
     hsCode: 'Short for Harmonized Commodity Description and Coding System',
     typeOfStorage: 'Where to keep your products',
     salesPackingMaterial: 'Packaging of the product - how it looks now',
-    specialDeliveryStorageRequest: 'Wishes on packaging, if any',
+    specialDeliveryStorageRequest: "Standart packaging is a postal package", //'Wishes on packaging, if any',
     whoProvidesPackagingMaterial: 'Required if "Special delivery / storage request" field is specified',
     specialTemperatureControl: 'Temperature conditions',
     expiringTerm: 'Expiration date of the product',
-    packingBox: 'If the product is packing box',
+    packingBox: 'If the product is packing box, e.g. box/plastic bag',
 }
 export const ProductDimensionsHints = {
     name: 'Unit of goods name',

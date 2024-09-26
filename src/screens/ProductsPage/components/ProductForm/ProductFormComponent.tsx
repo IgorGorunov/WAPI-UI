@@ -1071,7 +1071,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
                         </div>
 
-                        <div className='checkboxes grid-row'>
+                        <div className='product-info__checkboxes grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={additionalCheckboxes} errors={errors} isDisabled={isDisabled} />
                         </div>
                     </CardWithHelpIcon>
