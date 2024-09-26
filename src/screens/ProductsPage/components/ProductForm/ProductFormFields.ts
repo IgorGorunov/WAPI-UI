@@ -195,7 +195,7 @@ export const FormFieldsWarehouse = ({typeOfStorage, salesPackingMaterial, specia
             fieldType: FormFieldTypes.SELECT,
             type: "text",
             name: 'specialDeliveryStorageRequest',
-            label: "Special delivery / storage request",
+            label: "Extra packing material needed?",//"Special delivery / storage request",
             placeholder: '',
             options: specialDeliveryOrStorageRequirements,
             width: WidthType.w33,
@@ -277,7 +277,7 @@ export const FormFieldsAdditional2 = () => [
         {
             fieldType: FormFieldTypes.TOGGLE,
             name: 'packingBox',
-            label: "Product is a box",
+            label: "Is the product itself a package?", //"Product is a box",
             width: WidthType.w17,
             classNames: "",
             hint: ProductHints['packingBox'] || '',

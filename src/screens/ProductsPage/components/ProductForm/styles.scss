@@ -93,6 +93,14 @@
     }
   }
 
+  &__checkboxes {
+    align-items: center;
+
+    .tutorial-hint-tooltip {
+      margin-top: 0;
+    }
+  }
+
   &--dimensions.form-table{
     margin: 0;
     overflow: scroll;
