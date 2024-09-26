@@ -1331,7 +1331,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 files={selectedFiles}
                                 onFilesChange={handleFilesChange}
                                 docUuid={productData?.canEdit ? '' : productData?.uuid}
-                                allowOnlyFormats={['png', 'jpeg', 'pdf']}
+                                allowOnlyFormats={['png', 'jpg', 'jpeg', 'pdf']}
                                 hint={'The supported file formats: PNG, JPEG, PDF'}
                             />
                         </div>
