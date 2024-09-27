@@ -305,7 +305,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
             const matchesCountry = !filterCountry.length || filterCountry.includes(reportDataRow?.country) || filterCountry.includes(reportDataRow?.countryCode);
             const matchesReceiverCountry = !filterReceiverCountry.length || filterReceiverCountry.includes(reportDataRow?.receiverCountryCode);
             const matchesWarehouse = !filterWarehouse.length || filterWarehouse.includes(reportDataRow?.warehouse);
-            const matchesCourierService = !filterCourierService.length || filterCourierService.includes(reportDataRow?.courierServices);
+            const matchesCourierService = !filterCourierService.length || filterCourierService.includes(reportDataRow?.courierService);
             const matchesProduct = !filterProduct.length || filterProduct.includes(reportDataRow?.product);
             const matchesProductType = !filterProductType.length || filterProductType.includes(reportDataRow?.productType);
             const matchesStatus = !filterStatus.length || filterStatus.includes(reportDataRow?.status);
