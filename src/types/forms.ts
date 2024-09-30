@@ -50,6 +50,7 @@ export enum ALIGN_FLEX {
 
 export type FieldPropsType = {
   classNames?: string
+  key?: string
   name: string
   label?: string
   type?: string

@@ -13,7 +13,7 @@ const Field: React.FC<FormFieldsBlockType> = ({curField, control, errors, isDisa
     return (
         <>
         {curField.onChange ?  <Controller
-            key={curField.name}
+            key={curField.key || curField.name}
             name={curField.name}
             control={control}
             render={(
@@ -40,7 +40,7 @@ const Field: React.FC<FormFieldsBlockType> = ({curField, control, errors, isDisa
                 /> )}
             rules = {curField.rules}
         /> : <Controller
-            key={curField.name}
+            key={curField.key || curField.name}
             name={curField.name}
             control={control}
             render={(

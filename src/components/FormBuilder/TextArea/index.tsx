@@ -47,11 +47,11 @@ const TextArea= forwardRef<HTMLTextAreaElement, FieldPropsType>(({
                 aria-autocomplete='none'
             />
             {errorMessage && <p className="error">{errorMessage}</p>}
-            {errors && name in errors ? (
-                <p className="error er1">
-                    {(errors && errors[name]?.message) || errorMessage}
-                </p>
-            ) : null}
+            {/*{errors && name in errors ? (*/}
+            {/*    <p className="error er1">*/}
+            {/*        {(errors && errors[name]?.message) || errorMessage}*/}
+            {/*    </p>*/}
+            {/*) : null}*/}
             </div>
         </TutorialHintTooltip>
     );

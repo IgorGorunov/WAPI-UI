@@ -255,7 +255,9 @@ export const CargoFields = (
         container20Value = 0,
         container40Value = 0,
         palletsAmount = 0,
-        cartonsAmount = 0
+        cartonsAmount = 0,
+        canDisplayCargoInfo,
+        canEdit,
     }:{
         newObject: boolean,
         docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -266,9 +268,17 @@ export const CargoFields = (
         container40Value: number;
         palletsAmount: number;
         cartonsAmount: number;
+        canDisplayCargoInfo: boolean;
+        canEdit?: boolean;
     }
 ) => {
+    const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
     const isLogisticService = docType === STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE;
+    const isOutbound = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND;
+    const isStockMovement = docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT;
+
+    const isStockMovementOrOutbound = isStockMovement || isOutbound;
+    const isInboundOrLogisticService = isInbound || isLogisticService;
 
     const isContainer = deliveryMethod === DELIVERY_METHODS.CONTAINER;
     const isPallets = deliveryMethod === DELIVERY_METHODS.PLL;
@@ -278,6 +288,11 @@ export const CargoFields = (
 
     const docTypeSingle = docNamesSingle[docType];
     const docHintsObj = StockMovementsHints(docTypeSingle);
+
+    //const isCargoInfoFieldsDisplayed = (isOutbound || isStockMovement) && canDisplayCargoInfo || isInbound || isLogisticService;
+    const isCargoInfoFieldsDisplayed = isStockMovementOrOutbound && canDisplayCargoInfo || isInboundOrLogisticService;
+
+
 
     return [
         {
@@ -296,11 +311,30 @@ export const CargoFields = (
             isClearable: true,
             hint: docHintsObj['deliveryType'] || '',
         },
+        !isCargoInfoFieldsDisplayed ? {
+            fieldType: FormFieldTypes.TOGGLE,
+            key: 'labelingNeeds_extra',
+            name: 'labelingNeeds',
+            label: "Needs labeling",
+            width: WidthType.w25,
+            isDisplayed: !isCargoInfoFieldsDisplayed,
+            classNames: "",
+            hint: docHintsObj['labelingNeeds'] || '',
+        } : null,
+        {
+            fieldType: FormFieldTypes.OTHER,
+            type: "text",
+            name: 'cargoInfoHint',
+            otherComponent: <p>If you have any wishes about the way of packing, please specify in the Comment field (in General tab)!</p>,
+            width: WidthType.w100,
+            isDisplayed: (isStockMovementOrOutbound) && (newObject || canEdit),
+            classNames: 'delivery-type-hint'
+        },
         {
             name: 'grid-13',
             fieldType: FormFieldTypes.GRID,
             width: WidthType.w100,
-            //isDisplayed: isInbound,
+            isDisplayed: isCargoInfoFieldsDisplayed,
             classNames: 'grid-no-wrap',
             fields: [
                 {
@@ -308,12 +342,13 @@ export const CargoFields = (
                     type: "text",
                     name: 'deliveryMethod',
                     label: 'Delivery method',
-                    //isDisplayed: isInbound,
+                    isDisplayed: isCargoInfoFieldsDisplayed,
                     options: deliveryMethodOptions,
                     placeholder: "",
+                    disabled: isStockMovementOrOutbound,
                     width: WidthType.w50,
                     rules: {
-                        required: !isLogisticService ? "Required field" : false,
+                        required: isInbound || isLogisticService ? "Required field" : false,
                     },
                     errorMessage: "Required field",
                     isClearable: true,
@@ -337,7 +372,8 @@ export const CargoFields = (
                         },
                     },
                     classNames: "",
-                    isDisplayed: isContainer || isEmpty,
+                    isDisplayed: (isCargoInfoFieldsDisplayed || isInbound || isLogisticService) && (isContainer || isEmpty),
+                    disabled: isStockMovementOrOutbound,
                     hint: docHintsObj['container20Amount'] || '',
                 },
                 {
@@ -361,7 +397,8 @@ export const CargoFields = (
                         }
                     },
                     classNames: "",
-                    isDisplayed: isContainer || isEmpty,
+                    isDisplayed: (isCargoInfoFieldsDisplayed || isInbound || isLogisticService) && (isContainer || isEmpty),
+                    disabled: isStockMovementOrOutbound,
                     hint: docHintsObj['container40Amount'] || '',
                 },
                 {
@@ -380,7 +417,7 @@ export const CargoFields = (
             name: 'grid-14',
             fieldType: FormFieldTypes.GRID,
             width: WidthType.w50,
-            //isDisplayed: isInbound,
+            isDisplayed: isCargoInfoFieldsDisplayed,
             classNames: `grid-no-wrap ${isCartons ? 'align-right' : ''}`,
             fields: [
                 {
@@ -394,7 +431,7 @@ export const CargoFields = (
                         //required: isInbound ? 'Required field...' : false,
                         validate: value => {
                             //if (!isInbound || !isContainer) return true;
-                            if (!isPallets && !isFullTrack) return true;
+                            if (isOutbound || isStockMovement || !isPallets && !isFullTrack) return true;
 
                             if (isFullTrack && value<=0 && cartonsAmount <= 0) {
                                 return 'Fill the amount of pallets or cartons (or both)';
@@ -407,7 +444,8 @@ export const CargoFields = (
                             return true; // Validation passed
                         }
                     },
-                    isDisplayed: !isCartons,
+                    isDisplayed: (isCargoInfoFieldsDisplayed || isInbound || isLogisticService) && !isCartons,
+                    disabled: isStockMovementOrOutbound,
                     classNames: "",
                     hint: docHintsObj['pallets'] || '',
                 },
@@ -418,11 +456,13 @@ export const CargoFields = (
                     label: 'Cartons, pcs',
                     placeholder: "0",
                     width: WidthType.w50,
+                    isDisplayed: (isCargoInfoFieldsDisplayed || isInbound || isLogisticService),
+                    disabled: isStockMovementOrOutbound,
                     rules: {
                         //required: isInbound ? 'Required field...' : false,
                         validate: value => {
                             //if (!isInbound || !isContainer) return true;
-                            if (!isCartons && !isFullTrack) return true;
+                            if (isOutbound || isStockMovement || !isCartons && !isFullTrack) return true;
 
                             if (isCartons && value <= 0) {
                                 return 'Fill the amount of cartons';
@@ -440,21 +480,22 @@ export const CargoFields = (
                 },
             ],
         },
-        {
+        isCargoInfoFieldsDisplayed ? {
             fieldType: FormFieldTypes.TOGGLE,
             name: 'labelingNeeds',
             label: "Needs labeling",
             width: WidthType.w25,
-            //isDisplayed: isInbound,
+            isDisplayed: isCargoInfoFieldsDisplayed,
             classNames: "",
             hint: docHintsObj['labelingNeeds'] || '',
-        },
+        } : null,
         {
             fieldType: FormFieldTypes.TOGGLE,
             name: 'mixedCarton',
             label: "Mixed carton",
             width: WidthType.w25,
-            //isDisplayed: isInbound,
+            isDisplayed: isCargoInfoFieldsDisplayed,
+            disabled: isStockMovementOrOutbound,
             classNames: "",
             hint: docHintsObj['mixedCarton'] || '',
         },
@@ -462,7 +503,8 @@ export const CargoFields = (
             name: 'grid-15',
             fieldType: FormFieldTypes.GRID,
             width: WidthType.w100,
-            //isDisplayed: isInbound,
+            isDisplayed: isCargoInfoFieldsDisplayed,
+            disabled: isStockMovementOrOutbound,
             classNames: `grid-no-wrap`,
             fields: [
                 {
@@ -472,7 +514,8 @@ export const CargoFields = (
                     label: 'Volume, m3',
                     placeholder: "0",
                     width: WidthType.w25,
-
+                    isDisplayed: isCargoInfoFieldsDisplayed,
+                    disabled: isStockMovementOrOutbound,
                     classNames: "",
                     hint: docHintsObj['volume'] || '',
                 },
@@ -483,7 +526,8 @@ export const CargoFields = (
                     label: 'Total weight gross, kg',
                     placeholder: "0",
                     width: WidthType.w25,
-
+                    isDisplayed: isCargoInfoFieldsDisplayed,
+                    disabled: isStockMovementOrOutbound,
                     classNames: "",
                     hint: docHintsObj['weightTotalGross'] || '',
                 },
@@ -494,7 +538,8 @@ export const CargoFields = (
                     label: 'Total weight net, kg',
                     placeholder: "0",
                     width: WidthType.w25,
-
+                    isDisplayed: isCargoInfoFieldsDisplayed,
+                    disabled: isStockMovementOrOutbound,
                     classNames: "",
                     hint: docHintsObj['weightTotalNet'] || '',
                 },
@@ -504,6 +549,7 @@ export const CargoFields = (
                     name: 'cargoVolumeHint',
                     otherComponent: <p>If you dont have info about volume and weight, it will be approximately calculated based on the products specified in the document. </p>,
                     width: WidthType.w100,
+                    isDisplayed: isInboundOrLogisticService,
                     classNames: 'cargo-volume-hint'
                 }
             ],
