@@ -56,6 +56,8 @@
 
     .is-disabled & {
       cursor: not-allowed;
+      opacity: .7;
+      background-color: var(--color-light-gray);
 
       &.is-checked {
         background-color: var(--color-blue);

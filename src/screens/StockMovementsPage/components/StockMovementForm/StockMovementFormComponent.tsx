@@ -586,6 +586,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             container40Value: container40,
             palletsAmount,
             cartonsAmount,
+            canDisplayCargoInfo: !!docData,
+            canEdit: !!docData?.canEdit,
+            //canDisplayCargoInfo: !!(docData && docData.deliveryMethod),
+            //canDisplayCargoInfo: !!(docData && docData.status.toLowerCase()!=='draft' && docData.status.toLowerCase()!=='pending'),
         }), [docData, deliveryMethod, container20, container40, palletsAmount, cartonsAmount]);
 
 

@@ -11,6 +11,7 @@ type FormFieldsBlockType = {
 const FormFieldsBlock: React.FC<FormFieldsBlockType> = ({fieldsArray, control, errors, isDisabled=false}) => {
     return <>
         {fieldsArray.map((curField) => {
+            if (!curField) return null;
             if (curField.fieldType === FormFieldTypes.GRID) {
                 return <div key={curField.name} className={`grid-inner-row ${curField.width ? "width-"+curField.width : ""} ${curField.classNames}`}>
                     <div className='grid-row'>
