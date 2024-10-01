@@ -928,8 +928,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             <DropZone readOnly={!!isDisabled} files={selectedFiles}
                                       docUuid={docData?.canEdit ? '' : docData?.uuid}
                                       onFilesChange={handleFilesChange}
-                                      allowOnlyFormats={['pdf']}
-                                      hint={'The supported file formats: PDF'}
+                                      // allowOnlyFormats={['pdf']}
+                                      // hint={'The supported file formats: PDF'}
                             />
                         </div>
                     </CardWithHelpIcon>
