@@ -773,12 +773,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Order identifier within the WAPI system"><span>WH number</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Order identifier within the WAPI system"><span>WH number</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
-                    minWidth="80px"
-                    maxWidth="80px"
+                    minWidth="100px"
+                    maxWidth="100px"
                     contentPosition="start"
                     textColor='var(--color-blue)'
                     cursor='pointer'
