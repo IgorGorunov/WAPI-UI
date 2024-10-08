@@ -435,7 +435,13 @@ input[type="date"]::before {
   &-minus {
     width: 30px;
   }
+
+  &.header-icon {
+    width: 20px;
+  }
 }
+
+
 
 .ant-table-cell {
   .no-padding {

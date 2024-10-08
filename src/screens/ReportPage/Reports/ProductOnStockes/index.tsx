@@ -21,7 +21,7 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
     },
     {
         accessorKey: 'quantityExpense',
-        header: ()=><Tooltip title="Outbound" ><span>Expense</span></Tooltip>,
+        header: ()=><Tooltip title="Outbound" ><span>Items sent</span></Tooltip>,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
@@ -32,7 +32,7 @@ const resourceColumns: ColumnDef<ProductOnStockRowType>[] = [
     },
     {
         accessorKey: 'quantityReceipt',
-        header: ()=><Tooltip title="Inbound" ><span>Receipt</span></Tooltip>,
+        header: ()=><Tooltip title="Inbound" ><span>Items received</span></Tooltip>,
         aggregationFn: 'sum',
         size: 70,
         maxSize: 400,
