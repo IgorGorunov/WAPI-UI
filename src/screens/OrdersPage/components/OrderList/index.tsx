@@ -520,12 +520,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             title: <TitleColumn
                 className='no-padding'
-                minWidth="24px"
-                maxWidth="24px"
+                minWidth="26px"
+                maxWidth="26px"
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="If order has Claims" >
-                        <span><Icon name={"complaint"}/></span>
+                        <span><Icon name={"complaint"} className='header-icon' /></span>
                     </Tooltip>
                 }
             />,
@@ -533,8 +533,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return (
                     <TableCell
                         className='no-padding'
-                        minWidth="24px"
-                        maxWidth="24px"
+                        minWidth="26px"
+                        maxWidth="26px"
                         contentPosition="center"
                         childrenBefore={
                             record.claimsExist && (
@@ -576,12 +576,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             title: <TitleColumn
                 className='no-padding'
-                minWidth="24px"
-                maxWidth="24px"
+                minWidth="26px"
+                maxWidth="26px"
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="If order has Trouble statuses">
-                        <span><Icon name={"trouble"}/></span>
+                        <span><Icon name={"trouble"} className='header-icon'/></span>
                     </Tooltip>
                 }
             />,
@@ -589,8 +589,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return (
                     <TableCell
                         className='no-padding'
-                        minWidth="24px"
-                        maxWidth="24px"
+                        minWidth="26px"
+                        maxWidth="26px"
                         contentPosition="center"
                         childrenBefore={
                             record.troubleStatusesExist && (
@@ -640,7 +640,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="If order has Order issues" >
-                        <span>Order issue</span>
+                        <span className='table-header-title'>Order issue</span>
                     </Tooltip>
                 }
             />,

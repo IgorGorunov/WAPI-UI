@@ -9,8 +9,16 @@
     }
   }
 
-  .ant-table-column-sorter {
-    display: none;
+  .ant-table-column {
+    &-sorter {
+      display: none;
+    }
+
+    &-title {
+      span {
+        line-height: 1.1;
+      }
+    }
   }
 
   .page-size-container {
@@ -118,6 +126,10 @@
       text-align: start !important;
       padding: 10px 6px 10px 6px !important;
       height: 60px !important;
+
+      .table-header-title {
+        line-height: 1.1;
+      }
     }
 
     .ant-table-cell::before {
