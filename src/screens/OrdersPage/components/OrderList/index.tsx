@@ -635,7 +635,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             title: <TitleColumn
                 className='no-padding'
-                minWidth="40px"
+                minWidth="42px"
                 maxWidth="46px"
                 contentPosition="center"
                 childrenBefore={
@@ -648,7 +648,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return (
                     <TableCell
                         className='no-padding'
-                        minWidth="40px"
+                        minWidth="42px"
                         maxWidth="46px"
                         contentPosition="center"
                         childrenBefore={
