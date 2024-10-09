@@ -17,7 +17,7 @@ const RadioSwitch = forwardRef<HTMLDivElement, FieldPropsType>(({
         hint='',
     },ref) => {
 
-    const [curValue, setCurValue] = useState(value || options.length ? options[0].value : '');
+    const [curValue, setCurValue] = useState(value ? value : options.length ? options[0].value : '');
 
     const handleChange = (selectedOption) => {
         if (!disabled) {
@@ -42,7 +42,6 @@ const RadioSwitch = forwardRef<HTMLDivElement, FieldPropsType>(({
         }
         return '';
     },[])
-
 
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`} >
