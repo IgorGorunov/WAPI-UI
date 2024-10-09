@@ -22,7 +22,7 @@ const TicketInfoBlock: React.FC<TicketInfoPropsType> = ({ticketData }) => {
             <div className='grid-row'>
                 <p className='width-17 ticket-info--title'>Ticket number:</p>
                 <div className='width-50 ticket-info--info'>{ticketData.number}</div>
-                <p className='width-17 ticket-info--title'>Created:</p>
+                <p className='width-17 ticket-info--title'>Last update:</p>
                 <div className='width-17 ticket-info--info'>{formatDateTimeToStringWithDot(ticketData.date)}</div>
                 <p className='width-17 ticket-info--title'>Topic:</p>
                 <div className={`width-50 ticket-info--info`}>{ticketData.topic}</div>
