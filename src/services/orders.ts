@@ -166,5 +166,41 @@ const sendOrderFiles = async (
     }
 };
 
+const sendAddressData = async (
+    data: {
+        addressData: {
+            clientOrderID: string;
+            uuid: string,
+            receiverAddress?: string;
+            receiverCity?: string;
+            receiverComment?: string;
+            receiverCounty?: string;
+            receiverEMail?: string;
+            receiverFullName?: string;
+            receiverPhone?: string;
+            receiverPickUpAddress?:string;
+            receiverPickUpCity?:string;
+            receiverPickUpDescription?: string;
+            receiverPickUpID?: string;
+            receiverPickUpName?: string;
+            receiverZip?: string;
+        },
+        token: string;
+        ui?: string;
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/UpdateAddressShipmentOrder`,
+            data
+        );
 
-export { getOrders, getOrderData, getOrderParameters, getOrderPickupPoints, sendOrderData, sendOrderFiles, sendOrderComment, cancelOrder};
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+
+export { getOrders, getOrderData, getOrderParameters, getOrderPickupPoints, sendOrderData, sendOrderFiles, sendOrderComment, cancelOrder, sendAddressData};
