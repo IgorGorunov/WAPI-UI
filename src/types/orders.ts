@@ -175,6 +175,7 @@ export type SingleOrderType = {
     commentTodayWasSent: boolean;
     nextAvailableDayAfterDays: number;
     logisticComment: string;
+    addressEditAllowedOnly?: boolean;
 }
 
 export type OrderProductType = {
@@ -258,7 +259,7 @@ export type SingleOrderProductFormType = {
     connectionKey?: string | number;
 };
 
-    export type SingleOrderFormType = {
+export type SingleOrderFormType = {
     clientOrderID: string;
     codAmount: number;
     codCurrency: string;

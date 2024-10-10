@@ -16,7 +16,7 @@ import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
-import {cancelOrder, getOrderPickupPoints, sendOrderData} from '@/services/orders';
+import {cancelOrder, getOrderPickupPoints, sendAddressData, sendOrderData} from '@/services/orders';
 import {DetailsFields, GeneralFields, PickUpPointFields, ReceiverFields} from "./OrderFormFields";
 import {TabFields, TabTitles} from "./OrderFormTabs";
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
@@ -63,47 +63,79 @@ type OrderFormType = {
 
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
     const {notifications} = useNotifications();
+    const { token, currentDate, superUser, ui } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
 
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isAddressAllowed, setIsAddressAllowed] = useState(!orderUuid);
+    const [isAddressChange, setIsAddressChange] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
     const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
     const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
     const [selectedPickupPoint, setSelectedPickupPoint] = useState<string | null>(null);
-    const [selectedWarehouse, setSelectedWarehouse] = useState('');
-    const [selectedCourierService, setSelectedCourierService] = useState('');
+    //const [selectedWarehouse, setSelectedWarehouse] = useState('');
+    const [selectedCourierService, setSelectedCourierService] = useState<string | null>(null);
 
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
-    const { token, currentDate, superUser, ui } = useAuth();
 
-    //tickets
-    const [showTicketForm, setShowTicketForm] = useState(false);
+    const fetchPickupPoints = useCallback(async (courierService: string) => {
+        try {
+            setIsLoading(true);
+            const requestData = {token, courierService};
+            const res: ApiResponseType = await getOrderPickupPoints(superUser && ui ? {...requestData, ui} : requestData);
 
-    //countries
-    const allCountries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
-
-    const getCountryOptions = () =>  {
-        let filteredCountries = orderParameters ? [...orderParameters.warehouses] : [];
-
-        if (selectedWarehouse)  {
-            filteredCountries = filteredCountries.filter(item=>item.warehouse===selectedWarehouse);
+            if (res && "data" in res) {
+                setCurPickupPoints(res.data)
+                setPickupOptions(createPickupOptions(res.data));
+            } else {
+                console.error("API did not return expected data");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
         }
+    },[token]);
 
-        if (selectedCourierService) {
-            filteredCountries = filteredCountries.filter(item=>item.courierService===selectedCourierService);
+
+
+    const fetchPickupPointsForCreatedOrder = useCallback(async (courierService: string) => {
+        try {
+            const requestData = {token, courierService};
+            const res: ApiResponseType = await getOrderPickupPoints(superUser && ui ? {...requestData, ui} : requestData);
+
+            if (res && "data" in res) {
+                setCurPickupPoints(res.data);
+                const pickUpPoints = res.data;
+                // if (pickUpPoints.length && pickUpPoints.filter(item => item.ID === orderData.receiverPickUpID).length == 0) {
+                //     pickUpPoints.unshift({
+                //         address: orderData.receiverPickUpAddress,
+                //         city: orderData.receiverPickUpCity,
+                //         country: orderData.receiverPickUpCountry,
+                //         description: orderData.receiverPickUpID,
+                //         id: orderData.receiverPickUpID,
+                //         name: orderData.receiverPickUpName,
+                //     })
+                // }
+                setPickupOptions(createPickupOptions(pickUpPoints));
+                //setSelectedPickupPoint(orderData.receiverPickUpID);
+            } else {
+                console.error("API did not return expected data");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
         }
+    },[token]);
 
-        const countryArr =  filteredCountries.map(item => item.country);
-
-        return allCountries.filter(item=> countryArr.includes(item.value));
-    }
-
-    const [countries, setCountries] = useState<OptionType[]>(getCountryOptions);
-
-    useEffect(() =>  {
-        setCountries(getCountryOptions());
-    }, [selectedWarehouse, selectedCourierService]);
+    useEffect(() => {
+        if (orderData && (!isDisabled || isAddressAllowed) && orderData?.courierService) {
+            fetchPickupPointsForCreatedOrder(orderData?.courierService);
+            // setSelectedPickupPoint(orderData?.receiverPickUpID);
+        }
+    }, [isDisabled, isAddressAllowed]);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -152,7 +184,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     }, [orderParameters?.warehouses]);
 
     const now = new Date();
-    console.log('ksjdflsfaejhflaehf', currentDate, now, currentDate > now, '---', addCurrentTimeToDate(currentDate).toISOString())
 
     //form
     const defaultFormValues = useMemo(() => ({
@@ -222,49 +253,92 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const currencyOptions = useMemo(()=>{return orderParameters && orderParameters?.currencies.length ? createOptions(orderParameters?.currencies) : []},[]);
 
     const preferredWarehouse = watch('preferredWarehouse');
+    //const selectedWarehouse = watch('warehouse');
+
+
+    //tickets
+    const [showTicketForm, setShowTicketForm] = useState(false);
+
+    //countries
+    const allCountries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
+
+    const getCountryOptions = () =>  {
+        let filteredCountries = orderParameters ? [...orderParameters.warehouses] : [];
+
+        if (preferredWarehouse)  {
+            filteredCountries = filteredCountries.filter(item=>item.warehouse===preferredWarehouse);
+        }
+
+        if (selectedCourierService) {
+            filteredCountries = filteredCountries.filter(item=>item.courierService===selectedCourierService);
+        }
+
+        const countryArr =  filteredCountries.map(item => item.country);
+
+        return allCountries.filter(item=> countryArr.includes(item.value));
+    }
+
+    const [countries, setCountries] = useState<OptionType[]>(getCountryOptions);
+
+    useEffect(() =>  {
+        setCountries(getCountryOptions());
+    }, [preferredWarehouse, selectedCourierService]);
 
     //pickup points
-    const createPickupOptions = () => {
+    const createPickupOptions = useCallback((curPickupPoints: PickupPointsType[]) => {
         if (curPickupPoints && curPickupPoints.length) {
+            if (orderData && orderData.addressEditAllowedOnly) {
+                if (orderData.receiverPickUpCountry) {
+                    //filter by this country
+                    return curPickupPoints.filter(item=>item.country==orderData.receiverPickUpCountry).map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
+                } else if (orderData.receiverCountry) {
+                    //filter by receiverCountry
+                    return curPickupPoints.filter(item=>item.country==orderData.receiverCountry).map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
+                }
+            }
             return curPickupPoints.map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
         }
         return [];
-    }
+    }, [orderData]);
 
-    const fetchPickupPoints = useCallback(async (courierService: string) => {
-        try {
-            setIsLoading(true);
-            const requestData = {token, courierService};
-            const res: ApiResponseType = await getOrderPickupPoints(superUser && ui ? {...requestData, ui} : requestData);
 
-            if (res && "data" in res) {
-                setCurPickupPoints(res.data)
-                setPickupOptions(createPickupOptions());
-            } else {
-                console.error("API did not return expected data");
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    },[token]);
 
     useEffect(() => {
-        const pickupPoints = curPickupPoints && curPickupPoints.length ? curPickupPoints.filter((item:PickupPointsType)=>item.id===selectedPickupPoint) : [];
+        if (curPickupPoints && curPickupPoints.length) {
+            const pickupPoints = curPickupPoints.filter((item:PickupPointsType)=>item.id===selectedPickupPoint);
 
-        if (pickupPoints.length) {
-            setValue('receiverPickUpName', pickupPoints[0].name );
-            setValue('receiverPickUpCountry', pickupPoints[0].country );
-            setValue('receiverPickUpCity', pickupPoints[0].city );
-            setValue('receiverPickUpAddress', pickupPoints[0].address );
-        } else {
-            setValue('receiverPickUpName', orderData?.receiverPickUpName || '' );
-            setValue('receiverPickUpCountry', orderData?.receiverPickUpCountry || '' );
-            setValue('receiverPickUpCity', orderData?.receiverPickUpCity || '' );
-            setValue('receiverPickUpAddress', orderData?.receiverPickUpAddress || '' );
+            if (pickupPoints.length) {
+                setValue('receiverPickUpName', pickupPoints[0].name );
+                setValue('receiverPickUpCountry', pickupPoints[0].country );
+                setValue('receiverPickUpCity', pickupPoints[0].city );
+                setValue('receiverPickUpAddress', pickupPoints[0].address );
+            }
         }
-    }, [selectedPickupPoint, curPickupPoints]);
+    }, [selectedPickupPoint]);
+
+    const clearPickUpPoint = useCallback(() => {
+        setValue('receiverPickUpID', '');
+        setValue('receiverPickUpName', '');
+        setValue('receiverPickUpCountry', '');
+        setValue('receiverPickUpCity', '');
+        setValue('receiverPickUpAddress', '');
+    }, []);
+
+    // useEffect(() => {
+    //     if (selectedPickupPoint !== null) {
+    //         //let user know that pickUp point info is cleared
+    //         informUserAboutPickUpPointClearing('PickUp point is cleared! Please, fill this info for chosen courier service')
+    //
+    //         // setValue('receiverPickUpID', '');
+    //         // setValue('receiverPickUpName', '');
+    //         // setValue('receiverPickUpCountry', '');
+    //         // setValue('receiverPickUpCity', '');
+    //         // setValue('receiverPickUpAddress', '');
+    //         clearPickUpPoint();
+    //     }
+    // }, [selectedCourierService]);
+
+
 
 
     //products
@@ -630,7 +704,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     }
 
     //form fields
-    const warehouse = watch('preferredWarehouse');
+    //const warehouse = watch('preferredWarehouse');
 
     const getCourierServices = (warehouse: string) => {
         if (orderParameters?.warehouses) {
@@ -673,14 +747,31 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         return [];
     };
 
+    const informUserAboutPickUpPointClearing = (message: string) => {
+        if (getValues('receiverPickUpID') || getValues('receiverPickUpName')) {
+            toast.warn(message, {
+                position: "top-right",
+                autoClose: 3000,
+            });
+        }
+    }
+
     const handleCourierServiceChange = (selectedOption: string) => {
         setSelectedCourierService(selectedOption);
+        //let user know that pickUp point info is cleared
+        informUserAboutPickUpPointClearing('PickUp point is cleared! Please, fill this info for chosen courier service (if needed)')
         fetchPickupPoints(selectedOption);
+        clearPickUpPoint();
     }
 
     const handleWarehouseChange = (selectedOption: string) => {
-        setSelectedWarehouse(selectedOption);
-        setSelectedCourierService('')
+        //setSelectedWarehouse(selectedOption);
+        //let user know that pickUp point info is cleared
+        informUserAboutPickUpPointClearing('PickUp point is cleared! Please, choose courier service and fill PickUp point info (if needed)')
+        clearPickUpPoint();
+        setSelectedCourierService('');
+        setValue('preferredCourierService', '');
+        setCurPickupPoints([]);
     }
 
 
@@ -695,12 +786,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
-
     const generalFields = useMemo(()=> GeneralFields(!orderData?.uuid), [orderData])
-    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [warehouse]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries}),[curPickupPoints, pickupOptions, countries, selectedWarehouse,selectedCourierService ])
-    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries}),[countries, selectedWarehouse,selectedCourierService])
+    const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
+    const receiverFields = useMemo(()=>ReceiverFields({countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false}),[curPickupPoints, pickupOptions, countries, preferredWarehouse,selectedCourierService, isAddressAllowed, isDisabled ])
+    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
+
 
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
@@ -774,9 +865,10 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const handleConfirmCancelOrder = () => {
+
+    const handleConfirmCancelOrder = async () => {
         setShowConfirmModal(false);
-        handleCancelOrder();
+        await handleCancelOrder();
     }
 
     const handleCancelOrder = async() => {
@@ -810,11 +902,117 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
     }
 
+    const checkRequisiteChanged = useCallback((field:string, data:SingleOrderFormType)=>{
+        return !!(orderData[field] || data[field]) && orderData[field] !== data[field]
+    }, [orderData]);
+
+    // const needFillPickUpPointCountry = (data: SingleOrderFormType) => {
+    //     return !!((data.receiverPickUpID || data.receiverPickUpName) && !data.receiverPickUpCountry && data.receiverCountry);
+    // }
+
+    const sendAddressChangedData = async(data) => {
+
+        const receiverFieldsMain = [
+            'receiverAddress',
+            // 'receiverCity',
+            'receiverComment',
+            'receiverCounty',
+            'receiverEMail',
+            'receiverFullName',
+            'receiverPhone',
+            // 'receiverZip'
+        ];
+
+        const receiverFieldsPickUpPoint = [
+            'receiverPickUpAddress',
+            'receiverPickUpCity',
+            'receiverPickUpDescription',
+            'receiverPickUpID',
+            'receiverPickUpName',
+            'receiverPickUpCountry'
+        ];
+
+        const changedFields = {
+            uuid: orderData?.uuid,
+            clientOrderID: orderData?.clientOrderID,
+        }
+
+        receiverFieldsMain.forEach(field => {
+            if (checkRequisiteChanged(field, data)) {
+                changedFields[field] = data[field] || '';
+            }
+        })
+
+        //add check for city and zip
+        if (checkRequisiteChanged('receiverCity', data) || checkRequisiteChanged('receiverZip', data)) {
+            changedFields['receiverCity'] = data['receiverCity'] || '';
+            changedFields['receiverZip'] = data['receiverZip'] || '';
+        }
+
+
+        //pickUp point
+        let pickUpPointChanged = false;
+
+        receiverFieldsPickUpPoint.forEach(field => {
+            if (checkRequisiteChanged(field, data)) {
+                pickUpPointChanged = true;
+            }
+        });
+
+        if (pickUpPointChanged) {
+            receiverFieldsPickUpPoint.forEach(field => {
+                changedFields[field] = data[field] || '';
+            });
+
+            if (!data.receiverPickUpCountry) {
+                changedFields['receiverPickUpCountry'] = data.receiverCountry || '';
+            }
+        }
+
+        console.log('changed fields: ', changedFields)
+
+        try {
+            const requestData = {
+                token: token,
+                addressData: changedFields
+            };
+            const res: ApiResponseType = await sendAddressData(superUser && ui ? {...requestData, ui} : requestData);
+            //console.log('order res: ', res)
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order's address is successfully edited!`, onClose: closeSuccessModal})
+                setShowStatusModal(true);
+            } else if (res && 'response' in res ) {
+                const errResponse = res.response;
+
+                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+                    const errorMessages = errResponse?.data.errorMessage;
+
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setShowStatusModal(true);
+                }
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     const onSubmitForm = async (data) => {
         clearTabTitles();
         setIsLoading(true);
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
+
+        if (isAddressChange) {
+            return sendAddressChangedData(data);
+        }
+
+        // if (!isDraft && needFillPickUpPointCountry(data)) {
+        //     data.receiverPickUpCountry = data.receiverCountry;
+        // }
 
         try {
             const requestData = {
@@ -918,7 +1116,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             </h3>
                             <div className='grid-row'>
                                 <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors}
-                                                 isDisabled={isDisabled}/>
+                                                 // isDisabled={isDisabled}/>
+                                />
                             </div>
                         </div>
                         <div className='card order-info--pick-up-point'>
@@ -937,15 +1136,16 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                             fieldState: {error}
                                         }) => (
                                         <FieldBuilder
-                                            disabled={!!isDisabled}
+                                            // disabled={!!isDisabled}
                                             {...props}
                                             name='receiverPickUpID'
                                             label='Code'
                                             fieldType={curPickupPoints && curPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
-                                            options={createPickupOptions()}
+                                            options={curPickupPoints && curPickupPoints.length ? createPickupOptions(curPickupPoints) : []}
                                             placeholder={curPickupPoints && curPickupPoints.length ? 'Select' : ''}
                                             errorMessage={error?.message}
                                             errors={errors}
+                                            disabled={isDisabled && !((orderData?.receiverPickUpID || orderData?.receiverPickUpName) && isAddressAllowed)}
                                             onChange={(selectedOption) => {
                                                 setSelectedPickupPoint(selectedOption as string);
                                                 props.onChange(selectedOption);
@@ -953,8 +1153,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                             width={WidthType.w25}
                                         />)}
                                 />
-                                <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors}
-                                                 isDisabled={isDisabled}/>
+                                <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors} />
                             </div>
                         </div>
                     </div>
@@ -1152,12 +1351,16 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     {orderData?.uuid && orderData?.canEdit ?
                         <Button type='button' variant={ButtonVariant.PRIMARY} onClick={() => setShowConfirmModal(true)}>Cancel
                             order</Button> : null}
-                    {isDisabled && orderData?.canEdit && <Button type="button" disabled={false}
+                    {isDisabled && orderData?.canEdit && !orderData?.addressEditAllowedOnly && <Button type="button" disabled={false}
                                                                  onClick={() => setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))}
                                                                  variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                    {isDisabled && orderData?.addressEditAllowedOnly && !isAddressAllowed && <Button type="button" disabled={false}
+                                                                                                      onClick={() => setIsAddressAllowed(true)}
+                                                                                                      variant={ButtonVariant.PRIMARY}>Edit address</Button>}
                     {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
+                    {isDisabled && orderData?.addressEditAllowedOnly && isAddressAllowed && <Button type="submit" disabled={!isAddressAllowed} onClick={()=>setIsAddressChange(true)}  variant={ButtonVariant.PRIMARY}>Send address</Button>}
                     </div>
             </form>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
