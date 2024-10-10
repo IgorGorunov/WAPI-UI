@@ -88,10 +88,13 @@ const ProfileDropdown = () => {
                     </div> : null}
                 </>
             }
-            {showUserList && users && users.length &&
+            {showUserList ?
                 <Modal title="Clients" onClose={()=>setShowUserList(false)}>
-                    <UserList users={users} onClose={()=>{setShowUserList(false); setIsOpen(false)}}/>
-                </Modal>
+                    {users && users.length ?
+                        <UserList users={users} onClose={()=>{setShowUserList(false); setIsOpen(false)}}/>
+                        : <p className='no-users-text'>No clients you can switch to</p>
+                    }
+                </Modal> : null
             }
         </div>
     );
