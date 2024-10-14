@@ -176,6 +176,7 @@ export type SingleOrderType = {
     nextAvailableDayAfterDays: number;
     logisticComment: string;
     addressEditAllowedOnly?: boolean;
+    warehouseAdditionalInfo?: string;
 }
 
 export type OrderProductType = {
