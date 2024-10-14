@@ -9,6 +9,7 @@ export const enum GroupStatuses {
   "Returned" = "Returned",
   "Returning" = "Returning",
   "Other statuses" = "Other statuses",
+  "Error" = "Error",
 }
 
 export const GroupStatusesOrder = {
@@ -30,6 +31,7 @@ export const StatusColors = {
   [GroupStatuses.Returned]: "#FF4000",
   [GroupStatuses.Returning]: "#FF4000",
   [GroupStatuses["Other statuses"]]: "#FEDB4F",
+  [GroupStatuses.Error]: "#FF4000",
 };
 
 
