@@ -50,6 +50,7 @@
     margin-bottom: 6px;
 
     @media (min-width: $laptop) {
+      margin-top: -16px;
       margin-bottom: 16px;
     }
   }
