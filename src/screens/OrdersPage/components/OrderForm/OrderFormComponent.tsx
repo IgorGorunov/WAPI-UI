@@ -78,7 +78,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
-
     const fetchPickupPoints = useCallback(async (courierService: string) => {
         try {
             setIsLoading(true);
@@ -182,8 +181,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
         return [];
     }, [orderParameters?.warehouses]);
-
-    const now = new Date();
 
     //form
     const defaultFormValues = useMemo(() => ({
@@ -1083,9 +1080,15 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
                 <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
                 <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal'
-                      notifications={orderNotifications} extraInfo={orderData?.logisticComment ?
-                        <div className='order-info--logistic-comment-wrapper'>
-                            <p className='order-info--logistic-comment-text'>{orderData?.logisticComment}</p></div> : null}>
+                      notifications={orderNotifications} extraInfo={orderData?.logisticComment || orderData?.warehouseAdditionalInfo ?
+                        <div className='order-info--comments-wrapper'>
+                            {orderData?.logisticComment ? <div className='order-info--logistic-comment-wrapper'>
+                                <p className='order-info--logistic-comment-text'>{orderData?.logisticComment}</p>
+                            </div>: null}
+                            {orderData?.warehouseAdditionalInfo ? <div className='order-info--address-comment-wrapper'>
+                                <p className='order-info--address-comment-text'>{orderData?.warehouseAdditionalInfo}</p>
+                            </div>: null}
+                        </div> : null}>
                     <div key='general-tab' className='general-tab'>
                         <CardWithHelpIcon classNames='card order-info--general'>
                             <h3 className='order-info__block-title'>
