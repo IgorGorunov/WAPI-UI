@@ -4,9 +4,15 @@ import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
 import {ApiResponseType} from "@/types/api";
 import {checkNewNotifications, getNotifications} from "@/services/notifications";
-import {NOTIFICATION_STATUSES, NotificationResponseType} from "@/types/notifications";
+import {NOTIFICATION_STATUSES, NotificationResponseType, NotificationType} from "@/types/notifications";
 import NotificationsBlock from "@/components/HeaderNotifications/NotificationsBlock";
 import useNotifications from "@/context/notificationContext";
+
+const removeEmptyBrackets = (notificationsArray: NotificationType[]) => {
+    return notificationsArray.map(item => {
+        return {...item, message: item.message.replaceAll('()', '').replaceAll('( )', '')}
+    })
+}
 
 const HeaderNotifications: React.FC = () => {
     const { token, superUser, ui } = useAuth();
@@ -38,7 +44,7 @@ const HeaderNotifications: React.FC = () => {
             if (res && res.data) {
                 const notificationsData = res.data as NotificationResponseType;
                 if (notificationsData.notifications && Array.isArray(notificationsData.notifications)) {
-                    setNotifications(notificationsData.notifications);
+                    setNotifications(removeEmptyBrackets(notificationsData.notifications));
                     setNeedAnimation(true);
                     const newNotificationsAmount = notificationsData.notificationsStatuses[NOTIFICATION_STATUSES.NEW]+notificationsData.notificationsStatuses[NOTIFICATION_STATUSES.UNREAD];
                     setNewNotifications(newNotificationsAmount);
