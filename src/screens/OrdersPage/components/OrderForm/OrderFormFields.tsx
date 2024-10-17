@@ -327,7 +327,6 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
 }
 
 export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed}: { countries: OptionType[]; isDisabled: boolean; isAddressAllowed: boolean }) => {
-    console.log('pick up points: ', isAddressAllowed, isDisabled, '---', isDisabled && !isAddressAllowed)
     return [
         {
             fieldType: FormFieldTypes.SELECT,

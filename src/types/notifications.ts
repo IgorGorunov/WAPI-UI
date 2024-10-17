@@ -19,7 +19,7 @@ export enum NOTIFICATION_OBJECT_TYPES {
     Inbound ='/inbounds',
     Outbound = '/outbounds',
     StockMovement = '/stockMovements',
-    LogisticService = '/logisticService',
+    LogisticService = '/logisticServices',
     Product = '/products',
     Ticket = '/tickets',
 }

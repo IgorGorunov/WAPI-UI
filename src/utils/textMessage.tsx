@@ -17,3 +17,7 @@ export const splitMessage = (text: string, breakSymbol='<br>') => {
 
     return textArr.map((item, index) => <span key={`${item}_${index}`} className='new-line'>{item}</span>);
 }
+
+export const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}

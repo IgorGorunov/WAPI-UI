@@ -11,7 +11,7 @@ import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {exportFileXLS} from "@/utils/files";
 import { getInbounds} from "@/services/stockMovements";
 import {
-    STOCK_MOVEMENT_DOC_TYPE,
+    STOCK_MOVEMENT_DOC_TYPE, STOCK_MOVEMENT_ROUTES,
     StockMovementType
 } from "@/types/stockMovements";
 import Loader from "@/components/Loader";
@@ -25,6 +25,7 @@ import {
     tourGuideStepsStockMovements,
     tourGuideStepsStockMovementsNoDocs
 } from "@/screens/StockMovementsPage/stockMovementsTourGuideSteps.constants";
+import {getBindingIdentifiers} from "@babel/types";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
@@ -52,6 +53,16 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
     useEffect(() => {
         if (!token) Router.push(Routes.Login);
     }, [token]);
+
+    useEffect(() => {
+        const { uuid } = Router.query;
+
+        if (uuid) {
+            handleEditStockMovement(Array.isArray(uuid) ? uuid[0] : uuid);
+            Router.replace(STOCK_MOVEMENT_ROUTES[docType]);
+        }
+
+    }, [Router.query]);
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -100,8 +111,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
         setShowStockMovementModal(true);
     }
 
-    const handleAddOrder= (
-    ) => {
+    const handleAddOrder = () => {
         setIsDocNew(true);
         setDocUuid(null);
         // fetchInboundParams();

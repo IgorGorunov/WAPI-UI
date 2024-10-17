@@ -1,5 +1,6 @@
 import {AttachedFilesType, DocProductParamsType} from "@/types/utility";
 import {TicketType} from "@/types/tickets";
+import {Routes} from '@/types/routes';
 
 export const enum STOCK_MOVEMENT_DOC_TYPE {
     INBOUNDS = 'Inbound',
@@ -13,6 +14,13 @@ export enum STOCK_MOVEMENT_DOC_SUBJECT {
     'StockMovement' = 'Stock movement',
     'Outbound' = 'Outbound',
     'LogisticService' = 'Logistic service',
+}
+
+export enum STOCK_MOVEMENT_ROUTES {
+    'Inbound' = Routes.Inbounds,
+    'StockMovement' = Routes.StockMovements,
+    'Outbound' = Routes.Outbounds,
+    'LogisticService' = Routes.LogisticServices
 }
 
 export type StockMovementType = {
