@@ -966,15 +966,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             }
         }
 
-        console.log('changed fields: ', changedFields)
-
         try {
             const requestData = {
                 token: token,
                 addressData: changedFields
             };
             const res: ApiResponseType = await sendAddressData(superUser && ui ? {...requestData, ui} : requestData);
-            //console.log('order res: ', res)
+
             if (res && "status" in res && res?.status === 200) {
                 //success
                 setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order's address is successfully edited!`, onClose: closeSuccessModal})
@@ -1017,7 +1015,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 orderData: data
             };
             const res: ApiResponseType = await sendOrderData(superUser && ui ? {...requestData, ui} : requestData);
-            //console.log('order res: ', res)
+
             if (res && "status" in res && res?.status === 200) {
                 //success
                 setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully ${ orderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})

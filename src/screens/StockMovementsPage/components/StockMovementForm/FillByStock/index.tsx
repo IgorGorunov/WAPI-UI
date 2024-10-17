@@ -66,8 +66,6 @@ const FillByStock: React.FC<PropsType> = ({ qualityList, onClose, setResponseDat
                 quality: data.quality.filter(item => item.enable).map(item=>item.quality),
             };
 
-            //console.log('data: ', requestData)
-
             const res: ApiResponseType = await fillInboundByStock(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res && res?.status === 200) {

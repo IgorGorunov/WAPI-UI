@@ -230,10 +230,6 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         });
     }, [tickets, searchTerm, filterStatus, filterTopic, filterNewMessages, sortColumn, sortDirection, fullTextSearch, currentRange]);
 
-    useEffect(() => {
-        console.log('tickets changed')
-    }, [tickets]);
-
     const handleDateRangeSave = (newRange: DateRangeType) => {
         setCurrentRange(newRange);
         setCurrent(1);

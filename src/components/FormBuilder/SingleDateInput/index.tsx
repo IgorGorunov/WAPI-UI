@@ -120,7 +120,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                             {type==='date-time' ? <div className='time-picker-wrapper'> <Icon name='clock' /><TimePicker
                                 value={selectedTime}
                                 disableClock={true}
-                                onChange={(val)=>{console.log('got time:', val);handleTimeSelect(val)}}
+                                onChange={(val)=>{handleTimeSelect(val)}}
                             /></div> : null}
                         </div>}
                     <div className='date-input__wrapper'>

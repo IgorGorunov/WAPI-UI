@@ -110,8 +110,9 @@ const OrdersPage = () => {
                 if (el.length) {
                     return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
                 }
+                return [...prevState];
             }
-            return [...prevState];
+            return [];
         });
 
         setShowOrderModal(true);

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {authenticate, authenticateWithOneTimeToken} from "@/services/auth";
-import Router from "next/router";
+import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import useAuth from "@/context/authContext";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
@@ -11,6 +11,7 @@ import {UserStatusType} from "@/types/leads";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
 import {formFields} from "./LoginFormFields.constants";
+import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 
 type LoginFormPropsType = {
   oneTimeToken?: string;
@@ -18,10 +19,24 @@ type LoginFormPropsType = {
 }
 
 const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}) => {
+  const Router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
   const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile, setIsSuperUser } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
+
+  const [docType, setDocType] = useState('');
+  const [docUuid, setDocUuid] = useState('');
+
+  useEffect(() => {
+    const { type, uuid } = Router.query;
+    if (type && uuid) {
+      setDocType(Array.isArray(type) ? type[0] : type);
+      setDocUuid(Array.isArray(uuid) ? uuid[0] : uuid);
+    }
+
+  }, [Router.query]);
 
   const setAuthData = async(authData) => {
     const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile, superUser } = authData;
@@ -42,7 +57,11 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
 
     switch (userStatus) {
       case 'user':
-        await Router.push(Routes.Dashboard);
+        if (docType && docUuid) {
+          await Router.push({pathname: NOTIFICATION_OBJECT_TYPES[docType], query: {uuid: docUuid}})
+        } else {
+          await Router.push(Routes.Dashboard);
+        }
         return;
       default:
         await Router.push('/lead');
@@ -74,9 +93,6 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
       loginUserWithOneTimeToken();
     }
   }, [oneTimeToken]);
-
-
-
 
 
   const {

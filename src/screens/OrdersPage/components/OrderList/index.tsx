@@ -341,7 +341,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
 
     const getUnderlineColor = useCallback((statusText: string) => {
-        console.log('COLORS: ', statusText, StatusColors[statusText], StatusColors)
         return StatusColors[statusText] || 'black';
     }, []);
 
@@ -422,11 +421,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }
         });
     }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
-
-
-    useEffect(() => {
-        //console.log('filtered: ', filteredOrders)
-    }, [filteredOrders]);
 
     useEffect(() => {
         setCurrent(1)
