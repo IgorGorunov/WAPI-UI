@@ -33,6 +33,16 @@
     &:focus-visible {
       outline: 2px solid var(--color-blue);
     }
+
+    &.is-disabled {
+      opacity: 0.6;
+
+      &:focus,
+      &:focus-within,
+      &:focus-visible {
+        outline: none;
+      }
+    }
   }
 
   .dropzone-title {

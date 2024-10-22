@@ -735,7 +735,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                             </h3>
                         </TutorialHintTooltip>
                         <div className='dropzoneBlock'>
-                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? '' : amazonPrepOrderData?.uuid} hint="Product labels, Carton labels, Pallet labels, Excel file and any other files related to the order. Available formats: pdf, xls, xlsx." banCSV={true}/>
+                            <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? amazonPrepOrderData?.uuid : ''} hint="Product labels, Carton labels, Pallet labels, Excel file and any other files related to the order. Available formats: pdf, xls, xlsx." banCSV={true}/>
                         </div>
                     </CardWithHelpIcon>
                 </div>

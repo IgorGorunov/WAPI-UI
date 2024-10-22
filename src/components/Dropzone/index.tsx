@@ -183,14 +183,14 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
     return (
         <div className='dropzone-wrapper'>
             <ToastContainer />
-            <div onClick={handleDivClick} onPaste={onPaste} className={`dropzone-container ${readOnly ? 'read-only' : ''}`}>
+            <div onClick={handleDivClick} onPaste={onPaste} className={`dropzone-container ${readOnly ? 'read-only' : ''} ${readOnly && !docUuid ? 'is-disabled' : ''}`}>
                 {isDragging && <Loader/>}
                 <div
                     {...getRootProps()}
                     onClick={handleDivClick}
                     className={`dropzone ${isDragActive ? 'active' : ''}`}
                 >
-                    <input {...getInputProps()} id={inputId} />
+                    <input {...getInputProps()} id={inputId} disabled={readOnly && !docUuid}/>
                     {files && files.length == 0 && (<div className="circle" onClick={openFileDialog}>
                         <Icon name='upload'/>
                     </div>)}
