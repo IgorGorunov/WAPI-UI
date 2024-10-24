@@ -41,6 +41,8 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
+const noDocType = 'has no document';
+
 const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrentRange, handleEditTicket}) => {
     const router = useRouter();
 
@@ -79,7 +81,11 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     }
 
     const calcOrderAmount = useCallback((property: string, value: string) => {
-        return tickets.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
+        return tickets.filter(order => order[property] === value || order[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[tickets]);
+
+    const calcDocTypeAmount = useCallback((property: string, value: string) => {
+        return tickets.filter(ticket => ticket[property] === null && value===null || ticket[property] !==null && value !==null && ticket[property].toString().toLowerCase() === value.toString().toLowerCase()).length || 0;
     },[tickets]);
 
 
@@ -147,12 +153,30 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
     ]), [uniqueTopics]);
 
-
+    const [filterDocType, setFilterDocType] = useState<string[]>([]);
+    const handleFilterDocTypeChange = (newDocTypes: string[]) => {
+        setFilterDocType(newDocTypes);
+        setCurrent(1);
+        //setQuery({addParams: {page:1}})
+    }
+    const uniqueDocTypes = useMemo(() => {
+        const docTypes = tickets.map(order => order.subjectType ? order.subjectType : noDocType);
+        return Array.from(new Set(docTypes)).filter(item => item).sort();
+    }, [tickets]);
+    uniqueStatuses.sort();
+    const docTypeOptions = useMemo(() => ([
+        ...uniqueDocTypes.map(item => ({
+            value: item,
+            label: item,
+            amount: item === noDocType ? calcDocTypeAmount('subjectType', null) : calcDocTypeAmount('subjectType', item),
+        }))
+    ]), [uniqueDocTypes]);
 
     const handleClearAllFilters = () => {
         setFilterStatus([]);
         setFilterTopic([]);
         setFilterNewMessages([]);
+        setFilterDocType([]);
 
         setCurrent(1);
         //setQuery({addParams: {page:1}})
@@ -218,8 +242,9 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 (filterTopic.includes(ticket.topic));
             const matchesNewMessages = !filterNewMessages.length || (filterNewMessages.includes('Has new messages') && ticket.newMessages) ||
                 (filterNewMessages.includes("Doesn't have new messages") && !ticket.newMessages);
+            const matchesDocType = !filterDocType.length || (filterDocType.includes(noDocType) && ticket.subjectType===null) || filterDocType.includes(ticket.subjectType);
 
-            return matchesSearch && matchesStatus && matchesTopic && matchesNewMessages;
+            return matchesSearch && matchesStatus && matchesTopic && matchesNewMessages && matchesDocType;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -228,7 +253,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [tickets, searchTerm, filterStatus, filterTopic, filterNewMessages, sortColumn, sortDirection, fullTextSearch, currentRange]);
+    }, [tickets, searchTerm, filterStatus, filterTopic, filterNewMessages, filterDocType, sortColumn, sortDirection, fullTextSearch, currentRange]);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
         setCurrentRange(newRange);
@@ -245,6 +270,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
     const [isOpenFilterTopic, setIsOpenFilterTopic] = useState(false);
     const [isOpenFilterNewMessages, setIsOpenFilterNewMessages] = useState(true);
+    const [isOpenFilterDocTypes, setIsOpenFilterDocTypes] = useState(true);
 
     const columns: TableColumnProps<TicketType>[]  = [
         {
@@ -463,6 +489,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                     <CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
                     <CurrentFilters title='Topic' filterState={filterTopic} options={topicOptions} onClose={()=>handleFilterTopicChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />
                     <CurrentFilters title='New messages' filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>handleFilterNewMessagesChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />
+                    <CurrentFilters title='Document type' filterState={filterDocType} options={docTypeOptions} onClose={()=>handleFilterDocTypeChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterDocTypes(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -504,6 +531,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={statusOptions} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle='Topic' filterOptions={topicOptions} filterState={filterTopic} setFilterState={handleFilterTopicChange} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>
                 <FiltersBlock filterTitle='New messages' filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={handleFilterNewMessagesChange} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>
+                <FiltersBlock filterTitle='Document type' filterOptions={docTypeOptions} filterState={filterDocType} setFilterState={handleFilterDocTypeChange} isOpen={isOpenFilterDocTypes} setIsOpen={setIsOpenFilterDocTypes}/>
             </FiltersContainer>
         </div>
     );
