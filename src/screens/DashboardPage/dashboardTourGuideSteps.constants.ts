@@ -22,7 +22,7 @@ export const dashboardSteps = [
     },
     {
         target: '.forecast__container.gmv',
-        content: 'The total value of merchandise sold in a given time period',
+        content: 'The total value of merchandise sold in a given time period (additional services like "Delivery" are not included)',
     },
     {
         target: '.order-statuses',
