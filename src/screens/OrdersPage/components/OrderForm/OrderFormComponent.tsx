@@ -69,6 +69,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
     const [isAddressAllowed, setIsAddressAllowed] = useState(!orderUuid);
     const [isAddressChange, setIsAddressChange] = useState(false);
+    const [addressWasChanged, setAddressWasChanged] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
     const [curPickupPoints, setCurPickupPoints] = useState<PickupPointsType[]>(null);
     const [pickupOptions, setPickupOptions] = useState<OptionType[]>(null);
@@ -297,6 +298,10 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
         return [];
     }, [orderData]);
+
+    const createdPickupPoints = useMemo(() => {
+        return createPickupOptions(curPickupPoints);
+    },[orderData, curPickupPoints, preferredWarehouse, selectedCourierService])
 
 
 
@@ -771,8 +776,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         setCurPickupPoints([]);
     }
 
-
-
     //notifications
     let orderNotifications: NotificationType[] = [];
     if (orderData && orderData.uuid && notifications && notifications.length) {
@@ -780,13 +783,88 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         // orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid)
     }
 
+    //address fields
+    const checkRequisiteChanged = useCallback((field:string, data:SingleOrderFormType)=>{
+        return !!(orderData[field] || data[field]) && orderData[field] !== data[field]
+    }, [orderData]);
+
+    const getChangedAddressFields = useCallback((data: SingleOrderFormType)=>{
+        const receiverFieldsMain = [
+            'receiverAddress',
+            // 'receiverCity',
+            'receiverComment',
+            'receiverCounty',
+            'receiverEMail',
+            'receiverFullName',
+            'receiverPhone',
+            // 'receiverZip'
+        ];
+
+        const receiverFieldsPickUpPoint = [
+            'receiverPickUpAddress',
+            'receiverPickUpCity',
+            'receiverPickUpDescription',
+            'receiverPickUpID',
+            'receiverPickUpName',
+            'receiverPickUpCountry'
+        ];
+
+        const changedFields = {}
+
+        receiverFieldsMain.forEach(field => {
+            if (checkRequisiteChanged(field, data)) {
+                changedFields[field] = data[field] || '';
+            }
+        })
+
+        //add check for city and zip
+        if (checkRequisiteChanged('receiverCity', data) || checkRequisiteChanged('receiverZip', data)) {
+            changedFields['receiverCity'] = data['receiverCity'] || '';
+            changedFields['receiverZip'] = data['receiverZip'] || '';
+        }
+
+
+        //pickUp point
+        let pickUpPointChanged = false;
+
+        receiverFieldsPickUpPoint.forEach(field => {
+            if (checkRequisiteChanged(field, data)) {
+                pickUpPointChanged = true;
+            }
+        });
+
+        if (pickUpPointChanged) {
+            receiverFieldsPickUpPoint.forEach(field => {
+                changedFields[field] = data[field] || '';
+            });
+
+            if (!data.receiverPickUpCountry) {
+                changedFields['receiverPickUpCountry'] = data.receiverCountry || '';
+            }
+        }
+
+        return changedFields;
+    }, [orderData]);
+
+    const hasChangedAddressFields = () => {
+        if (orderData && isAddressChange) {
+            const data = getValues() as SingleOrderFormType;
+
+            if (Object.keys(getChangedAddressFields(data)).length > 0) {
+                setAddressWasChanged(true);
+            } else {
+                setAddressWasChanged(false)
+            }
+        }
+    };
+
 
     const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
     const generalFields = useMemo(()=> GeneralFields(!orderData?.uuid), [orderData])
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false}),[curPickupPoints, pickupOptions, countries, preferredWarehouse,selectedCourierService, isAddressAllowed, isDisabled ])
-    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed])
+    const receiverFields = useMemo(()=>ReceiverFields({countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[curPickupPoints, pickupOptions, countries, preferredWarehouse,selectedCourierService, isAddressAllowed, isDisabled ])
+    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
 
@@ -899,72 +977,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
     }
 
-    const checkRequisiteChanged = useCallback((field:string, data:SingleOrderFormType)=>{
-        return !!(orderData[field] || data[field]) && orderData[field] !== data[field]
-    }, [orderData]);
-
-    // const needFillPickUpPointCountry = (data: SingleOrderFormType) => {
-    //     return !!((data.receiverPickUpID || data.receiverPickUpName) && !data.receiverPickUpCountry && data.receiverCountry);
-    // }
-
     const sendAddressChangedData = async(data) => {
 
-        const receiverFieldsMain = [
-            'receiverAddress',
-            // 'receiverCity',
-            'receiverComment',
-            'receiverCounty',
-            'receiverEMail',
-            'receiverFullName',
-            'receiverPhone',
-            // 'receiverZip'
-        ];
-
-        const receiverFieldsPickUpPoint = [
-            'receiverPickUpAddress',
-            'receiverPickUpCity',
-            'receiverPickUpDescription',
-            'receiverPickUpID',
-            'receiverPickUpName',
-            'receiverPickUpCountry'
-        ];
-
-        const changedFields = {
-            uuid: orderData?.uuid,
-            clientOrderID: orderData?.clientOrderID,
-        }
-
-        receiverFieldsMain.forEach(field => {
-            if (checkRequisiteChanged(field, data)) {
-                changedFields[field] = data[field] || '';
-            }
-        })
-
-        //add check for city and zip
-        if (checkRequisiteChanged('receiverCity', data) || checkRequisiteChanged('receiverZip', data)) {
-            changedFields['receiverCity'] = data['receiverCity'] || '';
-            changedFields['receiverZip'] = data['receiverZip'] || '';
-        }
-
-
-        //pickUp point
-        let pickUpPointChanged = false;
-
-        receiverFieldsPickUpPoint.forEach(field => {
-            if (checkRequisiteChanged(field, data)) {
-                pickUpPointChanged = true;
-            }
-        });
-
-        if (pickUpPointChanged) {
-            receiverFieldsPickUpPoint.forEach(field => {
-                changedFields[field] = data[field] || '';
-            });
-
-            if (!data.receiverPickUpCountry) {
-                changedFields['receiverPickUpCountry'] = data.receiverCountry || '';
-            }
-        }
+        let changedFields = {
+            uuid: orderData.uuid,
+            clientOrderID: orderData.clientOrderID,
+            ...getChangedAddressFields(data)
+        };
 
         try {
             const requestData = {
@@ -1004,10 +1023,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         if (isAddressChange) {
             return sendAddressChangedData(data);
         }
-
-        // if (!isDraft && needFillPickUpPointCountry(data)) {
-        //     data.receiverPickUpCountry = data.receiverCountry;
-        // }
 
         try {
             const requestData = {
@@ -1141,8 +1156,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                             {...props}
                                             name='receiverPickUpID'
                                             label='Code'
-                                            fieldType={curPickupPoints && curPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
-                                            options={curPickupPoints && curPickupPoints.length ? createPickupOptions(curPickupPoints) : []}
+                                            fieldType={curPickupPoints && curPickupPoints.length && createdPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
+                                            options={createdPickupPoints}
                                             placeholder={curPickupPoints && curPickupPoints.length ? 'Select' : ''}
                                             errorMessage={error?.message}
                                             errors={errors}
@@ -1150,6 +1165,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                             onChange={(selectedOption) => {
                                                 setSelectedPickupPoint(selectedOption as string);
                                                 props.onChange(selectedOption);
+                                                hasChangedAddressFields();
                                             }}
                                             width={WidthType.w25}
                                         />)}
@@ -1361,7 +1377,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
-                    {isDisabled && orderData?.addressEditAllowedOnly && isAddressAllowed && <Button type="submit" disabled={!isAddressAllowed} onClick={()=>setIsAddressChange(true)}  variant={ButtonVariant.PRIMARY}>Send address</Button>}
+                    {isDisabled && orderData?.addressEditAllowedOnly && isAddressAllowed && <Button type="submit" disabled={!isAddressAllowed || !addressWasChanged} onClick={()=>setIsAddressChange(true)}  variant={ButtonVariant.PRIMARY}>Send address</Button>}
                     </div>
             </form>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

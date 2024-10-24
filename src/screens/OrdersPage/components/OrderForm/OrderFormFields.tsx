@@ -196,7 +196,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
     },
 ];
 
-export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllowed=false}: { countries: OptionType[]; prefix?:string; isDisabled: boolean; isAddressAllowed: boolean}) => {
+export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllowed=false, onChangeFn}: { countries: OptionType[]; prefix?:string; isDisabled: boolean; isAddressAllowed: boolean; onChangeFn: ()=>void}) => {
     return [
         {
             fieldType: FormFieldTypes.SELECT,
@@ -222,6 +222,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -236,6 +237,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -250,6 +252,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -264,6 +267,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -278,6 +282,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -297,6 +302,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             classNames: "",
             needToasts: false,
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -311,6 +317,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -322,11 +329,12 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             width: WidthType.w100,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
     ];
 }
 
-export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed}: { countries: OptionType[]; isDisabled: boolean; isAddressAllowed: boolean }) => {
+export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed, onChangeFn}: { countries: OptionType[]; isDisabled: boolean; isAddressAllowed: boolean, onChangeFn:()=>void }) => {
     return [
         {
             fieldType: FormFieldTypes.SELECT,
@@ -338,6 +346,7 @@ export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed}: { c
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -348,6 +357,7 @@ export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed}: { c
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -358,6 +368,7 @@ export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed}: { c
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -368,6 +379,7 @@ export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed}: { c
             width: WidthType.w100,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
+            onChange: onChangeFn,
         },
 
     ];
