@@ -1,0 +1,17 @@
+.lead-page {
+  &__warning-text {
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--color-error);
+    text-align: center;
+  }
+
+  .welcome-text {
+    max-width: 800px;
+    margin: 16px auto 32px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+  }
+}

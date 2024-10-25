@@ -8,6 +8,8 @@ import {ApiResponseType} from "@/types/api";
 import {getPricesInfo, sendSignNDA} from "@/services/leads";
 import useAuth from "@/context/authContext";
 import PricesBlock from "./PricesBlock";
+import leadTutorialInfo from "@/screens/LeadPage/components/ApprovedLeadInfo/leadTutorialUrlsAndTexts";
+import LeadTutorialStep from "@/screens/LeadPage/components/LeadTutorialStep";
 
 type PricesPropsType = {
 }
@@ -72,21 +74,25 @@ const Prices: React.FC<PricesPropsType> = () => {
 
 
     return (
-        <div className={`card prices-info`}>
+        <>
+            <LeadTutorialStep stepData={leadTutorialInfo.step3} />
+            <LeadTutorialStep stepData={leadTutorialInfo.step4} />
+            <div className={`card prices-info`}>
 
-            <div className={`prices-info-wrapper`}>
-                {showPrices ? curPrices ? (
-                    <PricesBlock prices={curPrices} />
-                ) : null : <Button onClick={()=>setShowNDA(true)}>Explore our pricing options</Button>}
+                <div className={`prices-info-wrapper`}>
+                    {showPrices ? curPrices ? (
+                        <PricesBlock prices={curPrices} />
+                    ) : null : <Button onClick={()=>setShowNDA(true)}>Explore our pricing options</Button>}
+                </div>
+
+
+                {showNDA ? (
+                    <Modal title={`To access our pricing, kindly sign the Non-Disclosure Agreement (NDA).`} onClose={()=>setShowNDA(false)} >
+                        <NDA handleSignNDA={handleSignNDA} />
+                    </Modal>
+                ) : null}
             </div>
-
-
-            {showNDA ? (
-                <Modal title={`To access our pricing, kindly sign the Non-Disclosure Agreement (NDA).`} onClose={()=>setShowNDA(false)} >
-                    <NDA handleSignNDA={handleSignNDA} />
-                </Modal>
-            ) : null}
-        </div>
+        </>
     );
 };
 

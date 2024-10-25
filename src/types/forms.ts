@@ -85,7 +85,7 @@ export type FieldPropsType = {
   otherComponent?: any;
   isDisplayed?: boolean;
   autoComplete?: string;
-  ref?: any;
+  ref?: any | null;
   hideTextOnMobile?: boolean;
   extraLabel?: string;
   isCheckboxHidden?: boolean;

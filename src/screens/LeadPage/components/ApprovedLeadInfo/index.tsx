@@ -8,6 +8,9 @@ import {ApiResponseType} from "@/types/api";
 import {getLegalData} from "@/services/leads";
 import useAuth from "@/context/authContext";
 import ApiInfo from "@/screens/LeadPage/components/ApprovedLeadInfo/ApiInfo";
+import Company from "@/screens/LeadPage/components/ApprovedLeadInfo/Company";
+import NextStep from "@/screens/LeadPage/components/ApprovedLeadInfo/NextStep";
+import NextButton from "@/screens/LeadPage/components/ApprovedLeadInfo/NextButton";
 
 type ApprovedLeadInfoPropsType = {
 
@@ -41,19 +44,39 @@ const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
 
     //const tabTitles = ['Prices', 'Legal documentation', 'API info', 'UI tutorial'].map(item=>({title: item}));
 
-    const tabTitles = ['Prices', 'Legal documentation', 'API info'].map(item=>({title: item}));
+    const tabTitles = ['Company', 'Prices', 'Legal documentation', 'API info', 'Next step'].map(item=>({title: item}));
+
+    const [activeTab, setActiveTab] = useState(0);
 
     return (
         <div className={`card lead-page__approved-block `}>
-            <Tabs id='order-tabs' tabTitles={tabTitles}>
+            <Tabs id='lead-tabs' tabTitles={tabTitles} curTab={activeTab} setCurTab={setActiveTab}>
+                <div key='company-tab' className='lead-page-tab'>
+                    <Company />
+                    <div className='lead-page__approved-block__next-btn'>
+                        <NextButton setActiveTab={setActiveTab} nextTab={1} />
+                    </div>
+                </div>
                 <div key='prices-tab' className='lead-page-tab'>
-                    <Prices />
+                    <Prices/>
+                    <div className='lead-page__approved-block__next-btn'>
+                        <NextButton setActiveTab={setActiveTab} nextTab={2}/>
+                    </div>
                 </div>
                 <div key='legal-tab' className='lead-page-tab'>
-                    {legalData ? <LegalInfo legalData={legalData}/> : null }
+                    <LegalInfo legalData={legalData}/>
+                    <div className='lead-page__approved-block__next-btn'>
+                        <NextButton setActiveTab={setActiveTab} nextTab={3}/>
+                    </div>
                 </div>
                 <div key='api-tab' className='lead-page-tab'>
-                    <ApiInfo />
+                    <ApiInfo/>
+                    <div className='lead-page__approved-block__next-btn'>
+                        <NextButton setActiveTab={setActiveTab} nextTab={4}/>
+                    </div>
+                </div>
+                <div key='next-step-tab' className='lead-page-tab'>
+                    <NextStep/>
                 </div>
                 {/*<div key='ui-tab' className='lead-page-tab'>*/}
                 {/*    UI*/}
