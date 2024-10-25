@@ -28,21 +28,23 @@ const formComponentsMap = {
   [FormFieldTypes.PHONE_NUMBER]: PhoneNumber,
 };
 
-//const FieldBuilder: React.FC<FormBuilderType> = ({
-const  FieldBuilder = forwardRef<HTMLInputElement | HTMLSelectElement, FormBuilderType>(
-          ({fieldType,
-    isDisplayed = true,
-  ...otherProps
-},ref) => {
 
-  if (!isDisplayed) return null;
+const FieldBuilder = forwardRef<any, FormBuilderType>(
+    ({ fieldType, isDisplayed = true, ...otherProps }, ref) => {
+      if (!isDisplayed) return null;
 
-  const Component =
-    formComponentsMap[fieldType as keyof typeof formComponentsMap];
+      const Component = formComponentsMap[fieldType as keyof typeof formComponentsMap];
 
-  if (!Component) return null;
+      if (!Component) return null;
 
-  return <Component ref={ref} type={fieldType} {...otherProps} />;
-});
+      return (
+          <Component
+              ref={ref as any}  // Using `any` to bypass strict typing
+              {...otherProps}
+          />
+      );
+    }
+);
+
 
 export default FieldBuilder;

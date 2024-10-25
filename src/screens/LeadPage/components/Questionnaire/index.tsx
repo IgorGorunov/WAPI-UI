@@ -35,7 +35,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
     const [isLoading, setIsLoading] = useState(false);
     //countries
-    const countryOptions = COUNTRIES.filter(item=> questionnaireParams.targetCountries.includes(item.value.toUpperCase())).map(item => ({label: item.label, value: item.value.toUpperCase()}));
+    const countryOptions = questionnaireParams ? COUNTRIES.filter(item=> questionnaireParams.targetCountries.includes(item.value.toUpperCase())).map(item => ({label: item.label, value: item.value.toUpperCase()})) : [];
 
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submitErrors, setSubmitErrors] = useState([]);
@@ -165,98 +165,103 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
     }
 
     return (
-        <div className={`card lead-questionnaire`}>
-            {isLoading && <Loader />}
-            {/*<div className={`title-h3`}>Client information</div>*/}
-            <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
-                <input autoComplete="false" name="hidden" type="text" style={{display: 'none'}}/>
-                <div className={`lead-questionnaire__questions`}>
-                    <div className={`grid-row`}>
-                        <SingleField key={CompanyNameField.name} curField={CompanyNameField} control={control}
-                                     errors={errors}/>
-                        <SingleField key={CompanyWebpageField.name} curField={CompanyWebpageField} control={control}
-                                     errors={errors}/>
+        <>
+            <p className='lead-page__warning-text'>
+                To access the UI system, please fill out the form with information about your business
+            </p>
+            <div className={`card lead-questionnaire`}>
+                {isLoading && <Loader />}
+                {/*<div className={`title-h3`}>Client information</div>*/}
+                <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
+                    <input autoComplete="false" name="hidden" type="text" style={{display: 'none'}}/>
+                    <div className={`lead-questionnaire__questions`}>
+                        <div className={`grid-row`}>
+                            <SingleField key={CompanyNameField.name} curField={CompanyNameField} control={control}
+                                         errors={errors}/>
+                            <SingleField key={CompanyWebpageField.name} curField={CompanyWebpageField} control={control}
+                                         errors={errors}/>
 
-                        <ul className={`lead-questionnaire__product-types-list lead-questionnaire-list`}>
-                            <p className={`lead-questionnaire-list-title`}>
-                                Product categories *
-                            </p>
-                            {questionnaireParams.productTypes.map((item, index) => (
-                                <li key={item + '_' + index}
-                                    className='lead-questionnaire-list-item width-33'>
-                                    <Checkbox
-                                        name={item}
-                                        label={item}
-                                        checked={checkedProductTypes.includes(item)}
-                                        onChange={(val: React.ChangeEvent<HTMLInputElement>) => {
-                                            updateCheckedValues(checkedProductTypes, 'productTypes', item, val.target.checked)
-                                        }}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                        <ul className={`lead-questionnaire-list grid-row`}>
-                            <p className={`lead-questionnaire-list-title`}>
-                                Choose your marketplaces (if any)
-                            </p>
-                            {questionnaireParams.marketplaces.map((item, index) => (
-                                <li key={item + '_' + index}
-                                    className='lead-questionnaire-list-item width-33'>
-                                    <Checkbox
-                                        name={item}
-                                        label={item}
-                                        checked={checkedMarketplaces.includes(item)}
-                                        onChange={(val: React.ChangeEvent<HTMLInputElement>) => {
-                                            updateCheckedValues(checkedMarketplaces, 'marketplaces', item, val.target.checked)
-                                        }}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                        <ul className={`lead-questionnaire-list grid-row`}>
-                            <p className={`lead-questionnaire-list-title`}>
-                                Target countries *
-                            </p>
-                            {countryOptions.map((item, index) => (
-                                <li key={item.value + '_' + index}
-                                    className='lead-questionnaire-list-item width-33'>
-                                    <Checkbox
-                                        name={item.value}
-                                        label={item.label}
-                                        checked={checkedCountries.includes(item.value)}
-                                        isCountry={true}
-                                        flagBefore={true}
-                                        onChange={(val: React.ChangeEvent<HTMLInputElement>) => {
-                                            updateCheckedValues(checkedCountries, 'targetCountries', item.value, val.target.checked)
-                                        }}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                        <SingleField key={SalesVolumePerMonthField.name} curField={SalesVolumePerMonthField}
-                                     control={control} errors={errors}/>
-                        <SingleField key={SkusField.name} curField={SkusField} control={control} errors={errors}/>
-                        <SingleField key={DimensionsField.name} curField={DimensionsField} control={control}
-                                     errors={errors}/>
-                        <SingleField key={WeightField.name} curField={WeightField} control={control} errors={errors}/>
-                        <SingleField key={PackagingField.name} curField={PackagingField} control={control}
-                                     errors={errors}/>
-                        <SingleField key={CodField.name} curField={CodField} control={control} errors={errors}/>
+                            <ul className={`lead-questionnaire__product-types-list lead-questionnaire-list`}>
+                                <p className={`lead-questionnaire-list-title`}>
+                                    Product categories *
+                                </p>
+                                {questionnaireParams ? questionnaireParams.productTypes.map((item, index) => (
+                                    <li key={item + '_' + index}
+                                        className='lead-questionnaire-list-item width-33'>
+                                        <Checkbox
+                                            name={item}
+                                            label={item}
+                                            checked={checkedProductTypes.includes(item)}
+                                            onChange={(val: React.ChangeEvent<HTMLInputElement>) => {
+                                                updateCheckedValues(checkedProductTypes, 'productTypes', item, val.target.checked)
+                                            }}
+                                        />
+                                    </li>
+                                )) : null}
+                            </ul>
+                            <ul className={`lead-questionnaire-list grid-row`}>
+                                <p className={`lead-questionnaire-list-title`}>
+                                    Choose your marketplaces (if any)
+                                </p>
+                                {questionnaireParams ? questionnaireParams.marketplaces.map((item, index) => (
+                                    <li key={item + '_' + index}
+                                        className='lead-questionnaire-list-item width-33'>
+                                        <Checkbox
+                                            name={item}
+                                            label={item}
+                                            checked={checkedMarketplaces.includes(item)}
+                                            onChange={(val: React.ChangeEvent<HTMLInputElement>) => {
+                                                updateCheckedValues(checkedMarketplaces, 'marketplaces', item, val.target.checked)
+                                            }}
+                                        />
+                                    </li>
+                                )) : null}
+                            </ul>
+                            <ul className={`lead-questionnaire-list grid-row`}>
+                                <p className={`lead-questionnaire-list-title`}>
+                                    Target countries *
+                                </p>
+                                {countryOptions.map((item, index) => (
+                                    <li key={item.value + '_' + index}
+                                        className='lead-questionnaire-list-item width-33'>
+                                        <Checkbox
+                                            name={item.value}
+                                            label={item.label}
+                                            checked={checkedCountries.includes(item.value)}
+                                            isCountry={true}
+                                            flagBefore={true}
+                                            onChange={(val: React.ChangeEvent<HTMLInputElement>) => {
+                                                updateCheckedValues(checkedCountries, 'targetCountries', item.value, val.target.checked)
+                                            }}
+                                        />
+                                    </li>
+                                ))}
+                            </ul>
+                            <SingleField key={SalesVolumePerMonthField.name} curField={SalesVolumePerMonthField}
+                                         control={control} errors={errors}/>
+                            <SingleField key={SkusField.name} curField={SkusField} control={control} errors={errors}/>
+                            <SingleField key={DimensionsField.name} curField={DimensionsField} control={control}
+                                         errors={errors}/>
+                            <SingleField key={WeightField.name} curField={WeightField} control={control} errors={errors}/>
+                            <SingleField key={PackagingField.name} curField={PackagingField} control={control}
+                                         errors={errors}/>
+                            <SingleField key={CodField.name} curField={CodField} control={control} errors={errors}/>
 
 
+                        </div>
+                        {isSubmitted && submitErrors.length ?
+                            <div className={`lead-questionnaire__errors`}>
+                                {submitErrors.map(error => <p key={error} className={'submit-error'}>{error}</p>)}
+                            </div> : null
+                        }
+                        <div className={`lead-questionnaire__btns`}>
+                            <Button type='submit'>Submit for review</Button>
+                        </div>
                     </div>
-                    {isSubmitted && submitErrors.length ?
-                        <div className={`lead-questionnaire__errors`}>
-                            {submitErrors.map(error => <p key={error} className={'submit-error'}>{error}</p>)}
-                        </div> : null
-                    }
-                    <div className={`lead-questionnaire__btns`}>
-                        <Button type='submit'>Submit for review</Button>
-                    </div>
-                </div>
-            </form>
-            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
-        </div>
+                </form>
+                {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+            </div>
+        </>
     );
 };
 

@@ -31,4 +31,27 @@
       max-width: 100%;
     }
   }
+
+
+}
+
+.lead-contract-faq__list {
+  list-style: disc;
+  max-width: 800px;
+  margin: 24px auto 0;
+
+  &-item {
+    margin-bottom: 16px;
+
+    &__question {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    &__answer {
+      font-size: 14px;
+      //font-weight: bold;
+    }
+  }
 }
