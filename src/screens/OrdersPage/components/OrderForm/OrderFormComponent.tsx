@@ -846,8 +846,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         return changedFields;
     }, [orderData]);
 
-    const hasChangedAddressFields = () => {
-        if (orderData && isAddressChange) {
+
+    const hasChangedAddressFields = useCallback(() => {
+        if (orderData && orderData.addressEditAllowedOnly) {
             const data = getValues() as SingleOrderFormType;
 
             if (Object.keys(getChangedAddressFields(data)).length > 0) {
@@ -856,15 +857,15 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 setAddressWasChanged(false)
             }
         }
-    };
+    },[orderData,  isAddressAllowed, setAddressWasChanged, getChangedAddressFields, getValues]);
 
 
     const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
     const generalFields = useMemo(()=> GeneralFields(!orderData?.uuid), [orderData])
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
-    const receiverFields = useMemo(()=>ReceiverFields({countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[curPickupPoints, pickupOptions, countries, preferredWarehouse,selectedCourierService, isAddressAllowed, isDisabled ])
-    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed])
+    const receiverFields = useMemo(()=>ReceiverFields({countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[curPickupPoints, pickupOptions, countries, preferredWarehouse,selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields ])
+    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
 
