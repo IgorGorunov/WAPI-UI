@@ -12,12 +12,12 @@
   }
 
   &-wrapper {
-    max-width: 1084px;
-
-    @media (min-width: $tablet) {
-      width: 100%;
-      min-width: min(90vw, 1084px);
-    }
+    //max-width: 1084px;
+    //
+    //@media (min-width: $tablet) {
+    //  width: 100%;
+    //  min-width: min(90vw, 1084px);
+    //}
 
     @media (max-width: $upToTablet) {
       .width-17,

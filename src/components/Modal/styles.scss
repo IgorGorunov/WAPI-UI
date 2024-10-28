@@ -2,7 +2,7 @@
 
 .modal-wrapper {
   position: fixed;
-  top: 20px;
+  top: 12px;
   max-width: 100%;
 
   @media (max-width: $upToLaptop) {
@@ -10,7 +10,8 @@
   }
 
   .document-modal & {
-    width: calc(100% - 32px);
+    //  width: calc(100% - 32px);
+    width: calc(1090px - 32px);
 
     @media (min-width: $upToDesktop) {
       max-width: 100%;

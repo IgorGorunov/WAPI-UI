@@ -21,9 +21,12 @@ type TabsType = {
 const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tabTitles, children, needMinHeight=true, notifications, extraInfo,  withHorizontalDivider=false}) => {
 
     const tabListRef = useRef<HTMLUListElement | null>(null);
+    const tabContentRef = useRef<HTMLDivElement | null>(null);
+
     const scrollToTabList = () => {
         //tabListRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         const tabList = tabListRef?.current;
+
         if (!tabList) return;
 
         // Get the bounding rectangle of the tabList element relative to the viewport
@@ -45,6 +48,10 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
 
     };
 
+    const scrollContent = () => {
+        tabContentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     const [activeTab, setActiveTab] = useState<number>(curTab);
 
     useEffect(() => {
@@ -55,6 +62,7 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
 
     useEffect(() => {
         scrollToTabList();
+        scrollContent();
     }, [activeTab]);
 
     const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, index: number) => {
@@ -79,30 +87,31 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
                 </li> )}
             </ul>
 
-            <div className={`tabs-block__content ${needMinHeight ? 'min-height' : ''}`}>
-                {extraInfo ? extraInfo : null}
-                {notifications && notifications.length ?
-                    <div className='tabs-block__content-notifications'>
-                        {notifications.map(notification => (
-                            <div key={notification.uuid} className='tabs-block__content-notification'>
-                                <NotificationMessageInDocuments {...notification} />
-                            </div>
-                        ))}
-                    </div>
-                 : null}
+            <div className={`tabs-block__content ${needMinHeight ? 'min-height' : ''}`} >
+                <div className={`tabs-block__content-wrapper`} ref={tabContentRef}>
+                    {extraInfo ? extraInfo : null}
+                    {notifications && notifications.length ?
+                        <div className='tabs-block__content-notifications'>
+                            {notifications.map(notification => (
+                                <div key={notification.uuid} className='tabs-block__content-notification'>
+                                    <NotificationMessageInDocuments {...notification} />
+                                </div>
+                            ))}
+                        </div>
+                     : null}
 
-                {React.Children.toArray(children).map((tabCntent, index)=> (
-                    <div
-                        key={`tab-block__content-panel_${index}`}
-                        className={`tab-block__content-panel ${index===activeTab} ? 'active' : ''`}
-                        role='tabpanel'
-                        hidden={index!==activeTab}
-                    >
-                        {tabCntent}
-                    </div>
-                ) )}
+                    {React.Children.toArray(children).map((tabCntent, index)=> (
+                        <div
+                            key={`tab-block__content-panel_${index}`}
+                            className={`tab-block__content-panel ${index===activeTab} ? 'active' : ''`}
+                            role='tabpanel'
+                            hidden={index!==activeTab}
+                        >
+                            {tabCntent}
+                        </div>
+                    ) )}
 
-
+                </div>
             </div>
         </div>
     </div>

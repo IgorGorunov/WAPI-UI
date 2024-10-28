@@ -1,0 +1,19 @@
+@import '@/constants/devices.scss';
+
+.doc-filters-wrapper {
+  position: relative;
+  padding: 16px 0 4px 24px;
+  //background-color: var(--color-white);
+
+
+  &__title {
+    margin-bottom: 12px;
+    padding: 8px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-gray);
+    //border-bottom: 2px solid var(--border-color);
+  }
+
+}
+
