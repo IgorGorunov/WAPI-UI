@@ -44,13 +44,13 @@ const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
 
     //const tabTitles = ['Prices', 'Legal documentation', 'API info', 'UI tutorial'].map(item=>({title: item}));
 
-    const tabTitles = ['Company', 'Prices', 'Legal documentation', 'API info', 'Next step'].map(item=>({title: item}));
+    const tabTitles = ['Company', 'Prices', 'Legal documentation', 'Integration', 'Next step'].map(item=>({title: item}));
 
     const [activeTab, setActiveTab] = useState(0);
 
     return (
         <div className={`card lead-page__approved-block `}>
-            <Tabs id='lead-tabs' tabTitles={tabTitles} curTab={activeTab} setCurTab={setActiveTab}>
+            <Tabs id='lead-tabs' tabTitles={tabTitles} curTab={activeTab} setCurTab={setActiveTab} needContentScroll={false}>
                 <div key='company-tab' className='lead-page-tab'>
                     <Company />
                     <div className='lead-page__approved-block__next-btn'>

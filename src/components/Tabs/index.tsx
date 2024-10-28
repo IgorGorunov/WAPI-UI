@@ -17,8 +17,9 @@ type TabsType = {
     extraInfo?: React.ReactNode;
     needMinHeight?: boolean;
     withHorizontalDivider?: boolean;
+    needContentScroll?: boolean;
 }
-const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tabTitles, children, needMinHeight=true, notifications, extraInfo,  withHorizontalDivider=false}) => {
+const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tabTitles, children, needMinHeight=true, notifications, extraInfo,  withHorizontalDivider=false, needContentScroll= true}) => {
 
     const tabListRef = useRef<HTMLUListElement | null>(null);
     const tabContentRef = useRef<HTMLDivElement | null>(null);
@@ -62,7 +63,9 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
 
     useEffect(() => {
         scrollToTabList();
-        scrollContent();
+        if (needContentScroll) {
+            scrollContent();
+        }
     }, [activeTab]);
 
     const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, index: number) => {

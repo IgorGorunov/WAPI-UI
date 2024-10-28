@@ -1,7 +1,14 @@
+@import '@/constants/devices.scss';
+
 .next-step__container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 36px 16px 16px;
+  list-style: disc;
+
+  @media (max-width: $mobile) {
+    padding-top: 16px;
+  }
 
   p {
     font-size: 16px;

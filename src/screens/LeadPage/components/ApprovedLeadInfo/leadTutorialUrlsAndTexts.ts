@@ -49,7 +49,7 @@ const leadTutorialInfo = {
         info: [
             {
                 text: 'What is waiting for you after you sign a contract',
-                url: '',
+                url: 'https://www.loom.com/share/abfa22c4738840839cbcca260e16043e?sid=0ef0f038-a0c1-4373-822c-8c86f984acd7',
             }
         ]
     },
@@ -58,7 +58,7 @@ const leadTutorialInfo = {
         info: [
             {
                 text: 'Fill the form with all information and submit a contract',
-                url: 'https://www.loom.com/share/abfa22c4738840839cbcca260e16043e?sid=0ef0f038-a0c1-4373-822c-8c86f984acd7',
+                url: '',
             }
         ]
     },

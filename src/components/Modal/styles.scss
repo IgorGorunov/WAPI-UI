@@ -11,9 +11,9 @@
 
   .document-modal & {
     //  width: calc(100% - 32px);
-    width: calc(1090px - 32px);
+    width: calc(1200px - 50px);
 
-    @media (min-width: $upToDesktop) {
+    @media (max-width: $upToDesktop) {
       max-width: 100%;
       width: auto;
     }
