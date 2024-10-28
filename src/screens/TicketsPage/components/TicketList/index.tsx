@@ -23,6 +23,8 @@ import {ticketStatusColors, TicketType} from "@/types/tickets";
 import {FILTER_TYPE} from "@/types/utility";
 import {useRouter} from "next/router";
 import Icon from "@/components/Icon";
+import FiltersBlockWrapper from "@/components/FiltersBlockWrapper";
+import {Countries} from "@/types/countries";
 
 
 type TicketListType = {
@@ -172,11 +174,71 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         }))
     ]), [uniqueDocTypes]);
 
+    const [filterOrderSenderWarehouse, setFilterOrderSenderWarehouse] = useState<string[]>([]);
+    const handleFilterOrderSenderWarehouseChange = (newDocTypes: string[]) => {
+        setFilterOrderSenderWarehouse(newDocTypes);
+        setCurrent(1);
+        //setQuery({addParams: {page:1}})
+    }
+    const uniqueOrderSenderWarehouses = useMemo(() => {
+        const warehouses = tickets.filter(item=>item.fulfillmentWarehouse).map(item => item.fulfillmentWarehouse);
+        return Array.from(new Set(warehouses)).filter(item => item).sort();
+    }, [tickets]);
+    uniqueOrderSenderWarehouses.sort();
+    const orderSenderWarehousesOptions = useMemo(() => ([
+        ...uniqueOrderSenderWarehouses.map(item => ({
+            value: item,
+            label: item,
+            amount: calcDocTypeAmount('fulfillmentWarehouse', item),
+        }))
+    ]), [uniqueOrderSenderWarehouses]);
+
+    const [filterOrderReceiverCountry, setFilterOrderReceiverCountry] = useState<string[]>([]);
+    const handleFilterOrderReceiverCountryChange = (newDocTypes: string[]) => {
+        setFilterOrderReceiverCountry(newDocTypes);
+        setCurrent(1);
+        //setQuery({addParams: {page:1}})
+    }
+    const uniqueOrderReceiverCountries = useMemo(() => {
+        const countries = tickets.filter(item=>item.fulfillmentCountryReceiver).map(item => item.fulfillmentCountryReceiver);
+        return Array.from(new Set(countries)).filter(item => item).sort();
+    }, [tickets]);
+    uniqueOrderReceiverCountries.sort();
+    const orderReceiverCountryOptions = useMemo(() => ([
+        ...uniqueOrderReceiverCountries.map(item => ({
+            value: item,
+            label: Countries[item] as string || item,
+            amount: calcDocTypeAmount('fulfillmentCountryReceiver', item),
+        }))
+    ]), [uniqueOrderReceiverCountries]);
+
+    const [filterOrderCourierService, setFilterOrderCourierService] = useState<string[]>([]);
+    const handleFilterOrderCourierServiceChange = (newDocTypes: string[]) => {
+        setFilterOrderCourierService(newDocTypes);
+        setCurrent(1);
+        //setQuery({addParams: {page:1}})
+    }
+    const uniqueOrderCourierServices = useMemo(() => {
+        const services = tickets.filter(item=>item.fulfillmentCourierService).map(item => item.fulfillmentCourierService);
+        return Array.from(new Set(services)).filter(item => item).sort();
+    }, [tickets]);
+        uniqueOrderCourierServices.sort();
+    const orderCourierServiceOptions = useMemo(() => ([
+        ...uniqueOrderCourierServices.map(item => ({
+            value: item,
+            label: item,
+            amount: calcDocTypeAmount('fulfillmentCourierService', item),
+        }))
+    ]), [uniqueOrderCourierServices]);
+
     const handleClearAllFilters = () => {
         setFilterStatus([]);
         setFilterTopic([]);
         setFilterNewMessages([]);
         setFilterDocType([]);
+        setFilterOrderSenderWarehouse([]);
+        setFilterOrderReceiverCountry([]);
+        setFilterOrderCourierService([]);
 
         setCurrent(1);
         //setQuery({addParams: {page:1}})
@@ -243,8 +305,11 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             const matchesNewMessages = !filterNewMessages.length || (filterNewMessages.includes('Has new messages') && ticket.newMessages) ||
                 (filterNewMessages.includes("Doesn't have new messages") && !ticket.newMessages);
             const matchesDocType = !filterDocType.length || (filterDocType.includes(noDocType) && ticket.subjectType===null) || filterDocType.includes(ticket.subjectType);
+            const matchesOrderSenderWarehouse = !filterOrderSenderWarehouse.length || filterOrderSenderWarehouse.includes(ticket.fulfillmentWarehouse);
+            const matchesOrderReceiverCountry = !filterOrderReceiverCountry.length  || filterOrderReceiverCountry.includes(ticket.fulfillmentCountryReceiver);
+            const matchesOrderCourierService = !filterOrderCourierService.length || filterOrderCourierService.includes(ticket.fulfillmentCourierService);
 
-            return matchesSearch && matchesStatus && matchesTopic && matchesNewMessages && matchesDocType;
+            return matchesSearch && matchesStatus && matchesTopic && matchesNewMessages && matchesDocType && matchesOrderSenderWarehouse && matchesOrderReceiverCountry && matchesOrderCourierService;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -253,7 +318,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [tickets, searchTerm, filterStatus, filterTopic, filterNewMessages, filterDocType, sortColumn, sortDirection, fullTextSearch, currentRange]);
+    }, [tickets, searchTerm, filterStatus, filterTopic, filterNewMessages, filterDocType, filterOrderSenderWarehouse, filterOrderReceiverCountry, filterOrderCourierService, sortColumn, sortDirection, fullTextSearch, currentRange]);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
         setCurrentRange(newRange);
@@ -270,7 +335,11 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
     const [isOpenFilterTopic, setIsOpenFilterTopic] = useState(false);
     const [isOpenFilterNewMessages, setIsOpenFilterNewMessages] = useState(true);
-    const [isOpenFilterDocTypes, setIsOpenFilterDocTypes] = useState(true);
+    const [isOpenFilterDocTypes, setIsOpenFilterDocTypes] = useState(false);
+
+    const [isOpenFilterOrderSenderWarehouse, setIsOpenFilterOrderSenderWarehouse] = useState(false);
+    const [isOpenFilterOrderReceiverCountry, setIsOpenFilterOrderReceiverCountry] = useState(false);
+    const [isOpenFilterOrderCourierService, setIsOpenFilterOrderCourierService] = useState(false);
 
     const columns: TableColumnProps<TicketType>[]  = [
         {
@@ -490,6 +559,9 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                     <CurrentFilters title='Topic' filterState={filterTopic} options={topicOptions} onClose={()=>handleFilterTopicChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />
                     <CurrentFilters title='New messages' filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>handleFilterNewMessagesChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />
                     <CurrentFilters title='Document type' filterState={filterDocType} options={docTypeOptions} onClose={()=>handleFilterDocTypeChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterDocTypes(true)}} />
+                    <CurrentFilters title='Sender warehouse' options={orderSenderWarehousesOptions} filterState={filterOrderSenderWarehouse} onClose={()=>handleFilterOrderSenderWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderSenderWarehouse(true)}} />
+                    <CurrentFilters title='Receiver country' options={orderReceiverCountryOptions} filterState={filterOrderReceiverCountry} onClose={()=>handleFilterOrderReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderReceiverCountry(true)}} />
+                    <CurrentFilters title='Courier service' options={orderCourierServiceOptions} filterState={filterOrderCourierService} onClose={()=>handleFilterOrderCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderCourierService(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -532,9 +604,15 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 <FiltersBlock filterTitle='Topic' filterOptions={topicOptions} filterState={filterTopic} setFilterState={handleFilterTopicChange} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>
                 <FiltersBlock filterTitle='New messages' filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={handleFilterNewMessagesChange} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>
                 <FiltersBlock filterTitle='Document type' filterOptions={docTypeOptions} filterState={filterDocType} setFilterState={handleFilterDocTypeChange} isOpen={isOpenFilterDocTypes} setIsOpen={setIsOpenFilterDocTypes}/>
+                <FiltersBlockWrapper title={'Fullfilment filters'}>
+                    <FiltersBlock filterTitle='Sender warehouse' filterOptions={orderSenderWarehousesOptions} filterState={filterOrderSenderWarehouse} setFilterState={handleFilterOrderSenderWarehouseChange} isOpen={isOpenFilterOrderSenderWarehouse} setIsOpen={setIsOpenFilterOrderSenderWarehouse} />
+                    <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={orderReceiverCountryOptions} filterState={filterOrderReceiverCountry} setFilterState={handleFilterOrderReceiverCountryChange} isOpen={isOpenFilterOrderReceiverCountry} setIsOpen={setIsOpenFilterOrderReceiverCountry} />
+                    <FiltersBlock filterTitle='Courier service' filterOptions={orderCourierServiceOptions} filterState={filterOrderCourierService} setFilterState={handleFilterOrderCourierServiceChange} isOpen={isOpenFilterOrderCourierService} setIsOpen={setIsOpenFilterOrderCourierService} />
+                </FiltersBlockWrapper>
             </FiltersContainer>
         </div>
     );
-};
+}
+;
 
 export default TicketList;

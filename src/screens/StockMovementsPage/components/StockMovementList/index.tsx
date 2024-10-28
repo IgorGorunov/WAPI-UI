@@ -21,7 +21,7 @@ import CurrentFilters from "@/components/CurrentFilters";
 import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
+import {formatDateStringToDisplayString} from "@/utils/date";
 import SimplePopup from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 
@@ -397,7 +397,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                                     {text}
                                 </div>
                                 <div style={{fontSize:'9px'}}>
-                                    [{formatDateTimeToStringWithDotWithoutSeconds(record.statusPeriod)}]
+                                    [{formatDateStringToDisplayString(record.statusPeriod)}]
                                 </div>
                             </div>
                         }

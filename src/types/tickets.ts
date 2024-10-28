@@ -23,6 +23,10 @@ export type TicketType = {
     supportManager: string;
     number: string;
     newMessages: boolean;
+    fulfillmentWarehouse: string | null;
+    fulfillmentCourierService: string | null;
+    fulfillmentCountrySender: string | null;
+    fulfillmentCountryReceiver: string | null;
 }
 
 export type TicketParamsType = {
