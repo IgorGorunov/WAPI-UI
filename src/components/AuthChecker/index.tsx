@@ -4,6 +4,7 @@ import {Routes} from "@/types/routes";
 import useAuth from "@/context/authContext";
 import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 import {capitalizeFirstLetter} from "@/utils/textMessage";
+import {getCleanParamsFromQuery} from "@/utils/query";
 
 type AuthCheckerPropsType = {
     isUser?: boolean;
@@ -27,14 +28,14 @@ const AuthChecker: React.FC<AuthCheckerPropsType> = ({ isUser=true, pageName='',
                 } else if (pageName && !isNavItemAccessible(pageName)) {
                     Router.replace(Routes.Dashboard);
                 } else {
-
-                    const { type, uuid } = Router.query;
+                    const cleanQuery = getCleanParamsFromQuery(Router.query);
+                    const type = cleanQuery['type'];
+                    const uuid = cleanQuery['uuid'];
 
                     if (type && uuid) {
-                        const correctType= Array.isArray(type) ? type[0] : type
                         await Router.push({
-                            pathname: NOTIFICATION_OBJECT_TYPES[capitalizeFirstLetter(correctType)],
-                            query: {uuid: Array.isArray(uuid) ? uuid[0] : uuid}
+                            pathname: NOTIFICATION_OBJECT_TYPES[capitalizeFirstLetter(type)],
+                            query: {uuid: uuid}
                         })
                     } else {
                         setCanShow(true);

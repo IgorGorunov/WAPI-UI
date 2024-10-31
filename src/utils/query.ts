@@ -1,10 +1,11 @@
-import {BasicDocListQueryType} from "@/types/utility";
+import {ParsedUrlQuery} from "node:querystring";
 
-export const createSetQueryFunction = (router, pathname: string) => {
-    return async({addParams, removeParams}: {addParams?:BasicDocListQueryType, removeParams?: BasicDocListQueryType}) => {
-        const prevQuery = router.query;
-        const newQuery = {...prevQuery, ...addParams};
+export const getCleanParamsFromQuery = (query: ParsedUrlQuery) => {
+    const rez = {};
+    const keys = Object.keys(query);
+    keys.map(key => {
+        rez[key.replace('amp;','')]=Array.isArray(query[key]) ? query[key][0] : query[key] ;
+    })
 
-        await router.push({pathname: pathname, query: newQuery}, undefined, {shallow: true});
-    }
+    return rez;
 }
