@@ -12,6 +12,7 @@ import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
 import {formFields} from "./LoginFormFields.constants";
 import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
+import {getCleanParamsFromQuery} from "@/utils/query";
 
 type LoginFormPropsType = {
   oneTimeToken?: string;
@@ -30,10 +31,13 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
   const [docUuid, setDocUuid] = useState('');
 
   useEffect(() => {
-    const { type, uuid } = Router.query;
+    const cleanQuery = getCleanParamsFromQuery(Router.query);
+    const type = cleanQuery['type'];
+    const uuid = cleanQuery['uuid'];
+
     if (type && uuid) {
-      setDocType(Array.isArray(type) ? type[0] : type);
-      setDocUuid(Array.isArray(uuid) ? uuid[0] : uuid);
+      setDocType(type);
+      setDocUuid(uuid);
     }
 
   }, [Router.query]);

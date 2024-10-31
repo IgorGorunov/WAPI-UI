@@ -63,7 +63,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
 
 
     const handleDateSelect = (date) => {
-        const newDate = setTimeToDate(date, type==='date-time' ? selectedTime : '0:0');
+        const newDate = setTimeToDate(date, type==='date-time' ? selectedTime : `12:00`);
         setSelectedDate(newDate);
         setShowCalendar(false);
 
