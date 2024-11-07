@@ -2,6 +2,31 @@
 
 .report-page {
 
+  .bread-crumbs-to-reports {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--color-blue);
+    transform: scale(1);
+    transform-origin: left;
+    transition: .3s ease;
+    cursor: pointer;
+
+    .icon {
+      transform: rotate(180deg);
+      path{
+        fill: var(--color-blue);
+      }
+    }
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
   .variant-container {
     padding: 0 0 12px;
 
