@@ -12,6 +12,7 @@ export const enum Routes {
   PrivacyPolicy = '/privacy-policy',
 
   //reports
+  ReportsList = '/reports',
   ProductsOnStocks = '/reports/productsOnStocks',
   DeliveryRates = '/reports/buyoutDeliveryRates',
   ReportSales = '/reports/reportSales',

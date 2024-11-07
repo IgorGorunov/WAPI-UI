@@ -58,6 +58,10 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isCalculating, setIsCalculating] = useState(false);
 
+    const handleBackToReportsPage = () => {
+        Router.push(Routes.ReportsList);
+    }
+
     //tour guide
     const {runTour, setRunTour, isReportWatched} = useTourGuide();
 
@@ -378,7 +382,10 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
             <div className="page-container report-page report-page__container">
                 {(isLoading || isCalculating)&& (<Loader />)}
                 <Header pageTitle={REPORT_TITLES[reportType]} toRight needTutorialBtn />
-
+                <button className='bread-crumbs-to-reports' onClick={handleBackToReportsPage}>
+                    <Icon name={"keyboard-arrow-right"} />
+                    <span>Reports</span>
+                </button>
                 {/*filters , search , + */}
                 <SearchContainer>
                     <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
