@@ -45,11 +45,16 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
         return watchedPages.filter(item => item==page).length > 0;
     }
 
+    const isTutorialWatchedForChecking = (page: string) => {
+        return watchedPages.filter(item => item==page).length > 0;
+    }
+
     const setTutorialAsWatched = (page: TourGuidePages) => {
         if (page === 'Lead') {
             setLeadTutorialAsWatched();
-        } else if (!isTutorialWatched(page)) {
+        } else if (!isTutorialWatchedForChecking(page)) {
             const tutorialCookieData = Cookie.get('tutorialData');
+
             if (tutorialCookieData) {
                 Cookie.set('tutorialData', watchedPages.filter(item=>item!==page).join(';') + ';' + page);
             } else {

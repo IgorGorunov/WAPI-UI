@@ -106,9 +106,17 @@ export const AuthProvider = (props: PropsWithChildren) => {
   }
 
   const setTutorialInfo = (tutorialInfo: string[] | null | undefined) => {
-    tutorialInfo && Array.isArray(tutorialInfo)
-        ? Cookie.set('tutorialData', tutorialInfo.join(';'))
-        : Cookie.set('tutorialData', null );
+
+    if (tutorialInfo && Array.isArray(tutorialInfo)) {
+      const visitedPages = Cookie.get('tutorialData') || '';
+      const visitedPagesArray = visitedPages.split(';') || [];
+      const combinedArray = Array.from(new Set([...visitedPagesArray, ...tutorialInfo]));
+
+      Cookie.set('tutorialData', combinedArray.join(';'));
+    }
+    // tutorialInfo && Array.isArray(tutorialInfo)
+    //     ? Cookie.set('tutorialData', tutorialInfo.join(';'))
+    //     : Cookie.set('tutorialData', null );
   }
 
   //const userStatus = Cookie.get('userStatus')  as UserStatusType || null;
@@ -134,7 +142,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
     Cookie.remove('token');
     Cookie.remove('userStatus');
     Cookie.remove('userName');
-    Cookie.remove('tutorialData');
+    //Cookie.remove('tutorialData');
     Cookie.remove('textInfo');
     //Cookie.remove('isSU);
     //setIsSuperUser(false);
