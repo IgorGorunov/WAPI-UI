@@ -406,7 +406,12 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                                     {text}
                                 </div>
                                 <div style={{fontSize:'9px', marginTop: '4px'}}>
-                                    ETA: {formatDateStringToDisplayString(record.statusDate)}
+                                    {record.statusDate !='0001-01-01T00:00:00'
+                                        ? <>ETA: {formatDateStringToDisplayString(record.statusDate)}</>
+                                        : record.estimatedTimeArrives && record.estimatedTimeArrives != '0001-01-01T00:00:00'
+                                            ? <>ETA: {formatDateStringToDisplayString(record.estimatedTimeArrives)}</>
+                                            : ''
+                                    }
                                 </div>
                             </div>
                         }
