@@ -38,7 +38,8 @@ export type StockMovementType = {
     status: string;
     tableKey: string;
     uuid: string;
-    statusPeriod: string;
+    statusPeriod: string; //date of status change
+    statusDate: string; //fact ETA date
 }
 
 export type ProductInfoType = {

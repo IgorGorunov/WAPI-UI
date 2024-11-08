@@ -383,7 +383,16 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             key: 'icon',
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title={`Current condition or state of ${getDocType(docType).substring(0, getDocType(docType).length - 1) }`}><span>Status</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="100px"
+                maxWidth="100px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title={`Current condition or state of ${getDocType(docType).substring(0, getDocType(docType).length - 1)} with estimated date`}>
+                        <span>Status</span>
+                    </Tooltip>
+                }
+            />,
             render: (text: string, record) => {
                 //const underlineColor = getUnderlineColor(record.status);
                 return (
@@ -396,8 +405,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                                 <div>
                                     {text}
                                 </div>
-                                <div style={{fontSize:'9px'}}>
-                                    [{formatDateStringToDisplayString(record.statusPeriod)}]
+                                <div style={{fontSize:'9px', marginTop: '4px'}}>
+                                    ETA: {formatDateStringToDisplayString(record.statusDate)}
                                 </div>
                             </div>
                         }
