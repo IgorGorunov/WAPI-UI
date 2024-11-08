@@ -28,7 +28,7 @@ import {
     StockMovementParamsType
 } from "@/types/stockMovements";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {sendInboundData, updateInboundData} from "@/services/stockMovements";
+import {cancelStockMovement, sendInboundData, updateInboundData} from "@/services/stockMovements";
 import {ApiResponseType} from "@/types/api";
 import {SingleOrderProductFormType} from "@/types/orders";
 import Modal from "@/components/Modal";
@@ -48,6 +48,7 @@ import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
 import useNotifications from "@/context/notificationContext";
+import ConfirmModal from "@/components/ModalConfirm";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -108,6 +109,44 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const closeErrorModal = useCallback(()=>{
         setShowStatusModal(false);
     }, [])
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+    const handleConfirmCancelDoc = async () => {
+        setShowConfirmModal(false);
+        await handleCancelOrder();
+    }
+
+    const handleCancelOrder = async() => {
+        try {
+            const res: ApiResponseType = await cancelStockMovement(
+                {
+                    token: token,
+                    uuid: docData?.uuid,
+                }
+            );
+
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Document is successfully canceled!`, onClose: closeSuccessModal})
+                setShowStatusModal(true);
+            } else if (res && 'response' in res ) {
+                const errResponse = res.response;
+
+                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+                    const errorMessages = errResponse?.data.errorMessage;
+
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Document can not be canceled!`, text: errorMessages, onClose: closeErrorModal})
+                    setShowStatusModal(true);
+                }
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     //tickets
     const [showTicketForm, setShowTicketForm] = useState(false);
@@ -940,6 +979,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 {docData && docData.uuid ?
                     <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
                             onClick={handleCreateTicket}>Create ticket</Button> : null}
+                {docData?.uuid && docData?.status && docData?.status.toLowerCase() =='draft' ?
+                    <Button type='button' variant={ButtonVariant.PRIMARY} onClick={() => setShowConfirmModal(true)}>Cancel
+                        document</Button> : null}
                 {isDisabled && docData?.canEdit && <Button type="button" disabled={false}
                                                            onClick={() => setIsDisabled(!(docData?.canEdit || !docData?.uuid))}
                                                            variant={ButtonVariant.PRIMARY}>Edit</Button>}
@@ -967,6 +1009,11 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={isOutboundOrStockMovement ? sender : ""} needWarehouses={isOutboundOrStockMovement}/>
         </Modal>}
         {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+        {showConfirmModal && <ConfirmModal
+            actionText='cancel this document?'
+            onOk={handleConfirmCancelDoc}
+            onCancel={()=>setShowConfirmModal(false)}
+        />}
     </div>
 }
 

@@ -167,4 +167,24 @@ const fillInboundByStock = async (
     }
 };
 
+export const cancelStockMovement = async (
+    data: {
+        uuid: string,
+        token: string;
+        ui?: string;
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/CancelStockMovement`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
 export { getInbounds, getInboundData, getInboundParameters, sendInboundData, updateInboundData, sendInboundFiles, fillInboundByStock};
