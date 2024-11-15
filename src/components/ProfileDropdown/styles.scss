@@ -108,6 +108,14 @@
   }
 }
 
+.empty-list {
+  min-width: 630px;
+
+  @media (max-width: $mobile) {
+    min-width: 100%;
+  }
+}
+
 .no-users-text {
   font-size: 14px;
   font-weight: bold;
