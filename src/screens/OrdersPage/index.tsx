@@ -149,7 +149,9 @@ const OrdersPage = () => {
             receiverEMail: item.receiverEMail,
             receiverPhone: item.receiverPhone,
             lastUpdateDate: item.lastUpdateDate.split("T").join(" "),
-            lastTroubleStatus: `${item.troubleStatuses.length ? item.troubleStatuses[item.troubleStatuses.length-1].period.split("T").join(" ")+'  '+(item.troubleStatuses[item.troubleStatuses.length-1].troubleStatus) : ""}`
+            lastTroubleStatus: `${item.troubleStatuses.length ? item.troubleStatuses[item.troubleStatuses.length-1].period.split("T").join(" ")+'  '+(item.troubleStatuses[item.troubleStatuses.length-1].troubleStatus) : ""}`,
+            // "Logistic comment": `${item.logisticComment ? (item.logisticComment+(item.warehouseAdditionalInfo ? '; '+item.warehouseAdditionalInfo : '')) : item.warehouseAdditionalInfo ? item.warehouseAdditionalInfo : ''}`,
+            "Logistic comment": `${item.logisticComment}`,
         }));
         exportFileXLS(filteredData, "Orders");
     }
