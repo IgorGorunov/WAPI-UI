@@ -210,7 +210,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             label: Countries[item] as string || item,
             amount: calcDocTypeAmount('fulfillmentCountryReceiver', item),
         }))
-    ]), [uniqueOrderReceiverCountries]);
+    ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)), [uniqueOrderReceiverCountries]);
 
     const [filterOrderCourierService, setFilterOrderCourierService] = useState<string[]>([]);
     const handleFilterOrderCourierServiceChange = (newDocTypes: string[]) => {

@@ -4,13 +4,14 @@ import './styles.scss';
 
 type AccordionPropsType = {
     title: string;
+    description?: string;
     children?: React.ReactNode;
     isOpen?: boolean;
     setIsOpen?: (val: boolean)=> void;
     classNames?: string;
 }
 
-const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= false, setIsOpen, classNames='' }) => {
+const Accordion: React.FC<AccordionPropsType> = ({ title, description='', children, isOpen= false, setIsOpen, classNames='' }) => {
     const [isActive, setIsActive] = useState(isOpen);
     const [height, setHeight] = useState('0px');
     const [showOverflow, setShowOverflow] = useState(isOpen);
@@ -60,7 +61,10 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, children, isOpen= fals
                 className={`accordion-item__title ${isActive ? "is-active" : ''}`}
                 onClick={toggleAccordion}
             >
-                <p className="accordion-item__title-text">{title}</p>
+                <div className="accordion-item__title-wrapper">
+                    <p className="accordion-item__title-text">{title}</p>
+                    {description ? <p className="accordion-item__title-dscription">{description}</p> : null}
+                </div>
                 <Icon name='keyboard-arrow-up' className={`accordion-item__title-icon ${isActive ? 'active' : ''}`}/>
             </button>
             <div

@@ -112,7 +112,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             label: Countries[country] || country,
             amount: calcOrderAmount('country', country),
         }))
-    ]), [uniqueCountries]);
+    ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)), [uniqueCountries]);
 
     // useEffect(() => {
     //     setFilterCountry(prevState => {
