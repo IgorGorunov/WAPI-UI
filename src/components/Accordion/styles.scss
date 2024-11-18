@@ -8,16 +8,22 @@
   //}
 
   &__title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    //align-items: center;
+    //justify-content: space-between;
     width: 100%;
     padding: 8px 16px;
     background-color: transparent;
     border: none;
     color: var(--color-gray-blue);
     white-space: break-spaces;
+
+    &-wrapper {
+      padding-right: 20px;
+      text-align: start;
+    }
 
     &-text {
       font-size: 14px;
@@ -35,6 +41,9 @@
     }
 
     &-icon {
+      position: absolute;
+      top: 0;
+      right: 5px;
       margin-left: auto;
       transform: rotate(180deg);
       transition: all 0.5s ease-in;
