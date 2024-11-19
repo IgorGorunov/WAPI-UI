@@ -3,5 +3,5 @@ export const TicketHints = {
     subject: 'Specify a short issue name',
     description: 'Describe the issue in details',
 
-    files: 'Attach all the necessary documents - screenshots, labels or something else',
+    files: 'Attach all the necessary documents - screenshots, labels or something else. The supported file formats: PNG, JPEG,s PDF, XLSX',
 }
