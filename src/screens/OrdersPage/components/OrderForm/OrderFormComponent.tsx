@@ -61,6 +61,15 @@ type OrderFormType = {
     refetchDoc: ()=>void;
 }
 
+const receiverFieldsPickUpPoint = [
+    'receiverPickUpAddress',
+    'receiverPickUpCity',
+    'receiverPickUpDescription',
+    'receiverPickUpID',
+    'receiverPickUpName',
+    'receiverPickUpCountry'
+];
+
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
     const {notifications} = useNotifications();
     const { token, currentDate, superUser, ui } = useAuth();
@@ -325,22 +334,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         setValue('receiverPickUpCity', '');
         setValue('receiverPickUpAddress', '');
     }, []);
-
-    // useEffect(() => {
-    //     if (selectedPickupPoint !== null) {
-    //         //let user know that pickUp point info is cleared
-    //         informUserAboutPickUpPointClearing('PickUp point is cleared! Please, fill this info for chosen courier service')
-    //
-    //         // setValue('receiverPickUpID', '');
-    //         // setValue('receiverPickUpName', '');
-    //         // setValue('receiverPickUpCountry', '');
-    //         // setValue('receiverPickUpCity', '');
-    //         // setValue('receiverPickUpAddress', '');
-    //         clearPickUpPoint();
-    //     }
-    // }, [selectedCourierService]);
-
-
 
 
     //products
@@ -800,14 +793,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             // 'receiverZip'
         ];
 
-        const receiverFieldsPickUpPoint = [
-            'receiverPickUpAddress',
-            'receiverPickUpCity',
-            'receiverPickUpDescription',
-            'receiverPickUpID',
-            'receiverPickUpName',
-            'receiverPickUpCountry'
-        ];
+        // const receiverFieldsPickUpPoint = [
+        //     'receiverPickUpAddress',
+        //     'receiverPickUpCity',
+        //     'receiverPickUpDescription',
+        //     'receiverPickUpID',
+        //     'receiverPickUpName',
+        //     'receiverPickUpCountry'
+        // ];
 
         const changedFields = {}
 
@@ -846,7 +839,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         return changedFields;
     }, [orderData]);
 
-
     const hasChangedAddressFields = useCallback(() => {
         if (orderData && orderData.addressEditAllowedOnly) {
             const data = getValues() as SingleOrderFormType;
@@ -859,13 +851,27 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
     },[orderData,  isAddressAllowed, setAddressWasChanged, getChangedAddressFields, getValues]);
 
+    const [atLeastOneFieldIsFilled, setAtLeastOneFieldIsFilled] = useState(false);
+    const hasAtLeastOnePickUpPointFieldIsFilled = useCallback(() => {
+        const data = getValues() as SingleOrderFormType;
+
+        let isFilled = false
+        receiverFieldsPickUpPoint.forEach(field => {
+            if (data[field]) {
+                isFilled = true;
+            }
+        });
+        setAtLeastOneFieldIsFilled(isFilled);
+
+    },[setAtLeastOneFieldIsFilled, getValues]);
+
 
     const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
     const generalFields = useMemo(()=> GeneralFields(!orderData?.uuid), [orderData])
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[curPickupPoints, pickupOptions, countries, preferredWarehouse,selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields ])
-    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields])
+    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: ()=>{hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled()}, atLeastOneFieldIsFilled}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
 
@@ -1156,7 +1162,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                             // disabled={!!isDisabled}
                                             {...props}
                                             name='receiverPickUpID'
-                                            label='Code'
+                                            label='ID'
                                             fieldType={curPickupPoints && curPickupPoints.length && createdPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
                                             options={createdPickupPoints}
                                             placeholder={curPickupPoints && curPickupPoints.length ? 'Select' : ''}
@@ -1167,9 +1173,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                 setSelectedPickupPoint(selectedOption as string);
                                                 props.onChange(selectedOption);
                                                 hasChangedAddressFields();
+                                                hasAtLeastOnePickUpPointFieldIsFilled();
                                             }}
                                             width={WidthType.w25}
-                                        />)}
+                                        />
+                                    )}
+                                    rules = {{required: atLeastOneFieldIsFilled ? "Required field" : false}}
                                 />
                                 <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors} />
                             </div>

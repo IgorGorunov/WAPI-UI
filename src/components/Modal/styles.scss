@@ -15,7 +15,7 @@
 
     @media (max-width: $upToDesktop) {
       max-width: 100%;
-      width: auto;
+      width: calc(100% - 32px);
     }
   }
 }

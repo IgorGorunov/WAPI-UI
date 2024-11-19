@@ -203,8 +203,13 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                                 </h3>
                             </TutorialHintTooltip>
                             <div className='dropzoneBlock'>
-                                <DropZone readOnly={isDisabled} files={selectedFiles}
-                                          onFilesChange={handleFilesChange} docUuid={singleTicketData?.uuid} showSend={true} />
+                                <DropZone readOnly={isDisabled}
+                                          files={selectedFiles}
+                                          onFilesChange={handleFilesChange}
+                                          docUuid={singleTicketData?.uuid}
+                                          showSend={true}
+                                          allowOnlyFormats={['png', 'jpg', 'jpeg', 'pdf', 'xlsx']}
+                                />
                             </div>
                         </CardWithHelpIcon>
                     </div>
