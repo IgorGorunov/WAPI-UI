@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import "./styles.scss";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {ProductParamsType, ProductType, SingleProductType} from "@/types/products";
 import {getProductByUID, getProductParameters, getProducts} from "@/services/products";
 import {ToastContainer} from '@/components/Toast';
@@ -10,6 +10,7 @@ import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
 import ProductFormComponent from "@/screens/ProductsPage/components/ProductForm/ProductFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type ProductPropsType = {
     uuid?: string | null;
@@ -22,7 +23,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const [productData, setProductData] = useState<SingleProductType|null>(null);
     const [productsList, setProductsList] = useState<ProductType[]|null>(products);
 
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
@@ -32,6 +33,15 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
         try {
             setIsLoading(true);
             const requestData = {token: token, uuid: uuid};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetProductData', AccessObjectTypes["Products/ProductsList"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
+            if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.ViewObject)) {
+                return null;
+            }
+
             const res: ApiResponse = await getProductByUID(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
@@ -52,6 +62,11 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
         try {
             setIsLoading(true);
             const requestData = {token: token};
+
+            // try {
+            //     sendUserBrowserInfo({...getBrowserInfo('GetProductParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
+            // } catch {}
+
             const resParams: ApiResponse = await getProductParameters(superUser && ui ? {...requestData, ui} : requestData);
 
             if (resParams && "data" in resParams) {
@@ -71,6 +86,15 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
         try {
             setIsLoading(true);
             const requestData = {token: token};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetProductsList', AccessObjectTypes["Products/ProductsList"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
+            if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.ListView)) {
+                return [];
+            }
+
             const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {

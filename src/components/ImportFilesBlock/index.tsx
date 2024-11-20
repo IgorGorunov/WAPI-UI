@@ -12,17 +12,20 @@ import Loader from "@/components/Loader";
 import {sendInboundFiles} from "@/services/stockMovements";
 import {ImportFilesType} from "@/types/importFiles";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const getFileData = (importType: ImportFilesType) => {
    switch (importType) {
        case ImportFilesType.ORDERS:
            return {
+               action: 'BulkOrdersCreate',
                downloadFileName: 'Orders mass upload file.xlsx',
                sendFileFunction: sendOrderFiles,
                title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
            }
        case ImportFilesType.PRODUCTS:
            return {
+               action: 'BulkProductsCreate',
                downloadFileName: 'Master data.xlsx',
                sendFileFunction: sendProductFiles,
                title: `To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system.
@@ -30,6 +33,7 @@ const getFileData = (importType: ImportFilesType) => {
            }
        case ImportFilesType.STOCK_MOVEMENTS_PRODUCTS:
            return {
+               action: 'FillStockMovementFromFile',
                downloadFileName: 'Products import.xlsx',
                sendFileFunction: sendInboundFiles,
                title: 'To upload products in the document it is necessary to download the master data draft file, fill it with data and then upload back to system',
@@ -37,6 +41,7 @@ const getFileData = (importType: ImportFilesType) => {
 
        default:
            return {
+               action: 'BulkOrdersCreate',
                downloadFileName: 'Orders mass upload file.xlsx',
                sendFileFunction: sendOrderFiles,
                title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
@@ -51,7 +56,7 @@ type ImportFilesBlockType = {
     setResponseData?: (res: ApiResponseType)=>void;
 }
 const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo } = useAuth();
     const [selectedFilesImport, setSelectedFilesImport] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
     const handleFilesChange = (files) => {
@@ -72,6 +77,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
     }, [])
 
     const downloadFile = async () => {
+
         const res = await fetch(`/${file}`); // Adjust the path accordingly
         const blob = await res.blob();
         const url = window.URL.createObjectURL(new Blob([blob]));
@@ -89,11 +95,17 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
         if (selectedFilesImport.length) {
             setIsLoading(true);
             try {
-                const requstData = {
+                const requestData = {
                     token: token,
                     files: selectedFilesImport
                 };
-                const res: ApiResponseType = await sendFunc(superUser && ui ? {...requstData, ui} : requstData);
+
+                try {
+                    sendUserBrowserInfo({...getBrowserInfo(fileData.action), body: superUser && ui ? {...requestData, ui} : requestData})
+                } catch {}
+
+
+                const res: ApiResponseType = await sendFunc(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (setResponseData) {
                     setResponseData(res);

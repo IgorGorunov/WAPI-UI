@@ -19,10 +19,11 @@ import {
     tourGuideStepsInvoices,
     tourGuideStepsInvoicesNoDocs
 } from "./invoicesTourGuideSteps.constants";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const InvoicesPage = () => {
 
-    const { token, currentDate, superUser, ui } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
 
     //balance/debt
     const [invoiceBalance, setInvoiceBalance] = useState<InvoiceBalanceType|null>(null);
@@ -45,6 +46,11 @@ const InvoicesPage = () => {
             try {
                 setIsLoading(true);
                 const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
+
+                try {
+                    sendUserBrowserInfo({...getBrowserInfo('GetInvoicesList'), body: superUser && ui ? {...requestData, ui} : requestData})
+                } catch {}
+
                 const res: ApiResponse = await getInvoices(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
@@ -74,6 +80,11 @@ const InvoicesPage = () => {
             try {
                 setIsLoading(true);
                 const requestData = { token: token };
+
+                try {
+                    sendUserBrowserInfo({...getBrowserInfo('GetInvoicesDebt'), body: superUser && ui ? {...requestData, ui} : requestData})
+                } catch {}
+
                 const res: ApiResponse = await getInvoicesDebts(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {

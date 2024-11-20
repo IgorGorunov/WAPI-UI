@@ -16,10 +16,11 @@ import {
     tourGuideStepsProductsStock,
     tourGuideStepsProductsStockNoDocs
 } from "./productsStockTourGuideSteps.constants";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const ProductsStockPage = () => {
 
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [filteredProducts, setFilteredProducts] = useState<ProductStockType[] | null>(null);
@@ -37,6 +38,9 @@ const ProductsStockPage = () => {
                 setProductsData([]);
                 setFilteredProducts([]);
                 const requestData = {token: token};
+                try {
+                    sendUserBrowserInfo({...getBrowserInfo('GetProductsStock'), body: superUser && ui ? {...requestData, ui} : requestData})
+                } catch {}
                 const res: ApiResponse = await getProductsStock(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {

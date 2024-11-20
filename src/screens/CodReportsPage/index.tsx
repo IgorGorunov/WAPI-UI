@@ -19,10 +19,11 @@ import {
     tourGuideStepsCodReports,
     tourGuideStepsCodReportsNoDocs
 } from "./codReportTourGuideSteps.constants";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const CodReportsPage = () => {
 
-    const { token, currentDate, superUser, ui } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
 
     const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType|null>(null);
 
@@ -44,6 +45,11 @@ const CodReportsPage = () => {
             try {
                 setIsLoading(true);
                 const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
+
+                try {
+                    sendUserBrowserInfo({...getBrowserInfo('GetCODReportsList'), body: superUser && ui ? {...requestData, ui} : requestData})
+                } catch {}
+
                 const res: ApiResponse = await getCodReports(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
@@ -73,6 +79,11 @@ const CodReportsPage = () => {
             try {
                 setIsLoading(true);
                 const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
+
+                try {
+                    sendUserBrowserInfo({...getBrowserInfo('GetCODIndicators'), body: superUser && ui ? {...requestData, ui} : requestData})
+                } catch {}
+
                 const res: ApiResponse = await getCODIndicators(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {useRouter} from "next/router";
 import {getProducts} from "@/services/products";
 
@@ -21,10 +21,11 @@ import TourGuide from "@/components/TourGuide";
 import useTourGuide from "@/context/tourGuideContext";
 import {tourGuideStepsProduct, tourGuideStepsProductNoDocs} from "./productListTourGuideSteps.constants";
 import {TourGuidePages} from "@/types/tourGuide";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const ProductsPage = () => {
     const Router = useRouter();
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [uuid, setUuid]=useState<string|null>(null);
@@ -79,6 +80,14 @@ const ProductsPage = () => {
             // const prevProductData = productsData || [];
             // setProductsData([]);
             const requestData = {token: token};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetProductsList', AccessObjectTypes["Products/ProductsList"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
+            if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.ListView)) {
+                return [];
+            }
             const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
@@ -110,6 +119,8 @@ const ProductsPage = () => {
     },[productsData])
 
     const handleEditProduct = (uuid: string) => {
+
+
         setUuid(uuid);
         setIsNew(false);
         setShowModal(true);
@@ -137,15 +148,39 @@ const ProductsPage = () => {
 
     const handleAddProduct = () => {
         //setSingleProductData(null);
+
+        if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject), body: {}});
+            } catch {}
+
+            return null;
+        }
         setUuid(null);
         setIsNew(true);
         setShowModal(true);
     }
     const handleImportXLS = () => {
+        if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.BulkCreate)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('BulkCreateProducts', AccessObjectTypes["Products/ProductsList"], AccessActions.BulkCreate), body: {}});
+            } catch {}
+
+            return null;
+        }
+
         setShowImportModal(true)
     }
 
     const handleExportXLS = () => {
+        try {
+            sendUserBrowserInfo({...getBrowserInfo('ExportProductList', AccessObjectTypes["Products/ProductsList"], AccessActions.ExportList), body: {}});
+        } catch {}
+
+        if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.ExportList)) {
+            return null;
+        }
+
         const filteredData = filteredProducts.map(item => ({
             status: item.status,
             sku: item.sku,

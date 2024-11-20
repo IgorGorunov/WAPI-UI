@@ -1,7 +1,6 @@
 import {api} from "@/services/api";
 
 const getDasboardData = async (
-  //token: string,
   data: {
     startDate: string;
     endDate: string;

@@ -11,6 +11,7 @@ import {CHAT_FILE_TYPES} from "@/types/tickets";
 //import EmojiPicker from './EmojiPicker';
 import ModalStatus from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type SendMessagePropsType = {
     objectUuid: string;
@@ -30,7 +31,7 @@ type ChatFileType = {
 }
 
 const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker, canEdit}) => {
-    const {token, superUser, ui} = useAuth();
+    const {token, superUser, ui, getBrowserInfo} = useAuth();
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const dropRef = useRef<HTMLDivElement>(null);
@@ -95,6 +96,11 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
                 objectUuid: objectUuid,
                 attachedFiles: attachedFiles,
             };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateMessageForObject'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await sendTicketMessage(superUser && ui ? {...requestData, ui} : requestData);
             if (res.status === 200) {
                 onSendMessage();

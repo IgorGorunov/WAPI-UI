@@ -67,11 +67,16 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
         //fetch messages
         try {
             setIsLoading(true);
-            const requstData = {
+            const requestData = {
                 token: token,
                 uuid: objectUuid,
             };
-            const res: ApiResponseType = await getTicketMessages(superUser && ui ? {...requstData, ui} : requstData);
+
+            // try {
+            //     sendUserBrowserInfo({...getBrowserInfo('GetMessagesByObject'), body: superUser && ui ? {...requestData, ui} : requestData})
+            // } catch {}
+
+            const res: ApiResponseType = await getTicketMessages(superUser && ui ? {...requestData, ui} : requestData);
             if (res.status === 200) {
                 setChatMessages(res.data);
             }

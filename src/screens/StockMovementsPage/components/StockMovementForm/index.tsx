@@ -16,6 +16,7 @@ import StockMovementFormComponent
     from "@/screens/StockMovementsPage/components/StockMovementForm/StockMovementFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type StockMovementFormType = {
     docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -27,7 +28,7 @@ type StockMovementFormType = {
 const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=null, closeDocModal, closeModalOnSuccess}) => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
 
@@ -41,8 +42,13 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
         try {
             setIsLoading(true);
-            const requstData = {token, uuid, documentType: docType};
-            const res: ApiResponse = await getInboundData(superUser && ui ? {...requstData, ui} : requstData);
+            const requestData = {token, uuid, documentType: docType};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetStockMovementData/'+docType), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
+            const res: ApiResponse = await getInboundData(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setDocData(res.data);
@@ -60,6 +66,11 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
         try {
             setIsLoading(true);
             const requestData = {token: token, documentType: docType};
+
+            // try {
+            //     sendUserBrowserInfo({...getBrowserInfo('GetStockMovementParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
+            // } catch {}
+
             const resp: ApiResponseType = await getInboundParameters(superUser && ui ? {...requestData, ui} : requestData);
 
             if (resp && "data" in resp) {

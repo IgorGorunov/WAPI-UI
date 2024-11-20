@@ -13,6 +13,7 @@ import Loader from "@/components/Loader";
 import AmazonPrepFormComponent from "./AmazonPrepFormComponent";
 import Modal from "@/components/Modal";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type AmazonPrepFormType = {
     docUuid?: string | null;
@@ -22,7 +23,7 @@ type AmazonPrepFormType = {
 
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, onCloseModalWithSuccess}) => {
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +37,10 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
             setIsLoading(true);
 
             const requestData = {token, uuid};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepData'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
 
             const res: ApiResponseType = await getSingleAmazonPrepData(superUser && ui ? {...requestData, ui} : requestData);
 
@@ -55,6 +60,11 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
     const fetchAmazonPrepOrderParams = useCallback(async() => {
         try {
             const requestData = {token};
+
+            // try {
+            //     sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
+            // } catch {}
+
             const responseParams: ApiResponseType = await getAmazonPrepParameters(superUser && ui ? {...requestData, ui} : requestData);
 
             if (responseParams?.data ) {

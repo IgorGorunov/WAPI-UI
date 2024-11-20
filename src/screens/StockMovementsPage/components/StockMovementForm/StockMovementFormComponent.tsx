@@ -49,6 +49,7 @@ import {docNamesSingle} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
 import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -96,7 +97,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
-    const { token, currentDate, superUser, ui } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
     const {notifications} = useNotifications();
 
     //status modal
@@ -119,12 +120,13 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     const handleCancelOrder = async() => {
         try {
-            const res: ApiResponseType = await cancelStockMovement(
-                {
-                    token: token,
-                    uuid: docData?.uuid,
-                }
-            );
+            const requestData = {token: token, uuid: docData?.uuid};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CancelStockMovement/'+docType), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
+            const res: ApiResponseType = await cancelStockMovement(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res && res?.status === 200) {
                 //success
@@ -722,6 +724,11 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 courierServiceTrackingNumber: data.courierServiceTrackingNumber,
             },
         };
+
+        try {
+            sendUserBrowserInfo({...getBrowserInfo('UpdateStockMovement/'+docType), body: superUser && ui ? {...requestData, ui} : requestData})
+        } catch {}
+
         return await updateInboundData(superUser && ui ? {...requestData, ui} : requestData);
     }
 
@@ -731,6 +738,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             documentType: docType,
             documentData: data,
         };
+        try {
+            sendUserBrowserInfo({...getBrowserInfo('CreateStockMovement/'+docType), body: superUser && ui ? {...requestData, ui} : requestData})
+        } catch {}
         return await sendInboundData(superUser && ui ? {...requestData, ui} : requestData);
     }
 

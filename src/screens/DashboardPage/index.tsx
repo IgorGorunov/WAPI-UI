@@ -18,6 +18,7 @@ import {dashboardSteps} from "@/screens/DashboardPage/dashboardTourGuideSteps.co
 import {TourGuidePages} from "@/types/tourGuide";
 import {Routes} from "@/types/routes";
 import Router from "next/router";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type pageDataType = {
   ordersDiagram: any;
@@ -30,7 +31,7 @@ type pageDataType = {
 
 const DashboardPage: React.FC = () => {
 
-  const { token, currentDate, isAuthorizedUser, superUser, ui } = useAuth();
+  const { token, currentDate, isAuthorizedUser, superUser, ui, getBrowserInfo } = useAuth();
 
   useEffect(() => {
     if (!isAuthorizedUser) Router.push(Routes.Login);
@@ -72,6 +73,10 @@ const DashboardPage: React.FC = () => {
             currentPeriod.startDate,
             currentPeriod.endDate
         );
+
+        try {
+          sendUserBrowserInfo({...getBrowserInfo('GetDashboardData'), body: superUser && ui ? {...requestData, ui} : requestData})
+        } catch {}
 
         const res: ApiResponse = await getDasboardData(superUser && ui ? {...requestData, ui} : requestData);
 

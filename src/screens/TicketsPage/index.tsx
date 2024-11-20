@@ -22,10 +22,11 @@ import {
     tourGuideStepsTickets,
     tourGuideStepsTicketsNoDocs
 } from "./ticketsTourGuideSteps.constants";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 
 const TicketsPage = () => {
-    const {token, currentDate, superUser, ui} = useAuth();
+    const {token, currentDate, superUser, ui, getBrowserInfo} = useAuth();
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -84,6 +85,11 @@ const TicketsPage = () => {
             setIsLoading(true);
             setTicketsData([]);
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetTicketList'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await getTickets(superUser && ui ? {...requestData, ui} : requestData);
             if (res && res.data ) {
                 let tickets = res.data;

@@ -20,6 +20,7 @@ import Loader from "@/components/Loader";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type CodReportsListType = {
     codReports: CodReportType[];
@@ -33,7 +34,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     const [animating, setAnimating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo } = useAuth();
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -107,6 +108,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
        setIsLoading(true);
         try {
             const requestData = { token: token, uuid: uuid };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetCODReportPrintForm'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const response = await getCODReportForm(superUser && ui ? {...requestData, ui} : requestData);
 
             if (response && response.data) {

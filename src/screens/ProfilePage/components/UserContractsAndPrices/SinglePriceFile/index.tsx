@@ -8,6 +8,7 @@ import {UserContractType, UserPriceType} from "@/types/profile";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import useAuth from "@/context/authContext";
 import {ContractPriceBlockType} from "@/screens/ProfilePage/components/UserContractsAndPrices/PriceContractBlock";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type FilePropsType = {
     file: UserContractType | UserPriceType;
@@ -15,12 +16,17 @@ type FilePropsType = {
 }
 
 const SingleFile: React.FC<FilePropsType> = ({file, type}) => {
-    const {token, ui, superUser} = useAuth();
+    const {token, ui, superUser, getBrowserInfo} = useAuth();
     const [fileData, setFileData] = useState<any|null>(null);
 
     const getFile = async(uuid: string, type: ContractPriceBlockType) => {
-        const requestedData = superUser ? {uuid, token, ui} : {uuid, token};
-        return type===ContractPriceBlockType.PRICE ? await getUserPriceFile(requestedData) : getUserContractFile(requestedData);
+        const requestData = superUser ? {uuid, token, ui} : {uuid, token};
+
+        try {
+            sendUserBrowserInfo({...getBrowserInfo(type===ContractPriceBlockType.PRICE ? 'GetClientPrice' : 'GetFileByUUID'), body: superUser && ui ? {...requestData, ui} : requestData})
+        } catch {}
+
+        return type===ContractPriceBlockType.PRICE ? await getUserPriceFile(requestData) : getUserContractFile(requestData);
     }
 
     const fileDownLoad = (file) => {
