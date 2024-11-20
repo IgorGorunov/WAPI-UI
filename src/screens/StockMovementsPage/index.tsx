@@ -25,7 +25,7 @@ import {
     tourGuideStepsStockMovements,
     tourGuideStepsStockMovementsNoDocs
 } from "@/screens/StockMovementsPage/stockMovementsTourGuideSteps.constants";
-import {getBindingIdentifiers} from "@babel/types";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
@@ -48,7 +48,7 @@ export const docNamesSingle = {
 const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     const Router = useRouter();
-    const { token, currentDate, superUser, ui } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
 
     useEffect(() => {
         if (!token) Router.push(Routes.Login);
@@ -86,6 +86,11 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             setIsLoading(true);
             setStockMovementData([]);
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate), documentType: docType};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetStockMovementList/'+docType), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await getInbounds(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {

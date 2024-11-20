@@ -11,6 +11,7 @@ import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import {fillInboundByStock} from "@/services/stockMovements";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type PropsType = {
     qualityList: string[];
@@ -21,9 +22,8 @@ type PropsType = {
 
 const FillByStock: React.FC<PropsType> = ({ qualityList, onClose, setResponseData, warehouse }) => {
 
-    const {token, ui, superUser} = useAuth();
+    const {token, ui, superUser, getBrowserInfo} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
-
 
 
     //form
@@ -65,6 +65,10 @@ const FillByStock: React.FC<PropsType> = ({ qualityList, onClose, setResponseDat
                 warehouse,
                 quality: data.quality.filter(item => item.enable).map(item=>item.quality),
             };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('FillStockMovementAllStock'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
 
             const res: ApiResponseType = await fillInboundByStock(superUser && ui ? {...requestData, ui} : requestData);
 

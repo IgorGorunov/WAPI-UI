@@ -44,6 +44,7 @@ import {ProductDimensionsHints, ProductOtherHints} from "@/screens/ProductsPage/
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {CommonHints} from "@/constants/commonHints";
 import ConfirmModal from "@/components/ModalConfirm";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -72,7 +73,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo } = useAuth();
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -978,6 +979,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 token: token,
                 productData: prepareProductDataForSending(data)
             };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponse = await sendProductInfo(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res && res?.status === 200) {
@@ -1340,7 +1346,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             </Tabs>
             <div className='form-submit-btn'>
                 {productData && productData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                {isDisabled && !orderIsApproved && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {isDisabled && !orderIsApproved && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid ))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
                 {(!isDisabled && !orderIsApproved || orderIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
                 {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}

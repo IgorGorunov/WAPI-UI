@@ -21,6 +21,52 @@ export type UserInfoType = {
     supportManager?: ManagerInfoType;
 }
 
+export type UserBrowserInfoType = {
+  userIp: string;
+  userLang: string;
+  userTimezone: string;
+  userAgentData: any;
+}
+
+export type UserAccessActionType = {
+  objectType: string;
+  action: string;
+  forbidden: boolean;
+}
+
+export enum AccessObjectTypes {
+  none = "none",
+  "Finances/CODReports" = "Finances/CODReports",
+  "Finances/Invoices" = "Finances/Invoices",
+  "Orders/AmazonPrep" = "Orders/AmazonPrep",
+  "Orders/Fullfillment" = "Orders/Fullfillment",
+  "Products/ProductsList" = "Products/ProductsList",
+  "Products/ProductsStock" = "Products/ProductsStock",
+  "Reports/CodCheck" = "Reports/CodCheck",
+  "Reports/DeliveryRate" = "Reports/DeliveryRate",
+  "Reports/ProductsOnStocks" = "Reports/ProductsOnStocks",
+  "Reports/SaleDynamic" = "Reports/SaleDynamic",
+  "Reports/Sales" = "Reports/Sales",
+  "StockManagment/Inbounds" = "StockManagment/Inbounds",
+  "StockManagment/LogisticServices" = "StockManagment/LogisticServices",
+  "StockManagment/Outbounds" = "StockManagment/Outbounds",
+  "StockManagment/StockMovements" = "StockManagment/StockMovements",
+  "Tickets" = "Tickets",
+}
+
+export enum AccessActions {
+  none = "none",
+  "ViewObject" = "ViewObject",
+  "EditObject" = "EditObject",
+  "ExportList" = "ExportList",
+  "BulkCreate" = "BulkCreate",
+  "ListView" = "ListView",
+  "CreateObject" = "CreateObject",
+  "GenerateReport" = "GenerateReport",
+  "DownloadReport" = "DownloadReport",
+  "View" = "View",
+}
+
 type authContextType = {
   token: string | null;
   userName: string | null | undefined;
@@ -51,6 +97,12 @@ type authContextType = {
   setIsSuperUser: (isSuperUser: boolean) => void;
   ui: string | null;
   setUserUi: (ui: string | null) => void;
+
+  userBrowserInfo: UserBrowserInfoType | null;
+  setUserBrowserInfoFn: (val: UserBrowserInfoType) => void;
+  getBrowserInfo: (action: string, objectType?: AccessObjectTypes, actionType?: AccessActions)=>any;
+  isActionIsAccessible: (objectType: string, action:string) => boolean;
+  setActionAccess: (val: UserAccessActionType[]) => void;
 };
 
 const AuthContext = createContext<authContextType>({} as authContextType);
@@ -79,6 +131,16 @@ export const AuthProvider = (props: PropsWithChildren) => {
       return JSON.parse(profileInfo);
     } else return null;
   }
+
+  const getUserBrowserInfo = () => {
+    const userBrowserInfo = Cookie.get('userBrowserInfo');
+    if (userBrowserInfo && userBrowserInfo !== 'null') {
+      return JSON.parse(userBrowserInfo);
+    } else return null;
+  }
+
+  const [userBrowserInfo, setUserBrowserInfo] = useState<UserBrowserInfoType | null>(getUserBrowserInfo());
+
   const [userInfo, setUserInfo] = useState<UserInfoType|null>(getProfileFromCookie());
 
   const [superUser, setSuperUser] = useState<boolean>(Cookie.get('isSU')==='true');
@@ -153,6 +215,9 @@ export const AuthProvider = (props: PropsWithChildren) => {
     Cookie.remove('WAPI_navAccess');
     Cookie.remove('currentDate');
 
+    Cookie.remove('userBrowserInfo');
+    Cookie.remove('userActions')
+
     setNotifications(null);
   }
 
@@ -198,10 +263,50 @@ export const AuthProvider = (props: PropsWithChildren) => {
     setUi(ui);
   }
 
+  const setUserBrowserInfoFn = (val: UserBrowserInfoType) => {
+    Cookie.set('userBrowserInfo', JSON.stringify(val));
+    setUserBrowserInfo(val);
+  }
+
+  const getBrowserInfo= (action: string, objectType: AccessObjectTypes, actionType: AccessActions) => {
+    console.log("12345 gghf", objectType, actionType, isActionIsAccessible(objectType, actionType));
+    const userData = userInfo;
+    return {
+      headers: [{ip: userBrowserInfo.userIp}, {lang: userBrowserInfo.userLang}, {timezone: userBrowserInfo.userTimezone}, {agent: userBrowserInfo.userAgentData}],
+      email: userData?.userLogin || '--',
+      clientName: userData.client,
+      token: token,
+      forbidden: objectType && actionType ? !isActionIsAccessible(objectType, actionType) : false,
+      action: action,
+    }
+  }
+
+  const getUserAccessActions = () => {
+    const userAccessActions = Cookie.get('userActions');
+    if (userAccessActions && userAccessActions !== 'null') {
+      return JSON.parse(userAccessActions);
+    } else return null;
+  }
+
+  const [accessForActions, setAccessForActions] = useState<UserAccessActionType[] | null>(getUserAccessActions());
+
+  const setActionAccess = (val: UserAccessActionType[]) => {
+    Cookie.set('userActions', JSON.stringify(val));
+    setAccessForActions(val);
+  }
+  const isActionIsAccessible = (objectType: string ="", action:string="" ) => {
+    if (!accessForActions || !objectType || !action) return true;
+    const rez = accessForActions.filter(item => item.objectType==objectType && item.action==action);
+    if (rez && rez.length) {
+      return !rez[0].forbidden;
+    }
+
+    return true;
+  }
 
 
   return (
-    <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser, setIsSuperUser, ui, setUserUi }}>
+      <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser, setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess, isActionIsAccessible }}>
       {props.children}
     </AuthContext.Provider>
   );

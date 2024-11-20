@@ -5,12 +5,16 @@ import {HierarchyNodeType} from "@/screens/ProfilePage/components/ApiProtocols";
 import Icon from "@/components/Icon";
 import {getApiProtocol} from "@/services/profile";
 import {base64ToBlob} from "@/utils/files";
+import {sendUserBrowserInfo} from "@/services/userInfo";
+import useAuth from "@/context/authContext";
 
 type FilePropsType = {
     file: HierarchyNodeType;
 }
 
 const SingleFile: React.FC<FilePropsType> = ({file}) => {
+    const { getBrowserInfo } = useAuth();
+
     const [fileData, setFileData] = useState<any|null>(null);
 
     const fileDownLoad = (file) => {
@@ -52,6 +56,10 @@ const SingleFile: React.FC<FilePropsType> = ({file}) => {
         if (fileData) {
             fileDownLoad(fileData);
         } else {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocolFile'), body: {uuid: file?.uuid}})
+            } catch {}
+
             const res = await getApiProtocol({uuid: file?.uuid});
             if (res.status === 200 && res.data.length) {
                 const fileInfo = res.data[0];
@@ -65,6 +73,10 @@ const SingleFile: React.FC<FilePropsType> = ({file}) => {
         if (fileData) {
             fileOpen(fileData);
         } else {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocolFile'), body: {uuid: file?.uuid}})
+            } catch {}
+
             const res = await getApiProtocol({uuid: file?.uuid});
             if (res.status === 200 && res.data.length) {
                 const fileInfo = res.data[0];

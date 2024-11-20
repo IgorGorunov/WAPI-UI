@@ -50,6 +50,7 @@ import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
 import {CommonHints} from "@/constants/commonHints";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -72,7 +73,7 @@ const receiverFieldsPickUpPoint = [
 
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
     const {notifications} = useNotifications();
-    const { token, currentDate, superUser, ui } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
@@ -92,6 +93,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         try {
             setIsLoading(true);
             const requestData = {token, courierService};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetPickupPoints'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await getOrderPickupPoints(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
@@ -112,6 +118,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const fetchPickupPointsForCreatedOrder = useCallback(async (courierService: string) => {
         try {
             const requestData = {token, courierService};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetPickupPoints'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await getOrderPickupPoints(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
@@ -955,12 +966,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const handleCancelOrder = async() => {
         try {
-            const res: ApiResponseType = await cancelOrder(
-                {
-                    token: token,
-                    uuid: orderData?.uuid,
-                }
-            );
+            const requestData = {token, uuid: orderData?.uuid};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CancelOrder'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
+            const res: ApiResponseType = await cancelOrder(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res && res?.status === 200) {
                 //success
@@ -997,6 +1009,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 token: token,
                 addressData: changedFields
             };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('UpdateAddressShipmentOrder'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await sendAddressData(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res && res?.status === 200) {
@@ -1036,6 +1053,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 token: token,
                 orderData: data
             };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateOrder'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await sendOrderData(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res && res?.status === 200) {

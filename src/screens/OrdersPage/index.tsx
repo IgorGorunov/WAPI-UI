@@ -21,10 +21,11 @@ import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsOrders, tourGuideStepsOrdersNoDocs} from "./ordersTourGuideSteps.constants";
 import {ApiResponseType} from "@/types/api";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const OrdersPage = () => {
     const Router = useRouter();
-    const { token, currentDate, superUser, ui } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
 
     useEffect(() => {
         const { uuid } = Router.query;
@@ -79,6 +80,11 @@ const OrdersPage = () => {
             setIsLoading(true);
             setOrdersData([]);
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetOrdersList'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await getOrders(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {

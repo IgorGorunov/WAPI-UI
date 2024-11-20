@@ -27,6 +27,7 @@ import {FILTER_TYPE} from "@/types/utility";
 import DateInput from "@/components/DateInput";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString} from "@/utils/date";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 
 export const StatusColors = {
@@ -52,7 +53,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const [isLoading, setIsLoading] = useState(false);
 
     //const Router = useRouter();
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo } = useAuth();
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -133,7 +134,12 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const handleDownloadInvoice = async (uuid, type='download') => {
         setIsLoading(true);
         try {
-            const requestData = { token: token, uuid: uuid, type }
+            const requestData = { token: token, uuid: uuid, type };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetInvoicePrintForm'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const response = await getInvoiceForm(superUser && ui ? {...requestData, ui} : requestData);
 
             if (response && response.data) {

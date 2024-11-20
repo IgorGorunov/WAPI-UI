@@ -13,6 +13,7 @@ import Modal from "@/components/Modal";
 import Loader from "@/components/Loader";
 import OrderFormComponent from "@/screens/OrdersPage/components/OrderForm/OrderFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type OrderFormType = {
     orderUuid?: string;
@@ -24,7 +25,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const { token, superUser, ui } = useAuth();
+    const { token, superUser, ui, getBrowserInfo } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [orderData, setOrderData] = useState<SingleOrderType|null>(null);
@@ -34,6 +35,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
         try {
             setIsLoading(true);
             const requestData = {token, uuid};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetOrderData'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await getOrderData(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
@@ -52,6 +58,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
         try {
             setIsLoading(true);
             const requestData = {token: token};
+
+            // try {
+            //     sendUserBrowserInfo({...getBrowserInfo('GetOrderParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
+            // } catch {}
+
             const resp: ApiResponseType = await getOrderParameters(superUser && ui ? {...requestData, ui} : requestData);
 
             if (resp && "data" in resp) {

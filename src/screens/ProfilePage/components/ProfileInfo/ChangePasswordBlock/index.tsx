@@ -11,13 +11,14 @@ import {ApiResponseType} from "@/types/api";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import {FormBuilderType, FormFieldTypes, WidthType} from "@/types/forms";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type ChangePasswordPropsType = {
     onClose: ()=>void;
 }
 
 const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
-    const {token, superUser, ui} = useAuth();
+    const {token, superUser, ui, getBrowserInfo} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     //status modal
@@ -98,6 +99,11 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
         try {
             setIsLoading(true);
             const requestData = {token, currentPassword: data.currentPassword, newPassword: data.newPassword};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('ChangePassword'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await changePassword(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res?.status === 200) {

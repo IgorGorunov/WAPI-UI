@@ -11,9 +11,10 @@ import {ApiProtocolType, UserPriceType} from "@/types/profile";
 import {getApiProtocols, getUserContracts, getUserPrices} from "@/services/profile";
 import useAuth from "@/context/authContext";
 import UserContractsAndPrices from "./components/UserContractsAndPrices";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const ProfilePage = () => {
-    const {token, superUser, ui} = useAuth();
+    const {token, superUser, ui, getBrowserInfo } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [apiProtocolsData, setApiProtocolsData] = useState<ApiProtocolType[]|null>(null);
     const [pricesData, setPricesData] = useState<UserPriceType[]|null>(null);
@@ -23,16 +24,27 @@ const ProfilePage = () => {
         try {
             setIsLoading(true);
             const requestData = {token};
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocols'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
 
             const res = await getApiProtocols(superUser && ui ? {...requestData, ui} : requestData);
             if (res.status === 200) {
                 setApiProtocolsData(res.data);
             }
 
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetClientPriceList'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const resPrices = await getUserPrices(superUser && ui ? {...requestData, ui} : requestData);
             if (resPrices.status === 200) {
                 setPricesData(resPrices.data);
             }
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetContractsList'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
 
             const resContracts = await getUserContracts(superUser && ui ? {...requestData, ui} : requestData);
             if (resContracts.status === 200) {

@@ -18,9 +18,10 @@ import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsAmazonPrep, tourGuideStepsAmazonPrepNoDocs} from "./amazomPrepTourGuideSteps.constants";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const AmazonPrepPage = () => {
-    const {token, currentDate, superUser, ui} = useAuth();
+    const {token, currentDate, superUser, ui, getBrowserInfo} = useAuth();
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -59,9 +60,13 @@ const AmazonPrepPage = () => {
         try {
             setIsLoading(true);
             setAmazonPrepOrdersData([]);
-            const requesData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
+            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
 
-            const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requesData, ui} : requesData);
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepsList'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
+            const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setAmazonPrepOrdersData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));

@@ -9,6 +9,7 @@ import {ToastContainer} from "@/components/Toast";
 import Modal from "@/components/Modal";
 import TicketComponent from "@/screens/TicketsPage/components/Ticket/TicketComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type TicketPropsType = {
     ticketUuid?: string;
@@ -20,7 +21,7 @@ type TicketPropsType = {
 
 const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose}) => {
 
-    const {token, superUser, ui} = useAuth();
+    const {token, superUser, ui, getBrowserInfo} = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
@@ -39,6 +40,11 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
         try {
             setIsLoading(true);
             const requestData = {token, uuid};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetTicketData'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await getSingleTicket(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
@@ -58,6 +64,9 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
         try {
             setIsLoading(true);
             const requestData = {token};
+            // try {
+            //     sendUserBrowserInfo({...getBrowserInfo('GetTicketParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
+            // } catch {}
             const res: ApiResponseType = await getTicketParams(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {

@@ -45,6 +45,7 @@ import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {AmazonPrepHints} from "@/screens/AmazonPrepPage/amazonPrepHints.constants";
 import {CommonHints} from "@/constants/commonHints";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -67,7 +68,7 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
 
 const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc}) => {
 
-    const { token, currentDate, superUser, ui } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
     const {notifications} = useNotifications();
 
     const [isDisabled, setIsDisabled] = useState(!!docUuid);
@@ -521,6 +522,10 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                 token: token,
                 orderData: data
             };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
 
             const res: ApiResponseType = await sendAmazonPrepData(superUser && ui ? {...requestData, ui} : requestData);
 

@@ -22,6 +22,7 @@ import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {TicketHints} from "@/screens/TicketsPage/ticketHints.constants";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type TicketPropsType = {
     subjectType?: string | null;
@@ -37,7 +38,7 @@ type TicketPropsType = {
 
 const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose, reFetchTicket}) => {
 
-    const {token, superUser, ui} = useAuth();
+    const {token, superUser, ui, getBrowserInfo} = useAuth();
 
     //const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
     const [infoHeight, setInfoHeight] = useState(0)
@@ -111,6 +112,10 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                 token: token,
                 uuid: ticketUuid,
             };
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('ReopenTicket'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await reopenTicket(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res?.status === 200) {
@@ -142,6 +147,10 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                 token: token,
                 ticket: data
             };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateTicket'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
 
             const res: ApiResponseType = await createTicket(superUser && ui ? {...requestData, ui} : requestData);
 

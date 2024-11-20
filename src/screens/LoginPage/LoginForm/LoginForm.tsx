@@ -13,6 +13,12 @@ import Loader from "@/components/Loader";
 import {formFields} from "./LoginFormFields.constants";
 import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 import {getCleanParamsFromQuery} from "@/utils/query";
+import {
+  getUserIP,
+  getUserLanguage,
+  getUserTimezone,
+  sendUserBrowserInfo
+} from "@/services/userInfo";
 
 type LoginFormPropsType = {
   oneTimeToken?: string;
@@ -23,7 +29,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
   const Router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
-  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile, setIsSuperUser } = useAuth();
+  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile, setIsSuperUser, setUserBrowserInfoFn, setActionAccess } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -42,8 +48,34 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
 
   }, [Router.query]);
 
+  const setUserBrowserDataToCookies = async(data) => {
+
+    //get browser data
+    const userIp = await getUserIP();
+    //const userLocation = await getUserLocation();
+    const userTimezone = await getUserTimezone();
+    const userLang = await getUserLanguage();
+    const userAgentData = navigator.userAgent;
+
+    setUserBrowserInfoFn({userIp, userTimezone, userLang, userAgentData});
+
+    try{
+      const userData = data.userProfile?.userInfo;
+
+      await sendUserBrowserInfo({
+          headers: [{ip: userIp}, {lang: userLang}, {timezone: userTimezone}, {agent: userAgentData}],
+          body: {},
+          action: 'Authorize',
+          email: userData?.userLogin || '--' ,
+          clientName: userData.client,
+          token: data.accessToken,
+          forbidden: false,
+        })
+    } catch (error) {}
+  }
+
   const setAuthData = async(authData) => {
-    const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile, superUser } = authData;
+    const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile, superUser, actionAccessSettings } = authData;
 
     setToken(accessToken, userStatus !== UserStatusType.user);
 
@@ -55,9 +87,13 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
     if (textInfo) setTextInfo(textInfo || '');
     setNavItemsAccess(access || []);
     setUserInfoProfile(userProfile?.userInfo || null);
+
+    setActionAccess(actionAccessSettings);
     if (!!superUser) setIsSuperUser(!!superUser);
 
     setOneTimeToken('');
+
+    await setUserBrowserDataToCookies(authData);
 
     switch (userStatus) {
       case 'user':
@@ -82,6 +118,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
 
       if (res?.status === 200) {
         await setAuthData(res.data);
+
       } else if (res?.response?.status === 401) {
         setError("Wrong token");
       }

@@ -42,6 +42,7 @@ import {
     tourGuideStepsReports,
     tourGuideStepsReportsWithoutVariants
 } from "./reportTourGuideSteps.constants";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -49,7 +50,7 @@ type ReportPagePropType = {
 
 const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const Router = useRouter();
-    const { token, currentDate, getToken, superUser, ui } = useAuth();
+    const { token, currentDate, getToken, superUser, ui, getBrowserInfo } = useAuth();
 
     useEffect(() => {
         if (!getToken()) Router.push(Routes.Login);
@@ -99,6 +100,11 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         try {
             setIsLoading(true);
             const requestData = {token: token};
+
+            // try {
+            //     sendUserBrowserInfo({...getBrowserInfo('GetReportParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
+            // } catch {}
+
             const res: ApiResponse = await getReportParams(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res.data) {
@@ -117,6 +123,11 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         try {
             setIsLoading(true);
             const requestData = {token: token, reportType: reportType, startDate: formatDateToString(currentRange.startDate), endDate: formatDateToString(currentRange.endDate)};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetReportData/'+reportType), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: any = await getReportData(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res.data) {

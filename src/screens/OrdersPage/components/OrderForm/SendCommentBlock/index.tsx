@@ -15,6 +15,7 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {DateFields, MainFields, ReceiverFields} from "./CommentFields";
 import {addWorkingDays, formatDateToString} from "@/utils/date";
 import Loader from "@/components/Loader";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type SendCommentPropsType = {
     orderData: SingleOrderType;
@@ -25,7 +26,7 @@ type SendCommentPropsType = {
 
 const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal, onSuccess }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const {token, superUser, ui} = useAuth();
+    const {token, superUser, ui, getBrowserInfo} = useAuth();
 
     const availableOptions = orderData.commentCourierServiceFunctionsList.split(';');
 
@@ -107,6 +108,11 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 token: token,
                 comment: sendData
             };
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('SendCommentToCourierService'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+
             const res: ApiResponseType = await sendOrderComment(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "status" in res && res?.status === 200) {
