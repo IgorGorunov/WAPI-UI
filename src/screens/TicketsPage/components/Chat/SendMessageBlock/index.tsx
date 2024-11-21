@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import "./styles.scss";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {sendTicketMessage} from "@/services/tickets";
 import {ApiResponseType} from "@/types/api";
 import Loader from "@/components/Loader";
@@ -31,7 +31,7 @@ type ChatFileType = {
 }
 
 const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker, canEdit}) => {
-    const {token, superUser, ui, getBrowserInfo} = useAuth();
+    const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const dropRef = useRef<HTMLDivElement>(null);
@@ -69,6 +69,10 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
     const sendMessage = async(e) => {
         e.preventDefault();
+
+        if (!isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.EditObject)) {
+            return null;
+        }
 
         //attached files
         const attachedFiles = await Promise.all(

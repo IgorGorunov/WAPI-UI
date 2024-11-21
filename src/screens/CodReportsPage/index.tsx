@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import { getCodReports , getCODIndicators} from "@/services/codReports";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
@@ -23,7 +23,7 @@ import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const CodReportsPage = () => {
 
-    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType|null>(null);
 
@@ -47,22 +47,32 @@ const CodReportsPage = () => {
                 const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
 
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo('GetCODReportsList'), body: superUser && ui ? {...requestData, ui} : requestData})
+                    sendUserBrowserInfo({...getBrowserInfo('GetCODReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
                 } catch {}
+
+                if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.ListView)) {
+                    console.log('no access')
+
+                    setCodReportsData([]);
+                    setFilteredCodReports([]);
+                    setIsLoading(false);
+                    return null;
+                }
+
+                console.log('has access')
 
                 const res: ApiResponse = await getCodReports(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
                     setCodReportsData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
                     setFilteredCodReports(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
-                    setIsLoading(false);
                 } else {
                     console.error("API did not return expected data");
-                    setIsLoading(false);
                 }
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+            } finally {
                 setIsLoading(false);
             }
         };
@@ -81,8 +91,32 @@ const CodReportsPage = () => {
                 const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
 
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo('GetCODIndicators'), body: superUser && ui ? {...requestData, ui} : requestData})
+                    sendUserBrowserInfo({...getBrowserInfo('GetCODIndicators', AccessObjectTypes["Finances/CODReports"], AccessActions.View), body: superUser && ui ? {...requestData, ui} : requestData})
                 } catch {}
+
+                if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.View)) {
+                    setCODIndicators({
+                        "currentAmount": [
+                            {
+                                "amount": 0,
+                                "currency": "EUR"
+                            }
+                        ],
+                        "monthAmount": [
+                            {
+                                "amount": 0,
+                                "currency": "EUR"
+                            }
+                        ],
+                        "yearAmount": [
+                            {
+                                "amount": 0,
+                                "currency": "EUR"
+                            }
+                        ]
+                    });
+                    return null;
+                }
 
                 const res: ApiResponse = await getCODIndicators(superUser && ui ? {...requestData, ui} : requestData);
 
@@ -107,6 +141,14 @@ const CodReportsPage = () => {
 
 
     const handleExportXLS = () => {
+        try {
+            sendUserBrowserInfo({...getBrowserInfo('ExportCodReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ExportList), body: {startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}});
+        } catch {}
+
+        if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.ExportList)) {
+            return null;
+        }
+
         const filteredData = filteredCodReports.map(item => ({
             number: item.number,
             date: item.date,

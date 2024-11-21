@@ -1,12 +1,16 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions} from "@/context/authContext";
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header";
 import "./styles.scss";
 import {getReportData, getReportParams} from "@/services/reports";
-import {REPORT_TITLES, REPORT_TYPES, ReportParametersType} from "@/types/reports";
+import {
+    REPORT_TITLES,
+    REPORT_TYPES,
+    ReportParametersType,
+} from "@/types/reports";
 import Loader from "@/components/Loader";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import DateInput from "@/components/DateInput";
@@ -26,7 +30,7 @@ import {
     getVariantOptionsByReportType,
     getVariantResourceColsByReportType,
     getVariantSortingColsByReportType,
-    isFilterVisibleByReportType
+    isFilterVisibleByReportType, transformReportType
 } from "./utils";
 
 import {Countries} from "@/types/countries";
@@ -38,10 +42,7 @@ import {aggregateTableData} from "@/utils/aggregateTable";
 import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
-import {
-    tourGuideStepsReports,
-    tourGuideStepsReportsWithoutVariants
-} from "./reportTourGuideSteps.constants";
+import {tourGuideStepsReports, tourGuideStepsReportsWithoutVariants} from "./reportTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type ReportPagePropType = {
@@ -50,7 +51,7 @@ type ReportPagePropType = {
 
 const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const Router = useRouter();
-    const { token, currentDate, getToken, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, currentDate, getToken, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     useEffect(() => {
         if (!getToken()) Router.push(Routes.Login);
@@ -125,8 +126,14 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
             const requestData = {token: token, reportType: reportType, startDate: formatDateToString(currentRange.startDate), endDate: formatDateToString(currentRange.endDate)};
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetReportData/'+reportType), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetReportData/'+reportType, transformReportType(reportType), AccessActions.GenerateReport), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
+
+            if (!isActionIsAccessible(transformReportType(reportType), AccessActions.GenerateReport) ) {
+                setReportData(null);
+                console.log('789')
+                return;
+            }
 
             const res: any = await getReportData(superUser && ui ? {...requestData, ui} : requestData);
 
@@ -348,11 +355,17 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         } finally {
             setIsCalculating(false);
         }
-
     }
 
     // handle report
     const handleGenerateReport = () => {
+        if (!isActionIsAccessible(transformReportType(reportType), AccessActions.GenerateReport) ) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GenerateReport/'+reportType, transformReportType(reportType), AccessActions.GenerateReport), body: {startDate: formatDateToString(currentRange.startDate), endDate: formatDateToString(currentRange.endDate)}});
+            } catch {}
+            return;
+        }
+
         setNoData(false);
 
         if (isCurrentRangeChanged) {
@@ -456,6 +469,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                                 </Tooltip>
                                 </div>
                                 <ReportTable
+                                    curPeriod={currentRange}
                                     reportData={collapsedData}
                                     reportType={reportType}
                                     reportVariantAsString={reportType === REPORT_TYPES.DELIVERY_RATES || reportType === REPORT_TYPES.REPORT_SALES ? periodVariantType+'_'+curVariant : curVariant}

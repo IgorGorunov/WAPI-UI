@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import "./styles.scss";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {Controller, useForm} from "react-hook-form";
 import {OrderCommentType, SingleOrderType} from "@/types/orders";
 import {createOptions} from "@/utils/selectOptions";
@@ -110,7 +110,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
             };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('SendCommentToCourierService'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('SendCommentToCourierService', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
             const res: ApiResponseType = await sendOrderComment(superUser && ui ? {...requestData, ui} : requestData);

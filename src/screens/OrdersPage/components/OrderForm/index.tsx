@@ -1,11 +1,8 @@
-import React, { useCallback, useEffect, useState} from 'react';
-import {
-    OrderParamsType,
-    SingleOrderType
-} from "@/types/orders";
+import React, {useCallback, useEffect, useState} from 'react';
+import {OrderParamsType, SingleOrderType} from "@/types/orders";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {getOrderData, getOrderParameters} from '@/services/orders';
 import {ApiResponseType} from '@/types/api';
 import {ToastContainer} from '@/components/Toast';
@@ -25,7 +22,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const { token, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [orderData, setOrderData] = useState<SingleOrderType|null>(null);
@@ -37,8 +34,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
             const requestData = {token, uuid};
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetOrderData'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetOrderData',AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
+
+            if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject)) {
+                setOrderData(null);
+                return null;
+            }
 
             const res: ApiResponseType = await getOrderData(superUser && ui ? {...requestData, ui} : requestData);
 

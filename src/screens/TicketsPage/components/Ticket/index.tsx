@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import "./styles.scss";
 import {ApiResponseType} from "@/types/api";
 import {getSingleTicket, getTicketParams} from "@/services/tickets";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {SingleTicketType, TicketParamsType} from "@/types/tickets";
 import Loader from "@/components/Loader";
 import {ToastContainer} from "@/components/Toast";
@@ -21,7 +21,7 @@ type TicketPropsType = {
 
 const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose}) => {
 
-    const {token, superUser, ui, getBrowserInfo} = useAuth();
+    const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
@@ -42,8 +42,13 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
             const requestData = {token, uuid};
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetTicketData'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetTicketData', AccessObjectTypes.Tickets, AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
+
+            if (!isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.ViewObject)) {
+                setSingleTicketData(null);
+                return null;
+            }
 
             const res: ApiResponseType = await getSingleTicket(superUser && ui ? {...requestData, ui} : requestData);
 
@@ -67,6 +72,13 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetTicketParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
             // } catch {}
+            if (!ticketUuid && !isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.CreateObject) ) {
+                try {
+                    sendUserBrowserInfo({...getBrowserInfo('CreateTicket', AccessObjectTypes.Tickets, AccessActions.CreateObject), body: superUser && ui ? {...requestData, ui} : requestData})
+                } catch {}
+                setTicketParams(null);
+                return null;
+            }
             const res: ApiResponseType = await getTicketParams(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {

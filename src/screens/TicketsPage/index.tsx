@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from "react";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {useRouter} from "next/router";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
@@ -26,7 +26,7 @@ import {sendUserBrowserInfo} from "@/services/userInfo";
 
 
 const TicketsPage = () => {
-    const {token, currentDate, superUser, ui, getBrowserInfo} = useAuth();
+    const {token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -45,17 +45,6 @@ const TicketsPage = () => {
             delete query.uuid;
             Router.replace({pathname: '/tickets', query: {...query}}, undefined, {shallow: true});
         }
-
-        // if (periodStart && periodEnd) {
-        //     console.log('set period')
-        //     setCurrentPeriod({startDate: new Date(periodStart as string), endDate: new Date(periodEnd as string)})
-        // } else {
-        //     setCurrentPeriod({startDate: firstDay, endDate: today})
-        // }
-        //
-        // if (!isQueryChecked) {
-        //     setIsQueryChecked(true);
-        // }
 
     }, [query]);
 
@@ -87,8 +76,13 @@ const TicketsPage = () => {
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetTicketList'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetTicketList', AccessObjectTypes.Tickets, AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
+
+            if (!isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.ListView)) {
+                setTicketsData([]);
+                return null;
+            }
 
             const res: ApiResponseType = await getTickets(superUser && ui ? {...requestData, ui} : requestData);
             if (res && res.data ) {
@@ -120,20 +114,13 @@ const TicketsPage = () => {
         setIsTicketNew(false);
         setSingleTicketUuid(uuid)
 
-        // setTicketsData(prevState => {
-        //     if (prevState && prevState.length) {
-        //         const el = prevState.filter(item => item.uuid === uuid);
-        //
-        //         if (el.length) {
-        //             console.log('new state: ', [...prevState.filter(item => item.uuid !== uuid), {...el[0], newMessages: false}].sort((a,b)=>a.number<b.number ? 1 : -1))
-        //             return [...prevState.filter(item => item.uuid !== uuid), {...el[0], newMessages: false}].sort((a,b)=>a.number<b.number ? 1 : -1)
-        //         }
-        //     }
-        //     return [...prevState];
-        // });
-
-        setShowTicketModal(true);
-
+        if (!isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.ViewObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('ViewEditTicket', AccessObjectTypes.Tickets, AccessActions.ViewObject), body: {uuid: uuid}});
+            } catch {}
+        } else {
+            setShowTicketModal(true);
+        }
     }
 
 
@@ -141,7 +128,15 @@ const TicketsPage = () => {
     ) => {
         setIsTicketNew(true);
         setSingleTicketUuid(null);
-        setShowTicketModal(true);
+
+        console.log('cc')
+        if (!isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.CreateObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateTicket', AccessObjectTypes.Tickets, AccessActions.CreateObject), body: {}});
+            } catch {}
+        } else {
+            setShowTicketModal(true);
+        }
     }
 
     //tour guide

@@ -9,12 +9,12 @@ import ProfileInfo from "./components/ProfileInfo";
 import ApiProtocols from "./components/ApiProtocols";
 import {ApiProtocolType, UserPriceType} from "@/types/profile";
 import {getApiProtocols, getUserContracts, getUserPrices} from "@/services/profile";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import UserContractsAndPrices from "./components/UserContractsAndPrices";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const ProfilePage = () => {
-    const {token, superUser, ui, getBrowserInfo } = useAuth();
+    const {token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [apiProtocolsData, setApiProtocolsData] = useState<ApiProtocolType[]|null>(null);
     const [pricesData, setPricesData] = useState<UserPriceType[]|null>(null);
@@ -25,30 +25,41 @@ const ProfilePage = () => {
             setIsLoading(true);
             const requestData = {token};
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocols'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocols', AccessObjectTypes["Profile/DeliveryProtocols"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
-            const res = await getApiProtocols(superUser && ui ? {...requestData, ui} : requestData);
-            if (res.status === 200) {
-                setApiProtocolsData(res.data);
+            if (!isActionIsAccessible(AccessObjectTypes["Profile/DeliveryProtocols"], AccessActions.ListView)) {
+                setApiProtocolsData([]);
+            } else {
+                const res = await getApiProtocols(superUser && ui ? {...requestData, ui} : requestData);
+                if (res.status === 200) {
+                    setApiProtocolsData(res.data);
+                }
             }
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetClientPriceList'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetClientPriceList', AccessObjectTypes["Profile/Prices"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
-            const resPrices = await getUserPrices(superUser && ui ? {...requestData, ui} : requestData);
-            if (resPrices.status === 200) {
-                setPricesData(resPrices.data);
+            if (!isActionIsAccessible(AccessObjectTypes["Profile/Prices"], AccessActions.ListView)) {
+                setPricesData([]);
+            } else {
+                const resPrices = await getUserPrices(superUser && ui ? {...requestData, ui} : requestData);
+                if (resPrices.status === 200) {
+                    setPricesData(resPrices.data);
+                }
             }
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetContractsList'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetContractsList', AccessObjectTypes["Profile/Contracts"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
-
-            const resContracts = await getUserContracts(superUser && ui ? {...requestData, ui} : requestData);
-            if (resContracts.status === 200) {
-                setContractsData(resContracts.data);
+            if (!isActionIsAccessible(AccessObjectTypes["Profile/Contracts"], AccessActions.ListView)) {
+                setPricesData([]);
+            } else {
+                const resContracts = await getUserContracts(superUser && ui ? {...requestData, ui} : requestData);
+                if (resContracts.status === 200) {
+                    setContractsData(resContracts.data);
+                }
             }
 
         } catch {

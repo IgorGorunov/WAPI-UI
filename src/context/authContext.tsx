@@ -52,6 +52,9 @@ export enum AccessObjectTypes {
   "StockManagment/Outbounds" = "StockManagment/Outbounds",
   "StockManagment/StockMovements" = "StockManagment/StockMovements",
   "Tickets" = "Tickets",
+  "Profile/Prices" = "Profile/Prices",
+  "Profile/Contracts" = "Profile/Contracts",
+  "Profile/DeliveryProtocols" = "Profile/DeliveryProtocols",
 }
 
 export enum AccessActions {
@@ -65,6 +68,7 @@ export enum AccessActions {
   "GenerateReport" = "GenerateReport",
   "DownloadReport" = "DownloadReport",
   "View" = "View",
+  "DownloadPrintForm" = "DownloadPrintForm",
 }
 
 type authContextType = {
@@ -269,7 +273,6 @@ export const AuthProvider = (props: PropsWithChildren) => {
   }
 
   const getBrowserInfo= (action: string, objectType: AccessObjectTypes, actionType: AccessActions) => {
-    console.log("12345 gghf", objectType, actionType, isActionIsAccessible(objectType, actionType));
     const userData = userInfo;
     return {
       headers: [{ip: userBrowserInfo.userIp}, {lang: userBrowserInfo.userLang}, {timezone: userBrowserInfo.userTimezone}, {agent: userBrowserInfo.userAgentData}],
@@ -297,6 +300,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
   const isActionIsAccessible = (objectType: string ="", action:string="" ) => {
     if (!accessForActions || !objectType || !action) return true;
     const rez = accessForActions.filter(item => item.objectType==objectType && item.action==action);
+
     if (rez && rez.length) {
       return !rez[0].forbidden;
     }

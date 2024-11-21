@@ -1,21 +1,17 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions} from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {ToastContainer} from '@/components/Toast';
-import {
-    SingleStockMovementType,
-    STOCK_MOVEMENT_DOC_TYPE,
-    StockMovementParamsType
-} from "@/types/stockMovements";
+import {SingleStockMovementType, STOCK_MOVEMENT_DOC_TYPE, StockMovementParamsType} from "@/types/stockMovements";
 import {getInboundData, getInboundParameters} from "@/services/stockMovements";
 import {ApiResponseType} from "@/types/api";
 import Modal from "@/components/Modal";
 import StockMovementFormComponent
     from "@/screens/StockMovementsPage/components/StockMovementForm/StockMovementFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
-import {docNamesSingle} from "@/screens/StockMovementsPage";
+import {docNamesSingle, getAccessActionObject} from "@/screens/StockMovementsPage";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 
 type StockMovementFormType = {
@@ -28,7 +24,7 @@ type StockMovementFormType = {
 const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=null, closeDocModal, closeModalOnSuccess}) => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const { token, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
 
@@ -45,9 +41,13 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
             const requestData = {token, uuid, documentType: docType};
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetStockMovementData/'+docType), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetStockMovementData/'+docType, getAccessActionObject(docType), AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
+            if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.ViewObject)) {
+                setDocData(null);
+                return null;
+            }
             const res: ApiResponse = await getInboundData(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
@@ -109,21 +109,28 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
         }
     }
 
-    return <div className={`stock-movement is-${docType}`}>
-        {isLoading && <Loader />}
-        <ToastContainer />
-        {docParameters && (docUuid && docData || !docUuid) ? (
-            <Modal title={docNamesSingle[docType]} onClose={onClose} classNames='document-modal'>
-                <StockMovementFormComponent
-                    docType={docType}
-                    docParameters={docParameters}
-                    docData={docData}
-                    closeDocModal={onCloseOnSuccess}
-                    refetchDoc={()=>fetchSingleStockMovement(docUuid)}
-                />
-            </Modal>
-        ) : null}
-    </div>
+    return (
+        <div>
+            {docParameters && (docUuid && docData || !docUuid ? (
+                <div className={`stock-movement is-${docType}`}>
+                    {isLoading && <Loader />}
+                    <ToastContainer />
+                    {docParameters && (docUuid && docData || !docUuid) ? (
+                        <Modal title={docNamesSingle[docType]} onClose={onClose} classNames='document-modal'>
+                            <StockMovementFormComponent
+                                docType={docType}
+                                docParameters={docParameters}
+                                docData={docData}
+                                closeDocModal={onCloseOnSuccess}
+                                refetchDoc={()=>fetchSingleStockMovement(docUuid)}
+                            />
+                        </Modal>
+                    ) : null}
+                </div>
+                )
+            : null)}
+        </div>
+    );
 }
 
 export default StockMovementForm;

@@ -10,7 +10,7 @@ import {
 import {AttachedFilesType, STATUS_MODAL_TYPES, WarehouseType} from "@/types/utility";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
@@ -73,7 +73,7 @@ const receiverFieldsPickUpPoint = [
 
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
     const {notifications} = useNotifications();
-    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
@@ -172,16 +172,22 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const [showSendCommentModal, setShowSendCommentModal] = useState(false);
     const [commentHasBeenSent, setCommentHasBeenSent] = useState(orderData?.commentTodayWasSent || false);
     const handleShowCommentModal = () => {
-        if (orderData && orderData.commentTodayWasSent || commentHasBeenSent) {
-            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: "Warning", subtitle: `Comment for this order has already been sent!
-            There needs to be at least 48 hours between comments for the same order.`, onClose: ()=>setShowStatusModal(false)})
-            setShowStatusModal(true);
-        }
-        else if (orderData && orderData.commentCourierServiceFunctionsList) {
-            setShowSendCommentModal(true);
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('SendComment', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {uuid: orderData?.uuid}});
+            } catch {}
         } else {
-            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: "Warning", subtitle: `Sending comment for this order is unavailable!`, onClose: ()=>setShowStatusModal(false)})
-            setShowStatusModal(true);
+            if (orderData && orderData.commentTodayWasSent || commentHasBeenSent) {
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: "Warning", subtitle: `Comment for this order has already been sent!
+            There needs to be at least 48 hours between comments for the same order.`, onClose: ()=>setShowStatusModal(false)})
+                setShowStatusModal(true);
+            }
+            else if (orderData && orderData.commentCourierServiceFunctionsList) {
+                setShowSendCommentModal(true);
+            } else {
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.MESSAGE, title: "Warning", subtitle: `Sending comment for this order is unavailable!`, onClose: ()=>setShowStatusModal(false)})
+                setShowStatusModal(true);
+            }
         }
     }
 
@@ -969,8 +975,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             const requestData = {token, uuid: orderData?.uuid};
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CancelOrder'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('CancelOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
+            if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject)) {
+                return null;
+            }
 
             const res: ApiResponseType = await cancelOrder(superUser && ui ? {...requestData, ui} : requestData);
 
@@ -1039,6 +1048,15 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     }
 
     const onSubmitForm = async (data) => {
+        const curAction = orderData ? AccessActions.EditObject : AccessActions.CreateObject;
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], curAction)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateOrder', AccessObjectTypes["Orders/Fullfillment"], curAction), body: {}});
+            } catch {}
+
+            return null;
+        }
+
         clearTabTitles();
         setIsLoading(true);
         data.draft = isDraft;
@@ -1083,6 +1101,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     }
 
     const onError = (props: any) => {
+        const curAction = orderData ? AccessActions.EditObject : AccessActions.CreateObject;
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], curAction)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateOrder', AccessObjectTypes["Orders/Fullfillment"], curAction), body: {}});
+            } catch {}
+
+            return null;
+        }
 
         if (isDraft) {
             clearErrors();
@@ -1114,6 +1140,38 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
         return false;
     }, []);
+
+    const handleEditClick = () => {
+        // () => setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('EditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {}});
+            } catch {}
+        } else {
+            setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))
+        }
+    }
+
+    const handleCancelOrderClick = () => {
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CancelOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {}});
+            } catch {}
+        } else {
+            setShowConfirmModal(true);
+        }
+    }
+
+    const handleEditAddressClick = () => {
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('EditAddressOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {}});
+            } catch {}
+        } else {
+            setIsAddressAllowed(true)
+        }
+    }
+
 
     return <div className='order-info'>
         {(isLoading || !orderParameters) && <Loader />}
@@ -1398,13 +1456,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
                                 onClick={handleCreateTicket}>Create ticket</Button> : null}
                     {orderData?.uuid && orderData?.canEdit ?
-                        <Button type='button' variant={ButtonVariant.PRIMARY} onClick={() => setShowConfirmModal(true)}>Cancel
+                        <Button type='button' variant={ButtonVariant.PRIMARY} onClick={handleCancelOrderClick}>Cancel
                             order</Button> : null}
                     {isDisabled && orderData?.canEdit && !orderData?.addressEditAllowedOnly && <Button type="button" disabled={false}
-                                                                 onClick={() => setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))}
+                                                                 onClick={handleEditClick}
                                                                  variant={ButtonVariant.PRIMARY}>Edit</Button>}
                     {isDisabled && orderData?.addressEditAllowedOnly && !isAddressAllowed && <Button type="button" disabled={false}
-                                                                                                      onClick={() => setIsAddressAllowed(true)}
+                                                                                                      onClick={handleEditAddressClick}
                                                                                                       variant={ButtonVariant.PRIMARY}>Edit address</Button>}
                     {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}

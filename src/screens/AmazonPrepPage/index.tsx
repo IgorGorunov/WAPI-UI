@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useCallback} from "react";
-import useAuth from "@/context/authContext";
+import React, {useCallback, useEffect, useState} from "react";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {useRouter} from "next/router";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
@@ -21,7 +21,7 @@ import {tourGuideStepsAmazonPrep, tourGuideStepsAmazonPrepNoDocs} from "./amazom
 import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const AmazonPrepPage = () => {
-    const {token, currentDate, superUser, ui, getBrowserInfo} = useAuth();
+    const {token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
 
     const today = currentDate;
     const firstDay = getLastFewDays(today, 30);
@@ -63,22 +63,28 @@ const AmazonPrepPage = () => {
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepsList'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepsList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
-            const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requestData, ui} : requestData);
+            if (isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ListView)) {
+                const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requestData, ui} : requestData);
 
-            if (res && "data" in res) {
-                setAmazonPrepOrdersData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
-                setIsLoading(false);
+                if (res && "data" in res) {
+                    setAmazonPrepOrdersData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
+                } else {
+                    console.error("API did not return expected data");
+                }
             } else {
-                console.error("API did not return expected data");
+                setAmazonPrepOrdersData([]);
             }
 
         } catch (error) {
             console.error("Error fetching data:", error);
             setIsLoading(false);
+        } finally {
+            setIsLoading(false);
         }
+
     }, [token,curPeriod]);
 
     useEffect(() => {
@@ -88,17 +94,25 @@ const AmazonPrepPage = () => {
     const handleEditAmazonPrepOrder = async (uuid: string) => {
         setIsAmazonPrepNew(false);
         setAmazonPrepUuid(uuid);
-        setAmazonPrepOrdersData(prevState => {
-            if (prevState && prevState.length) {
-                const el = prevState.filter(item => item.uuid === uuid);
-                if (el.length) {
-                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
-                }
-            }
-            return [...prevState];
-        });
 
-        setShowAmazonPrepOrderModal(true);
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject) ) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject), body: {}});
+            } catch {}
+        } else {
+            setAmazonPrepOrdersData(prevState => {
+                if (prevState && prevState.length) {
+                    const el = prevState.filter(item => item.uuid === uuid);
+                    if (el.length) {
+                        return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
+                    }
+                }
+                return [...prevState];
+            });
+
+            setShowAmazonPrepOrderModal(true);
+        }
+
     }
 
     useEffect(() => {
@@ -113,10 +127,24 @@ const AmazonPrepPage = () => {
     const handleAddAmazonPrepOrder= (
     ) => {
         setIsAmazonPrepNew(true);
-        setShowAmazonPrepOrderModal(true);
+        setAmazonPrepUuid(null);
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject), body: {}});
+            } catch {}
+        } else {
+            setShowAmazonPrepOrderModal(true);
+        }
     }
 
     const handleExportXLS = () => {
+        try {
+            sendUserBrowserInfo({...getBrowserInfo('ExportAmazonPrepList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ExportList), body: {startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}});
+        } catch {}
+
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ExportList)) {
+            return null;
+        }
         const filteredData = filteredAmazonPrepOrders.map(item => ({
             wapiTrackingNumber: item.wapiTrackingNumber,
             status: item.status,
