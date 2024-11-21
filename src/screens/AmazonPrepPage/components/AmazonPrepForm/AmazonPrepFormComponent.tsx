@@ -492,7 +492,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         console.log()
         if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], curAction), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], curAction), body: {uuid: amazonPrepOrderData?.uuid || ''}});
             } catch {}
 
             return null;
@@ -543,7 +543,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         const curAction = amazonPrepOrderData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], curAction), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], curAction), body: {uuid: amazonPrepOrderData?.uuid || ''}});
             } catch {}
 
             return null;
@@ -572,7 +572,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         // ()=>
         if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.EditObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('EditAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.EditObject), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('EditAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.EditObject), body: {uuid: amazonPrepOrderData?.uuid || ''}});
             } catch {}
         } else {
             setIsDisabled(!(amazonPrepOrderData?.canEdit || !amazonPrepOrderData?.uuid))

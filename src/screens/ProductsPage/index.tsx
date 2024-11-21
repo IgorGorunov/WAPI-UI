@@ -153,7 +153,7 @@ const ProductsPage = () => {
 
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject), body: {}});
             } catch {}
 
             return null;

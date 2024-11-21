@@ -1051,7 +1051,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         const curAction = orderData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateOrder', AccessObjectTypes["Orders/Fullfillment"], curAction), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateOrder', AccessObjectTypes["Orders/Fullfillment"], curAction), body: {uuid: data?.uuid || ''}});
             } catch {}
 
             return null;
@@ -1104,7 +1104,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         const curAction = orderData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateOrder', AccessObjectTypes["Orders/Fullfillment"], curAction), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateOrder', AccessObjectTypes["Orders/Fullfillment"], curAction), body: {uuid: orderData?.uuid || ''}});
             } catch {}
 
             return null;
@@ -1145,7 +1145,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         // () => setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('EditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('EditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {uuid: orderData?.uuid || ''}});
             } catch {}
         } else {
             setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))
@@ -1155,7 +1155,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const handleCancelOrderClick = () => {
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CancelOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CancelOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {uuid: orderData?.uuid || ''}});
             } catch {}
         } else {
             setShowConfirmModal(true);
@@ -1165,7 +1165,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const handleEditAddressClick = () => {
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('EditAddressOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('EditAddressOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {uuid: orderData?.uuid || ''}});
             } catch {}
         } else {
             setIsAddressAllowed(true)

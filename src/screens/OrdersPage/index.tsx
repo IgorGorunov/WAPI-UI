@@ -114,7 +114,7 @@ const OrdersPage = () => {
         setOrderUuid(uuid);
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('ViewEditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('ViewEditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: {uuid: uuid}});
             } catch {}
             return null;
         } else {

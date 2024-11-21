@@ -748,7 +748,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         const curAction = docData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(getAccessActionObject(docType), curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateStockMovement', getAccessActionObject(docType), curAction), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateStockMovement', getAccessActionObject(docType), curAction), body: {uuid: data?.uuid || ''}});
             } catch {}
 
             return null;
@@ -807,7 +807,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         const curAction = docData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(getAccessActionObject(docType), curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateStockMovement', getAccessActionObject(docType), curAction), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateStockMovement', getAccessActionObject(docType), curAction), body: {uuid: docData?.uuid || ''}});
             } catch {}
 
             return null;
@@ -852,7 +852,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const handleCancelDocClick = () => {
         if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.EditObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('EditDoc/'+docType, getAccessActionObject(docType), AccessActions.EditObject), body: {}})
+                sendUserBrowserInfo({...getBrowserInfo('CancelDoc/'+docType, getAccessActionObject(docType), AccessActions.EditObject), body: {uuid: docData?.uuid || ''}});
             } catch {}
             return;
         } else {
