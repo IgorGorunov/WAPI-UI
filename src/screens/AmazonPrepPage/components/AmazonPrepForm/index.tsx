@@ -5,7 +5,7 @@ import {
 } from "@/types/amazonPrep";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {getAmazonPrepParameters, getSingleAmazonPrepData} from '@/services/amazonePrep';
 import {ApiResponseType} from '@/types/api';
 import {ToastContainer} from '@/components/Toast';
@@ -23,7 +23,7 @@ type AmazonPrepFormType = {
 
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, onCloseModalWithSuccess}) => {
-    const { token, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -39,8 +39,13 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
             const requestData = {token, uuid};
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepData'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepData', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
+
+            if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject)) {
+                setAmazonPrepOrderData(null);
+                return null;
+            }
 
             const res: ApiResponseType = await getSingleAmazonPrepData(superUser && ui ? {...requestData, ui} : requestData);
 

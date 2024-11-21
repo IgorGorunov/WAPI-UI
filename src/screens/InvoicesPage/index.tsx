@@ -1,29 +1,26 @@
-import React, { useState, useEffect } from "react";
-import useAuth from "@/context/authContext";
-import { getInvoices, getInvoicesDebts } from "@/services/invoices";
+import React, {useEffect, useState} from "react";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
+import {getInvoices, getInvoicesDebts} from "@/services/invoices";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import InvoiceList from "./components/InvoiceList";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
-import {InvoiceType, InvoiceBalanceType} from "@/types/invoices";
+import {InvoiceBalanceType, InvoiceType} from "@/types/invoices";
 import {exportFileXLS} from "@/utils/files";
 import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getLastFewDays, } from "@/utils/date";
+import {formatDateToString, getLastFewDays,} from "@/utils/date";
 import BalanceInfoCard from "@/screens/InvoicesPage/components/BalanceInfoCard";
 import Loader from "@/components/Loader";
 import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
-import {
-    tourGuideStepsInvoices,
-    tourGuideStepsInvoicesNoDocs
-} from "./invoicesTourGuideSteps.constants";
+import {tourGuideStepsInvoices, tourGuideStepsInvoicesNoDocs} from "./invoicesTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const InvoicesPage = () => {
 
-    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     //balance/debt
     const [invoiceBalance, setInvoiceBalance] = useState<InvoiceBalanceType|null>(null);
@@ -48,21 +45,27 @@ const InvoicesPage = () => {
                 const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
 
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo('GetInvoicesList'), body: superUser && ui ? {...requestData, ui} : requestData})
+                    sendUserBrowserInfo({...getBrowserInfo('GetInvoicesList', AccessObjectTypes["Finances/Invoices"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
                 } catch {}
+
+                if (!isActionIsAccessible(AccessObjectTypes["Finances/Invoices"], AccessActions.ListView)) {
+                    setInvoicesData([]);
+                    setFilteredInvoices([]);
+                    return null;
+                }
 
                 const res: ApiResponse = await getInvoices(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
                     setInvoicesData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
                     setFilteredInvoices(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
-                    setIsLoading(false);
                 } else {
                     console.error("API did not return expected data");
                 }
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+            } finally {
                 setIsLoading(false);
             }
         };
@@ -82,9 +85,32 @@ const InvoicesPage = () => {
                 const requestData = { token: token };
 
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo('GetInvoicesDebt'), body: superUser && ui ? {...requestData, ui} : requestData})
+                    sendUserBrowserInfo({...getBrowserInfo('GetInvoicesDebt', AccessObjectTypes["Finances/Invoices"], AccessActions.View), body: superUser && ui ? {...requestData, ui} : requestData})
                 } catch {}
 
+                if (!isActionIsAccessible(AccessObjectTypes["Finances/Invoices"], AccessActions.View)) {
+                    setInvoiceBalance({
+                        "overdueLimit": [
+                            {
+                                "limit": 0,
+                                "currency": "EUR"
+                            }
+                        ],
+                        "overdue": [
+                            {
+                                "overdue": 0,
+                                "currency": "EUR"
+                            }
+                        ],
+                        "debt": [
+                            {
+                                "debt": 0,
+                                "currency": "EUR"
+                            }
+                        ]
+                    });
+                    return;
+                }
                 const res: ApiResponse = await getInvoicesDebts(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
@@ -108,6 +134,14 @@ const InvoicesPage = () => {
 
 
     const handleExportXLS = () => {
+        try {
+            sendUserBrowserInfo({...getBrowserInfo('ExportInvoicesList', AccessObjectTypes["Finances/Invoices"], AccessActions.ExportList), body: {startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}});
+        } catch {}
+
+        if (!isActionIsAccessible(AccessObjectTypes["Finances/Invoices"], AccessActions.ExportList)) {
+            return null;
+        }
+
         const filteredData = filteredInvoices.map(item => ({
             status: item.status,
             number: item.number,

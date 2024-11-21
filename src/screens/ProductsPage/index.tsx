@@ -86,7 +86,8 @@ const ProductsPage = () => {
             } catch {}
 
             if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.ListView)) {
-                return [];
+                setProductsData([]);
+                return null;
             }
             const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
 
@@ -148,6 +149,7 @@ const ProductsPage = () => {
 
     const handleAddProduct = () => {
         //setSingleProductData(null);
+        setUuid(null);
 
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject)) {
             try {
@@ -156,7 +158,7 @@ const ProductsPage = () => {
 
             return null;
         }
-        setUuid(null);
+
         setIsNew(true);
         setShowModal(true);
     }

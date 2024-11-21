@@ -1,7 +1,7 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions} from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
@@ -45,7 +45,7 @@ import {formatDateStringToDisplayString} from "@/utils/date";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-import {docNamesSingle} from "@/screens/StockMovementsPage";
+import {docNamesSingle, getAccessActionObject} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
 import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
@@ -97,7 +97,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
-    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {notifications} = useNotifications();
 
     //status modal
@@ -745,6 +745,15 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     const onSubmitForm = async (data) => {
+        const curAction = docData ? AccessActions.EditObject : AccessActions.CreateObject;
+        if (!isActionIsAccessible(getAccessActionObject(docType), curAction)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateStockMovement', getAccessActionObject(docType), curAction), body: {}});
+            } catch {}
+
+            return null;
+        }
+
         clearTabTitles();
         clearErrors();
         if (data.products.length === 0 && !isDraft && !isJustETA) {
@@ -795,6 +804,15 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     const onError = (props: any) => {
+        const curAction = docData ? AccessActions.EditObject : AccessActions.CreateObject;
+        if (!isActionIsAccessible(getAccessActionObject(docType), curAction)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateStockMovement', getAccessActionObject(docType), curAction), body: {}});
+            } catch {}
+
+            return null;
+        }
+
         if (isDraft || isJustETA) {
             clearErrors();
             const formData = getValues();
@@ -817,6 +835,30 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
         updateTabTitles(fieldNames);
     };
+
+    const handleEditClick = () => {
+    //     () => setIsDisabled(!(docData?.canEdit || !docData?.uuid))
+
+        if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.EditObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('EditDoc/'+docType, getAccessActionObject(docType), AccessActions.EditObject), body:{}})
+            } catch {}
+            return;
+        } else {
+            setIsDisabled(!(docData?.canEdit || !docData?.uuid))
+        }
+    }
+
+    const handleCancelDocClick = () => {
+        if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.EditObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('EditDoc/'+docType, getAccessActionObject(docType), AccessActions.EditObject), body: {}})
+            } catch {}
+            return;
+        } else {
+            setShowConfirmModal(true)
+        }
+    }
 
     return <div className={`stock-movement is-${docType}`}>
         {isLoading && <Loader />}
@@ -990,10 +1032,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
                             onClick={handleCreateTicket}>Create ticket</Button> : null}
                 {docData?.uuid && docData?.status && docData?.status.toLowerCase() =='draft' ?
-                    <Button type='button' variant={ButtonVariant.PRIMARY} onClick={() => setShowConfirmModal(true)}>Cancel
+                    <Button type='button' variant={ButtonVariant.PRIMARY} onClick={handleCancelDocClick}>Cancel
                         document</Button> : null}
                 {isDisabled && docData?.canEdit && <Button type="button" disabled={false}
-                                                           onClick={() => setIsDisabled(!(docData?.canEdit || !docData?.uuid))}
+                                                           onClick={handleEditClick}
                                                            variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY}
                                         onClick={() => setIsDraft(true)}>Save as draft</Button>}

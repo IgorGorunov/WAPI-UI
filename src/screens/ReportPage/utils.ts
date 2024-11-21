@@ -55,6 +55,7 @@ import {
     getCodReportVariantResourceCols,
     getCodReportVariantSortingCols
 } from "@/screens/ReportPage/Reports/CodReport";
+import {AccessObjectTypes} from "@/context/authContext";
 
 
 export const getVariantByReportType = (reportType: REPORT_TYPES, variant: string) => {
@@ -243,6 +244,24 @@ export const getHeaderNameById = (reportType: REPORT_TYPES, headerId: string) =>
 
         default:
             return '';
+    }
+}
+
+export const transformReportType =(reportType:REPORT_TYPES) => {
+    switch (reportType) {
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS:
+            return AccessObjectTypes["Reports/ProductsOnStocks"];
+        case REPORT_TYPES.DELIVERY_RATES:
+            return AccessObjectTypes["Reports/DeliveryRate"];
+        case REPORT_TYPES.REPORT_SALES:
+            return AccessObjectTypes["Reports/Sales"];
+        case REPORT_TYPES.SALE_DYNAMIC:
+            return AccessObjectTypes["Reports/SaleDynamic"];
+        case REPORT_TYPES.COD_REPORT:
+            return AccessObjectTypes["Reports/CodCheck"];
+
+        default:
+            return null;
     }
 }
 

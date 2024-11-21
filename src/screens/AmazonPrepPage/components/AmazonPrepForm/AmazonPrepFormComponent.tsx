@@ -8,7 +8,7 @@ import {
 } from "@/types/amazonPrep";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
@@ -68,7 +68,7 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
 
 const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc}) => {
 
-    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {notifications} = useNotifications();
 
     const [isDisabled, setIsDisabled] = useState(!!docUuid);
@@ -403,30 +403,6 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                     />
                 ),
             },
-            // {
-            //     title: 'Unit',
-            //     dataIndex: 'unitOfMeasure',
-            //     key: 'unitOfMeasure',
-            //     width: '20%',
-            //     render: (text, record, index) => (
-            //         <Controller
-            //             name={`products[${index}].unitOfMeasure`}
-            //             control={control}
-            //             render={({ field }) => (
-            //                 <div style={{}}>
-            //                     <FieldBuilder
-            //                         name={`products[${index}].unitOfMeasure`}
-            //                         fieldType={FormFieldTypes.SELECT}
-            //                         {...field}
-            //                         disabled={isDisabled}
-            //                         options={getProductUnit(index)}
-            //
-            //                     />
-            //                 </div>
-            //             )}
-            //         />
-            //     ),
-            // },
             {
                 title: '',
                 key: 'action',
@@ -511,6 +487,17 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
     }, [amazonPrepOrderData]);
 
     const onSubmitForm = async (data: SingleAmazonPrepOrderFormType) => {
+        const curAction = amazonPrepOrderData ? AccessActions.EditObject : AccessActions.CreateObject;
+
+        console.log()
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], curAction)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], curAction), body: {}});
+            } catch {}
+
+            return null;
+        }
+
         setIsLoading(true);
         clearTabTitles();
         //const sendData = {...data, draft: isDraft, selectedFiles: selectedFiles };
@@ -553,6 +540,14 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
     }
 
     const onError = (props: any) => {
+        const curAction = amazonPrepOrderData ? AccessActions.EditObject : AccessActions.CreateObject;
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], curAction)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], curAction), body: {}});
+            } catch {}
+
+            return null;
+        }
 
         if (isDraft) {
             clearErrors();
@@ -568,10 +563,21 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
             toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
                 position: "top-right",
                 autoClose: 1000,
-            });
+            });isActionIsAccessible
         }
         updateTabTitles(fieldNames);
     };
+
+    const handleEditClick = () => {
+        // ()=>
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.EditObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('EditAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.EditObject), body: {}});
+            } catch {}
+        } else {
+            setIsDisabled(!(amazonPrepOrderData?.canEdit || !amazonPrepOrderData?.uuid))
+        }
+    }
 
     return <div className='amazon-prep-info'>
         {(isLoading || !amazonPrepOrderParameters) && <Loader />}
@@ -748,7 +754,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
 
             <div className='form-submit-btn'>
                 {amazonPrepOrderData && amazonPrepOrderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                {isDisabled && amazonPrepOrderData?.canEdit && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(amazonPrepOrderData?.canEdit || !amazonPrepOrderData?.uuid))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {isDisabled && amazonPrepOrderData?.canEdit && <Button type="button" disabled={false} onClick={handleEditClick} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY} >Save</Button>}
             </div>

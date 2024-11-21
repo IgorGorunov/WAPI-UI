@@ -19,6 +19,7 @@ import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {getProductSelection} from "@/services/productSelection";
 import {aggregateTableData} from "@/utils/aggregateTable";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 
 
 export type SelectedProductType = {
@@ -48,7 +49,7 @@ const getWarehouseCountry = (productList:ProductsSelectionType[], warehouse: str
 
 const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, handleAddSelection, selectedDocWarehouse, needWarehouses=true, needOnlyOneWarehouse=true}) => {
     const [filteredProducts, setFilteredProducts]  = useState<ProductsSelectionType[]>([]);
-    const {token, superUser, ui} = useAuth();
+    const {token, superUser, ui, getBrowserInfo, } = useAuth();
     const [productList, setProductList]  = useState<ProductsSelectionType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -62,6 +63,10 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         try {
             setIsLoading(true);
             const requestData = {token: token};
+
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetProductsSelection'), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
             const resp: ApiResponseType = await getProductSelection(superUser && ui ? {...requestData, ui} : requestData);
 
             if (resp && "data" in resp) {

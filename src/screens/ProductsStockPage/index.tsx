@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import useAuth from "@/context/authContext";
-import { getProductsStock } from "@/services/products";
+import React, {useEffect, useState} from "react";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
+import {getProductsStock} from "@/services/products";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import ProductList from "./components/ProductList";
@@ -12,15 +12,12 @@ import Loader from "@/components/Loader";
 import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
-import {
-    tourGuideStepsProductsStock,
-    tourGuideStepsProductsStockNoDocs
-} from "./productsStockTourGuideSteps.constants";
+import {tourGuideStepsProductsStock, tourGuideStepsProductsStockNoDocs} from "./productsStockTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const ProductsStockPage = () => {
 
-    const { token, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
     const [filteredProducts, setFilteredProducts] = useState<ProductStockType[] | null>(null);
@@ -39,8 +36,15 @@ const ProductsStockPage = () => {
                 setFilteredProducts([]);
                 const requestData = {token: token};
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo('GetProductsStock'), body: superUser && ui ? {...requestData, ui} : requestData})
+                    sendUserBrowserInfo({...getBrowserInfo('GetProductsStock', AccessObjectTypes["Products/ProductsStock"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
                 } catch {}
+
+                if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsStock"], AccessActions.ListView)){
+                    setProductsData([]);
+                    setFilteredProducts([]);
+                    setIsLoading(false);
+                    return;
+                }
                 const res: ApiResponse = await getProductsStock(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res && "data" in res) {
@@ -61,6 +65,14 @@ const ProductsStockPage = () => {
     }, [token]);
 
     const handleExportXLS = () => {
+        try {
+            sendUserBrowserInfo({...getBrowserInfo('ExportProductStockList', AccessObjectTypes["Products/ProductsStock"], AccessActions.ExportList), body: {}});
+        } catch {}
+
+        if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsStock"], AccessActions.ExportList)) {
+            return null;
+        }
+
         const filteredData = filteredProducts.map(item => ({
             sku: item.sku,
             name: item.name,

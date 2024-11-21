@@ -14,7 +14,7 @@ import {PageOptions} from '@/constants/pagination';
 import getSymbolFromCurrency from "currency-symbol-map";
 import {DateRangeType} from "@/types/dashboard";
 import {getInvoiceForm} from "@/services/invoices";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {FormFieldTypes} from "@/types/forms";
 import Button, {ButtonVariant} from "@/components/Button/Button";
@@ -53,7 +53,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const [isLoading, setIsLoading] = useState(false);
 
     //const Router = useRouter();
-    const { token, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -137,8 +137,12 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             const requestData = { token: token, uuid: uuid, type };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetInvoicePrintForm'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetInvoicePrintForm', AccessObjectTypes["Finances/Invoices"], AccessActions.DownloadPrintForm), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
+
+            if (!isActionIsAccessible(AccessObjectTypes["Finances/Invoices"], AccessActions.DownloadPrintForm) ) {
+                return null;
+            }
 
             const response = await getInvoiceForm(superUser && ui ? {...requestData, ui} : requestData);
 
@@ -182,14 +186,13 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                         }
                     });
                 }
-            setIsLoading(false);
             } else {
                 console.error("API did not return expected data");
-                setIsLoading(false);
             }
 
         } catch (error) {
             console.error("Error fetching data:", error);
+        } finally {
             setIsLoading(false);
         }
     };

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from "react";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {useRouter} from "next/router";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
@@ -25,7 +25,7 @@ import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const OrdersPage = () => {
     const Router = useRouter();
-    const { token, currentDate, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     useEffect(() => {
         const { uuid } = Router.query;
@@ -82,14 +82,18 @@ const OrdersPage = () => {
             const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetOrdersList'), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('GetOrdersList', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
+
+            if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ListView)) {
+                setOrdersData([]);
+                return null;
+            }
 
             const res: ApiResponseType = await getOrders(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
                 setOrdersData(res.data.map(item=>({...item, key: item.uuid})));
-                setIsLoading(false);
             } else {
                 console.error("API did not return expected data");
             }
@@ -108,33 +112,63 @@ const OrdersPage = () => {
     const handleEditOrder = (uuid: string) => {
         setIsOrderNew(false);
         setOrderUuid(uuid);
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('ViewEditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: {}});
+            } catch {}
+            return null;
+        } else {
+            setOrdersData(prevState => {
+                if (prevState && prevState.length) {
+                    const el = prevState.filter(item => item.uuid === uuid);
 
-        setOrdersData(prevState => {
-            if (prevState && prevState.length) {
-                const el = prevState.filter(item => item.uuid === uuid);
-
-                if (el.length) {
-                    return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
+                    if (el.length) {
+                        return [...prevState.filter(item => item.uuid !== uuid), {
+                            ...el[0],
+                            notifications: false
+                        }].sort((a, b) => a.wapiTrackingNumber < b.wapiTrackingNumber ? 1 : -1)
+                    }
+                    return [...prevState];
                 }
-                return [...prevState];
-            }
-            return [];
-        });
+                return [];
+            });
 
-        setShowOrderModal(true);
+            setShowOrderModal(true);
+        }
     }
 
-    const handleAddOrder= (
-    ) => {
+    const handleAddOrder= () => {
         setIsOrderNew(true);
         setOrderUuid(null);
-        setShowOrderModal(true);
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.CreateObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.CreateObject), body: {}});
+            } catch {}
+            return null;
+        } else {
+            setShowOrderModal(true);
+        }
     }
     const handleImportXLS = () => {
-        setShowImportModal(true)
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ExportList)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('BulkOrdersCreate', AccessObjectTypes["Orders/Fullfillment"], AccessActions.BulkCreate), body: {}});
+            } catch {}
+            return null;
+        } else {
+            setShowImportModal(true)
+        }
     }
 
     const handleExportXLS = () => {
+        try {
+            sendUserBrowserInfo({...getBrowserInfo('ExportFulfilmentList', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ExportList), body: {startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}});
+        } catch {}
+
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ExportList)) {
+            return null;
+        }
+
         const filteredData = filteredOrders.map(item => ({
             wapiTrackingNumber: item.wapiTrackingNumber,
             status: item.status,

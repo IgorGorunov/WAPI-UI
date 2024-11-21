@@ -3,7 +3,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import Icon from "@/components/Icon";
 import './styles.scss';
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import {getHeaderNameById, getVariantColumnsByReportType} from '../utils';
+import {getHeaderNameById, getVariantColumnsByReportType, transformReportType} from '../utils';
 
 import {
     ColumnResizeMode,
@@ -26,7 +26,12 @@ import {getVariantByReportType} from "@/screens/ReportPage/utils";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 
 import {Workbook} from 'exceljs';
-import {formatDateStringToDisplayString, formatDateToShowMonthYear, formatDateToWeekRange} from "@/utils/date";
+import {
+    formatDateStringToDisplayString,
+    formatDateToShowMonthYear,
+    formatDateToString,
+    formatDateToWeekRange
+} from "@/utils/date";
 import getSymbolFromCurrency from "currency-symbol-map";
 import {
     getAverageSaleValue,
@@ -34,8 +39,14 @@ import {
     getDeliveredWithFirstAttemptValue,
     getProbableBuyoutValue
 } from "@/screens/ReportPage/Reports/DeliveryRates";
+import {sendUserBrowserInfo} from "@/services/userInfo";
+import useAuth, {AccessActions} from "@/context/authContext";
 
 type ReportTablePropsType = {
+    curPeriod: {
+        startDate: Date;
+        endDate: Date;
+    }
     reportData: AllReportsRowType[];
     reportGrouping: string[];
     dimensionsCount: number;
@@ -46,12 +57,16 @@ type ReportTablePropsType = {
     resourceColumnNames?: string[];
 }
 
-const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAsString, reportData,reportGrouping, dimensionsCount, searchText='', sortingCols = [], resourceColumnNames=[]}) => {
+const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, reportVariantAsString, reportData,reportGrouping, dimensionsCount, searchText='', sortingCols = [], resourceColumnNames=[]}) => {
+    const {isActionIsAccessible, getBrowserInfo} = useAuth();
+
     //resizing
     const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({});
     const [columnResizeMode, setColumnResizeMode] = React.useState<ColumnResizeMode>("onChange");
 
-    const initialSortingState: ColumnSort[] = useMemo(()=> {return sortingCols.map(item => ({id: item, desc: false}))},[sortingCols]);
+    const initialSortingState: ColumnSort[] = useMemo(()=> {
+        return sortingCols.map(item => ({id: item, desc: false}))
+    },[sortingCols]);
 
     const [sorting, setSorting] = React.useState<SortingState>( initialSortingState);
     const [grouping, setGrouping] = React.useState<GroupingState>(reportGrouping);
@@ -141,6 +156,14 @@ const ReportTable:React.FC<ReportTablePropsType> = ({reportType, reportVariantAs
     }, [reportType, curVariantAsType])
 
     const handleDownload = async () => {
+        try {
+            sendUserBrowserInfo({...getBrowserInfo('DownloadReportData/'+reportType, transformReportType(reportType), AccessActions.DownloadReport), body: {startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}})
+        } catch {}
+
+        if (!isActionIsAccessible(transformReportType(reportType), AccessActions.DownloadReport) ) {
+            return;
+        }
+
         const workbook = new Workbook();
         const worksheet = workbook.addWorksheet('Report');
 

@@ -3,7 +3,7 @@ import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {FormFieldTypes, WidthType} from "@/types/forms";
 import {COUNTRIES} from "@/types/countries";
 import "./styles.scss";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {
     ProductParamsType,
     SingleProductFormType,
@@ -73,7 +73,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
-    const { token, superUser, ui, getBrowserInfo } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -970,6 +970,16 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     }, [productData]);
 
     const onSubmitForm = async (data: any) => {
+
+        const curAction = productData ? AccessActions.EditObject : AccessActions.CreateObject;
+        if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], curAction)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: {}});
+            } catch {}
+
+            return null;
+        }
+
         setIsLoading(true);
         clearTabTitles();
         data.status = sendStatus;
@@ -1009,6 +1019,15 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     }
 
     const onError = (props: any) => {
+        const curAction = productData ? AccessActions.EditObject : AccessActions.CreateObject;
+        if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], curAction)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: {}});
+            } catch {}
+
+            return null;
+        }
+
         if (sendStatus === SendStatusType.DRAFT) {
             clearErrors();
             const formData = getValues();
@@ -1032,6 +1051,20 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const warehouseFields = useMemo(()=>FormFieldsWarehouse({typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial:createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements)}),[productParams])
     const additionalFields = useMemo(()=> FormFieldsAdditional1({whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking)}), [])
     const additionalCheckboxes = useMemo(()=>FormFieldsAdditional2(), []);
+
+
+    const handleClickEdit = () => {
+        // ()=>setIsDisabled(!(productData.canEdit || !productData?.uuid ))} variant={ButtonVariant.PRIMARY
+
+        if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.EditObject)) {
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('EditProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.EditObject), body: {}});
+            } catch {}
+
+            return null;
+        }
+        setIsDisabled(!(productData.canEdit || !productData?.uuid ));
+    }
 
 
     return <div className='product-info'>
@@ -1346,7 +1379,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             </Tabs>
             <div className='form-submit-btn'>
                 {productData && productData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                {isDisabled && !orderIsApproved && <Button type="button" disabled={false} onClick={()=>setIsDisabled(!(productData.canEdit || !productData?.uuid ))} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {isDisabled && !orderIsApproved && <Button type="button" disabled={false} onClick={handleClickEdit} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
                 {(!isDisabled && !orderIsApproved || orderIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
                 {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
