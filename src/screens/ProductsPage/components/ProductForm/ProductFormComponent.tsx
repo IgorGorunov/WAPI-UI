@@ -974,7 +974,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         const curAction = productData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: {uuid: data?.uuid || ''}});
             } catch {}
 
             return null;
@@ -1022,7 +1022,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         const curAction = productData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: {uuid: productData?.uuid || ''}});
             } catch {}
 
             return null;
@@ -1058,7 +1058,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.EditObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('EditProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.EditObject), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('EditProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.EditObject), body: {uuid: productData?.uuid || ''}});
             } catch {}
 
             return null;

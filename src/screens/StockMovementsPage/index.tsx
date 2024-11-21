@@ -133,7 +133,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             try {
                 sendUserBrowserInfo({
                     ...getBrowserInfo('ViewEditDoc/' + docType, getAccessActionObject(docType), AccessActions.ViewObject),
-                    body: {}
+                    body: {uuid: uuid}
                 });
             } catch {
             }

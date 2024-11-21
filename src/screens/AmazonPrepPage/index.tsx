@@ -97,7 +97,7 @@ const AmazonPrepPage = () => {
 
         if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject) ) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject), body: {uuid: uuid}});
             } catch {}
         } else {
             setAmazonPrepOrdersData(prevState => {
@@ -130,7 +130,7 @@ const AmazonPrepPage = () => {
         setAmazonPrepUuid(null);
         if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject), body: {}});
+                sendUserBrowserInfo({...getBrowserInfo('CreateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject), body: {}});
             } catch {}
         } else {
             setShowAmazonPrepOrderModal(true);
