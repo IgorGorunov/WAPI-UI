@@ -110,7 +110,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
             };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('SendCommentToCourierService', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: superUser && ui ? {...requestData, ui} : requestData})
+                sendUserBrowserInfo({...getBrowserInfo('SendCommentToCourierService', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
             const res: ApiResponseType = await sendOrderComment(superUser && ui ? {...requestData, ui} : requestData);
