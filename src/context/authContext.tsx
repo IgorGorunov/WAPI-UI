@@ -207,7 +207,6 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
 
   const logout = () => {
-    console.log('123')
     Cookie.remove('token');
     Cookie.remove('userStatus');
     Cookie.remove('userName');
