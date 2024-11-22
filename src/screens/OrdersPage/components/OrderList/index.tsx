@@ -398,7 +398,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             const matchesClaims = !filterClaims.length || (filterClaims.includes('With claims') && order.claimsExist) ||
                 (filterClaims.includes('Without claims') && !order.claimsExist);
             const matchesLogisticComment = !filterLogisticComment.length || (filterLogisticComment.includes('With order issue') && !!order.logisticComment) ||
-                (filterClaims.includes('Without order issue') && !order.logisticComment);
+                (filterLogisticComment.includes('Without order issue') && !order.logisticComment);
             const matchesCommentsToCourierService = !filterCommentsToCourierService.length || (filterCommentsToCourierService.includes('With comments') && order.commentToCourierServiceExist) ||
                 (filterCommentsToCourierService.includes('Without comments') && !order.commentToCourierServiceExist);
             const matchesSelfCollect = !filterSelfCollect.length || (filterSelfCollect.includes('Self collect') && order.selfCollect) ||

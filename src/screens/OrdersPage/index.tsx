@@ -37,7 +37,7 @@ const OrdersPage = () => {
     }, [Router.query]);
 
     const today = currentDate;
-    const firstDay = getLastFewDays(today, 10);
+    const firstDay = getLastFewDays(today, 5);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 
     const [ordersData, setOrdersData,] = useState<any | null>(null);
