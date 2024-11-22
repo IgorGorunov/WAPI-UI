@@ -227,6 +227,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
     Cookie.remove('suName');
 
     setNotifications(null);
+    setSuperUserName('')
   }
 
   const isAuthorizedUser = () => {
