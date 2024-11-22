@@ -107,6 +107,8 @@ type authContextType = {
   getBrowserInfo: (action: string, objectType?: AccessObjectTypes, actionType?: AccessActions)=>any;
   isActionIsAccessible: (objectType: string, action:string) => boolean;
   setActionAccess: (val: UserAccessActionType[]) => void;
+
+  saveSuperUserName: (val: string)=>void;
 };
 
 const AuthContext = createContext<authContextType>({} as authContextType);
@@ -222,6 +224,8 @@ export const AuthProvider = (props: PropsWithChildren) => {
     Cookie.remove('userBrowserInfo');
     Cookie.remove('userActions')
 
+    Cookie.remove('suName');
+
     setNotifications(null);
   }
 
@@ -252,6 +256,20 @@ export const AuthProvider = (props: PropsWithChildren) => {
     return access.includes(navItemName);
   }
 
+  const getSuNameFromCookie = () => {
+    const suName = Cookie.get('suName');
+    if (suName) {
+      return JSON.stringify(suName);
+    }
+    return '';
+  }
+  const [superUserName, setSuperUserName] = useState<string|null>(getSuNameFromCookie());
+  const saveSuperUserName = (name: string) => {
+    Cookie.set('suName', name);
+    console.log('su name: ', name);
+    setSuperUserName(name);
+  }
+
   const setUserInfoProfile = (val: UserInfoType) => {
     setUserInfo(val);
     Cookie.set('WAPI_profile_info', JSON.stringify(val));
@@ -274,6 +292,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
   const getBrowserInfo= (action: string, objectType: AccessObjectTypes, actionType: AccessActions) => {
     const userData = userInfo;
+    console.log('121212', superUserName)
     return {
       headers: [{ip: userBrowserInfo.userIp}, {lang: userBrowserInfo.userLang}, {timezone: userBrowserInfo.userTimezone}, {agent: userBrowserInfo.userAgentData}],
       email: userData?.userLogin || '--',
@@ -281,6 +300,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
       token: token,
       forbidden: objectType && actionType ? !isActionIsAccessible(objectType, actionType) : false,
       action: action,
+      superUserName: superUserName,
     }
   }
 
@@ -310,7 +330,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
 
   return (
-      <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser, setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess, isActionIsAccessible }}>
+      <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser, setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess, isActionIsAccessible, saveSuperUserName }}>
       {props.children}
     </AuthContext.Provider>
   );

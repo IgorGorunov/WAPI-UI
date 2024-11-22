@@ -9,7 +9,7 @@
   }
 
   &.has-copy-icon {
-    padding: 36px 8px 8px 2px!important;
+    padding: 64px 8px 8px 2px!important;
   }
 
   .copy-btn {
@@ -44,6 +44,12 @@
         fill: var(--color-dark-blue);
       }
     }
+  }
+
+  .copy-btn-tab {
+    position: absolute;
+    top: 36px;
+    left: 12px;
   }
 
   &__list {

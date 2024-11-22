@@ -67,10 +67,26 @@ const SimplePopup: React.FC<PopupPropsType> = ({ items, width, handleClose, hasC
         })
     }
 
+    const getInfoToCopyTab = (items: PopupItem[]) => {
+        return items
+            .map((item) => `${item.title}\t${item.description || ''}`) // Separate columns with tab
+            .join('\n'); // Separate rows with newline
+    };
+
+    const handleCopyTab = () => {
+        const textToCopy = getInfoToCopyTab(items);
+        copyToClipboard(textToCopy);
+        toast.success('Successfully copied to clipboard!', {
+            position: "bottom-center",
+            autoClose: 1500,
+        });
+    };
+
     return (
         <>
             <div className={`simple-popup ${positionClass}  ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle} >
                 {hasCopyBtn && <button className='copy-btn' onClick={handleCopy}>{items.length > 1 ? 'copy all' : 'copy'}<Icon name='copy' /></button> }
+                {hasCopyBtn && <button className='copy-btn copy-btn-tab' onClick={handleCopyTab}>copy as table<Icon name='copy' /></button> }
                 {/*{!!handleClose ? (<a className="simple-popup__close" href="#" onClick={handleClose}>*/}
                 {/*    <Icon name='close' />*/}
                 {/*</a>) : null }*/}
