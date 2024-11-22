@@ -265,9 +265,8 @@ export const AuthProvider = (props: PropsWithChildren) => {
   }
   const [superUserName, setSuperUserName] = useState<string|null>(getSuNameFromCookie());
   const saveSuperUserName = (name: string) => {
-    Cookie.set('suName', name);
-    console.log('su name: ', name);
-    setSuperUserName(name);
+    Cookie.set('suName', name.replace('"',''));
+    setSuperUserName(name.replace('"',''));
   }
 
   const setUserInfoProfile = (val: UserInfoType) => {
@@ -292,7 +291,6 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
   const getBrowserInfo= (action: string, objectType: AccessObjectTypes, actionType: AccessActions) => {
     const userData = userInfo;
-    console.log('121212', superUserName)
     return {
       headers: [{ip: userBrowserInfo.userIp}, {lang: userBrowserInfo.userLang}, {timezone: userBrowserInfo.userTimezone}, {agent: userBrowserInfo.userAgentData}],
       email: userData?.userLogin || '--',
