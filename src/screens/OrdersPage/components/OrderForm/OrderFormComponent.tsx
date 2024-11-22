@@ -172,9 +172,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const [showSendCommentModal, setShowSendCommentModal] = useState(false);
     const [commentHasBeenSent, setCommentHasBeenSent] = useState(orderData?.commentTodayWasSent || false);
     const handleShowCommentModal = () => {
-        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject)) {
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('SendComment', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {uuid: orderData?.uuid}});
+                sendUserBrowserInfo({...getBrowserInfo('SendComment', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: {uuid: orderData?.uuid}});
             } catch {}
         } else {
             if (orderData && orderData.commentTodayWasSent || commentHasBeenSent) {
