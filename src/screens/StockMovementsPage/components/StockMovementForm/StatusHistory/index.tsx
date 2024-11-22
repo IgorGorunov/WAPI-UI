@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles.scss";
 import {StockMovementHistoryType} from "@/types/stockMovements";
-import {formatDateStringToDisplayString, formatDateTimeToStringWithDot} from "@/utils/date";
+import {formatDateStringToDisplayString} from "@/utils/date";
 
 type PropsType = {
     statusHistory?: StockMovementHistoryType[] ;
@@ -12,7 +12,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
     return (
         <div className="stock-movement-status-history">
             <div className="stock-movement-status-history__header">
-                <div className='date-column'>Period</div>
+                {/*<div className='date-column'>Period</div>*/}
                 <div className='column status-column'>Status</div>
                 {/*<div className='column etd-column'>ETD</div>*/}
                 <div className='column eta-column'>ETA</div>
@@ -29,7 +29,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                 index % 2 === 1 ? "highlight" : " "
                             }`}
                         >
-                            <div className='date-column'>{formatDateTimeToStringWithDot(status.period)}</div>
+                            {/*<div className='date-column'>{formatDateTimeToStringWithDot(status.period)}</div>*/}
                             <div className='column status-column'>
                                 {status.status}
                             </div>
