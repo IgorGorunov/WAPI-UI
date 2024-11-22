@@ -29,7 +29,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
   const Router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
-  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile, setIsSuperUser, setUserBrowserInfoFn, setActionAccess } = useAuth();
+  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile, setIsSuperUser, setUserBrowserInfoFn, setActionAccess, saveSuperUserName } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -70,6 +70,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
           clientName: userData.client,
           token: data.accessToken,
           forbidden: false,
+          superUserName: data.superUser ? userData.userName : '',
         })
     } catch (error) {}
   }
@@ -92,6 +93,8 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
 
     setActionAccess(actionAccessSettings);
     if (!!superUser) setIsSuperUser(!!superUser);
+
+    if (superUser) saveSuperUserName(userProfile?.userInfo?.userName);
 
     setOneTimeToken('');
 

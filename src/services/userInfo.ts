@@ -38,6 +38,7 @@ export type SendUserBrowserInfoType = {
     email: string;
     token: string;
     forbidden: boolean;
+    superUserName: string;
 }
 
 export async function sendUserBrowserInfo(dataToSend: SendUserBrowserInfoType): Promise<void> {
