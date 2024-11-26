@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import "./styles.scss";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import Icon from "@/components/Icon";
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal";
@@ -9,18 +9,34 @@ import ChangePasswordBlock from "./ChangePasswordBlock";
 
 const ProfileInfo: React.FC = () => {
 
-    const {userInfo} = useAuth();
+    const {userInfo, isActionIsAccessible} = useAuth();
 
     const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+    const [isChangePasswordVisible, setIsChangePasswordVisible] = useState(false);
+
+    useEffect(() => {
+        setIsChangePasswordVisible(isActionIsAccessible(AccessObjectTypes["Profile/ChangePassword"], AccessActions.EditObject));
+    }, [isActionIsAccessible]);
+
+    // const handlePasswordChangeClick = () => {
+    //     try {
+    //         sendUserBrowserInfo({...getBrowserInfo('ChangePassword', AccessObjectTypes["Profile/ChangePassword"], AccessActions.EditObject), body: {}})
+    //     } catch {}
+    //     if (isActionIsAccessible(AccessObjectTypes["Profile/ChangePassword"], AccessActions.EditObject)) {
+    //         setShowPasswordModal(true);
+    //     }
+    // }
+
 
     return (
         <div className={`profile-info`}>
             <div className={`profile-info__wrapper`}>
                 <div className='profile-info__user-avatar'>
                     <Icon name='profile'/>
-                    <div className='profile-info__change-password'>
-                        <Button onClick={() => setShowPasswordModal(true)}>Change password</Button>
-                    </div>
+                    {isChangePasswordVisible ? <div className='profile-info__change-password'>
+                        <Button onClick={()=>setShowPasswordModal(true)}>Change password</Button>
+                    </div> : null}
                 </div>
                 <div className='profile-info__user-info'>
                     <div className='profile-info__user-info--user'>
