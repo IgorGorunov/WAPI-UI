@@ -7,10 +7,11 @@ import Header from "@/components/Header";
 import Tabs from "@/components/Tabs";
 import ProfileInfo from "./components/ProfileInfo";
 import ApiProtocols from "./components/ApiProtocols";
-import {ApiProtocolType, UserPriceType} from "@/types/profile";
-import {getApiProtocols, getUserContracts, getUserPrices} from "@/services/profile";
+import {ApiProtocolType, UserContractType, UserPriceType, WarehouseInfoType} from "@/types/profile";
+import {getApiProtocols, getUserContracts, getUserPrices, getWarehouseInfo} from "@/services/profile";
 import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import UserContractsAndPrices from "./components/UserContractsAndPrices";
+import WarehouseInfo from "@/screens/ProfilePage/components/WarehouseInfo";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 
 const ProfilePage = () => {
@@ -18,7 +19,8 @@ const ProfilePage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [apiProtocolsData, setApiProtocolsData] = useState<ApiProtocolType[]|null>(null);
     const [pricesData, setPricesData] = useState<UserPriceType[]|null>(null);
-    const [contractsData, setContractsData] = useState<any[]|null>(null);
+    const [contractsData, setContractsData] = useState<UserContractType[]|null>(null);
+    const [warehouseInfoData, setWarehouseInfoData] = useState<WarehouseInfoType[]|null>(null);
 
     const fetchProfileData = useCallback(async() => {
         try {
@@ -62,6 +64,17 @@ const ProfilePage = () => {
                 }
             }
 
+            try {
+                sendUserBrowserInfo({...getBrowserInfo('GetWarehousesList', AccessObjectTypes["Profile/WarehouseInfo"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
+            } catch {}
+            if (!isActionIsAccessible(AccessObjectTypes["Profile/WarehouseInfo"], AccessActions.ListView)) {
+                setWarehouseInfoData([]);
+            } else {
+                const resWarehouseInfo = await getWarehouseInfo(superUser && ui ? {...requestData, ui} : requestData);
+                if (resWarehouseInfo.status === 200) {
+                    setWarehouseInfoData(resWarehouseInfo.data);
+                }
+            }
         } catch {
             //something went wrong
         } finally {
@@ -70,12 +83,10 @@ const ProfilePage = () => {
     }, [token, ui]);
 
     useEffect(() => {
-
-
         fetchProfileData();
     }, []);
 
-    const tabTitles = ['User profile', 'Delivery protocols', 'Contracts and prices'].map(item=>({title: item}));
+    const tabTitles = ['User profile', 'Delivery protocols', 'Contracts and prices', 'Warehouses info'].map(item=>({title: item}));
 
     return (
         <Layout hasFooter>
@@ -97,6 +108,9 @@ const ProfilePage = () => {
                         </div>
                         <div key='prices-and-contracts-tab' className='profile-page-tab'>
                             <UserContractsAndPrices prices={pricesData} contracts={contractsData}/>
+                        </div>
+                        <div key='warehouse-info-tab' className='profile-page-tab'>
+                            <WarehouseInfo warehouseInfoData={warehouseInfoData}/>
                         </div>
                     </Tabs>
                 </div>

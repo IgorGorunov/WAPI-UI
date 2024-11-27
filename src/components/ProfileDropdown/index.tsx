@@ -3,7 +3,7 @@ import './styles.scss'
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
 import {Routes} from "@/types/routes";
-import Router from "next/router";
+import Router, {useRouter} from "next/router";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import Modal from "@/components/Modal";
 import UserList, {UserType} from "@/components/ProfileDropdown/UserList";
@@ -18,6 +18,8 @@ const ProfileDropdown = () => {
     const [showUserList, setShowUserList] = useState(false);
     const [users, setUsers] = useState<UserType[] | null>(null);
 
+    const router = useRouter();
+
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useOutsideClick(dropdownRef, ()=>setIsOpen(false));
@@ -30,7 +32,6 @@ const ProfileDropdown = () => {
             );
 
             if (res && "data" in res) {
-                //console.log('res users: ', res.data)
                 setUsers(res.data);
             } else {
                 console.error("API did not return expected data");
@@ -91,7 +92,7 @@ const ProfileDropdown = () => {
             {showUserList ?
                 <Modal title="Clients" onClose={()=>setShowUserList(false)}>
                     {users && users.length ?
-                        <UserList users={users} onClose={()=>{setShowUserList(false); setIsOpen(false)}}/>
+                        <UserList users={users} onClose={()=>{setShowUserList(false); setIsOpen(false); router.reload()}}/>
                         : <div className='empty-list' />
                     }
                 </Modal> : null

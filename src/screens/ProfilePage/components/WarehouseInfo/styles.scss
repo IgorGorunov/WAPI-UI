@@ -1,0 +1,16 @@
+.warehouse-info {
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    &-item {
+      width: 100%;
+    }
+  }
+  .no-info {
+    padding: 16px;
+    text-align: center;
+  }
+}

@@ -138,3 +138,23 @@ export const getUserContractFile = async (
         return err;
     }
 };
+
+export const getWarehouseInfo = async (
+
+    data: {
+        token: string,
+        ui?: string;
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/GetWarehouseInfo`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import useAuth from "@/context/authContext";
 import {getDasboardData} from "@/services/dashboard";
-import {DashboardPeriodType, PeriodType,} from "@/types/dashboard";
+import {DashboardPeriodType, PeriodType} from "@/types/dashboard";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header"
 import Diagram from "./components/Diagram";
