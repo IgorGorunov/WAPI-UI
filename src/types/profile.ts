@@ -23,3 +23,10 @@ export type UserContractType = {
     startDate: string;
     endDate: string;
 }
+
+export type WarehouseInfoType = {
+    Code: string;
+    Country: string;
+    Address: string;
+    InfoForClients: string;
+}

@@ -16,6 +16,7 @@ export const setInterceptorRedirectCallback = (callback:()=>void)=> {redirectToL
 
 const maintenanceErrorText = 'We are sorry for inconvenience. Maintenance is currently underway. Please, try a bit later.';
 const administratorErrorText = 'Something went wrong. We are already fixing this. Please contact Wapi IT department.';
+const forbiddenErrorText = "You don't have permission to view this document.";
 
 const loginApi = axios.create(
     {
@@ -95,6 +96,9 @@ api.interceptors.response.use(response=> {
 
         if (errorStatus === 401) {
             redirectToLogin();
+        } else if (errorStatus === 403) {
+            errorTitle = 'Error';
+            errorMessage = forbiddenErrorText;
         } else if (errorStatus === 500) {
             const errorResponseMessage = error.response.data.message || error.response.data.errorMessage || 'Something went wrong. Please, contact administrator.';
 
@@ -124,65 +128,6 @@ api.interceptors.response.use(response=> {
     return Promise.reject(error);
 });
 
-// const apiCompressed = axios.create(
-//     {
-//         baseURL: API_URL,
-//         timeout: 10000000,
-//         headers: {
-//             'Accept-Encoding': 'gzip',
-//             "content-type": "application/json",
-//         },
-//     }
-// );
-
-// apiCompressed.interceptors.response.use(response=> {
-//
-//     if (response.status === 200) {
-//         return  response;
-//     }
-//     return  response;
-// }, error => {
-//
-//     let errorMessage = '';
-//     let errorTitle = '';
-//
-//
-//     if (error.code === "ERR_BAD_RESPONSE" || error.code === "ERR_BAD_REQUEST") {
-//         const errorStatus = error.response.status;
-//         if (errorStatus === 400 && error?.response?.data?.errorMessage) {
-//             return Promise.reject(error);
-//         }
-//
-//         if (errorStatus === 401) {
-//             redirectToLogin();
-//         } else if (errorStatus === 500) {
-//             const errorResponseMessage = error.response.data.message || error.response.data.errorMessage || 'Something went wrong. Please, contact administrator.';
-//
-//             if (errorResponseMessage) {
-//                 errorTitle = 'Error';
-//                 errorMessage = administratorErrorText
-//             } else {
-//                 errorTitle = 'Maintenance';
-//                 errorMessage = maintenanceErrorText
-//             }
-//         } else {
-//             errorTitle = 'Error';
-//             errorMessage = administratorErrorText;
-//         }
-//
-//         setError(errorTitle, errorMessage);
-//         return Promise.reject(error);
-//     }
-//
-//     if (error.code === "ECONNABORTED") {
-//         // Request timed out
-//         errorTitle = 'Maintenance';
-//         errorMessage = maintenanceErrorText;
-//     }
-//
-//     setError(errorTitle, errorMessage);
-//     return Promise.reject(error);
-// });
 
 const noErrorApi = axios.create(
     {

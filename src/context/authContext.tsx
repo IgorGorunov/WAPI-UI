@@ -55,6 +55,7 @@ export enum AccessObjectTypes {
   "Profile/Prices" = "Profile/Prices",
   "Profile/Contracts" = "Profile/Contracts",
   "Profile/DeliveryProtocols" = "Profile/DeliveryProtocols",
+  "Profile/WarehouseInfo" = "Profile/WarehouseInfo",
   "Profile/ChangePassword" = "Profile/ChangePassword",
 }
 
