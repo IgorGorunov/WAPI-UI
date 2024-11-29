@@ -1,5 +1,6 @@
 import {api} from "@/services/api";
 import {LegalInfoFormType, QuestionnaireFormType} from "@/types/leads";
+import {ApiResponseType} from "@/types/api";
 
 const getLeadParameters = async (
     data: {
@@ -155,5 +156,25 @@ const checkLeadStatus = async (
     }
 };
 
+const sendQuestion = async (
 
-export { getLeadParameters, sendQuestionnaire, sendLegalInfo, getPricesInfo, getPriceFile, sendSignNDA, getLegalData, checkLeadStatus };
+    data: {
+        token: string,
+        questionText: string
+    }
+) => {
+    try {
+        const response: ApiResponseType = await api.post(
+            `/LeadEmailSupport`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
+
+
+export { getLeadParameters, sendQuestionnaire, sendLegalInfo, getPricesInfo, getPriceFile, sendSignNDA, getLegalData, checkLeadStatus, sendQuestion };
