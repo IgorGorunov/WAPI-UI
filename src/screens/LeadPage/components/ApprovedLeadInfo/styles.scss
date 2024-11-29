@@ -5,10 +5,10 @@
 
     &__next-btn {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       gap: 16px;
-      padding: 0 16px;
-      margin-top: 24px;
+      padding: 24px 16px 0;
+      margin-top: auto;
     }
 
     .tabs-block__tablist {
@@ -51,5 +51,9 @@
 
   &-tab {
     padding: 24px 0 16px;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 }

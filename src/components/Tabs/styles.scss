@@ -1,8 +1,12 @@
 @import "@/constants/devices.scss";
 
 .tabs-block {
-  &__tablist {
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+  }
 
+  &__tablist {
     //background-color: white;
     display: flex;
     justify-content: center;
@@ -64,6 +68,9 @@
   }
 
   &__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
 
     &.min-height {
       min-height: min(calc(100vh - 225px), 610px);
@@ -71,6 +78,16 @@
       //@media (max-width: $upToTablet) {
       //  min-height: min(calc(100vh - 225px), 610px);
       //}
+    }
+
+    &.min-height-small {
+      min-height: min(calc(100vh - 325px), 610px);
+    }
+
+    &-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
     }
 
     &-notifications {
@@ -86,8 +103,10 @@
       //display: inline-block;
     }
 
-    &-panel {
-
+    &-panel.active {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
     }
   }
 

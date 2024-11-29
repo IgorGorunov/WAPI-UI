@@ -16,10 +16,11 @@ type TabsType = {
     notifications?: NotificationMessageInDocumentsType[];
     extraInfo?: React.ReactNode;
     needMinHeight?: boolean;
+    needMinHeightSmall?: boolean;
     withHorizontalDivider?: boolean;
     needContentScroll?: boolean;
 }
-const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tabTitles, children, needMinHeight=true, notifications, extraInfo,  withHorizontalDivider=false, needContentScroll= true}) => {
+const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tabTitles, children, needMinHeight=true, needMinHeightSmall=false, notifications, extraInfo,  withHorizontalDivider=false, needContentScroll= true}) => {
 
     const tabListRef = useRef<HTMLUListElement | null>(null);
     const tabContentRef = useRef<HTMLDivElement | null>(null);
@@ -90,7 +91,7 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
                 </li> )}
             </ul>
 
-            <div className={`tabs-block__content ${needMinHeight ? 'min-height' : ''}`} >
+            <div className={`tabs-block__content ${needMinHeight ? 'min-height' : ''} ${needMinHeightSmall ? 'min-height-small' : ''}`} >
                 <div className={`tabs-block__content-wrapper`} ref={tabContentRef}>
                     {extraInfo ? extraInfo : null}
                     {notifications && notifications.length ?
@@ -105,8 +106,8 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
 
                     {React.Children.toArray(children).map((tabCntent, index)=> (
                         <div
-                            key={`tab-block__content-panel_${index}`}
-                            className={`tab-block__content-panel ${index===activeTab} ? 'active' : ''`}
+                            key={`tabs-block__content-panel_${index}`}
+                            className={`tabs-block__content-panel ${index===activeTab ? 'active' : ''}`}
                             role='tabpanel'
                             hidden={index!==activeTab}
                         >

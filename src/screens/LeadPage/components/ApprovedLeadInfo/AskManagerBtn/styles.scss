@@ -1,0 +1,12 @@
+.ask-manager {
+
+  &__wrapper {
+    max-width: 100%;
+    min-width: 400px;
+  }
+  &__btn-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+}
