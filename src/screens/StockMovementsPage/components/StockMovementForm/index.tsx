@@ -13,6 +13,8 @@ import StockMovementFormComponent
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {docNamesSingle, getAccessActionObject} from "@/screens/StockMovementsPage";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 type StockMovementFormType = {
     docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -27,9 +29,15 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
-
     const [docData, setDocData] = useState<SingleStockMovementType|null>(null);
     const [docParameters, setDocParameters] = useState<StockMovementParamsType|null>(null);
+
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
 
     const fetchSingleStockMovement = async (uuid: string) => {
         type ApiResponse = {
@@ -46,6 +54,8 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
             if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.ViewObject)) {
                 setDocData(null);
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                setShowStatusModal(true);
                 return null;
             }
             const res: ApiResponse = await getInboundData(superUser && ui ? {...requestData, ui} : requestData);
@@ -129,6 +139,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
                 </div>
                 )
             : null)}
+            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </div>
     );
 }

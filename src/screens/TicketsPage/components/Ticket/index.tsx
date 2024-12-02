@@ -10,6 +10,8 @@ import Modal from "@/components/Modal";
 import TicketComponent from "@/screens/TicketsPage/components/Ticket/TicketComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 type TicketPropsType = {
     ticketUuid?: string;
@@ -36,6 +38,13 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
     const [ticketParams, setTicketParams] = useState<TicketParamsType | null>(null);
     const [singleTicketData, setSingleTicketData] = useState<SingleTicketType | null>(null);
 
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
+
     const fetchSingleTicket = useCallback(async (uuid: string) => {
         try {
             setIsLoading(true);
@@ -47,6 +56,8 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
 
             if (!isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.ViewObject)) {
                 setSingleTicketData(null);
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                setShowStatusModal(true);
                 return null;
             }
 
@@ -121,7 +132,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
                     <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid}  reFetchTicket={()=>{fetchSingleTicket(ticketUuid)}} onClose={onCloseModal}/>
                 </Modal>
                 : null}
-
+            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </div>
     );
 };

@@ -23,6 +23,8 @@ import {
     tourGuideStepsStockMovementsNoDocs
 } from "@/screens/StockMovementsPage/stockMovementsTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
@@ -92,6 +94,13 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
         setShowStockMovementModal(false);
     }
 
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
+
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
@@ -137,6 +146,8 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
                 });
             } catch {
             }
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+            setShowStatusModal(true);
             return null;
         } else {
             setShowStockMovementModal(true);
@@ -219,6 +230,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
                 <StockMovementForm docType={docType} docUuid={docUuid} closeDocModal={onShowStockMovementModalClose} closeModalOnSuccess={()=>{setShowStockMovementModal(false);fetchData();}} />
             }
             {stockMovementData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages[docType]} /> : null}
+            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </Layout>
     )
 }

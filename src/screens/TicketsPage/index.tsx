@@ -23,6 +23,8 @@ import {
     tourGuideStepsTicketsNoDocs
 } from "./ticketsTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 
 
 const TicketsPage = () => {
@@ -37,7 +39,7 @@ const TicketsPage = () => {
     const query = Router.query;
 
     useEffect(() => {
-        const { uuid, periodStart, periodEnd } = query;
+        const { uuid } = query;
 
         if (uuid) {
             handleEditTicket(Array.isArray(uuid) ? uuid[0] : uuid);
@@ -68,6 +70,13 @@ const TicketsPage = () => {
         }
         fetchTickets(singleTicketUuid);
     }
+
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
 
     const fetchTickets = useCallback(async (ticketUuid='') => {
         try {
@@ -118,6 +127,9 @@ const TicketsPage = () => {
             try {
                 sendUserBrowserInfo({...getBrowserInfo('ViewEditTicket', AccessObjectTypes.Tickets, AccessActions.ViewObject), body: {uuid: uuid}});
             } catch {}
+
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+            setShowStatusModal(true);
         } else {
             setShowTicketModal(true);
         }
@@ -172,6 +184,7 @@ const TicketsPage = () => {
                 </Modal>
             }
             {ticketsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Tickets} /> : null}
+            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </Layout>
     )
 }
