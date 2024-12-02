@@ -19,6 +19,8 @@ import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsAmazonPrep, tourGuideStepsAmazonPrepNoDocs} from "./amazomPrepTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 const AmazonPrepPage = () => {
     const {token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
@@ -56,6 +58,15 @@ const AmazonPrepPage = () => {
     const onAmazonPrepOrderModalClose = () => {
         setShowAmazonPrepOrderModal(false);
     }
+
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
+
+
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
@@ -99,6 +110,8 @@ const AmazonPrepPage = () => {
             try {
                 sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject), body: {uuid: uuid}});
             } catch {}
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+            setShowStatusModal(true);
         } else {
             setAmazonPrepOrdersData(prevState => {
                 if (prevState && prevState.length) {
@@ -172,6 +185,7 @@ const AmazonPrepPage = () => {
                 <AmazonPrepForm  docUuid={amazonPrepUuid} onCloseModal={onAmazonPrepOrderModalClose} onCloseModalWithSuccess={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
             }
             {amazonPrepOrdersData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.AmazonPreps} /> : null}
+            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </Layout>
     )
 }

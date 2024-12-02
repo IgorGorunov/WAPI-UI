@@ -14,6 +14,8 @@ import AmazonPrepFormComponent from "./AmazonPrepFormComponent";
 import Modal from "@/components/Modal";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 type AmazonPrepFormType = {
     docUuid?: string | null;
@@ -31,6 +33,12 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
     const [amazonPrepOrderData, setAmazonPrepOrderData] = useState<SingleAmazonPrepOrderType|null>(null);
     const [amazonPrepOrderParameters, setAmazonPrepOrderParameters] = useState<AmazonPrepOrderParamsType|null>(null);
 
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
 
     const fetchSingleAmazonPrepOrder = useCallback(async (uuid: string) => {
         try {
@@ -44,6 +52,8 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
 
             if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject)) {
                 setAmazonPrepOrderData(null);
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                setShowStatusModal(true);
                 return null;
             }
 
@@ -118,6 +128,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
                 />
             </Modal>
         :null}
+        {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
     </div>
 }
 
