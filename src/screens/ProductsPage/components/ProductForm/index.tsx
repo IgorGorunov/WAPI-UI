@@ -11,6 +11,8 @@ import Modal from "@/components/Modal";
 import ProductFormComponent from "@/screens/ProductsPage/components/ProductForm/ProductFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 type ProductPropsType = {
     uuid?: string | null;
@@ -29,6 +31,13 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
 
     const [isLoading, setIsLoading] = useState(false);
 
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
+
     const fetchProductData = async (uuid) => {
         try {
             setIsLoading(true);
@@ -39,6 +48,8 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
             } catch {}
 
             if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.ViewObject)) {
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                setShowStatusModal(true);
                 return null;
             }
 
@@ -169,6 +180,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
                 />
             </Modal> : null
         }
+        {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
     </div>
 }
 

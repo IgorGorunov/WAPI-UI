@@ -11,6 +11,8 @@ import Loader from "@/components/Loader";
 import OrderFormComponent from "@/screens/OrdersPage/components/OrderForm/OrderFormComponent";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 type OrderFormType = {
     orderUuid?: string;
@@ -28,6 +30,13 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
     const [orderData, setOrderData] = useState<SingleOrderType|null>(null);
     const [orderParameters, setOrderParameters] = useState<OrderParamsType|null>(null);
 
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
+
     const fetchSingleOrder = async (uuid: string) => {
         try {
             setIsLoading(true);
@@ -39,6 +48,10 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
 
             if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject)) {
                 setOrderData(null);
+
+                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                setShowStatusModal(true);
+
                 return null;
             }
 
@@ -113,6 +126,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
                     refetchDoc={()=>{fetchSingleOrder(orderUuid);}}/>
             </Modal>
         : null}
+        {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
     </div>
 }
 
