@@ -22,6 +22,8 @@ import useTourGuide from "@/context/tourGuideContext";
 import {tourGuideStepsProduct, tourGuideStepsProductNoDocs} from "./productListTourGuideSteps.constants";
 import {TourGuidePages} from "@/types/tourGuide";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 const ProductsPage = () => {
     const Router = useRouter();
@@ -56,23 +58,16 @@ const ProductsPage = () => {
         setShowImportModal(false);
     }
 
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
+
     type ApiResponse = {
         data: any;
     };
-
-    // const isProductSelected = (prevState: ProductType[], uuid: string) => {
-    //     if (!prevState) return false;
-    //     //console.log('prev state:', prevState)
-    //     const neededProduct = prevState.find(item=>item.uuid===uuid);
-    //
-    //     //console.log('is selected', prevState, neededProduct)
-    //
-    //     if (neededProduct) {
-    //         return neededProduct.selected || false;
-    //     } else {
-    //         return false;
-    //     }
-    // }
 
     const fetchData = useCallback(async () => {
         try {
@@ -120,8 +115,6 @@ const ProductsPage = () => {
     },[productsData])
 
     const handleEditProduct = (uuid: string) => {
-
-
         setUuid(uuid);
         setIsNew(false);
         setShowModal(true);
@@ -155,7 +148,8 @@ const ProductsPage = () => {
             try {
                 sendUserBrowserInfo({...getBrowserInfo('CreateProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject), body: {}});
             } catch {}
-
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+            setShowStatusModal(true);
             return null;
         }
 
@@ -221,6 +215,7 @@ const ProductsPage = () => {
                 </Modal>
             }
             {productsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Products} /> : null}
+            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </Layout>
     )
 }

@@ -22,6 +22,8 @@ import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsOrders, tourGuideStepsOrdersNoDocs} from "./ordersTourGuideSteps.constants";
 import {ApiResponseType} from "@/types/api";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 
 const OrdersPage = () => {
     const Router = useRouter();
@@ -75,6 +77,13 @@ const OrdersPage = () => {
         setShowOrderModal(false);
     }
 
+    //status modal
+    const [showStatusModal, setShowStatusModal]=useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
+    const closeErrorModal = useCallback(()=>{
+        setShowStatusModal(false);
+    }, [])
+
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
@@ -87,6 +96,7 @@ const OrdersPage = () => {
 
             if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ListView)) {
                 setOrdersData([]);
+
                 return null;
             }
 
@@ -116,6 +126,9 @@ const OrdersPage = () => {
             try {
                 sendUserBrowserInfo({...getBrowserInfo('ViewEditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: {uuid: uuid}});
             } catch {}
+
+            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+            setShowStatusModal(true);
             return null;
         } else {
             setOrdersData(prevState => {
@@ -217,6 +230,7 @@ const OrdersPage = () => {
                 </Modal>
             }
             {ordersData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Orders} /> : null}
+            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         </Layout>
     )
 }
