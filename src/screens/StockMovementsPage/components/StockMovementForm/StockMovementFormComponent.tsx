@@ -97,7 +97,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {notifications} = useNotifications();
 
     //status modal
@@ -167,7 +167,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         defaultValues: {
             //date: docData?.date || currentDate.toISOString(),
             number: docData?.number || '',
-            incomingDate: docData?.incomingDate || currentDate.toISOString(),
+            incomingDate: docData?.incomingDate || '',
             incomingNumber: docData?.incomingNumber || '',
             deliveryType: docData?.deliveryType || '',
             deliveryMethod: docData?.deliveryMethod || '',
@@ -701,16 +701,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         setShowImportModal(true)
     }
 
-    //const [showFillModal, setShowFillModal] = useState(false);
-    // const onFillModalClose = () => {
-    //     setShowFillModal(false);
-    // }
-    // const handleFillByStock = () => {
-    //     setImportType('fillByStock');
-    //     setShowFillModal(true)
-    // }
-
-
     useEffect(() => {
         resetTabTables(tabTitleArray);
     }, [docData]);
@@ -762,6 +752,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             return;
         }
 
+        if (!data.incomingDate) {
+            data.incomingDate = (new Date()).toISOString();
+        }
+
         setIsLoading(true);
 
         data.draft = isDraft;
@@ -769,7 +763,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         data.products.forEach(item => item.quality = item.quality || 'Saleable');
 
         if (data?.deliveryMethod !== DELIVERY_METHODS.CONTAINER) {
-
             data.container20Amount = 0;
             data.container40Amount = 0;
         }
@@ -1052,16 +1045,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 <ImportFilesBlock file='Products import.xlsx' importFilesType={ImportFilesType.STOCK_MOVEMENTS_PRODUCTS} setResponseData={setImportResponse} closeModal={()=>setShowImportModal(false)}/>
             </Modal>
         }
-        {/*{showFillModal &&*/}
-        {/*    <Modal title={`Choose required quality`} onClose={onFillModalClose} >*/}
-        {/*        <FillByStock qualityList={docParameters?.quality} warehouse={sender} setResponseData={setImportResponse} onClose={()=>setShowFillModal(false)}/>*/}
-        {/*    </Modal>*/}
-        {/*}*/}
         {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
             <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={isOutboundOrStockMovement ? sender : ""} needWarehouses={isOutboundOrStockMovement}/>
         </Modal>}
         {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
         {showConfirmModal && <ConfirmModal
+            // actionText='Are you sure you want to cancel this document?'
             actionText='cancel this document?'
             onOk={handleConfirmCancelDoc}
             onCancel={()=>setShowConfirmModal(false)}
