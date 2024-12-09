@@ -48,8 +48,6 @@ const pageOptions = [
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
 
-    console.log('tickets: ', orders.filter(item=>item.ticket));
-
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
@@ -303,13 +301,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     const hasTicketsOptions = useMemo(() => ([
         {
-            value: 'Have tickets',
-            label: 'Have tickets',
+            value: 'With tickets',
+            label: 'With tickets',
             amount:  calcOrderWithBooleanProperty('ticket', true),
         },
         {
-            value: "Doesn't have tickets",
-            label: "Doesn't have tickets",
+            value: "Without tickets",
+            label: "Without tickets",
             amount: (orders.length - calcOrderWithBooleanProperty('ticket', true)),
         },
     ]), [orders]);
@@ -322,13 +320,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     const hasOpenTicketsOptions = useMemo(() => ([
         {
-            value: 'Have open tickets',
-            label: 'Have open tickets',
+            value: 'With open tickets',
+            label: 'With open tickets',
             amount:  calcOrderWithBooleanProperty('ticketopen', true),
         },
         {
-            value: "Doesn't have open tickets",
-            label: "Doesn't have open tickets",
+            value: "Without open tickets",
+            label: "Without open tickets",
             amount: (orders.length - calcOrderWithBooleanProperty('ticketopen', true)),
         },
     ]), [orders]);
@@ -419,10 +417,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 (filterSelfCollect.includes('Not self collect') && !order.selfCollect);
             const matchesSentSMS = !filterSentSMS.length || (filterSentSMS.includes('SMS was sent') && order.sentSMSExist) ||
                 (filterSentSMS.includes("Doesn't have SMS") && !order.sentSMSExist);
-            const matchesHasTickets = !filterHasTickets.length || (filterHasTickets.includes('Have tickets') && order.ticket) ||
-                (filterHasTickets.includes("Doesn't have tickets") && !order.ticket);
-            const matchesHasOpenTickets = !filterHasOpenTickets.length || (filterHasOpenTickets.includes('Have open tickets') && order.ticketopen) ||
-                (filterHasOpenTickets.includes("Doesn't have open tickets") && !order.ticketopen);
+            const matchesHasTickets = !filterHasTickets.length || (filterHasTickets.includes('With tickets') && order.ticket) ||
+                (filterHasTickets.includes("Without tickets") && !order.ticket);
+            const matchesHasOpenTickets = !filterHasOpenTickets.length || (filterHasOpenTickets.includes('With open tickets') && order.ticketopen) ||
+                (filterHasOpenTickets.includes("Without open tickets") && !order.ticketopen);
             const matchesWarehouse = !filterWarehouse.length ||
                 filterWarehouse.map(item=>item.toLowerCase()).includes(order.warehouse.toLowerCase());
             const matchesCourierService = !filterCourierService.length ||
