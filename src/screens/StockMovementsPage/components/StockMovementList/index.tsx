@@ -225,13 +225,13 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     }
     const hasTicketsOptions = useMemo(() => ([
         {
-            value: 'Have tickets',
-            label: 'Have tickets',
+            value: 'With tickets',
+            label: 'With tickets',
             amount:  calcDocsWithBooleanProperty('ticket', true),
         },
         {
-            value: "Doesn't have tickets",
-            label: "Doesn't have tickets",
+            value: "Without tickets",
+            label: "Without tickets",
             amount: (docs.length - calcDocsWithBooleanProperty('ticket', true)),
         },
     ]), [docs]);
@@ -244,13 +244,13 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     }
     const hasOpenTicketsOptions = useMemo(() => ([
         {
-            value: 'Have open tickets',
-            label: 'Have open tickets',
+            value: 'With open tickets',
+            label: 'With open tickets',
             amount:  calcDocsWithBooleanProperty('ticketopen', true),
         },
         {
-            value: "Doesn't have open tickets",
-            label: "Doesn't have open tickets",
+            value: "Without open tickets",
+            label: "Without open tickets",
             amount: (docs.length - calcDocsWithBooleanProperty('ticketopen', true)),
         },
     ]), [docs]);
@@ -314,10 +314,10 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 filterSender.map(item=>item.toLowerCase()).includes(doc.sender.toLowerCase());
             const matchesReceiver =  !filterReceiver.length ||
                 filterReceiver.map(item=>item.toLowerCase()).includes(doc.receiver.toLowerCase());
-            const matchesHasTickets = !filterHasTickets.length || (filterHasTickets.includes('Have tickets') && doc.ticket) ||
-                (filterHasTickets.includes("Doesn't have tickets") && !doc.ticket);
-            const matchesHasOpenTickets = !filterHasOpenTickets.length || (filterHasOpenTickets.includes('Have open tickets') && doc.ticketopen) ||
-                (filterHasOpenTickets.includes("Doesn't have open tickets") && !doc.ticketopen);
+            const matchesHasTickets = !filterHasTickets.length || (filterHasTickets.includes('With tickets') && doc.ticket) ||
+                (filterHasTickets.includes("Without tickets") && !doc.ticket);
+            const matchesHasOpenTickets = !filterHasOpenTickets.length || (filterHasOpenTickets.includes('With open tickets') && doc.ticketopen) ||
+                (filterHasOpenTickets.includes("Without open tickets") && !doc.ticketopen);
             return matchesSearch && matchesStatus && matchesSenderCountry && matchesReceiverCountry && matchesReceiver && matchesSender && matchesHasTickets && matchesHasOpenTickets;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
