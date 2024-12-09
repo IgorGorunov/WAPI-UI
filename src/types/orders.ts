@@ -72,6 +72,8 @@ export type OrderType = {
     sentSMS: {}[];
     sentSMSExist: boolean;
     logisticComment: string;
+    ticket?: boolean;
+    ticketopen?: boolean;
 }
 
 export type ProductInfoType = {
