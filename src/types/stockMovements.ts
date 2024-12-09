@@ -40,6 +40,8 @@ export type StockMovementType = {
     uuid: string;
     statusPeriod: string; //date of status change
     statusDate: string; //fact ETA date
+    ticket?: boolean;
+    ticketopen?: boolean;
 }
 
 export type ProductInfoType = {
