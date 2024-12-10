@@ -1,5 +1,6 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {ProductHints} from "@/screens/ProductsPage/productsHints.constants";
+import React from "react";
 
 export const PRODUCT = {
     uuid: 'uuid',
@@ -49,8 +50,7 @@ export const PRODUCT = {
 } as const;
 
 
-
-export const FormFieldsGeneral = ({countries, isNew=false}: { countries: OptionType[], isNew: boolean }) => {
+export const FormFieldsGeneral = ({countries, isNew=false, isAdditionalService=false, handleAdditionalServiceChange}: { countries: OptionType[], isNew: boolean, isAdditionalService: boolean, handleAdditionalServiceChange: (val:React.ChangeEvent<HTMLInputElement>)=>void }) => {
     return [
         {
             fieldType: FormFieldTypes.TEXT,
@@ -74,7 +74,7 @@ export const FormFieldsGeneral = ({countries, isNew=false}: { countries: OptionT
             label: 'Country of origin',
             placeholder: "",
             rules: {
-                required: "Required field",
+                required: isAdditionalService ? false : "Required field",
             },
             options: countries,
             errorMessage: "Required field",
@@ -89,7 +89,7 @@ export const FormFieldsGeneral = ({countries, isNew=false}: { countries: OptionT
             name: 'purchaseValue',
             label: "Purchase value",
             rules: {
-                required: "Required field",
+                required: isAdditionalService ? false : "Required field",
             },
             placeholder: "0",
             width: WidthType.w25,
@@ -106,11 +106,20 @@ export const FormFieldsGeneral = ({countries, isNew=false}: { countries: OptionT
                 required: "Required field",
             },
             errorMessage: "Required field",
-            width: isNew ? WidthType.w100 : WidthType.w75,
+            width: isNew ? WidthType.w75 : WidthType.w50,
             classNames: "",
             hint: ProductHints['fullName'] || '',
             onlyAllowedSymbols: true,
         },
+        // {
+        //     fieldType: FormFieldTypes.TOGGLE,
+        //     name: 'additionalService',
+        //     label: "Additional virtual product",
+        //     width: WidthType.w25,
+        //     classNames: "",
+        //     onChange: handleAdditionalServiceChange,
+        //     hint: ProductHints['additionalService'] || '',
+        // },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
@@ -164,7 +173,17 @@ export const FormFieldsSKU = () => [
     ];
 
 
-export const FormFieldsWarehouse = ({typeOfStorage, salesPackingMaterial, specialDeliveryOrStorageRequirements}) => [
+export const FormFieldsWarehouse = ({
+    typeOfStorage,
+    salesPackingMaterial,
+    specialDeliveryOrStorageRequirements,
+    isAdditionalService
+}: {
+    typeOfStorage: OptionType[];
+    salesPackingMaterial: OptionType[];
+    specialDeliveryOrStorageRequirements: OptionType[];
+    isAdditionalService: boolean;
+}) => [
         {
             fieldType: FormFieldTypes.SELECT,
             type: "text",
@@ -173,7 +192,7 @@ export const FormFieldsWarehouse = ({typeOfStorage, salesPackingMaterial, specia
             placeholder: '',
             options: typeOfStorage,
             rules: {
-                required: "Required field",
+                required: isAdditionalService ? false : "Required field",
             },
             errorMessage: "Required field",
             width: WidthType.w33,

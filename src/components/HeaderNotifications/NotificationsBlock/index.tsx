@@ -237,7 +237,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
             </div>
             {showNotificationModal && <ModalStatus {...modalStatusInfo} />}
             {showConfirmModal && <ConfirmModal
-                actionText='set all notifications to read?'
+                actionText='Are you sure you want to set all notifications to read?'
                 onOk={handleConfirmAllToRead}
                 onCancel={handleCancelAllToRead}
             />}

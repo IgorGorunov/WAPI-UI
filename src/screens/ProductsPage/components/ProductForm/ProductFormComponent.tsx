@@ -107,10 +107,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         }
     };
 
-    // const bundleOptions = useMemo(()=>{
-    //     return products.filter(item=>item.quantity>0).map(item=>{return{value:item.uuid, label:item.name}})
-    // }, [products]);
-
     const analogueOptions = useMemo(()=>{
         return products.map(item=>{return{value:item.uuid, label:item.name}})
     }, [products]);
@@ -141,6 +137,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             hazmat: productData?.hazmat,
             unitOfMeasure: productData?.unitOfMeasure || 'pcs',
             withoutMasterCartonData: productData?.withoutMasterCartonData || productData?.unitOfMeasures.length<=1 || false,
+            additionalService: !!productData?.additionalService || false,
             unitOfMeasures:
                 productData && productData.unitOfMeasures
                     ? productData.unitOfMeasures.map((unit, index) => (
@@ -216,17 +213,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             analogue: analogue || '',
                         }))
                     : [],
-            // statusHistory:
-            //     productData && productData?.statusHistory && productData.statusHistory.length
-            //         ? productData.statusHistory.map((status, index: number) => (
-            //             {
-            //                 key: status || `status-${Date.now().toString()}_${index}`,
-            //                 date: status.date || '',
-            //                 status: status.status || '',
-            //                 comment: status.comment || '',
-            //             }))
-            //         : [],
-
         }
     })
     const { append, remove: removeUnits } = useFieldArray({ control, name: 'unitOfMeasures' });
@@ -239,6 +225,30 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const withoutMasterCartonData = watch('withoutMasterCartonData');
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState<string[]>([]);
 
+    //additional virtual product
+    const isAdditionalService = watch('additionalService');
+
+    const handleAdditionalServiceChange = (val: React.ChangeEvent<HTMLInputElement>) => {
+        const boxes = getBoxes(unitOfMeasures);
+
+        if (val.target.checked) {
+            if (!withoutMasterCartonData) {
+                if (boxes.length && (boxes[0].coefficient || boxes[0].width || boxes[0].length || boxes[0].weightGross)) {
+                    setShowConfirmModalAdditionalService(true);
+                } else {
+                    // setValue('additionalService', true)
+                    setValue('withoutMasterCartonData', true);
+                    removeMasterCarton();
+                }
+            }
+        } else if (withoutMasterCartonData !== !!productData?.withoutMasterCartonData) {
+            // setValue('additionalService', false);
+            setValue('withoutMasterCartonData', productData?.withoutMasterCartonData);
+            if (unitOfMeasures.length <=1 && !boxes.length) {
+                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })
+            }
+        }
+    }
 
     const getOptions = () => {
         // Extract names from unitOfMeasures array
@@ -269,8 +279,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     }, [setUnitOfMeasureOptions, getPieces, unitOfMeasures, withoutMasterCartonData]);
 
 
-    //const [selectAllUnits, setSelectAllUnits] = useState(false);
-
     const handleUnitNameChange = (newValue: string, index: number) => {
         // Update the unitOfMeasureOptions based on the changed "Unit Name"
         setUnitOfMeasureOptions(prevState => {
@@ -294,7 +302,14 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             setValue('withoutMasterCartonData', true);
             removeMasterCarton();
         }
+    }
 
+    //confirm to remove master carton data on setting Additional product
+    const [showConfirmModalAdditionalService, setShowConfirmModalAdditionalService] = useState(false);
+    const handleConfirmAdditionalService = () => {
+        setShowConfirmModalAdditionalService(false);
+        removeMasterCarton();
+        setValue('withoutMasterCartonData', true);
     }
 
     const handleMasterCartonDataChange = (val: React.ChangeEvent<HTMLInputElement>, onChange) => {
@@ -302,7 +317,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
         if (val.target.checked) {
             if (boxes.length && (boxes[0].coefficient || boxes[0].width || boxes[0].length || boxes[0].weightGross)) {
-                setShowConfirmModal(true);
+                setShowConfirmModalAdditionalService(true);
             } else {
                 onChange(val);
                 removeMasterCarton();
@@ -312,7 +327,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             if (unitOfMeasures.length <=1 && !boxes.length) {
                 append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })
             }
-
         }
     }
 
@@ -413,7 +427,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 ),
             },
             {
-                title: 'Width | mm *',
+                title: `Width | mm${isAdditionalService ? '' : ' *'}`,
                 dataIndex: 'width',
                 key: 'width',
                 //responsive: ['lg'] as ResponsiveBreakpoint[],
@@ -433,12 +447,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: "Required field" }}
+                        rules={{ required: isAdditionalService ? false : "Required field" }}
                     />
                 ),
             },
             {
-                title: 'Length | mm *',
+                title: `Length | mm${isAdditionalService ? '' : ' *'}`,
                 dataIndex: 'length',
                 key: 'length',
                 //responsive: ['lg'] as ResponsiveBreakpoint[],
@@ -458,12 +472,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: "Required field" }}
+                        rules={{ required: isAdditionalService ? false : "Required field" }}
                     />
                 ),
             },
             {
-                title: 'Height | mm *',
+                title: `Height | mm${isAdditionalService ? '' : ' *'}`,
                 dataIndex: 'height',
                 key: 'height',
                 //responsive: ['lg'] as ResponsiveBreakpoint[],
@@ -483,12 +497,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: "Required field" }}
+                        rules={{ required: isAdditionalService ? false : "Required field" }}
                     />
                 ),
             },
             {
-                title: 'Weight gross | kg *',
+                title: `Weight gross | kg${isAdditionalService ? '' : ' *'}`,
                 dataIndex: 'weightGross',
                 key: 'weightGross',
                 //responsive: ['sm'] as ResponsiveBreakpoint[],
@@ -508,7 +522,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: "Required field" }}
+                        rules={{ required: isAdditionalService ? false : "Required field" }}
                     />
                 ),
             },
@@ -546,12 +560,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             // },
         ];
     }
-
-    // const removeDimensions = () => {
-    //     const newUnitsArr = unitOfMeasures.filter(item => !item.selected);
-    //     setValue('unitOfMeasures', newUnitsArr);
-    //     setSelectAllUnits(false);
-    // }
 
 
     //Barcodes
@@ -1046,9 +1054,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         updateTabTitles(fieldNames);
     };
 
-    const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr, isNew: !productData?.uuid}), [COUNTRIES])
+    const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr, isNew: !productData?.uuid, isAdditionalService, handleAdditionalServiceChange}), [COUNTRIES, isAdditionalService])
     const skuFields = useMemo(()=>FormFieldsSKU(), []);
-    const warehouseFields = useMemo(()=>FormFieldsWarehouse({typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial:createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements)}),[productParams])
+    const warehouseFields = useMemo(()=>FormFieldsWarehouse({typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial:createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements), isAdditionalService}),[productParams, isAdditionalService])
     const additionalFields = useMemo(()=> FormFieldsAdditional1({whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking)}), [])
     const additionalCheckboxes = useMemo(()=>FormFieldsAdditional2(), []);
 
@@ -1386,9 +1394,14 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             </div>
         </form>
         {showConfirmModal && <ConfirmModal
-            actionText={`remove data about master carton? It's data will be cleared and row will be removed.`}
+            actionText={`Are you sure you want to remove data about master carton? It's data will be cleared and row will be removed.`}
             onOk={handleConfirmToRemoveMasterCarton}
             onCancel={()=>setShowConfirmModal(false)}
+        />}
+        {showConfirmModalAdditionalService && <ConfirmModal
+            actionText={`You have a master carton data for this product. Do you want to clear it?`}
+            onOk={handleConfirmAdditionalService}
+            onCancel={()=>setShowConfirmModalAdditionalService(false)}
         />}
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
