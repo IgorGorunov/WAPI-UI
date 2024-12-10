@@ -12,20 +12,11 @@ type ConfirmModalType = {
     modalType?: ModalTypes;
 }
 const ConfirmModal:React.FC<ConfirmModalType> = ({ actionText='', onOk, onCancel, modalType=ModalTypes.CONFIRM, classNames }) => {
-    // return (
-    //     <Modal
-    //         title="Confirmation"
-    //         onOk={onOk}
-    //         onCancel={onCancel}
-    //     >
-    //         <p>Are you sure you want to {actionText}?</p>
-    //     </Modal>
-    // );
 
     const modalContent = (
         <div className={`confirm-modal-overlay ${classNames ? classNames : ''}`}>
             <div className="confirm-modal-wrapper">
-                <p>Are you sure you want to {actionText}</p>
+                <p>{actionText}</p>
                 <div className='confirm-modal__btns'>
                     <Button variant={ButtonVariant.PRIMARY} onClick={onOk}>Yes</Button>
                     <Button variant={ButtonVariant.SECONDARY} onClick={onCancel}>No</Button>

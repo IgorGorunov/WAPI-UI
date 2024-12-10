@@ -1483,7 +1483,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
 
             {showConfirmModal && <ConfirmModal
-                actionText='cancel this order?'
+                actionText='Are you sure you want to cancel this order?'
                 onOk={handleConfirmCancelOrder}
                 onCancel={()=>setShowConfirmModal(false)}
             />}

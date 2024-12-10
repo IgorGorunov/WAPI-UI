@@ -120,6 +120,7 @@ export type SingleProductType = {
     statusHistory: StatusHistoryType[];
     canEdit: boolean;
     tickets?: TicketType[];
+    additionalService?: boolean;
 };
 
 export type UnitOfMeasureFormType = {
@@ -163,6 +164,7 @@ export type SingleProductFormType = {
     withoutMasterCartonData?: boolean;
     unitOfMeasures: UnitOfMeasureFormType[];
     whoProvidesPackagingMaterial: string;
+    additionalService?: boolean;
     aliases: {
         key: string;
         selected: boolean;
