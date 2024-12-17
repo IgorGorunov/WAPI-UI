@@ -14,6 +14,7 @@ export const ProductHints = {
     specialTemperatureControl: 'Temperature conditions',
     expiringTerm: 'Expiration date of the product',
     packingBox: 'If the product is packing box, e.g. box/plastic bag',
+    additionalService: 'If the product is virtual (like insurance, electronic gift card etc.)',
 }
 export const ProductDimensionsHints = {
     name: 'Unit of goods name',
