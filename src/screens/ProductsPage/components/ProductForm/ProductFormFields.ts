@@ -74,7 +74,7 @@ export const FormFieldsGeneral = ({countries, isNew=false, isAdditionalService=f
             label: 'Country of origin',
             placeholder: "",
             rules: {
-                required: isAdditionalService ? false : "Required field",
+                required: "Required field",
             },
             options: countries,
             errorMessage: "Required field",
@@ -89,7 +89,7 @@ export const FormFieldsGeneral = ({countries, isNew=false, isAdditionalService=f
             name: 'purchaseValue',
             label: "Purchase value",
             rules: {
-                required: isAdditionalService ? false : "Required field",
+                required: "Required field",
             },
             placeholder: "0",
             width: WidthType.w25,
@@ -111,15 +111,15 @@ export const FormFieldsGeneral = ({countries, isNew=false, isAdditionalService=f
             hint: ProductHints['fullName'] || '',
             onlyAllowedSymbols: true,
         },
-        // {
-        //     fieldType: FormFieldTypes.TOGGLE,
-        //     name: 'additionalService',
-        //     label: "Additional virtual product",
-        //     width: WidthType.w25,
-        //     classNames: "",
-        //     onChange: handleAdditionalServiceChange,
-        //     hint: ProductHints['additionalService'] || '',
-        // },
+        {
+            fieldType: FormFieldTypes.TOGGLE,
+            name: 'additionalService',
+            label: "Additional virtual product",
+            width: WidthType.w25,
+            classNames: "",
+            onChange: handleAdditionalServiceChange,
+            hint: ProductHints['additionalService'] || '',
+        },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",

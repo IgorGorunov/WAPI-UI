@@ -22,6 +22,7 @@ export type ProductType = {
         available: number,
     }[]
     notifications: boolean,
+    additionalService?: boolean,
 }
 
 export type ReservedRowType = {
@@ -138,6 +139,7 @@ export type UnitOfMeasureFormType = {
 
 export type SingleProductFormType = {
     uuid?: string;
+    status?: string;
     amazonSku: string;
     barcodes: {
         key: string;
