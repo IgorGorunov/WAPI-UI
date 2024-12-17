@@ -222,16 +222,46 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const { append: appendAnalogue, remove: removeAnalogue } = useFieldArray({ control, name: 'analogues' });
     const unitOfMeasures = watch('unitOfMeasures');
     const unitOfMeasure = watch('unitOfMeasure');
+    const purchaseValue = watch('purchaseValue');
     const withoutMasterCartonData = watch('withoutMasterCartonData');
+
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState<string[]>([]);
+
+    const getOptions = () => {
+        // Extract names from unitOfMeasures array
+        return unitOfMeasureOptions.map((item) => ({ value: item, label: item }));
+    };
+
+    const getBoxes = useCallback((arr) => {
+        return arr.filter(item => item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton'));
+    },[]);
+
+    const getPieces = useCallback((arr) => {
+        return arr.filter(item => !(item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton')));
+    },[]);
 
     //additional virtual product
     const isAdditionalService = watch('additionalService');
 
+    //confirm to remove master carton data on setting Additional product
+    const [showConfirmModalAdditionalService, setShowConfirmModalAdditionalService] = useState(false);
+    const handleConfirmAdditionalService = () => {
+        setShowConfirmModalAdditionalService(false);
+        removeMasterCarton();
+        setValue('withoutMasterCartonData', true);
+    }
+    const handleCancelAdditionalService = () => {
+        setShowConfirmModalAdditionalService(false);
+        setValue('additionalService', false);
+    }
+
     const handleAdditionalServiceChange = (val: React.ChangeEvent<HTMLInputElement>) => {
-        const boxes = getBoxes(unitOfMeasures);
+        const boxes = getBoxes(getValues('unitOfMeasures'));
 
         if (val.target.checked) {
+            if (!purchaseValue) {
+                setValue('purchaseValue', 1);
+            }
             if (!withoutMasterCartonData) {
                 if (boxes.length && (boxes[0].coefficient || boxes[0].width || boxes[0].length || boxes[0].weightGross)) {
                     setShowConfirmModalAdditionalService(true);
@@ -249,19 +279,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             }
         }
     }
-
-    const getOptions = () => {
-        // Extract names from unitOfMeasures array
-        return unitOfMeasureOptions.map((item) => ({ value: item, label: item }));
-    };
-
-    const getBoxes = useCallback((arr) => {
-        return arr.filter(item => item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton'));
-    },[]);
-
-    const getPieces = useCallback((arr) => {
-        return arr.filter(item => !(item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton')));
-    },[]);
 
     useEffect(() => {
         // Update the select options when the unitOfMeasures array changes
@@ -304,20 +321,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         }
     }
 
-    //confirm to remove master carton data on setting Additional product
-    const [showConfirmModalAdditionalService, setShowConfirmModalAdditionalService] = useState(false);
-    const handleConfirmAdditionalService = () => {
-        setShowConfirmModalAdditionalService(false);
-        removeMasterCarton();
-        setValue('withoutMasterCartonData', true);
-    }
-
     const handleMasterCartonDataChange = (val: React.ChangeEvent<HTMLInputElement>, onChange) => {
         const boxes = getBoxes(unitOfMeasures);
-
         if (val.target.checked) {
             if (boxes.length && (boxes[0].coefficient || boxes[0].width || boxes[0].length || boxes[0].weightGross)) {
-                setShowConfirmModalAdditionalService(true);
+                setShowConfirmModal(true);
             } else {
                 onChange(val);
                 removeMasterCarton();
@@ -389,7 +397,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     onChange={(newValue: string) => {field.onChange(newValue); handleUnitNameChange(newValue, index)}}
-                                    disabled={isDisabled  || orderIsApproved}
+                                    disabled={isDisabled  || orderIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -415,7 +423,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled  || orderIsApproved}
+                                    disabled={isDisabled  || orderIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -441,7 +449,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].width`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled  || orderIsApproved}
+                                    disabled={isDisabled  || orderIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -466,7 +474,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].length`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || orderIsApproved}
+                                    disabled={isDisabled || orderIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -491,7 +499,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].height`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || orderIsApproved}
+                                    disabled={isDisabled || orderIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -516,7 +524,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].weightGross`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || orderIsApproved}
+                                    disabled={isDisabled || orderIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -541,7 +549,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].weightNet`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || orderIsApproved}
+                                    disabled={isDisabled || orderIsApproved || isAdditionalService}
                                 /></div>
 
                         )}
@@ -977,7 +985,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         resetTabTables(tabTitleArray);
     }, [productData]);
 
-    const onSubmitForm = async (data: any) => {
+    const onSubmitForm = async (data: SingleProductFormType) => {
 
         const curAction = productData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], curAction)) {
@@ -991,6 +999,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         setIsLoading(true);
         clearTabTitles();
         data.status = sendStatus;
+
+        if (data.additionalService) {
+            const pieces = getPieces(data.unitOfMeasures);
+            if (pieces.length > 0 && pieces[0].coefficient !== 1) {
+                pieces[0].coefficient = 1;
+            }
+        }
 
         try {
             const requestData = {
@@ -1099,7 +1114,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors} isDisabled={isDisabled}/>
                         </div>
                     </CardWithHelpIcon>
-                    <CardWithHelpIcon classNames='card product-info--warehouse'>
+                    {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--warehouse'>
                         <h3 className='product-info__block-title'>
                             <Icon name='warehouse' />
                             Warehouse
@@ -1107,8 +1122,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={warehouseFields} errors={errors} isDisabled={isDisabled} />
                         </div>
-                    </CardWithHelpIcon>
-                    <CardWithHelpIcon classNames='card product-info--additional'>
+                    </CardWithHelpIcon> : null}
+                    {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--additional'>
                         <h3 className='product-info__block-title'>
                             <Icon name='additional' />
                             Additional
@@ -1121,7 +1136,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <div className='product-info__checkboxes grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={additionalCheckboxes} errors={errors} isDisabled={isDisabled} />
                         </div>
-                    </CardWithHelpIcon>
+                    </CardWithHelpIcon> : null}
                 </div>
                 <div className="dimensions-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--unitOfMeasures">
@@ -1148,7 +1163,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                             errors={errors}
                                             isRequired={true}
                                             hint={ProductDimensionsHints['unitOfMeasure'] || ''}
-                                            disabled={isDisabled}
+                                            disabled={isDisabled || isAdditionalService}
                                         />
                                     )}
                                     rules={{ required: 'Field is required' }}
@@ -1169,12 +1184,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 {/*</div>*/}
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields form-table product-info--dimensions has-scroll' aria-disabled={orderIsApproved}>
+                        <div className='product-info--table table-form-fields form-table product-info--dimensions has-scroll' aria-disabled={orderIsApproved || isAdditionalService}>
                             <Table
                                 columns={getUnitsColumns(control)}
                                 dataSource={getValues('unitOfMeasures')?.map((field) => ({ key: field.name, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
+
                                 //rowClassName={(record)=>{return (checkMasterCarton(record) ? 'is-disabled' : '')}}
                             />
 
@@ -1192,7 +1208,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
-                                    disabled={isDisabled}
+                                    disabled={isDisabled || isAdditionalService}
                                     onChange={(val: React.ChangeEvent<HTMLInputElement>)=>{handleMasterCartonDataChange(val, field.onChange); }}
                                     //hint={ProductDimensionsHints['unitOfMeasure'] || ''}
                                 />
@@ -1399,9 +1415,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             onCancel={()=>setShowConfirmModal(false)}
         />}
         {showConfirmModalAdditionalService && <ConfirmModal
-            actionText={`You have a master carton data for this product. Do you want to clear it?`}
+            actionText={`You have a master carton data for this product, which will be cleared. Do you want to mark this product as Additional virtual product and clear master carton data?`}
             onOk={handleConfirmAdditionalService}
-            onCancel={()=>setShowConfirmModalAdditionalService(false)}
+            onCancel={handleCancelAdditionalService}
         />}
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
         {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}

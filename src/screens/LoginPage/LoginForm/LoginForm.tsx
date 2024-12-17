@@ -78,8 +78,6 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
   const setAuthData = async(authData) => {
     const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile, superUser, actionAccessSettings } = authData;
 
-    console.log("actionAccessSettings: ", actionAccessSettings);
-
     setToken(accessToken, userStatus !== UserStatusType.user);
 
     //Cookie.set('token', accessToken);
