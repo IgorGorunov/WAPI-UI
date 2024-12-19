@@ -1010,7 +1010,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         </TutorialHintTooltip>
                         <div className='dropzoneBlock'>
                             <DropZone readOnly={!!isDisabled} files={selectedFiles}
-                                      docUuid={docData ? docData?.uuid : ''}
+                                      docUuid={docData?.canEdit ? '' : docData?.uuid}
                                       onFilesChange={handleFilesChange}
                                       // allowOnlyFormats={['pdf']}
                                       // hint={'The supported file formats: PDF'}

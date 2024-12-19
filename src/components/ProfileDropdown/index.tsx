@@ -64,12 +64,12 @@ const ProfileDropdown = () => {
         <div className="profile-dropdown" ref={dropdownRef}>
             {isLoading && <Loader />}
             {userStatus == 'user' ?
-                <>
+                <div>
                     <button className='profile-dropdown__user card' onClick={() => setIsOpen(!isOpen)}>
                         {superUser ? <Icon name='admin'/> : <Icon name='user'/>}
                         <span className='user-name'>{userName}</span>
                     </button>
-                    {isOpen && (
+                    {isOpen ? (
                         <ul className="profile-dropdown__menu card">
                             <li key='profile' className="profile-dropdown__menu-item"> <button className="profile-dropdown__menu-item-btn" onClick={handleOpenProfile}><Icon name='profile' /> Profile</button></li>
                             {superUser ? <li key='user-list' className="profile-dropdown__menu-item">
@@ -80,14 +80,14 @@ const ProfileDropdown = () => {
                             <li key='logout' className="profile-dropdown__menu-item">
                                 <button className="profile-dropdown__menu-item-btn" onClick={handleLogOut}><Icon name='exit' /> Log out</button></li>
                         </ul>
-                    )}
-                </>
-                : <>
+                    ) : null}
+                </div>
+                : <div>
                     {userStatus ? <div className='profile-dropdown__user card' onClick={handleLogOut}>
                         <span className='user-name'>{userName}</span>
                         <Icon name='exit'/>
                     </div> : null}
-                </>
+                </div>
             }
             {showUserList ?
                 <Modal title="Clients" onClose={()=>setShowUserList(false)}>

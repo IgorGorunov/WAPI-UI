@@ -1,5 +1,5 @@
 import Head from "next/head";
-import LoginPage from "@/screens/LoginPage";
+import LoginPage from "@/screens/LoginPage/";
 
 export default function Login() {
   return (
@@ -14,3 +14,5 @@ export default function Login() {
     </>
   );
 }
+
+//GC0gfAV3wTt0tW_S

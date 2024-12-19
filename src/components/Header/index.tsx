@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import Navigation from "@/components/Navigation";
@@ -15,17 +15,29 @@ import {
 import {getNotificationIconName} from "@/components/HeaderNotifications/NotificationsBlock";
 import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import SingleDocument from "@/components/SingleDocument";
+import useAuth from "@/context/authContext";
+import {UserStatusType} from "@/types/leads";
 
 type HeaderType = {
     pageTitle?: string;
     toRight?: boolean;
     needTutorialBtn?: boolean;
     children?: React.ReactNode;
-    noMenu?: boolean;
-    needNotifications?: boolean;
+    // noMenu?: boolean;
+    // needNotifications?: boolean;
 }
 
-const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, needTutorialBtn=false, noMenu=false, needNotifications=true}) => {
+const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, needTutorialBtn=false}) => {
+    const { userStatus } = useAuth();
+
+    const [needMenu, setNeedMenu] = useState(false);
+    const [needNotificationsInHeader, setNeedNotificationsInHeader] = useState(false);
+
+    useEffect(() => {
+        setNeedMenu(userStatus === UserStatusType.user);
+        setNeedNotificationsInHeader(userStatus === UserStatusType.user);
+    }, [userStatus]);
+
     const [isMenuOpen, setMenuOpen] = useState(false);
 
     const handleClick = () => {
@@ -64,10 +76,10 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
         <div className={`main-header`}>
             <div className='main-header__wrapper card'>
                 <div className='main-header__menu-block' onClick={handleClick}>
-                    {!noMenu && <div className='main-header__icon'>
+                    {needMenu  && <div className='main-header__icon'>
                         <Icon name={"burger"}/>
                     </div>}
-                    <div className={`page-title ${noMenu ? 'no-margin' : ''}`}><h2>{pageTitle}</h2></div>
+                    <div className={`page-title ${!needMenu ? 'no-margin' : ''}`}><h2>{pageTitle}</h2></div>
                 </div>
 
                 <div className={`main-header__components ${toRight ? "align-right" : ""}`}>
@@ -79,7 +91,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
                     {needTutorialBtn ?
                         <button className={`tour-guide ${runTour ? 'is-active' : ''}`} onClick={()=>setRunTour(!runTour)}><Icon name='book' /></button>
                         : null}
-                    {needNotifications ? <div className='main-header__notifications'>
+                    {needNotificationsInHeader ? <div className='main-header__notifications'>
                         <HeaderNotifications />
                     </div> : null}
                 </div>

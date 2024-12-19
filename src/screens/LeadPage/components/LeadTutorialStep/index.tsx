@@ -1,6 +1,6 @@
 import React from "react";
 import "./styles.scss";
-import VideoEmbeddedLoom from "@/components/VideoEmbeddedLoom";
+import VideoEmbeddedLoom from "../../../../components/VideoEmbedded";
 
 type LeadStepInfoType = {
     text: string;

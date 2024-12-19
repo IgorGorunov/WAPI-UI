@@ -1,18 +1,15 @@
 import React from "react";
 import Layout from "@/components/Layout/Layout";
 import "./styles.scss";
-import useAuth from "@/context/authContext";
 import Header from "@/components/Header";
-import {UserStatusType} from "@/types/leads";
 import Link from "next/link";
 
 const PrivacyPolicyPage = () => {
-    const { userStatus} = useAuth();
 
     return (
         <Layout hasFooter>
             <div className="privacy-policy-page">
-                <Header pageTitle='Privacy policy' toRight noMenu={userStatus !== UserStatusType.user} needNotifications={userStatus === UserStatusType.user} />
+                <Header pageTitle='Privacy policy' toRight  />
 
                 <div className="privacy-policy-page__text-wrapper">
                     <ol>
