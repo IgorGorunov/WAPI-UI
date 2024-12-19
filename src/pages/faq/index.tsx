@@ -4,11 +4,13 @@ import {createClient} from "next-sanity";
 import clientConfig from "@/sanity/config/client-config";
 import {FaqPageType} from "@/types/sanity/pagesTypes";
 import FaqPageScreen from '@/screens/FaqPage';
+import AuthChecker from "@/components/AuthChecker";
 
 const FaqPage = ({ faqPageData }: { faqPageData: FaqPageType}) => {
-    console.log('faqPageData:  ', faqPageData)
     return (
-        <FaqPageScreen {...faqPageData} />
+        <AuthChecker isUser={true}>
+            <FaqPageScreen {...faqPageData} />
+        </AuthChecker>
     );
 };
 
