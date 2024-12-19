@@ -118,7 +118,7 @@ body {
 }
 
 body {
-  font-family: var(--inter-font);
+  font-family: var(--inter-font), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   letter-spacing: 0.1px;
   color: var(--color-gray);
   background: var(--color-light-gray);
@@ -182,7 +182,7 @@ label {
 }
 
 input {
-  font-family: var(--inter-font);
+  font-family: var(--inter-font), sans-serif;
   font-size: 12px;
   font-weight: 700;
   line-height: 20px;
@@ -465,7 +465,7 @@ input[type="date"]::before {
 }
 
 .has-scroll {
-  overflow: hidden scroll;
+  overflow: auto scroll;
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -499,6 +499,7 @@ input[type="date"]::before {
   color: var(--color-blue);
   text-decoration: underline;
   transition: .3s ease;
+  cursor: pointer;
 
   &:hover {
     text-decoration: none;
@@ -563,6 +564,8 @@ input[type="date"]::before {
     }
   }
 }
+
+
 
 
 //animations

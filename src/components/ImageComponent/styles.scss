@@ -1,0 +1,13 @@
+.image-component {
+  &__wrapper {
+    img {
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+    }
+  }
+
+  &__caption {
+    text-align: center;
+  }
+}

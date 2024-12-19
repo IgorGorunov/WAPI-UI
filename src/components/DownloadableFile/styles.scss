@@ -1,0 +1,38 @@
+.download-file {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 12px;
+
+  &__action-btn {
+    svg {
+      width: 26px;
+      transform: scale(1);
+      transition: 0.3s ease;
+
+      path {
+        //fill: var(--color-light-blue-gray);
+        fill: var(--color-blue);
+        transition: .3s ease;
+      }
+    }
+
+    &:hover {
+      svg {
+        transform: scale(1.25);
+
+        path {
+          fill: var(--color-blue);
+        }
+      }
+    }
+  }
+
+  &__name {
+    //font-size: 14px;
+    margin-left: 8px;
+    //font-weight: bold;
+    line-height: 1;
+    color: var(--color-blue);
+  }
+}

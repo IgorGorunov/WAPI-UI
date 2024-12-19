@@ -1,18 +1,15 @@
 import React from "react";
 import Layout from "@/components/Layout/Layout";
 import "./styles.scss";
-import useAuth from "@/context/authContext";
 import Header from "@/components/Header";
-import {UserStatusType} from "@/types/leads";
 import Link from "next/link";
 
 const CookiePolicyPage = () => {
-    const { userStatus} = useAuth();
 
     return (
         <Layout hasFooter>
             <div className="cookie-policy-page__container">
-                <Header pageTitle='Cookie policy' toRight noMenu={userStatus !== UserStatusType.user} needNotifications={userStatus === UserStatusType.user} />
+                <Header pageTitle='Cookie policy' toRight  />
 
                 <div className="cookie-policy-page__text-wrapper">
                     <p>This Cookie Policy explains how we use cookies and similar tracking technologies when you visit

@@ -14,6 +14,9 @@ import Loader from "@/components/Loader";
 import {E164Number} from "libphonenumber-js";
 import LeadTutorialStep from "@/screens/LeadPage/components/LeadTutorialStep";
 import leadTutorialInfo from "@/screens/LeadPage/components/ApprovedLeadInfo/leadTutorialUrlsAndTexts";
+import {getImportTemplate} from "@/sanity/sanity-utils";
+import {toast} from "@/components/Toast";
+import {ImportTemplateNamesSanity} from "@/types/importFiles";
 
 type LegalInfoPropsType = {
     legalData: any | null;
@@ -27,15 +30,30 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
 
 
     const handleContractDownload = async () => {
-        const res = await fetch(`/Contract2024.docx`); // Adjust the path accordingly
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(new Blob([blob]));
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'ContractDraft.docx';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        const res = await getImportTemplate(ImportTemplateNamesSanity.CONTRACT as string);
+        if (res && res.fileUrl) {
+            const url = res.fileUrl;
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ContractDraft.docx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            toast.warn(`Couldn't download the file. Please, try a bit later or contact our IT support.`, {
+                position: "top-right",
+                autoClose: 5000,
+            });
+        }
+        // const res = await fetch(`/Contract2024.docx`); // Adjust the path accordingly
+        // const blob = await res.blob();
+        // const url = window.URL.createObjectURL(new Blob([blob]));
+        // const a = document.createElement('a');
+        // a.href = url;
+        // a.download = 'ContractDraft.docx';
+        // document.body.appendChild(a);
+        // a.click();
+        // document.body.removeChild(a);
     }
 
     //form

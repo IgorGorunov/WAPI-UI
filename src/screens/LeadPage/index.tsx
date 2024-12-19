@@ -130,7 +130,7 @@ const LeadPage = () => {
         <Layout hasHeader hasFooter>
             {show && <div className="page-component lead-page lead-page__container">
                 {isLoading && <Loader/>}
-                <Header pageTitle={getHeaderTitle(userStatus)} toRight noMenu needTutorialBtn needNotifications={false} />
+                <Header pageTitle={getHeaderTitle(userStatus)} toRight needTutorialBtn  />
 
                 {userStatus === UserStatusType.Questionnaire && questionnaireParams ?
                     <div className={`lead-page__questionnaire`}>

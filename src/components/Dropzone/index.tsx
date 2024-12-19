@@ -30,6 +30,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
     // }, []);
 
     const onDrop = useCallback(async (acceptedFiles) => {
+        console.log('file -- on drop', acceptedFiles, readOnly, docUuid)
         if (readOnly && !docUuid) {
             return;
         }
@@ -67,7 +68,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
     }, [readOnly]);
 
     const onPaste = useCallback(async (e: React.ClipboardEvent<HTMLDivElement>) => {
-
+        console.log('file -- on paste', e, readOnly, docUuid)
         if (readOnly && !docUuid) {
             return;
         }

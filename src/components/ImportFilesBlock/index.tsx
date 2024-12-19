@@ -10,9 +10,11 @@ import {ApiResponseType} from "@/types/api";
 import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {sendInboundFiles} from "@/services/stockMovements";
-import {ImportFilesType} from "@/types/importFiles";
+import {ImportFilesType, ImportTemplateNamesSanity} from "@/types/importFiles";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import {getImportTemplate} from "@/sanity/sanity-utils";
+import {toast, ToastContainer} from "@/components/Toast";
 
 const getFileData = (importType: ImportFilesType) => {
    switch (importType) {
@@ -20,6 +22,7 @@ const getFileData = (importType: ImportFilesType) => {
            return {
                action: 'BulkOrdersCreate',
                downloadFileName: 'Orders mass upload file.xlsx',
+               templateName: ImportTemplateNamesSanity.ORDERS,
                sendFileFunction: sendOrderFiles,
                title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
            }
@@ -27,6 +30,7 @@ const getFileData = (importType: ImportFilesType) => {
            return {
                action: 'BulkProductsCreate',
                downloadFileName: 'Master data.xlsx',
+               templateName: ImportTemplateNamesSanity.PRODUCTS,
                sendFileFunction: sendProductFiles,
                title: `To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system.
                After uploading a document, you need to send draft products for approve (open a product and click "Send")`,
@@ -35,6 +39,7 @@ const getFileData = (importType: ImportFilesType) => {
            return {
                action: 'FillStockMovementFromFile',
                downloadFileName: 'Products import.xlsx',
+               templateName: ImportTemplateNamesSanity.STOCK_MOVEMENTS_PRODUCTS,
                sendFileFunction: sendInboundFiles,
                title: 'To upload products in the document it is necessary to download the master data draft file, fill it with data and then upload back to system',
            }
@@ -43,6 +48,7 @@ const getFileData = (importType: ImportFilesType) => {
            return {
                action: 'BulkOrdersCreate',
                downloadFileName: 'Orders mass upload file.xlsx',
+               templateName: ImportTemplateNamesSanity.ORDERS,
                sendFileFunction: sendOrderFiles,
                title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
            }
@@ -77,16 +83,30 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
     }, [])
 
     const downloadFile = async () => {
-
-        const res = await fetch(`/${file}`); // Adjust the path accordingly
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(new Blob([blob]));
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileData.downloadFileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        //const res = await fetch(`/${file}`);
+        const res = await getImportTemplate(fileData.templateName as string);
+        if (res && res.fileUrl) {
+            const url = res.fileUrl;
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileData.downloadFileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            toast.warn(`Couldn't download the file. Please, try a bit later or contact our IT support.`, {
+                position: "top-right",
+                autoClose: 5000,
+            });
+        }
+        // const blob = await res.blob();
+        // const url = window.URL.createObjectURL(new Blob([blob]));
+        // const a = document.createElement('a');
+        // a.href = url;
+        // a.download = fileData.downloadFileName;
+        // document.body.appendChild(a);
+        // a.click();
+        // document.body.removeChild(a);
     };
 
     const sendFunc = fileData.sendFileFunction;
@@ -142,6 +162,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
     return (
         <div className='import-files'>
             {isLoading && <Loader />}
+            <ToastContainer />
             <p className='import-files__title'>
                 {fileData.title}
             </p>

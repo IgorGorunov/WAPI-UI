@@ -8,6 +8,7 @@ import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import {Routes} from "@/types/routes";
 import CookieConsent from "@/components/CookieConsent";
+import BackToTop from "@/components/BackToTop";
 //import { clarity } from 'react-microsoft-clarity';
 
 type Props = {
@@ -77,7 +78,6 @@ const Layout: React.FC<Props> = ({
           <div id="modal-root-preview"></div>
           <div id="modal-root-confirm"></div>
           <div id="modal-root-api-error"></div>
-          <div id="modal-root-main-two"></div>
           {apiErrorText ? <ModalStatus
               statusModalType={STATUS_MODAL_TYPES.ERROR}
               modalType={ModalTypes.API_ERROR}
@@ -85,6 +85,7 @@ const Layout: React.FC<Props> = ({
               subtitle={apiErrorText || ''}
               onClose={handleClose}/> : null
           }
+          <BackToTop />
       </div>
   );
 };

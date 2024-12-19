@@ -1,0 +1,15 @@
+.rich-text {
+
+  ul, ol {
+    padding-left: 32px;
+    font-size: 12px;
+  }
+
+  ul.list-disc {
+    list-style: disc;
+  }
+
+  ol.list-decimal {
+    list-style: decimal;
+  }
+}
