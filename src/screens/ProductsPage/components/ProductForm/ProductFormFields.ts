@@ -247,7 +247,7 @@ export const FormFieldsAdditional1 = ({whoProvidesPackagingMaterial}) => [
             onlyAllowedSymbols: true,
         },
         {
-            fieldType: FormFieldTypes.TEXT,
+            fieldType: FormFieldTypes.NUMBER,
             type: "text",
             name: 'expiringTerm',
             label: "Expiring term (month)",
