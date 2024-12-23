@@ -6,6 +6,7 @@ import {imageComponentFields, tableComponentFields, textComponentFields} from "@
 export async function getImportTemplate(templateName: string) {
     const query = `
         *[_type == "importFile" && templateName == $templateName][0]{
+            ...,
             title,
             templateName,
             "fileUrl": file.asset->url
