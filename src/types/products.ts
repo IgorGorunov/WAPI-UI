@@ -122,6 +122,7 @@ export type SingleProductType = {
     canEdit: boolean;
     tickets?: TicketType[];
     additionalService?: boolean;
+    expiringTerm?: number;
 };
 
 export type UnitOfMeasureFormType = {
@@ -184,6 +185,7 @@ export type SingleProductFormType = {
         selected: boolean;
         analogue: string;
     }[];
+    expiringTerm?: number;
     //attachedFiles: AttachedFilesType[];
     // statusHistory: StatusHistoryType[];
     // canEdit: boolean;
