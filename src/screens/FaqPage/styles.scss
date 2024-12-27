@@ -30,6 +30,7 @@
     overscroll-behavior: none;
 
     @media (max-width: $mobile) {
+      max-height: none !important;
       overflow: initial !important;
       width: 100%;
       position: relative !important;
@@ -157,10 +158,22 @@
   }
 
   &__question {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     margin-top: 12px;
     margin-bottom: 8px;
+
+    &-wrapper {
+      margin-bottom: 32px;
+
+      @media (max-width: $mobile) {
+        margin-bottom: 24px;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 
 }
