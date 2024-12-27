@@ -10,7 +10,7 @@ type FaqAnswerItemPropsType = {
 
 const AnswerItem: React.FC<FaqAnswerItemPropsType> = ({ item, setRef, level =0 }) => {
     return (
-        <section id={item.anchorId} ref={setRef(item.anchorId)} className="faq-answers__question-wrapper">
+        <section id={item.anchorId} ref={setRef(item.anchorId)} className={`faq-answers__question-wrapper ${'questionGroupText' in item ? 'question-group' : "single-question"}`}>
             {'questionGroupText' in item && (
                 <h2 className={`faq-answers__list-item is-group content-item-level-${level}`}>
                     {item.questionGroupText}
