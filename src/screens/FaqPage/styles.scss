@@ -95,6 +95,13 @@
 .faq-answers {
   //padding-left: 300px;
   flex: 1;
+  max-width: calc(100vw - 325px);
+
+  @media (max-width: $mobile) {
+    max-width: 100%;
+  }
+
+
 
   &__wrapper {
     margin-top: -24px;
