@@ -93,15 +93,12 @@
 }
 
 .faq-answers {
-  //padding-left: 300px;
   flex: 1;
   max-width: calc(100vw - 325px);
 
   @media (max-width: $mobile) {
     max-width: 100%;
   }
-
-
 
   &__wrapper {
     margin-top: -24px;
@@ -171,11 +168,21 @@
     margin-bottom: 8px;
 
     &-wrapper {
-      margin-bottom: 32px;
+      margin-bottom: 28px;
 
       @media (max-width: $mobile) {
         margin-bottom: 24px;
       }
+
+      &.question-group {
+        margin-bottom: 48px;
+
+        @media (max-width: $mobile) {
+          margin-bottom: 38px;
+        }
+      }
+
+
 
       &:last-child {
         margin-bottom: 0;
