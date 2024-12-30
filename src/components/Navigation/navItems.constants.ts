@@ -92,4 +92,11 @@ export const navBlocks = (unreadAmount: number = 0) => ([
         submenuLink: '/tickets?filter=Has new messages',
         navItems: [],
     },
+    {
+        submenuTitle: `FAQ`,
+        submenuName: "FAQ",
+        submenuIcon: 'faq',
+        submenuLink: '/faq',
+        navItems: [],
+    },
 ]);
