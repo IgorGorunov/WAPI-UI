@@ -21,7 +21,6 @@ const TextComponent: React.FC<FaqItemPropsType> = (props) => {
             h2: (props: any) => <h2 className="text-h2" {...props} />,
             // Render image components within text content
             imageComponent: ({ value }) => {
-                console.log('image val: ', value)
                 return (
                     <ImageComponent
                         imageUrl={value.imageUrl}
