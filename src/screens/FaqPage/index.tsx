@@ -7,6 +7,7 @@ import FaqTableOfContents from "@/screens/FaqPage/components/FaqTableOfContents"
 import AnswersBlock from "@/screens/FaqPage/components/AnswersBlock";
 import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
+import Head from "next/head";
 
 
 const FaqPage:React.FC<FaqPageType> = (props) => {
@@ -91,24 +92,54 @@ const FaqPage:React.FC<FaqPageType> = (props) => {
     }, [router.isReady, router.query.anchorId]);
 
     const handleClickToScrollTo = useCallback((anchorId: string) => {
-        router.push(
-            {
-                pathname: router.pathname, // Keep the current path
-                query: { ...router.query, question: anchorId }, // Add the anchorId to the query
-            },
-            undefined,
-            { shallow: true } // Prevent a full page reload
-        );
+        // router.push(
+        //     {
+        //         pathname: router.pathname, // Keep the current path
+        //         query: { ...router.query, question: anchorId }, // Add the anchorId to the query
+        //     },
+        //     undefined,
+        //     { shallow: true } // Prevent a full page reload
+        // );
 
         const element = document.getElementById(anchorId);
-        console.log('click: ', anchorId, element)
+
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+            const rect = element.getBoundingClientRect();
+            const isFullyVisible =
+                rect.top >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+
+            if (isFullyVisible) {
+                // Content is visible, perform a slight "wiggle"
+                window.scrollBy({ top: 20, behavior: 'smooth' });
+                setTimeout(() => {
+                    window.scrollBy({ top: -20, behavior: 'smooth' });
+                }, 200); // Wait 200ms for the first scroll to complete
+            } else {
+                // Content not fully visible, scroll to it
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        } else {
+            console.log('click: ', anchorId, element);
+            router.push(
+                {
+                    pathname: router.pathname, // Keep the current path
+                    query: { ...router.query, question: anchorId }, // Add the anchorId to the query
+                },
+                undefined,
+                { shallow: true } // Prevent a full page reload
+            );
         }
     }, []);
 
     return (
         <Layout hasHeader hasFooter >
+            <Head>
+                <title>FAQ</title>
+                <meta name="faq" content="FAQ" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="icon" href="/logo.png" type="image/png"/>
+            </Head>
             <div className="faq-page page-container">
                 {/*{isLoading && <Loader />}*/}
                 <Header pageTitle='FAQ' toRight  />
