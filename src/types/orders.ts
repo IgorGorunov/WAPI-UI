@@ -74,6 +74,14 @@ export type OrderType = {
     logisticComment: string;
     ticket?: boolean;
     ticketopen?: boolean;
+    nonTroubleEventsByString: string;
+    nonTroubleEvents: {
+        event: string;
+        period: string;
+        status: string;
+        additionalInfo: string;
+    }[];
+    nonTroubleEventsExist: boolean;
 }
 
 export type ProductInfoType = {

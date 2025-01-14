@@ -96,7 +96,27 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const calcOrderWithLogisticComment = useCallback(()=> {
         return orders.filter(order => !!order.logisticComment).length || 0;
-    }, [orders])
+    }, [orders]);
+
+    const calcOrderWithoutNonTroubleStatuses = useCallback(()=> {
+        return orders.filter(order => !order.nonTroubleEventsExist).length || 0;
+    }, [orders]);
+
+    const calcOrderAllNonTroubleStatuses = useCallback(()=> {
+        return orders.filter(order => !!order.nonTroubleEventsExist).length || 0;
+    }, [orders]);
+
+    const calcOrderAmountWithNonTroubleEvent = useCallback((event: string) => {
+        const ordersWithEvent = orders.filter(order => order.nonTroubleEvents.filter(orderEvent=> orderEvent.event==event).length > 0);
+        return ordersWithEvent.length || 0;
+    }, [orders]);
+
+    const hasNonTroubleEvents = useCallback((filterArray: string[], order: OrderType) => {
+        if (!order.nonTroubleEventsExist) return false;
+
+        const filterSet = new Set(filterArray); // Convert one array to a Set for fast lookups
+        return order.nonTroubleEventsByString.split(',').some(item => filterSet.has(item));
+    }, []);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const handleFilterStatusChange = (newStatuses: string[]) => {
@@ -126,7 +146,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         const statuses = orders.map(order => order.lastTroubleStatus);
         return Array.from(new Set(statuses)).filter(status => status).sort();
     }, [orders]);
-    uniqueStatuses.sort();
+    uniqueTroubleStatuses.sort();
     const transformedTroubleStatuses = useMemo(() => ([
         {
             value: '-NO trouble statuses-',
@@ -144,6 +164,36 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             amount: calcOrderAmount('lastTroubleStatus', status),
         }))
     ]), [uniqueTroubleStatuses]);
+
+    //nonTroubleEventsByString, nonTroubleEvents, nonTroubleEventsExist
+    const [filterNonTroubleStatus, setFilterNonTroubleStatus] = useState<string[]>([]);
+    const handleFilterNonTroubleStatusChange = (newValue: string[]) => {
+        setFilterNonTroubleStatus(newValue);
+        setCurrent(1);
+    }
+    const uniqueNonTroubleStatuses = useMemo(() => {
+        const nonTroubleEvents= [];
+        orders.forEach(order => order.nonTroubleEventsByString.split(',').forEach(event=>nonTroubleEvents.push(event.trim())));
+        return Array.from(new Set(nonTroubleEvents)).filter(nonTroubleEvent => nonTroubleEvent).sort();
+    }, [orders]);
+    uniqueNonTroubleStatuses.sort();
+    const transformedNonTroubleStatuses = useMemo(() => ([
+        {
+            value: '-NO non-trouble events-',
+            label: '-Never had non-trouble events-',
+            amount: calcOrderWithoutNonTroubleStatuses(),
+        },
+        {
+            value: '-All non-trouble events-',
+            label: '-All trouble events-',
+            amount: calcOrderAllNonTroubleStatuses(),
+        },
+        ...uniqueNonTroubleStatuses.map(event => ({
+            value: event,
+            label: event,
+            amount: calcOrderAmountWithNonTroubleEvent(event) || 0,
+        }))
+    ]), [uniqueNonTroubleStatuses]);
 
     const [filterClaims, setFilterClaims] = useState<string[]>([]);
     const handleFilterClaimsChange = (newValue: string[]) => {
@@ -346,6 +396,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setFilterSentSMS([]);
         setFilterHasTickets([]);
         setFilterHasOpenTickets([]);
+        setFilterNonTroubleStatus([]);
 
         setCurrent(1);
         //close filter modal
@@ -407,6 +458,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 (filterStatus.includes(order.status));
             const matchesTroubleStatus = !filterTroubleStatus.length || (filterTroubleStatus.includes('-All trouble statuses-') && order.lastTroubleStatus.length) ||
                 (filterTroubleStatus.includes('-NO trouble statuses-') && order.troubleStatuses.length === 0) || filterTroubleStatus.includes(order.lastTroubleStatus);
+            const matchesNonTroubleEvent = !filterNonTroubleStatus.length || (filterNonTroubleStatus.includes('-All non-trouble events-') && order.nonTroubleEvents.length) ||
+                (filterNonTroubleStatus.includes('-NO non-trouble events-') && order.nonTroubleEvents.length === 0) || hasNonTroubleEvents(filterNonTroubleStatus, order);
             const matchesClaims = !filterClaims.length || (filterClaims.includes('With claims') && order.claimsExist) ||
                 (filterClaims.includes('Without claims') && !order.claimsExist);
             const matchesLogisticComment = !filterLogisticComment.length || (filterLogisticComment.includes('With order issue') && !!order.logisticComment) ||
@@ -427,7 +480,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 filterCourierService.map(item=>item.toLowerCase()).includes(order.courierService.toLowerCase());
             const matchesReceiverCountry = !filterReceiverCountry.length ||
                 filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
-            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets;
+
+            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -436,11 +490,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets]);
+    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets]);
 
     useEffect(() => {
         setCurrent(1)
-    }, [searchTerm, filterStatus, filterTroubleStatus, filterClaims, filterLogisticComment, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
+    }, [searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
     //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
@@ -456,6 +510,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     };
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
     const [isOpenFilterTroubleStatus, setIsOpenFilterTroubleStatus] = useState(false);
+    const [isOpenFilterNonTroubleStatus, setIsOpenFilterNonTroubleStatus] = useState(false);
     const [isOpenFilterClaim, setIsOpenFilterClaim] = useState(false);
     const [isOpenFilterLogisticComment, setIsOpenFilterLogisticComment] = useState(false);
     const [isOpenFilterCommentToCourierService, setIsOpenFilterCommentToCourierService] = useState(false);
@@ -972,6 +1027,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <div className='current-filter-container'>
                     <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
                     <CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>handleFilterTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
+                    <CurrentFilters title='Non-trouble events' filterState={filterNonTroubleStatus} options={transformedNonTroubleStatuses} onClose={()=>handleFilterNonTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);}}/>
                     <CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>handleFilterClaimsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
                     <CurrentFilters title='Order issues' filterState={filterLogisticComment} options={logisticCommentFilterOptions} onClose={()=>handleFilterLogisticCommentChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}} />
                     <CurrentFilters title='Comment to courier service' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>handleFilterCommentsToCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />
@@ -1020,6 +1076,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
                 <FiltersBlock filterTitle={'Trouble status'} filterDescriptions={'Shows orders where the selected trouble status was the last in the trouble status list'} filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={handleFilterTroubleStatusChange} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
+                <FiltersBlock filterTitle='Non-trouble events' filterOptions={transformedNonTroubleStatuses} filterState={filterNonTroubleStatus} setFilterState={handleFilterNonTroubleStatusChange} isOpen={isOpenFilterNonTroubleStatus} setIsOpen={setIsOpenFilterNonTroubleStatus}/>
                 <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={handleFilterClaimsChange} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
                 <FiltersBlock filterTitle='Order issues' filterOptions={logisticCommentFilterOptions} filterState={filterLogisticComment} setFilterState={handleFilterLogisticCommentChange} isOpen={isOpenFilterLogisticComment} setIsOpen={setIsOpenFilterLogisticComment}/>
                 <FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={handleFilterCommentsToCourierServiceChange} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>

@@ -35,14 +35,14 @@ const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterDescriptio
     }
 
 
-    const filterTitleWithCheckedFilters = `${filterTitle} (${filterState ? filterState.length : 0})`
+    const filterTitleWithCheckedFilters = `${filterTitle} (${filterState ? filterState.length : 0})`;
 
     return (
         <div className="filter-block filter-block__wrapper">
             <Accordion title={filterTitleWithCheckedFilters} description={filterDescriptions} isOpen={isOpen} setIsOpen={setIsOpen}>
                 <div className='filter-block__options'>
                     <ul className='filter-block__options-list'>
-                        {filterOptions.map(option => (<li key={option.value} className='filter-block__options-list-item'><FilterOption option={option} filterType={filterType} isChecked={getIsChecked(option.value, filterState)} onClick={handleOptionClick} isCountry={isCountry}/></li>))}
+                        {filterOptions.map(option => (<li key={option.value+'_'+filterTitle} className={`filter-block__options-list-item`}><FilterOption option={option} filterType={filterType} isChecked={getIsChecked(option.value, filterState)} onClick={handleOptionClick} isCountry={isCountry} extraName={filterTitle}/></li>))}
                     </ul>
                 </div>
             </Accordion>
