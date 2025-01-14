@@ -10,14 +10,15 @@ export type FilterOptionType = {
     isChecked?: boolean;
     onClick: (value: string)=>void;
     isCountry?: boolean;
+    extraName: string;
 }
 
-const FilterOption: React.FC<FilterOptionType> = ({option, isChecked=false, filterType = FILTER_TYPE.CHECKBOX, onClick, isCountry=false }) => {
+const FilterOption: React.FC<FilterOptionType> = ({option, extraName='', isChecked=false, filterType = FILTER_TYPE.CHECKBOX, onClick, isCountry=false }) => {
 
     return (
         <div className={`filter-option ${isChecked ? "checked" : ""} ${filterType}-type`} >
             <Checkbox
-                name={option.value}
+                name={option.value+extraName.split(' ').join('_')}
                 circleColor={filterType === FILTER_TYPE.COLORED_CIRCLE ? option.color : ''}
                 label={`${option.label}`}
                 isCountry={isCountry}
