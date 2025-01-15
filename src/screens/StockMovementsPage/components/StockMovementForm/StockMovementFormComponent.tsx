@@ -2,6 +2,7 @@ import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'rea
 import "./styles.scss";
 import '@/styles/forms.scss';
 import useAuth, {AccessActions} from "@/context/authContext";
+import useHintsTracking from "@/context/hintsContext";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
@@ -93,6 +94,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const [isFinished, setIsFinished] = useState(docData?.status === 'Finished');
 
     const isOutboundOrStockMovement = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT;
+
+    //
+    const {setStockMovementsAsVisited} = useHintsTracking();
 
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
@@ -742,6 +746,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             } catch {}
 
             return null;
+        }
+
+        if (!docData) {
+            setStockMovementsAsVisited(true);
         }
 
         clearTabTitles();
