@@ -7,6 +7,7 @@ import {NotificationsProvider} from "@/context/notificationContext";
 import {TourGuideProvider} from "@/context/tourGuideContext";
 import { clarity } from 'react-microsoft-clarity';
 import {useEffect} from "react";
+import {HintsTrackingProvider} from "@/context/hintsContext";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -43,7 +44,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <NotificationsProvider>
           <AuthProvider>
             <TourGuideProvider>
-              <Component {...pageProps} />
+              <HintsTrackingProvider>
+                <Component {...pageProps} />
+              </HintsTrackingProvider>
             </TourGuideProvider>
           </AuthProvider>
         </NotificationsProvider>
