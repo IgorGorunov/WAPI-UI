@@ -96,7 +96,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const isOutboundOrStockMovement = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT;
 
     //
-    const {setStockMovementsAsVisited} = useHintsTracking();
+    const {setStockMovementsAsVisited, addInboundsNumber} = useHintsTracking();
 
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
@@ -748,10 +748,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             return null;
         }
 
-        if (!docData) {
-            setStockMovementsAsVisited(true);
-        }
-
         clearTabTitles();
         clearErrors();
         if (data.products.length === 0 && !isDraft && !isJustETA) {
@@ -785,6 +781,14 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 //success
                 setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Document is successfully ${ docData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
                 setShowStatusModal(true);
+
+                if (!docData) {
+                    setStockMovementsAsVisited(true);
+                    if (docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS) {
+                        addInboundsNumber();
+                    }
+                }
+
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
 
