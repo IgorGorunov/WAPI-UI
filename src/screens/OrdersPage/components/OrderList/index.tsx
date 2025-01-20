@@ -185,7 +185,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             value: '-All non-trouble events-',
-            label: '-All trouble events-',
+            label: '-All non-trouble events-',
             amount: calcOrderAllNonTroubleStatuses(),
         },
         ...uniqueNonTroubleStatuses.map(event => ({
