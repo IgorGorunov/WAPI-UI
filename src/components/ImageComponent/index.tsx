@@ -24,6 +24,7 @@ const ImageComponent: React.FC<ImageBlockPropsType> = (props) => {
                        width={0}
                        height={0}
                        sizes={`(max-width: 768px) 100vw, ${isHalf ? '50vw' : '100vw'}`}
+                       loading="eager"
                        onClick={()=>setOpenImageView(true)}
                 />
                 {caption ? <p className='image-component__caption'>{caption}</p> : null}
