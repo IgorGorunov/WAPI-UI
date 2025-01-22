@@ -6,7 +6,6 @@ import AnswerItem from "@/screens/FaqPage/components/AnswerItem";
 
 type FaqAnswersBlockPropsType = {
     content: FaqPageContentItemType[];
-    onClick: (id: string) => void;
     level?: number;
 }
 

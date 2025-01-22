@@ -81,56 +81,75 @@ const FaqPage:React.FC<FaqPageType> = (props) => {
     }, []);
 
     useEffect(() => {
-        if (router.isReady && router.query.question) {
-            const anchorId = router.query.question as string;
-            const targetElement = document.getElementById(anchorId);
-
-            if (targetElement) {
-                targetElement.scrollIntoView({ behavior: "smooth" });
+        const handleScrollAfterLoad = async () => {
+            if (router.query.question) {
+                const anchorId = router.query.question as string;
+                setTimeout(() => {
+                    scrollToSection(anchorId);
+                }, 500);
             }
+        };
+
+        // Wait for the full page to load
+        if (document.readyState === 'complete') {
+            handleScrollAfterLoad();
+        } else {
+            window.addEventListener('load', handleScrollAfterLoad);
         }
-    }, [router.isReady, router.query.anchorId]);
 
-    const handleClickToScrollTo = useCallback((anchorId: string) => {
-        // router.push(
-        //     {
-        //         pathname: router.pathname, // Keep the current path
-        //         query: { ...router.query, question: anchorId }, // Add the anchorId to the query
-        //     },
-        //     undefined,
-        //     { shallow: true } // Prevent a full page reload
-        // );
+        return () => {
+            window.removeEventListener('load', handleScrollAfterLoad);
+        };
+    }, [router.query.anchorId]);
 
+    const scrollToSection = useCallback((anchorId: string) => {
         const element = document.getElementById(anchorId);
 
         if (element) {
-            const rect = element.getBoundingClientRect();
-            const isFullyVisible =
-                rect.top >= 0 &&
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
-
-            if (isFullyVisible) {
-                // Content is visible, perform a slight "wiggle"
-                window.scrollBy({ top: 20, behavior: 'smooth' });
-                setTimeout(() => {
-                    window.scrollBy({ top: -20, behavior: 'smooth' });
-                }, 200); // Wait 200ms for the first scroll to complete
-            } else {
-                // Content not fully visible, scroll to it
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
+            element.scrollIntoView({ behavior: 'smooth' });
+            // const rect = element.getBoundingClientRect();
+            // const isFullyVisible =
+            //     rect.top >= 0 &&
+            //     rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+            //
+            // console.log('is fullyVisible', isFullyVisible, rect, window.innerHeight, document.documentElement.clientHeight);
+            // if (isFullyVisible) {
+            //     // Content is visible, perform a slight "wiggle"
+            //     window.scrollBy({ top: 20, behavior: 'smooth' });
+            //     setTimeout(() => {
+            //         window.scrollBy({ top: -20, behavior: 'smooth' });
+            //     }, 200);
+            // } else {
+            //     // Content not fully visible, scroll to it
+            //     element.scrollIntoView({ behavior: 'smooth' });
+            //     // Scroll to the top of the section
+            //     // const offsetTop = element.offsetTop; // Position of the section relative to the document
+            //     // console.log('offsetTop', offsetTop, element.scrollTop, rect.top, rect, element);
+            //     // window.scrollTo({
+            //     //     top: offsetTop,
+            //     //     behavior: 'smooth',
+            //     // });
+            // }
         } else {
-            console.log('click: ', anchorId, element);
-            router.push(
-                {
-                    pathname: router.pathname, // Keep the current path
-                    query: { ...router.query, question: anchorId }, // Add the anchorId to the query
-                },
-                undefined,
-                { shallow: true } // Prevent a full page reload
-            );
+            console.log('couldn\'t scroll: ', anchorId, element);
         }
     }, []);
+
+    const handleClickToScrollTo = useCallback((anchorId: string) => {
+        if (!anchorId) {
+            console.log('Empty anchor ID');
+        }
+        router.push(
+            {
+                pathname: router.pathname,
+                query: { ...router.query, question: anchorId },
+            },
+            undefined,
+            { shallow: true } // Prevent a full page reload
+        );
+        scrollToSection(anchorId);
+
+    }, [router]);
 
     return (
         <Layout hasHeader hasFooter >
@@ -148,11 +167,11 @@ const FaqPage:React.FC<FaqPageType> = (props) => {
                     <div className="faq-page__container" ref={layoutRef}>
                         <div className={`faq-table-of-contents`} >
                             <div className = {`faq-table-of-contents__wrapper` } ref={sidebarRef} style={{...sidebarStyle, maxHeight: (visiblePixels-10)+'px'}} >
-                            <FaqTableOfContents content={content} onClick={handleClickToScrollTo}/></div>
+                                <FaqTableOfContents content={content} onClick={handleClickToScrollTo}/>
+                            </div>
                         </div>
                         <div className={`faq-answers`}>
-
-                            <AnswersBlock content={content} onClick={handleClickToScrollTo}/>
+                            <AnswersBlock content={content} />
                         </div>
                     </div>
                     <div className='faq-page__bottom' ref={footerRef} ></div>
