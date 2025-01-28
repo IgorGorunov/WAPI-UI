@@ -5,6 +5,7 @@ import useAuth, {NavAccessItemType, UserInfoType} from "@/context/authContext";
 import Loader from "@/components/Loader";
 import SearchContainer from "@/components/SearchContainer";
 import SearchField from "@/components/SearchField";
+import Cookie from "js-cookie";
 
 export type UserType = {
     access: NavAccessItemType[];
@@ -58,6 +59,7 @@ const UserList: React.FC<UserListPropsType> = ({users, onClose}) => {
         setUserName(`SU - ${user.userPresentation}`);
         setNavItemsAccess(user.access);
         setUserInfoProfile(user.userProfile.userInfo);
+        Cookie.remove('orders-period');
         onClose();
     }
 

@@ -228,6 +228,8 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
     Cookie.remove('suName');
 
+    Cookie.remove('orders-period');
+
     setNotifications(null);
     setSuperUserName('')
   }
