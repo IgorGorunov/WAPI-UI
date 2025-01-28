@@ -24,6 +24,7 @@ import {ApiResponseType} from "@/types/api";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import Cookies from "js-cookie";
 
 const OrdersPage = () => {
     const Router = useRouter();
@@ -38,9 +39,26 @@ const OrdersPage = () => {
         }
     }, [Router.query]);
 
-    const today = currentDate;
-    const firstDay = getLastFewDays(today, 5);
-    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
+    const [curPeriod, setCurrentPeriod] = useState<DateRangeType|null>(null);
+
+    useEffect(() => {
+        const ordersPeriodFromCookie = Cookies.get('orders-period');
+        if (ordersPeriodFromCookie) {
+            const period = JSON.parse(ordersPeriodFromCookie);
+            if (period && period?.startDate && period.endDate) {
+                setCurrentPeriod({startDate: new Date(period.startDate), endDate: new Date(period.endDate)});
+                return;
+            }
+        }
+        const today = currentDate;
+        const firstDay = getLastFewDays(today, 5);
+        setCurrentPeriod({startDate: firstDay, endDate: today});
+    }, []);
+    const setCurrentPeriodFn= (period: DateRangeType) => {
+        setCurrentPeriod(period);
+        //const exp = new Date(new Date().getTime() + 15 * 60 * 1000);
+        Cookies.set('orders-period', JSON.stringify(period), {expires: 1/24});
+    }
 
     const [ordersData, setOrdersData,] = useState<any | null>(null);
     const [filteredOrders, setFilteredOrders] = useState<OrderType[]>(ordersData);
@@ -85,6 +103,7 @@ const OrdersPage = () => {
     }, [])
 
     const fetchData = useCallback(async () => {
+        if (!curPeriod) return;
         try {
             setIsLoading(true);
             setOrdersData([]);
@@ -103,7 +122,7 @@ const OrdersPage = () => {
             const res: ApiResponseType = await getOrders(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res && "data" in res) {
-                setOrdersData(res.data.map(item=>({...item, key: item.uuid})));
+                setOrdersData(res.data.map(item=>({...item, key: item.uuid})).sort((a:OrderType,b:OrderType)=>a.date>b.date ? -1 : 1));
             } else {
                 console.error("API did not return expected data");
             }
@@ -219,7 +238,7 @@ const OrdersPage = () => {
                     <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
-                {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} handleRefresh={()=>fetchData()}/>}
+                {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriodFn} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} handleRefresh={()=>fetchData()}/>}
             </div>
             {showOrderModal && (orderUuid || isOrderNew) &&
                 <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={()=>{onOrderModalClose(); fetchData(); }}/>

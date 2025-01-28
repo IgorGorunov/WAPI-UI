@@ -203,7 +203,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
         ))}
         {error && <p className="login-error">{error}</p>}
         <div className="login-submit-block">
-          <p id='login-recovery-link' className="login-recovery-link">Password recovery</p>
+          {/*<p id='login-recovery-link' className="login-recovery-link">Password recovery</p>*/}
           <Button
             type="submit"
             icon={"arrow-right"}
