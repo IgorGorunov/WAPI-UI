@@ -8,6 +8,28 @@
     margin-right: -16px;
   }
 
+  &__info-text {
+    display: flex;
+    align-items: center;
+    padding: 0 20px 6px;
+    color: var(--color-gray-blue);
+    font-weight: bold;
+    font-size: 10px;
+    text-decoration: underline;
+
+    span {
+      height: 24px
+    }
+
+    svg {
+      width: 24px;
+      height: auto;
+      path {
+        fill: var(--color-gray-blue);
+      }
+    }
+  }
+
   &__header {
     display: flex;
     align-items: center;
