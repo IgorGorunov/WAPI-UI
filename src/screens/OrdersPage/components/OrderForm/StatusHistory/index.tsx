@@ -67,6 +67,10 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
 
     return (
         <div className="order-status-history">
+            <p className={`order-status-history__info-text`}>
+                {/*<span><Icon name='info' /></span>*/}
+                Time in status history - in time zone UTC 0
+            </p>
             <div className="order-status-history__header">
                 <div className='date-column'>Period / Status</div>
                 {/*<div className='column status--column'>Status</div>*/}
