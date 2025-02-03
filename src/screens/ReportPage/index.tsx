@@ -131,7 +131,6 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
             if (!isActionIsAccessible(transformReportType(reportType), AccessActions.GenerateReport) ) {
                 setReportData(null);
-                console.log('789')
                 return;
             }
 
@@ -188,23 +187,30 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         const uniqueCountries = Array.from(new Set(countries)).filter(country => country).sort();
         const uniqueWarehouses = Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
 
-        const warehouseOptions = [
+        let warehouseOptions = [
             ...uniqueWarehouses.map(warehouse => ({
                 label: warehouse,
                 value: warehouse,
             }))
         ];
 
-        const countryOptions = [
+        let countryOptions = [
             ...uniqueCountries.map(country => ({
                 value: country,
                 label: Countries[country] as string || country,
             }))
         ];
 
+        if (reportData && isFilterVisibleByReportType(reportType, 'country')) {
+            const reportCountries = reportData.map(item=> item.country.toUpperCase());
+            countryOptions = countryOptions.filter(item => reportCountries.includes(item.value.toUpperCase()));
+        }
+        if (reportData && isFilterVisibleByReportType(reportType, 'warehouse')) {
+            const reportWarehouses = reportData.map(item=> item.warehouse.toUpperCase());
+            warehouseOptions =  warehouseOptions.filter(item => reportWarehouses.includes(item.value.toUpperCase()));
+        }
         return {warehouseOptions, countryOptions}
-
-    },[reportParams]);
+    }, [reportParams, reportData, reportType]);
 
     const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
     const [isOpenFilterCountry, setIsOpenFilterCountry] = useState(false);
@@ -213,65 +219,98 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const courierServiceOptions = useMemo(()=> {
         const courierServices = reportParams?.courierServices && reportParams.courierServices.length ? reportParams.courierServices.map(item => item) : [];
         const uniqueCourierServices = Array.from(new Set(courierServices)).filter(item => item).sort();
-        return [
+        const courierServicesOptions = [
             ...uniqueCourierServices.map(item => ({
                 value: item,
                 label: item,
             }))
         ];
-    }, [reportParams])
+        if (reportData && isFilterVisibleByReportType(reportType, 'courierService')) {
+            const reportCourierServices = reportData.map(item=> item.courierService.toUpperCase());
+            return courierServicesOptions.filter(item => reportCourierServices.includes(item.value.toUpperCase()));
+        }
+        return courierServicesOptions;
+    }, [reportParams, reportData, reportType]);
     const [isOpenFilterCourierService, setIsOpenFilterCourierService] = useState(false);
 
     const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
     const receiverCountryOptions = useMemo(()=> {
         const receiverCountries = reportParams?.countries && reportParams.countries.length ? reportParams.countries.map(item => item) : [];
         const uniqueReceiverCountries = Array.from(new Set(receiverCountries)).filter(item => item).sort();
-        return [
+        const receiverCountryOptions = [
             ...uniqueReceiverCountries.map(country => ({
                 value: country,
                 label: Countries[country] as string || country,
             }))
         ];
-    }, [reportParams])
+        if (reportData && isFilterVisibleByReportType(reportType, 'receiverCountry')) {
+            const reportReceiverCountries = reportData.map(item=> item.receiverCountryCode.toUpperCase());
+            return receiverCountryOptions.filter(item => reportReceiverCountries.includes(item.value.toUpperCase()));
+        }
+
+
+
+        return receiverCountryOptions;
+    }, [reportParams, reportData, reportType]);
+
     const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
 
     const [filterProduct, setFilterProduct] = useState<string[]>([]);
     const productOptions = useMemo(()=> {
         const products = reportParams?.products && reportParams.products.length ? reportParams.products.map(product => product.name) : [];
         const uniqueProducts = Array.from(new Set(products)).filter(product => product).sort();
-        return [
+        let productOptions =  [
             ...uniqueProducts.map(product => ({
                 value: product,
                 label: product,
             }))
         ];
-    }, [reportParams])
+
+        if (reportData && isFilterVisibleByReportType(reportType, 'product')) {
+            const reportProducts = reportData.map(item=> item.product.toUpperCase());
+            productOptions = productOptions.filter(item => reportProducts.includes(item.value.toUpperCase()));
+        }
+
+        return productOptions;
+    }, [reportParams, reportData, reportType]);
     const [isOpenFilterProduct, setIsOpenFilterProduct] = useState(false);
 
     const [filterProductType, setFilterProductType] = useState<string[]>([]);
     const productTypeOptions = useMemo(()=> {
         const productTypes = reportParams?.productTypes && reportParams.productTypes.length ? reportParams.productTypes.map(item => item) : [];
         const uniqueProductTypes = Array.from(new Set(productTypes)).filter(productType => productType).sort();
-        return [
+        let productTypeOptions = [
             ...uniqueProductTypes.map(productType => ({
                 value: productType,
                 label: productType,
             }))
         ];
-    }, [reportParams])
+        if (reportData && isFilterVisibleByReportType(reportType, 'productType')) {
+            const reportProductTypes = reportData.map(item=> item.productType.toUpperCase());
+            productTypeOptions = productTypeOptions.filter(item => reportProductTypes.includes(item.value.toUpperCase()));
+        }
+
+        return productTypeOptions;
+    }, [reportParams, reportData, reportType]);
     const [isOpenFilterProductType, setIsOpenFilterProductType] = useState(false);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const statusOptions = useMemo(()=> {
         const statuses = reportParams?.statuses && reportParams.statuses.length ? reportParams.statuses.map(item => item) : [];
         const uniqueStatuses = Array.from(new Set(statuses)).filter(item => item).sort();
-        return [
+        let statusOptions = [
             ...uniqueStatuses.map(item => ({
                 value: item,
                 label: item,
             }))
         ];
-    }, [reportParams])
+        if (reportData && isFilterVisibleByReportType(reportType, 'status')) {
+            const reportStatuses = reportData.map(item=> item.status.toUpperCase());
+            statusOptions = statusOptions.filter(item => reportStatuses.includes(item.value.toUpperCase()));
+        }
+
+        return statusOptions;
+    }, [reportParams, reportData, reportType]);
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
 
 
@@ -314,6 +353,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         const dimensionCols = getVariantDimensionColsByReportType(reportType, curVariantAsType);
         setDimensionsCont(getVariantDimensionNumberByReportType(reportType, curVariantAsType).length);
 
+
         const filteredData = reportData ? reportData.filter(reportDataRow => {
 
             const matchesSearch = !searchTerm.trim() || Object.keys(reportDataRow).some(key => {
@@ -325,7 +365,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
             });
 
             const matchesCountry = !filterCountry.length || filterCountry.includes(reportDataRow?.country) || filterCountry.includes(reportDataRow?.countryCode);
-            const matchesReceiverCountry = !filterReceiverCountry.length || filterReceiverCountry.includes(reportDataRow?.receiverCountryCode);
+            const matchesReceiverCountry = !filterReceiverCountry.length ||  filterReceiverCountry.includes(reportDataRow?.receiverCountryCode);
             const matchesWarehouse = !filterWarehouse.length || filterWarehouse.includes(reportDataRow?.warehouse);
             const matchesCourierService = !filterCourierService.length || filterCourierService.includes(reportDataRow?.courierService);
             const matchesProduct = !filterProduct.length || filterProduct.includes(reportDataRow?.product);
@@ -371,6 +411,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         if (isCurrentRangeChanged) {
             fetchData();
             setIsCurrentRangeChanged(false);
+            handleClearAllFilters();
         }
     }
 
