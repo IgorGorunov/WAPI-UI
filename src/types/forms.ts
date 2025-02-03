@@ -102,6 +102,7 @@ export type FieldPropsType = {
   disableDaysAfterToday?: number;
   disableDaysTime?: string; //if current time (in Italy) if before this time, disableDaysAfterToday=disableDaysAfterToday-1
   onlyAllowedSymbols?: boolean;
+  countryName?: string;
 }
 
 export type FormBuilderType = FieldPropsType & {
