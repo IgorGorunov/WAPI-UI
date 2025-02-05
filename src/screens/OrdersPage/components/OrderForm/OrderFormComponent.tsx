@@ -51,6 +51,7 @@ import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
 import {CommonHints} from "@/constants/commonHints";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import ImageSlider from "@/components/ImageSlider";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -1172,6 +1173,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
     }
 
+    const [showWarehousePhotos, setShowWarehousePhotos] = useState(false);
+
 
     return <div className='order-info'>
         {(isLoading || !orderParameters) && <Loader />}
@@ -1199,6 +1202,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors}
                                                  isDisabled={isDisabled}/>
                             </div>
+                            {orderData?.warehouseAssemblyPhotos && orderData?.warehouseAssemblyPhotos.length>0 ? (
+                                <>
+                                    <div className={`order-info--warehouse-photos`} onClick={()=>setShowWarehousePhotos(true)}>
+                                        <Icon name={'webcam'} />
+                                        <span>Photos from warehouse</span>
+                                    </div>
+                                </>
+                            ) : null}
                         </CardWithHelpIcon>
                         <CardWithHelpIcon classNames='card order-info--details'>
                             <h3 className='order-info__block-title'>
@@ -1488,6 +1499,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 onCancel={()=>setShowConfirmModal(false)}
             />}
         </> : null}
+        {showWarehousePhotos ? <ImageSlider  images={orderData?.warehouseAssemblyPhotos || []} show={showWarehousePhotos} setShow={setShowWarehousePhotos}/> : null}
     </div>
 }
 
