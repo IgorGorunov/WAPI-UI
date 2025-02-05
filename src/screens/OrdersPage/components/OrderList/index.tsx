@@ -592,6 +592,49 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="26px"
                 contentPosition="center"
                 childrenBefore={
+                    <Tooltip title="If order has photos from warehouse" >
+                        <span><Icon name={"webcam"} className='header-icon' /></span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="26px"
+                        maxWidth="26px"
+                        contentPosition="center"
+                        childrenBefore={
+                            record?.WarehouseAssemblyPhotos && (
+                                <div style={{
+                                    minHeight: '8px',
+                                    minWidth: '8px',
+                                    backgroundColor: 'var(--color-blue)',
+                                    borderRadius: '50%',
+                                    display: 'inline-block',
+                                    alignSelf: 'center',
+                                }} />
+                            )
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'WarehouseAssemblyPhotos',
+            key: 'WarehouseAssemblyPhotos',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+            responsive: ['lg'],
+        },
+        {
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="26px"
+                maxWidth="26px"
+                contentPosition="center"
+                childrenBefore={
                     <Tooltip title="If order has Claims" >
                         <span><Icon name={"complaint"} className='header-icon' /></span>
                     </Tooltip>

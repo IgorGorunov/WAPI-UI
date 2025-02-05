@@ -1,0 +1,10 @@
+.image-slider {
+  &__wrapper {
+    transition: .5s ease;
+    opacity: 0;
+
+    &.active {
+      opacity: 1;
+    }
+  }
+}

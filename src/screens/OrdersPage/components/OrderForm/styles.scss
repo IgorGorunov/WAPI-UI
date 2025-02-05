@@ -73,6 +73,34 @@
     }
   }
 
+  &--warehouse-photos {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--color-blue);
+    transition: .5s ease;
+    transform: scale(1);
+    transform-origin: left center;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      transform: scale(1.05);
+    }
+
+    svg {
+      width: 20px;
+      height: auto;
+
+      path,
+      circle {
+        stroke: var(--color-blue);
+      }
+    }
+  }
+
   //&--address-comment {
   //  &-wrapper {
   //    border: 1px solid var(--color-dark-red2);

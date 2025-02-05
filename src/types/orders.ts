@@ -82,6 +82,7 @@ export type OrderType = {
         additionalInfo: string;
     }[];
     nonTroubleEventsExist: boolean;
+    WarehouseAssemblyPhotos?: boolean;
 }
 
 export type ProductInfoType = {
@@ -187,6 +188,7 @@ export type SingleOrderType = {
     logisticComment: string;
     addressEditAllowedOnly?: boolean;
     warehouseAdditionalInfo?: string;
+    warehouseAssemblyPhotos?: AttachedFilesType[];
 }
 
 export type OrderProductType = {

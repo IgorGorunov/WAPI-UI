@@ -96,6 +96,7 @@ import LightningBolt from '@/assets/icons/lightning-bolt.svg'
 import Warning from '@/assets/icons/warning.svg'
 import Shipping from '@/assets/icons/shipping.svg'
 import FAQ from '@/assets/icons/faq.svg'
+import Webcam from '@/assets/icons/webcam.svg'
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -194,6 +195,7 @@ export const icons = {
   'warning': Warning,
   'shipping': Shipping,
   'faq': FAQ,
+  'webcam': Webcam,
 };
 
 export type IconType = keyof typeof icons;

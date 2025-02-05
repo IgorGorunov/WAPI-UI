@@ -18,6 +18,18 @@
       width: calc(100% - 32px);
     }
   }
+
+  .hints-modal & {
+    width: 600px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    @media (max-width: $mobile) {
+      max-width: 100%;
+      width: calc(100% - 32px);
+    }
+  }
+
 }
 
 .modal {
