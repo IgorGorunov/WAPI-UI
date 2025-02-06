@@ -109,6 +109,7 @@ export type OrderHistoryType = {
     additionalInfo: string;
     period: string;
     status: string;
+    offset: string;
     trackingNumber: string;
     troubleStatus: string;
     statusGroup: string;

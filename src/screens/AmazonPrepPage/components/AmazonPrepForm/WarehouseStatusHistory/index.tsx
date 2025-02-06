@@ -15,18 +15,18 @@ const WarehouseStatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
     }, []);
 
     return (
-        <div className="order-status-history">
-            <div className="order-status-history__header">
+        <div className="amazon-warehouse-status-history">
+            <div className="amazon-warehouse-status-history__header">
                 <div className='date-column'>Period</div>
                 <div className='column status-column'>Status</div>
                 <div className='column comment-column'>Additional information</div>
             </div>
-            <ul className="order-status-history__list">
+            <ul className="amazon-warehouse-status-history__list">
                 {statusHistory &&
                     statusHistory.map((status: AmazonPrepOrderHistoryType, index: number) => (
                         <li
                             key={status.status + "_" + index}
-                            className={`order-status-history__list-item ${
+                            className={`amazon-warehouse-status-history__list-item ${
                                 index % 2 === 1 ? "highlight" : " "
                             }`}
                         >
