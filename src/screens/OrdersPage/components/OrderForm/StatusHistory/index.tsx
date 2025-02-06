@@ -72,7 +72,10 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                 Time in status history - in time zone UTC 0
             </p>
             <div className="order-status-history__header">
-                <div className='date-column'>Period / Status</div>
+                <div className='date-column'>
+                    <span className={`date-column--header`}>Period <span className={`date-column--offset`}>offset</span></span>
+                    <span>Status</span>
+                </div>
                 {/*<div className='column status--column'>Status</div>*/}
                 <div className='column tracking-number--column'>Tracking #</div>
                 <div className='column trouble-status--column'>Trouble status</div>
@@ -91,12 +94,14 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                             }`}
                         >
                             <div className='date-column'>
-                                <span>{formatDateTimeToStringWithDot(status.period)}</span>
+                                <span className={`date-column--date-time`}>
+                                    {formatDateTimeToStringWithDot(status.period)}
+                                    <span className={`date-column--offset`}>{status.offset}</span>
+                                </span>
                                 <span style={{
                                     borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,
                                     display: 'inline-block',
-                                }}>
-                                    {status.status}
+                                }}>{status.status}
                                 </span>
                             </div>
                             {/*<div className='column status--column'>*/}

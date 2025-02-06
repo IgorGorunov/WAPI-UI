@@ -1,6 +1,6 @@
 @import "@/constants/devices.scss";
 
-.order-status-history {
+.amazon-status-history {
   margin: 24px -28px 0 -28px;
 
   @media (max-width: $mobile) {
@@ -42,7 +42,7 @@
   }
 
   .date-column {
-    flex: 0 0 120px;
+    flex: 0 0 160px;
     padding: 10px 12px 10px 0;
     margin-left: 20px;
 
