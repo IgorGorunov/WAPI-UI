@@ -381,6 +381,24 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
     ]), [orders]);
 
+    const [filterPhotos, setFilterPhotos] = useState<string[]>([]);
+    const handleFilterPhotosChange = (newValue: string[]) => {
+        setFilterPhotos(newValue);
+        setCurrent(1);
+    }
+    const photoFilterOptions = useMemo(() => ([
+        {
+            value: 'With photos',
+            label: 'With photos',
+            amount:  calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true),
+        },
+        {
+            value: 'Without photos',
+            label: 'Without photos',
+            amount: (orders.length - calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true)),
+        },
+    ]), [orders]);
+
 
 
     const handleClearAllFilters = () => {
@@ -397,6 +415,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setFilterHasTickets([]);
         setFilterHasOpenTickets([]);
         setFilterNonTroubleStatus([]);
+        setFilterPhotos([]);
 
         setCurrent(1);
         //close filter modal
@@ -480,8 +499,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 filterCourierService.map(item=>item.toLowerCase()).includes(order.courierService.toLowerCase());
             const matchesReceiverCountry = !filterReceiverCountry.length ||
                 filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
+            const matchesPhotos = !filterPhotos.length || (filterPhotos.includes('With photos') && order.WarehouseAssemblyPhotos) ||
+                (filterPhotos.includes('Without photos') && !order.WarehouseAssemblyPhotos);
 
-            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets;
+            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets && matchesPhotos;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -490,11 +511,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets]);
+    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos]);
 
     useEffect(() => {
         setCurrent(1)
-    }, [searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterWarehouse, filterCourierService, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch]);
+    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos]);
     //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
@@ -521,6 +542,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
     const [isOpenFilterHasTickets, setIsOpenFilterHasTickets] = useState(false);
     const [isOpenFilterHasOpenTickets, setIsOpenFilterHasOpenTickets] = useState(false);
+    const [isOpenFilterPhotos, setIsOpenFilterPhotos] = useState(false);
 
 
     useEffect(() => {
@@ -1081,6 +1103,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
                     <CurrentFilters title='Tickets' filterState={filterHasTickets} options={hasTicketsOptions} onClose={()=>handleFilterHasTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)}} />
                     <CurrentFilters title='Open tickets' filterState={filterHasOpenTickets} options={hasOpenTicketsOptions} onClose={()=>handleFilterHasOpenTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)}} />
+                    <CurrentFilters title='Photos from warehouse' filterState={filterPhotos} options={photoFilterOptions} onClose={()=>handleFilterPhotosChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)}} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -1130,6 +1153,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
                 <FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>
                 <FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>
+                <FiltersBlock filterTitle='Photos from warehouse' filterOptions={photoFilterOptions} filterState={filterPhotos} setFilterState={handleFilterPhotosChange} isOpen={isOpenFilterPhotos} setIsOpen={setIsOpenFilterPhotos}/>
             </FiltersContainer>
         </div>
     );
