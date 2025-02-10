@@ -57,7 +57,6 @@ import HintsModal from "@/screens/StockMovementsPage/components/StockMovementFor
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 
-
 type StockMovementFormType = {
     docType: STOCK_MOVEMENT_DOC_TYPE,
     docData?: SingleStockMovementType;
