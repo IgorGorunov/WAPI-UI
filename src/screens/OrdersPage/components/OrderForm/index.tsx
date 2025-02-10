@@ -114,7 +114,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
     }
 
     return <div className='order-info'>
-        {(isLoading || !orderParameters) && <Loader />}
+        {(isLoading || !(orderUuid && orderData || !orderUuid) || !orderParameters) && <Loader />}
         <ToastContainer />
         {orderParameters && (orderUuid && orderData || !orderUuid) ?
             <Modal title={`Order`} onClose={onClose} classNames='document-modal'>
