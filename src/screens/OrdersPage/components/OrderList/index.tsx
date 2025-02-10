@@ -34,6 +34,8 @@ type OrderListType = {
     setFilteredOrders: React.Dispatch<React.SetStateAction<OrderType[]>>;
     handleEditOrder(uuid: string): void;
     handleRefresh: ()=>void;
+    current: number;
+    setCurrent: (val: number) => void;
 }
 
 const pageOptions = [
@@ -45,10 +47,10 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
-const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, handleRefresh}) => {
+const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
 
-    const [current, setCurrent] = React.useState(1);
+    // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -513,9 +515,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         });
     }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos]);
 
-    useEffect(() => {
-        setCurrent(1)
-    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos]);
+    // useEffect(() => {
+    //     setCurrent(1)
+    // }, [orders, searchTerm]);
     //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
