@@ -30,6 +30,8 @@ const OrdersPage = () => {
     const Router = useRouter();
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
+    const [current, setCurrent] = React.useState(1);
+
     useEffect(() => {
         const { uuid } = Router.query;
 
@@ -132,11 +134,15 @@ const OrdersPage = () => {
         } finally {
             setIsLoading(false);
         }
+        setCurrent(1);
+
     }, [token,curPeriod, ui]);
 
     useEffect(() => {
         fetchData();
     }, [token, curPeriod, ui]);
+
+
 
     const handleEditOrder = (uuid: string) => {
         setIsOrderNew(false);
@@ -238,7 +244,15 @@ const OrdersPage = () => {
                     <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
-                {ordersData && <OrderList orders={ordersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriodFn} setFilteredOrders={setFilteredOrders} handleEditOrder={handleEditOrder} handleRefresh={()=>fetchData()}/>}
+                {ordersData && <OrderList orders={ordersData}
+                                          currentRange={curPeriod}
+                                          setCurrentRange={setCurrentPeriodFn}
+                                          setFilteredOrders={setFilteredOrders}
+                                          handleEditOrder={handleEditOrder}
+                                          handleRefresh={()=>fetchData()}
+                                          current={current}
+                                          setCurrent={setCurrent}
+                />}
             </div>
             {showOrderModal && (orderUuid || isOrderNew) &&
                 <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={()=>{onOrderModalClose(); fetchData(); }}/>
