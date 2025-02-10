@@ -51,6 +51,7 @@ import {CommonHints} from "@/constants/commonHints";
 import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import HintsModal from "@/screens/StockMovementsPage/components/StockMovementForm/HintsModal";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -96,7 +97,19 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const isOutboundOrStockMovement = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT;
 
     //
-    const {setStockMovementsAsVisited, addInboundsNumber} = useHintsTracking();
+    const {visitedStockMovements, setStockMovementsAsVisited, addInboundsNumber} = useHintsTracking();
+
+    const [showHintQuestion, setShowHintQuestion] = useState(false);
+    const [showAllHints, setShowAllHints] = useState(false);
+    useEffect(() => {
+        if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !visitedStockMovements) {
+            setShowHintQuestion(true);
+        }
+    }, []);
+    const showHints = () => {
+        setShowHintQuestion(false);
+        setShowAllHints(true);
+    }
 
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
@@ -873,7 +886,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             <Tabs id='stock-movement-tabs' tabTitles={tabTitles} classNames='inside-modal'
                   notifications={docNotifications}>
                 <div key='general-tab' className='general-tab'>
-                    <CardWithHelpIcon classNames='card stock-movement--general'>
+                    <CardWithHelpIcon classNames='card stock-movement--general' showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='general'/>
                             General
@@ -883,7 +896,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                              isDisabled={isDisabled}/>
                         </div>
                     </CardWithHelpIcon>
-                    <CardWithHelpIcon classNames='card stock-movement--details'>
+                    <CardWithHelpIcon classNames='card stock-movement--details' showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='additional'/>
                             Details
@@ -895,7 +908,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     </CardWithHelpIcon>
                 </div>
                 <div key='cargo-tab' className='cargo-tab'>
-                    <CardWithHelpIcon classNames='card stock-movement--cargo'>
+                    <CardWithHelpIcon classNames='card stock-movement--cargo' showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='shipping'/>
                             Cargo info
@@ -908,7 +921,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                 </div>
 
                 <div key='product-tab' className='product-tab'>
-                    <CardWithHelpIcon classNames="card min-height-600 stock-movement--products">
+                    <CardWithHelpIcon classNames="card min-height-600 stock-movement--products" showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title '>
                             <Icon name='goods'/>
                             Products
@@ -1012,7 +1025,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                     </div>
                 </div> : null}
                 <div key='files-tab' className='files-tab'>
-                    <CardWithHelpIcon classNames="card min-height-600 stock-movement--files">
+                    <CardWithHelpIcon classNames="card min-height-600 stock-movement--files" showHintsByDefault={showAllHints}>
                         {/*<div className="card min-height-600 stock-movement--products">*/}
                         <TutorialHintTooltip hint={StockMovementsHints('')['files'] || ''} position='left'>
                             <h3 className='stock-movement__block-title title-small'>
@@ -1067,6 +1080,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             onOk={handleConfirmCancelDoc}
             onCancel={()=>setShowConfirmModal(false)}
         />}
+        {showHintQuestion && <HintsModal docName="Inbounds" onClose={()=>setShowHintQuestion(false)} onOk={showHints} />}
     </div>
 }
 
