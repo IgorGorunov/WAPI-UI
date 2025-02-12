@@ -22,18 +22,28 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
       notDisable,
       noCounters = true,
       onlyAllowedSymbols = false,
+      onlyWholeNumbers = false,
       ...otherProps
 }, ref) => {
 
   //const validRegex = /^[a-zA-Z0-9\s.,\-+_:;!?*()\[\]'"]+$/;
   const invalidRegex = /[^a-zA-Z0-9\s.,\-+_:;!?—*'"%&#()\[\]]+/g;
 
+
+
   const handleChange = useCallback((event: FormEvent) => {
       const {value} = event.target as HTMLInputElement;
+
+
+      console.log('nuuuu ', name, value, type, onlyWholeNumbers)
+
       if (onChange) {
           if (onlyAllowedSymbols) {
               const sanitizedValue = value.replace(invalidRegex, '');
               onChange(sanitizedValue);
+          // } else if (type==='number' && onlyWholeNumbers) {
+          //     const newValue = value.replace(/\D/g, "");
+          //     onChange(newValue);
           } else onChange(value);
       }
   } ,[] )
@@ -44,6 +54,11 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
   }
 
   const curVal = (type === 'number') ? value as number : type=== 'date' ? (getDate(value as string)) : value as string;
+
+  const onLeyDownFn = (e) => {
+      e.key === 'Enter' && e.preventDefault();
+      onlyWholeNumbers && (e.key === '.' || e.key === ',') && e.preventDefault();
+  }
 
   return (
     <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
@@ -57,7 +72,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
                 onChange={handleChange}
                 value={curVal || ""}
                 disabled={disabled}
-                onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                onKeyDown={onLeyDownFn}
                 {...otherProps}
                 autoComplete="new-user-email"
                 aria-autocomplete='none'

@@ -30,7 +30,7 @@ const formComponentsMap = {
 
 
 const FieldBuilder = forwardRef<any, FormBuilderType>(
-    ({ fieldType, isDisplayed = true, ...otherProps }, ref) => {
+    ({ fieldType, isDisplayed = true, type, ...otherProps }, ref) => {
       if (!isDisplayed) return null;
 
       const Component = formComponentsMap[fieldType as keyof typeof formComponentsMap];
@@ -41,6 +41,7 @@ const FieldBuilder = forwardRef<any, FormBuilderType>(
           <Component
               ref={ref as any}  // Using `any` to bypass strict typing
               {...otherProps}
+              type={fieldType===FormFieldTypes.NUMBER ? 'number' : type}
           />
       );
     }

@@ -391,6 +391,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                 <FieldBuilder
                                     name={`products.${index}.quantityPlan`}
                                     fieldType={FormFieldTypes.NUMBER}
+                                    type={'number'}
                                     {...field}
                                     disabled={isDisabled}
                                     errorMessage={error?.message}
@@ -401,11 +402,16 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                         // updateTotalProducts();
                                         setQuantityActual(record, index);
                                     }}
+                                    onlyWholeNumbers={true}
                                     classNames={!isQuantityActualHidden && record.quantity !==record.quantityPlan ? 'highlight-error' : ''}
                                 />
                             </div>
                         )}
-                        rules={{ required: 'filed is required' }}
+                        rules={{ required: 'filed is required',
+                            pattern: {
+                                value: /^\d+$/, // Allows only digits (0-9)
+                                message: "Only whole numbers are allowed",
+                            },}}
                     />
                 ),
             },
