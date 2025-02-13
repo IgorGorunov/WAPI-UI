@@ -96,12 +96,17 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const isOutboundOrStockMovement = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT;
 
     //
-    const {visitedStockMovements, setStockMovementsAsVisited, addInboundsNumber} = useHintsTracking();
+    const {visitedStockMovements, setStockMovementsAsVisited, addInboundsNumber, cancelHintsNumber, addCancelHintsNumber} = useHintsTracking();
 
     const [showHintQuestion, setShowHintQuestion] = useState(false);
+    const handleCancelHints = () => {
+        setShowHintQuestion(false);
+        addCancelHintsNumber();
+
+    }
     const [showAllHints, setShowAllHints] = useState(false);
     useEffect(() => {
-        if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !visitedStockMovements) {
+        if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !visitedStockMovements && cancelHintsNumber<2) {
             setShowHintQuestion(true);
         }
     }, []);
@@ -1085,7 +1090,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             onOk={handleConfirmCancelDoc}
             onCancel={()=>setShowConfirmModal(false)}
         />}
-        {showHintQuestion && <HintsModal docName="Inbounds" onClose={()=>setShowHintQuestion(false)} onOk={showHints} />}
+        {showHintQuestion && <HintsModal docName="Inbounds" onClose={handleCancelHints} onOk={showHints} />}
     </div>
 }
 
