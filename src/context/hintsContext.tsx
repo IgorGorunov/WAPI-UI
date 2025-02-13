@@ -35,7 +35,7 @@ export const HintsTrackingProvider = (props: PropsWithChildren) => {
 
     const addCancelHintsNumber = () => {
         setCancelHintsNumber(prevState=>prevState+1);
-        Cookie.set('inbound-hints-cancel-number', (visitedInboundsNumber+1).toString(), { expires: 730 });
+        Cookie.set('inbound-hints-cancel-number', (cancelHintsNumber+1).toString(), { expires: 730 });
     }
 
     return (
