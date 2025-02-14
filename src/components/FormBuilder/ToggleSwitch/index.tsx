@@ -36,8 +36,11 @@ const ToggleSwitch =  forwardRef<HTMLInputElement, FieldPropsType>(({
                    onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                 />
                 <label className={`toggle-switch-label ${disabled ? 'is-disabled' : ''}`} htmlFor={`${name}-toggle`} aria-disabled={disabled}>
-                    <span className="toggle-switch-inner" />
-                    <span className="toggle-switch-switch" />
+                    <span className="toggle-switch-inner">
+                        <span className="toggle-switch-inner--before" />
+                        <span className="toggle-switch-inner--after" />
+                    </span>
+                    <span className="toggle-switch-switch"/>
                 </label>
                 <span className='toggle-switch-label-text'>{label}</span>
             </div>
