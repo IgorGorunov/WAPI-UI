@@ -204,7 +204,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                                 </div>
                             }
                         </div>
-                        <CardWithHelpIcon classNames="card ticket--files">
+                        {isTicketNew ? <> <CardWithHelpIcon classNames="card ticket--files">
                             <TutorialHintTooltip hint={TicketHints['files'] || ''} position='left' >
                                 <h3 className='ticket__block-title title-small'>
                                     <Icon name='files'/>
@@ -220,7 +220,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                                           allowOnlyFormats={['png', 'jpg', 'jpeg', 'pdf', 'xlsx']}
                                 />
                             </div>
-                        </CardWithHelpIcon>
+                        </CardWithHelpIcon></> : null}
                     </div>
                     {singleTicketData ?
                         <div key='messages-tab' className='files-tab'>
