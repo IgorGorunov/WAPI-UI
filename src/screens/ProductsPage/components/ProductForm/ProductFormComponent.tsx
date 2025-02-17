@@ -126,7 +126,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             typeOfStorage: productData?.typeOfStorage || '',
             salesPackingMaterial : productData?.salesPackingMaterial || '',
             specialTemperatureControl: productData?.specialTemperatureControl || '',
-            specialDeliveryStorageRequest: productData?.specialDeliveryOrStorageRequirements || '',
+            specialDeliveryOrStorageRequirements: productData?.specialDeliveryOrStorageRequirements || '',
             whoProvidesPackagingMaterial: productData?.whoProvideExtraPacking || '',
             expiringTerm: productData?.expiringTerm || '',
             liquid: productData?.liquid,

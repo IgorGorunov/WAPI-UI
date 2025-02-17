@@ -160,7 +160,7 @@ export type SingleProductFormType = {
     purchaseValue: number;
     salesPackingMaterial: string;
     sku: string;
-    specialDeliveryStorageRequest: string;
+    specialDeliveryOrStorageRequirements: string;
     specialTemperatureControl: string;
     typeOfStorage: string;
     unitOfMeasure: string;

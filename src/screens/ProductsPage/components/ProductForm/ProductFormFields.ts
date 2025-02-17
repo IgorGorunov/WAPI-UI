@@ -213,7 +213,7 @@ export const FormFieldsWarehouse = ({
         {
             fieldType: FormFieldTypes.SELECT,
             type: "text",
-            name: 'specialDeliveryStorageRequest',
+            name: 'specialDeliveryOrStorageRequirements',
             label: "Extra packing material needed?",//"Special delivery / storage request",
             placeholder: '',
             options: specialDeliveryOrStorageRequirements,
