@@ -29,9 +29,18 @@ export type TicketType = {
     fulfillmentCountryReceiver: string | null;
 }
 
+export type TicketTopicType = {
+    topic: string;
+    AP: boolean;
+    FF: boolean;
+    Movements: boolean;
+    Products: boolean;
+}
+
 export type TicketParamsType = {
     statuses: string[];
     topics: string[];
+    topicsVisibleParam: TicketTopicType[];
 }
 
 export type SingleTicketType = {
@@ -69,6 +78,7 @@ export enum TICKET_OBJECT_TYPES {
     Inbound ='Inbound',
     Outbound = 'Outbound',
     StockMovement = 'StockMovement',
+    LogisticService = 'LogisticService',
     Product = 'Product',
     Ticket = 'Ticket',
 }

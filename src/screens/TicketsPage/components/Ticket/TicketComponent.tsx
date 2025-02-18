@@ -3,7 +3,7 @@ import "./styles.scss";
 import {ApiResponseType} from "@/types/api";
 import {createTicket, reopenTicket} from "@/services/tickets";
 import useAuth from "@/context/authContext";
-import {SingleTicketType, TicketParamsType} from "@/types/tickets";
+import {SingleTicketType, TICKET_OBJECT_TYPES, TicketParamsType} from "@/types/tickets";
 import Loader from "@/components/Loader";
 import {ToastContainer} from "@/components/Toast";
 import Tabs from "@/components/Tabs";
@@ -88,8 +88,37 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
     });
 
     const topicOptions = useMemo(()=>{
-        return ticketParams && ticketParams.topics && ticketParams.topics.length ? ticketParams.topics.map(item => ({label: item, value: item})) : [];
-    },[ticketParams]);
+        console.log('subject type: ', subjectType)
+        if (!ticketParams || !ticketParams?.topicsVisibleParam) return [];
+
+        let visibleTopics = [...ticketParams?.topicsVisibleParam];
+        if (subjectType) {
+            switch (subjectType) {
+                case TICKET_OBJECT_TYPES.AmazonPrep :
+                    visibleTopics = visibleTopics.filter(item=>item.AP);
+                    break;
+                case TICKET_OBJECT_TYPES.Fullfilment :
+                    visibleTopics = visibleTopics.filter(item=>item.FF);
+                    break;
+                case TICKET_OBJECT_TYPES.StockMovement :
+                    visibleTopics = visibleTopics.filter(item=>item.Movements);
+                    break;
+                case TICKET_OBJECT_TYPES.Inbound :
+                    visibleTopics = visibleTopics.filter(item=>item.Movements);
+                    break;
+                case TICKET_OBJECT_TYPES.Outbound :
+                    visibleTopics = visibleTopics.filter(item=>item.Movements);
+                    break;
+                case TICKET_OBJECT_TYPES.LogisticService :
+                    visibleTopics = visibleTopics.filter(item=>item.Movements);
+                    break;
+                case TICKET_OBJECT_TYPES.Product :
+                    visibleTopics = visibleTopics.filter(item=>item.Products);
+                    break;
+            }
+        }
+        return visibleTopics.length ? visibleTopics.map(item => ({label: item.topic, value: item.topic})) : [];
+    },[ticketParams, subjectType]);
 
     const createTicketFields = useMemo(() => CreateTicketFields(topicOptions, subjectUuid), [topicOptions, subjectUuid]);
 
