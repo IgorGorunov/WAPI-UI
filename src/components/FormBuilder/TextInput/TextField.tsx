@@ -34,9 +34,6 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
   const handleChange = useCallback((event: FormEvent) => {
       const {value} = event.target as HTMLInputElement;
 
-
-      console.log('nuuuu ', name, value, type, onlyWholeNumbers)
-
       if (onChange) {
           if (onlyAllowedSymbols) {
               const sanitizedValue = value.replace(invalidRegex, '');

@@ -37,11 +37,18 @@
     font-size: 12px;
     font-weight: bold;
     color: var(--color-gray-blue);
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--color-gray2);
   }
 
   &__list {
     list-style: none;
+    max-height: calc(100vh - 470px);
+    overflow: hidden scroll;
+
+    @media (max-width: $mobile) {
+      max-height: calc(100vh - 420px);
+    }
+
     &-item {
       display: flex;
       font-size: 10px;

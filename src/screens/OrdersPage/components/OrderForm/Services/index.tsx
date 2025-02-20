@@ -24,7 +24,7 @@ const Services: React.FC<PropsType> = ({ services }) => {
                 <div className='column tracking-number-column'>Tracking #</div>
                 <div className='column sum-column'>Σ EUR</div>
             </div>
-            <ul className="order-service-history__list">
+            <ul className="order-service__list">
                 {services &&
                     services.map((service: OrderServiceType, index: number) => (
                         <li
