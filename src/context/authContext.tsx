@@ -210,28 +210,35 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
   const logout = () => {
     Cookie.remove('token');
+    setToken(null);
     Cookie.remove('userStatus');
+    setUserStatus(null);
     Cookie.remove('userName');
+    setUserName(null);
     //Cookie.remove('tutorialData');
     Cookie.remove('textInfo');
     //Cookie.remove('isSU);
     //setIsSuperUser(false);
     //setUserUi('');
-    Cookie.remove('isSU')
+    Cookie.remove('isSU');
+    setSuperUser(false);
     Cookie.remove('ui');
+    setUserUi('')
     Cookie.remove('WAPI_profile_info');
+    setUserInfoProfile(null);
     Cookie.remove('WAPI_navAccess');
+    setNavItemsAccess([]);
     Cookie.remove('currentDate');
 
     Cookie.remove('userBrowserInfo');
     Cookie.remove('userActions')
 
     Cookie.remove('suName');
-
+    setSuperUserName(null);
     Cookie.remove('orders-period');
 
     setNotifications(null);
-    setSuperUserName('')
+    setSuperUserName('');
   }
 
   const isAuthorizedUser = () => {
