@@ -22,20 +22,24 @@ const ToggleSwitch =  forwardRef<HTMLInputElement, FieldPropsType>(({
 
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`} position='left'>
-            <div className={`toggle-switch ${classNames ? classNames : ""} ${hideTextOnMobile ? 'hide-text-on-mobile' : ''}`}>
+            <div
+                className={`toggle-switch ${classNames ? classNames : ""} ${hideTextOnMobile ? 'hide-text-on-mobile' : ''}`}>
                 <input
-                   {...otherProps}
-                   className='toggle-switch-checkbox'
-                   type='checkbox'
-                   name={name}
-                   id={`${name}-toggle`}
-                   ref={ref}
-                   checked={!!value || checked}
-                   onChange={onChange}
-                   disabled={disabled}
-                   onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                    {...otherProps}
+                    className='toggle-switch-checkbox'
+                    type='checkbox'
+                    name={name}
+                    id={`${name}-toggle`}
+                    ref={ref}
+                    checked={!!value || checked}
+                    onChange={onChange}
+                    disabled={disabled}
+                    onKeyDown={(e) => {
+                        e.key === 'Enter' && e.preventDefault();
+                    }}
                 />
-                <label className={`toggle-switch-label ${disabled ? 'is-disabled' : ''}`} htmlFor={`${name}-toggle`} aria-disabled={disabled}>
+                <label className={`toggle-switch-label ${disabled ? 'is-disabled' : ''}`} htmlFor={`${name}-toggle`}
+                       aria-disabled={disabled}>
                     <span className="toggle-switch-inner">
                         <span className="toggle-switch-inner--before" />
                         <span className="toggle-switch-inner--after" />

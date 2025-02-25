@@ -413,7 +413,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         return [
             {
                 title: (
-                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                    <div style={{width: '30px', justifyContent: 'center', alignItems: 'center'}}>
                         <FieldBuilder
                             name={'selectedAllUnits'}
                             fieldType={FormFieldTypes.CHECKBOX}
@@ -433,14 +433,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     </div>
                 ),
                 dataIndex: 'selected',
-                width: '40px',
+                width: '30px',
                 key: 'selected',
                 render: (text, record, index) => (
                     <Controller
                         name={`products.${index}.selected`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                            <div style={{width: '30px', justifyContent: 'center', alignItems: 'center'}}>
                                 <FieldBuilder
                                     name={`products.${index}.selected`}
                                     fieldType={FormFieldTypes.CHECKBOX}
@@ -463,7 +463,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         name={`products.${index}.sku`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{maxWidth: '130px'}}>
+                            <div style={{maxWidth: '110px'}}>
                                 <FieldBuilder
                                     name={`products.${index}.sku`}
                                     fieldType={FormFieldTypes.TEXT}
@@ -522,7 +522,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         name={`products.${index}.analogue`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{maxWidth: '200px'}}>
+                            <div style={{maxWidth: '180px'}}>
                                 <FieldBuilder
                                     name={`products.${index}.analogue`}
                                     fieldType={FormFieldTypes.TEXT}
