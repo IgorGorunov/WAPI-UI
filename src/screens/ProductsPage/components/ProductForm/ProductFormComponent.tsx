@@ -167,7 +167,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         {
                             key: `unit-box-${Date.now().toString()}`,
                             selected: false,
-                            name: 'box',
+                            name: 'master carton',
                             coefficient: '',
                             width: '',
                             length: '',
@@ -275,7 +275,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             // setValue('additionalService', false);
             setValue('withoutMasterCartonData', productData?.withoutMasterCartonData);
             if (unitOfMeasures.length <=1 && !boxes.length) {
-                // append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'box', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })
+                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })
             }
         }
     }
@@ -333,7 +333,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         } else {
             onChange(val);
             if (unitOfMeasures.length <=1 && !boxes.length) {
-                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'box', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })
+                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })
             }
         }
     }
@@ -1202,7 +1202,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 <FieldBuilder
                                     fieldType={FormFieldTypes.TOGGLE}
                                     name='withoutMasterCartonData'
-                                    label="Product doesn't have box data"
+                                    label="Product doesn't have master carton data"
                                     {...field}
                                     width={WidthType.w100}
                                     errorMessage={error?.message}
@@ -1410,12 +1410,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             </div>
         </form>
         {showConfirmModal && <ConfirmModal
-            actionText={`Are you sure you want to remove data about box? It's data will be cleared and row will be removed.`}
+            actionText={`Are you sure you want to remove data about master carton? It's data will be cleared and row will be removed.`}
             onOk={handleConfirmToRemoveMasterCarton}
             onCancel={()=>setShowConfirmModal(false)}
         />}
         {showConfirmModalAdditionalService && <ConfirmModal
-            actionText={`You have a box data for this product, which will be cleared. Do you want to mark this product as Additional virtual product and clear box data?`}
+            actionText={`You have a master carton data for this product, which will be cleared. Do you want to mark this product as Additional virtual product and clear master carton data?`}
             onOk={handleConfirmAdditionalService}
             onCancel={handleCancelAdditionalService}
         />}
