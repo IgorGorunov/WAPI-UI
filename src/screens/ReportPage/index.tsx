@@ -18,7 +18,6 @@ import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
 import {formatDateToString, getLastFewDays} from "@/utils/date";
 import {DateRangeType} from "@/types/dashboard";
-import FiltersBlock from "@/components/FiltersBlock";
 import FiltersContainer from "@/components/FiltersContainer";
 import ReportTable from "./ReportTable";
 import RadioButton from "@/components/FormBuilder/RadioButton";
@@ -34,7 +33,6 @@ import {
 } from "./utils";
 
 import {Countries} from "@/types/countries";
-import CurrentFilters from "@/components/CurrentFilters";
 import RadioSwitch from "@/components/FormBuilder/RadioSwitch";
 import Icon from "@/components/Icon";
 import {Tooltip} from "antd";
@@ -44,6 +42,8 @@ import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsReports, tourGuideStepsReportsWithoutVariants} from "./reportTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import FiltersListWithOptions from "@/components/FiltersListWithOptions";
+import FiltersChosen from "@/components/FiltersChosen";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -314,6 +314,126 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
 
 
+    const reportFilters = [];
+    if (isFilterVisibleByReportType(reportType, 'country')) {
+        reportFilters.push(
+            {
+                filterTitle: 'Country',
+                icon: 'country-location',
+                isCountry: true,
+                filterDescriptions: '',
+                filterOptions: reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions,
+                filterState: filterCountry,
+                setFilterState: setFilterCountry,
+                isOpen: isOpenFilterCountry,
+                setIsOpen: setIsOpenFilterCountry,
+                onClose: ()=>setFilterCountry([]),
+                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)},
+            },
+        )
+    }
+    if (isFilterVisibleByReportType(reportType, 'receiverCountry')) {
+        reportFilters.push(
+            {
+                filterTitle: 'Country',
+                icon: 'country-in',
+                isCountry: true,
+                filterDescriptions: '',
+                filterOptions: receiverCountryOptions,
+                filterState:filterReceiverCountry,
+                setFilterState: setFilterReceiverCountry,
+                isOpen: isOpenFilterReceiverCountry,
+                setIsOpen: setIsOpenFilterReceiverCountry,
+                onClose: ()=>setFilterReceiverCountry([]),
+                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
+            },
+        )
+    }
+    if (isFilterVisibleByReportType(reportType, 'warehouse')) {
+        reportFilters.push(
+            {
+                filterTitle: 'Warehouse',
+                icon: 'warehouse',
+                filterDescriptions: '',
+                filterOptions: warehouseOptions,
+                filterState: filterWarehouse,
+                setFilterState: setFilterWarehouse,
+                isOpen: isOpenFilterWarehouse,
+                setIsOpen: setIsOpenFilterWarehouse,
+                onClose: ()=>setFilterWarehouse([]),
+                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)},
+            },
+        )
+    }
+    if (isFilterVisibleByReportType(reportType, 'courierService')) {
+        reportFilters.push(
+            {
+                filterTitle: 'Courier service',
+                icon: 'courier-service',
+                filterDescriptions: '',
+                filterOptions: courierServiceOptions,
+                filterState: filterCourierService,
+                setFilterState: setFilterCourierService,
+                isOpen: isOpenFilterCourierService,
+                setIsOpen: setIsOpenFilterCourierService,
+                onClose: ()=>setFilterCourierService([]),
+                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCourierService(true)},
+            },
+        )
+    }
+    if (isFilterVisibleByReportType(reportType, 'product')) {
+        reportFilters.push(
+            {
+                filterTitle: 'Product',
+                icon: 'package',
+                filterDescriptions: '',
+                filterOptions: productOptions,
+                filterState: filterProduct,
+                setFilterState: setFilterProduct,
+                isOpen: isOpenFilterProduct,
+                setIsOpen: setIsOpenFilterProduct,
+                onClose: ()=>setFilterProduct([]),
+                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterProduct(true)},
+            },
+        )
+    }
+    if (isFilterVisibleByReportType(reportType, 'productType')) {
+        reportFilters.push(
+            {
+                filterTitle: 'Product type',
+                icon: 'package',
+                filterDescriptions: '',
+                filterOptions:productTypeOptions,
+                filterState: filterProductType,
+                setFilterState: setFilterProductType,
+                isOpen: isOpenFilterProductType,
+                setIsOpen: setIsOpenFilterProductType,
+                onClose: ()=>setFilterProductType([]),
+                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterProductType(true)},
+            },
+        )
+    }
+    if (isFilterVisibleByReportType(reportType, 'status')) {
+        reportFilters.push(
+            {
+                filterTitle: 'Status',
+                icon: 'status',
+                filterDescriptions: '',
+                filterOptions: statusOptions,
+                filterState: filterStatus,
+                setFilterState: setFilterStatus,
+                isOpen: isOpenFilterStatus,
+                setIsOpen: setIsOpenFilterStatus,
+                onClose: () => setFilterStatus([]),
+                onClick: () => {
+                    setIsFiltersVisible(true);
+                    setIsOpenFilterStatus(true)
+                },
+            },
+        )
+    }
+
+
     useEffect(() => {
         setIsCurrentRangeChanged(true);
     }, [currentRange]);
@@ -479,13 +599,14 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                 {/* report variants */}
                 <div className='filter-info-container'>
                     <div className='current-filter-container'>
-                        <CurrentFilters title='Country' filterState={filterCountry} options={reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />
-                        <CurrentFilters title='Country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
-                        <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={warehouseOptions} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
-                        <CurrentFilters title='Courier service' filterState={filterCourierService} options={countryOptions} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierService(true)}}/>
-                        <CurrentFilters title='Product' filterState={filterProduct} options={productOptions} onClose={()=>setFilterProduct([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterProduct(true)}}/>
-                        <CurrentFilters title='Product type' filterState={filterProductType} options={productTypeOptions} onClose={()=>setFilterProductType([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterProductType(true)}}/>
-                        <CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}}/>
+                        <FiltersChosen filters={reportFilters} />
+                        {/*<CurrentFilters title='Country' filterState={filterCountry} options={reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />*/}
+                        {/*<CurrentFilters title='Country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>setFilterReceiverCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />*/}
+                        {/*<CurrentFilters title='Warehouse' filterState={filterWarehouse} options={warehouseOptions} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>*/}
+                        {/*<CurrentFilters title='Courier service' filterState={filterCourierService} options={countryOptions} onClose={()=>setFilterCourierService([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierService(true)}}/>*/}
+                        {/*<CurrentFilters title='Product' filterState={filterProduct} options={productOptions} onClose={()=>setFilterProduct([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterProduct(true)}}/>*/}
+                        {/*<CurrentFilters title='Product type' filterState={filterProductType} options={productTypeOptions} onClose={()=>setFilterProductType([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterProductType(true)}}/>*/}
+                        {/*<CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}}/>*/}
                     </div>
 
                 </div>
@@ -530,13 +651,14 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
                 </div>
 
                 <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                    {isFilterVisibleByReportType(reportType, 'country') && <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>}
-                    {isFilterVisibleByReportType(reportType, 'receiverCountry') && <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>}
-                    {isFilterVisibleByReportType(reportType, 'warehouse') && <FiltersBlock filterTitle='Warehouse' filterOptions={warehouseOptions} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>}
-                    {isFilterVisibleByReportType(reportType, 'courierService') && <FiltersBlock filterTitle='Courier service' filterOptions={courierServiceOptions} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierService} setIsOpen={setIsOpenFilterCourierService}/>}
-                    {isFilterVisibleByReportType(reportType, 'product') && <FiltersBlock filterTitle='Product' filterOptions={productOptions} filterState={filterProduct} setFilterState={setFilterProduct} isOpen={isOpenFilterProduct} setIsOpen={setIsOpenFilterProduct}/>}
-                    {isFilterVisibleByReportType(reportType, 'productType') && <FiltersBlock filterTitle='Product type' filterOptions={productTypeOptions} filterState={filterProductType} setFilterState={setFilterProductType} isOpen={isOpenFilterProductType} setIsOpen={setIsOpenFilterProductType}/>}
-                    {isFilterVisibleByReportType(reportType, 'status') && <FiltersBlock filterTitle='Status' filterOptions={statusOptions} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>}
+                    <FiltersListWithOptions filters={reportFilters} />
+                    {/*{isFilterVisibleByReportType(reportType, 'country') && <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={reportType === REPORT_TYPES.SALE_DYNAMIC ? receiverCountryOptions : countryOptions} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>}*/}
+                    {/*{isFilterVisibleByReportType(reportType, 'receiverCountry') && <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={setFilterReceiverCountry} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>}*/}
+                    {/*{isFilterVisibleByReportType(reportType, 'warehouse') && <FiltersBlock filterTitle='Warehouse' filterOptions={warehouseOptions} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>}*/}
+                    {/*{isFilterVisibleByReportType(reportType, 'courierService') && <FiltersBlock filterTitle='Courier service' filterOptions={courierServiceOptions} filterState={filterCourierService} setFilterState={setFilterCourierService} isOpen={isOpenFilterCourierService} setIsOpen={setIsOpenFilterCourierService}/>}*/}
+                    {/*{isFilterVisibleByReportType(reportType, 'product') && <FiltersBlock filterTitle='Product' filterOptions={productOptions} filterState={filterProduct} setFilterState={setFilterProduct} isOpen={isOpenFilterProduct} setIsOpen={setIsOpenFilterProduct}/>}*/}
+                    {/*{isFilterVisibleByReportType(reportType, 'productType') && <FiltersBlock filterTitle='Product type' filterOptions={productTypeOptions} filterState={filterProductType} setFilterState={setFilterProductType} isOpen={isOpenFilterProductType} setIsOpen={setIsOpenFilterProductType}/>}*/}
+                    {/*{isFilterVisibleByReportType(reportType, 'status') && <FiltersBlock filterTitle='Status' filterOptions={statusOptions} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>}*/}
                 </FiltersContainer>
 
 

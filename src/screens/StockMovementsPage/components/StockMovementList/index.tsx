@@ -12,18 +12,17 @@ import {STOCK_MOVEMENT_DOC_TYPE, StockMovementType} from "@/types/stockMovements
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, {ButtonVariant} from "@/components/Button/Button";
-import Head from "next/head";
 import {FormFieldTypes} from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
 import {Countries} from "@/types/countries";
-import CurrentFilters from "@/components/CurrentFilters";
-import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import SimplePopup from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import FiltersListWithOptions from "@/components/FiltersListWithOptions";
+import FiltersChosen from "@/components/FiltersChosen";
 
 
 type StockMovementsListType = {
@@ -254,6 +253,106 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             amount: (docs.length - calcDocsWithBooleanProperty('ticketopen', true)),
         },
     ]), [docs]);
+
+    const docFilters = [
+        {
+            filterTitle: 'Status',
+            icon: 'status',
+            filterDescriptions: '',
+            filterOptions: transformedStatuses,
+            filterState: filterStatus,
+            setFilterState: handleFilterStatusChange,
+            isOpen: isOpenFilterStatus,
+            setIsOpen: setIsOpenFilterStatus,
+            onClose: ()=>handleFilterStatusChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
+        },
+        {
+            filterTitle: 'Sender',
+            icon: 'sender',
+            filterDescriptions: '',
+            filterOptions: senderOptions,
+            filterState: filterSender,
+            setFilterState: handleFilterSenderChange,
+            isOpen: isOpenFilterSender,
+            setIsOpen: setIsOpenFilterSender,
+            onClose: ()=>handleFilterSenderChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)},
+        },
+        {
+            filterTitle: 'Sender country',
+            icon: 'country-out',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: senderCountryOptions,
+            filterState: filterSenderCountry,
+            setFilterState: handleFilterSenderCountryChange,
+            isOpen: isOpenFilterSenderCountry,
+            setIsOpen: setIsOpenFilterSenderCountry,
+            onClose: ()=>handleFilterSenderCountryChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)},
+        },
+        {
+            filterTitle: 'Receiver',
+            icon: 'package-receiver',
+            filterDescriptions: '',
+            filterOptions: receiverOptions,
+            filterState: filterReceiver,
+            setFilterState: handleFilterReceiverChange,
+            isOpen: isOpenFilterReceiver,
+            setIsOpen: setIsOpenFilterReceiver,
+            onClose: ()=>handleFilterReceiverChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiver(true)},
+        },
+        {
+            filterTitle: 'Receiver country',
+            icon: 'country-in',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: receiverCountryOptions,
+            filterState: filterReceiverCountry,
+            setFilterState: handleFilterReceiverCountryChange,
+            isOpen: isOpenFilterReceiverCountry,
+            setIsOpen: setIsOpenFilterReceiverCountry,
+            onClose: ()=>handleFilterReceiverCountryChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
+        },
+        {
+            filterTitle: 'Tickets',
+            icon: 'ticket-gray',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: hasTicketsOptions,
+            filterState: filterHasTickets,
+            setFilterState: handleFilterHasTicketsChange,
+            isOpen: isOpenFilterHasTickets,
+            setIsOpen: setIsOpenFilterHasTickets,
+            onClose: ()=>handleFilterHasTicketsChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)},
+        },
+        {
+            filterTitle: 'Tickets (open)',
+            icon: 'ticket-open',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: hasOpenTicketsOptions,
+            filterState: filterHasOpenTickets,
+            setFilterState: handleFilterHasOpenTicketsChange,
+            isOpen: isOpenFilterHasOpenTickets,
+            setIsOpen: setIsOpenFilterHasOpenTickets,
+            onClose: ()=>handleFilterHasOpenTicketsChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)},
+        },
+
+    ];
+    // <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+    // <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={handleFilterSenderChange} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
+    // <FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={handleFilterSenderCountryChange} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
+    // <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={handleFilterReceiverChange} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
+    // <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+    // <FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>
+    // <FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>
+
 
 
     const handleChangePage = (page: number) => {
@@ -586,12 +685,6 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         ];
     return (
         <div className="table">
-            <Head>
-                <title>Orders</title>
-                <meta name="orders" content="orders" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
@@ -603,13 +696,14 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Sender' filterState={filterSender} options={senderOptions} onClose={()=>handleFilterSenderChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)}}/>
-                    <CurrentFilters title='Sender country' filterState={filterSenderCountry} options={senderCountryOptions} onClose={()=>handleFilterSenderCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)}}/>
-                    <CurrentFilters title='Receiver' filterState={filterReceiver} options={receiverOptions} onClose={()=>handleFilterReceiverChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiver(true)}}/>
-                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
-                    <CurrentFilters title='Tickets' filterState={filterHasTickets} options={hasTicketsOptions} onClose={()=>handleFilterHasTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)}} />
-                    <CurrentFilters title='Open tickets' filterState={filterHasOpenTickets} options={hasOpenTicketsOptions} onClose={()=>handleFilterHasOpenTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)}} />
+                    <FiltersChosen filters={docFilters} />
+                    {/*<CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
+                    {/*<CurrentFilters title='Sender' filterState={filterSender} options={senderOptions} onClose={()=>handleFilterSenderChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)}}/>*/}
+                    {/*<CurrentFilters title='Sender country' filterState={filterSenderCountry} options={senderCountryOptions} onClose={()=>handleFilterSenderCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)}}/>*/}
+                    {/*<CurrentFilters title='Receiver' filterState={filterReceiver} options={receiverOptions} onClose={()=>handleFilterReceiverChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiver(true)}}/>*/}
+                    {/*<CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />*/}
+                    {/*<CurrentFilters title='Tickets' filterState={filterHasTickets} options={hasTicketsOptions} onClose={()=>handleFilterHasTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)}} />*/}
+                    {/*<CurrentFilters title='Open tickets' filterState={filterHasOpenTickets} options={hasOpenTicketsOptions} onClose={()=>handleFilterHasOpenTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -646,13 +740,14 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={handleFilterSenderChange} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
-                <FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={handleFilterSenderCountryChange} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
-                <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={handleFilterReceiverChange} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
-                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
-                <FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>
-                <FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>
+                <FiltersListWithOptions filters={docFilters} />
+                {/*<FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
+                {/*<FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={handleFilterSenderChange} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>*/}
+                {/*<FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={handleFilterSenderCountryChange} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>*/}
+                {/*<FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={handleFilterReceiverChange} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />*/}
+                {/*<FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
+                {/*<FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>*/}
+                {/*<FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>*/}
             </FiltersContainer>
         </div>
     );

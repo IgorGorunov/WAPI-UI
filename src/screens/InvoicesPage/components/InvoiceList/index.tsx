@@ -20,14 +20,14 @@ import {FormFieldTypes} from "@/types/forms";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import SearchField from "@/components/SearchField";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import CurrentFilters from "@/components/CurrentFilters";
-import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import {FILTER_TYPE} from "@/types/utility";
 import DateInput from "@/components/DateInput";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import FiltersListWithOptions from "@/components/FiltersListWithOptions";
+import FiltersChosen from "@/components/FiltersChosen";
 
 
 export const StatusColors = {
@@ -105,7 +105,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         return Array.from(new Set(statuses)).filter(status => status).sort();
     }, [invoices]);
     uniqueStatuses.sort();
-    const transformedWarehouses = useMemo(() => ([
+    const transformedStatuses = useMemo(() => ([
         ...uniqueStatuses.map(status => ({
             value: status,
             label: status,
@@ -123,6 +123,22 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
 
     const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+
+    const invoiceFilters = [
+        {
+            filterTitle: 'Status',
+            icon: 'status',
+            filterDescriptions: '',
+            filterType: FILTER_TYPE.COLORED_CIRCLE,
+            filterOptions: transformedStatuses,
+            filterState: filterStatus,
+            setFilterState: setFilterStatus,
+            isOpen: isOpenFilterStatus,
+            setIsOpen: setIsOpenFilterStatus,
+            onClose: ()=>setFilterStatus([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
+        },
+    ];
 
     const toggleFilters = () => {
         setIsFiltersVisible(!isFiltersVisible);
@@ -526,7 +542,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedWarehouses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
+                    <FiltersChosen filters={invoiceFilters} />
+                    {/*<CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>setFilterStatus([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -566,7 +583,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={()=>setFilterStatus([])}>
-                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedWarehouses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersListWithOptions filters={invoiceFilters} />
+                {/*<FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedWarehouses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
             </FiltersContainer>
         </div>
     );

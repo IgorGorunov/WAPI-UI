@@ -14,8 +14,6 @@ import Head from "next/head";
 import {FormFieldTypes} from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
-import FiltersBlock from "@/components/FiltersBlock";
-import CurrentFilters from "@/components/CurrentFilters";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
@@ -25,6 +23,8 @@ import {useRouter} from "next/router";
 import Icon from "@/components/Icon";
 import FiltersBlockWrapper from "@/components/FiltersBlockWrapper";
 import {Countries} from "@/types/countries";
+import FiltersListWithOptions from "@/components/FiltersListWithOptions";
+import FiltersChosen from "@/components/FiltersChosen";
 
 
 type TicketListType = {
@@ -341,6 +341,99 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     const [isOpenFilterOrderReceiverCountry, setIsOpenFilterOrderReceiverCountry] = useState(false);
     const [isOpenFilterOrderCourierService, setIsOpenFilterOrderCourierService] = useState(false);
 
+    const ticketFilters = [
+        {
+            filterTitle: 'Status',
+            icon: 'status',
+            filterDescriptions: '',
+            filterType: FILTER_TYPE.COLORED_CIRCLE,
+            filterOptions: statusOptions,
+            filterState: filterStatus,
+            setFilterState: handleFilterStatusChange,
+            isOpen: isOpenFilterStatus,
+            setIsOpen: setIsOpenFilterStatus,
+            onClose: ()=>handleFilterStatusChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
+        },
+        {
+            filterTitle: 'Topic',
+            icon: 'topic',
+            filterDescriptions: '',
+            filterOptions: topicOptions,
+            filterState: filterTopic,
+            setFilterState: handleFilterTopicChange,
+            isOpen: isOpenFilterTopic,
+            setIsOpen: setIsOpenFilterTopic,
+            onClose: ()=>handleFilterTopicChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)},
+        },
+        {
+            filterTitle: 'New messages',
+            icon: 'comment',
+            filterDescriptions: '',
+            filterOptions: newMessagesOptions,
+            filterState: filterNewMessages,
+            setFilterState: handleFilterNewMessagesChange,
+            isOpen: isOpenFilterNewMessages,
+            setIsOpen: setIsOpenFilterNewMessages,
+            onClose: ()=>handleFilterNewMessagesChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)},
+        },
+        {
+            filterTitle: 'Document type',
+            icon: 'doc-type',
+            filterDescriptions: '',
+            filterOptions: docTypeOptions,
+            filterState: filterDocType,
+            setFilterState: handleFilterDocTypeChange,
+            isOpen: isOpenFilterDocTypes,
+            setIsOpen: setIsOpenFilterDocTypes,
+            onClose: ()=>handleFilterDocTypeChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterDocTypes(true)},
+        },
+    ];
+
+        const ticketExtraFilters = [
+            {
+                filterTitle: 'Sender warehouse',
+                icon: 'warehouse',
+                filterDescriptions: '',
+                filterOptions: orderSenderWarehousesOptions,
+                filterState: filterOrderSenderWarehouse,
+                setFilterState: handleFilterOrderSenderWarehouseChange,
+                isOpen: isOpenFilterOrderSenderWarehouse,
+                setIsOpen: setIsOpenFilterOrderSenderWarehouse,
+                onClose: ()=>handleFilterOrderSenderWarehouseChange([]),
+                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterOrderSenderWarehouse(true)},
+            },
+            {
+                filterTitle: 'Receiver country',
+                icon: 'country-in',
+                isCountry: true,
+                filterDescriptions: '',
+                filterOptions: orderReceiverCountryOptions,
+                filterState: filterOrderReceiverCountry,
+                setFilterState: handleFilterOrderReceiverCountryChange,
+                isOpen: isOpenFilterOrderReceiverCountry,
+                setIsOpen: setIsOpenFilterOrderReceiverCountry,
+                onClose: ()=>handleFilterOrderReceiverCountryChange([]),
+                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterOrderReceiverCountry(true)},
+            },
+            {
+                filterTitle: 'Courier service',
+                icon: 'courier-service',
+                filterDescriptions: '',
+                filterOptions: orderCourierServiceOptions,
+                filterState: filterOrderCourierService,
+                setFilterState: handleFilterOrderCourierServiceChange,
+                isOpen: isOpenFilterOrderCourierService,
+                setIsOpen: setIsOpenFilterOrderCourierService,
+                onClose: ()=>handleFilterOrderCourierServiceChange([]),
+                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterOrderCourierService(true)},
+            },
+
+        ];
+
     const columns: TableColumnProps<TicketType>[]  = [
         {
             title: <TitleColumn title="" minWidth="5px" maxWidth="5px" contentPosition="start"/>,
@@ -555,13 +648,14 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Topic' filterState={filterTopic} options={topicOptions} onClose={()=>handleFilterTopicChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />
-                    <CurrentFilters title='New messages' filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>handleFilterNewMessagesChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />
-                    <CurrentFilters title='Document type' filterState={filterDocType} options={docTypeOptions} onClose={()=>handleFilterDocTypeChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterDocTypes(true)}} />
-                    <CurrentFilters title='Sender warehouse' options={orderSenderWarehousesOptions} filterState={filterOrderSenderWarehouse} onClose={()=>handleFilterOrderSenderWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderSenderWarehouse(true)}} />
-                    <CurrentFilters title='Receiver country' options={orderReceiverCountryOptions} filterState={filterOrderReceiverCountry} onClose={()=>handleFilterOrderReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderReceiverCountry(true)}} />
-                    <CurrentFilters title='Courier service' options={orderCourierServiceOptions} filterState={filterOrderCourierService} onClose={()=>handleFilterOrderCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderCourierService(true)}} />
+                    <FiltersChosen filters={[...ticketFilters, ...ticketExtraFilters]} />
+                    {/*<CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
+                    {/*<CurrentFilters title='Topic' filterState={filterTopic} options={topicOptions} onClose={()=>handleFilterTopicChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />*/}
+                    {/*<CurrentFilters title='New messages' filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>handleFilterNewMessagesChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />*/}
+                    {/*<CurrentFilters title='Document type' filterState={filterDocType} options={docTypeOptions} onClose={()=>handleFilterDocTypeChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterDocTypes(true)}} />*/}
+                    {/*<CurrentFilters title='Sender warehouse' options={orderSenderWarehousesOptions} filterState={filterOrderSenderWarehouse} onClose={()=>handleFilterOrderSenderWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderSenderWarehouse(true)}} />*/}
+                    {/*<CurrentFilters title='Receiver country' options={orderReceiverCountryOptions} filterState={filterOrderReceiverCountry} onClose={()=>handleFilterOrderReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderReceiverCountry(true)}} />*/}
+                    {/*<CurrentFilters title='Courier service' options={orderCourierServiceOptions} filterState={filterOrderCourierService} onClose={()=>handleFilterOrderCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderCourierService(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -600,14 +694,16 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={statusOptions} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Topic' filterOptions={topicOptions} filterState={filterTopic} setFilterState={handleFilterTopicChange} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>
-                <FiltersBlock filterTitle='New messages' filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={handleFilterNewMessagesChange} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>
-                <FiltersBlock filterTitle='Document type' filterOptions={docTypeOptions} filterState={filterDocType} setFilterState={handleFilterDocTypeChange} isOpen={isOpenFilterDocTypes} setIsOpen={setIsOpenFilterDocTypes}/>
+                <FiltersListWithOptions filters={ticketFilters} />
+                {/*<FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={statusOptions} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
+                {/*<FiltersBlock filterTitle='Topic' filterOptions={topicOptions} filterState={filterTopic} setFilterState={handleFilterTopicChange} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>*/}
+                {/*<FiltersBlock filterTitle='New messages' filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={handleFilterNewMessagesChange} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>*/}
+                {/*<FiltersBlock filterTitle='Document type' filterOptions={docTypeOptions} filterState={filterDocType} setFilterState={handleFilterDocTypeChange} isOpen={isOpenFilterDocTypes} setIsOpen={setIsOpenFilterDocTypes}/>*/}
                 <FiltersBlockWrapper title={'Fullfilment filters'}>
-                    <FiltersBlock filterTitle='Sender warehouse' filterOptions={orderSenderWarehousesOptions} filterState={filterOrderSenderWarehouse} setFilterState={handleFilterOrderSenderWarehouseChange} isOpen={isOpenFilterOrderSenderWarehouse} setIsOpen={setIsOpenFilterOrderSenderWarehouse} />
-                    <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={orderReceiverCountryOptions} filterState={filterOrderReceiverCountry} setFilterState={handleFilterOrderReceiverCountryChange} isOpen={isOpenFilterOrderReceiverCountry} setIsOpen={setIsOpenFilterOrderReceiverCountry} />
-                    <FiltersBlock filterTitle='Courier service' filterOptions={orderCourierServiceOptions} filterState={filterOrderCourierService} setFilterState={handleFilterOrderCourierServiceChange} isOpen={isOpenFilterOrderCourierService} setIsOpen={setIsOpenFilterOrderCourierService} />
+                    <FiltersListWithOptions filters={ticketExtraFilters} />
+                    {/*<FiltersBlock filterTitle='Sender warehouse' filterOptions={orderSenderWarehousesOptions} filterState={filterOrderSenderWarehouse} setFilterState={handleFilterOrderSenderWarehouseChange} isOpen={isOpenFilterOrderSenderWarehouse} setIsOpen={setIsOpenFilterOrderSenderWarehouse} />*/}
+                    {/*<FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={orderReceiverCountryOptions} filterState={filterOrderReceiverCountry} setFilterState={handleFilterOrderReceiverCountryChange} isOpen={isOpenFilterOrderReceiverCountry} setIsOpen={setIsOpenFilterOrderReceiverCountry} />*/}
+                    {/*<FiltersBlock filterTitle='Courier service' filterOptions={orderCourierServiceOptions} filterState={filterOrderCourierService} setFilterState={handleFilterOrderCourierServiceChange} isOpen={isOpenFilterOrderCourierService} setIsOpen={setIsOpenFilterOrderCourierService} />*/}
                 </FiltersBlockWrapper>
             </FiltersContainer>
         </div>

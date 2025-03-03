@@ -1,4 +1,4 @@
-interface TableObject {
+export interface TableObject {
     [key: string]: string | number;
 }
 

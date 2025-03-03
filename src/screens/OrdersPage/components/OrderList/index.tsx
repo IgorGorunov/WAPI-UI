@@ -19,13 +19,13 @@ import {FormFieldTypes} from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
 import {Countries} from "@/types/countries";
-import FiltersBlock from "@/components/FiltersBlock";
-import CurrentFilters from "@/components/CurrentFilters";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds, formatTimeStringFromString} from "@/utils/date";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import SimplePopup, {PopupItem} from "@/components/SimplePopup";
+import FiltersChosen from "@/components/FiltersChosen";
+import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 
 type OrderListType = {
     orders: OrderType[];
@@ -46,6 +46,7 @@ const pageOptions = [
     { value: '1000', label: '1000 per page' },
     { value: '1000000', label: 'All' },
 ];
+
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
@@ -546,6 +547,181 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [isOpenFilterHasOpenTickets, setIsOpenFilterHasOpenTickets] = useState(false);
     const [isOpenFilterPhotos, setIsOpenFilterPhotos] = useState(false);
 
+
+    const orderFilters = [
+        {
+            filterTitle: 'Status',
+            icon: 'status',
+            filterDescriptions: '',
+            filterOptions: transformedStatuses,
+            filterState: filterStatus,
+            setFilterState: handleFilterStatusChange,
+            isOpen: isOpenFilterStatus,
+            setIsOpen: setIsOpenFilterStatus,
+            onClose: ()=>handleFilterStatusChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
+        },
+        {
+            filterTitle: 'Trouble status',
+            icon: 'trouble',
+            filterDescriptions: 'Shows orders where the selected trouble status was the last in the trouble status list',
+            filterOptions: transformedTroubleStatuses,
+            filterState: filterTroubleStatus,
+            setFilterState: handleFilterTroubleStatusChange,
+            isOpen: isOpenFilterTroubleStatus,
+            setIsOpen: setIsOpenFilterTroubleStatus,
+            onClose: ()=>handleFilterTroubleStatusChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);},
+        },
+        {
+            filterTitle: 'Non-trouble events',
+            icon: 'event',
+            filterDescriptions: '',
+            filterOptions: transformedNonTroubleStatuses,
+            filterState: filterNonTroubleStatus,
+            setFilterState: handleFilterNonTroubleStatusChange,
+            isOpen: isOpenFilterNonTroubleStatus,
+            setIsOpen: setIsOpenFilterNonTroubleStatus,
+            onClose: ()=>handleFilterNonTroubleStatusChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);},
+        },
+        {
+            filterTitle: 'Claims',
+            icon: 'complaint',
+            filterDescriptions: '',
+            filterOptions: claimFilterOptions,
+            filterState: filterClaims,
+            setFilterState: handleFilterClaimsChange,
+            isOpen: isOpenFilterClaim,
+            setIsOpen: setIsOpenFilterClaim,
+            onClose: ()=>handleFilterClaimsChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)},
+        },
+        {
+            filterTitle: 'Order issues',
+            filterDescriptions: '',
+            icon: 'issue',
+            filterOptions: logisticCommentFilterOptions,
+            filterState: filterLogisticComment,
+            setFilterState: handleFilterLogisticCommentChange,
+            isOpen: isOpenFilterLogisticComment,
+            setIsOpen: setIsOpenFilterLogisticComment,
+            onClose: ()=>handleFilterLogisticCommentChange([]),
+            onClick: ()=>{()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}},
+        },
+        {
+            filterTitle: 'Comments to courier service',
+            icon: 'comment',
+            filterDescriptions: '',
+            filterOptions: commentToCourierServiceFilterOptions,
+            filterState: filterCommentsToCourierService,
+            setFilterState: handleFilterCommentsToCourierServiceChange,
+            isOpen: isOpenFilterCommentToCourierService,
+            setIsOpen: setIsOpenFilterCommentToCourierService,
+            onClose: ()=>handleFilterCommentsToCourierServiceChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)},
+        },
+        {
+            filterTitle: 'Self collect',
+            icon: 'self-collect',
+            filterDescriptions: '',
+            filterOptions: selfCollectFilterOptions,
+            filterState: filterSelfCollect,
+            setFilterState: handleFilterSelfCollectChange,
+            isOpen: isOpenFilterSelfCollect,
+            setIsOpen: setIsOpenFilterSelfCollect,
+            onClose: ()=>handleFilterSelfCollectChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)},
+        },
+        {
+            filterTitle: 'Sent SMS',
+            icon: 'sms',
+            filterDescriptions: '',
+            filterOptions: sentSMSFilterOptions,
+            filterState: filterSentSMS,
+            setFilterState: handleFilterSentSMSChange,
+            isOpen: isOpenFilterSentSMS,
+            setIsOpen: setIsOpenFilterSentSMS,
+            onClose: ()=>handleFilterSentSMSChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)},
+        },
+        {
+            filterTitle: 'Warehouse',
+            icon: 'warehouse',
+            filterDescriptions: '',
+            filterOptions: transformedWarehouses,
+            filterState: filterWarehouse,
+            setFilterState: handleFilterWarehouseChange,
+            isOpen: isOpenFilterWarehouse,
+            setIsOpen: setIsOpenFilterWarehouse,
+            onClose: ()=>handleFilterWarehouseChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)},
+        },
+        {
+            filterTitle: 'Courier service',
+            icon: 'courier-service',
+            filterDescriptions: '',
+            filterOptions: transformedCourierServices,
+            filterState: filterCourierService,
+            setFilterState: handleFilterCourierServiceChange,
+            isOpen: isOpenFilterCourierStatus,
+            setIsOpen: setIsOpenFilterCourierStatus,
+            onClose: ()=>handleFilterCourierServiceChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)},
+        },
+        {
+            filterTitle: 'Receiver country',
+            icon: 'country-in',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: transformedReceiverCountries,
+            filterState: filterReceiverCountry,
+            setFilterState: handleFilterReceiverCountryChange,
+            isOpen: isOpenFilterReceiverCountry,
+            setIsOpen: setIsOpenFilterReceiverCountry,
+            onClose: ()=>handleFilterReceiverCountryChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
+        },
+        {
+            filterTitle: 'Tickets',
+            icon: 'ticket-gray',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: hasTicketsOptions,
+            filterState: filterHasTickets,
+            setFilterState: handleFilterHasTicketsChange,
+            isOpen: isOpenFilterHasTickets,
+            setIsOpen: setIsOpenFilterHasTickets,
+            onClose: ()=>handleFilterHasTicketsChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)},
+        },
+        {
+            filterTitle: 'Tickets (open)',
+            icon: 'ticket-open',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: hasOpenTicketsOptions,
+            filterState: filterHasOpenTickets,
+            setFilterState: handleFilterHasOpenTicketsChange,
+            isOpen: isOpenFilterHasOpenTickets,
+            setIsOpen: setIsOpenFilterHasOpenTickets,
+            onClose: ()=>handleFilterHasOpenTicketsChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)},
+        },
+        {
+            filterTitle: 'Photos from warehouse',
+            isCountry: true,
+            icon: 'webcam',
+            filterDescriptions: '',
+            filterOptions: photoFilterOptions,
+            filterState: filterPhotos,
+            setFilterState: handleFilterPhotosChange,
+            isOpen: isOpenFilterPhotos,
+            setIsOpen: setIsOpenFilterPhotos,
+            onClose: ()=>handleFilterPhotosChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)},
+        }
+    ];
 
     useEffect(() => {
         setFilteredOrders(filteredOrders);
@@ -1092,20 +1268,21 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>handleFilterTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>
-                    <CurrentFilters title='Non-trouble events' filterState={filterNonTroubleStatus} options={transformedNonTroubleStatuses} onClose={()=>handleFilterNonTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);}}/>
-                    <CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>handleFilterClaimsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />
-                    <CurrentFilters title='Order issues' filterState={filterLogisticComment} options={logisticCommentFilterOptions} onClose={()=>handleFilterLogisticCommentChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}} />
-                    <CurrentFilters title='Comment to courier service' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>handleFilterCommentsToCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />
-                    <CurrentFilters title='Self collect' filterState={filterSelfCollect} options={selfCollectFilterOptions} onClose={()=>handleFilterSelfCollectChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)}} />
-                    <CurrentFilters title='Sent SMS' filterState={filterSentSMS} options={sentSMSFilterOptions} onClose={()=>handleFilterSentSMSChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)}} />
-                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>handleFilterWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
-                    <CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>handleFilterCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>
-                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
-                    <CurrentFilters title='Tickets' filterState={filterHasTickets} options={hasTicketsOptions} onClose={()=>handleFilterHasTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)}} />
-                    <CurrentFilters title='Open tickets' filterState={filterHasOpenTickets} options={hasOpenTicketsOptions} onClose={()=>handleFilterHasOpenTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)}} />
-                    <CurrentFilters title='Photos from warehouse' filterState={filterPhotos} options={photoFilterOptions} onClose={()=>handleFilterPhotosChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)}} />
+                    <FiltersChosen filters={orderFilters} />
+                    {/*<CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
+                    {/*<CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>handleFilterTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>*/}
+                    {/*<CurrentFilters title='Non-trouble events' filterState={filterNonTroubleStatus} options={transformedNonTroubleStatuses} onClose={()=>handleFilterNonTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);}}/>*/}
+                    {/*<CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>handleFilterClaimsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />*/}
+                    {/*<CurrentFilters title='Order issues' filterState={filterLogisticComment} options={logisticCommentFilterOptions} onClose={()=>handleFilterLogisticCommentChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}} />*/}
+                    {/*<CurrentFilters title='Comment to courier service' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>handleFilterCommentsToCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />*/}
+                    {/*<CurrentFilters title='Self collect' filterState={filterSelfCollect} options={selfCollectFilterOptions} onClose={()=>handleFilterSelfCollectChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)}} />*/}
+                    {/*<CurrentFilters title='Sent SMS' filterState={filterSentSMS} options={sentSMSFilterOptions} onClose={()=>handleFilterSentSMSChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)}} />*/}
+                    {/*<CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>handleFilterWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>*/}
+                    {/*<CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>handleFilterCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>*/}
+                    {/*<CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />*/}
+                    {/*<CurrentFilters title='Tickets' filterState={filterHasTickets} options={hasTicketsOptions} onClose={()=>handleFilterHasTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)}} />*/}
+                    {/*<CurrentFilters title='Open tickets' filterState={filterHasOpenTickets} options={hasOpenTicketsOptions} onClose={()=>handleFilterHasOpenTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)}} />*/}
+                    {/*<CurrentFilters title='Photos from warehouse' filterState={filterPhotos} options={photoFilterOptions} onClose={()=>handleFilterPhotosChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -1142,23 +1319,26 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle={'Trouble status'} filterDescriptions={'Shows orders where the selected trouble status was the last in the trouble status list'} filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={handleFilterTroubleStatusChange} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>
-                <FiltersBlock filterTitle='Non-trouble events' filterOptions={transformedNonTroubleStatuses} filterState={filterNonTroubleStatus} setFilterState={handleFilterNonTroubleStatusChange} isOpen={isOpenFilterNonTroubleStatus} setIsOpen={setIsOpenFilterNonTroubleStatus}/>
-                <FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={handleFilterClaimsChange} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>
-                <FiltersBlock filterTitle='Order issues' filterOptions={logisticCommentFilterOptions} filterState={filterLogisticComment} setFilterState={handleFilterLogisticCommentChange} isOpen={isOpenFilterLogisticComment} setIsOpen={setIsOpenFilterLogisticComment}/>
-                <FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={handleFilterCommentsToCourierServiceChange} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>
-                <FiltersBlock filterTitle='Self collect' filterOptions={selfCollectFilterOptions} filterState={filterSelfCollect} setFilterState={handleFilterSelfCollectChange} isOpen={isOpenFilterSelfCollect} setIsOpen={setIsOpenFilterSelfCollect}/>
-                <FiltersBlock filterTitle='Sent SMS' filterOptions={sentSMSFilterOptions} filterState={filterSentSMS} setFilterState={handleFilterSentSMSChange} isOpen={isOpenFilterSentSMS} setIsOpen={setIsOpenFilterSentSMS}/>
-                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={handleFilterWarehouseChange} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                <FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={handleFilterCourierServiceChange} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>
-                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
-                <FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>
-                <FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>
-                <FiltersBlock filterTitle='Photos from warehouse' filterOptions={photoFilterOptions} filterState={filterPhotos} setFilterState={handleFilterPhotosChange} isOpen={isOpenFilterPhotos} setIsOpen={setIsOpenFilterPhotos}/>
+                <FiltersListWithOptions filters={orderFilters} />
             </FiltersContainer>
         </div>
     );
 };
 
 export default React.memo(OrderList);
+
+
+{/*<FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
+{/*<FiltersBlock filterTitle={'Trouble status'} filterDescriptions={'Shows orders where the selected trouble status was the last in the trouble status list'} filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={handleFilterTroubleStatusChange} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>*/}
+{/*<FiltersBlock filterTitle='Non-trouble events' filterOptions={transformedNonTroubleStatuses} filterState={filterNonTroubleStatus} setFilterState={handleFilterNonTroubleStatusChange} isOpen={isOpenFilterNonTroubleStatus} setIsOpen={setIsOpenFilterNonTroubleStatus}/>*/}
+{/*<FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={handleFilterClaimsChange} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>*/}
+{/*<FiltersBlock filterTitle='Order issues' filterOptions={logisticCommentFilterOptions} filterState={filterLogisticComment} setFilterState={handleFilterLogisticCommentChange} isOpen={isOpenFilterLogisticComment} setIsOpen={setIsOpenFilterLogisticComment}/>*/}
+{/*<FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={handleFilterCommentsToCourierServiceChange} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>*/}
+{/*<FiltersBlock filterTitle='Self collect' filterOptions={selfCollectFilterOptions} filterState={filterSelfCollect} setFilterState={handleFilterSelfCollectChange} isOpen={isOpenFilterSelfCollect} setIsOpen={setIsOpenFilterSelfCollect}/>*/}
+{/*<FiltersBlock filterTitle='Sent SMS' filterOptions={sentSMSFilterOptions} filterState={filterSentSMS} setFilterState={handleFilterSentSMSChange} isOpen={isOpenFilterSentSMS} setIsOpen={setIsOpenFilterSentSMS}/>*/}
+{/*<FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={handleFilterWarehouseChange} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
+{/*<FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={handleFilterCourierServiceChange} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>*/}
+{/*<FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
+{/*<FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>*/}
+{/*<FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>*/}
+{/*<FiltersBlock filterTitle='Photos from warehouse' filterOptions={photoFilterOptions} filterState={filterPhotos} setFilterState={handleFilterPhotosChange} isOpen={isOpenFilterPhotos} setIsOpen={setIsOpenFilterPhotos}/>*/}

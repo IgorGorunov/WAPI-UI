@@ -4,6 +4,7 @@ import {OptionType} from "@/types/forms";
 import FilterOption from "@/components/FiltersBlock/FilterOption";
 import Accordion from "@/components/Accordion";
 import {FILTER_TYPE} from "@/types/utility";
+import {IconType} from "@/components/Icon";
 
 
 export type FiltersBlockType = {
@@ -16,9 +17,10 @@ export type FiltersBlockType = {
     isOpen?: boolean;
     setIsOpen: (val: boolean)=>void;
     isCountry?: boolean;
+    icon?: IconType;
 }
 
-const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterDescriptions='', filterOptions, filterState, setFilterState, filterType=FILTER_TYPE.CHECKBOX, isOpen=false, setIsOpen, isCountry=false}) => {
+const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterDescriptions='', filterOptions, filterState, setFilterState, filterType=FILTER_TYPE.CHECKBOX, isOpen=false, setIsOpen, isCountry=false, icon}) => {
 
     const handleOptionClick = (val: string) => {
        setFilterState((prevState: string[]) => {
@@ -39,7 +41,7 @@ const FiltersBlock: React.FC<FiltersBlockType> = ({filterTitle, filterDescriptio
 
     return (
         <div className="filter-block filter-block__wrapper">
-            <Accordion title={filterTitleWithCheckedFilters} description={filterDescriptions} isOpen={isOpen} setIsOpen={setIsOpen}>
+            <Accordion title={filterTitleWithCheckedFilters} titleIcon={icon} description={filterDescriptions} isOpen={isOpen} setIsOpen={setIsOpen}>
                 <div className='filter-block__options'>
                     <ul className='filter-block__options-list'>
                         {filterOptions.map(option => (<li key={option.value+'_'+filterTitle} className={`filter-block__options-list-item`}><FilterOption option={option} filterType={filterType} isChecked={getIsChecked(option.value, filterState)} onClick={handleOptionClick} isCountry={isCountry} extraName={filterTitle}/></li>))}

@@ -16,13 +16,12 @@ import SearchField from "@/components/SearchField";
 import {FormFieldTypes} from "@/types/forms";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import CurrentFilters from "@/components/CurrentFilters";
-import FiltersBlock from "@/components/FiltersBlock";
-import {FILTER_TYPE,} from "@/types/utility";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import SimplePopup, {PopupItem} from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import FiltersListWithOptions from "@/components/FiltersListWithOptions";
+import FiltersChosen from "@/components/FiltersChosen";
 
 type ProductListType = {
     products: ProductType[];
@@ -42,10 +41,6 @@ const statusFilter = [
     { value: 'Expired', label: 'Expired' , color: '#FF4000'},
 ];
 
-// const statusOptions = [
-//     { value: 'Draft', label: 'Draft' , color: '#FEDB4F'},
-//     { value: 'Pending', label: 'Pending (send to approve)' , color: '#FFA500'},
-// ];
 
 const extraStatusHints = {
     'Draft' : ' - needs to be send for approve',
@@ -136,13 +131,22 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         }))
     ]), [uniqueStatuses]);
 
-    // useEffect(() => {
-    //     setFilterStatus(prevState => {
-    //         return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
-    //     })
-    // }, [uniqueStatuses]);
-
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+
+    const productFilters = [
+        {
+            filterTitle: 'Status',
+            icon: 'status',
+            filterDescriptions: '',
+            filterOptions: transformedStatuses,
+            filterState: filterStatus,
+            setFilterState: handleFilterStatusChange,
+            isOpen: isOpenFilterStatus,
+            setIsOpen: setIsOpenFilterStatus,
+            onClose: ()=>handleFilterStatusChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
+        },
+    ];
 
     const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
@@ -426,14 +430,15 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters
-                        title='Status'
-                        filterState={filterStatus}
-                        options={transformedStatuses}
-                        onClose={() => handleFilterStatusChange([])} onClick={() => {
-                        setIsFiltersVisible(true);
-                        setIsOpenFilterStatus(true)
-                    }}/>
+                    <FiltersChosen filters={productFilters} />
+                    {/*<CurrentFilters*/}
+                    {/*    title='Status'*/}
+                    {/*    filterState={filterStatus}*/}
+                    {/*    options={transformedStatuses}*/}
+                    {/*    onClose={() => handleFilterStatusChange([])} onClick={() => {*/}
+                    {/*    setIsFiltersVisible(true);*/}
+                    {/*    setIsOpenFilterStatus(true)*/}
+                    {/*}}/>*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -477,10 +482,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible}
                               onClearFilters={() => handleFilterStatusChange([])}>
-                <FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE}
-                              filterOptions={transformedStatuses} filterState={filterStatus}
-                              setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus}
-                              setIsOpen={setIsOpenFilterStatus}/>
+                <FiltersListWithOptions filters={productFilters} />
+                {/*<FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE}*/}
+                {/*              filterOptions={transformedStatuses} filterState={filterStatus}*/}
+                {/*              setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus}*/}
+                {/*              setIsOpen={setIsOpenFilterStatus}/>*/}
             </FiltersContainer>
             {/*{showConfirmModal && <ModalConfirm actionText={`to change status of ${selectedProducts.length} product${selectedProducts.length>1 ?'s':''}`} onOk={handleStatusChange} onCancel={()=>setShowConfirmModal(false)} />}*/}
             {/*{showStatusModal && (modalStatusInfo.statusModalType===STATUS_MODAL_TYPES.SUCCESS || changeStatusErrors.length) && <ModalStatus {...modalStatusInfo} multipleObjectsErrorText={changeStatusErrors.map(item=>({title: `${item.product.name}:`, text: item.errors}))}/>}*/}

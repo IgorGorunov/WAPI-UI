@@ -29,11 +29,15 @@
       font-size: 14px;
       font-weight: 700;
       line-height: normal;
-      //color: var(--color-gray-blue);
-      //
-      //.is-active & {
-      //  color: var(--color-blue);
-      //}
+      display: flex;
+      align-items: center;
+
+
+      .title-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 6px;
+      }
     }
 
     &:hover {
