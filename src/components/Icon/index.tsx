@@ -97,6 +97,23 @@ import Warning from '@/assets/icons/warning.svg'
 import Shipping from '@/assets/icons/shipping.svg'
 import FAQ from '@/assets/icons/faq.svg'
 import Webcam from '@/assets/icons/webcam.svg'
+import Event from '@/assets/icons/event.svg';
+import Issue from '@/assets/icons/issue.svg';
+import Comment from '@/assets/icons/comment.svg';
+import SelfCollect from '@/assets/icons/self-collect.svg';
+import Sms from '@/assets/icons/sms.svg';
+import CourierService from '@/assets/icons/service-courier.svg';
+import CountryIn from '@/assets/icons/country-in.svg';
+import CountryOut from '@/assets/icons/country-out.svg';
+import Status from '@/assets/icons/status.svg';
+import TicketGray from '@/assets/icons/ticket-gray.svg';
+import TicketOpen from '@/assets/icons/ticket-open.svg';
+import CountryLocation from '@/assets/icons/country-location.svg';
+import Sender from '@/assets/icons/sender.svg';
+import PackageReceiver from '@/assets/icons/pachege-receiver.svg';
+import Topic from '@/assets/icons/topic.svg';
+import DocType from '@/assets/icons/document-type.svg';
+import Package from '@/assets/icons/package.svg';
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -196,6 +213,23 @@ export const icons = {
   'shipping': Shipping,
   'faq': FAQ,
   'webcam': Webcam,
+  'event': Event,
+  'issue': Issue,
+  'comment': Comment,
+  'self-collect': SelfCollect,
+  'sms': Sms,
+  'courier-service': CourierService,
+  'country-in': CountryIn,
+  'country-out': CountryOut,
+  'status': Status,
+  'ticket-gray': TicketGray,
+  'ticket-open': TicketOpen,
+  'country-location': CountryLocation,
+  'sender': Sender,
+  'package-receiver': PackageReceiver,
+  'topic': Topic,
+  'doc-type': DocType,
+  'package': Package,
 };
 
 export type IconType = keyof typeof icons;

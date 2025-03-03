@@ -25,6 +25,7 @@ import {
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import Head from "next/head";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
@@ -217,6 +218,12 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     return (
         <Layout hasHeader hasFooter>
+            <Head>
+                <title>{docNamesPlural[docType]}</title>
+                <meta name="orders" content="orders" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="icon" href="/logo.png" type="image/png"/>
+            </Head>
             <div className="stock-movement-page__container">
                 {isLoading && <Loader />}
                 <Header pageTitle={docNamesPlural[docType]} toRight needTutorialBtn >

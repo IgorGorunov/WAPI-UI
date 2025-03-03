@@ -17,14 +17,14 @@ import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import SearchField from "@/components/SearchField";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
-import CurrentFilters from "@/components/CurrentFilters";
-import FiltersBlock from "@/components/FiltersBlock";
 import {Countries} from "@/types/countries";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import SimplePopup from "@/components/SimplePopup";
+import FiltersListWithOptions from "@/components/FiltersListWithOptions";
+import FiltersChosen from "@/components/FiltersChosen";
 
 
 type AmazonPrepListType = {
@@ -155,11 +155,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         }))
     ]), [uniqueReceiverCountries]);
 
-    // useEffect(() => {
-    //     setFilterReceiverCountry(prevState => {
-    //         return [...prevState.filter(selectedValue => uniqueReceiverCountries.includes(selectedValue))];
-    //     })
-    // }, [uniqueReceiverCountries]);
+
 
     const handleClearAllFilters = () => {
         setFilterStatus([]);
@@ -170,6 +166,47 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         //close filter modal
         //setIsFiltersVisible(false);
     }
+
+
+    const orderFilters = [
+        {
+            filterTitle: 'Status',
+            icon: 'status',
+            filterDescriptions: '',
+            filterOptions: transformedStatuses,
+            filterState: filterStatus,
+            setFilterState: handleFilterStatusChange,
+            isOpen: isOpenFilterStatus,
+            setIsOpen: setIsOpenFilterStatus,
+            onClose: ()=>handleFilterStatusChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
+        },
+        {
+            filterTitle: 'Warehouse',
+            icon: 'warehouse',
+            filterDescriptions: '',
+            filterOptions: transformedWarehouses,
+            filterState: filterWarehouse,
+            setFilterState: handleFilterWarehouseChange,
+            isOpen: isOpenFilterWarehouse,
+            setIsOpen: setIsOpenFilterWarehouse,
+            onClose: ()=>handleFilterWarehouseChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)},
+        },
+        {
+            filterTitle: 'Receiver country',
+            icon: 'planet-in',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: transformedReceiverCountries,
+            filterState: filterReceiverCountry,
+            setFilterState: handleFilterReceiverCountryChange,
+            isOpen: isOpenFilterReceiverCountry,
+            setIsOpen: setIsOpenFilterReceiverCountry,
+            onClose: ()=>handleFilterReceiverCountryChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
+        },
+    ];
 
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
@@ -500,9 +537,10 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />
-                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>handleFilterWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>
-                    <CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />
+                    <FiltersChosen filters={orderFilters} />
+                    {/*<CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
+                    {/*<CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>handleFilterWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>*/}
+                    {/*<CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -540,9 +578,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
              </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={handleFilterWarehouseChange} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
+                <FiltersListWithOptions filters={orderFilters} />
             </FiltersContainer>
 
         </div>

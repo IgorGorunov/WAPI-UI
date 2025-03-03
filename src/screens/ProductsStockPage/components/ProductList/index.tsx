@@ -12,16 +12,16 @@ import Icon from "@/components/Icon";
 import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import SearchField from "@/components/SearchField";
-import CurrentFilters from "@/components/CurrentFilters";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
-import FiltersBlock from "@/components/FiltersBlock";
 import SearchContainer from "@/components/SearchContainer";
 import {Countries} from "@/types/countries";
 import FiltersContainer from "@/components/FiltersContainer";
 import SimplePopup from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import FiltersListWithOptions from "@/components/FiltersListWithOptions";
+import FiltersChosen from "@/components/FiltersChosen";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -121,6 +121,34 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     // }, [uniqueCountries]);
 
     const [isOpenFilterCountry, setIsOpenFilterCountry] = useState(false);
+
+    const productFilters = [
+        {
+            filterTitle: 'Warehouse',
+            icon: 'warehouse',
+            filterDescriptions: '',
+            filterOptions: transformedWarehouses,
+            filterState: filterWarehouse,
+            setFilterState: setFilterWarehouse,
+            isOpen: isOpenFilterWarehouse,
+            setIsOpen: setIsOpenFilterWarehouse,
+            onClose: ()=>setFilterWarehouse([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)},
+        },
+        {
+            filterTitle: 'Country',
+            icon: 'country-location',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: transformedCountries,
+            filterState: filterCountry,
+            setFilterState: setFilterCountry,
+            isOpen: isOpenFilterCountry,
+            setIsOpen: setIsOpenFilterCountry,
+            onClose: ()=>setFilterCountry([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)},
+        },
+    ];
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
     const fullTextSearchField = {
@@ -381,8 +409,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}} />
-                    <CurrentFilters title='Country' filterState={filterCountry} options={transformedCountries} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />
+                    <FiltersChosen filters={productFilters} />
+                    {/*<CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}} />*/}
+                    {/*<CurrentFilters title='Country' filterState={filterCountry} options={transformedCountries} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -422,8 +451,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>
-                <FiltersBlock filterTitle='Country' isCountry={true} filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>
+                <FiltersListWithOptions filters={productFilters} />
+                {/*<FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
+                {/*<FiltersBlock filterTitle='Country' isCountry={true} filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>*/}
             </FiltersContainer>
         </div>
     );

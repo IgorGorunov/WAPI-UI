@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import Icon from "@/components/Icon";
+import Icon, {IconType} from "@/components/Icon";
 import './styles.scss';
 
 type AccordionPropsType = {
@@ -9,9 +9,10 @@ type AccordionPropsType = {
     isOpen?: boolean;
     setIsOpen?: (val: boolean)=> void;
     classNames?: string;
+    titleIcon?: IconType;
 }
 
-const Accordion: React.FC<AccordionPropsType> = ({ title, description='', children, isOpen= false, setIsOpen, classNames='' }) => {
+const Accordion: React.FC<AccordionPropsType> = ({ title, titleIcon, description='', children, isOpen= false, setIsOpen, classNames='' }) => {
     const [isActive, setIsActive] = useState(isOpen);
     const [height, setHeight] = useState('0px');
     const [showOverflow, setShowOverflow] = useState(isOpen);
@@ -62,7 +63,10 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, description='', childr
                 onClick={toggleAccordion}
             >
                 <div className="accordion-item__title-wrapper">
-                    <p className="accordion-item__title-text">{title}</p>
+                    <p className="accordion-item__title-text">
+                        {titleIcon ? (<Icon name={titleIcon} className={'title-icon'}/>) : ''}
+                        {title}
+                    </p>
                     {description ? <p className="accordion-item__title-dscription">{description}</p> : null}
                 </div>
                 <Icon name='keyboard-arrow-up' className={`accordion-item__title-icon ${isActive ? 'active' : ''}`}/>
