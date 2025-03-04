@@ -195,7 +195,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         },
         {
             filterTitle: 'Receiver country',
-            icon: 'planet-in',
+            icon: 'country-in',//'planet-in',
             isCountry: true,
             filterDescriptions: '',
             filterOptions: transformedReceiverCountries,
