@@ -62,6 +62,7 @@ export const companyInfoFields  = [
         name: 'vatNo',
         label: "VAT No.",
         width: WidthType.w25,
+        placeholder: 'XX000000000',
         classNames: "",
         rules: {
             required: "Required field",
