@@ -17,6 +17,7 @@ import leadTutorialInfo from "@/screens/LeadPage/components/ApprovedLeadInfo/lea
 import {getImportTemplate} from "@/sanity/sanity-utils";
 import {toast} from "@/components/Toast";
 import {ImportTemplateNamesSanity} from "@/types/importFiles";
+import axios from "axios";
 
 type LegalInfoPropsType = {
     legalData: any | null;
@@ -45,15 +46,6 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
                 autoClose: 5000,
             });
         }
-        // const res = await fetch(`/Contract2024.docx`); // Adjust the path accordingly
-        // const blob = await res.blob();
-        // const url = window.URL.createObjectURL(new Blob([blob]));
-        // const a = document.createElement('a');
-        // a.href = url;
-        // a.download = 'ContractDraft.docx';
-        // document.body.appendChild(a);
-        // a.click();
-        // document.body.removeChild(a);
     }
 
     //form
@@ -61,6 +53,8 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
         control,
         handleSubmit,
         formState: { errors },
+        getValues,
+        setError,
     } = useForm(
         {
             mode: 'onSubmit',
@@ -95,7 +89,54 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
         setShowStatusModal(false);
     }, [])
 
+
+    const checkVAT = async(vat: string) => {
+        if (!vat || vat.length < 6) {
+            return {status: 'invalid'};
+        }
+
+        const countryCode = vat.slice(0,2);
+        const vatNumber = vat.slice(2);
+
+        const res = await axios.post("/api/validate-vat", {countryCode: countryCode.toString().toUpperCase(), vatNumber });
+
+        if (res.status===200 && res.data) {
+            if (res.data.valid) return {status: 'valid'};
+            if (res.data.source && !res.data.source.includes('Error')) return {status: 'invalid'};
+        }
+
+        return {status: 'error'};
+    }
+
+    const onError = async() => {
+        const curVat = getValues('vatNo');
+        if (curVat) {
+            const checkResult = await checkVAT(curVat);
+            console.log('statussss', checkResult)
+            if (checkResult) {
+                if (checkResult.status === 'invalid') {
+                    setError("vatNo", {type: "manual", message: "Please, enter valid VAT"});
+                }
+            }
+        }
+    }
+
     const onSubmitForm = async (data: LegalInfoFormType) => {
+        const curVat = data.vatNo;
+        const checkResult = await checkVAT(curVat);
+        if (checkResult) {
+            if (checkResult.status === 'invalid') {
+                setError("vatNo", { type: "manual", message: "Please, enter valid VAT" });
+                return;
+
+            } else if (checkResult.status === 'error') {
+                const errorMessages = ['We were unable to validate your VAT number. Please, try again a bit later!'];
+                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Something went wrong...`, text: errorMessages, onClose: closeErrorModal})
+                setShowStatusModal(true);
+                return;
+            }
+        }
+
         setIsLoading(true);
 
         try {
@@ -141,7 +182,7 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
                     <Button icon='download-file' iconOnTheRight onClick={handleContractDownload}>Contract sample</Button>
                 </div>
                 <div className='legal-info__form-wrapper'>
-                    <form onSubmit={handleSubmit(onSubmitForm)} autoComplete="off">
+                    <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={companyInfoFields} errors={errors} isDisabled={noLegal || isDisabled}/>
                         </div>
