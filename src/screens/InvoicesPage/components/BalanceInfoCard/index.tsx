@@ -12,6 +12,16 @@ type BalanceIfoCartPropsType = {
     cardIcons?: boolean;
 };
 
+const allAreZero = (balanceArray: BalanceInfoType[], type: string) => {
+    if (!balanceArray.length) return false;
+
+    for (let i=0; i<balanceArray.length; i++) {
+        if (balanceArray[i][type] !=0 ) return false;
+    }
+
+    return true;
+}
+
 const BalanceInfoCard: React.FC<BalanceIfoCartPropsType> = (props) => {
     const {
         title,
@@ -29,7 +39,10 @@ const BalanceInfoCard: React.FC<BalanceIfoCartPropsType> = (props) => {
         return `${currencySymbol} ${debtAmount}`;
     }
 
-    const correctBalanceArray = aggregateTableDataSimple(balanceArray, ['currency'], [type], [], []);
+    let correctBalanceArray = [...balanceArray] as BalanceInfoType[];
+    if (balanceArray.length>1 && allAreZero(balanceArray, type)) {
+        correctBalanceArray = [...aggregateTableDataSimple(balanceArray, ['currency'], [type], [], []) as BalanceInfoType[]];
+    }
 
     return (
         <div
