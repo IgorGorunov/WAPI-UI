@@ -3,6 +3,7 @@ import { BalanceInfoType } from "@/types/invoices";
 import "./styles.scss";
 import getSymbolFromCurrency from "currency-symbol-map";
 import Icon from "@/components/Icon";
+import {aggregateTableDataSimple} from "@/utils/aggregateTableWithoutPromise";
 
 type BalanceIfoCartPropsType = {
     title: string;
@@ -28,7 +29,7 @@ const BalanceInfoCard: React.FC<BalanceIfoCartPropsType> = (props) => {
         return `${currencySymbol} ${debtAmount}`;
     }
 
-
+    const correctBalanceArray = aggregateTableDataSimple(balanceArray, ['currency'], [type], [], []);
 
     return (
         <div
@@ -38,8 +39,8 @@ const BalanceInfoCard: React.FC<BalanceIfoCartPropsType> = (props) => {
                 <h4 className="title">{title}</h4>
 
                 <ul className="balance-info-card__list">
-                    {balanceArray && balanceArray.length ? (
-                        balanceArray.map((item, index) => (<li key={item.currency+"_"+index} className='balance-info-card__list-item'>{formatAmount(item[type], item.currency)}</li>))
+                    {correctBalanceArray && correctBalanceArray.length ? (
+                        correctBalanceArray.map((item, index) => (<li key={item.currency+"_"+index} className='balance-info-card__list-item'>{formatAmount(item[type] as number, item.currency as string)}</li>))
                     ): (<li className='balance-info-card__list-item'>0</li>)}
                 </ul>
             </div>
