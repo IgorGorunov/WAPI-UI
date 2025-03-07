@@ -71,6 +71,7 @@
     }
 
     &-item {
+      position: relative;
       display: block;
       margin-bottom: 4px;
       font-size: 14px;
@@ -87,6 +88,19 @@
 
       &.faqQuestionGroup {
         font-weight: bold;
+      }
+
+      &.faqItem {
+        &::before {
+          content: '';
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background-color: var(--color-blue);
+          position: absolute;
+          top: 5px;
+          left: -10px;
+        }
       }
     }
   }

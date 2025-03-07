@@ -12,7 +12,7 @@ const FilterListWithOptions: React.FC<FilterListPropsType> = ({filters}) => {
     return (
         <>
             {filters && filters.length
-                ? filters.sort((a,b)=>a.filterTitle<b.filterTitle ? -1 : 1).map(filter => <FiltersBlock {...filter} />)
+                ? filters.sort((a,b)=>a.filterTitle<b.filterTitle ? -1 : 1).map(filter => <div key={filter.filterTitle.replaceAll(' ','_')}><FiltersBlock {...filter} /></div>)
                 : null
             }
         </>

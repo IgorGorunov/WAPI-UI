@@ -11,7 +11,7 @@ const FiltersChosen: React.FC<FilterListPropsType> = ({filters}) => {
     return (
         <>
             {filters && filters.length
-                ? filters.map(filter => <CurrentFilters {...filter} />)
+                ? filters.map(filter => <div key={filter.filterTitle.replaceAll(' ','_')}><CurrentFilters {...filter} /></div>)
                 : null
             }
         </>
