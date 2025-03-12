@@ -26,6 +26,8 @@ import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import SimplePopup, {PopupItem} from "@/components/SimplePopup";
 import FiltersChosen from "@/components/FiltersChosen";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
+import useNotifications from "@/context/notificationContext";
+import {NotificationType} from "@/types/notifications";
 
 type OrderListType = {
     orders: OrderType[];
@@ -47,6 +49,13 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
+const hasCorrectNotifications = (record: OrderType, notifications: NotificationType[]) => {
+    if (record.status.toLowerCase().includes('error')) {
+        const orderNotifications = notifications.filter(item => item.objectUuid === record.uuid && !item.message.toLowerCase().includes('error'));
+        return !!orderNotifications.length;
+    }
+    return true;
+}
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
@@ -72,6 +81,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         classNames: 'full-text-search-toggle',
         hideTextOnMobile: true,
     }
+
+    //notifications
+    const {notifications} = useNotifications();
 
     const calcOrderAmount = useCallback((property: string, value: string) => {
         return orders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
@@ -1008,7 +1020,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     maxWidth="20px"
                     contentPosition="center"
                     childrenAfter ={
-                        <span style={{marginTop:'3px'}}>{record.notifications ? <Icon name="notification" />: null}</span>}
+                        <span style={{marginTop:'3px'}}>{record.notifications && hasCorrectNotifications(record, notifications) ? <Icon name="notification" />: null}</span>}
                 >
                 </TableCell>
 

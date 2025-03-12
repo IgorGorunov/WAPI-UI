@@ -13,6 +13,12 @@
     word-break: break-all;
   }
 
+  &__date {
+    display: inline-block;
+    font-size: 9px;
+    width: 90px;
+  }
+
   &__icon {
     position: absolute;
     top: 50%;
@@ -22,7 +28,7 @@
     height: 20px;
 
     svg {
-      width: 20px;
+      width: 16px;
 
       path {
         fill: var(--color-blue);
@@ -34,6 +40,15 @@
     .notification-Urgent & {
       left: 6px;
       height: 14px;
+    }
+
+    &-bell {
+      position: relative;
+
+      svg {
+        width: 30px;
+        height: 30px;
+      }
     }
   }
 
