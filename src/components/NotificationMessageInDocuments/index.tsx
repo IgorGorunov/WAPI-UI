@@ -2,7 +2,7 @@ import React from "react";
 import "./styles.scss";
 import {NOTIFICATION_TYPES} from "@/types/notifications";
 import Icon from "@/components/Icon";
-import {getNotificationIconName} from "@/components/HeaderNotifications/NotificationsBlock";
+import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 
 export type NotificationMessageInDocumentsType = {
     title?: string;
@@ -13,7 +13,7 @@ export type NotificationMessageInDocumentsType = {
 };
 
 const NotificationMessageInDocuments: React.FC<NotificationMessageInDocumentsType> = ({
-      message, type
+      message, type, period
  }) => {
 
     // const handleClose = () => {
@@ -24,10 +24,19 @@ const NotificationMessageInDocuments: React.FC<NotificationMessageInDocumentsTyp
         <div className={`document-notification-message notification-${type}`}>
             {/*{title ? <div className='document-notification-message__title'>{title}</div> : null}*/}
             {/*<div className='document-notification-message__period'>{formatDateTimeToStringWithDotWithoutSeconds(period)}</div>*/}
+            {/*<div className='document-notification-message__icon-bell'>*/}
+            {/*    <Icon name={`notification`} />*/}
+            {/*</div>*/}
             <div className='document-notification-message__icon'>
-                <Icon name={getNotificationIconName(type)} />
+                {/*<Icon name={getNotificationIconName(type)} />*/}
+                <Icon name={"notification"} />
             </div>
-            <div className='document-notification-message__message'>{message}</div>
+            <div className='document-notification-message__message'>
+                <span className='document-notification-message__date'>
+                    {formatDateTimeToStringWithDotWithoutSeconds(period)}
+                </span>
+                {message}
+            </div>
             {/*<div className='document-notification-message__close' onClick={handleClose}>*/}
             {/*    <Icon name='close'/>*/}
             {/*</div>*/}

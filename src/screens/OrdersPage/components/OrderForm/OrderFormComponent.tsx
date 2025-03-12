@@ -39,7 +39,7 @@ import Loader from "@/components/Loader";
 import Claims from "@/screens/OrdersPage/components/OrderForm/Claims";
 import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import useNotifications from "@/context/notificationContext";
-import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import {NOTIFICATION_OBJECT_TYPES, NotificationType} from "@/types/notifications";
 import SingleDocument from "@/components/SingleDocument";
 import DocumentTickets from "@/components/DocumentTickets";
 import {addCurrentTimeToDate, formatDateStringToDisplayString} from "@/utils/date";
@@ -71,6 +71,16 @@ const receiverFieldsPickUpPoint = [
     'receiverPickUpName',
     'receiverPickUpCountry'
 ];
+
+const getCorrectNotifications = (record: SingleOrderType, notifications: NotificationType[]) => {
+    const orderNotifications = notifications.filter(item => item.objectUuid === record.uuid);
+
+    console.log('noti: ', orderNotifications);
+    if (record.status.toLowerCase().includes('error')) {
+        return orderNotifications.filter(item => !item.message.toLowerCase().includes('error'));
+    }
+    return orderNotifications;
+}
 
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
     const {notifications} = useNotifications();
@@ -790,8 +800,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     //notifications
     let orderNotifications: NotificationType[] = [];
     if (orderData && orderData.uuid && notifications && notifications.length) {
-        orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
+        //orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
         // orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid)
+        orderNotifications = getCorrectNotifications(orderData, notifications);
     }
 
     //address fields
