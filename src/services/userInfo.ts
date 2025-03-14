@@ -2,12 +2,10 @@ import axios from 'axios';
 
 const LOGGING_URL = 'https://api.wapi.com/UILOG/hs/v1/UI/WriteLog'
 
-
 export type LocationType = {
     latitude: number;
     longitude: number;
 };
-
 
 // Function to get the user's IP address
 export async function getUserIP(): Promise<string> {
@@ -48,12 +46,6 @@ export async function sendUserBrowserInfo(dataToSend: SendUserBrowserInfoType): 
                 'Content-Type': 'application/json',
             },
         });
-
-        // const response = await axios.post(LOGGING_URL, {}, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        // });
 
         if (response.status === 200) {
             //console.log('User info sent successfully');
