@@ -697,7 +697,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             filterTitle: 'Tickets',
             icon: 'ticket-gray',
-            isCountry: true,
+            // isCountry: true,
             filterDescriptions: '',
             filterOptions: hasTicketsOptions,
             filterState: filterHasTickets,
@@ -710,7 +710,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             filterTitle: 'Tickets (open)',
             icon: 'ticket-open',
-            isCountry: true,
+            // isCountry: true,
             filterDescriptions: '',
             filterOptions: hasOpenTicketsOptions,
             filterState: filterHasOpenTickets,
@@ -722,7 +722,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             filterTitle: 'Photos from warehouse',
-            isCountry: true,
+            // isCountry: true,
             icon: 'webcam',
             filterDescriptions: '',
             filterOptions: photoFilterOptions,

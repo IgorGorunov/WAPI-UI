@@ -320,7 +320,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         {
             filterTitle: 'Tickets',
             icon: 'ticket-gray',
-            isCountry: true,
+            // isCountry: true,
             filterDescriptions: '',
             filterOptions: hasTicketsOptions,
             filterState: filterHasTickets,
@@ -333,7 +333,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         {
             filterTitle: 'Tickets (open)',
             icon: 'ticket-open',
-            isCountry: true,
+            // isCountry: true,
             filterDescriptions: '',
             filterOptions: hasOpenTicketsOptions,
             filterState: filterHasOpenTickets,
