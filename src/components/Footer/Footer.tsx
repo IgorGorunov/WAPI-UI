@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
             <LogoWAPI />
           </div>
           <p className="copyright">
-            ©2024 all rights reserved by – WAPI OÜ
+            ©{(new Date).getFullYear()} all rights reserved by – WAPI OÜ
           </p>
           <p className="address">
             Kadaka tee 7, Mustamae linnaosa, Tallinn, 12915 Estonia WAPI OÜ, Reg
