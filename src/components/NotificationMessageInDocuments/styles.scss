@@ -3,11 +3,14 @@
   //display: flex;
   //width: 100%;
   margin-bottom: 6px;
-  padding: 3px 25px 3px 26px;
+  padding: 3px 0 3px 36px;
   border-radius: 5px;
   //display: inline-block;
 
   &__message {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
     font-size: 12px;
     font-weight: bold;
     word-break: break-all;
@@ -15,8 +18,14 @@
 
   &__date {
     display: inline-block;
-    font-size: 9px;
-    width: 90px;
+    font-size: 10px;
+    line-height: 16px;
+    width: 92px;
+    flex: 0 0 92px;
+  }
+
+  &__text {
+    display: inline-block;
   }
 
   &__icon {
