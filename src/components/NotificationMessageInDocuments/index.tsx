@@ -32,10 +32,11 @@ const NotificationMessageInDocuments: React.FC<NotificationMessageInDocumentsTyp
                 <Icon name={"notification"} />
             </div>
             <div className='document-notification-message__message'>
+
+                <span className='document-notification-message__text'>{message}</span>
                 <span className='document-notification-message__date'>
                     {formatDateTimeToStringWithDotWithoutSeconds(period)}
                 </span>
-                {message}
             </div>
             {/*<div className='document-notification-message__close' onClick={handleClose}>*/}
             {/*    <Icon name='close'/>*/}
