@@ -35,6 +35,7 @@ export type TicketTopicType = {
     FF: boolean;
     Movements: boolean;
     Products: boolean;
+    CommonSection: boolean;
 }
 
 export type TicketParamsType = {

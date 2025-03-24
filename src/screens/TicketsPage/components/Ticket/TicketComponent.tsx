@@ -91,7 +91,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
         console.log('subject type: ', subjectType)
         if (!ticketParams || !ticketParams?.topicsVisibleParam) return [];
 
-        let visibleTopics = [...ticketParams?.topicsVisibleParam];
+        let visibleTopics = [...ticketParams?.topicsVisibleParam.filter(item=>item.CommonSection)];
         if (subjectType) {
             switch (subjectType) {
                 case TICKET_OBJECT_TYPES.AmazonPrep :
