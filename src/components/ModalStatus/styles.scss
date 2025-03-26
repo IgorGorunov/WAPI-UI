@@ -27,6 +27,10 @@
     background-color: var(--color-blue);
   }
 
+  &.warning-modal {
+    background-color: var(--color-warning);
+  }
+
   &::-webkit-scrollbar {
     width: 10px;
     margin-right: 50px;
@@ -84,6 +88,10 @@
         svg path {
           fill: var(--color-white);
         }
+      }
+
+      &.warning {
+        width: 42px;
       }
     }
   }
