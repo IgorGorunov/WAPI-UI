@@ -518,8 +518,24 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
 
             if (res && "status" in res && res?.status === 200) {
                 //success
-                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Order is successfully ${ amazonPrepOrderData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
-                setShowStatusModal(true);
+                if (res.data && 'errorMessage' in res.data) {
+                    setModalStatusInfo({
+                        statusModalType: STATUS_MODAL_TYPES.WARNING,
+                        title: "Warning",
+                        subtitle: `Please pay attention, the order has some troubles!`,
+                        text: res?.data?.errorMessage || [],
+                        onClose: closeSuccessModal
+                    })
+                    setShowStatusModal(true);
+                } else {
+                    setModalStatusInfo({
+                        statusModalType: STATUS_MODAL_TYPES.SUCCESS,
+                        title: "Success",
+                        subtitle: `Order is successfully ${amazonPrepOrderData?.uuid ? 'edited' : 'created'}!`,
+                        onClose: closeSuccessModal
+                    })
+                    setShowStatusModal(true);
+                }
 
             } else if (res && 'response' in res ) {
                 const errResponse = res.response;
@@ -527,7 +543,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                 if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Order isn't ${amazonPrepOrderData?.uuid ? 'edited' : 'created'}! There are some errors:!`, text: errorMessages, onClose: closeErrorModal})
                     setShowStatusModal(true);
                 }
             }

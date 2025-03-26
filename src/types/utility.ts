@@ -11,6 +11,7 @@ export const enum STATUS_MODAL_TYPES {
     ERROR = 'error',
     NOTIFICATION = 'notification',
     MESSAGE = 'message',
+    WARNING = 'warning',
 }
 
 export const enum SEND_COMMENT_TYPES {

@@ -29,6 +29,8 @@ const getStatusModalIconName = (statusModalType: STATUS_MODAL_TYPES) => {
             return 'error';
         case STATUS_MODAL_TYPES.NOTIFICATION:
             return 'notification';
+        case STATUS_MODAL_TYPES.WARNING:
+            return 'warning';
         default:
             return 'info';
     }
