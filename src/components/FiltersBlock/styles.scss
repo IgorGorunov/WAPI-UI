@@ -20,6 +20,11 @@
       border-bottom: 2px solid var(--border-color);
     }
 
+    .icon-marketplace,
+    .icon-package-return {
+      transform: scale(.85);
+    }
+
   }
 
   &__options {

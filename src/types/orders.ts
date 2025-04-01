@@ -83,6 +83,13 @@ export type OrderType = {
     }[];
     nonTroubleEventsExist: boolean;
     WarehouseAssemblyPhotos?: boolean;
+    returnsExist?: boolean;
+    returns?: {
+        date: string;
+        number: string;
+        status: string;
+    }[];
+    marketplace: string;
 }
 
 export type ProductInfoType = {
@@ -134,6 +141,21 @@ export type OrderServiceType = {
     service: string;
     trackingNumber: string;
     weight: number;
+}
+
+
+
+export type OrderCustomerReturnProductType = {
+    product: ProductInfoType;
+    quality: string;
+    quantity: number;
+}
+
+export type OrderCustomerReturnType = {
+    products: OrderCustomerReturnProductType[];
+    date: string;
+    number: string;
+    status: string;
 }
 
 export type SingleOrderType = {
@@ -190,6 +212,7 @@ export type SingleOrderType = {
     addressEditAllowedOnly?: boolean;
     warehouseAdditionalInfo?: string;
     warehouseAssemblyPhotos?: AttachedFilesType[];
+    customerReturns: OrderCustomerReturnType[];
 }
 
 export type OrderProductType = {

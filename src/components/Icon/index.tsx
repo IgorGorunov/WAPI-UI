@@ -114,6 +114,8 @@ import PackageReceiver from '@/assets/icons/pachege-receiver.svg';
 import Topic from '@/assets/icons/topic.svg';
 import DocType from '@/assets/icons/document-type.svg';
 import Package from '@/assets/icons/package.svg';
+import PackageReturn from '@/assets/icons/package-return.svg';
+import Marketplace from '@/assets/icons/shop-icon.svg';
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -230,6 +232,8 @@ export const icons = {
   'topic': Topic,
   'doc-type': DocType,
   'package': Package,
+  'package-return': PackageReturn,
+  'marketplace': Marketplace,
 };
 
 export type IconType = keyof typeof icons;

@@ -52,6 +52,7 @@ import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
 import {CommonHints} from "@/constants/commonHints";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ImageSlider from "@/components/ImageSlider";
+import CustomerReturns from "./CustomerReturns";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -75,7 +76,6 @@ const receiverFieldsPickUpPoint = [
 const getCorrectNotifications = (record: SingleOrderType, notifications: NotificationType[]) => {
     const orderNotifications = notifications.filter(item => item.objectUuid === record.uuid);
 
-    console.log('noti: ', orderNotifications);
     if (record.status.toLowerCase().includes('error')) {
         return orderNotifications.filter(item => !item.message.toLowerCase().includes('error'));
     }
@@ -85,8 +85,8 @@ const getCorrectNotifications = (record: SingleOrderType, notifications: Notific
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
     const {notifications} = useNotifications();
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
-    const [isLoading, setIsLoading] = useState(false);
 
+    const [isLoading, setIsLoading] = useState(false);
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
     const [isAddressAllowed, setIsAddressAllowed] = useState(!orderUuid);
     const [isAddressChange, setIsAddressChange] = useState(false);
@@ -963,7 +963,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         updateTotalProducts();
     }
 
-    const tabTitleArray =  TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length), !!(orderData?.tickets && orderData.tickets.length));
+    const tabTitleArray =  TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length), !!(orderData?.customerReturns && orderData.customerReturns.length), !!(orderData?.tickets && orderData.tickets.length));
     const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
 
     useEffect(() => {
@@ -1436,6 +1436,17 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             <Claims claims={orderData.claims}/>
                         </div>
                     </div> : null}
+                    {/*customer returns*/}
+                    {orderData?.uuid && orderData?.customerReturns.length ? <div key='customer-returns-tab' className='customer-returns-tab'>
+                        <div className="card min-height-600 order-info--customer-returns">
+                            <h3 className='order-info__block-title'>
+                                <Icon name='package-return'/>
+                                Customer returns
+                            </h3>
+                            <CustomerReturns customerReturns={orderData.customerReturns}/>
+                        </div>
+                    </div> : null}
+                    {/*-----*/}
                     {orderData?.uuid && orderData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
                         <div className="card min-height-600 order-info--tickets">
                             <h3 className='order-info__block-title'>

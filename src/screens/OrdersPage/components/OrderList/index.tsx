@@ -60,7 +60,7 @@ const hasCorrectNotifications = (record: OrderType, notifications: NotificationT
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
 
-    // const [current, setCurrent] = React.useState(1);
+   // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -414,6 +414,45 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
     ]), [orders]);
 
+    //customer returns
+    const [filterCustomerReturns, setFilterCustomerReturns] = useState<string[]>([]);
+    const handleFilterCustomerReturnsChange = (newValue: string[]) => {
+        setFilterCustomerReturns(newValue);
+        setCurrent(1);
+    }
+    const customerReturnsOptions = useMemo(() => ([
+        {
+            value: 'With customer returns',
+            label: 'With customer returns',
+            amount:  calcOrderWithBooleanProperty('returnsExist', true),
+        },
+        {
+            value: "Without customer returns",
+            label: "Without customer returns",
+            amount: (orders.length - calcOrderWithBooleanProperty('returnsExist', true)),
+        },
+    ]), [orders]);
+
+    //marketplaces
+    const [filterMarketplace, setFilterMarketplace] = useState<string[]>([]);
+    const handleFilterMarketplaceChange = (newValue: string[]) => {
+        setFilterMarketplace(newValue);
+        setCurrent(1);
+    }
+    const uniqueMarketplaces = useMemo(() => {
+        const marketplaces = orders.map(order => order.marketplace);
+        return Array.from(new Set(marketplaces)).filter(item => item).sort();
+    }, [orders]);
+    uniqueMarketplaces.sort();
+    const marketplaceOptions = useMemo(() => ([
+        ...uniqueMarketplaces.map(item => ({
+            value: item,
+            label: item,
+            amount: calcOrderAmount('marketplace', item),
+        }))
+    ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)), [uniqueMarketplaces]);
+
+
 
 
     const handleClearAllFilters = () => {
@@ -516,8 +555,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
             const matchesPhotos = !filterPhotos.length || (filterPhotos.includes('With photos') && order.WarehouseAssemblyPhotos) ||
                 (filterPhotos.includes('Without photos') && !order.WarehouseAssemblyPhotos);
+            const matchesReturns = !filterCustomerReturns.length || (filterCustomerReturns.includes('With customer returns') && order.returnsExist) ||
+                (filterCustomerReturns.includes('Without customer returns') && !order.returnsExist);
+            const matchesMarketplace = !filterMarketplace.length ||
+                filterMarketplace.map(item=>item.toLowerCase()).includes(order.marketplace.toLowerCase());
 
-            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets && matchesPhotos;
+            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets && matchesPhotos && matchesReturns && matchesMarketplace;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -526,7 +569,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos]);
+    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos, filterCustomerReturns, filterMarketplace]);
 
     // useEffect(() => {
     //     setCurrent(1)
@@ -558,6 +601,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const [isOpenFilterHasTickets, setIsOpenFilterHasTickets] = useState(false);
     const [isOpenFilterHasOpenTickets, setIsOpenFilterHasOpenTickets] = useState(false);
     const [isOpenFilterPhotos, setIsOpenFilterPhotos] = useState(false);
+    const [isOpenFilterCustomerReturns, setIsOpenFilterCustomerReturns] = useState(false);
+    const [isOpenFilterMarketplaces, setIsOpenFilterMarketplaces] = useState(false);
 
 
     const orderFilters = [
@@ -732,6 +777,32 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterPhotos,
             onClose: ()=>handleFilterPhotosChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)},
+        },
+        {
+            filterTitle: 'Customer returns',
+            // isCountry: true,
+            icon: 'package-return',
+            filterDescriptions: '',
+            filterOptions: customerReturnsOptions,
+            filterState: filterCustomerReturns,
+            setFilterState: handleFilterCustomerReturnsChange,
+            isOpen: isOpenFilterCustomerReturns,
+            setIsOpen: setIsOpenFilterCustomerReturns,
+            onClose: ()=>handleFilterCustomerReturnsChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCustomerReturns(true)},
+        },
+        {
+            filterTitle: 'Marketplaces',
+            // isCountry: true,
+            icon: 'marketplace',
+            filterDescriptions: '',
+            filterOptions: marketplaceOptions,
+            filterState: filterMarketplace,
+            setFilterState: handleFilterMarketplaceChange,
+            isOpen: isOpenFilterMarketplaces,
+            setIsOpen: setIsOpenFilterMarketplaces,
+            onClose: ()=>handleFilterMarketplaceChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterMarketplaces(true)},
         }
     ];
 
