@@ -523,7 +523,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         statusModalType: STATUS_MODAL_TYPES.WARNING,
                         title: "Warning",
                         subtitle: `Please pay attention, the order has some troubles!`,
-                        text: res?.data?.errorMessage || [],
+                        text: res.data.errorMessage,
                         onClose: closeSuccessModal
                     })
                     setShowStatusModal(true);
