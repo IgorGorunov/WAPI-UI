@@ -162,8 +162,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     },[token]);
 
     useEffect(() => {
-        if (orderData && (!isDisabled || isAddressAllowed) && orderData?.courierService) {
-            fetchPickupPointsForCreatedOrder(orderData?.courierService);
+        if (orderData && (!isDisabled || isAddressAllowed) && orderData?.preferredCourierService) {
+            fetchPickupPointsForCreatedOrder(orderData?.preferredCourierService);
             // setSelectedPickupPoint(orderData?.receiverPickUpID);
         }
     }, [isDisabled, isAddressAllowed]);
@@ -325,13 +325,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             if (orderData && orderData.addressEditAllowedOnly) {
                 if (orderData.receiverPickUpCountry) {
                     //filter by this country
-                    return curPickupPoints.filter(item=>item.country==orderData.receiverPickUpCountry).map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
+                    return curPickupPoints.filter(item=>item.country==orderData.receiverPickUpCountry).map((item: PickupPointsType)=>{return {label:`${item.id} (${item.description})`, value: item.id} as OptionType})
                 } else if (orderData.receiverCountry) {
                     //filter by receiverCountry
-                    return curPickupPoints.filter(item=>item.country==orderData.receiverCountry).map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
+                    return curPickupPoints.filter(item=>item.country==orderData.receiverCountry).map((item: PickupPointsType)=>{return {label:`${item.id} (${item.description})`, value: item.id} as OptionType})
                 }
             }
-            return curPickupPoints.map((item: PickupPointsType)=>{return {label:item.id, value: item.id} as OptionType})
+            return curPickupPoints.map((item: PickupPointsType)=>{return {label:`${item.id} (${item.description})`, value: item.id} as OptionType})
         }
         return [];
     }, [orderData]);
@@ -351,6 +351,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 setValue('receiverPickUpCountry', pickupPoints[0].country );
                 setValue('receiverPickUpCity', pickupPoints[0].city );
                 setValue('receiverPickUpAddress', pickupPoints[0].address );
+                setValue('receiverPickUpDescription', pickupPoints[0].description );
             }
         }
     }, [selectedPickupPoint]);
@@ -361,6 +362,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         setValue('receiverPickUpCountry', '');
         setValue('receiverPickUpCity', '');
         setValue('receiverPickUpAddress', '');
+        setValue('receiverPickUpDescription', '');
     }, []);
 
 
@@ -900,7 +902,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const generalFields = useMemo(()=> GeneralFields(!orderData?.uuid), [orderData])
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[curPickupPoints, pickupOptions, countries, preferredWarehouse,selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields ])
-    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: ()=>{hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled()}, atLeastOneFieldIsFilled}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled])
+    const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: ()=>{hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled()}, atLeastOneFieldIsFilled}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
 
@@ -1160,7 +1162,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 sendUserBrowserInfo({...getBrowserInfo('EditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: {uuid: orderData?.uuid || ''}});
             } catch {}
         } else {
-            setIsDisabled(!(orderData?.canEdit || !orderData?.uuid))
+            setIsDisabled(!(orderData?.canEdit || !orderData?.uuid));
+
         }
     }
 
