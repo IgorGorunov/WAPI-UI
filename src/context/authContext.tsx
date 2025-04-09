@@ -36,6 +36,7 @@ export type UserAccessActionType = {
 
 export enum AccessObjectTypes {
   none = "none",
+  'Dashboard' = 'Dashboard',
   "Finances/CODReports" = "Finances/CODReports",
   "Finances/Invoices" = "Finances/Invoices",
   "Orders/AmazonPrep" = "Orders/AmazonPrep",
@@ -328,6 +329,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
     setAccessForActions(val);
   }
   const isActionIsAccessible = (objectType: string ="", action:string="" ) => {
+    console.log('121212', action, objectType);
     if (!accessForActions || !objectType || !action) return true;
     const rez = accessForActions.filter(item => item.objectType==objectType && item.action==action);
 
