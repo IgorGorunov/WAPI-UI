@@ -33,6 +33,8 @@ const DashboardPage: React.FC = () => {
 
   const { token, currentDate, isAuthorizedUser, getBrowserInfo ,superUser, ui, isActionIsAccessible, isNavItemAccessible } = useAuth();
 
+  console.log('test: ', isActionIsAccessible(AccessObjectTypes["Dashboard"], AccessActions.View), isNavItemAccessible('Dashboard'))
+
   useEffect(() => {
     if (!isAuthorizedUser) Router.push(Routes.Login);
   }, [token]);
