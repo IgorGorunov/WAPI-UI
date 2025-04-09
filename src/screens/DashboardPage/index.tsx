@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import useAuth from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {getDasboardData} from "@/services/dashboard";
 import {DashboardPeriodType, PeriodType} from "@/types/dashboard";
 import Layout from "@/components/Layout/Layout";
@@ -31,7 +31,7 @@ type pageDataType = {
 
 const DashboardPage: React.FC = () => {
 
-  const { token, currentDate, isAuthorizedUser, superUser, ui, getBrowserInfo } = useAuth();
+  const { token, currentDate, isAuthorizedUser, getBrowserInfo ,superUser, ui, isActionIsAccessible, isNavItemAccessible } = useAuth();
 
   useEffect(() => {
     if (!isAuthorizedUser) Router.push(Routes.Login);
@@ -78,13 +78,25 @@ const DashboardPage: React.FC = () => {
           sendUserBrowserInfo({...getBrowserInfo('GetDashboardData'), body: superUser && ui ? {...requestData, ui} : requestData})
         } catch {}
 
-        const res: ApiResponse = await getDasboardData(superUser && ui ? {...requestData, ui} : requestData);
+        if (isActionIsAccessible(AccessObjectTypes["Dashboard"], AccessActions.View) && isNavItemAccessible('Dashboard')) {
+          const res: ApiResponse = await getDasboardData(superUser && ui ? {...requestData, ui} : requestData);
 
-        if (res && "data" in res) {
-          setPageData(res.data);
-          setIsLoading(false);
+          if (res && "data" in res) {
+            setPageData(res.data);
+            setIsLoading(false);
+          } else {
+            console.error("API did not return expected data");
+          }
         } else {
-          console.error("API did not return expected data");
+          setPageData({
+            ordersDiagram: {},
+            gmv: {},
+            totalOrders: [],
+            ordersByStatuses: [],
+            orderByCountryArrival: [],
+            orderByCountryDeparture: [],
+          });
+          setIsLoading(false);
         }
 
       } catch (error) {
@@ -136,55 +148,58 @@ const DashboardPage: React.FC = () => {
                   setClickedPeriod={setClickedPeriod} />
             </Header>
           </div>
-          <div className="dashboard-animated-grid grid-row dashboard-grid-row">
-            <div className="width-33 dashboard-grid-col">
-              <Forecast
-                  type="GMV"
-                  amountInPeriod={!gmv?.gmvInPeriod ? 0 : gmv?.gmvInPeriod}
-                  beginOfMonth={!gmv?.gmvBEginOfMonth ? 0 : gmv?.gmvBEginOfMonth}
-                  beginOfYear={!gmv?.gmvBeginOfYear ? 0 : gmv?.gmvBeginOfYear}
-                  forecastByMonth={!gmv?.gmvForecastByMonth ? 0 : gmv?.gmvForecastByMonth}
-                  forecastByYear={!gmv?.gmvForecastByYear ? 0 : gmv?.gmvForecastByYear}
-                  //temporary
-                  isError = {false}
-                  errorMessage='This indicator is temporarily unavailable due to technical work until 22.01.2024'
-              />
-            </div>
-            <div className="width-33 dashboard-grid-col">
-              <OrderStatuses ordersByStatuses={ordersByStatuses}/>
-            </div>
-            <div className="width-33 dashboard-grid-col">
-              <Forecast
-                  type="ORDERS"
-                  amountInPeriod={!orders?.ordersInPeriod ? 0 : orders?.ordersInPeriod}
-                  beginOfMonth={!orders?.ordersInPeriod ? 0 : orders?.ordersBeginOfMonth}
-                  beginOfYear={!orders?.ordersBeginOfYear ? 0 : orders?.ordersBeginOfYear}
-                  forecastByMonth={!orders?.ordersForecastByMonth ? 0 : orders?.ordersForecastByMonth}
-                  forecastByYear={!orders?.ordersForecastByYear ? 0 : orders?.ordersForecastByYear}
-              />
-            </div>
-          </div>
-          {
-            isLoading
-                ?
-                <Diagram
-                    diagramData={null}
-                    setDiagramType={setDiagramType}
-                    diagramType={diagramType}
+          {(isActionIsAccessible(AccessObjectTypes["Dashboard"], AccessActions.View) && isNavItemAccessible('Dashboard')) ? (
+              <div>
+            <div className="dashboard-animated-grid grid-row dashboard-grid-row">
+              <div className="width-33 dashboard-grid-col">
+                <Forecast
+                    type="GMV"
+                    amountInPeriod={!gmv?.gmvInPeriod ? 0 : gmv?.gmvInPeriod}
+                    beginOfMonth={!gmv?.gmvBEginOfMonth ? 0 : gmv?.gmvBEginOfMonth}
+                    beginOfYear={!gmv?.gmvBeginOfYear ? 0 : gmv?.gmvBeginOfYear}
+                    forecastByMonth={!gmv?.gmvForecastByMonth ? 0 : gmv?.gmvForecastByMonth}
+                    forecastByYear={!gmv?.gmvForecastByYear ? 0 : gmv?.gmvForecastByYear}
+                    //temporary
+                    isError = {false}
+                    errorMessage='This indicator is temporarily unavailable due to technical work until 22.01.2024'
                 />
-                : <Diagram
-                    diagramData={pageData.ordersDiagram}
-                    setDiagramType={setDiagramType}
-                    diagramType={diagramType}
+              </div>
+              <div className="width-33 dashboard-grid-col">
+                <OrderStatuses ordersByStatuses={ordersByStatuses}/>
+              </div>
+              <div className="width-33 dashboard-grid-col">
+                <Forecast
+                    type="ORDERS"
+                    amountInPeriod={!orders?.ordersInPeriod ? 0 : orders?.ordersInPeriod}
+                    beginOfMonth={!orders?.ordersInPeriod ? 0 : orders?.ordersBeginOfMonth}
+                    beginOfYear={!orders?.ordersBeginOfYear ? 0 : orders?.ordersBeginOfYear}
+                    forecastByMonth={!orders?.ordersForecastByMonth ? 0 : orders?.ordersForecastByMonth}
+                    forecastByYear={!orders?.ordersForecastByYear ? 0 : orders?.ordersForecastByYear}
                 />
-          }
-          {
-            <OrdersByCountry
-                arrival={!orderByCountryArrival ? [] : orderByCountryArrival}
-                departure={!orderByCountryDeparture ? [] : orderByCountryDeparture}
-            />
-          }
-          {pageData && runTour && dashboardSteps ? <TourGuide steps={dashboardSteps} run={runTour} pageName={TourGuidePages.Dashboard} /> : null}
+              </div>
+            </div>
+            {
+              isLoading
+                  ?
+                  <Diagram
+                      diagramData={null}
+                      setDiagramType={setDiagramType}
+                      diagramType={diagramType}
+                  />
+                  : <Diagram
+                      diagramData={pageData.ordersDiagram}
+                      setDiagramType={setDiagramType}
+                      diagramType={diagramType}
+                  />
+            }
+            {
+              <OrdersByCountry
+                  arrival={!orderByCountryArrival ? [] : orderByCountryArrival}
+                  departure={!orderByCountryDeparture ? [] : orderByCountryDeparture}
+              />
+            }
+            {pageData && runTour && dashboardSteps ? <TourGuide steps={dashboardSteps} run={runTour} pageName={TourGuidePages.Dashboard} /> : null}
+              </div>) : null}
         </div>
 
       </Layout>
