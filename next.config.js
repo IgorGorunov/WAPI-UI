@@ -8,6 +8,7 @@ const nextConfig = {
     'rc-picker',
     'rc-tree',
     'rc-table',
+    'rc-input',
     '@ant-design/icons',
     '@ant-design/icons-svg',
   ],
