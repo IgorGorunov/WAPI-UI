@@ -275,6 +275,7 @@ export type OrderCommentType = {
         email: string;
         fullName: string;
         phone: string;
+        zip: string;
     }
     deliveryDate?:{
         date: string;

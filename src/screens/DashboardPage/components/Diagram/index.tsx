@@ -160,7 +160,7 @@ let Diagram: React.FC<DashboardDataProps> = ({
         ticks: {
           font: {
             size: 13,
-            weight: "Bold",
+            weight: "bold",
           },
           color: "#5380F5",
         },

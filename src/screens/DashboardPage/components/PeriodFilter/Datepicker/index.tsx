@@ -1,6 +1,6 @@
 import { PeriodType } from "@/types/dashboard";
 import React, { useState } from "react";
-import {DateRange} from "react-date-range";
+import { DateRange as DateRangeBase } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import Button from "@/components/Button/Button";
@@ -19,6 +19,8 @@ type DatePickerPropsType =  {
   setShowCustom: React.Dispatch<React.SetStateAction<boolean>>;
   setDiagramType: React.Dispatch<React.SetStateAction<PeriodType>>;
 };
+
+const DateRange = DateRangeBase as unknown as React.FC<any>;
 
 const Datepicker: React.FC<DatePickerPropsType> = ({
   currentPeriod,

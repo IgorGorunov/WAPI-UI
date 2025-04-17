@@ -111,7 +111,7 @@ export type SingleAmazonPrepOrderType = {
     draft?: boolean;
     carrierType?: string;
     multipleLocations?: boolean;
-    boxesType?: boolean;
+    boxesType?: string;
     tickets?: TicketType[];
     comment: string;
     warehouseStatusHistory?: AmazonPrepOrderWarehouseStatusHistoryType[];
@@ -189,12 +189,12 @@ export type SingleAmazonPrepOrderFormType = {
         key: string;
         selected: boolean;
         product: string;
-        quantity: string;
-        boxesQuantity: string;
+        quantity: number;
+        boxesQuantity: number;
     }[];
     carrierType?: string;
     multipleLocations?: boolean;
-    boxesType?: boolean;
+    boxesType?: string;
     draft?: boolean;
     attachedFiles?: AttachedFilesType[];
     comment: string;

@@ -35,7 +35,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
     //TEMPORARILY !!!
     let commentDate = addWorkingDays((orderData?.nextAvailableDayAfterDays || 0)+1, '14:00'); //14:00 added temporarily. Need data from backend
 
-    const {control, handleSubmit, formState: { errors }, watch} = useForm({
+    const {control, handleSubmit, formState: { errors }, watch} = useForm<OrderCommentType>({
         mode: 'onSubmit',
         defaultValues: {
             order: {
@@ -43,7 +43,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
             },
 
             // clientOrderID: orderData?.clientOrderID || '',
-            action: sendCommentTypeOptions[0].value,
+            action: sendCommentTypeOptions[0].value as SEND_COMMENT_TYPES,
             comment: '',
             receiver: {
                 address: orderData?.receiverAddress || '',

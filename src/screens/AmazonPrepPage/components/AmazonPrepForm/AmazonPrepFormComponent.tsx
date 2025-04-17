@@ -160,8 +160,8 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         key: `${product.product.uuid} ${Date.now().toString()}_${index}` || `product-${Date.now().toString()}_${index}`,
                         selected: false,
                         product: product.product.uuid || '',
-                        quantity: product.quantity || '',
-                        boxesQuantity: product.boxesQuantity || '',
+                        quantity: product.quantity || 0,
+                        boxesQuantity: product.boxesQuantity || 0,
                         // unitOfMeasure: product.unitOfMeasure.toLowerCase() || '',
                     }))
                 : [],
@@ -677,7 +677,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                             </Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
-                                            <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:'', boxesQuantity: ''})}>
+                                            <Button type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({ key: `product-${Date.now().toString()}`, selected: false, product: '', quantity:0, boxesQuantity: 0})}>
                                                 Add by SKU
                                             </Button>
                                         </TutorialHintTooltip>

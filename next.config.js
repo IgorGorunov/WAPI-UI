@@ -3,6 +3,17 @@ const path = require('path');
 
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: [
+    'rc-util',
+    'rc-picker',
+    'rc-tree',
+    'rc-table',
+    '@ant-design/icons',
+    '@ant-design/icons-svg',
+  ],
+  experimental: {
+    esmExternals: 'loose', // important for Vercel builds!
+  },
 
   images: {
     remotePatterns: [
@@ -52,6 +63,9 @@ const nextConfig = {
         one.issuer.and = [path.resolve(__dirname)];
       });
     });
+
+    config.resolve.extensions.push('.js', '.mjs');
+
 
     return config;
   },

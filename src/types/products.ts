@@ -130,12 +130,12 @@ export type UnitOfMeasureFormType = {
     selected?: boolean;
     isDisabled?: boolean;
     name: string;
-    coefficient: string;
-    width: string;
-    length: string;
-    height:  string;
-    weightGross: string;
-    weightNet: string;
+    coefficient: number;
+    width: number;
+    length: number;
+    height:  number;
+    weightGross: number;
+    weightNet: number;
 };
 
 export type SingleProductFormType = {
@@ -178,7 +178,7 @@ export type SingleProductFormType = {
         key: string;
         selected: boolean;
         uuid: string;
-        quantity: string;
+        quantity: number;
     }[];
     analogues: {
         key: string;
