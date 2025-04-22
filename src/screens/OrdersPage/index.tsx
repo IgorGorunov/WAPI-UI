@@ -24,7 +24,7 @@ import {ApiResponseType} from "@/types/api";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
-import Cookies from "js-cookie";
+
 
 const OrdersPage = () => {
     const Router = useRouter();
@@ -44,22 +44,23 @@ const OrdersPage = () => {
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType|null>(null);
 
     useEffect(() => {
-        const ordersPeriodFromCookie = Cookies.get('orders-period');
-        if (ordersPeriodFromCookie) {
-            const period = JSON.parse(ordersPeriodFromCookie);
-            if (period && period?.startDate && period.endDate) {
-                setCurrentPeriod({startDate: new Date(period.startDate), endDate: new Date(period.endDate)});
-                return;
-            }
-        }
+        // const ordersPeriodFromCookie = Cookies.get('orders-period');
+        // if (ordersPeriodFromCookie) {
+        //     const period = JSON.parse(ordersPeriodFromCookie);
+        //     if (period && period?.startDate && period.endDate) {
+        //         setCurrentPeriod({startDate: new Date(period.startDate), endDate: new Date(period.endDate)});
+        //         return;
+        //     }
+        // }
         const today = currentDate;
         const firstDay = getLastFewDays(today, 5);
         setCurrentPeriod({startDate: firstDay, endDate: today});
     }, []);
+
     const setCurrentPeriodFn= (period: DateRangeType) => {
         setCurrentPeriod(period);
         //const exp = new Date(new Date().getTime() + 15 * 60 * 1000);
-        Cookies.set('orders-period', JSON.stringify(period), {expires: 1/24});
+        // Cookies.set('orders-period', JSON.stringify(period), {expires: 1/24});
     }
 
     const [ordersData, setOrdersData,] = useState<any | null>(null);
