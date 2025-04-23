@@ -132,6 +132,26 @@ export const setTimeToDate = (date: Date, time: string) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hours, +minutes);
 }
 
+export const areDatesEqual = (date1: Date, date2:Date) => date1.getTime() === date2.getTime();
+
+export const getEndMonth = (date: Date) => {
+    const month = date.getMonth();
+    const month31 = [0,2,4,6,7,9,11];
+    const month30 = [3,5,8,10];
+    if (month31.includes(month)) {
+        return new Date(date.getFullYear(), month, 31);
+    } else if (month30.includes(month)) {
+        return new Date(date.getFullYear(), month, 30);
+    } else {
+        //february
+        if (date.getFullYear() % 4 === 0) {
+            return new Date(date.getFullYear(), month, 29);
+        } else {
+            return new Date(date.getFullYear(), month, 28);
+        }
+    }
+}
+
 export {
     formatDateToString,
     formatDateTimeToStringWithDot,

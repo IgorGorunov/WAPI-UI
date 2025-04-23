@@ -1,5 +1,5 @@
 import React, {useState, forwardRef, useRef} from "react";
-import { Calendar} from "react-date-range";
+import { Calendar } from 'react-date-range';
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
@@ -14,44 +14,40 @@ import {
     formatDateToDisplayStringWithTime, setTimeToDate
 } from '@/utils/date'
 import Icon from "@/components/Icon";
-import useAuth from "@/context/authContext";
-import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import useOutsideClick from "@/hooks/useOutsideClick";
+import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
 const EMPTY_DATE_AS_STRING = '0001-01-01T00:00:00';
 const EMPTY_DATE = new Date(EMPTY_DATE_AS_STRING);
 
 const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
-       classNames='',
-       name,
-       label='',
-       type='date',
-       onChange,
-       isRequired = false,
-       placeholder = '',
-       errorMessage,
-       disabled ,
-       value='',
-       rules,
-       errors,
-       width,
-       isClearable = false,
-       hint='',
-       notDisable,
-       disableWeekends = false,
-       disablePreviousDays = false,
-       disableDaysAfterToday = 0,
-       disableDaysTime = '0',
-       ...otherProps
-}, ref) => {
+                                                                          classNames='',
+                                                                          name,
+                                                                          label='',
+                                                                          type='date',
+                                                                          onChange,
+                                                                          isRequired = false,
+                                                                          placeholder = '',
+                                                                          errorMessage,
+                                                                          disabled ,
+                                                                          value='',
+                                                                          width,
+                                                                          isClearable = false,
+                                                                          hint='',
+                                                                          disableWeekends = false,
+                                                                          disablePreviousDays = false,
+                                                                          disableDaysAfterToday = 0,
+                                                                          disableDaysTime = '0',
+                                                                          ...otherProps
+                                                                      }, ref) => {
 
-    const {currentDate} = useAuth();
+    // const {currentDate} = useAuth();
 
     const getDate = (dateStr: string) => {
-        return !dateStr ? currentDate : new Date(dateStr);
+        return  new Date(dateStr);
     }
 
-    const isDateEmpty = (date) => {
+    const isDateEmpty = (date: Date) => {
         return date.getFullYear() === 1;
     }
 
@@ -62,7 +58,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
     const [selectedTime, setSelectedTime] = useState(`${curDate.getHours()}:${curDate.getMinutes()}`);
 
 
-    const handleDateSelect = (date) => {
+    const handleDateSelect = (date: Date) => {
         const newDate = setTimeToDate(date, type==='date-time' ? selectedTime : `12:00`);
         setSelectedDate(newDate);
         setShowCalendar(false);
@@ -70,7 +66,10 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
         if (onChange) onChange(newDate.toISOString());
     };
 
-    const handleTimeSelect = (time: string) => {
+    const handleTimeSelect = (time: string|null) => {
+        if (!time) {
+            return;
+        }
         setSelectedTime(time);
         const newDate = setTimeToDate(selectedDate, time);
         setSelectedDate(newDate);
@@ -87,15 +86,15 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
     useOutsideClick(dateInputRef, handleCloseDatePicker);
 
     const disableDays = (date: Date) => {
-        let isDisadled = false;
+        let isDisabled = false;
         if (disableWeekends) {
             const dayOfWeek = date.getDay();
-            isDisadled = dayOfWeek === 0 || dayOfWeek === 6;
+            isDisabled = dayOfWeek === 0 || dayOfWeek === 6;
         }
         if (disablePreviousDays) {
-            isDisadled = isDisadled || date < addWorkingDays(disableDaysAfterToday, disableDaysTime);
+            isDisabled = isDisabled || date < addWorkingDays(disableDaysAfterToday, disableDaysTime);
         }
-        return isDisadled;
+        return isDisabled;
     }
 
     return (
@@ -110,7 +109,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                             </a>
                             <Calendar
                                 className='custom-calendar'
-                                date={selectedDate.getFullYear()<2000 ? currentDate : selectedDate }
+                                date={ selectedDate }
                                 onChange={handleDateSelect}
                                 showDateDisplay={false}
                                 showMonthAndYearPickers={false}
@@ -132,7 +131,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                             id={name}
                             placeholder={placeholder}
                             disabled={disabled}
-                            onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                            onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
                             {...otherProps}
                             ref={ref}
                         />
@@ -149,5 +148,8 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
         </TutorialHintTooltip>
     )
 });
+
+
+SingleDateInput.displayName = 'SingleDateInput';
 
 export default SingleDateInput;

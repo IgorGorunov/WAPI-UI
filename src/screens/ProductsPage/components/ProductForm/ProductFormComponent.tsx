@@ -119,7 +119,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             fullName: productData?.fullName || '',
             status: productData?.status || SendStatusType.DRAFT,
             countryOfOrigin: productData?.countryOfOrigin || '',
-            purchaseValue: productData?.purchaseValue || '',
+            purchaseValue: productData?.purchaseValue || 0,
             sku: productData?.sku || '',
             amazonSku: productData?.amazonSku || '',
             hsCode: productData?.hsCode || '',
@@ -128,7 +128,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             specialTemperatureControl: productData?.specialTemperatureControl || '',
             specialDeliveryOrStorageRequirements: productData?.specialDeliveryOrStorageRequirements || '',
             whoProvidesPackagingMaterial: productData?.whoProvideExtraPacking || '',
-            expiringTerm: productData?.expiringTerm || '',
+            expiringTerm: productData?.expiringTerm || 0,
             liquid: productData?.liquid,
             glass: productData?.glass,
             fragile: productData?.fragile,
@@ -145,35 +145,35 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             key: `unit-${unit.name}_${index}`,
                             selected: false,
                             name: unit.name || '',
-                            coefficient: unit.coefficient || '',
-                            width: unit.width || '',
-                            length: unit.length || '',
-                            height: unit.height || '',
-                            weightGross: unit.weightGross || '',
-                            weightNet: unit.weightNet || '',
+                            coefficient: unit.coefficient || 0,
+                            width: unit.width || 0,
+                            length: unit.length || 0,
+                            height: unit.height || 0,
+                            weightGross: unit.weightGross || 0,
+                            weightNet: unit.weightNet || 0,
                         }))
                     : [
                         {
                             key: `unit-psc-${Date.now().toString()}`,
                             selected: false,
                             name: 'pcs',
-                            coefficient: '1',
-                            width: '',
-                            length: '',
-                            height:  '',
-                            weightGross: '',
-                            weightNet: '',
+                            coefficient: 1,
+                            width: 0,
+                            length: 0,
+                            height:  0,
+                            weightGross: 0,
+                            weightNet: 0,
                         },
                         {
                             key: `unit-box-${Date.now().toString()}`,
                             selected: false,
                             name: 'master carton',
-                            coefficient: '',
-                            width: '',
-                            length: '',
-                            height:  '',
-                            weightGross: '',
-                            weightNet: '',
+                            coefficient: 0,
+                            width: 0,
+                            length: 0,
+                            height:  0,
+                            weightGross: 0,
+                            weightNet: 0,
                         }
                     ],
             barcodes:
@@ -198,10 +198,10 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                 productData && productData?.bundleKit && productData.bundleKit.length
                     ? productData.bundleKit.map((bundle, index: number) => (
                         {
-                            key: bundle || `bundle-${Date.now().toString()}_${index}`,
+                            key: bundle.uuid || `bundle-${Date.now().toString()}_${index}`,
                             selected: false,
                             uuid: bundle.uuid || '',
-                            quantity: bundle.quantity || '',
+                            quantity: bundle.quantity || 0,
                         }))
                     : [],
             analogues:
@@ -215,7 +215,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     : [],
         }
     })
-    const { append, remove: removeUnits } = useFieldArray({ control, name: 'unitOfMeasures' });
+    const { append } = useFieldArray({ control, name: 'unitOfMeasures' });
     const { append: appendBarcode, remove: removeBarcode } = useFieldArray({ control, name: 'barcodes' });
     const { append: appendAlias, remove: removeAlias } = useFieldArray({ control, name: 'aliases' });
     const { append: appendBundle, remove: removeBundle } = useFieldArray({ control, name: 'bundleKit' });
@@ -275,7 +275,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             // setValue('additionalService', false);
             setValue('withoutMasterCartonData', productData?.withoutMasterCartonData);
             if (unitOfMeasures.length <=1 && !boxes.length) {
-                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })
+                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:0, width: 0, length: 0, height: 0, weightGross:0, weightNet: 0 })
             }
         }
     }
@@ -333,7 +333,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         } else {
             onChange(val);
             if (unitOfMeasures.length <=1 && !boxes.length) {
-                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })
+                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:0, width: 0, length: 0, height: 0, weightGross:0, weightNet: 0 })
             }
         }
     }
@@ -1305,7 +1305,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
                                     <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
-                                        <Button classNames='add-bundle-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:'' })}>
+                                        <Button classNames='add-bundle-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:0 })}>
                                             Add
                                         </Button>
                                     </TutorialHintTooltip>
