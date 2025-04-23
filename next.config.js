@@ -9,8 +9,11 @@ const nextConfig = {
     'rc-tree',
     'rc-table',
     'rc-input',
+    'rc-pagination',
     '@ant-design/icons',
     '@ant-design/icons-svg',
+    'next-sanity',
+    '@portabletext/react'
   ],
   experimental: {
     esmExternals: 'loose', // important for Vercel builds!

@@ -3,6 +3,8 @@ import { FaqBlockType } from "./types/FaqTypes";
 import clientConfig from './config/client-config'
 import {imageComponentFields, tableComponentFields, textComponentFields} from "@/sanity/fragments";
 
+export const client = createClient(clientConfig);
+
 export async function getImportTemplate(templateName: string) {
     const query = `
         *[_type == "importFile" && templateName == $templateName][0]{
