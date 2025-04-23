@@ -109,7 +109,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                             </a>
                             <Calendar
                                 className='custom-calendar'
-                                date={ selectedDate }
+                                date={ isDateEmpty(selectedDate) ? new Date() : selectedDate }
                                 onChange={handleDateSelect}
                                 showDateDisplay={false}
                                 showMonthAndYearPickers={false}
