@@ -58,8 +58,6 @@ const getDocType = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
 const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, currentRange, setCurrentRange, setFilteredDocs, handleEditDoc }) => {
     const isTouchDevice = useIsTouchDevice();
 
-    console.log('tickets: ', docs.filter(item=>item.ticket));
-
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);

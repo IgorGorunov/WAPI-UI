@@ -37,7 +37,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                                                                           disableWeekends = false,
                                                                           disablePreviousDays = false,
                                                                           disableDaysAfterToday = 0,
-                                                                          disableDaysTime = '0',
+                                                                          disableDaysTime = '0', notDisable=false,
                                                                           ...otherProps
                                                                       }, ref) => {
 

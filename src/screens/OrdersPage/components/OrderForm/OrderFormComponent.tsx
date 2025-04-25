@@ -491,6 +491,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 title: 'Product*',
                 dataIndex: 'product',
                 width: '100%',
+                minWidth: 200,
                 key: 'product',
                 render: (text, record, index) => (
                     <Controller
@@ -526,8 +527,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 title: 'Analogue',
                 dataIndex: 'analogue',
                 key: 'analogue',
-                width: 200,
-                minWidth: 200,
+                width: 150,
+                minWidth: 150,
                 responsive: ['lg'] as ResponsiveBreakpoint[],
                 render: (text, record, index) => (
                     <Controller
@@ -713,7 +714,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             {
                 title: '',
                 key: 'action',
-                minWidth: 500,
+                minWidth: 50,
                 render: (text, record, index) => (
                     <button disabled={isDisabled} className='action-btn' onClick={() => removeProduct(index)}>
                         <Icon name='waste-bin' />
