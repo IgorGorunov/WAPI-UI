@@ -644,7 +644,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             {
                 title: '',
                 key: 'action',
-                minWidth: 500,
+                minWidth: 50,
                 render: (text, record, index) => (
                     <button disabled={isDisabled} className='action-btn' onClick={() => removeBarcode(index)}>
                         <Icon name='waste-bin' />
@@ -733,7 +733,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             {
                 title: '',
                 key: 'action',
-                minWidth: 500,
+                minWidth: 50,
                 render: (text, record, index) => (
                     <button disabled={isDisabled} className='action-btn' onClick={() => removeAlias(index)}>
                         <Icon name='waste-bin' />
@@ -850,7 +850,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             {
                 title: '',
                 key: 'action',
-                minWidth: 500,
+                minWidth: 50,
                 render: (text, record, index) => (
                     <button disabled={isDisabled} className='action-btn' onClick={() => removeBundle(index)}>
                         <Icon name='waste-bin' />
@@ -941,7 +941,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             {
                 title: '',
                 key: 'action',
-                minWidth: 500,
+                minWidth: 50,
                 render: (text, record, index) => (
                     <button disabled={isDisabled} className='action-btn' onClick={() => removeAnalogue(index)}>
                         <Icon name='waste-bin' />

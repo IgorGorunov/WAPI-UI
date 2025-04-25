@@ -520,7 +520,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             {
                 title: '',
                 key: 'action',
-                minWidth: 500,
+                minWidth: 50,
                 render: (text, record, index) => (
                     <button disabled={isDisabled} className='action-btn' onClick={() => removeProduct(index)}>
                         <Icon name='waste-bin' />
