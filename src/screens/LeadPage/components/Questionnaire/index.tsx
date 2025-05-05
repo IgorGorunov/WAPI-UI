@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
 import "./styles.scss";
 import {QuestionnaireFormType, QuestionnaireParamsType, UserStatusType} from "@/types/leads";
-import {useForm} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import {COUNTRIES} from "@/types/countries";
 import {
     CodField,
@@ -9,9 +9,12 @@ import {
     CompanyWebpageField,
     DimensionsField,
     PackagingField,
+    ProductTypeDescriptions_NameField,
+    ProductTypeDescriptions_LinkField,
+    ProductTypeDescriptionsFields2,
     SalesVolumePerMonthField,
     SkusField,
-    WeightField
+    WeightField, CompanyVatFields
 } from "./questionnaireFiels";
 import SingleField from "@/components/FormFieldsBlock/SingleField";
 import Checkbox from "@/components/FormBuilder/Checkbox";
@@ -24,6 +27,45 @@ import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import Router from "next/router";
 import {Routes} from "@/types/routes";
+import {FormFieldTypes, WidthType} from "@/types/forms";
+import Icon from "@/components/Icon";
+import ProductImagesWithPreview from "@/screens/LeadPage/components/Questionnaire/ProductImagesWithPreview";
+import axios from "axios";
+import {AttachedFilesType} from "@/types/utility";
+
+type ProductTypeDescriptionType = {
+    productTypeName: string;
+    productLink: string;
+    productPhoto: AttachedFilesType[],
+    hazmat: boolean;
+    hasSerialNumbers: boolean;
+    batches: boolean;
+    cbdProduct: boolean;
+    food: boolean;
+    alcohol: boolean;
+    cigarettes: boolean;
+    fragile: boolean;
+    glass: boolean;
+    flammable: boolean;
+    liquid: boolean;
+};
+
+const emptyProductTypeDescription = {
+    productTypeName: '',
+    productLink: '',
+    productPhoto: [] as AttachedFilesType[],
+    hazmat: false,
+    hasSerialNumbers: false,
+    batches: false,
+    cbdProduct: false,
+    food: false,
+    alcohol: false,
+    cigarettes: false,
+    fragile: false,
+    glass: false,
+    flammable: false,
+    liquid: false,
+} as ProductTypeDescriptionType;
 
 type QuestionnairePropsType = {
     questionnaireParams: QuestionnaireParamsType;
@@ -39,6 +81,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submitErrors, setSubmitErrors] = useState([]);
+    const [vatErrorText, setVarErrorText] = useState("");
 
     //form
     const {
@@ -46,13 +89,17 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
         handleSubmit,
         formState: { errors },
         setValue,
+        getValues,
         watch,
+        setError,
     } = useForm(
         {
             mode: 'onSubmit',
             defaultValues: {
                 companyName: '',
                 companyWebpage: '',
+                vatNo: '',
+                companyWorksWithoutVAT: false,
                 productTypes: [],
                 marketplaces: [],
                 salesVolumePerMonth: 0,
@@ -62,13 +109,19 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                 weightOfHeaviestProduct: 0,
                 additionalPackagingForLastMileDelivery: false,
                 needsCOD: false,
+                productTypeDescriptions: [{...emptyProductTypeDescription}] as ProductTypeDescriptionType[],
             }
         }
     );
 
+    const productTypeDescriptions = watch('productTypeDescriptions');
+    const { append: addProduct, remove: removeProduct } = useFieldArray({ control, name: 'productTypeDescriptions' });
+
     const checkedProductTypes = watch('productTypes');
     const checkedMarketplaces = watch('marketplaces');
     const checkedCountries = watch('targetCountries');
+    const companyWorksWithoutVAT = watch('companyWorksWithoutVAT');
+    const vatNumber = watch('vatNo');
 
     const updateCheckedValues = (checkedProperty: any, formField: any, value: string, checked: boolean) => {
         if (checked) {
@@ -78,6 +131,10 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
             //remove val
             setValue(formField, [...checkedProperty.filter(item => item !== value)]);
         }
+    }
+
+    const handleRemoveProduct = (index) => {
+        removeProduct(index);
     }
 
     useEffect(() => {
@@ -98,12 +155,56 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
     }, []);
     const closeErrorModal = useCallback(()=>{
         setShowStatusModal(false);
-    }, [])
+    }, []);
 
-    const checkValidity = () => {
+    //check VAT validity
+    const checkVAT = async(vat: string) => {
+        if (!vat || vat.length < 6) {
+            return {status: 'invalid'};
+        }
+
+        const countryCode = vat.slice(0,2);
+        const vatNumber = vat.slice(2);
+
+        const res = await axios.post("/api/validate-vat", {countryCode: countryCode.toString().toUpperCase(), vatNumber });
+
+        console.log('res:', res)
+        if (res.status===200 && res.data) {
+            if (res.data.valid) return {status: 'valid'};
+            if (res.data.source && !res.data.source.includes('Error')) return {status: 'invalid'};
+        }
+
+        return {status: 'error'};
+    }
+
+    // const productTypeDescriptionFields1 = useMemo(()=>ProductTypeDescriptionsFields1(),[]);
+    const changeProductPhotos = (index: number, files: AttachedFilesType[]) => {
+        setValue(`productTypeDescriptions.${index}.productPhoto`, files);
+    }
+
+    const checkVatNumber = (val: ChangeEvent) => {
+        const isChecked = 'checked' in val.target ?  val.target.checked as boolean : false;
+        setValue('companyWorksWithoutVAT', isChecked);
+    }
+
+    const companyVatFields = useMemo(()=>CompanyVatFields({companyWorksWithoutVAT, errorText: vatErrorText, checkVatNumber}), [companyWorksWithoutVAT, vatErrorText, checkVatNumber]);
+
+    const checkValidity = async() => {
 
         const curSubmitErrors = [];
         let isNotValid = false;
+
+        const curVat = getValues('vatNo');
+        if (curVat && !companyWorksWithoutVAT) {
+            const checkResult = await checkVAT(curVat);
+
+            if (checkResult) {
+                if (checkResult.status === 'invalid') {
+                    setError("vatNo", {type: "manual", message: "Please, enter valid VAT"});
+                }
+            }
+        }
+
         if (checkedProductTypes.length === 0) {
             isNotValid = true;
             curSubmitErrors.push('Please, choose at least one product type!');
@@ -121,8 +222,13 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
     const onSubmitForm = async (data: QuestionnaireFormType) => {
         setIsSubmitted(true);
-        if (checkValidity()) {
+        const hasErrors = await checkValidity();
+        if (hasErrors) {
             return;
+        }
+
+        if (data.companyWorksWithoutVAT) {
+            data.vatNo = '';
         }
 
         setIsLoading(true);
@@ -181,6 +287,16 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                             <SingleField key={CompanyWebpageField.name} curField={CompanyWebpageField} control={control}
                                          errors={errors}/>
 
+                            {companyVatFields.map((field, index) => (
+                                <SingleField
+                                    key={field.name + '_' + index}
+                                    curField={{
+                                        ...field,
+                                    }}
+                                    control={control}
+                                    errors={errors}
+                                />
+                            ))}
                             <ul className={`lead-questionnaire__product-types-list lead-questionnaire-list`}>
                                 <p className={`lead-questionnaire-list-title`}>
                                     Product categories *
@@ -249,9 +365,89 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
 
                         </div>
+                        <div className='product-type-descriptions'>
+                            {/*<p className="product-type-descriptions__title">*/}
+                            {/*    Please, describe types of the products you sell.*/}
+                            {/*</p>*/}
+                            <p className="product-type-descriptions__title">
+                                Please, specify each TYPE of the products you sell
+                            </p>
+                            <p className="product-type-descriptions__sub-title-description">
+                                For example, if you sell shampoos, you don't need to specify each SKU, you just need to specify one example
+                            </p>
+                            <ul className='product-type-descriptions__list'>
+                                {productTypeDescriptions.map((item, index) => (
+                                    <li className='product-type-descriptions__list-item'
+                                        key={`productTypeDescription.${index}.productTypeName-item`}>
+                                        <div className={`grid-row`}>
+                                            <SingleField
+                                                key={`productTypeDescriptions.${index}.productTypeName`}
+                                                curField={{
+                                                    ...ProductTypeDescriptions_NameField,
+                                                    name: `productTypeDescriptions.${index}.productTypeName`
+                                                }}
+                                                control={control}
+                                                errors={errors}
+                                            />
+                                            <SingleField
+                                                key={`productTypeDescriptions.${index}.productLink`}
+                                                curField={{
+                                                    ...ProductTypeDescriptions_LinkField,
+                                                    name: `productTypeDescriptions.${index}.productLink`,
+                                                    rules: {
+                                                        required: productTypeDescriptions[index].productPhoto.length
+                                                            ? false
+                                                            : 'Please, fill link to the product page or add photo of the product/product type'
+                                                    }
+                                                }}
+                                                control={control}
+                                                errors={errors}
+                                            />
+
+                                            <SingleField
+                                                key={`productTypeDescriptions.${index}.productPhoto`}
+                                                control={control}
+                                                curField={{
+                                                    name: `productTypeDescriptions.${index}.productPhoto`,
+                                                    fieldType: FormFieldTypes.OTHER,
+                                                    label: 'Please, add photo of the product type',
+                                                    otherComponent: <ProductImagesWithPreview
+                                                        productPhotos={productTypeDescriptions[index].productPhoto || []}
+                                                        onChange={(files: AttachedFilesType[]) => changeProductPhotos(index, files)}
+                                                    />,
+                                                    width: WidthType.w100,
+                                                    classNames: 'photo-lead',
+                                                }}
+                                                errors={errors}/>
+                                            {ProductTypeDescriptionsFields2.map(field => (
+                                                <SingleField
+                                                    key={field.name + '_' + index}
+                                                    curField={{
+                                                        ...field,
+                                                        name: `productTypeDescriptions.${index}.${field.name}`,
+                                                    }}
+                                                    control={control}
+                                                    errors={errors}
+                                                />
+                                            ))}
+                                        </div>
+                                        {productTypeDescriptions.length > 1 ? (
+                                            <button className="product-type-descriptions__list-item-remove-btn"
+                                                    type='button' onClick={() => handleRemoveProduct(index)}>
+                                                <Icon name="waste-bin"/>
+                                            </button>
+                                        ) : null}
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="product-type-descriptions__add-product-btn-wrapper">
+                                <Button onClick={() => addProduct({...emptyProductTypeDescription})} icon={'add'}>Add
+                                    another product / product type</Button>
+                            </div>
+                        </div>
                         {isSubmitted && submitErrors.length ?
                             <div className={`lead-questionnaire__errors`}>
-                                {submitErrors.map(error => <p key={error} className={'submit-error'}>{error}</p>)}
+                            {submitErrors.map(error => <p key={error} className={'submit-error'}>{error}</p>)}
                             </div> : null
                         }
                         <div className={`lead-questionnaire__btns`}>

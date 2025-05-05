@@ -100,6 +100,7 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
 
         const res = await axios.post("/api/validate-vat", {countryCode: countryCode.toString().toUpperCase(), vatNumber });
 
+        console.log('res:', res)
         if (res.status===200 && res.data) {
             if (res.data.valid) return {status: 'valid'};
             if (res.data.source && !res.data.source.includes('Error')) return {status: 'invalid'};
