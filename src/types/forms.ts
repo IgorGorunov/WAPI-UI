@@ -48,6 +48,8 @@ export enum ALIGN_FLEX {
   END = 'end',
 }
 
+export type ChangeEventType = ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType | E164Number;
+
 export type FieldPropsType = {
   classNames?: string
   key?: string
@@ -70,7 +72,7 @@ export type FieldPropsType = {
   valPhone?: E164Number;
   onPhoneChange?: (value: E164Number)=>void;
   checked?: boolean;
-  onChange?: (event: ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType | E164Number) => void;
+  onChange?: (event: ChangeEventType) => void;
   onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement> | React.ClipboardEvent<HTMLInputElement> | ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType) => void
   onDrop?: (event: React.DragEvent<HTMLDivElement> | React.DragEvent<HTMLTextAreaElement>)=>void;
   onDragOver?: (event: React.DragEvent<HTMLDivElement> | React.DragEvent<HTMLTextAreaElement>)=>void;

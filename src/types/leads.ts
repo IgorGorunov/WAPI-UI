@@ -30,6 +30,8 @@ export type QuestionnaireFormType = {
     weightOfHeaviestProduct: number;
     additionalPackagingForLastMileDelivery: boolean;
     needsCOD: boolean;
+    vatNo: string;
+    companyWorksWithoutVAT: boolean;
 }
 
 export type LegalInfoFormType = {
