@@ -31,6 +31,10 @@ type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
 }
 
+const getProductsByString = (item: StockMovementType) => {
+    return  item.products.map(product => product.product).join('; ')
+}
+
 const docNamesPlural = {
     [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbounds',
     [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movements',
@@ -189,7 +193,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             senderCountry: item.senderCountry,
             receiver: item.receiver,
             receiverCountry: item.receiverCountry,
-            products: item.productsByString,
+            products: item.productsByString || getProductsByString(item),
             // packages: item.packages,
             // palletAmount: item.palletAmount,
             // volume: item.volume,
