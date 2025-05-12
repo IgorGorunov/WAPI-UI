@@ -194,6 +194,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             receiver: item.receiver,
             receiverCountry: item.receiverCountry,
             products: item.productsByString || getProductsByString(item),
+            services: '€ ' + item.servicesAmount,
             // packages: item.packages,
             // palletAmount: item.palletAmount,
             // volume: item.volume,

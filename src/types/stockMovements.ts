@@ -42,6 +42,7 @@ export type StockMovementType = {
     statusDate: string; //fact ETA date
     ticket?: boolean;
     ticketopen?: boolean;
+    servicesAmount: number;
 }
 
 export type ProductInfoType = {
