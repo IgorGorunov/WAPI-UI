@@ -559,12 +559,12 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
         },
         {
-            title: <TitleColumn minWidth="70px" maxWidth="700px" contentPosition="start"  childrenBefore={<Tooltip title="Document identifier within the WAPI system"><span>Number</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="75px" maxWidth="700px" contentPosition="start"  childrenBefore={<Tooltip title="Document identifier within the WAPI system"><span>Number</span></Tooltip>}/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
-                    minWidth="70px"
-                    maxWidth="70px"
+                    minWidth="75px"
+                    maxWidth="75px"
                     contentPosition="start"
                     textColor='var(--color-blue)'
                     cursor='pointer'
