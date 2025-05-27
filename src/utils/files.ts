@@ -20,6 +20,24 @@ const exportFileXLS = (data: any[], fileName: string) => {
 
     const ws = XLSX.utils.json_to_sheet(data);
 
+    const dataKeys = Object.keys(data[0]);
+    const urlColIndex = dataKeys.indexOf('trackingLink');
+
+    if (urlColIndex !== -1) {
+        for (let i = 0; i < data.length; i++) {
+            const cellAddress = XLSX.utils.encode_cell({ c: urlColIndex, r: i + 1 }); // +1 because row 0 is header
+            const url = data[i]['trackingLink'];
+
+            if (url) {
+                ws[cellAddress] = {
+                    t: 's',
+                    v: url,
+                    l: { Target: url, Tooltip: 'Click to open link' }
+                };
+            }
+        }
+    }
+
     ws['!cols'] = setColWidth(data);
 
     const wb = XLSX.utils.book_new();

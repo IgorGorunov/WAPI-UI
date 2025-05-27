@@ -231,6 +231,7 @@ const OrdersPage = () => {
             lastTroubleStatus: `${item.troubleStatuses.length ? item.troubleStatuses[item.troubleStatuses.length-1].period.split("T").join(" ")+'  '+(item.troubleStatuses[item.troubleStatuses.length-1].troubleStatus) : ""}`,
             // "Logistic comment": `${item.logisticComment ? (item.logisticComment+(item.warehouseAdditionalInfo ? '; '+item.warehouseAdditionalInfo : '')) : item.warehouseAdditionalInfo ? item.warehouseAdditionalInfo : ''}`,
             "Logistic comment": `${item.logisticComment}`,
+            trackingLink: item.trackingNumber ? item.trackingLink : '',
         }));
         exportFileXLS(filteredData, "Orders");
     }

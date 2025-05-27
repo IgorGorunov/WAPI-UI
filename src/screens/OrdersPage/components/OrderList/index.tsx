@@ -60,6 +60,8 @@ const hasCorrectNotifications = (record: OrderType, notifications: NotificationT
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
 
+    //console.log('orders', orders);
+
    // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
