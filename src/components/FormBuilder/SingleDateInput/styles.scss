@@ -49,6 +49,11 @@
     border: 2px solid #F5F6F7;
     background-color: white;
 
+    .calendar-drag-handle {
+      min-height: 24px;
+      cursor: move;
+    }
+
     .close-calendar {
       position: absolute;
       right: 2px;

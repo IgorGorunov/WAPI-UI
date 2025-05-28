@@ -165,7 +165,6 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                                 errorMessage={error?.message}
                                 errors={errors}
                                 width={WidthType.w100}
-
                             /> )}
                     />
                 </div>
