@@ -16,6 +16,7 @@ import {
 import Icon from "@/components/Icon";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
+import Draggable from 'react-draggable';
 
 const EMPTY_DATE_AS_STRING = '0001-01-01T00:00:00';
 const EMPTY_DATE = new Date(EMPTY_DATE_AS_STRING);
@@ -103,25 +104,29 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                 {label && <label htmlFor={name}>{label}</label>}
                 <div className='date-input' ref={dateInputRef}>
                     {showCalendar && !disabled &&
-                        <div className='custom-calendar-wrapper'>
-                            <a href="#" className='close-calendar' onClick={handleCloseDatePicker}>
-                                <Icon name='close' />
-                            </a>
-                            <Calendar
-                                className='custom-calendar'
-                                date={ isDateEmpty(selectedDate) ? new Date() : selectedDate }
-                                onChange={handleDateSelect}
-                                showDateDisplay={false}
-                                showMonthAndYearPickers={false}
-                                color="#5380F5"
-                                disabledDay={disableDays}
-                            />
-                            {type==='date-time' ? <div className='time-picker-wrapper'> <Icon name='clock' /><TimePicker
-                                value={selectedTime}
-                                disableClock={true}
-                                onChange={(val)=>{handleTimeSelect(val)}}
-                            /></div> : null}
-                        </div>}
+                        <Draggable handle=".calendar-drag-handle">
+                            <div className='custom-calendar-wrapper'>
+                                <a href="#" className='close-calendar' onClick={handleCloseDatePicker}>
+                                    <Icon name='close' />
+                                </a>
+                                <div className="calendar-drag-handle" >
+                                    <Calendar
+                                        className='custom-calendar'
+                                        date={ isDateEmpty(selectedDate) ? new Date() : selectedDate }
+                                        onChange={handleDateSelect}
+                                        showDateDisplay={false}
+                                        showMonthAndYearPickers={false}
+                                        color="#5380F5"
+                                        disabledDay={disableDays}
+                                    />
+                                    {type==='date-time' ? <div className='time-picker-wrapper'> <Icon name='clock' /><TimePicker
+                                        value={selectedTime}
+                                        disableClock={true}
+                                        onChange={(val)=>{handleTimeSelect(val)}}
+                                    /></div> : null}
+                                </div>
+                            </div>
+                        </Draggable>}
                     <div className='date-input__wrapper'>
                         <input
                             type="text"
