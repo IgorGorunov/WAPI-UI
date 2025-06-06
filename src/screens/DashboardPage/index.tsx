@@ -19,6 +19,8 @@ import {TourGuidePages} from "@/types/tourGuide";
 import {Routes} from "@/types/routes";
 import Router from "next/router";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 type pageDataType = {
   ordersDiagram: any;
@@ -30,7 +32,7 @@ type pageDataType = {
 };
 
 const DashboardPage: React.FC = () => {
-
+  const { tenantData: { alias } } = useTenant();
   const { token, currentDate, isAuthorizedUser, getBrowserInfo ,superUser, ui, isActionIsAccessible, isNavItemAccessible } = useAuth();
 
   useEffect(() => {
@@ -57,6 +59,7 @@ const DashboardPage: React.FC = () => {
       startDate: formatDateToString(startDate),
       endDate: formatDateToString(endDate),
       token: token || "",
+      alias,
     };
   },[token]);
 
@@ -136,6 +139,7 @@ const DashboardPage: React.FC = () => {
 
   return (
       <Layout hasHeader hasFooter>
+        <SeoHead title='Dashboard' description='Our dashboard page' />
         <div className="dashboard-page__container">
           {isLoading && <Loader />}
           <div className='header'>

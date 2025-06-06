@@ -45,6 +45,7 @@ import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {CommonHints} from "@/constants/commonHints";
 import ConfirmModal from "@/components/ModalConfirm";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -66,6 +67,7 @@ type ProductPropsType = {
 }
 const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal, refetchDoc}) => {
     const {notifications} = useNotifications();
+    const { tenantData: { alias }} = useTenant();
 
     const orderIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved') ;
     const orderIsInDraft = !!(productData && productData?.status.toLowerCase() === 'draft');
@@ -1009,7 +1011,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
         try {
             const requestData = {
-                token: token,
+                token,
+                alias,
                 productData: prepareProductDataForSending(data)
             };
 

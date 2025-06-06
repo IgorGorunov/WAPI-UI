@@ -20,9 +20,11 @@ import {
     tourGuideStepsCodReportsNoDocs
 } from "./codReportTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 const CodReportsPage = () => {
-
+    const { tenantData: { alias }} = useTenant();
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType|null>(null);
@@ -44,7 +46,7 @@ const CodReportsPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
+                const requestData = {token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
 
                 try {
                     sendUserBrowserInfo({...getBrowserInfo('GetCODReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -88,7 +90,7 @@ const CodReportsPage = () => {
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
-                const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
+                const requestData = {token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
 
                 try {
                     sendUserBrowserInfo({...getBrowserInfo('GetCODIndicators', AccessObjectTypes["Finances/CODReports"], AccessActions.View), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -178,6 +180,7 @@ const CodReportsPage = () => {
 
     return (
         <Layout hasHeader hasFooter>
+            <SeoHead title='COD reports' description='Our COD reports page' />
             <div className="cod-reports__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='COD reports' toRight needTutorialBtn >

@@ -18,15 +18,17 @@ import {getImportTemplate} from "@/sanity/sanity-utils";
 import {toast} from "@/components/Toast";
 import {ImportTemplateNamesSanity} from "@/types/importFiles";
 import axios from "axios";
+import useTenant from "@/context/tenantContext";
 
 type LegalInfoPropsType = {
     legalData: any | null;
 }
 
 const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
+    const { tenantData: { alias }} = useTenant();
     const {token, userStatus, setUserStatus} = useAuth();
-    const [isLoading, setIsLoading] = useState(false);
 
+    const [isLoading, setIsLoading] = useState(false);
     const [isDisabled, setIsDisabled] = useState(userStatus === UserStatusType.NoLegalNoPrices || userStatus === UserStatusType.NoLegalPrices);
 
 
@@ -141,12 +143,7 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
         setIsLoading(true);
 
         try {
-            const res: ApiResponseType = await sendLegalInfo(
-                {
-                    token: token,
-                    legalData: data
-                }
-            );
+            const res: ApiResponseType = await sendLegalInfo({ token, alias, legalData: data });
 
             if (res && "status" in res && res?.status === 200) {
                 //success

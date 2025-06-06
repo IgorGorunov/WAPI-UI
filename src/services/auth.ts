@@ -1,13 +1,14 @@
 import {loginApi} from "@/services/api";
 
 
-const authenticate = async (login: string, password: string) => {
+const authenticate = async (login: string, password: string, alias='') => {
   try {
     const response: any = await loginApi.post(
       `/Authorize`,
       {
         login,
         password,
+        alias,
       },
       {
         headers: {
@@ -24,6 +25,7 @@ const authenticate = async (login: string, password: string) => {
 
 const authenticateWithOneTimeToken = async (data: {
   oneTimeToken: string,
+  alias: string,
 }) => {
   try {
     const response: any = await loginApi.post(
@@ -39,6 +41,7 @@ const authenticateWithOneTimeToken = async (data: {
 
 const getUserList = async (data: {
   token: string,
+  alias: string,
 }) => {
   try {
     const response: any = await loginApi.post(

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import "./styles.scss";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes, USER_TYPES} from "@/context/authContext";
 import Icon from "@/components/Icon";
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal";
@@ -9,7 +9,9 @@ import ChangePasswordBlock from "./ChangePasswordBlock";
 
 const ProfileInfo: React.FC = () => {
 
-    const {userInfo, isActionIsAccessible} = useAuth();
+    const {userInfo, isActionIsAccessible, userType} = useAuth();
+
+    console.log('userType in profile: ', userType, typeof userType, userType === USER_TYPES.SELLER)
 
     const [showPasswordModal, setShowPasswordModal] = useState(false);
 
@@ -54,8 +56,8 @@ const ProfileInfo: React.FC = () => {
                             <div className="profile-info__user-info--value">{userInfo?.userLogin}</div>
                         </div>
                     </div>
-                    <div className='profile-info__user-info--managers'>
-                    <div className='profile-info__user-info--manager'>
+                    {userType !== USER_TYPES.SELLER ? <div className='profile-info__user-info--managers'>
+                        <div className='profile-info__user-info--manager'>
                             <p className='profile-info__user-info--manager-title'>Support manager</p>
                             <div className='profile-info__user-info--row'>
                                 <div className="profile-info__user-info--title">Name</div>
@@ -68,7 +70,7 @@ const ProfileInfo: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> : null }
                 </div>
                 {showPasswordModal ?
                     <Modal title='Change password' onClose={() => setShowPasswordModal(false)}><ChangePasswordBlock

@@ -25,9 +25,12 @@ import {
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 
 const TicketsPage = () => {
+    const { tenantData: { alias }} = useTenant();
     const {token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
 
     const today = currentDate;
@@ -82,7 +85,7 @@ const TicketsPage = () => {
         try {
             setIsLoading(true);
             setTicketsData([]);
-            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
+            const requestData = {token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetTicketList', AccessObjectTypes.Tickets, AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -170,6 +173,7 @@ const TicketsPage = () => {
 
     return (
         <Layout hasHeader hasFooter>
+            <SeoHead title='Tickets' description={`Our tickets page`} />
             <div className="page-component tickets-page tickets-page__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Tickets' toRight needTutorialBtn >

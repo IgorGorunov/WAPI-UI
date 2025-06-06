@@ -9,13 +9,14 @@ import {ApiResponseType} from "@/types/api";
 import {sendNote} from "@/services/notes";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import useTenant from "@/context/tenantContext";
 
 type NotePropsType = {
     uuid: string;
     onCloseOnSuccess?: ()=>void;
 }
 const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
-
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui } = useAuth();
     const [noteText, setNoteText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +33,7 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
 
         try {
             setIsLoading(true);
-            const requestData = {token, uuid: uuid, note: noteText };
+            const requestData = {token, alias, uuid, note: noteText };
             const res: ApiResponseType = await sendNote(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res?.status === 200) {

@@ -10,7 +10,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import SearchField from "@/components/SearchField";
 import {FormFieldTypes} from "@/types/forms";
@@ -46,13 +45,14 @@ const extraStatusHints = {
     'Draft' : ' - needs to be send for approve',
 }
 
-const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setProductsData, handleEditProduct, reFetchData}) => {
 
-    //const {token, superUser, ui} = useAuth();
+
+const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setProductsData, handleEditProduct, reFetchData}) => {
 
     const isTouchDevice = useIsTouchDevice();
     const [animating, setAnimating] = useState(false);
     //const [isLoading, setIsLoading] = useState(false);
+    const [selectedSeller, setSelectedSeller] = useState<string|null>(null);
 
     // Popup
     const getPopupItems = useCallback((hoveredProduct) => {
@@ -219,7 +219,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         //     ),
         // },
         {
-            width: "40px",
+            width: "33px",
             title: <TitleColumn minWidth="20px" maxWidth="20px" contentPosition="center"/>,
             render: (status: string, record) => {
                 const statusObj = statusFilter.find(s => s.value === status);
@@ -397,12 +397,6 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     return (
         <div className='table'>
             {/*{isLoading && <Loader />}*/}
-            <Head>
-                <title>Products</title>
-                <meta name="products" content="products"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <link rel="icon" href="/logo.png"/>
-            </Head>
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER}
                         icon={'filter'}></Button>

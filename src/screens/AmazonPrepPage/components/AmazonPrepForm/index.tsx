@@ -16,6 +16,7 @@ import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
 
 type AmazonPrepFormType = {
     docUuid?: string | null;
@@ -25,6 +26,7 @@ type AmazonPrepFormType = {
 
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, onCloseModalWithSuccess}) => {
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
@@ -44,7 +46,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
         try {
             setIsLoading(true);
 
-            const requestData = {token, uuid};
+            const requestData = {token, uuid, alias};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepData', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -74,7 +76,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
 
     const fetchAmazonPrepOrderParams = useCallback(async() => {
         try {
-            const requestData = {token};
+            const requestData = {token, alias};
 
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepParameters'), body: superUser && ui ? {...requestData, ui} : requestData})

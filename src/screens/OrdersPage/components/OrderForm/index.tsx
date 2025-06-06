@@ -13,6 +13,7 @@ import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
 
 type OrderFormType = {
     orderUuid?: string;
@@ -21,9 +22,9 @@ type OrderFormType = {
 }
 
 const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOrderModalOnSuccess}) => {
-
     const [isLoading, setIsLoading] = useState(false);
 
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
@@ -40,7 +41,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
     const fetchSingleOrder = async (uuid: string) => {
         try {
             setIsLoading(true);
-            const requestData = {token, uuid};
+            const requestData = {token, alias, uuid};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetOrderData',AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -72,7 +73,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
     const fetchOrderParams = useCallback(async() => {
         try {
             setIsLoading(true);
-            const requestData = {token: token};
+            const requestData = {token, alias};
 
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetOrderParameters'), body: superUser && ui ? {...requestData, ui} : requestData})

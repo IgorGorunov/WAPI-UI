@@ -46,6 +46,7 @@ import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {AmazonPrepHints} from "@/screens/AmazonPrepPage/amazonPrepHints.constants";
 import {CommonHints} from "@/constants/commonHints";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -67,7 +68,7 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
 }
 
 const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc}) => {
-
+    const { tenantData: { alias }} = useTenant();
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {notifications} = useNotifications();
 
@@ -507,7 +508,8 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         try {
             const requestData = {
                 token: token,
-                orderData: data
+                orderData: data,
+                alias,
             };
 
             try {

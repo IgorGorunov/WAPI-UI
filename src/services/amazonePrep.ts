@@ -5,6 +5,7 @@ const getAmazonPrep = async (
     //token: string,
     data: {
         token: string;
+        alias: string;
         startDate: string;
         endDate: string;
         ui?: string;
@@ -28,6 +29,7 @@ const getSingleAmazonPrepData = async (
     data: {
         uuid: string;
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -50,6 +52,7 @@ const getAmazonPrepParameters = async (
 
     data: {
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -72,6 +75,7 @@ const sendAmazonPrepData = async (
     data: {
         orderData: SingleAmazonPrepOrderFormType,
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -92,6 +96,7 @@ const sendAmazonPrepFiles = async (
     data: {
         files: AttachedFilesType[],
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {

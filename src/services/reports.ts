@@ -5,6 +5,7 @@ const getReportData = async (
     //token: string,
     data: {
         token: string;
+        alias: string;
         reportType: string;
         startDate: string;
         endDate: string;
@@ -28,6 +29,7 @@ const getReportParams = async (
     //token: string,
     data: {
         token: string;
+        alias: string;
         ui?: string;
         // reportType: string;
     }

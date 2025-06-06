@@ -53,6 +53,7 @@ import {CommonHints} from "@/constants/commonHints";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ImageSlider from "@/components/ImageSlider";
 import CustomerReturns from "./CustomerReturns";
+import useTenant from "@/context/tenantContext";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -84,6 +85,7 @@ const getCorrectNotifications = (record: SingleOrderType, notifications: Notific
 
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
     const {notifications} = useNotifications();
+    const { tenantData: { alias }} = useTenant();
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +105,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const fetchPickupPoints = useCallback(async (courierService: string) => {
         try {
             setIsLoading(true);
-            const requestData = {token, courierService};
+            const requestData = {token, alias, courierService};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetPickupPoints'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -128,7 +130,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const fetchPickupPointsForCreatedOrder = useCallback(async (courierService: string) => {
         try {
-            const requestData = {token, courierService};
+            const requestData = {token, alias, courierService};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetPickupPoints'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -987,7 +989,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const handleCancelOrder = async() => {
         try {
-            const requestData = {token, uuid: orderData?.uuid};
+            const requestData = {token, alias, uuid: orderData?.uuid};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('CancelOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -1029,10 +1031,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         };
 
         try {
-            const requestData = {
-                token: token,
-                addressData: changedFields
-            };
+            const requestData = {token, alias, addressData: changedFields};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('UpdateAddressShipmentOrder'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -1084,6 +1083,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         try {
             const requestData = {
                 token: token,
+                alias,
                 orderData: data
             };
 

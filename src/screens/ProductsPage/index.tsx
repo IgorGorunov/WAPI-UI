@@ -24,9 +24,12 @@ import {TourGuidePages} from "@/types/tourGuide";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 const ProductsPage = () => {
     const Router = useRouter();
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
@@ -74,7 +77,7 @@ const ProductsPage = () => {
             setIsLoading(true);
             // const prevProductData = productsData || [];
             // setProductsData([]);
-            const requestData = {token: token};
+            const requestData = {token, alias};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetProductsList', AccessObjectTypes["Products/ProductsList"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -195,6 +198,7 @@ const ProductsPage = () => {
 
     return (
         <Layout hasFooter>
+            <SeoHead title='Product list' description='Our product list page' />
             <div className="products-page__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Products' toRight needTutorialBtn>

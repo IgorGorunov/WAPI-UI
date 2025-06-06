@@ -12,6 +12,7 @@ import {FormFieldTypes} from "@/types/forms";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import {fillInboundByStock} from "@/services/stockMovements";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 type PropsType = {
     qualityList: string[];
@@ -21,7 +22,7 @@ type PropsType = {
 };
 
 const FillByStock: React.FC<PropsType> = ({ qualityList, onClose, setResponseData, warehouse }) => {
-
+    const { tenantData: { alias }} = useTenant();
     const {token, ui, superUser, getBrowserInfo} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -61,7 +62,8 @@ const FillByStock: React.FC<PropsType> = ({ qualityList, onClose, setResponseDat
         setIsLoading(true);
         try {
             const requestData = {
-                token: token,
+                token,
+                alias,
                 warehouse,
                 quality: data.quality.filter(item => item.enable).map(item=>item.quality),
             };

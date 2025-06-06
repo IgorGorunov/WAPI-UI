@@ -23,6 +23,7 @@ import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {TicketHints} from "@/screens/TicketsPage/ticketHints.constants";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 type TicketPropsType = {
     subjectType?: string | null;
@@ -37,7 +38,7 @@ type TicketPropsType = {
 };
 
 const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose, reFetchTicket}) => {
-
+    const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui, getBrowserInfo} = useAuth();
 
     //const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
@@ -138,7 +139,8 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
     const handleReopenTicket = async () => {
         try {
             const requestData = {
-                token: token,
+                token,
+                alias,
                 uuid: ticketUuid,
             };
             try {
@@ -173,7 +175,8 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
 
         try {
             const requestData = {
-                token: token,
+                token,
+                alias,
                 ticket: data
             };
 

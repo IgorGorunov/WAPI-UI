@@ -5,6 +5,7 @@ import {ApiResponseType} from "@/types/api";
 const getLeadParameters = async (
     data: {
         token: string;
+        alias: string;
     }
 ) => {
     try {
@@ -24,6 +25,7 @@ const sendQuestionnaire = async (
 
     data: {
         token: string,
+        alias: string;
         leadData: QuestionnaireFormType,
     }
 ) => {
@@ -44,6 +46,7 @@ const sendLegalInfo = async (
 
     data: {
         token: string,
+        alias: string;
         legalData: LegalInfoFormType,
     }
 ) => {
@@ -64,6 +67,7 @@ const getPricesInfo = async (
 
     data: {
         token: string,
+        alias: string;
     }
 ) => {
     try {
@@ -83,6 +87,7 @@ const getPriceFile = async (
 
     data: {
         token: string,
+        alias: string;
         uuid: string,
     }
 ) => {
@@ -103,6 +108,7 @@ const getLegalData = async (
 
     data: {
         token: string,
+        alias: string;
     }
 ) => {
     try {
@@ -123,6 +129,7 @@ const sendSignNDA = async (
 
     data: {
         token: string,
+        alias: string;
     }
 ) => {
     try {
@@ -141,6 +148,7 @@ const sendSignNDA = async (
 const checkLeadStatus = async (
     data: {
         lead: string,
+        alias: string;
     }
 ) => {
     try {
@@ -160,6 +168,7 @@ const sendQuestion = async (
 
     data: {
         token: string,
+        alias: string;
         questionText: string
     }
 ) => {

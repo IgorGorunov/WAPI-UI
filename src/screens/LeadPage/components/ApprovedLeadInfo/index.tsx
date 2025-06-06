@@ -12,19 +12,20 @@ import Company from "@/screens/LeadPage/components/ApprovedLeadInfo/Company";
 import NextStep from "@/screens/LeadPage/components/ApprovedLeadInfo/NextStep";
 import NextButton from "@/screens/LeadPage/components/ApprovedLeadInfo/NextButton";
 import AskManagerBtn from "@/screens/LeadPage/components/ApprovedLeadInfo/AskManagerBtn";
+import useTenant from "@/context/tenantContext";
 
 type ApprovedLeadInfoPropsType = {
 
 }
 
 const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
-
+    const { tenantData: { alias }} = useTenant();
     const {token, userStatus} = useAuth();
     const [legalData, setLegalData] = useState<null|LegalInfoFormType>(null);
 
     const fetchLegalData = useCallback(async () => {
         try {
-            const res: ApiResponseType = await getLegalData({token: token});
+            const res: ApiResponseType = await getLegalData({token: token, alias});
 
             if (res && "data" in res) {
                 setLegalData(res.data);

@@ -20,6 +20,7 @@ import Loader from "@/components/Loader";
 import {getProductSelection} from "@/services/productSelection";
 import {aggregateTableData} from "@/utils/aggregateTable";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 
 export type SelectedProductType = {
@@ -49,6 +50,7 @@ const getWarehouseCountry = (productList:ProductsSelectionType[], warehouse: str
 
 const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, handleAddSelection, selectedDocWarehouse, needWarehouses=true, needOnlyOneWarehouse=true}) => {
     const [filteredProducts, setFilteredProducts]  = useState<ProductsSelectionType[]>([]);
+    const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui, getBrowserInfo, } = useAuth();
     const [productList, setProductList]  = useState<ProductsSelectionType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +64,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
     const fetchProductSelection = useCallback(async() => {
         try {
             setIsLoading(true);
-            const requestData = {token: token};
+            const requestData = {token, alias};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetProductsSelection'), body: superUser && ui ? {...requestData, ui} : requestData})

@@ -631,12 +631,6 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
     return (
         <div className="table order-list">
-            <Head>
-                <title>Tickets</title>
-                <meta name="orders" content="orders" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />

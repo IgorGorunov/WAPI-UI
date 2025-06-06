@@ -13,8 +13,11 @@ import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import UserContractsAndPrices from "./components/UserContractsAndPrices";
 import WarehouseInfo from "@/screens/ProfilePage/components/WarehouseInfo";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 const ProfilePage = () => {
+    const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [apiProtocolsData, setApiProtocolsData] = useState<ApiProtocolType[]|null>(null);
@@ -25,13 +28,13 @@ const ProfilePage = () => {
     const fetchProfileData = useCallback(async() => {
         try {
             setIsLoading(true);
-            const requestData = {token};
+            const requestData = {token, alias};
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocols', AccessObjectTypes["Profile/DeliveryProtocols"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
             if (!isActionIsAccessible(AccessObjectTypes["Profile/DeliveryProtocols"], AccessActions.ListView)) {
-                setApiProtocolsData([]);
+                setApiProtocolsData(null);
             } else {
                 const res = await getApiProtocols(superUser && ui ? {...requestData, ui} : requestData);
                 if (res.status === 200) {
@@ -44,7 +47,7 @@ const ProfilePage = () => {
             } catch {}
 
             if (!isActionIsAccessible(AccessObjectTypes["Profile/Prices"], AccessActions.ListView)) {
-                setPricesData([]);
+                setPricesData(null);
             } else {
                 const resPrices = await getUserPrices(superUser && ui ? {...requestData, ui} : requestData);
                 if (resPrices.status === 200) {
@@ -56,7 +59,7 @@ const ProfilePage = () => {
                 sendUserBrowserInfo({...getBrowserInfo('GetContractsList', AccessObjectTypes["Profile/Contracts"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
             if (!isActionIsAccessible(AccessObjectTypes["Profile/Contracts"], AccessActions.ListView)) {
-                setPricesData([]);
+                setPricesData(null);
             } else {
                 const resContracts = await getUserContracts(superUser && ui ? {...requestData, ui} : requestData);
                 if (resContracts.status === 200) {
@@ -68,7 +71,7 @@ const ProfilePage = () => {
                 sendUserBrowserInfo({...getBrowserInfo('GetWarehousesList', AccessObjectTypes["Profile/WarehouseInfo"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
             if (!isActionIsAccessible(AccessObjectTypes["Profile/WarehouseInfo"], AccessActions.ListView)) {
-                setWarehouseInfoData([]);
+                setWarehouseInfoData(null);
             } else {
                 const resWarehouseInfo = await getWarehouseInfo(superUser && ui ? {...requestData, ui} : requestData);
                 if (resWarehouseInfo.status === 200) {
@@ -86,15 +89,17 @@ const ProfilePage = () => {
         fetchProfileData();
     }, []);
 
-    const tabTitles = ['User profile', 'Delivery protocols', 'Contracts and prices', 'Warehouses info'].map(item=>({title: item}));
+    const tabTitlesArr = ['User profile'];
+    if (apiProtocolsData !== null) tabTitlesArr.push('Delivery protocols');
+    if (pricesData !== null || contractsData !== null) tabTitlesArr.push('Contracts and prices');
+    if (warehouseInfoData !== null) tabTitlesArr.push('Warehouses info');
+    const tabTitles = tabTitlesArr.map(item=>({title: item}));
+
+    console.log('tabTitles', apiProtocolsData, pricesData, contractsData, warehouseInfoData);
 
     return (
         <Layout hasFooter>
-            <Head>
-                <title>Profile</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
+            <SeoHead title='Profile' description='Our profile page' />
             <div className="page-component profile-page">
                 {isLoading && <Loader />}
                 <Header pageTitle='Profile' toRight  />
@@ -103,15 +108,15 @@ const ProfilePage = () => {
                         <div key='profile-info-tab' className='profile-page-tab'>
                             <ProfileInfo/>
                         </div>
-                        <div key='protocols-tab' className='profile-page-tab'>
+                        {apiProtocolsData !==null ? <div key='protocols-tab' className='profile-page-tab'>
                             <ApiProtocols apiProtocols={apiProtocolsData}/>
-                        </div>
-                        <div key='prices-and-contracts-tab' className='profile-page-tab'>
+                        </div> : null}
+                        {pricesData !== null || contractsData !==null  ? <div key='prices-and-contracts-tab' className='profile-page-tab'>
                             <UserContractsAndPrices prices={pricesData} contracts={contractsData}/>
-                        </div>
-                        <div key='warehouse-info-tab' className='profile-page-tab'>
+                        </div> : null}
+                        {warehouseInfoData !== null ? <div key='warehouse-info-tab' className='profile-page-tab'>
                             <WarehouseInfo warehouseInfoData={warehouseInfoData}/>
-                        </div>
+                        </div> : null}
                     </Tabs>
                 </div>
             </div>

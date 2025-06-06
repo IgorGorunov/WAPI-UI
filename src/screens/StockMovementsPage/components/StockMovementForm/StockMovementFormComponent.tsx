@@ -52,6 +52,7 @@ import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import HintsModal from "@/screens/StockMovementsPage/components/StockMovementForm/HintsModal";
+import useTenant from "@/context/tenantContext";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -118,6 +119,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
 
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {notifications} = useNotifications();
 
@@ -141,7 +143,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     const handleCancelOrder = async() => {
         try {
-            const requestData = {token: token, uuid: docData?.uuid};
+            const requestData = {token, alias, uuid: docData?.uuid};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('CancelStockMovement/'+docType), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -735,6 +737,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const sendJustETA = async(data) => {
         const requestData = {
             token,
+            alias,
             documentData: {
                 uuid: data.uuid,
                 estimatedTimeArrives: data.estimatedTimeArrives,
@@ -752,6 +755,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const sendDocument = async(data) => {
         const requestData = {
             token,
+            alias,
             documentType: docType,
             documentData: data,
         };

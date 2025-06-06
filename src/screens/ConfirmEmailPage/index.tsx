@@ -10,9 +10,12 @@ import Loader from "@/components/Loader";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Link from "next/link";
 import {Routes} from "@/types/routes";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 const ConfirmEmailPage = () => {
     const router = useRouter();
+    const { tenantData: { alias }} = useTenant();
 
     const [confirmToken, setConfirmToken] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +45,7 @@ const ConfirmEmailPage = () => {
             const sendConfirm = async(confirmToken: string) => {
                 try {
                     setIsLoading(true);
-                    const res: ApiResponseType = await confirmEmail({uuid: confirmToken});
+                    const res: ApiResponseType = await confirmEmail({uuid: confirmToken, alias});
 
                     if (res?.status === 200) {
                         setIsLoaded(true);
@@ -80,11 +83,7 @@ const ConfirmEmailPage = () => {
 
     return (
         <Layout hasFooter>
-            <Head>
-                <title>Confirm email</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
+            <SeoHead title='Confirm email' description='Our Confirm email page' />
 
             <div className="email-confirm-page">
                 {isLoading && <Loader />}

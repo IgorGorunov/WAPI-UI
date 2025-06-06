@@ -3,6 +3,7 @@ import {api} from "@/services/api";
 export const getProductSelection = async (
     data: {
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {

@@ -24,10 +24,13 @@ import {ApiResponseType} from "@/types/api";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 
 const OrdersPage = () => {
     const Router = useRouter();
+    const { tenantData: { alias }} = useTenant();
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [current, setCurrent] = React.useState(1);
@@ -110,7 +113,7 @@ const OrdersPage = () => {
         try {
             setIsLoading(true);
             setOrdersData([]);
-            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
+            const requestData = {token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetOrdersList', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -238,6 +241,7 @@ const OrdersPage = () => {
 
     return (
         <Layout hasHeader hasFooter>
+            <SeoHead title='Orders (fulfillments)' description='Our orders page' />
             <div className="page-component orders-page__container">
                 {isLoading && (<Loader />)}
                 <Header pageTitle='Fulfillment' toRight needTutorialBtn >

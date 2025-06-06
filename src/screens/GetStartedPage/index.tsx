@@ -5,6 +5,7 @@ import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import Icon from "@/components/Icon";
 import Button from "@/components/Button/Button";
+import SeoHead from "@/components/SeoHead";
 
 const GetStartedPage: React.FC = () => {
 
@@ -18,6 +19,7 @@ const GetStartedPage: React.FC = () => {
 
     return (
         <Layout hasFooter isWide >
+            <SeoHead title='Get started' description='Our get started page' />
             <div className="page-component get-started-page">
                 <div className="get-started-page__container">
                     <h1  className="get-started-page__main-title">

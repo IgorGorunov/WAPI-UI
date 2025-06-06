@@ -44,6 +44,8 @@ import {tourGuideStepsReports, tourGuideStepsReportsWithoutVariants} from "./rep
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -51,6 +53,7 @@ type ReportPagePropType = {
 
 const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const Router = useRouter();
+    const { tenantData: { alias }} = useTenant();
     const { token, currentDate, getToken, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     useEffect(() => {
@@ -100,7 +103,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const fetchParamsData = useCallback(async () => {
         try {
             setIsLoading(true);
-            const requestData = {token: token};
+            const requestData = {token, alias};
 
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetReportParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -123,7 +126,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-            const requestData = {token: token, reportType: reportType, startDate: formatDateToString(currentRange.startDate), endDate: formatDateToString(currentRange.endDate)};
+            const requestData = {token, alias, reportType, startDate: formatDateToString(currentRange.startDate), endDate: formatDateToString(currentRange.endDate)};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetReportData/'+reportType, transformReportType(reportType), AccessActions.GenerateReport), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -564,6 +567,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
     return (
         <Layout hasFooter>
+            <SeoHead title={REPORT_TITLES[reportType]} description='Our report page' />
             <div className="page-container report-page report-page__container">
                 {(isLoading || isCalculating)&& (<Loader />)}
                 <Header pageTitle={REPORT_TITLES[reportType]} toRight needTutorialBtn />

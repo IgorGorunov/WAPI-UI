@@ -15,6 +15,7 @@ import {STATUS_MODAL_TYPES} from "@/types/utility";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import {getImportTemplate} from "@/sanity/sanity-utils";
 import {toast, ToastContainer} from "@/components/Toast";
+import useTenant from "@/context/tenantContext";
 
 const getFileData = (importType: ImportFilesType) => {
    switch (importType) {
@@ -62,6 +63,7 @@ type ImportFilesBlockType = {
     setResponseData?: (res: ApiResponseType)=>void;
 }
 const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo } = useAuth();
     const [selectedFilesImport, setSelectedFilesImport] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
@@ -116,7 +118,8 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
             setIsLoading(true);
             try {
                 const requestData = {
-                    token: token,
+                    token,
+                    alias,
                     files: selectedFilesImport
                 };
 

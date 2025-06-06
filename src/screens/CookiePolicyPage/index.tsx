@@ -3,17 +3,21 @@ import Layout from "@/components/Layout/Layout";
 import "./styles.scss";
 import Header from "@/components/Header";
 import Link from "next/link";
+import SeoHead from "@/components/SeoHead";
+import useTenant from "@/context/tenantContext";
 
 const CookiePolicyPage = () => {
+    const { tenantData } = useTenant();
 
     return (
         <Layout hasFooter>
+            <SeoHead title='Cookie Policy' description='Our Cookie policy page' />
             <div className="cookie-policy-page__container">
                 <Header pageTitle='Cookie policy' toRight  />
 
                 <div className="cookie-policy-page__text-wrapper">
                     <p>This Cookie Policy explains how we use cookies and similar tracking technologies when you visit
-                        our website <Link className='is-link' href='/'>https://ui.wapi.com</Link>. By continuing to
+                        our website <Link className='is-link' href='/'>{tenantData?.uiLink || ''}</Link>. By continuing to
                         browse the site, you are agreeing to our use
                         of cookies as outlined in this policy.</p>
                     <p className='text-bold'>What are cookies? </p>
@@ -49,7 +53,7 @@ const CookiePolicyPage = () => {
                         </thead>
                         <tbody>
                         <tr>
-                            <td>WAPI_CookieConsent</td>
+                            <td>CookieConsent</td>
                             <td>Essential</td>
                             <td>Stores user's cookie consent.</td>
                             <td>6 months</td>
@@ -87,15 +91,33 @@ const CookiePolicyPage = () => {
                             <td>Session</td>
                         </tr>
                         <tr>
-                            <td>WAPI_profile_info</td>
+                            <td>profile_info</td>
                             <td>Essential</td>
                             <td>Stores logged user's profile info.</td>
                             <td>Session</td>
                         </tr>
                         <tr>
-                            <td>WAPI_navAccess</td>
+                            <td>navAccess</td>
                             <td>Essential</td>
                             <td>Stores logged user's navigation access info.</td>
+                            <td>Session</td>
+                        </tr>
+                        <tr>
+                            <td>browser</td>
+                            <td>Essential</td>
+                            <td>Stores browser info for logging.</td>
+                            <td>Session</td>
+                        </tr>
+                        <tr>
+                            <td>userActions</td>
+                            <td>Essential</td>
+                            <td>Stores actions user is allowed to perform according to their settings.</td>
+                            <td>Session</td>
+                        </tr>
+                        <tr>
+                            <td>userType</td>
+                            <td>Essential</td>
+                            <td>Used to identify the type of user's account and their access to extra features.</td>
                             <td>Session</td>
                         </tr>
 

@@ -13,6 +13,7 @@ import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
 
 type ProductPropsType = {
     uuid?: string | null;
@@ -25,6 +26,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const [productData, setProductData] = useState<SingleProductType|null>(null);
     const [productsList, setProductsList] = useState<ProductType[]|null>(products);
 
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
@@ -41,7 +43,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductData = async (uuid) => {
         try {
             setIsLoading(true);
-            const requestData = {token: token, uuid: uuid};
+            const requestData = {token, alias, uuid};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetProductData', AccessObjectTypes["Products/ProductsList"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -72,7 +74,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductParams = useCallback(async () => {
         try {
             setIsLoading(true);
-            const requestData = {token: token};
+            const requestData = {token, alias};
 
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetProductParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -96,7 +98,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductsList = useCallback(async () => {
         try {
             setIsLoading(true);
-            const requestData = {token: token};
+            const requestData = {token, alias};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetProductsList', AccessObjectTypes["Products/ProductsList"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})

@@ -3,6 +3,7 @@ import {api} from "@/services/api";
 export const getNotes = async (
     data: {
         token: string;
+        alias: string;
         uuid: string;
         ui?: string;
     }
@@ -23,6 +24,7 @@ export const getNotes = async (
 export const sendNote = async (
     data: {
         token: string;
+        alias: string;
         uuid: string;
         //period: string;
         note: string;

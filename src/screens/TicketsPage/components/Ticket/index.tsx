@@ -12,6 +12,7 @@ import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
 
 type TicketPropsType = {
     ticketUuid?: string;
@@ -22,7 +23,7 @@ type TicketPropsType = {
 };
 
 const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose}) => {
-
+    const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
@@ -48,7 +49,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
     const fetchSingleTicket = useCallback(async (uuid: string) => {
         try {
             setIsLoading(true);
-            const requestData = {token, uuid};
+            const requestData = {token, alias, uuid};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetTicketData', AccessObjectTypes.Tickets, AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -79,7 +80,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
     const fetchTicketParams = useCallback(async () => {
         try {
             setIsLoading(true);
-            const requestData = {token};
+            const requestData = {token, alias};
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetTicketParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
             // } catch {}

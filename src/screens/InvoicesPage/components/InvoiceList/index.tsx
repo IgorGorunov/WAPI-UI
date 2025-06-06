@@ -28,6 +28,7 @@ import {formatDateStringToDisplayString} from "@/utils/date";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
+import useTenant from "@/context/tenantContext";
 
 
 export const StatusColors = {
@@ -49,10 +50,10 @@ type InvoiceListType = {
 const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurrentRange, setFilteredInvoices}) => {
 
     const [animating, setAnimating] = useState(false);
-
     const [isLoading, setIsLoading] = useState(false);
 
     //const Router = useRouter();
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     // Pagination
@@ -150,7 +151,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const handleDownloadInvoice = async (uuid, type='download') => {
         setIsLoading(true);
         try {
-            const requestData = { token: token, uuid: uuid, type };
+            const requestData = { token: token, alias, uuid: uuid, type };
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetInvoicePrintForm', AccessObjectTypes["Finances/Invoices"], AccessActions.DownloadPrintForm), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -524,12 +525,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     return (
         <div className='table invoices-list'>
             {isLoading && <Loader />}
-            <Head>
-                <title>Invoices</title>
-                <meta name="invoices" content="invoices" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
 
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>

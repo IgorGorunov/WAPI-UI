@@ -17,9 +17,11 @@ import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsInvoices, tourGuideStepsInvoicesNoDocs} from "./invoicesTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 const InvoicesPage = () => {
-
+    const { tenantData: { alias }} = useTenant();
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     //balance/debt
@@ -42,7 +44,7 @@ const InvoicesPage = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
+                const requestData = {token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
 
                 try {
                     sendUserBrowserInfo({...getBrowserInfo('GetInvoicesList', AccessObjectTypes["Finances/Invoices"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -82,7 +84,7 @@ const InvoicesPage = () => {
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
-                const requestData = { token: token };
+                const requestData = { token: token, alias };
 
                 try {
                     sendUserBrowserInfo({...getBrowserInfo('GetInvoicesDebt', AccessObjectTypes["Finances/Invoices"], AccessActions.View), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -174,6 +176,7 @@ const InvoicesPage = () => {
 
     return (
         <Layout hasHeader hasFooter>
+            <SeoHead title='Invoices' description='Our Invoices page' />
             <div className="invoices__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Invoices' toRight needTutorialBtn >

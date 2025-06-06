@@ -21,6 +21,7 @@ import {formatDateStringToDisplayString} from "@/utils/date";
 import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 type CodReportsListType = {
     codReports: CodReportType[];
@@ -34,6 +35,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     const [animating, setAnimating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     // Pagination
@@ -107,7 +109,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     const handleDownloadCORReport = async (uuid) => {
        setIsLoading(true);
         try {
-            const requestData = { token: token, uuid: uuid };
+            const requestData = { token: token, alias, uuid: uuid };
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetCODReportPrintForm', AccessObjectTypes["Finances/CODReports"], AccessActions.DownloadPrintForm), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -302,12 +304,6 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     return (
         <div className='table'>
             {isLoading && <Loader />}
-            <Head>
-                <title>Cod reports</title>
-                <meta name="cod reports" content="cod" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
             {/*<div className="date-filter-container">*/}
             {/*    <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*/}
             {/*    <Input*/}

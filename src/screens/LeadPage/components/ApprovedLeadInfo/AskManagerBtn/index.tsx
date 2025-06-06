@@ -10,6 +10,7 @@ import FormFieldsBlock from "@/components/FormFieldsBlock";
 import {sendQuestion} from "@/services/leads";
 import {ApiResponseType} from "@/types/api";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
 
 type AskManagerFormDataType = {
     questionText: string;
@@ -27,6 +28,7 @@ export const askManagerFields  = [
 ];
 
 const AskManagerBtn = () => {
+    const { tenantData: { alias }} = useTenant();
     const {token} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -61,7 +63,7 @@ const AskManagerBtn = () => {
             console.log("Submitted value:", data);
             try {
                 setIsLoading(true);
-                const res: ApiResponseType = await sendQuestion({token, questionText: data.questionText});
+                const res: ApiResponseType = await sendQuestion({token, alias, questionText: data.questionText});
                 if (res.status === 200) {
                     //success
                     setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Your question was successfully send! Our manager will contact you soon.`, text: ['We will reach out for any necessary additional information.'], onClose: closeSuccessModal, disableAutoClose: true})

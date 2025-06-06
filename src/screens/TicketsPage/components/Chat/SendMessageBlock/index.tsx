@@ -12,6 +12,7 @@ import {CHAT_FILE_TYPES} from "@/types/tickets";
 import ModalStatus from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 type SendMessagePropsType = {
     objectUuid: string;
@@ -31,6 +32,7 @@ type ChatFileType = {
 }
 
 const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker, canEdit}) => {
+    const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -95,10 +97,11 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
         try {
             const requestData = {
-                token: token,
+                token,
+                alias,
                 message: userInput,
-                objectUuid: objectUuid,
-                attachedFiles: attachedFiles,
+                objectUuid,
+                attachedFiles,
             };
 
             try {

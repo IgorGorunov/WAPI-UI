@@ -7,6 +7,7 @@ import {ApiResponseType} from "@/types/api";
 import {getTicketMessages} from "@/services/tickets";
 import Loader from "@/components/Loader";
 import {ChatMessageType} from "@/types/tickets";
+import useTenant from "@/context/tenantContext";
 
 type ChatPropsType = {
     objectUuid: string;
@@ -14,7 +15,7 @@ type ChatPropsType = {
 };
 
 const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
-
+    const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui} = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -68,7 +69,8 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
         try {
             setIsLoading(true);
             const requestData = {
-                token: token,
+                token,
+                alias,
                 uuid: objectUuid,
             };
 

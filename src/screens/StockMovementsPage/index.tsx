@@ -26,6 +26,8 @@ import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import Head from "next/head";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
@@ -66,6 +68,7 @@ export const getAccessActionObject = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
 const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     const Router = useRouter();
+    const { tenantData: { alias }} = useTenant();
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     useEffect(() => {
@@ -110,7 +113,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
         try {
             setIsLoading(true);
             setStockMovementData([]);
-            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate), documentType: docType};
+            const requestData = {token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate), documentType: docType};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetStockMovementList/'+docType, getAccessActionObject(docType), AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -223,12 +226,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     return (
         <Layout hasHeader hasFooter>
-            <Head>
-                <title>{docNamesPlural[docType]}</title>
-                <meta name="orders" content="orders" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
+            <SeoHead title={docNamesPlural[docType]} description={`Our ${docNamesPlural[docType]} page`} />
             <div className="stock-movement-page__container">
                 {isLoading && <Loader />}
                 <Header pageTitle={docNamesPlural[docType]} toRight needTutorialBtn >
