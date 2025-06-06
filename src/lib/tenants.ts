@@ -43,6 +43,7 @@ export type TENANT_TYPE = keyof typeof TENANTS;
 export const tenants = {
     'ui.wapi.com': TENANTS.WAPI,
     'localhost:3000': TENANTS.N1,
+    'wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
 };
 
 export const tenantsData = {
@@ -86,7 +87,7 @@ export const tenantsData = {
 
     [TENANTS.N1]: {
         id: TENANTS.N1,
-        alias: 'BERGOT LTD',
+        alias: 'dismaroon',
         name: 'N1ND GLOBAL',
         logo: '/N1-logo.png',
         email: 'info@n1storeworld.com',
