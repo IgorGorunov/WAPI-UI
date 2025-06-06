@@ -23,6 +23,7 @@ import SimplePopup from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
+import {isTabAllowed} from "@/utils/tabs";
 
 
 type StockMovementsListType = {
@@ -32,6 +33,7 @@ type StockMovementsListType = {
     setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
     setFilteredDocs: React.Dispatch<React.SetStateAction<StockMovementType[]>>;
     handleEditDoc(uuid: string): void;
+    forbiddenTabs: string[];
 }
 
 const pageOptions = [
@@ -55,7 +57,7 @@ const getDocType = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
     } else return 'documents'
 }
 
-const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, currentRange, setCurrentRange, setFilteredDocs, handleEditDoc }) => {
+const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, currentRange, setCurrentRange, setFilteredDocs, handleEditDoc, forbiddenTabs }) => {
     const isTouchDevice = useIsTouchDevice();
 
     const [current, setCurrent] = React.useState(1);
@@ -315,7 +317,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             onClose: ()=>handleFilterReceiverCountryChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
         },
-        {
+        isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets',
             icon: 'ticket-gray',
             // isCountry: true,
@@ -327,8 +329,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             setIsOpen: setIsOpenFilterHasTickets,
             onClose: ()=>handleFilterHasTicketsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)},
-        },
-        {
+        } : null,
+        isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets (open)',
             icon: 'ticket-open',
             // isCountry: true,
@@ -340,7 +342,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             setIsOpen: setIsOpenFilterHasOpenTickets,
             onClose: ()=>handleFilterHasOpenTicketsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)},
-        },
+        } : null,
 
     ];
     // <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
@@ -694,7 +696,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <FiltersChosen filters={docFilters} />
+                    <FiltersChosen filters={docFilters.filter(item => item!==null)} />
                     {/*<CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
                     {/*<CurrentFilters title='Sender' filterState={filterSender} options={senderOptions} onClose={()=>handleFilterSenderChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)}}/>*/}
                     {/*<CurrentFilters title='Sender country' filterState={filterSenderCountry} options={senderCountryOptions} onClose={()=>handleFilterSenderCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)}}/>*/}
@@ -738,7 +740,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersListWithOptions filters={docFilters} />
+                <FiltersListWithOptions filters={docFilters.filter(item => item!==null)} />
                 {/*<FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
                 {/*<FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={handleFilterSenderChange} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>*/}
                 {/*<FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={handleFilterSenderCountryChange} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>*/}

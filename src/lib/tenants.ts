@@ -19,6 +19,10 @@ export type PrivacyPolicyDataType = {
         text:string,
         link:string
     }[];
+};
+
+export type OrdersTenantDataType = {
+    trackingNumberTitle: string;
 }
 
 export type TenantDataType = {
@@ -31,6 +35,7 @@ export type TenantDataType = {
     privacyPolicy: PrivacyPolicyDataType;
     mainWebsite: string;
     uiLink: string;
+    orderTitles: OrdersTenantDataType;
 }
 
 export enum TENANTS {
@@ -43,12 +48,13 @@ export type TENANT_TYPE = keyof typeof TENANTS;
 export const tenants = {
     'ui.wapi.com': TENANTS.WAPI,
     'localhost:3000': TENANTS.N1,
+    'wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
 };
 
 export const tenantsData = {
     [TENANTS.WAPI]: {
         id: TENANTS.WAPI,
-        alias: 'WAPI',
+        alias: '',
         name: 'WAPI OÜ',
         logo: '/logo.png',
         email: 'info@wapi.com',
@@ -82,11 +88,14 @@ export const tenantsData = {
         },
         mainWebsite: 'https://wapi.com',
         uiLink: 'https://ui.wapi.com',
+        orderTitles: {
+            trackingNumberTitle: 'WAPI tracking number',
+        },
     } as TenantDataType,
 
     [TENANTS.N1]: {
         id: TENANTS.N1,
-        alias: 'BERGOT LTD',
+        alias: 'dismaroon',
         name: 'N1ND GLOBAL',
         logo: '/N1-logo.png',
         email: 'info@n1storeworld.com',
@@ -115,6 +124,9 @@ export const tenantsData = {
         },
         mainWebsite: '',
         uiLink: 'https://google.com/',
+        orderTitles: {
+            trackingNumberTitle: 'Warehouse tracking number',
+        }
     } as TenantDataType,
 }
 

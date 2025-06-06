@@ -79,7 +79,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                         </Link>
                     </div>
                     {navBlocksArray && navBlocksArray.length ? navBlocksArray.map((navBlock, index)=> (
-                        (isNavItemAccessible(navBlock.submenuName) || navBlock.submenuName=='FAQ') ? (<div key={`${navBlock.submenuTitle}-${index}`}>
+                        (isNavItemAccessible(navBlock.submenuName)) ? (<div key={`${navBlock.submenuTitle}-${index}`}>
                             {navBlock.submenuLink && !navBlock.navItems.length ?
                                 <SubmenuSingleItem {...navBlock}/>
                                 :

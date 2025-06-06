@@ -1,12 +1,13 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
+import {OrdersTenantDataType} from "@/lib/tenants";
 
-export const GeneralFields = (newObject: boolean) => [
+export const GeneralFields = (newObject: boolean, orderTitles: OrdersTenantDataType) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'wapiTrackingNumber',
-        label: "WAPI tracking number",
+        label: orderTitles.trackingNumberTitle || "Tracking number",
         placeholder: "",
         disabled: true,
         width: WidthType.w25,

@@ -53,6 +53,7 @@ import ConfirmModal from "@/components/ModalConfirm";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import HintsModal from "@/screens/StockMovementsPage/components/StockMovementForm/HintsModal";
 import useTenant from "@/context/tenantContext";
+import {isTabAllowed} from "@/utils/tabs";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -64,6 +65,7 @@ type StockMovementFormType = {
     docParameters?: StockMovementParamsType;
     closeDocModal: ()=>void;
     refetchDoc: ()=>void;
+    forbiddenTabs: string[] | null;
 }
 
 export enum DELIVERY_METHODS {
@@ -87,7 +89,7 @@ const deliveryTypeOptions: OptionType[] = [
     {value: 'Customer Carrier', label: 'Customer Carrier'}
 ]
 
-const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc}) => {
+const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc, forbiddenTabs}) => {
     const [isDisabled, setIsDisabled] = useState(!!docData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
@@ -180,7 +182,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     //tab titles
-    const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length));
+    const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length), forbiddenTabs);
     const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
 
 
@@ -899,7 +901,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
             <Tabs id='stock-movement-tabs' tabTitles={tabTitles} classNames='inside-modal'
                   notifications={docNotifications}>
-                <div key='general-tab' className='general-tab'>
+                {isTabAllowed('General', forbiddenTabs) ? <div key='general-tab' className='general-tab'>
                     <CardWithHelpIcon classNames='card stock-movement--general' showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='general'/>
@@ -920,8 +922,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                              isDisabled={isDisabled}/>
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                <div key='cargo-tab' className='cargo-tab'>
+                </div> : null }
+                {isTabAllowed('Cargo info', forbiddenTabs) ? <div key='cargo-tab' className='cargo-tab'>
                     <CardWithHelpIcon classNames='card stock-movement--cargo' showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='shipping'/>
@@ -932,9 +934,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                              isDisabled={isDisabled}/>
                         </div>
                     </CardWithHelpIcon>
-                </div>
+                </div> : null}
 
-                <div key='product-tab' className='product-tab'>
+                {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className='product-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 stock-movement--products" showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title '>
                             <Icon name='goods'/>
@@ -1010,8 +1012,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                            packages={docData?.cartonsAmount || 0}/>
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                {docData?.uuid && <div key='services-tab' className='services-tab'>
+                </div> : null }
+                {docData?.uuid && isTabAllowed('Services', forbiddenTabs) &&  <div key='services-tab' className='services-tab'>
                     <div className="card min-height-600 stock-movement--history">
                         <h3 className='stock-movement__block-title'>
                             <Icon name='bundle'/>
@@ -1020,7 +1022,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         <Services services={docData?.services}/>
                     </div>
                 </div>}
-                {docData?.uuid && <div key='status-history-tab' className='status-history-tab'>
+                {docData?.uuid && isTabAllowed('Status history', forbiddenTabs) && <div key='status-history-tab' className='status-history-tab'>
                     <div className="card min-height-600 stock-movement--history">
                         <h3 className='stock-movement__block-title'>
                             <Icon name='history'/>
@@ -1029,7 +1031,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         <StatusHistory statusHistory={docData?.statusHistory}/>
                     </div>
                 </div>}
-                {docData?.uuid && docData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                {docData?.uuid && docData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ? <div key='tickets-tab' className='tickets-tab'>
                     <div className="card min-height-600 stock-movement--tickets">
                         <h3 className='stock-movement__block-title'>
                             <Icon name='ticket'/>
@@ -1038,7 +1040,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         <DocumentTickets tickets={docData.tickets}/>
                     </div>
                 </div> : null}
-                <div key='files-tab' className='files-tab'>
+                {isTabAllowed('Files', forbiddenTabs) ? <div key='files-tab' className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 stock-movement--files" showHintsByDefault={showAllHints}>
                         {/*<div className="card min-height-600 stock-movement--products">*/}
                         <TutorialHintTooltip hint={StockMovementsHints('')['files'] || ''} position='left'>
@@ -1056,11 +1058,11 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             />
                         </div>
                     </CardWithHelpIcon>
-                </div>
+                </div> : null }
             </Tabs>
 
             <div className='form-submit-btn'>
-                {docData && docData.uuid ?
+                {docData && docData.uuid && isTabAllowed('Tickets', forbiddenTabs) ?
                     <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
                             onClick={handleCreateTicket}>Create ticket</Button> : null}
                 {docData?.uuid && docData?.status && docData?.status.toLowerCase() =='draft' ?

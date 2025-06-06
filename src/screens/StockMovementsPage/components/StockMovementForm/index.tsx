@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth, {AccessActions} from "@/context/authContext";
+import useAuth, {AccessActions, UserAccessActionType} from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {ToastContainer} from '@/components/Toast';
 import {SingleStockMovementType, STOCK_MOVEMENT_DOC_TYPE, StockMovementParamsType} from "@/types/stockMovements";
@@ -33,6 +33,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
     const [docData, setDocData] = useState<SingleStockMovementType|null>(null);
     const [docParameters, setDocParameters] = useState<StockMovementParamsType|null>(null);
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[]|null>(null);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -87,6 +88,20 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
             if (resp && "data" in resp) {
                 setDocParameters(resp.data);
+
+                if (resp.data.actionAccessSettings) {
+                    const tabs = resp.data.actionAccessSettings as UserAccessActionType[];
+                    const tabsInString = [];
+                    tabs.forEach(item => {
+                        if (item.action === 'View' && item.forbidden) {
+                            const temp = item.objectType.split('/');
+                            tabsInString.push(temp[temp.length - 1]);
+                        }
+                    })
+                    setForbiddenTabs(tabsInString);
+                } else {
+                    setForbiddenTabs([]);
+                }
             } else {
                 console.error("API did not return expected data");
             }
@@ -135,6 +150,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
                                 docData={docData}
                                 closeDocModal={onCloseOnSuccess}
                                 refetchDoc={()=>fetchSingleStockMovement(docUuid)}
+                                forbiddenTabs={forbiddenTabs}
                             />
                         </Modal>
                     ) : null}

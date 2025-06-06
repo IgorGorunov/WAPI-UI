@@ -25,7 +25,7 @@ import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 
 const AmazonPrepPage = () => {
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData: { alias, orderTitles }} = useTenant();
     const {token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
 
     const today = currentDate;
@@ -162,14 +162,14 @@ const AmazonPrepPage = () => {
             return null;
         }
         const filteredData = filteredAmazonPrepOrders.map(item => ({
-            wapiTrackingNumber: item.wapiTrackingNumber,
-            status: item.status,
-            date: item.date,
-            clientOrderID: item.clientOrderID,
-            warehouse: item.warehouse,
-            courierService: item.courierService,
-            trackingNumber: item.trackingNumber,
-            receiverCountry: item.receiverCountry,
+            [orderTitles.trackingNumberTitle]: item.wapiTrackingNumber,
+            Status: item.status,
+            Date: item.date,
+            "Client order ID": item.clientOrderID,
+            Warehouse: item.warehouse,
+            "Courier service": item.courierService,
+            "Tracking number": item.trackingNumber,
+            "Receiver Country": item.receiverCountry,
         }));
         exportFileXLS(filteredData, "Orders");
     }

@@ -76,20 +76,20 @@ const ProductsStockPage = () => {
         }
 
         const filteredData = filteredProducts.map(item => ({
-            sku: item.sku,
-            name: item.name,
-            warehouse: item.warehouse,
-            warehouseSku: item.warehouseSku,
-            country: item.country,
-            available: item.available,
-            reserved: item.reserved,
-            damaged: item.damaged,
-            expired: item.expired,
-            undefinedStatus: item.undefinedStatus,
-            withoutBox: item.withoutBox,
-            forPlacement: item.forPlacement,
-            onShipping: item.onShipping,
-            total: item.total,
+            SKU: item.sku,
+            Name: item.name,
+            Warehouse: item.warehouse,
+            "Warehouse SKU": item.warehouseSku,
+            Country: item.country,
+            Available: item.available,
+            Reserved: item.reserved,
+            Damaged: item.damaged,
+            Expired: item.expired,
+            "Undefined status": item.undefinedStatus,
+            "Without box": item.withoutBox,
+            "For placement": item.forPlacement,
+            "On shipping": item.onShipping,
+            Total: item.total,
         }));
         exportFileXLS(filteredData, `ProductsStock${warehouseForReport ? "_"+warehouseForReport : ""}`)
     }

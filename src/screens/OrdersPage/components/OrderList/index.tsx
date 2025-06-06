@@ -28,6 +28,7 @@ import FiltersChosen from "@/components/FiltersChosen";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import useNotifications from "@/context/notificationContext";
 import {NotificationType} from "@/types/notifications";
+import {isTabAllowed} from "@/utils/tabs";
 
 type OrderListType = {
     orders: OrderType[];
@@ -38,6 +39,7 @@ type OrderListType = {
     handleRefresh: ()=>void;
     current: number;
     setCurrent: (val: number) => void;
+    forbiddenTabs: string[] | null;
 }
 
 const pageOptions = [
@@ -57,10 +59,10 @@ const hasCorrectNotifications = (record: OrderType, notifications: NotificationT
     return true;
 }
 
-const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, handleRefresh}) => {
+const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, forbiddenTabs, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
 
-    //console.log('orders', orders);
+    console.log('orders', forbiddenTabs, isTabAllowed('Claims', forbiddenTabs));
 
    // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -644,7 +646,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterNonTroubleStatusChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);},
         },
-        {
+        isTabAllowed('Claims', forbiddenTabs) ? {
             filterTitle: 'Claims',
             icon: 'complaint',
             filterDescriptions: '',
@@ -655,7 +657,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterClaim,
             onClose: ()=>handleFilterClaimsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)},
-        },
+        } : null,
         {
             filterTitle: 'Order issues',
             filterDescriptions: '',
@@ -692,7 +694,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterSelfCollectChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)},
         },
-        {
+        isTabAllowed('SMS history', forbiddenTabs) ? {
             filterTitle: 'Sent SMS',
             icon: 'sms',
             filterDescriptions: '',
@@ -703,7 +705,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterSentSMS,
             onClose: ()=>handleFilterSentSMSChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)},
-        },
+        } : null,
         {
             filterTitle: 'Warehouse',
             icon: 'warehouse',
@@ -741,7 +743,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterReceiverCountryChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
         },
-        {
+        isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets',
             icon: 'ticket-gray',
             // isCountry: true,
@@ -753,8 +755,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterHasTickets,
             onClose: ()=>handleFilterHasTicketsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)},
-        },
-        {
+        } : null,
+        isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets (open)',
             icon: 'ticket-open',
             // isCountry: true,
@@ -766,7 +768,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterHasOpenTickets,
             onClose: ()=>handleFilterHasOpenTicketsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)},
-        },
+        } : null,
         {
             filterTitle: 'Photos from warehouse',
             // isCountry: true,
@@ -780,7 +782,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterPhotosChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)},
         },
-        {
+        isTabAllowed('Customer returns', forbiddenTabs) ? {
             filterTitle: 'Customer returns',
             // isCountry: true,
             icon: 'package-return',
@@ -792,7 +794,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterCustomerReturns,
             onClose: ()=>handleFilterCustomerReturnsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCustomerReturns(true)},
-        },
+        } : null,
         {
             filterTitle: 'Marketplaces',
             // isCountry: true,
@@ -819,6 +821,68 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         const width = 47+maxAmount*9;
         return width.toString()+'px';
     },[current, pageSize, filteredOrders]);
+
+
+    const ClaimsColumns: TableColumnProps<OrderType>[] = [];
+    if (isTabAllowed('Claims', forbiddenTabs)) {
+        ClaimsColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="26px"
+                maxWidth="26px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="If order has Claims" >
+                        <span><Icon name={"complaint"} className='header-icon' /></span>
+                    </Tooltip>
+                }
+            />,
+                render: (text: string, record) => {
+            return (
+                <TableCell
+                    className='no-padding'
+                    minWidth="26px"
+                    maxWidth="26px"
+                    contentPosition="center"
+                    childrenBefore={
+                        record.claimsExist && (
+                            <Popover
+                                content={record.claims.length ? <SimplePopup
+                                    items={record.claims.map(orderItem => ({
+                                        uuid: record.uuid,
+                                        title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.date),
+                                        description: orderItem.status,
+                                    }))}
+                                /> : null}
+                                trigger={isTouchDevice ? 'click' : 'hover'}
+                                placement="right"
+                                overlayClassName="doc-list-popover"
+                            >
+                                <div style={{
+                                    minHeight: '8px',
+                                    minWidth: '8px',
+                                    backgroundColor: 'red',
+                                    borderRadius: '50%',
+                                    display: 'inline-block',
+                                    alignSelf: 'center',
+                                }} />
+                            </Popover>
+                        )
+                    }
+                >
+                </TableCell>
+            );
+            },
+                dataIndex: 'claimsExist',
+                key: 'claimsExist',
+                sorter: false,
+                onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+                responsive: ['lg'],
+
+        } as TableColumnProps<OrderType>);
+    }
 
     const columns: TableColumnProps<OrderType>[]  = [
         {
@@ -913,62 +977,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             responsive: ['lg'],
         },
-        {
-            title: <TitleColumn
-                className='no-padding'
-                minWidth="26px"
-                maxWidth="26px"
-                contentPosition="center"
-                childrenBefore={
-                    <Tooltip title="If order has Claims" >
-                        <span><Icon name={"complaint"} className='header-icon' /></span>
-                    </Tooltip>
-                }
-            />,
-            render: (text: string, record) => {
-                return (
-                    <TableCell
-                        className='no-padding'
-                        minWidth="26px"
-                        maxWidth="26px"
-                        contentPosition="center"
-                        childrenBefore={
-                            record.claimsExist && (
-                                <Popover
-                                    content={record.claims.length ? <SimplePopup
-                                        items={record.claims.map(orderItem => ({
-                                            uuid: record.uuid,
-                                            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.date),
-                                            description: orderItem.status,
-                                        }))}
-                                    /> : null}
-                                    trigger={isTouchDevice ? 'click' : 'hover'}
-                                    placement="right"
-                                    overlayClassName="doc-list-popover"
-                                >
-                                    <div style={{
-                                        minHeight: '8px',
-                                        minWidth: '8px',
-                                        backgroundColor: 'red',
-                                        borderRadius: '50%',
-                                        display: 'inline-block',
-                                        alignSelf: 'center',
-                                    }} />
-                                </Popover>
-                            )
-                        }
-                    >
-                    </TableCell>
-                );
-            },
-            dataIndex: 'claimsExist',
-            key: 'claimsExist',
-            sorter: false,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
-            responsive: ['lg'],
-        },
+        ...ClaimsColumns,
         {
             title: <TitleColumn
                 className='no-padding'
@@ -1347,7 +1356,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <FiltersChosen filters={orderFilters} />
+                    <FiltersChosen filters={orderFilters.filter(item=>item!==null)} />
                     {/*<CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
                     {/*<CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>handleFilterTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>*/}
                     {/*<CurrentFilters title='Non-trouble events' filterState={filterNonTroubleStatus} options={transformedNonTroubleStatuses} onClose={()=>handleFilterNonTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);}}/>*/}
@@ -1398,7 +1407,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersListWithOptions filters={orderFilters} />
+                <FiltersListWithOptions filters={orderFilters.filter(item=>item!==null)} />
             </FiltersContainer>
         </div>
     );

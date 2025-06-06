@@ -64,6 +64,7 @@ export enum AccessObjectTypes {
   "Profile/DeliveryProtocols" = "Profile/DeliveryProtocols",
   "Profile/WarehouseInfo" = "Profile/WarehouseInfo",
   "Profile/ChangePassword" = "Profile/ChangePassword",
+  "FAQ" = 'FAQ',
 }
 
 export enum AccessActions {
@@ -122,6 +123,7 @@ type authContextType = {
   userType: USER_TYPES | null;
   setCurrentUserType: (val: USER_TYPES | null) => void;
   getUserType: () => USER_TYPES | null;
+  getForbiddenTabs: (document:AccessObjectTypes)=>string[];
 };
 
 const AuthContext = createContext<authContextType>({} as authContextType);
@@ -358,9 +360,17 @@ export const AuthProvider = (props: PropsWithChildren) => {
     return true;
   }
 
+  const getForbiddenTabs = (document:AccessObjectTypes) => {
+    const forbiddenTabs = accessForActions.filter(item => item.objectType.includes(document+'/') && item.forbidden);
+    return forbiddenTabs.map(item => {
+      const temp = item.objectType.split('/');
+      return temp[temp.length-1];
+    });
+  }
+
 
   return (
-      <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser, setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess, isActionIsAccessible, saveSuperUserName, userType, setCurrentUserType, getUserType }}>
+      <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser, setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess, isActionIsAccessible, saveSuperUserName, userType, setCurrentUserType, getUserType, getForbiddenTabs }}>
       {props.children}
     </AuthContext.Provider>
   );

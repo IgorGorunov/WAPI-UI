@@ -46,6 +46,7 @@ import {CommonHints} from "@/constants/commonHints";
 import ConfirmModal from "@/components/ModalConfirm";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
+import {isTabAllowed} from "@/utils/tabs";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -64,8 +65,9 @@ type ProductPropsType = {
     closeProductModal: ()=>void;
     products: {name: string; uuid: string; quantity: number }[];
     refetchDoc: ()=>void;
+    forbiddenTabs: string[] | null;
 }
-const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal, refetchDoc}) => {
+const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal, refetchDoc, forbiddenTabs}) => {
     const {notifications} = useNotifications();
     const { tenantData: { alias }} = useTenant();
 
@@ -980,7 +982,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         productNotifications = notifications.filter(item => item.objectUuid === productData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
     }
 
-    const tabTitleArray =  TabTitles(!!productData?.uuid, !!(productData?.tickets && productData.tickets.length));
+    const tabTitleArray =  TabTitles(!!productData?.uuid, !!(productData?.tickets && productData.tickets.length), forbiddenTabs);
     const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
 
     useEffect(() => {
@@ -1098,7 +1100,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='tabs-iddd' tabTitles={tabTitles} classNames='inside-modal' notifications={productNotifications}>
-                <div className='primary-tab'>
+                {isTabAllowed('Primary', forbiddenTabs) ? <div className='primary-tab'>
                     <CardWithHelpIcon classNames='card product-info--general'>
                         <h3 className='product-info__block-title'>
                             <Icon name='general' />
@@ -1140,8 +1142,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             <FormFieldsBlock control={control} fieldsArray={additionalCheckboxes} errors={errors} isDisabled={isDisabled} />
                         </div>
                     </CardWithHelpIcon> : null}
-                </div>
-                <div className="dimensions-tab">
+                </div> : null }
+                {isTabAllowed('Dimensions', forbiddenTabs) ? <div className="dimensions-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--unitOfMeasures">
                         <h3 className='product-info__block-title'>
                             <Icon name='dimensions' />
@@ -1219,8 +1221,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             //rules={{ required: 'Field is required' }}
                         /> }
                     </CardWithHelpIcon>
-                </div>
-                <div className="barcodes-tab">
+                </div> : null }
+                {isTabAllowed('Barcodes', forbiddenTabs ) ? <div className="barcodes-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--barcodes">
                         <h3 className='product-info__block-title title-small'>
                             <Icon name='barcodes'/>
@@ -1260,8 +1262,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                <div className="aliases-tab">
+                </div> : null }
+                {isTabAllowed('Aliases', forbiddenTabs) ? <div className="aliases-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--aliases">
                         <TutorialHintTooltip hint={ProductOtherHints['aliases'] || ''} position='left' >
                             <h3 className='product-info__block-title title-small'>
@@ -1295,8 +1297,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                <div className="bundles-tab">
+                </div> : null }
+                {isTabAllowed('Virtual bundle kit', forbiddenTabs) ? <div className="bundles-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--bundleKit">
                         <TutorialHintTooltip hint={ProductOtherHints['virtualBundleKit'] || ''} position='left' >
                             <h3 className='product-info__block-title title-small'>
@@ -1330,8 +1332,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                <div className="analogues-tab">
+                </div> : null }
+                {isTabAllowed('Analogues', forbiddenTabs) ? <div className="analogues-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--analogues">
                         <TutorialHintTooltip hint={ProductOtherHints['analogues'] || ''} position='left' >
                             <h3 className='product-info__block-title title-small'>
@@ -1364,8 +1366,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                {productData?.statusHistory ? <div className="status-history-tab">
+                </div> : null }
+                {productData?.statusHistory && isTabAllowed('Status history', forbiddenTabs) ? <div className="status-history-tab">
                     <div className="card min-height-600 product-info--status-history">
                         <h3 className='product-info__block-title'>
                             <Icon name='history' />
@@ -1374,7 +1376,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <StatusHistory statusHistory={productData?.statusHistory} />
                     </div>
                 </div> : null}
-                {productData?.uuid && productData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                {productData?.uuid && productData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ? <div key='tickets-tab' className='tickets-tab'>
                     <div className="card min-height-600 product-info--tickets">
                         <h3 className='product-info__block-title'>
                             <Icon name='ticket' />
@@ -1383,7 +1385,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <DocumentTickets tickets={productData.tickets}/>
                     </div>
                 </div> : null}
-                <div className='files-tab'>
+                {isTabAllowed('Files', forbiddenTabs) ? <div className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 product-info--files">
                         <TutorialHintTooltip hint={ProductOtherHints['files'] || ''} position='left' classNames='mb-md' >
                             <h3 className='product-info__block-title title-small'>
@@ -1402,10 +1404,10 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
                         </div>
                     </CardWithHelpIcon>
-                </div>
+                </div> : null }
             </Tabs>
             <div className='form-submit-btn'>
-                {productData && productData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
+                {productData && productData.uuid && isTabAllowed('Tickets', forbiddenTabs) ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
                 {isDisabled && !orderIsApproved && <Button type="button" disabled={false} onClick={handleClickEdit} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
                 {(!isDisabled && !orderIsApproved || orderIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}

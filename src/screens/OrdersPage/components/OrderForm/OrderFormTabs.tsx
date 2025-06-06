@@ -1,26 +1,42 @@
 import {TabFieldType} from '@/types/tabs';
+import {isTabAllowed} from "@/utils/tabs";
 
-export const TabTitles = (objectExists: boolean, hasClaim=false, hasReturns=false, hasTickets=false) => {
 
-    const tabArray = objectExists ? ['General', 'Delivery info', 'Products', 'Services', 'Status history', 'SMS history'] : ['General', 'Delivery info', 'Products'];
+export const TabTitles = (objectExists: boolean, hasClaim=false, hasReturns=false, hasTickets=false, forbiddenTabs: string[] =[]) => {
 
-    if (hasClaim) {
+    const tabArray = [];
+
+    ['General', 'Delivery info', 'Products'].forEach(tabName => {
+        if (isTabAllowed(tabName, forbiddenTabs)) {
+            tabArray.push(tabName);
+        }
+    })
+
+    if (objectExists) {
+        ['Services', 'Status history', 'SMS history'].forEach(tabName => {
+            if (isTabAllowed(tabName, forbiddenTabs)) {
+                tabArray.push(tabName);
+            }
+        })
+    };
+
+    if (hasClaim && isTabAllowed('Claims', forbiddenTabs)) {
         tabArray.push('Claims');
     }
 
-    if (hasReturns) {
+    if (hasReturns && isTabAllowed('Customer returns', forbiddenTabs)) {
         tabArray.push('Customer returns');
     }
 
-    if (hasTickets) {
+    if (hasTickets && isTabAllowed('Tickets', forbiddenTabs)) {
         tabArray.push('Tickets');
     }
 
-    if (objectExists) {
+    if (objectExists && isTabAllowed('Notes', forbiddenTabs)) {
         tabArray.push('Notes');
     }
 
-    tabArray.push('Files');
+    if (isTabAllowed('Files', forbiddenTabs)) tabArray.push('Files');
 
     return tabArray;
 }

@@ -47,6 +47,7 @@ import {AmazonPrepHints} from "@/screens/AmazonPrepPage/amazonPrepHints.constant
 import {CommonHints} from "@/constants/commonHints";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
+import {isTabAllowed} from "@/utils/tabs";
 
 type AmazonPrepFormType = {
     amazonPrepOrderData?: SingleAmazonPrepOrderType;
@@ -54,6 +55,7 @@ type AmazonPrepFormType = {
     docUuid?: string | null;
     closeAmazonPrepOrderModal: ()=>void;
     refetchDoc: ()=>void;
+    forbiddenTabs: string[];
 }
 
 const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew: number) => {
@@ -67,8 +69,8 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
     return 0;
 }
 
-const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc}) => {
-    const { tenantData: { alias }} = useTenant();
+const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc, forbiddenTabs}) => {
+    const { tenantData: { alias, orderTitles }} = useTenant();
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {notifications} = useNotifications();
 
@@ -267,7 +269,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
 
     const linkToTrack = amazonPrepOrderData && amazonPrepOrderData.trackingLink ? <a href={amazonPrepOrderData?.trackingLink} target='_blank'>{amazonPrepOrderData?.trackingLink}</a> : null;
 
-    const generalFields = useMemo(()=> GeneralFields(!amazonPrepOrderData?.uuid), [])
+    const generalFields = useMemo(()=> GeneralFields(!amazonPrepOrderData?.uuid, orderTitles), [amazonPrepOrderData])
     const detailsFields = useMemo(()=>DetailsFields({newObject: !amazonPrepOrderData?.uuid, warehouses: warehouses, courierServices: getCourierServices(warehouse), handleWarehouseChange:handleWarehouseChange, linkToTrack, deliveryMethodOptions, carrierTypeOptions}), [warehouse, amazonPrepOrderParameters]);
     const receiverFields = useMemo(()=>ReceiverFields({countries, multipleLocations}),[countries,multipleLocations ])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(amazonPrepOrderData?.attachedFiles || []);
@@ -480,7 +482,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         // orderNotifications = notifications.filter(item => item.objectUuid === orderData.uuid)
     }
 
-    const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid, !!(amazonPrepOrderData?.tickets && amazonPrepOrderData?.tickets.length));
+    const tabTitleArray =  TabTitles(!!amazonPrepOrderData?.uuid, !!(amazonPrepOrderData?.tickets && amazonPrepOrderData?.tickets.length), forbiddenTabs);
     const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
 
     useEffect(() => {
@@ -602,7 +604,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         <ToastContainer />
         {amazonPrepOrderParameters ? <><form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='amazon-prep-tabs' tabTitles={tabTitles} classNames='inside-modal' notifications={amazonPrepNotifications} >
-                <div key='general-tab' className='general-tab'>
+                {isTabAllowed('General', forbiddenTabs) ? <div key='general-tab' className='general-tab'>
                     <CardWithHelpIcon classNames='card amazon-prep-info--general'>
                         <h3 className='amazon-prep-info__block-title'>
                             <Icon name='general' />
@@ -613,8 +615,8 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         </div>
                     </CardWithHelpIcon>
 
-                </div>
-                <div key='delivery-tab' className='delivery-tab'>
+                </div> : null }
+                {isTabAllowed('Delivery info', forbiddenTabs) ? <div key='delivery-tab' className='delivery-tab'>
                     <CardWithHelpIcon classNames='card amazon-prep-info--details'>
                         <h3 className='amazon-prep-info__block-title'>
                             <Icon name='additional' />
@@ -633,8 +635,8 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                             <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors} isDisabled={isDisabled}/>
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                <div key='product-tab' className='product-tab'>
+                </div> : null }
+                {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className='product-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--products">
                         {/*<TutorialHintTooltip hint={AmazonPrepHints['products'] || ''} position='left' >*/}
                             <h3 className='amazon-prep-info__block-title'>
@@ -703,8 +705,8 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                             <ProductsTotal productsInfo={productsTotalInfo} />
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                {amazonPrepOrderData?.uuid &&
+                </div> : null }
+                {amazonPrepOrderData?.uuid && isTabAllowed('Pallets', forbiddenTabs) &&
                     <div key='pallets-tab' className='pallets-tab'>
                         <div className="card min-height-600 amazon-prep-info--pallets">
                             <h3 className='amazon-prep-info__block-title'>
@@ -715,7 +717,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         </div>
                     </div>
                 }
-                {amazonPrepOrderData?.uuid &&
+                {amazonPrepOrderData?.uuid && isTabAllowed('Services', forbiddenTabs) &&
                     <div key='services-tab' className='services-tab'>
                         <div className="card min-height-600 amazon-prep-info--services">
                             <h3 className='amazon-prep-info__block-title'>
@@ -726,7 +728,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         </div>
                     </div>
                 }
-                {amazonPrepOrderData?.uuid &&
+                {amazonPrepOrderData?.uuid && isTabAllowed('Status history', forbiddenTabs) &&
                     <div key='status-history-tab' className='status-history-tab'>
                         <div className="card amazon-prep-info--history">
                             <h3 className='amazon-prep-info__block-title'>
@@ -745,7 +747,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                         </div> : null}
                     </div>
                 }
-                {amazonPrepOrderData?.uuid && amazonPrepOrderData.tickets.length ?
+                {amazonPrepOrderData?.uuid && amazonPrepOrderData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ?
                     <div key='tickets-tab' className='tickets-tab'>
                         <div className="card min-height-600 amazon-prep-info--tickets">
                             <h3 className='amazon-prep-info__block-title'>
@@ -755,7 +757,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                             <DocumentTickets tickets={amazonPrepOrderData.tickets}/>
                         </div>
                     </div> : null}
-                <div key='files-tab' className='files-tab'>
+                {isTabAllowed('Files', forbiddenTabs) ? <div key='files-tab' className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--files">
                         <TutorialHintTooltip hint={AmazonPrepHints['files'] || ''} position='left' >
                             <h3 className='amazon-prep-info__block-title title-small'>
@@ -767,11 +769,11 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                             <DropZone readOnly={!!isDisabled} files={selectedFiles} onFilesChange={handleFilesChange} docUuid={amazonPrepOrderData?.canEdit ? amazonPrepOrderData?.uuid : ''} hint="Product labels, Carton labels, Pallet labels, Excel file and any other files related to the order. Available formats: pdf, xls, xlsx." banCSV={true}/>
                         </div>
                     </CardWithHelpIcon>
-                </div>
+                </div> : null }
             </Tabs>
 
             <div className='form-submit-btn'>
-                {amazonPrepOrderData && amazonPrepOrderData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
+                {amazonPrepOrderData && amazonPrepOrderData.uuid && isTabAllowed('Tickets', forbiddenTabs) ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
                 {isDisabled && amazonPrepOrderData?.canEdit && <Button type="button" disabled={false} onClick={handleEditClick} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY} >Save</Button>}

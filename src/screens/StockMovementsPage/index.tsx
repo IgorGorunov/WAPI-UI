@@ -69,7 +69,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     const Router = useRouter();
     const { tenantData: { alias }} = useTenant();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
 
     useEffect(() => {
         if (!token) Router.push(Routes.Login);
@@ -187,17 +187,17 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
         }
 
         const filteredData = filteredDocs.map(item => ({
-            number: item.number,
-            incomingDate: item.incomingDate,
-            incomingNumber: item.incomingNumber,
-            status: item.status,
+            Number: item.number,
+            "Incoming date": item.incomingDate,
+            "Incoming number": item.incomingNumber,
+            Status: item.status,
             ETA: item.estimatedTimeArrives,
-            sender: item.sender,
-            senderCountry: item.senderCountry,
-            receiver: item.receiver,
-            receiverCountry: item.receiverCountry,
-            products: item.productsByString || getProductsByString(item),
-            services: '€ ' + item.servicesAmount,
+            Sender: item.sender,
+            "Sender Country": item.senderCountry,
+            Receiver: item.receiver,
+            "receiver Country": item.receiverCountry,
+            Products: item.productsByString || getProductsByString(item),
+            Services: '€ ' + item.servicesAmount,
             // packages: item.packages,
             // palletAmount: item.palletAmount,
             // volume: item.volume,
@@ -234,7 +234,15 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
                     <Button classNames='export-docs' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
-                {stockMovementData && <StockMovementList docType={docType} docs={stockMovementData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredDocs={setFilteredDocs} handleEditDoc={handleEditStockMovement} />}
+                {stockMovementData && <StockMovementList
+                    docType={docType}
+                    docs={stockMovementData}
+                    currentRange={curPeriod}
+                    setCurrentRange={setCurrentPeriod}
+                    setFilteredDocs={setFilteredDocs}
+                    handleEditDoc={handleEditStockMovement}
+                    forbiddenTabs={getForbiddenTabs(getAccessActionObject(docType))}
+                />}
             </div>
             {showStockMovementModal && (isDocNew && !docUuid || !isDocNew && docUuid) &&
                 <StockMovementForm docType={docType} docUuid={docUuid} closeDocModal={onShowStockMovementModalClose} closeModalOnSuccess={()=>{setShowStockMovementModal(false);fetchData();}} />

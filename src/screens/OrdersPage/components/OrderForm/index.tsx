@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {OrderParamsType, SingleOrderType} from "@/types/orders";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes, UserAccessActionType} from "@/context/authContext";
 import {getOrderData, getOrderParameters} from '@/services/orders';
 import {ApiResponseType} from '@/types/api';
 import {ToastContainer} from '@/components/Toast';
@@ -30,6 +30,7 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
 
     const [orderData, setOrderData] = useState<SingleOrderType|null>(null);
     const [orderParameters, setOrderParameters] = useState<OrderParamsType|null>(null);
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[]|null>(null);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -83,6 +84,20 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
 
             if (resp && "data" in resp) {
                 setOrderParameters(resp.data);
+
+                if (resp.data.actionAccessSettings) {
+                    const tabs = resp.data.actionAccessSettings as UserAccessActionType[];
+                    const tabsInString = [];
+                    tabs.forEach(item => {
+                        if (item.action === 'View' && item.forbidden) {
+                            const temp = item.objectType.split('/');
+                            tabsInString.push(temp[temp.length - 1]);
+                        }
+                    })
+                    setForbiddenTabs(tabsInString);
+                } else {
+                    setForbiddenTabs([]);
+                }
             } else {
                 console.error("API did not return expected data");
             }
@@ -117,14 +132,16 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
     return <div className='order-info'>
         {(isLoading || !(orderUuid && orderData || !orderUuid) || !orderParameters) && <Loader />}
         <ToastContainer />
-        {orderParameters && (orderUuid && orderData || !orderUuid) ?
+        {orderParameters && forbiddenTabs !==null && (orderUuid && orderData || !orderUuid) ?
             <Modal title={`Order`} onClose={onClose} classNames='document-modal'>
                 <OrderFormComponent
                     orderData={orderData}
                     orderParameters={orderParameters}
                     orderUuid={orderUuid}
                     closeOrderModal={onCloseWithSuccess}
-                    refetchDoc={()=>{fetchSingleOrder(orderUuid);}}/>
+                    refetchDoc={()=>{fetchSingleOrder(orderUuid);}}
+                    forbiddenTabs = {forbiddenTabs}
+                />
             </Modal>
         : null}
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

@@ -1,11 +1,24 @@
 import {TabFieldType} from '@/types/tabs';
+import {isTabAllowed} from "@/utils/tabs";
 
-export const TabTitles = (objectExists: boolean, hasTickets=false) => {
-    const tabsArr = objectExists ? ['General', 'Cargo info', 'Products', 'Services', 'Status history'] : ['General', 'Cargo info', 'Products'];
-    if (hasTickets) {
+export const TabTitles = (objectExists: boolean, hasTickets=false, forbiddenTabs: string[]) => {
+    const tabsArr = [];
+
+    ['General', 'Cargo info', 'Products'].forEach(tabName => {
+        if (isTabAllowed(tabName, forbiddenTabs)) tabsArr.push(tabName);
+    } );
+
+    if (objectExists) {
+        ['Services', 'Status history'].forEach(tabName => {
+            if (isTabAllowed(tabName, forbiddenTabs)) tabsArr.push(tabName);
+        })
+    }
+    if (hasTickets && isTabAllowed('Tickets', forbiddenTabs)) {
         tabsArr.push('Tickets');
     }
-    tabsArr.push('Files');
+
+    if (isTabAllowed('Files', forbiddenTabs)) tabsArr.push('Files');
+
     return tabsArr;
 }
 export const TabFields: TabFieldType[] = [

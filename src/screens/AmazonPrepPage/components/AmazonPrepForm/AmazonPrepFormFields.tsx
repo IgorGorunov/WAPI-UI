@@ -1,12 +1,13 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {AmazonPrepHints} from "@/screens/AmazonPrepPage/amazonPrepHints.constants";
+import {OrdersTenantDataType} from "@/lib/tenants";
 
-export const GeneralFields = (newObject) => [
+export const GeneralFields = (newObject, orderTitles: OrdersTenantDataType) => [
     {
         fieldType: FormFieldTypes.TEXT,
         type: "text",
         name: 'wapiTrackingNumber',
-        label: "WAPI tracking number",
+        label: orderTitles.trackingNumberTitle || 'Warehouse tracking number',
         placeholder: "",
         disabled: true,
         width: WidthType.w25,

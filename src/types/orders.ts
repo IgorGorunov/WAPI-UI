@@ -6,6 +6,7 @@ import {
 } from "@/types/utility";
 import {TicketType} from "@/types/tickets";
 import {NoteType} from "@/types/notes";
+import {UserAccessActionType} from "@/context/authContext";
 
 export type ClaimType = {
     date: string;
@@ -240,6 +241,7 @@ export type OrderParamsType = {
     products?: DocProductParamsType[];
     warehouses: WarehouseType[];
     currencies: string[];
+    actionAccessSettings?: UserAccessActionType[];
 }
 
 export type PickupPointsType = {
