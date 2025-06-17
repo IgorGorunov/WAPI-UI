@@ -22,6 +22,10 @@ type TabsType = {
 }
 const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tabTitles, children, needMinHeight=true, needMinHeightSmall=false, notifications, extraInfo,  withHorizontalDivider=false, needContentScroll= true}) => {
 
+    useEffect(() => {
+        console.log('tabs changed: ', tabTitles)
+    }, [tabTitles]);
+
     const tabListRef = useRef<HTMLUListElement | null>(null);
     const tabContentRef = useRef<HTMLDivElement | null>(null);
 

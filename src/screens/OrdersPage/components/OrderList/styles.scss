@@ -68,4 +68,18 @@
     }
 
   }
+
+  &__seller-block {
+    //display: flex;
+
+    .seller-filter {
+      padding: 0;
+
+      @media (min-width: $laptop) {
+        width: 50%;
+        margin-left: 50%;
+      }
+    }
+
+  }
 }

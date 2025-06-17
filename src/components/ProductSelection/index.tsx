@@ -38,6 +38,7 @@ type ProductSelectionPropsType = {
     selectedDocWarehouse?: string;
     needWarehouses?: boolean;
     needOnlyOneWarehouse?: boolean;
+    seller?: string;
 };
 
 const getWarehouseCountry = (productList:ProductsSelectionType[], warehouse: string) => {
@@ -48,10 +49,10 @@ const getWarehouseCountry = (productList:ProductsSelectionType[], warehouse: str
     return '';
 }
 
-const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, handleAddSelection, selectedDocWarehouse, needWarehouses=true, needOnlyOneWarehouse=true}) => {
+const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, handleAddSelection, selectedDocWarehouse, seller, needWarehouses=true, needOnlyOneWarehouse=true}) => {
     const [filteredProducts, setFilteredProducts]  = useState<ProductsSelectionType[]>([]);
     const { tenantData: { alias }} = useTenant();
-    const {token, superUser, ui, getBrowserInfo, } = useAuth();
+    const {token, superUser, ui, getBrowserInfo, needSeller} = useAuth();
     const [productList, setProductList]  = useState<ProductsSelectionType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -72,7 +73,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
             const resp: ApiResponseType = await getProductSelection(superUser && ui ? {...requestData, ui} : requestData);
 
             if (resp && "data" in resp) {
-                setProductList(resp.data);
+                setProductList(needSeller() ? resp.data.filter(item => item.seller === seller) : resp.data);
                 if (needWarehouses) {
                     setFilteredProducts(selectedDocWarehouse ? getFilteredProducts(selectedDocWarehouse, searchTerm, resp.data) : resp.data);
                 } else {
@@ -459,7 +460,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         <div className="product-selection">
             {(isLoading) && <Loader />}
             <div className={`product-selection__container ${needWarehouses ? 'with-filter' : "without-filter"} has-scroll`}>
-                {needWarehouses ?
+                {needWarehouses && warehouseOptions && warehouseOptions.length ?
                     <div className='product-selection__warehouses'>
                         <RadioButton name='warehouseSelection' isCountry={true} options={warehouseOptions}
                                      value={selectedWarehouse} onChange={(val) => setSelectedWarehouse(val as string)}

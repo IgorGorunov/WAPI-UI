@@ -361,6 +361,10 @@ button {
 
 .mb-md {
   margin-bottom: 24px;
+
+  @media (max-width: $upToTablet) {
+    margin-bottom: 16px;
+  }
 } 
 
 .react-calendar {
@@ -371,35 +375,6 @@ button {
   display: none;
 }
 
-.search-input {
-  flex: 1 1 auto !important;
-  display: flex;
-  height: 50px;
-  padding: 15px 40px 15px 20px;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-  border-radius: 30px;
-  border: 2px solid #F5F6F7;
-  background: #FFF;
-  box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-  color: #7D8FB3;
-  font-feature-settings: 'clig' off, 'liga' off;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 20px;
-  &::before {
-    content: '';
-    position: absolute;
-    left: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    background-size: cover;
-  }
-}
 
 .flag-icon {
   border: 1px solid var(--color-gray2);
@@ -569,8 +544,11 @@ input[type="date"]::before {
   }
 }
 
-
-
+.empty-table-error {
+  padding: 8px 0;
+  border: 2px solid var(--color-red);
+  border-radius: 15px;
+}
 
 //animations
 @keyframes fadeIn {

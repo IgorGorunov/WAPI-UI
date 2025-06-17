@@ -24,7 +24,7 @@ const FilterOption: React.FC<FilterOptionType> = ({option, extraName='', isCheck
                 isCountry={isCountry}
                 countryName = {option.value}
                 flagBefore={true}
-                extraLabel={`${option.amount ? "("+option.amount+")" : ''}`}
+                extraLabel={`${option.amount ? ""+option.amount+"" : ''}`}
                 value={isChecked}
                 checked={isChecked}
                 onChange={()=>onClick(option.value)}

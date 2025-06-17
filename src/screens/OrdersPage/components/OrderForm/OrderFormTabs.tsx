@@ -18,7 +18,7 @@ export const TabTitles = (objectExists: boolean, hasClaim=false, hasReturns=fals
                 tabArray.push(tabName);
             }
         })
-    };
+    }
 
     if (hasClaim && isTabAllowed('Claims', forbiddenTabs)) {
         tabArray.push('Claims');
@@ -47,6 +47,10 @@ export const TabFields: TabFieldType[] = [
         fieldName: 'date'
     },
     {
+        tabName: 'General',
+        fieldName: 'seller'
+    },
+    {
         tabName: 'Delivery info',
         fieldName: 'receiverCountry'
     },
@@ -73,6 +77,10 @@ export const TabFields: TabFieldType[] = [
     {
         tabName: 'Products',
         fieldName: 'codCurrency'
+    },
+    {
+        tabName: 'Products',
+        fieldName: 'priceCurrency'
     },
     {
         tabName: 'Products',

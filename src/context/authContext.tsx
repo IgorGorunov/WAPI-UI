@@ -2,6 +2,8 @@ import React, {createContext, PropsWithChildren, useContext, useState,} from "re
 import Cookie from "js-cookie";
 import {UserStatusType} from "@/types/leads";
 import useNotifications from "@/context/notificationContext";
+import {OptionType} from "@/types/forms";
+import {SellerType} from "@/types/utility";
 
 export type NavAccessItemType = {
   available: boolean;
@@ -36,7 +38,7 @@ export type UserAccessActionType = {
 
 export enum USER_TYPES {
   OWNER = "Owner",
-  OWNER_USER = "Owner user",
+  OPERATIONAL_TEAM = "Operations team",
   SELLER = "Seller",
 }
 
@@ -124,6 +126,9 @@ type authContextType = {
   setCurrentUserType: (val: USER_TYPES | null) => void;
   getUserType: () => USER_TYPES | null;
   getForbiddenTabs: (document:AccessObjectTypes)=>string[];
+  sellersList: OptionType[];
+  setSellers: (val: SellerType[]) => void;
+  needSeller: ()=>boolean;
 };
 
 const AuthContext = createContext<authContextType>({} as authContextType);
@@ -226,6 +231,28 @@ export const AuthProvider = (props: PropsWithChildren) => {
     setUserType(userType as USER_TYPES);
   }
 
+  const getSellersFromCookie = () => {
+    const sellers = Cookie.get('sellers');
+    if (sellers && sellers !== 'null') {
+      return JSON.parse(sellers).map(item => ({ label: item.description, value: item.uid }));
+    } else return null;
+  }
+  const [sellersList, setSellersList] = useState<OptionType[] | null>(getSellersFromCookie());
+  const setSellers = (val: SellerType[] | null) => {
+    if (val) {
+      const sellerOptions = val.map(item => ({ label: item.description, value: item.uid }));
+      setSellersList(sellerOptions);
+      Cookie.set('sellers', JSON.stringify(val));
+    } else {
+      setSellersList(null);
+      Cookie.remove('sellers');
+    }
+  }
+
+  const needSeller = () => {
+    return userType && (userType === USER_TYPES.OWNER || userType === USER_TYPES.OPERATIONAL_TEAM);
+  }
+
   const logout = () => {
     Cookie.remove('token');
     // setToken(null);
@@ -260,6 +287,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
     // setSuperUserName('');
 
     Cookie.remove('userType');
+    Cookie.remove('sellers');
   }
 
   const isAuthorizedUser = () => {
@@ -370,7 +398,14 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
 
   return (
-      <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser, setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess, isActionIsAccessible, saveSuperUserName, userType, setCurrentUserType, getUserType, getForbiddenTabs }}>
+      <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName,
+        currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus,
+        textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived,
+        setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser,
+        setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess,
+        isActionIsAccessible, saveSuperUserName, userType, setCurrentUserType, getUserType, getForbiddenTabs,
+        sellersList, setSellers, needSeller
+      }}>
       {props.children}
     </AuthContext.Provider>
   );

@@ -18,7 +18,7 @@
     align-items: center;
     min-width: 210px;
     padding: 6px 36px 6px 16px;
-    border: 1px solid var(--color-light-gray) !important;
+    border: 2px solid var(--color-light-gray) !important;
     border-radius: 30px;
     box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03) !important;
     color: var(--color-gray-blue) !important;
@@ -28,14 +28,15 @@
     font-weight: 700;
     cursor: pointer;
     justify-content: center;
-    @media (max-width: $mobile) {
-      width: 100%;
-    }
-    @media (max-width: $tablet) {
+    transition: .3s ease;
+    //@media (max-width: $mobile) {
+    //  width: 100%;
+    //}
+    @media (max-width: $upToTablet) {
       width: 100%;
     }
     &:hover {
-      border: 2px solid #4096ff !important;
+      border-color: var(--color-blue) !important;
     }
   }
 

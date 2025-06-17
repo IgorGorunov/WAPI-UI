@@ -162,6 +162,19 @@
     }
   }
 
+  &--cod-currency {
+    @media (max-width: $tablet) {
+      flex: 1 0 100%;
+      margin: 0;
+      padding: 0;
+
+      .width-50 {
+        flex-basis: 50%;
+        max-width: 50%;
+      }
+    }
+  }
+
   &--table {
     //flex: 1 0 100%;
     //display: flex;
@@ -232,4 +245,14 @@
   //    flex-wrap: wrap;
   //  }
   //}
+
+  &--seller {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+
+    .seller-filter {
+      padding: 0;
+    }
+  }
+
 }

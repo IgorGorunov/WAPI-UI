@@ -26,7 +26,6 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
-import {OrdersTenantDataType} from "@/lib/tenants";
 
 
 const OrdersPage = () => {

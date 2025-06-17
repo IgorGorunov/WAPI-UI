@@ -2,7 +2,7 @@ import {
     SEND_COMMENT_TYPES,
     AttachedFilesType,
     WarehouseType,
-    DocProductParamsType
+    DocProductParamsType, SellerType
 } from "@/types/utility";
 import {TicketType} from "@/types/tickets";
 import {NoteType} from "@/types/notes";
@@ -91,6 +91,7 @@ export type OrderType = {
         status: string;
     }[];
     marketplace: string;
+    seller?: SellerType;
 }
 
 export type ProductInfoType = {
@@ -214,6 +215,7 @@ export type SingleOrderType = {
     warehouseAdditionalInfo?: string;
     warehouseAssemblyPhotos?: AttachedFilesType[];
     customerReturns: OrderCustomerReturnType[];
+    seller?: string;
 }
 
 export type OrderProductType = {
@@ -337,3 +339,13 @@ export type SingleOrderFormType = {
     warehouse: string;
     products: SingleOrderProductFormType[];
 }
+
+//endpoint types
+export type CreateOrderRequestType = {
+    orderData: SingleOrderType,
+    token: string;
+    alias: string;
+    ui?: string;
+    seller?: string;
+}
+

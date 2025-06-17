@@ -2,6 +2,7 @@ import React from "react";
 import "./styles.scss";
 import {Input} from "antd";
 import Button from "@/components/Button/Button";
+import Icon from "@/components/Icon";
 
 type SearchFieldPropsType = {
     searchTerm: string;
@@ -12,6 +13,7 @@ type SearchFieldPropsType = {
 const SearchField: React.FC<SearchFieldPropsType> = ({ searchTerm, handleClear, handleChange}) => {
     return (
         <div className="search-field">
+            <Icon name='search' />
             <Input
                 id='search-input'
                 placeholder="Search..."

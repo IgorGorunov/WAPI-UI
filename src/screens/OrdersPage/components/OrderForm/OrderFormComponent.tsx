@@ -1,5 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {
+    CreateOrderRequestType,
     OrderParamsType,
     OrderProductWithTotalInfoType,
     PickupPointsType,
@@ -88,7 +89,7 @@ const getCorrectNotifications = (record: SingleOrderType, notifications: Notific
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal, forbiddenTabs}) => {
     const {notifications} = useNotifications();
     const { tenantData: { alias, orderTitles }} = useTenant();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
@@ -262,6 +263,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         uuid: orderData?.uuid || '',
         wapiTrackingNumber: orderData?.wapiTrackingNumber || '',
         warehouse: orderData?.warehouse || '',
+        seller: orderData?.seller && needSeller() ? orderData.seller : '',
         products:
             orderData && orderData?.products && orderData.products.length
                 ? orderData.products.map((product, index: number) => (
@@ -282,7 +284,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 : [],
     }),[orderData]);
 
-    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors} = useForm({
+    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors, setError} = useForm({
         mode: 'onSubmit',
         defaultValues: defaultFormValues,
     });
@@ -294,6 +296,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const preferredWarehouse = watch('preferredWarehouse');
     //const selectedWarehouse = watch('warehouse');
 
+    useEffect(() => {
+        console.log('products: ', products);
+    }, [products]);
 
     //tickets
     const [showTicketForm, setShowTicketForm] = useState(false);
@@ -407,15 +412,30 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         updateTotalProducts();
     },[products]);
 
+    const selectedSeller = watch('seller');
 
+    const handleSelectedSellerChange = (val:string) => {
+        if (val != selectedSeller) setValue('products', []);
+    }
 
     const getProductSku = (productUuid: string) => {
         const product = orderParameters.products.find(item => item.uuid === productUuid);
+        if (product && needSeller()) {
+            return product.seller === selectedSeller ? product?.sku : '';
+        }
         return product?.sku || '';
     }
+
     const productOptions = useMemo(() =>{
-        return orderParameters ? orderParameters.products.map((item)=> ({label: `${item.name}`, value: item.uuid})) : [];
-    },[orderParameters]);
+
+        let sellersProducts = orderParameters ? orderParameters.products : [];
+        if (needSeller()) {
+            sellersProducts = selectedSeller ? sellersProducts.filter(item=>item.seller===selectedSeller) : [];
+        }
+
+        return sellersProducts.map((item)=> ({label: `${item.name}`, value: item.uuid}));
+
+    },[orderParameters, selectedSeller]);
 
     const calcProductTotal = (index: number) => {
         const product = getValues('products')[index];
@@ -1074,6 +1094,24 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
 
         clearTabTitles();
+
+        if (!isDraft && !products.length) {
+            setError('products', {
+                type: 'manual',
+                message: 'Products are empty! Order needs to have at least 1 product!',
+            });
+
+            toast.warn(`Order needs to have at least 1 product!`, {
+                position: "top-right",
+                autoClose: 3000,
+            });
+
+
+            updateTabTitles(['products']);
+
+            return;
+        }
+
         setIsLoading(true);
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
@@ -1083,11 +1121,15 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
 
         try {
-            const requestData = {
+            const requestData: CreateOrderRequestType = {
                 token: token,
                 alias,
                 orderData: data
             };
+
+            if (data.seller) {
+                requestData.seller = data.seller;
+            }
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('CreateUpdateOrder'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -1129,21 +1171,53 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
         if (isDraft) {
             clearErrors();
-            const formData = getValues();
+            clearTabTitles();
 
-            return onSubmitForm(formData as SingleOrderFormType);
+            if (needSeller() && props.seller) {
+                setError('seller', {
+                    type: 'manual',
+                    message: 'Seller is required!',
+                });
+
+                toast.warn(`Seller is required for draft orders!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                updateTabTitles(['seller']);
+
+            } else {
+                const formData = getValues();
+                return onSubmitForm(formData as SingleOrderFormType);
+            }
+        } else {
+            let fieldNames = Object.keys(props);
+
+            if (fieldNames.length > 0) {
+                toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+            }
+
+            if (!products.length) {
+                setError('products', {
+                    type: 'manual',
+                    message: 'Products are empty! Order needs to have at least 1 product!',
+                });
+
+                toast.warn(`Order needs to have at least 1 product!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                fieldNames.push('products');
+            }
+
+            updateTabTitles(fieldNames);
         }
 
-        const fieldNames = Object.keys(props);
 
-        if (fieldNames.length > 0) {
-            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
-                position: "top-right",
-                autoClose: 3000,
-            });
-        }
-
-        updateTabTitles(fieldNames);
     };
 
     //validation function for codCurrency field
@@ -1192,7 +1266,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const [showWarehousePhotos, setShowWarehousePhotos] = useState(false);
 
-
     return <div className='order-info'>
         {(isLoading || !orderParameters) && <Loader />}
         <ToastContainer />
@@ -1200,7 +1273,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
                 <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
                 <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal'
-                      notifications={orderNotifications} extraInfo={orderData?.logisticComment || orderData?.warehouseAdditionalInfo ?
+                      notifications={orderNotifications}
+                      extraInfo={(orderData?.logisticComment || orderData?.warehouseAdditionalInfo) && isTabAllowed('Logistic comment', forbiddenTabs) ?
                         <div className='order-info--comments-wrapper'>
                             {orderData?.logisticComment ? <div className='order-info--logistic-comment-wrapper'>
                                 <p className='order-info--logistic-comment-text'>{orderData?.logisticComment}</p>
@@ -1210,6 +1284,43 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             </div>: null}
                         </div> : null}>
                     {isTabAllowed('General', forbiddenTabs) ? <div key='general-tab' className='general-tab'>
+                        {needSeller() ? (
+                            <div className='order-info--seller card'>
+                                <div className='grid-row'>
+                                    <Controller
+                                        key='seller'
+                                        name='seller'
+                                        control={control}
+                                        render={(
+                                            {
+                                                field: {...props},
+                                                fieldState: {error}
+                                            }) => (
+                                            <FieldBuilder
+                                                // disabled={!!isDisabled}
+                                                {...props}
+                                                name='seller'
+                                                label='Seller: '
+                                                fieldType={FormFieldTypes.SELECT}
+                                                options={sellersList}
+                                                placeholder={''}
+                                                errorMessage={error?.message}
+                                                errors={errors}
+                                                disabled={isDisabled || orderData?.status !=='Draft'}
+                                                width={WidthType.w50}
+                                                classNames={'seller-filter'}
+                                                isClearable={false}
+                                                onChange={(val: string)=>{
+                                                    handleSelectedSellerChange(val);
+                                                    props.onChange(val);
+                                                }}
+                                            />
+                                        )}
+                                        rules = {{required: "Required field"}}
+                                    />
+                                </div>
+                            </div>
+                        ) : null}
                         <CardWithHelpIcon classNames='card order-info--general'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='general'/>
@@ -1394,12 +1505,15 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 </div>
                             </div>
                             <div className='order-info--table table-form-fields form-table'>
-                                <Table
-                                    columns={getProductColumns(control)}
-                                    dataSource={getValues('products')?.map((field, index) => ({key: field.product + '-' + index, ...field})) || []}
-                                    pagination={false}
-                                    rowKey="key"
-                                />
+                                <div className={`products-wrapper${errors?.products ? ' empty-table-error' : ''}`}>
+                                    <Table
+                                        columns={getProductColumns(control)}
+                                        dataSource={getValues('products')?.map((field, index) => ({key: field.product + '-' + index, ...field})) || []}
+                                        pagination={false}
+                                        rowKey="key"
+                                    />
+                                </div>
+                                {errors?.products ? <p className={'error-message'}>{errors.products.message}</p> : null}
                                 <ProductsTotal productsInfo={productsTotalInfo}/>
                             </div>
                         </CardWithHelpIcon>
@@ -1500,13 +1614,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     {isDisabled && orderData?.canEdit && !orderData?.addressEditAllowedOnly && <Button type="button" disabled={false}
                                                                  onClick={handleEditClick}
                                                                  variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                    {isDisabled && orderData?.addressEditAllowedOnly && !isAddressAllowed && <Button type="button" disabled={false}
+                    {isDisabled && orderData?.addressEditAllowedOnly && !isAddressAllowed && isTabAllowed('Logistic comment', forbiddenTabs) && <Button type="button" disabled={false}
                                                                                                       onClick={handleEditAddressClick}
                                                                                                       variant={ButtonVariant.PRIMARY}>Edit address</Button>}
-                    {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
+                    {orderData?.uuid && orderData?.status==="In transit" && isTabAllowed('Comment to courier service', forbiddenTabs) && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
-                    {isDisabled && orderData?.addressEditAllowedOnly && isAddressAllowed && <Button type="submit" disabled={!isAddressAllowed || !addressWasChanged} onClick={()=>setIsAddressChange(true)}  variant={ButtonVariant.PRIMARY}>Send address</Button>}
+                    {isDisabled && orderData?.addressEditAllowedOnly && isAddressAllowed && isTabAllowed('Logistic comment', forbiddenTabs) && <Button type="submit" disabled={!isAddressAllowed || !addressWasChanged} onClick={()=>setIsAddressChange(true)}  variant={ButtonVariant.PRIMARY}>Send address</Button>}
                     </div>
             </form>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
@@ -1515,7 +1629,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             </Modal>}
             {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
                 {/*<ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>*/}
-                <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={preferredWarehouse} needOnlyOneWarehouse={false}/>
+                <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={preferredWarehouse} needOnlyOneWarehouse={false} seller={selectedSeller}/>
 
             </Modal>}
 

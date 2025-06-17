@@ -33,7 +33,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
   const Router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
-  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile, setIsSuperUser, setUserBrowserInfoFn, setActionAccess, saveSuperUserName, setCurrentUserType } = useAuth();
+  const { setToken, setUserName, setCurrentDate, setTutorialInfo, setUserStatus, setTextInfo, setNavItemsAccess, setUserInfoProfile, setIsSuperUser, setUserBrowserInfoFn, setActionAccess, saveSuperUserName, setCurrentUserType, setSellers } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -80,7 +80,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
   }
 
   const setAuthData = async(authData) => {
-    const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile, superUser, actionAccessSettings, whiteLabelUserType } = authData;
+    const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile, superUser, actionAccessSettings, whiteLabelUserType, seilers } = authData;
 
     setToken(accessToken, userStatus !== UserStatusType.user);
 
@@ -99,6 +99,10 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
 
     if (superUser) saveSuperUserName(userProfile?.userInfo?.userName);
 
+    if (seilers) {
+      setSellers(seilers);
+    } else setSellers(null);
+
     setOneTimeToken('');
 
     await setUserBrowserDataToCookies(authData);
@@ -115,6 +119,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
         await Router.push('/lead');
         return;
     }
+
   }
 
   const loginUserWithOneTimeToken = useCallback(async() => {

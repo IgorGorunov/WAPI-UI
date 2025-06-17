@@ -1,5 +1,5 @@
-import {SingleOrderType, OrderCommentType} from "@/types/orders";
-import {AttachedFilesType } from '@/types/utility';
+import {OrderCommentType, CreateOrderRequestType} from "@/types/orders";
+import {BulkCreateRequestType} from '@/types/utility';
 import {api} from "@/services/api";
 
 
@@ -91,12 +91,7 @@ const getOrderPickupPoints = async (
 };
 
 const sendOrderData = async (
-    data: {
-        orderData: SingleOrderType,
-        token: string;
-        alias: string;
-        ui?: string;
-    }
+    data: CreateOrderRequestType
 ) => {
     try {
         const response: any = await api.post(
@@ -154,12 +149,7 @@ const cancelOrder = async (
 };
 
 const sendOrderFiles = async (
-    data: {
-        files: AttachedFilesType[],
-        token: string;
-        alias: string;
-        ui?: string;
-    }
+    data: BulkCreateRequestType
 ) => {
     try {
         const response: any = await api.post(

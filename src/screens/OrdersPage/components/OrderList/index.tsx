@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState, useEffect} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
@@ -14,14 +14,17 @@ import {OrderType} from "@/types/orders";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, {ButtonVariant} from "@/components/Button/Button";
-import Head from "next/head";
 import {FormFieldTypes} from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
 import {Countries} from "@/types/countries";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds, formatTimeStringFromString} from "@/utils/date";
+import {
+    formatDateStringToDisplayString,
+    formatDateTimeToStringWithDotWithoutSeconds,
+    formatTimeStringFromString
+} from "@/utils/date";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import SimplePopup, {PopupItem} from "@/components/SimplePopup";
 import FiltersChosen from "@/components/FiltersChosen";
@@ -29,6 +32,8 @@ import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import useNotifications from "@/context/notificationContext";
 import {NotificationType} from "@/types/notifications";
 import {isTabAllowed} from "@/utils/tabs";
+import useAuth, {USER_TYPES} from "@/context/authContext";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 type OrderListType = {
     orders: OrderType[];
@@ -61,8 +66,7 @@ const hasCorrectNotifications = (record: OrderType, notifications: NotificationT
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, forbiddenTabs, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
-
-    console.log('orders', forbiddenTabs, isTabAllowed('Claims', forbiddenTabs));
+    const {userType, sellersList} = useAuth();
 
    // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -136,6 +140,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         const filterSet = new Set(filterArray); // Convert one array to a Set for fast lookups
         return order.nonTroubleEventsByString.split(',').some(item => filterSet.has(item));
     }, []);
+
+    const calcSellersAmount = useCallback((seller: string) => {
+        return orders.filter(order => order.seller?.uid.toLowerCase() === seller.toLowerCase()).length || 0;
+    },[orders]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const handleFilterStatusChange = (newStatuses: string[]) => {
@@ -457,6 +465,16 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)), [uniqueMarketplaces]);
 
 
+    //seller filter
+    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
+
+    useEffect(() => {
+        console.log('selected seller', selectedSeller);
+    }, [selectedSeller]);
+
+    const sellersOptions = useMemo(()=>{
+        return [{label: 'All sellers', value: 'All sellers', amount: orders.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
+    }, [sellersList, calcSellersAmount])
 
 
     const handleClearAllFilters = () => {
@@ -564,7 +582,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             const matchesMarketplace = !filterMarketplace.length ||
                 filterMarketplace.map(item=>item.toLowerCase()).includes(order.marketplace.toLowerCase());
 
-            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets && matchesPhotos && matchesReturns && matchesMarketplace;
+            const matchesSeller = selectedSeller === 'All sellers' || selectedSeller === order.seller.uid;
+
+            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets && matchesPhotos && matchesReturns && matchesMarketplace && matchesSeller;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -573,7 +593,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos, filterCustomerReturns, filterMarketplace]);
+    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos, filterCustomerReturns, filterMarketplace, selectedSeller]);
 
     // useEffect(() => {
     //     setCurrent(1)
@@ -658,7 +678,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterClaimsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)},
         } : null,
-        {
+        isTabAllowed('Order issues', forbiddenTabs) ? {
             filterTitle: 'Order issues',
             filterDescriptions: '',
             icon: 'issue',
@@ -669,8 +689,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterLogisticComment,
             onClose: ()=>handleFilterLogisticCommentChange([]),
             onClick: ()=>{()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}},
-        },
-        {
+        } : null,
+        isTabAllowed('Comment to courier service', forbiddenTabs) ? {
             filterTitle: 'Comments to courier service',
             icon: 'comment',
             filterDescriptions: '',
@@ -681,7 +701,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterCommentToCourierService,
             onClose: ()=>handleFilterCommentsToCourierServiceChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)},
-        },
+        } : null,
         {
             filterTitle: 'Self collect',
             icon: 'self-collect',
@@ -884,6 +904,105 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         } as TableColumnProps<OrderType>);
     }
 
+    const OrderIssueColumns: TableColumnProps<OrderType>[] = [];
+    if (isTabAllowed('Order issues', forbiddenTabs)) {
+        OrderIssueColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="42px"
+                maxWidth="46px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="If order has Order issues" >
+                        <span className='table-header-title'>Order issue</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="42px"
+                        maxWidth="46px"
+                        contentPosition="center"
+                        childrenBefore={
+                            !!record.logisticComment && (
+                                <Popover
+                                    content={<SimplePopup
+                                        items={[{
+                                            title: '',
+                                            description: record.logisticComment,
+                                        }] as PopupItem[]}
+                                    />}
+                                    trigger={isTouchDevice ? 'click' : 'hover'}
+                                    placement="right"
+                                    overlayClassName="doc-list-popover"
+                                >
+                                    <div style={{
+                                        minHeight: '8px',
+                                        minWidth: '8px',
+                                        backgroundColor: 'red',
+                                        borderRadius: '50%',
+                                        display: 'inline-block',
+                                        alignSelf: 'center',
+                                    }} />
+                                </Popover>
+                            )
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'logisticComment',
+            key: 'logisticComment',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<OrderType>);
+    }
+
+    const SellerColumns: TableColumnProps<OrderType>[] = [];
+    if (userType && (userType === USER_TYPES.OWNER || userType === USER_TYPES.OPERATIONAL_TEAM)) {
+        SellerColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="60px"
+                maxWidth="80px"
+                contentPosition="left"
+                childrenBefore={
+                    <Tooltip title="Seller's name" >
+                        <span className='table-header-title'>Seller</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="60px"
+                        maxWidth="80px"
+                        contentPosition="left"
+                        childrenBefore={
+                            <div className="seller-container">
+                                {record.seller.description}
+                            </div>
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'seller',
+            key: 'seller',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<OrderType>);
+    }
+
     const columns: TableColumnProps<OrderType>[]  = [
         {
             title: <TitleColumn
@@ -1037,61 +1156,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             responsive: ['lg'],
         },
-        {
-            title: <TitleColumn
-                className='no-padding'
-                minWidth="42px"
-                maxWidth="46px"
-                contentPosition="center"
-                childrenBefore={
-                    <Tooltip title="If order has Order issues" >
-                        <span className='table-header-title'>Order issue</span>
-                    </Tooltip>
-                }
-            />,
-            render: (text: string, record) => {
-                return (
-                    <TableCell
-                        className='no-padding'
-                        minWidth="42px"
-                        maxWidth="46px"
-                        contentPosition="center"
-                        childrenBefore={
-                            !!record.logisticComment && (
-                                <Popover
-                                    content={<SimplePopup
-                                        items={[{
-                                            title: '',
-                                            description: record.logisticComment,
-                                        }] as PopupItem[]}
-                                    />}
-                                    trigger={isTouchDevice ? 'click' : 'hover'}
-                                    placement="right"
-                                    overlayClassName="doc-list-popover"
-                                >
-                                    <div style={{
-                                        minHeight: '8px',
-                                        minWidth: '8px',
-                                        backgroundColor: 'red',
-                                        borderRadius: '50%',
-                                        display: 'inline-block',
-                                        alignSelf: 'center',
-                                    }} />
-                                </Popover>
-                            )
-                        }
-                    >
-                    </TableCell>
-                );
-            },
-            dataIndex: 'logisticComment',
-            key: 'logisticComment',
-            sorter: false,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
-            responsive: ['lg'],
-        },
+        ...OrderIssueColumns,
         {
             title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
             />,
@@ -1121,8 +1186,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 const underlineColor = getUnderlineColor(record.status==='Error' ? record.status : record.statusGroup);
                 return (
                     <TableCell
-                        minWidth="60px"
-                        maxWidth="100px"
+                        minWidth="50px"
+                        maxWidth="90px"
                         contentPosition="start"
                         childrenAfter={
                             <Popover
@@ -1202,15 +1267,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             },
         },
         {
-            title: <TitleColumn minWidth="75px" maxWidth="75px" contentPosition="center" childrenBefore={<Tooltip title="The sum of cash on delivery"><span>COD</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="65px" maxWidth="65px" contentPosition="center" childrenBefore={<Tooltip title="The sum of cash on delivery"><span>COD</span></Tooltip>}/>,
             render: (text: string, record) => {
                 if (record.codCurrency) {
                     const currencySymbol = getSymbolFromCurrency(record.codCurrency);
                     return (
                         <TableCell
                             value={`${text} ${currencySymbol}`}
-                            minWidth="75px"
-                            maxWidth="75px"
+                            minWidth="65px"
+                            maxWidth="65px"
                             contentPosition="center">
                         </TableCell>
                     );
@@ -1247,6 +1312,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             responsive: ['md'],
         },
+        ...SellerColumns,
         {
             title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Code of warehouse"><span>Warehouse</span></Tooltip>}/>,
             render: (text: string) => (
@@ -1353,6 +1419,23 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
+
+            {userType && (userType === USER_TYPES.OWNER || userType === USER_TYPES.OPERATIONAL_TEAM) ?
+                <div className='order-list__seller-block'>
+                    <SelectField
+                        key='seller-filter'
+                        name='selectedSeller'
+                        label='Seller: '
+                        value={selectedSeller}
+                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                        options={sellersOptions}
+                        classNames='seller-filter full-sized'
+                        isClearable={false}
+                    />
+                    </div>
+                : null
+            }
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
