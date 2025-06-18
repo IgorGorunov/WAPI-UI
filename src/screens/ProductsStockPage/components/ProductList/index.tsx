@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Table, Pagination, Tooltip, Popover} from 'antd';
+import {Table, Pagination, Tooltip, Popover, TableColumnProps} from 'antd';
 import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
@@ -9,7 +9,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import SearchField from "@/components/SearchField";
 import Button, {ButtonVariant} from "@/components/Button/Button";
@@ -22,6 +21,8 @@ import SimplePopup from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
+import useAuth from "@/context/authContext";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 type ProductListType = {
     products: ProductStockType[];
@@ -30,6 +31,8 @@ type ProductListType = {
 }
 
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setWarehouseForExport}) => {
+    const {sellersList, needSeller} = useAuth();
+
     const [animating, setAnimating] = useState(false);
     const isTouchDevice = useIsTouchDevice();
 
@@ -150,6 +153,16 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         },
     ];
 
+    //Seller filter
+    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
+    const sellersOptions = useMemo(()=>{
+        return [{label: 'All sellers', value: 'All sellers', amount: products.length}, ...sellersList.map(item=>({...item, amount: calcOrderAmount('seller', item.value)}))];
+    }, [sellersList, calcOrderAmount])
+    const getSellerName = useCallback((sellerUid: string) => {
+        const t = sellersList.find(item=>item.value===sellerUid);
+        return t ? t.label : ' - ';
+    }, [sellersList]);
+
     const [fullTextSearch, setFullTextSearch] = useState(true);
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
@@ -189,7 +202,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             });
             const matchesWarehouse = !filterWarehouse.length || filterWarehouse.map(item=>item.toLowerCase()).includes(product.warehouse.toLowerCase());
             const matchesCountry = !filterCountry.length || filterCountry.map(item=>item.toLowerCase()).includes(product.country.toLowerCase());
-            return matchesSearch && matchesWarehouse && matchesCountry;
+            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === product.seller;
+
+            return matchesSearch && matchesWarehouse && matchesCountry && matchesSeller;
         });
 
         if (sortColumn) {
@@ -202,7 +217,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             });
         }
         return filtered;
-    }, [products, searchTerm, filterWarehouse, filterCountry, sortColumn, sortDirection]);
+    }, [products, searchTerm, filterWarehouse, filterCountry, sortColumn, sortDirection, sellersList, selectedSeller]);
 
     useEffect(() => {
         setFilteredProducts(filteredProducts)
@@ -219,6 +234,48 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         const width = 63+maxAmount*9;
         return width.toString()+'px';
     },[current, pageSize, filteredProducts]);
+
+
+    //Columns
+    const SellerColumns: TableColumnProps<ProductStockType>[] = [];
+    if (needSeller()) {
+        SellerColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="60px"
+                maxWidth="80px"
+                contentPosition="left"
+                childrenBefore={
+                    <Tooltip title="Seller's name" >
+                        <span className='table-header-title'>Seller</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="60px"
+                        maxWidth="80px"
+                        contentPosition="left"
+                        childrenBefore={
+                            <div className="seller-container">
+                                {getSellerName(record.seller)}
+                            </div>
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'seller',
+            key: 'seller',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<ProductStockType>);
+    }
 
     const columns: ColumnType<ProductStockType>[] = useMemo(() => [
         {
@@ -281,6 +338,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
             }),
         },
+        ...SellerColumns,
         {
             title: <TitleColumn minWidth="40px" maxWidth="40px"  contentPosition="center" childrenBefore={<Tooltip title="Available products for new orders"><span>Available</span></Tooltip>}/>,
             render: (text: string) => (
@@ -399,6 +457,23 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
+
+            { sellersList && needSeller() ?
+                <div className='seller-filter-block'>
+                    <SelectField
+                        key='seller-filter'
+                        name='selectedSeller'
+                        label='Seller: '
+                        value={selectedSeller}
+                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                        options={sellersOptions}
+                        classNames='seller-filter full-sized'
+                        isClearable={false}
+                    />
+                </div>
+                : null
+            }
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>

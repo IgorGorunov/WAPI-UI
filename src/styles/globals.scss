@@ -550,6 +550,17 @@ input[type="date"]::before {
   border-radius: 15px;
 }
 
+.seller-filter-block {
+  .seller-filter {
+    padding: 0;
+
+    @media (min-width: $laptop) {
+      width: 50%;
+      margin-left: 50%;
+    }
+  }
+}
+
 //animations
 @keyframes fadeIn {
   0% {

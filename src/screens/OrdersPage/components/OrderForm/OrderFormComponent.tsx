@@ -1306,7 +1306,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                 placeholder={''}
                                                 errorMessage={error?.message}
                                                 errors={errors}
-                                                disabled={isDisabled || orderData?.status !=='Draft'}
+                                                disabled={isDisabled || (orderData?.status !=='Draft' && !!orderData)}
                                                 width={WidthType.w50}
                                                 classNames={'seller-filter'}
                                                 isClearable={false}

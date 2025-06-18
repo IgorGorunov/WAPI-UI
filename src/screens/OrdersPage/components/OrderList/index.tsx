@@ -32,7 +32,7 @@ import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import useNotifications from "@/context/notificationContext";
 import {NotificationType} from "@/types/notifications";
 import {isTabAllowed} from "@/utils/tabs";
-import useAuth, {USER_TYPES} from "@/context/authContext";
+import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 type OrderListType = {
@@ -66,7 +66,7 @@ const hasCorrectNotifications = (record: OrderType, notifications: NotificationT
 
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, forbiddenTabs, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
-    const {userType, sellersList} = useAuth();
+    const {needSeller, sellersList} = useAuth();
 
    // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -964,7 +964,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
 
     const SellerColumns: TableColumnProps<OrderType>[] = [];
-    if (userType && (userType === USER_TYPES.OWNER || userType === USER_TYPES.OPERATIONAL_TEAM)) {
+    if (needSeller()) {
         SellerColumns.push({
             title: <TitleColumn
                 className='no-padding'
@@ -1420,8 +1420,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 </div>
             </SearchContainer>
 
-            {userType && (userType === USER_TYPES.OWNER || userType === USER_TYPES.OPERATIONAL_TEAM) ?
-                <div className='order-list__seller-block'>
+            {needSeller() ?
+                <div className='seller-filter-block'>
                     <SelectField
                         key='seller-filter'
                         name='selectedSeller'

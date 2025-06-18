@@ -30,7 +30,7 @@ ChartJS.register(
     scales,
 );
 
-type DataPoint = {
+export type DataPoint = {
   Key: string;
   Value: number;
 };

@@ -51,10 +51,6 @@
     }
   }
 
-  //.no-padding {
-  //  margin: 0 -10px;
-  //}
-
   .table-date-time-container {
     display: flex;
     flex-direction: column;
@@ -65,20 +61,6 @@
 
     .table-time {
       font-size: 10px;
-    }
-
-  }
-
-  &__seller-block {
-    //display: flex;
-
-    .seller-filter {
-      padding: 0;
-
-      @media (min-width: $laptop) {
-        width: 50%;
-        margin-left: 50%;
-      }
     }
 
   }

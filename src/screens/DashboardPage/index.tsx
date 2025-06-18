@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {getDasboardData} from "@/services/dashboard";
-import {DashboardPeriodType, PeriodType} from "@/types/dashboard";
+import {DashboardDataType, DashboardPeriodType, PeriodType} from "@/types/dashboard";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header"
 import Diagram from "./components/Diagram";
@@ -21,25 +21,35 @@ import Router from "next/router";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
+import {ApiResponseType} from "@/types/api";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
+import {OptionType} from "@/types/forms";
 
-type pageDataType = {
-  ordersDiagram: any;
-  gmv: any;
-  totalOrders: any;
-  ordersByStatuses: any;
-  orderByCountryArrival: any;
-  orderByCountryDeparture: any;
-};
+// type pageDataType = {
+//   ordersDiagram: any;
+//   gmv: any;
+//   totalOrders: any;
+//   ordersByStatuses: any;
+//   orderByCountryArrival: any;
+//   orderByCountryDeparture: any;
+// };
 
 const DashboardPage: React.FC = () => {
   const { tenantData: { alias } } = useTenant();
-  const { token, currentDate, isAuthorizedUser, getBrowserInfo ,superUser, ui, isActionIsAccessible, isNavItemAccessible } = useAuth();
+  const { token, currentDate, isAuthorizedUser, getBrowserInfo ,superUser, ui, isActionIsAccessible, isNavItemAccessible, needSeller, sellersList } = useAuth();
 
   useEffect(() => {
     if (!isAuthorizedUser) Router.push(Routes.Login);
   }, [token]);
 
-  const [pageData, setPageData] = useState<pageDataType | null>(null);
+
+
+  const [selectedSeller, setSelectedSeller] = useState<string | null>(null);
+  const [sellersOptions, setSellersOptions] = useState<OptionType[]>([]);
+
+  const [pageDataArr, setPageDataArr] = useState<DashboardDataType[]>([]);
+  const [data, setData] = useState<string>('');
+  const [sellerData, setSellerData] = useState<DashboardDataType | null>(null);
 
   const [currentPeriod, setCurrentPeriod] = useState<DashboardPeriodType>({
     startDate: new Date(new Date().setDate(currentDate.getDate() - 30 + 1)),
@@ -63,10 +73,9 @@ const DashboardPage: React.FC = () => {
     };
   },[token]);
 
+  const lastValidPageData = useRef<DashboardDataType[]>([]);
+
   useEffect(() => {
-    type ApiResponse = {
-      data: any;
-    };
 
     const fetchData = async () => {
       try {
@@ -82,23 +91,28 @@ const DashboardPage: React.FC = () => {
         } catch {}
 
         if (isActionIsAccessible(AccessObjectTypes["Dashboard"], AccessActions.View) && isNavItemAccessible('Dashboard')) {
-          const res: ApiResponse = await getDasboardData(superUser && ui ? {...requestData, ui} : requestData);
+          const res: ApiResponseType = await getDasboardData(superUser && ui ? {...requestData, ui} : requestData);
 
           if (res && "data" in res) {
-            setPageData(res.data);
+            setPageDataArr(res.data);
+
+            if (Array.isArray(res.data) && res.data.length > 0) {
+              setData(JSON.stringify(res.data));
+              lastValidPageData.current = res.data;
+              // setSellerData(res.data[0]);
+              setSelectedSeller(res.data[0].seller);
+              setSellersOptions(res.data.map(item => {
+                const seller = sellersList.find(s => s.value === item.seller);
+                return {label: seller ? seller.label : ' - ', value: item.seller}
+              }));
+            }
             setIsLoading(false);
           } else {
             console.error("API did not return expected data");
           }
         } else {
-          setPageData({
-            ordersDiagram: {},
-            gmv: {},
-            totalOrders: [],
-            ordersByStatuses: [],
-            orderByCountryArrival: [],
-            orderByCountryDeparture: [],
-          });
+          setPageDataArr([]);
+          console.log('no access');
           setIsLoading(false);
         }
 
@@ -116,26 +130,48 @@ const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     if (!isTutorialWatched(TourGuidePages.Dashboard)) {
-      if (!isLoading && pageData) {
+      if (!isLoading && pageDataArr) {
         setTimeout(() => setRunTour(true), 1000);
       }
     }
   }, [isLoading]);
 
-  const gmv = pageData && pageData.gmv ? pageData.gmv : null;
-  const orders = pageData && pageData.totalOrders ? pageData.totalOrders : null;
-  const ordersByStatuses =
-    pageData && pageData.ordersByStatuses ? pageData.ordersByStatuses : null;
+  useEffect(() => {
+    if (selectedSeller && data) {
+          const selectedSellerData = JSON.parse(data).find(s => s.seller === selectedSeller);
 
-  const orderByCountryArrival =
-    pageData && pageData.orderByCountryArrival
-      ? pageData.orderByCountryArrival
-      : null;
 
-  const orderByCountryDeparture =
-    pageData && pageData.orderByCountryDeparture
-      ? pageData.orderByCountryDeparture
-      : null;
+
+          if (selectedSellerData) {
+            setSellerData(selectedSellerData);
+            setSelectedSeller(selectedSeller);
+            return;
+          }
+        }
+  }, [selectedSeller]);
+
+ // const handleSellerChange = (selectedSeller: string) => {
+ //   console.log('selectedSeller: ', selectedSeller, pageDataArr, !data);
+ //   console.log('Fallback data:', lastValidPageData.current);
+ //
+ //   if (selectedSeller && data) {
+ //     const selectedSellerData = JSON.parse(data).find(s => s.seller === selectedSeller);
+ //
+ //
+ //
+ //     if (selectedSellerData) {
+ //       setSellerData(selectedSellerData);
+ //       setSelectedSeller(selectedSeller);
+ //       return;
+ //     }
+ //   }
+ //
+ //   // setSellerData(null);
+ // }
+
+  useEffect(() => {
+    console.log('page data: ', pageDataArr, data);
+  }, [pageDataArr, data]);
 
   return (
       <Layout hasHeader hasFooter>
@@ -154,55 +190,75 @@ const DashboardPage: React.FC = () => {
           </div>
           {(isActionIsAccessible(AccessObjectTypes["Dashboard"], AccessActions.View) && isNavItemAccessible('Dashboard')) ? (
               <div>
-            <div className="dashboard-animated-grid grid-row dashboard-grid-row">
-              <div className="width-33 dashboard-grid-col">
-                <Forecast
-                    type="GMV"
-                    amountInPeriod={!gmv?.gmvInPeriod ? 0 : gmv?.gmvInPeriod}
-                    beginOfMonth={!gmv?.gmvBEginOfMonth ? 0 : gmv?.gmvBEginOfMonth}
-                    beginOfYear={!gmv?.gmvBeginOfYear ? 0 : gmv?.gmvBeginOfYear}
-                    forecastByMonth={!gmv?.gmvForecastByMonth ? 0 : gmv?.gmvForecastByMonth}
-                    forecastByYear={!gmv?.gmvForecastByYear ? 0 : gmv?.gmvForecastByYear}
-                    //temporary
-                    isError = {false}
-                    errorMessage='This indicator is temporarily unavailable due to technical work until 22.01.2024'
-                />
-              </div>
-              <div className="width-33 dashboard-grid-col">
-                <OrderStatuses ordersByStatuses={ordersByStatuses}/>
-              </div>
-              <div className="width-33 dashboard-grid-col">
-                <Forecast
-                    type="ORDERS"
-                    amountInPeriod={!orders?.ordersInPeriod ? 0 : orders?.ordersInPeriod}
-                    beginOfMonth={!orders?.ordersInPeriod ? 0 : orders?.ordersBeginOfMonth}
-                    beginOfYear={!orders?.ordersBeginOfYear ? 0 : orders?.ordersBeginOfYear}
-                    forecastByMonth={!orders?.ordersForecastByMonth ? 0 : orders?.ordersForecastByMonth}
-                    forecastByYear={!orders?.ordersForecastByYear ? 0 : orders?.ordersForecastByYear}
-                />
-              </div>
-            </div>
-            {
-              isLoading
-                  ?
-                  <Diagram
-                      diagramData={null}
-                      setDiagramType={setDiagramType}
-                      diagramType={diagramType}
+                { sellersList && needSeller() ?
+                    <div className='seller-filter-block'>
+                      <SelectField
+                          key='seller-filter'
+                          name='selectedSeller'
+                          label='Seller: '
+                          value={selectedSeller}
+                          // onChange={(val)=>handleSellerChange(val as  string)}
+                          onChange={(val)=>setSelectedSeller(val as  string)}
+                          //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                          options={sellersOptions}
+                          classNames='seller-filter full-sized'
+                          isClearable={false}
+                      />
+                    </div>
+                    : null
+                }
+                {sellerData ? <div>
+              <div className="dashboard-animated-grid grid-row dashboard-grid-row">
+                <div className="width-33 dashboard-grid-col">
+                  <Forecast
+                      type="GMV"
+                      amountInPeriod={!sellerData.gmv?.gmvInPeriod ? 0 : sellerData.gmv?.gmvInPeriod}
+                      beginOfMonth={!sellerData.gmv?.gmvBEginOfMonth ? 0 : sellerData.gmv?.gmvBEginOfMonth}
+                      beginOfYear={!sellerData.gmv?.gmvBeginOfYear ? 0 : sellerData.gmv?.gmvBeginOfYear}
+                      forecastByMonth={!sellerData.gmv?.gmvForecastByMonth ? 0 : sellerData.gmv?.gmvForecastByMonth}
+                      forecastByYear={!sellerData.gmv?.gmvForecastByYear ? 0 : sellerData.gmv?.gmvForecastByYear}
+                      //temporary
+                      isError = {false}
+                      errorMessage='This indicator is temporarily unavailable due to technical work until 22.01.2024'
                   />
-                  : <Diagram
-                      diagramData={pageData.ordersDiagram}
-                      setDiagramType={setDiagramType}
-                      diagramType={diagramType}
+                </div>
+                <div className="width-33 dashboard-grid-col">
+                  <OrderStatuses ordersByStatuses={sellerData.ordersByStatuses}/>
+                </div>
+                <div className="width-33 dashboard-grid-col">
+                  <Forecast
+                      type="ORDERS"
+                      amountInPeriod={!sellerData.totalOrders?.ordersInPeriod ? 0 : sellerData.totalOrders?.ordersInPeriod}
+                      beginOfMonth={!sellerData.totalOrders?.ordersInPeriod ? 0 : sellerData.totalOrders?.ordersBeginOfMonth}
+                      beginOfYear={!sellerData.totalOrders?.ordersBeginOfYear ? 0 : sellerData.totalOrders?.ordersBeginOfYear}
+                      forecastByMonth={!sellerData.totalOrders?.ordersForecastByMonth ? 0 : sellerData.totalOrders?.ordersForecastByMonth}
+                      forecastByYear={!sellerData.totalOrders?.ordersForecastByYear ? 0 : sellerData.totalOrders?.ordersForecastByYear}
                   />
-            }
-            {
-              <OrdersByCountry
-                  arrival={!orderByCountryArrival ? [] : orderByCountryArrival}
-                  departure={!orderByCountryDeparture ? [] : orderByCountryDeparture}
-              />
-            }
-            {pageData && runTour && dashboardSteps ? <TourGuide steps={dashboardSteps} run={runTour} pageName={TourGuidePages.Dashboard} /> : null}
+                </div>
+              </div>
+              {
+                isLoading
+                    ?
+                    <Diagram
+                        diagramData={null}
+                        setDiagramType={setDiagramType}
+                        diagramType={diagramType}
+                    />
+                    : <Diagram
+                        diagramData={sellerData.ordersDiagram}
+                        setDiagramType={setDiagramType}
+                        diagramType={diagramType}
+                    />
+              }
+              {
+                <OrdersByCountry
+                    arrival={!sellerData.orderByCountryArrival ? [] : sellerData.orderByCountryArrival}
+                    departure={!sellerData.orderByCountryDeparture ? [] : sellerData.orderByCountryDeparture}
+                />
+              }
+                    </div> : null }
+              {sellerData && runTour && dashboardSteps ? <TourGuide steps={dashboardSteps} run={runTour} pageName={TourGuidePages.Dashboard} /> : null}
+
               </div>) : null}
         </div>
 
