@@ -89,7 +89,7 @@ const getCorrectNotifications = (record: SingleOrderType, notifications: Notific
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal, forbiddenTabs}) => {
     const {notifications} = useNotifications();
     const { tenantData: { alias, orderTitles }} = useTenant();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
@@ -1302,7 +1302,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                 name='seller'
                                                 label='Seller: '
                                                 fieldType={FormFieldTypes.SELECT}
-                                                options={sellersList}
+                                                options={(orderData?.status !=='Draft' && !!orderData) ? sellersList : sellersListActive}
                                                 placeholder={''}
                                                 errorMessage={error?.message}
                                                 errors={errors}

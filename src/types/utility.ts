@@ -93,6 +93,7 @@ export type BasicDocListQueryType = {
 export type SellerType = {
     description: string;
     uid: string;
+    inactive: boolean;
 }
 
 export type BulkCreateRequestType = {

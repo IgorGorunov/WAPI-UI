@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {sendOrderFiles} from '@/services/orders';
 import {sendProductFiles} from "@/services/products";
 import Button from '@/components/Button/Button'
@@ -65,7 +65,7 @@ type ImportFilesBlockType = {
 }
 const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
     const { tenantData: { alias }} = useTenant();
-    const { token, superUser, ui, getBrowserInfo, needSeller, sellersList } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, needSeller, sellersListActive } = useAuth();
     const [selectedFilesImport, setSelectedFilesImport] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
     const handleFilesChange = (files) => {
@@ -106,7 +106,23 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
     };
 
     const sendFunc = fileData.sendFileFunction;
+    const [errorMessageSeller, setErrorMessageSeller] = useState('');
+    const [hasTriedToSend, setHasTriedToSend] = useState(false);
+    useEffect(() => {
+        if (hasTriedToSend && !selectedSeller) {
+            setErrorMessageSeller('Please, select seller');
+        } else {
+            setErrorMessageSeller('');}
+    }, [selectedSeller, hasTriedToSend]);
+
     const sendFiles = async () => {
+        if (needSeller() && !selectedSeller) {
+            setHasTriedToSend(true);
+            setErrorMessageSeller('Please, select seller');
+            return null;
+        } else {
+            setErrorMessageSeller('');
+        }
 
         if (selectedFilesImport.length) {
             setIsLoading(true);
@@ -176,10 +192,10 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                         label='Seller: '
                         value={selectedSeller}
                         onChange={(val)=>setSelectedSeller(val as  string)}
-                        options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                        options={[...sellersListActive]}
                         classNames='seller-filter'
                         isClearable={false}
-                        errors={'aaaa'}
+                        errorMessage={errorMessageSeller}
                     />
                 </div>
             )}

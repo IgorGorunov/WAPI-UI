@@ -93,46 +93,59 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     //notifications
     const {notifications} = useNotifications();
 
-    const calcOrderAmount = useCallback((property: string, value: string) => {
-        return orders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
+
+    //filters
+    //seller filter
+    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
+
+    const calcSellersAmount = useCallback((seller: string) => {
+        return orders.filter(order => order.seller?.uid.toLowerCase() === seller.toLowerCase()).length || 0;
     },[orders]);
+
+    const sellersOptions = useMemo(()=>{
+        return [{label: 'All sellers', value: 'All sellers', amount: orders.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
+    }, [sellersList, calcSellersAmount]);
+
+    const calcOrderAmount = useCallback((property: string, value: string) => {
+        return orders.filter(order => order[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderAllTroubleStatuses = useCallback(() => {
-        return orders.filter(order => order.lastTroubleStatus.length).length || 0;
-    },[orders]);
+        return orders.filter(order => order.lastTroubleStatus.length  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithoutTroubleStatuses = useCallback(() => {
-        return orders.filter(order => order.troubleStatuses.length===0).length || 0;
-    },[orders]);
+        return orders.filter(order => order.troubleStatuses.length===0  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithClaims = useCallback(() => {
-        return orders.filter(order => order.claimsExist).length || 0;
-    },[orders]);
+        return orders.filter(order => order.claimsExist  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithCommentsToCourierService = useCallback(() => {
-        return orders.filter(order => order.commentToCourierServiceExist).length || 0;
-    },[orders]);
+        return orders.filter(order => order.commentToCourierServiceExist  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithBooleanProperty = useCallback((property: string, value: boolean) => {
-        return orders.filter(order => order[property] === value).length || 0;
-    },[orders]);
+        return orders.filter(order => order[property] === value  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithLogisticComment = useCallback(()=> {
-        return orders.filter(order => !!order.logisticComment).length || 0;
-    }, [orders]);
+        return orders.filter(order => !!order.logisticComment && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderWithoutNonTroubleStatuses = useCallback(()=> {
-        return orders.filter(order => !order.nonTroubleEventsExist).length || 0;
-    }, [orders]);
+        return orders.filter(order => !order.nonTroubleEventsExist && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderAllNonTroubleStatuses = useCallback(()=> {
-        return orders.filter(order => !!order.nonTroubleEventsExist).length || 0;
-    }, [orders]);
+        return orders.filter(order => !!order.nonTroubleEventsExist && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderAmountWithNonTroubleEvent = useCallback((event: string) => {
-        const ordersWithEvent = orders.filter(order => order.nonTroubleEvents.filter(orderEvent=> orderEvent.event==event).length > 0);
+        const ordersWithEvent = orders.filter(order => (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller) && order.nonTroubleEvents.filter(orderEvent=> orderEvent.event==event).length > 0);
         return ordersWithEvent.length || 0;
-    }, [orders]);
+    }, [orders, selectedSeller]);
 
     const hasNonTroubleEvents = useCallback((filterArray: string[], order: OrderType) => {
         if (!order.nonTroubleEventsExist) return false;
@@ -141,9 +154,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         return order.nonTroubleEventsByString.split(',').some(item => filterSet.has(item));
     }, []);
 
-    const calcSellersAmount = useCallback((seller: string) => {
-        return orders.filter(order => order.seller?.uid.toLowerCase() === seller.toLowerCase()).length || 0;
-    },[orders]);
+
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const handleFilterStatusChange = (newStatuses: string[]) => {
@@ -152,9 +163,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
-        const statuses = orders.map(order => order.status);
+        const statuses = orders.map(order =>  selectedSeller==='All sellers' || order.seller.uid === selectedSeller ? order.status : null).filter(status => status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
         ...uniqueStatuses.map(status => ({
@@ -170,9 +181,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
     }
     const uniqueTroubleStatuses = useMemo(() => {
-        const statuses = orders.map(order => order.lastTroubleStatus);
+        const statuses = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.lastTroubleStatus);
         return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueTroubleStatuses.sort();
     const transformedTroubleStatuses = useMemo(() => ([
         {
@@ -200,9 +211,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     const uniqueNonTroubleStatuses = useMemo(() => {
         const nonTroubleEvents= [];
-        orders.forEach(order => order.nonTroubleEventsByString.split(',').forEach(event=>nonTroubleEvents.push(event.trim())));
+        orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).forEach(order => order.nonTroubleEventsByString.split(',').forEach(event=>nonTroubleEvents.push(event.trim())));
         return Array.from(new Set(nonTroubleEvents)).filter(nonTroubleEvent => nonTroubleEvent).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueNonTroubleStatuses.sort();
     const transformedNonTroubleStatuses = useMemo(() => ([
         {
@@ -236,9 +247,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Without claims',
             label: 'Without claims',
-            amount: (orders.length - calcOrderWithClaims()),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithClaims()),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterLogisticComment, setFilterLogisticComment] = useState<string[]>([]);
     const handleFilterLogisticCommentChange = (newValue: string[]) => {
@@ -254,9 +265,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Without order issue',
             label: 'Without order issue',
-            amount: (orders.length - calcOrderWithLogisticComment()),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithLogisticComment()),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterCommentsToCourierService, setFilterCommentsToCourierService] = useState<string[]>([]);
     const handleFilterCommentsToCourierServiceChange = (newValue: string[]) => {
@@ -272,9 +283,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Without comments',
             label: 'Without comments',
-            amount: (orders.length - calcOrderWithCommentsToCourierService()),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithCommentsToCourierService()),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterSelfCollect, setFilterSelfCollect] = useState<string[]>([]);
     const handleFilterSelfCollectChange = (newValue: string[]) => {
@@ -290,9 +301,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Not self collect',
             label: 'Not self collect',
-            amount: (orders.length - calcOrderWithBooleanProperty('selfCollect', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('selfCollect', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterSentSMS, setFilterSentSMS] = useState<string[]>([]);
     const handleFilterSentSMSChange = (newValue: string[]) => {
@@ -308,9 +319,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: "Doesn't have SMS",
             label: "Doesn't have SMS",
-            amount: (orders.length - calcOrderWithBooleanProperty('sentSMSExist', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('sentSMSExist', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     const handleFilterWarehouseChange = (newValue: string[]) => {
@@ -319,9 +330,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
-        const warehouses = orders.map(order => order.warehouse);
+        const warehouses = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.warehouse);
         return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueWarehouses.sort();
     const transformedWarehouses = useMemo(() => ([
         ...uniqueWarehouses.map(warehouse => ({
@@ -338,9 +349,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = useMemo(() => {
-        const courierServices = orders.map(order => order.courierService);
+        const courierServices = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.courierService);
         return Array.from(new Set(courierServices)).filter(courier => courier).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueCourierServices.sort();
     const transformedCourierServices = useMemo(() => ([
         ...uniqueCourierServices.map(courier => ({
@@ -358,9 +369,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
-        const receiverCountries = orders.map(order => order.receiverCountry);
+        const receiverCountries = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.receiverCountry);
         return Array.from(new Set(receiverCountries)).filter(country => country).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueReceiverCountries.sort();
     const transformedReceiverCountries = useMemo(() => ([
         ...uniqueReceiverCountries.map(country => ({
@@ -385,9 +396,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: "Without tickets",
             label: "Without tickets",
-            amount: (orders.length - calcOrderWithBooleanProperty('ticket', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('ticket', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     // open tickets
     const [filterHasOpenTickets, setFilterHasOpenTickets] = useState<string[]>([]);
@@ -404,9 +415,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: "Without open tickets",
             label: "Without open tickets",
-            amount: (orders.length - calcOrderWithBooleanProperty('ticketopen', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('ticketopen', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterPhotos, setFilterPhotos] = useState<string[]>([]);
     const handleFilterPhotosChange = (newValue: string[]) => {
@@ -422,9 +433,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Without photos',
             label: 'Without photos',
-            amount: (orders.length - calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     //customer returns
     const [filterCustomerReturns, setFilterCustomerReturns] = useState<string[]>([]);
@@ -441,9 +452,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: "Without customer returns",
             label: "Without customer returns",
-            amount: (orders.length - calcOrderWithBooleanProperty('returnsExist', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('returnsExist', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     //marketplaces
     const [filterMarketplace, setFilterMarketplace] = useState<string[]>([]);
@@ -452,9 +463,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
     }
     const uniqueMarketplaces = useMemo(() => {
-        const marketplaces = orders.map(order => order.marketplace);
+        const marketplaces = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.marketplace);
         return Array.from(new Set(marketplaces)).filter(item => item).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueMarketplaces.sort();
     const marketplaceOptions = useMemo(() => ([
         ...uniqueMarketplaces.map(item => ({
@@ -463,18 +474,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             amount: calcOrderAmount('marketplace', item),
         }))
     ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)), [uniqueMarketplaces]);
-
-
-    //seller filter
-    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
-
-    useEffect(() => {
-        console.log('selected seller', selectedSeller);
-    }, [selectedSeller]);
-
-    const sellersOptions = useMemo(()=>{
-        return [{label: 'All sellers', value: 'All sellers', amount: orders.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
-    }, [sellersList, calcSellersAmount])
 
 
     const handleClearAllFilters = () => {
@@ -1440,20 +1439,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
                     <FiltersChosen filters={orderFilters.filter(item=>item!==null)} />
-                    {/*<CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
-                    {/*<CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>handleFilterTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>*/}
-                    {/*<CurrentFilters title='Non-trouble events' filterState={filterNonTroubleStatus} options={transformedNonTroubleStatuses} onClose={()=>handleFilterNonTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);}}/>*/}
-                    {/*<CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>handleFilterClaimsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />*/}
-                    {/*<CurrentFilters title='Order issues' filterState={filterLogisticComment} options={logisticCommentFilterOptions} onClose={()=>handleFilterLogisticCommentChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}} />*/}
-                    {/*<CurrentFilters title='Comment to courier service' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>handleFilterCommentsToCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />*/}
-                    {/*<CurrentFilters title='Self collect' filterState={filterSelfCollect} options={selfCollectFilterOptions} onClose={()=>handleFilterSelfCollectChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)}} />*/}
-                    {/*<CurrentFilters title='Sent SMS' filterState={filterSentSMS} options={sentSMSFilterOptions} onClose={()=>handleFilterSentSMSChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)}} />*/}
-                    {/*<CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>handleFilterWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>*/}
-                    {/*<CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>handleFilterCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>*/}
-                    {/*<CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />*/}
-                    {/*<CurrentFilters title='Tickets' filterState={filterHasTickets} options={hasTicketsOptions} onClose={()=>handleFilterHasTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)}} />*/}
-                    {/*<CurrentFilters title='Open tickets' filterState={filterHasOpenTickets} options={hasOpenTicketsOptions} onClose={()=>handleFilterHasOpenTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)}} />*/}
-                    {/*<CurrentFilters title='Photos from warehouse' filterState={filterPhotos} options={photoFilterOptions} onClose={()=>handleFilterPhotosChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -1497,19 +1482,3 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 };
 
 export default React.memo(OrderList);
-
-
-{/*<FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
-{/*<FiltersBlock filterTitle={'Trouble status'} filterDescriptions={'Shows orders where the selected trouble status was the last in the trouble status list'} filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={handleFilterTroubleStatusChange} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>*/}
-{/*<FiltersBlock filterTitle='Non-trouble events' filterOptions={transformedNonTroubleStatuses} filterState={filterNonTroubleStatus} setFilterState={handleFilterNonTroubleStatusChange} isOpen={isOpenFilterNonTroubleStatus} setIsOpen={setIsOpenFilterNonTroubleStatus}/>*/}
-{/*<FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={handleFilterClaimsChange} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>*/}
-{/*<FiltersBlock filterTitle='Order issues' filterOptions={logisticCommentFilterOptions} filterState={filterLogisticComment} setFilterState={handleFilterLogisticCommentChange} isOpen={isOpenFilterLogisticComment} setIsOpen={setIsOpenFilterLogisticComment}/>*/}
-{/*<FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={handleFilterCommentsToCourierServiceChange} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>*/}
-{/*<FiltersBlock filterTitle='Self collect' filterOptions={selfCollectFilterOptions} filterState={filterSelfCollect} setFilterState={handleFilterSelfCollectChange} isOpen={isOpenFilterSelfCollect} setIsOpen={setIsOpenFilterSelfCollect}/>*/}
-{/*<FiltersBlock filterTitle='Sent SMS' filterOptions={sentSMSFilterOptions} filterState={filterSentSMS} setFilterState={handleFilterSentSMSChange} isOpen={isOpenFilterSentSMS} setIsOpen={setIsOpenFilterSentSMS}/>*/}
-{/*<FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={handleFilterWarehouseChange} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
-{/*<FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={handleFilterCourierServiceChange} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>*/}
-{/*<FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
-{/*<FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>*/}
-{/*<FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>*/}
-{/*<FiltersBlock filterTitle='Photos from warehouse' filterOptions={photoFilterOptions} filterState={filterPhotos} setFilterState={handleFilterPhotosChange} isOpen={isOpenFilterPhotos} setIsOpen={setIsOpenFilterPhotos}/>*/}

@@ -127,6 +127,7 @@ type authContextType = {
   getUserType: () => USER_TYPES | null;
   getForbiddenTabs: (document:AccessObjectTypes)=>string[];
   sellersList: OptionType[];
+  sellersListActive: OptionType[];
   setSellers: (val: SellerType[]) => void;
   needSeller: ()=>boolean;
 };
@@ -234,20 +235,33 @@ export const AuthProvider = (props: PropsWithChildren) => {
   const getSellersFromCookie = () => {
     const sellers = Cookie.get('sellers');
     if (sellers && sellers !== 'null') {
-      return JSON.parse(sellers).map(item => ({ label: item.description, value: item.uid }));
+      return JSON.parse(sellers).map((item: SellerType) => ({ label: item.description, value: item.uid }));
     } else return null;
   }
+  const getSellersActiveFromCookie = () => {
+    const sellers = Cookie.get('sellers');
+    if (sellers && sellers !== 'null') {
+      return JSON.parse(sellers).filter((item: SellerType)=>!item.inactive).map((item: SellerType) => ({ label: item.description, value: item.uid }));
+    } else return null;
+  }
+
   const [sellersList, setSellersList] = useState<OptionType[] | null>(getSellersFromCookie());
+  const [sellersListActive, setSellersListActive] = useState<OptionType[] | null>(getSellersActiveFromCookie());
   const setSellers = (val: SellerType[] | null) => {
     if (val) {
       const sellerOptions = val.map(item => ({ label: item.description, value: item.uid }));
       setSellersList(sellerOptions);
+      const sellerOptionsActive = val.filter(item=>!item.inactive).map(item => ({ label: item.description, value: item.uid }));
+      setSellersListActive(sellerOptionsActive);
+
       Cookie.set('sellers', JSON.stringify(val));
     } else {
       setSellersList(null);
+      setSellersListActive(null);
       Cookie.remove('sellers');
     }
   }
+
 
   const needSeller = () => {
     return userType && (userType === USER_TYPES.OWNER || userType === USER_TYPES.OPERATIONAL_TEAM);
@@ -404,7 +418,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
         setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser,
         setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess,
         isActionIsAccessible, saveSuperUserName, userType, setCurrentUserType, getUserType, getForbiddenTabs,
-        sellersList, setSellers, needSeller
+        sellersList, setSellers, needSeller, sellersListActive
       }}>
       {props.children}
     </AuthContext.Provider>

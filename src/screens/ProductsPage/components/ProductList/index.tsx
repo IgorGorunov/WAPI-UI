@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Popover, Table, Tooltip} from 'antd';
+import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
 import {ColumnType} from "antd/es/table";
 
 import "./styles.scss";
@@ -21,6 +21,8 @@ import SimplePopup, {PopupItem} from "@/components/SimplePopup";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
+import useAuth from "@/context/authContext";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 type ProductListType = {
     products: ProductType[];
@@ -48,11 +50,9 @@ const extraStatusHints = {
 
 
 const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setProductsData, handleEditProduct, reFetchData}) => {
-
+    const { needSeller, sellersList } = useAuth();
     const isTouchDevice = useIsTouchDevice();
     const [animating, setAnimating] = useState(false);
-    //const [isLoading, setIsLoading] = useState(false);
-    const [selectedSeller, setSelectedSeller] = useState<string|null>(null);
 
     // Popup
     const getPopupItems = useCallback((hoveredProduct) => {
@@ -108,9 +108,26 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         hideTextOnMobile: true,
     }
 
-    const calcOrderAmount = useCallback((property: string, value: string) => {
-        return products.filter(product => product[property].toLowerCase() === value.toLowerCase()).length || 0;
+    //filters
+    //seller filter
+    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
+
+    const calcSellersAmount = useCallback((seller: string) => {
+        return products.filter(order => order.seller.toLowerCase() === seller.toLowerCase()).length || 0;
     },[products]);
+
+    const sellersOptions = useMemo(()=>{
+        return [{label: 'All sellers', value: 'All sellers', amount: products.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
+    }, [sellersList, calcSellersAmount]);
+
+    const getSellerName = useCallback((sellerUid: string) => {
+        const t = sellersList.find(item=>item.value===sellerUid);
+        return t ? t.label : ' - ';
+    }, [sellersList]);
+
+    const calcProductAmount = useCallback((property: string, value: string) => {
+        return products.filter(product => product[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller==='All sellers' || product.seller == selectedSeller)).length || 0;
+    },[products, selectedSeller]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const handleFilterStatusChange = (newStatuses: string[]) => {
@@ -118,18 +135,18 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         setCurrent(1);
     }
     const uniqueStatuses = useMemo(() => {
-        const statuses = products.map(invoice => invoice.status);
+        const statuses = products.filter(product => !selectedSeller || selectedSeller==='All sellers' || product.seller == selectedSeller).map(invoice => invoice.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [products]);
+    }, [products, selectedSeller]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
         ...uniqueStatuses.map(status => ({
             value: status,
             label: status,
-            amount: calcOrderAmount('status', status),
+            amount: calcProductAmount('status', status),
             color: statusFilter.filter(item=>item.value===status)[0]?.color || 'white',
         }))
-    ]), [uniqueStatuses]);
+    ]), [uniqueStatuses, calcProductAmount]);
 
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
 
@@ -168,7 +185,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
             const matchesStatus = !filterStatus.length || filterStatus.map(item=>item.toLowerCase()).includes(product.status.toLowerCase());
-            return matchesSearch && matchesStatus;
+            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === product.seller;
+
+            return matchesSearch && matchesStatus && matchesSeller;
         });
 
         if (sortColumn) {
@@ -182,13 +201,53 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         }
 
         return filtered;
-    }, [products, searchTerm, filterStatus, sortColumn, sortDirection]);
+    }, [products, searchTerm, filterStatus, sortColumn, sortDirection, selectedSeller]);
 
     useEffect(() => {
         setFilteredProducts(filteredProducts)
     }, [searchTerm, filterStatus]);
 
     // Table
+    const SellerColumns: TableColumnProps<ProductType>[] = [];
+    if (needSeller()) {
+        SellerColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="70px"
+                maxWidth="90px"
+                contentPosition="left"
+                childrenBefore={
+                    <Tooltip title="Seller's name" >
+                        <span className='table-header-title'>Seller</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="70px"
+                        maxWidth="90px"
+                        contentPosition="left"
+                        childrenBefore={
+                            <div className="seller-container">
+                                {getSellerName(record.seller)}
+                            </div>
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'seller',
+            key: 'seller',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<ProductType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<ProductType>);
+    }
+
     const columns: ColumnType<ProductType>[] = useMemo(() => [
         // {
         //     title: (
@@ -282,9 +341,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         },
 
         {
-            title: <TitleColumn minWidth="120px" maxWidth="200px" contentPosition="start" childrenBefore={<Tooltip title="A unique code for tracking each product in inventory"><span>SKU</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="110px" maxWidth="200px" contentPosition="start" childrenBefore={<Tooltip title="A unique code for tracking each product in inventory"><span>SKU</span></Tooltip>}/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="120px" maxWidth="200px" contentPosition="start"/>
+                <TableCell value={text} minWidth="110px" maxWidth="200px" contentPosition="start"/>
             ),
             dataIndex: 'sku',
             key: 'sku',
@@ -311,6 +370,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 };
             },
         },
+        ...SellerColumns,
         {
             title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="center" childrenBefore={<Tooltip title="Length, width, and height in millimeters"><span>Dimension | mm</span></Tooltip>}/>,
             render: (text: string) => (
@@ -408,31 +468,29 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
-
+            {needSeller() ?
+                <div className='seller-filter-block'>
+                    <SelectField
+                        key='seller-filter'
+                        name='selectedSeller'
+                        label='Seller: '
+                        value={selectedSeller}
+                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                        options={sellersOptions}
+                        classNames='seller-filter full-sized'
+                        isClearable={false}
+                    />
+                </div>
+                : null
+            }
             <div className='product-list__notice'>
                 <p>Before sending a new product to our warehouse, please wait until the product receives "Approved" status</p>
             </div>
 
-            {/*<Accordion title={'Extra actions'} classNames='extra-actions'>*/}
-            {/*    <div className='list-extra-actions'>*/}
-            {/*        <p className='text-bold'>Set status of selected products to:</p>*/}
-            {/*        <FieldBuilder fieldType={FormFieldTypes.SELECT} name={'newStatus'} options={statusOptions} value={selectedNewStatus} isClearable={false} onChange={(val)=>setSelectedNewStatus(val as string)} classNames={'list-extra-actions--select'}/>*/}
-            {/*        <Button disabled={!selectedProducts.length} size={ButtonSize.EXTRA_SMALL} onClick={()=>setShowConfirmModal(true)}>Apply</Button>*/}
-            {/*    </div>*/}
-            {/*</Accordion>*/}
-
-
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
                     <FiltersChosen filters={productFilters} />
-                    {/*<CurrentFilters*/}
-                    {/*    title='Status'*/}
-                    {/*    filterState={filterStatus}*/}
-                    {/*    options={transformedStatuses}*/}
-                    {/*    onClose={() => handleFilterStatusChange([])} onClick={() => {*/}
-                    {/*    setIsFiltersVisible(true);*/}
-                    {/*    setIsOpenFilterStatus(true)*/}
-                    {/*}}/>*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -477,14 +535,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible}
                               onClearFilters={() => handleFilterStatusChange([])}>
                 <FiltersListWithOptions filters={productFilters} />
-                {/*<FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE}*/}
-                {/*              filterOptions={transformedStatuses} filterState={filterStatus}*/}
-                {/*              setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus}*/}
-                {/*              setIsOpen={setIsOpenFilterStatus}/>*/}
             </FiltersContainer>
-            {/*{showConfirmModal && <ModalConfirm actionText={`to change status of ${selectedProducts.length} product${selectedProducts.length>1 ?'s':''}`} onOk={handleStatusChange} onCancel={()=>setShowConfirmModal(false)} />}*/}
-            {/*{showStatusModal && (modalStatusInfo.statusModalType===STATUS_MODAL_TYPES.SUCCESS || changeStatusErrors.length) && <ModalStatus {...modalStatusInfo} multipleObjectsErrorText={changeStatusErrors.map(item=>({title: `${item.product.name}:`, text: item.errors}))}/>}*/}
-
         </div>
     );
 };

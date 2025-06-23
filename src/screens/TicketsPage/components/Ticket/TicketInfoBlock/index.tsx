@@ -33,10 +33,10 @@ const TicketInfoBlock: React.FC<TicketInfoPropsType> = ({ticketData }) => {
                      onClick={() => setDisplayDocModal(true)}>{ticketData.subject.trim()}</div>
                 <p className='width-17 ticket-info--title'>Description:</p>
                 <div className='width-83 ticket-info--info'>{ticketData.description}</div>
-                {ticketData.result ? <>
+                {ticketData.result ? <div>
                     <p className='width-17 ticket-info--title'>Result:</p>
                     <div className='width-83 ticket-info--info'>{ticketData.result}</div>
-                </> : null}
+                </div> : null}
             </div>
 
             {displayDocModal && ticketData.subjectUuid ? (
