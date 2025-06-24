@@ -58,6 +58,8 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
 
     const [productSelectionDocWarehouse, setProductSelectionDocWarehouse] = useState(needWarehouses ? selectedDocWarehouse : "");
 
+    console.log('1234567890: ', seller);
+
     useEffect(() => {
         setProductSelectionDocWarehouse(needWarehouses ? selectedDocWarehouse : '');
     }, [selectedDocWarehouse]);
@@ -73,12 +75,13 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
             const resp: ApiResponseType = await getProductSelection(superUser && ui ? {...requestData, ui} : requestData);
 
             if (resp && "data" in resp) {
-                setProductList(needSeller() ? resp.data.filter(item => item.seller === seller) : resp.data);
-                if (needWarehouses) {
-                    setFilteredProducts(selectedDocWarehouse ? getFilteredProducts(selectedDocWarehouse, searchTerm, resp.data) : resp.data);
-                } else {
+                const productsSelection = needSeller() ? resp.data.filter(item => item.seller === seller) : resp.data ;
+                setProductList(productsSelection as ProductsSelectionType[]);
 
-                    const res = await aggregateTableData(resp.data, ['uuid', 'name', 'sku','aliases','barcodes'], ['available'], ['warehouse','country','weightNet','weightGross','volumeWeight','volume'], [])
+                if (needWarehouses) {
+                    setFilteredProducts(selectedDocWarehouse ? getFilteredProducts(selectedDocWarehouse, searchTerm, productsSelection) : resp.data);
+                } else {
+                    const res = await aggregateTableData(productsSelection, ['uuid', 'name', 'sku','aliases','barcodes'], ['available'], ['warehouse','country','weightNet','weightGross','volumeWeight','volume'], [])
                     setProductList(res.map(item => ({...item, warehouse: '', key: item.uuid})) as ProductsSelectionType[]);
                     setFilteredProducts(res.map(item => ({...item, warehouse: '', key: item.uuid})) as ProductsSelectionType[]);
                 }
@@ -459,7 +462,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
     return (
         <div className="product-selection">
             {(isLoading) && <Loader />}
-            <div className={`product-selection__container ${needWarehouses ? 'with-filter' : "without-filter"} has-scroll`}>
+            <div className={`product-selection__container ${needWarehouses && warehouseOptions && warehouseOptions.length ? 'with-filter' : "without-filter"} has-scroll`}>
                 {needWarehouses && warehouseOptions && warehouseOptions.length ?
                     <div className='product-selection__warehouses'>
                         <RadioButton name='warehouseSelection' isCountry={true} options={warehouseOptions}
@@ -469,7 +472,6 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                     : null
                 }
                 <div className="product-selection__search">
-
                     <SearchContainer>
                         <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => {
                             setSearchTerm("");

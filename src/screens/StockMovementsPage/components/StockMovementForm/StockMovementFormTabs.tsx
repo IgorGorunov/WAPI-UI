@@ -47,6 +47,10 @@ export const TabFields: TabFieldType[] = [
         fieldName: 'receiverCountry'
     },
     {
+        tabName: 'General',
+        fieldName: 'seller'
+    },
+    {
         tabName: 'Products',
         fieldName: 'products'
     },

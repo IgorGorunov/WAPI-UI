@@ -9,8 +9,6 @@ import useAuth from "@/context/authContext";
 import {Routes} from "@/types/routes";
 import CookieConsent from "@/components/CookieConsent";
 import BackToTop from "@/components/BackToTop";
-import useTenant from "@/context/tenantContext";
-//import { clarity } from 'react-microsoft-clarity';
 
 type Props = {
   hasHeader?: boolean;
@@ -27,10 +25,6 @@ const Layout: React.FC<Props> = ({
     const router = useRouter();
     const {logout, isCookieConsentReceived} = useAuth();
     const [showCookieConsent, setShowCookieConsent] = useState(false);
-
-    const {tenant} = useTenant();
-
-    console.log('tenant in layout: ', tenant)
 
     const [apiErrorTitle, setApiErrorTitle] = useState<string>('');
     const [apiErrorText, setApiErrorText] = useState<string>('');

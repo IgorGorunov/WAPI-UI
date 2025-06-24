@@ -28,6 +28,10 @@ export const TabFields: TabFieldType[] = [
         fieldName: 'date'
     },
     {
+        tabName: 'General',
+        fieldName: 'seller'
+    },
+    {
         tabName: 'Delivery info',
         fieldName: 'asnNumber',
     },

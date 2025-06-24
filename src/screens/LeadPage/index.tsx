@@ -41,7 +41,8 @@ const getHeaderTitle = (userStatus: string) => {
 }
 
 const LeadPage = () => {
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData } = useTenant();
+    const alias = tenantData?.alias || null;
     const {token, getToken, userStatus, setUserStatus, logout} = useAuth();
     //const [curStatus, setCurStatus] = useState(getUserStatus() as UserStatusType);
     const Router = useRouter();

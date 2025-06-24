@@ -23,6 +23,9 @@ export type PrivacyPolicyDataType = {
 
 export type OrdersTenantDataType = {
     trackingNumberTitle: string;
+    carrierTitle: string;
+    stockMovStandardDeliveryTitle: string;
+    stockMovExpressDeliveryTitle: string;
 }
 
 export type TenantDataType = {
@@ -48,6 +51,8 @@ export type TENANT_TYPE = keyof typeof TENANTS;
 export const tenants = {
     'ui.wapi.com': TENANTS.WAPI,
     'localhost:3000': TENANTS.N1,
+    'localhost:3001': TENANTS.N1,
+    'https://wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
     'wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
 };
 
@@ -90,6 +95,10 @@ export const tenantsData = {
         uiLink: 'https://ui.wapi.com',
         orderTitles: {
             trackingNumberTitle: 'WAPI tracking number',
+            carrierTitle: 'WAPI carrier',
+            stockMovExpressDeliveryTitle: 'WAPI Express',
+            stockMovStandardDeliveryTitle: 'WAPI Standard',
+
         },
     } as TenantDataType,
 
@@ -126,6 +135,9 @@ export const tenantsData = {
         uiLink: 'https://google.com/',
         orderTitles: {
             trackingNumberTitle: 'Warehouse tracking number',
+            carrierTitle: 'N1ND GLOBAL carrier',
+            stockMovExpressDeliveryTitle: 'N1ND GLOBAL Express',
+            stockMovStandardDeliveryTitle: 'N1ND GLOBAL Standard',
         }
     } as TenantDataType,
 }

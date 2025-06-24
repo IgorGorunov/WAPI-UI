@@ -297,7 +297,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     //const selectedWarehouse = watch('warehouse');
 
     useEffect(() => {
-        console.log('products: ', products);
+        // console.log('products: ', products);
     }, [products]);
 
     //tickets
@@ -848,15 +848,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             'receiverPhone',
             // 'receiverZip'
         ];
-
-        // const receiverFieldsPickUpPoint = [
-        //     'receiverPickUpAddress',
-        //     'receiverPickUpCity',
-        //     'receiverPickUpDescription',
-        //     'receiverPickUpID',
-        //     'receiverPickUpName',
-        //     'receiverPickUpCountry'
-        // ];
 
         const changedFields = {}
 

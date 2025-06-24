@@ -169,10 +169,6 @@ const DashboardPage: React.FC = () => {
  //   // setSellerData(null);
  // }
 
-  useEffect(() => {
-    console.log('page data: ', pageDataArr, data);
-  }, [pageDataArr, data]);
-
   return (
       <Layout hasHeader hasFooter>
         <SeoHead title='Dashboard' description='Our dashboard page' />

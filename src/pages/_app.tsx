@@ -8,7 +8,6 @@ import {TourGuideProvider} from "@/context/tourGuideContext";
 import { clarity } from 'react-microsoft-clarity';
 import {useEffect, useState} from "react";
 import {HintsTrackingProvider} from "@/context/hintsContext";
-import Cookies from "js-cookie";
 import {getTenantData, TENANT_TYPE, TenantDataType, TENANTS, tenants} from '@/lib/tenants';
 import { TenantContext } from "@/context/tenantContext";
 
@@ -26,10 +25,11 @@ const inter = Inter({
   display: "swap",
 });
 
-export function App({ Component, pageProps, tenantHost }: AppProps & {tenantHost?: string}) {
+export function App({ Component, pageProps, tenantHost, host }: AppProps & {tenantHost?: string, host?: string}) {
   const [tenant, setTenant] = useState<null|TENANT_TYPE>(null);
   const [tenantData, setTenantData] = useState<TenantDataType | null>(null);
 
+  // console.log("tenant", host, tenantHost);
 
   useEffect(() => {
     if (!clarity.hasStarted()) {
@@ -42,8 +42,9 @@ export function App({ Component, pageProps, tenantHost }: AppProps & {tenantHost
       // Cookies.set('tenant', tenantHost, { path: '/' });
       setTenant(TENANTS[tenantHost] as TENANT_TYPE );
       setTenantData(getTenantData(TENANTS[tenantHost] as TENANT_TYPE ) || null);
+      console.log("Host", host);
     }
-    console.log('tenant:  ', tenantHost)
+    // console.log('tenant:  ', tenantHost)
   }, [tenantHost]);
 
 
@@ -86,6 +87,7 @@ App.getInitialProps = async (appContext: AppContext) => {
   return {
     ...componentProps,
     tenantHost,
+    host,
   };
 };
 

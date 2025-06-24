@@ -15,7 +15,7 @@ import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
 import {COUNTRIES} from "@/types/countries";
 import {sendAmazonPrepData} from '@/services/amazonePrep';
 import {DetailsFields, GeneralFields, ReceiverFields} from "./AmazonPrepFormFields";
-import {FormFieldTypes, OptionType} from "@/types/forms";
+import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
@@ -71,7 +71,7 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
 
 const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc, forbiddenTabs}) => {
     const { tenantData: { alias, orderTitles }} = useTenant();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
     const {notifications} = useNotifications();
 
     const [isDisabled, setIsDisabled] = useState(!!docUuid);
@@ -123,7 +123,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
     const deliveryMethodOptions = useMemo(()=>amazonPrepOrderParameters?.deliveryMethod.map(item => ({label: item, value: item})),[amazonPrepOrderParameters]);
 
     //carrierTypeOptions
-    const carrierTypeOptions = useMemo(()=>amazonPrepOrderParameters?.carrierTypes ? amazonPrepOrderParameters?.carrierTypes.map(item => ({label: item, value: item})) : [{label: 'WAPI carrier', value: 'WAPI carrier'}, {label: 'Customer carrier', value: 'Customer carrier'}],[amazonPrepOrderParameters]);
+    const carrierTypeOptions = useMemo(()=>amazonPrepOrderParameters?.carrierTypes ? amazonPrepOrderParameters?.carrierTypes.map(item => ({label: item, value: item})) : [{label: orderTitles.carrierTitle || 'Company carrier', value: 'WAPI carrier'}, {label: 'Customer carrier', value: 'Customer carrier'}],[amazonPrepOrderParameters, orderTitles]);
 
     //boxTypesOptions
     const boxesTypeOptions = useMemo(()=> amazonPrepOrderParameters?.boxesTypes ? amazonPrepOrderParameters.boxesTypes.map(item => ({label: item as string, value: item as string})) : [],[amazonPrepOrderParameters]);
@@ -137,7 +137,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         date: amazonPrepOrderData?.date || currentDate.toISOString(),
         deliveryMethod: amazonPrepOrderData?.deliveryMethod || amazonPrepOrderParameters?.deliveryMethod[0] || "",
         incomingDate: amazonPrepOrderData?.incomingDate || '',
-        preferredDeliveryDate: amazonPrepOrderData?.preferredDeliveryDate || '',
+        preferredDeliveryDate: amazonPrepOrderData?.preferredDeliveryDate || '0001-01-01T00:00:00.000Z',
         receiverAddress: amazonPrepOrderData?.receiverAddress || '',
         receiverCity: amazonPrepOrderData?.receiverCity || '',
         receiverComment: amazonPrepOrderData?.receiverComment || '',
@@ -156,6 +156,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         carrierType: amazonPrepOrderData?.carrierType || (amazonPrepOrderParameters?.carrierTypes && amazonPrepOrderParameters?.carrierTypes.length && amazonPrepOrderParameters?.carrierTypes[0]) || "",
         multipleLocations: amazonPrepOrderData?.multipleLocations || false,
         boxesType: amazonPrepOrderData?.boxesType || (boxesTypeOptions && boxesTypeOptions.length ? boxesTypeOptions[0].value : '') || '',
+        seller: amazonPrepOrderData?.seller || '',
         products:
             amazonPrepOrderData && amazonPrepOrderData?.products && amazonPrepOrderData.products.length
                 ? amazonPrepOrderData.products.map((product, index: number) => (
@@ -170,7 +171,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                 : [],
     }),[amazonPrepOrderData]);
 
-    const {control, handleSubmit, formState: { errors }, clearErrors, getValues, setValue, watch} = useForm({
+    const {control, handleSubmit, formState: { errors }, setError, clearErrors, getValues, setValue, watch} = useForm({
         mode: 'onSubmit',
         defaultValues: defaultFormValues,
     });
@@ -278,13 +279,26 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         setSelectedFiles(files);
     };
 
-    const productOptions = useMemo(() =>{
-        return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item)=>{return {label: `${item.name}`, value:item.uuid}}) : [];
-    },[amazonPrepOrderParameters, warehouse]);
-
     // const productOptions = useMemo(() =>{
-    //     return docParameters.products.map((item: StockMovementParamsProductType)=>{return {label: `${item.name} (available: ${item.available} in ${item.warehouse})`, value:item.uuid, extraInfo: item.name} });
-    // },[docParameters]);
+    //     return amazonPrepOrderParameters ? amazonPrepOrderParameters.products.map((item)=>{return {label: `${item.name}`, value:item.uuid}}) : [];
+    // },[amazonPrepOrderParameters, warehouse]);
+
+    const selectedSeller = watch('seller');
+
+    const handleSelectedSellerChange = (val:string) => {
+        if (val != selectedSeller) setValue('products', []);
+    }
+
+    const productOptions = useMemo(() =>{
+
+        let sellersProducts = amazonPrepOrderParameters ? amazonPrepOrderParameters.products : [];
+        if (needSeller()) {
+            sellersProducts = selectedSeller ? sellersProducts.filter(item=>item.seller===selectedSeller) : [];
+        }
+
+        return sellersProducts.map((item)=> ({label: `${item.name}`, value: item.uuid}));
+
+    },[amazonPrepOrderParameters, warehouse, selectedSeller]);
 
 
     const getProductColumns = (control: any) => {
@@ -569,23 +583,56 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
             return null;
         }
 
+        // if (isDraft) {
+        //     clearErrors();
+        //     const formData = getValues();
+        //
+        //     return onSubmitForm(formData as SingleAmazonPrepOrderFormType);
+        // }
+
         if (isDraft) {
             clearErrors();
-            const formData = getValues();
 
-            return onSubmitForm(formData as SingleAmazonPrepOrderFormType);
+            if (needSeller() && props.seller) {
+                setError('seller', {
+                    type: 'manual',
+                    message: 'Seller is required!',
+                });
+
+                toast.warn(`Seller is required for draft orders!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                updateTabTitles(['seller']);
+
+            } else {
+                const formData = getValues();
+                return onSubmitForm(formData as SingleAmazonPrepOrderFormType);
+            }
+        } else {
+            let fieldNames = Object.keys(props);
+
+            if (fieldNames.length > 0) {
+                toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+            }
+
+            updateTabTitles(fieldNames);
         }
 
 
-        const fieldNames = Object.keys(props);
-
-        if (fieldNames.length > 0) {
-            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
-                position: "top-right",
-                autoClose: 1000,
-            });isActionIsAccessible
-        }
-        updateTabTitles(fieldNames);
+        // const fieldNames = Object.keys(props);
+        //
+        // if (fieldNames.length > 0) {
+        //     toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+        //         position: "top-right",
+        //         autoClose: 1000,
+        //     });isActionIsAccessible
+        // }
+        // updateTabTitles(fieldNames);
     };
 
     const handleEditClick = () => {
@@ -610,6 +657,43 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                             <Icon name='general' />
                             General
                         </h3>
+                        {needSeller() ? (
+                            <div className='order-info--seller card'>
+                                <div className='grid-row'>
+                                    <Controller
+                                        key='seller'
+                                        name='seller'
+                                        control={control}
+                                        render={(
+                                            {
+                                                field: {...props},
+                                                fieldState: {error}
+                                            }) => (
+                                            <FieldBuilder
+                                                // disabled={!!isDisabled}
+                                                {...props}
+                                                name='seller'
+                                                label='Seller: '
+                                                fieldType={FormFieldTypes.SELECT}
+                                                options={(amazonPrepOrderData?.status !=='Draft' && !!amazonPrepOrderData) ? sellersList : sellersListActive}
+                                                placeholder={''}
+                                                errorMessage={error?.message}
+                                                errors={errors}
+                                                disabled={isDisabled || (amazonPrepOrderData?.status !=='Draft' && !!amazonPrepOrderData)}
+                                                width={WidthType.w50}
+                                                classNames={'seller-filter'}
+                                                isClearable={false}
+                                                onChange={(val: string)=>{
+                                                    handleSelectedSellerChange(val);
+                                                    props.onChange(val);
+                                                }}
+                                            />
+                                        )}
+                                        rules = {{required: "Required field"}}
+                                    />
+                                </div>
+                            </div>
+                        ) : null}
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
                         </div>

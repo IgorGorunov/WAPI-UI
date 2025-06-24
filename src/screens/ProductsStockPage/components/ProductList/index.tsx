@@ -74,17 +74,30 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
 
     // Filter and searching
+    //Seller filter
+    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
+
     const calcOrderAmount = useCallback((property: string, value: string) => {
         return products.filter(product => product[property].toLowerCase() === value.toLowerCase()).length || 0;
     },[products]);
+
+    const sellersOptions = useMemo(()=>{
+        return [{label: 'All sellers', value: 'All sellers', amount: products.length}, ...sellersList.map(item=>({...item, amount: calcOrderAmount('seller', item.value)}))];
+    }, [sellersList, calcOrderAmount])
+
+    const getSellerName = useCallback((sellerUid: string) => {
+        const t = sellersList.find(item=>item.value===sellerUid);
+        return t ? t.label : ' - ';
+    }, [sellersList]);
+
 
     const [searchTerm, setSearchTerm] = useState('');
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
 
     const uniqueWarehouses = useMemo(() => {
-        const warehouses = products.map(product => product.warehouse);
+        const warehouses = products.filter(item=>selectedSeller==='All sellers' || selectedSeller===item.seller).map(product => product.warehouse);
         return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
-    }, [products]);
+    }, [products, selectedSeller]);
     uniqueWarehouses.sort();
     const transformedWarehouses = useMemo(() => ([
         ...uniqueWarehouses.map(warehouse => ({
@@ -105,9 +118,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const [filterCountry, setFilterCountry] = useState<string[]>([]);
 
     const uniqueCountries = useMemo(() => {
-        const countries = products.map(product => product.country);
+        const countries = products.filter(item=>selectedSeller==='All sellers' || selectedSeller===item.seller).map(product => product.country);
         return Array.from(new Set(countries)).filter(country => country).sort();
-    }, [products]);
+    }, [products, selectedSeller]);
     uniqueCountries.sort();
     const transformedCountries = useMemo(() => ([
         ...uniqueCountries.map(country => ({
@@ -152,16 +165,6 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)},
         },
     ];
-
-    //Seller filter
-    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
-    const sellersOptions = useMemo(()=>{
-        return [{label: 'All sellers', value: 'All sellers', amount: products.length}, ...sellersList.map(item=>({...item, amount: calcOrderAmount('seller', item.value)}))];
-    }, [sellersList, calcOrderAmount])
-    const getSellerName = useCallback((sellerUid: string) => {
-        const t = sellersList.find(item=>item.value===sellerUid);
-        return t ? t.label : ' - ';
-    }, [sellersList]);
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
     const fullTextSearchField = {

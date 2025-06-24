@@ -24,6 +24,8 @@ import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import {isTabAllowed} from "@/utils/tabs";
+import useAuth from "@/context/authContext";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 
 type StockMovementsListType = {
@@ -59,6 +61,7 @@ const getDocType = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
 
 const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, currentRange, setCurrentRange, setFilteredDocs, handleEditDoc, forbiddenTabs }) => {
     const isTouchDevice = useIsTouchDevice();
+    const { needSeller, sellersList } = useAuth();
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -91,6 +94,22 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     }, []);
 
     //filters
+    //sellers filter
+    const [selectedSeller, setSelectedSeller] = useState<string | null>('All sellers');
+    const calcSellersAmount = useCallback((seller: string) => {
+        return docs.filter(order => order.seller.toLowerCase() === seller.toLowerCase()).length || 0;
+    },[docs]);
+
+    const sellersOptions = useMemo(()=>{
+        return [{label: 'All sellers', value: 'All sellers', amount: docs.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
+    }, [sellersList, calcSellersAmount]);
+
+    const getSellerName = useCallback((sellerUid: string) => {
+        const t = sellersList.find(item=>item.value===sellerUid);
+        return t ? t.label : ' - ';
+    }, [sellersList]);
+    
+    //other filters
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
     const [isOpenFilterSenderCountry, setIsOpenFilterSenderCountry] = useState(false);
     const [isOpenFilterSender, setIsOpenFilterSender] = useState(false);
@@ -100,12 +119,12 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
     const [isOpenFilterHasOpenTickets, setIsOpenFilterHasOpenTickets] = useState(false);
 
     const calcOrderAmount = useCallback((property, value) => {
-        return docs.filter(doc => doc[property] !== null && doc[property].toLowerCase() === value.toLowerCase()).length || 0;
-    },[docs]);
+        return docs.filter(doc => doc[property] !== null && doc[property].toLowerCase() === value.toLowerCase() && (selectedSeller==='All sellers' || doc.seller===selectedSeller)).length || 0;
+    },[docs, selectedSeller]);
 
     const calcDocsWithBooleanProperty = useCallback((property: string, value: boolean) => {
-        return docs.filter(doc => doc[property] === value).length || 0;
-    },[docs]);
+        return docs.filter(doc => doc[property] === value && (selectedSeller==='All sellers' || doc.seller===selectedSeller)).length || 0;
+    },[docs, selectedSeller]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const handleFilterStatusChange = (newStatuses: string[]) => {
@@ -113,9 +132,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         setCurrent(1);
     }
     const uniqueStatuses = useMemo(() => {
-        const statuses = docs.map(order => order.status);
+        const statuses = docs.filter(doc=>selectedSeller==='All sellers' || doc.seller===selectedSeller).map(order => order.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [docs]);
+    }, [docs, selectedSeller]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
         ...uniqueStatuses.map(status => ({
@@ -132,9 +151,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         setCurrent(1);
     }
     const uniqueSenderCountries = useMemo(() => {
-        const senderCountries = docs.map(doc => doc.senderCountry);
+        const senderCountries = docs.filter(doc=>selectedSeller==='All sellers' || doc.seller===selectedSeller).map(doc => doc.senderCountry);
         return Array.from(new Set(senderCountries)).filter(senderCountry => senderCountry);
-    }, [docs]);
+    }, [docs, selectedSeller]);
     uniqueSenderCountries.sort();
 
     const senderCountryOptions = useMemo(() => {
@@ -154,9 +173,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         setCurrent(1);
     }
     const uniqueSenders = useMemo(() => {
-        const senders = docs.map(doc => doc.sender);
+        const senders = docs.filter(doc=>selectedSeller==='All sellers' || doc.seller===selectedSeller).map(doc => doc.sender);
         return Array.from(new Set(senders)).filter(sender => sender).sort();
-    }, [docs]);
+    }, [docs, selectedSeller]);
     uniqueSenders.sort();
 
     const senderOptions = useMemo(() => {
@@ -176,9 +195,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         setCurrent(1);
     }
     const uniqueReceiverCountries = useMemo(() => {
-        const receiverCountries = docs.map(doc => doc.receiverCountry);
+        const receiverCountries = docs.filter(doc=>selectedSeller==='All sellers' || doc.seller===selectedSeller).map(doc => doc.receiverCountry);
         return Array.from(new Set(receiverCountries)).filter(receiverCountry => receiverCountry);
-    }, [docs]);
+    }, [docs, selectedSeller]);
     uniqueReceiverCountries.sort();
 
     const receiverCountryOptions = useMemo(() => {
@@ -197,14 +216,14 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         setFilterReceiver(newValue);
         setCurrent(1);
     }
-    const uniqueReceivers = useMemo(() => {
-        const receivers = docs.map(doc => doc.receiver);
-        return Array.from(new Set(receivers)).filter(receiver => receiver).sort();
-    }, [docs]);
-    uniqueReceivers.sort();
+    // const uniqueReceivers = useMemo(() => {
+    //     const receivers = docs.filter(doc=>selectedSeller==='All sellers' || doc.seller===selectedSeller).map(doc => doc.receiver);
+    //     return Array.from(new Set(receivers)).filter(receiver => receiver).sort();
+    // }, [docs, selectedSeller]);
+    // uniqueReceivers.sort();
 
     const receiverOptions = useMemo(() => {
-        const receivers = docs.map(doc => doc.receiver);
+        const receivers = docs.filter(doc=>selectedSeller==='All sellers' || doc.seller===selectedSeller).map(doc => doc.receiver);
         const uniqueReceivers = Array.from(new Set(receivers)).filter(receiver => receiver).sort();
 
         return [
@@ -214,7 +233,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 amount: calcOrderAmount('receiver', receiver),
             })),
         ];
-    }, [uniqueReceivers]);
+    }, [docs, selectedSeller]);
 
     //tickets
     const [filterHasTickets, setFilterHasTickets] = useState<string[]>([]);
@@ -231,9 +250,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         {
             value: "Without tickets",
             label: "Without tickets",
-            amount: (docs.length - calcDocsWithBooleanProperty('ticket', true)),
+            amount: (docs.filter(doc=>selectedSeller==='All sellers' || doc.seller===selectedSeller).length - calcDocsWithBooleanProperty('ticket', true)),
         },
-    ]), [docs]);
+    ]), [docs, selectedSeller]);
 
     // open tickets
     const [filterHasOpenTickets, setFilterHasOpenTickets] = useState<string[]>([]);
@@ -250,9 +269,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         {
             value: "Without open tickets",
             label: "Without open tickets",
-            amount: (docs.length - calcDocsWithBooleanProperty('ticketopen', true)),
+            amount: (docs.filter(doc=>selectedSeller==='All sellers' || doc.seller===selectedSeller).length - calcDocsWithBooleanProperty('ticketopen', true)),
         },
-    ]), [docs]);
+    ]), [docs, selectedSeller]);
 
     const docFilters = [
         {
@@ -345,14 +364,6 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         } : null,
 
     ];
-    // <FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>
-    // <FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={handleFilterSenderChange} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>
-    // <FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={handleFilterSenderCountryChange} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>
-    // <FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={handleFilterReceiverChange} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />
-    // <FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>
-    // <FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>
-    // <FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>
-
 
 
     const handleChangePage = (page: number) => {
@@ -417,7 +428,10 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 (filterHasTickets.includes("Without tickets") && !doc.ticket);
             const matchesHasOpenTickets = !filterHasOpenTickets.length || (filterHasOpenTickets.includes('With open tickets') && doc.ticketopen) ||
                 (filterHasOpenTickets.includes("Without open tickets") && !doc.ticketopen);
-            return matchesSearch && matchesStatus && matchesSenderCountry && matchesReceiverCountry && matchesReceiver && matchesSender && matchesHasTickets && matchesHasOpenTickets;
+
+            const matchesSeller = !selectedSeller || selectedSeller==='All sellers' || doc.seller.toLowerCase() === selectedSeller.toLowerCase();
+
+            return matchesSearch && matchesStatus && matchesSenderCountry && matchesReceiverCountry && matchesReceiver && matchesSender && matchesHasTickets && matchesHasOpenTickets && matchesSeller;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -426,7 +440,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [docs, searchTerm, filterStatus, filterSenderCountry, filterReceiverCountry, filterReceiver, filterSender, filterHasTickets, filterHasOpenTickets, sortColumn, sortDirection, fullTextSearch]);
+    }, [docs, searchTerm, filterStatus, filterSenderCountry, filterReceiverCountry, filterReceiver, filterSender, filterHasTickets, filterHasOpenTickets, sortColumn, sortDirection, fullTextSearch, selectedSeller]);
 
 
     const handleDateRangeSave = (newRange) => {
@@ -466,6 +480,46 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         const width = 47+maxAmount*9;
         return width.toString()+'px';
     },[current,pageSize, filteredDocs]);
+
+    const SellerColumns: TableColumnProps<StockMovementType>[] = [];
+    if (needSeller()) {
+        SellerColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="60px"
+                maxWidth="80px"
+                contentPosition="left"
+                childrenBefore={
+                    <Tooltip title="Seller's name" >
+                        <span className='table-header-title'>Seller</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="60px"
+                        maxWidth="80px"
+                        contentPosition="left"
+                        childrenBefore={
+                            <div className="seller-container">
+                                {getSellerName(record.seller)}
+                            </div>
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'seller',
+            key: 'seller',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<StockMovementType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof StockMovementType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<StockMovementType>);
+    }
 
     const columns: TableColumnProps<StockMovementType>[]  = [
         {
@@ -602,6 +656,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             }),
             responsive: ['md'],
         },
+        ...SellerColumns,
         {
             title: <TitleColumn minWidth="100px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title="The source responsible for initiating the movement of products"><span>Sender</span></Tooltip>}/>,
             render: (text: string) => (
@@ -694,16 +749,26 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 </div>
             </SearchContainer>
 
+            {needSeller() ?
+                <div className='seller-filter-block'>
+                    <SelectField
+                        key='seller-filter'
+                        name='selectedSeller'
+                        label='Seller: '
+                        value={selectedSeller}
+                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                        options={sellersOptions}
+                        classNames='seller-filter full-sized'
+                        isClearable={false}
+                    />
+                </div>
+                : null
+            }
+
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
                     <FiltersChosen filters={docFilters.filter(item => item!==null)} />
-                    {/*<CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
-                    {/*<CurrentFilters title='Sender' filterState={filterSender} options={senderOptions} onClose={()=>handleFilterSenderChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSender(true)}}/>*/}
-                    {/*<CurrentFilters title='Sender country' filterState={filterSenderCountry} options={senderCountryOptions} onClose={()=>handleFilterSenderCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSenderCountry(true)}}/>*/}
-                    {/*<CurrentFilters title='Receiver' filterState={filterReceiver} options={receiverOptions} onClose={()=>handleFilterReceiverChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiver(true)}}/>*/}
-                    {/*<CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={receiverCountryOptions} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />*/}
-                    {/*<CurrentFilters title='Tickets' filterState={filterHasTickets} options={hasTicketsOptions} onClose={()=>handleFilterHasTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)}} />*/}
-                    {/*<CurrentFilters title='Open tickets' filterState={filterHasOpenTickets} options={hasOpenTicketsOptions} onClose={()=>handleFilterHasOpenTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -741,13 +806,6 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersListWithOptions filters={docFilters.filter(item => item!==null)} />
-                {/*<FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
-                {/*<FiltersBlock filterTitle='Sender' filterState={filterSender} filterOptions={senderOptions} setFilterState={handleFilterSenderChange} isOpen={isOpenFilterSender} setIsOpen={setIsOpenFilterSender}/>*/}
-                {/*<FiltersBlock filterTitle='Sender country' isCountry={true} filterState={filterSenderCountry} filterOptions={senderCountryOptions} setFilterState={handleFilterSenderCountryChange} isOpen={isOpenFilterSenderCountry} setIsOpen={setIsOpenFilterSenderCountry}/>*/}
-                {/*<FiltersBlock filterTitle='Receiver' filterState={filterReceiver} filterOptions={receiverOptions} setFilterState={handleFilterReceiverChange} isOpen={isOpenFilterReceiver} setIsOpen={setIsOpenFilterReceiver} />*/}
-                {/*<FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={receiverCountryOptions} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
-                {/*<FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>*/}
-                {/*<FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>*/}
             </FiltersContainer>
         </div>
     );

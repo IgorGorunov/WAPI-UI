@@ -52,7 +52,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
         return date.getFullYear() === 1;
     }
 
-    const [selectedDate, setSelectedDate] = useState(getDate(value as string));
+    const [selectedDate, setSelectedDate] = useState(getDate(value as string) || EMPTY_DATE);
     const [showCalendar, setShowCalendar] = useState(false);
 
     const curDate = new Date();

@@ -28,7 +28,6 @@ export const useTabsState = (tabTitleArray: string[], tabFields: TabFieldType[])
     }
 
     const clearTabTitles = () => {
-        console.log('clear tabs');
         setInitialState(noErrors);
         setTabTitles(noErrors)
     }
