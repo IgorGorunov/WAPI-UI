@@ -48,7 +48,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
             <div
                 ref={innerRef}
                 {...innerProps}
-                className={`select-field__option${isFocused ? ' is-focused' : ''}${isSelected ? ' is-selected' : ''}${data.amount !== undefined && !data.amount ? ' is-empty' : ''}`}
+                className={`select-field__option${isFocused ? ' is-focused' : ''}${isSelected ? ' is-selected' : ''}${data.amount !== undefined && !data.amount ? ' is-empty' : ''}${data.inactive ? ' is-inactive' : ''}`}
                 role="option"
             >
                 <span>{data.label}</span>

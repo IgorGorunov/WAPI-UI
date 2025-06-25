@@ -166,13 +166,17 @@
         border-radius: 15px;
       }
 
-      &.is-empty {
+      &.is-empty,
+      &.is-inactive {
         color: var(--color-light-blue-gray);
 
         .amount-circle {
           background-color: var(--color-light-blue-gray);
-
         }
+      }
+
+      &.is-inactive:hover {
+        color: var(--color-light-blue-gray) !important;
       }
     }
 

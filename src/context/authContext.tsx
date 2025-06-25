@@ -235,7 +235,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
   const getSellersFromCookie = () => {
     const sellers = Cookie.get('sellers');
     if (sellers && sellers !== 'null') {
-      return JSON.parse(sellers).map((item: SellerType) => ({ label: item.description, value: item.uid }));
+      return JSON.parse(sellers).map((item: SellerType) => ({ label: item.description, value: item.uid, inactive: item.inactive }));
     } else return null;
   }
   const getSellersActiveFromCookie = () => {
@@ -249,7 +249,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
   const [sellersListActive, setSellersListActive] = useState<OptionType[] | null>(getSellersActiveFromCookie());
   const setSellers = (val: SellerType[] | null) => {
     if (val) {
-      const sellerOptions = val.map(item => ({ label: item.description, value: item.uid }));
+      const sellerOptions = val.map(item => ({ label: item.description, value: item.uid, inactive: item.inactive }));
       setSellersList(sellerOptions);
       const sellerOptionsActive = val.filter(item=>!item.inactive).map(item => ({ label: item.description, value: item.uid }));
       setSellersListActive(sellerOptionsActive);
