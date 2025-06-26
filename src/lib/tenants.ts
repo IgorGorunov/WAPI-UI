@@ -49,10 +49,10 @@ export enum TENANTS {
 export type TENANT_TYPE = keyof typeof TENANTS;
 
 export const tenants = {
+    'n1globalpay.com': TENANTS.N1,
     'wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
     'ui.wapi.com': TENANTS.WAPI,
-    'localhost:3000': TENANTS.N1,
-    'localhost:3001': TENANTS.N1,
+    'localhost': TENANTS.N1,
     'https://wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
 
 };

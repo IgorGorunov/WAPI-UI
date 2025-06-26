@@ -76,8 +76,16 @@ export function App({ Component, pageProps, tenantHost, host }: AppProps & {tena
 
 App.getInitialProps = async (appContext: AppContext) => {
   const { ctx } = appContext;
-  const host = ctx.req?.headers.host || 'localhost:3000';
-  const tenantHost = tenants[host] || tenants['localhost:3000'];
+
+  const rawHost = ctx.req?.headers['x-forwarded-host'] || ctx.req?.headers.host || 'localhost:3000';
+  let host = Array.isArray(rawHost) ? rawHost[0] : rawHost;
+
+  // 🧹 Normalize: remove port and "www."
+  host = host
+      .replace(/^www\./, '')        // Strip "www."
+      .replace(/:\d+$/, '')         // Strip port like ":3000"
+
+  const tenant = tenants[host] || tenants['localhost'];
 
   const componentProps =
       typeof appContext.Component.getInitialProps === 'function'
@@ -86,7 +94,7 @@ App.getInitialProps = async (appContext: AppContext) => {
 
   return {
     ...componentProps,
-    tenantHost,
+    tenantHost: tenant,
     host,
   };
 };
