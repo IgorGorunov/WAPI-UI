@@ -551,6 +551,9 @@ input[type="date"]::before {
 }
 
 .seller-filter-block {
+  position: relative;
+  z-index: 9;
+
   .seller-filter {
     padding: 0;
 
