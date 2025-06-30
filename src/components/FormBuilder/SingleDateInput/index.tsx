@@ -118,6 +118,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                                         showMonthAndYearPickers={false}
                                         color="#5380F5"
                                         disabledDay={disableDays}
+                                        weekStartsOn={1}
                                     />
                                     {type==='date-time' ? <div className='time-picker-wrapper'> <Icon name='clock' /><TimePicker
                                         value={selectedTime}
