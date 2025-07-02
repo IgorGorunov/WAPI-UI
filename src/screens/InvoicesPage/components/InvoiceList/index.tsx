@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Table} from 'antd';
+import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
 import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
@@ -9,7 +9,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import getSymbolFromCurrency from "currency-symbol-map";
 import {DateRangeType} from "@/types/dashboard";
@@ -45,16 +44,17 @@ type InvoiceListType = {
     currentRange: DateRangeType;
     setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
     setFilteredInvoices: React.Dispatch<React.SetStateAction<InvoiceType[]>>;
+    selectedSeller: string;
 }
 
-const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurrentRange, setFilteredInvoices}) => {
+const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurrentRange, setFilteredInvoices, selectedSeller}) => {
 
     const [animating, setAnimating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     //const Router = useRouter();
     const { tenantData: { alias }} = useTenant();
-    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -81,6 +81,10 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         setSortColumn(columnDataIndex);
     }, [sortColumn]);
 
+    const getSellerName = useCallback((sellerUid: string) => {
+        const t = sellersList.find(item=>item.value===sellerUid);
+        return t ? t.label : ' - ';
+    }, [sellersList]);
 
     // Filter and searching
     const [searchTerm, setSearchTerm] = useState('');
@@ -97,14 +101,14 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     }
 
     const calcOrderAmount = useCallback((property, value) => {
-        return invoices.filter(invoice => invoice[property].toLowerCase() === value.toLowerCase()).length || 0;
-    },[invoices]);
+        return invoices.filter(item=>!selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).filter(invoice => invoice[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[invoices, selectedSeller]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const uniqueStatuses = useMemo(() => {
-        const statuses = invoices.map(invoice => invoice.status);
+        const statuses = invoices.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).map(invoice => invoice.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [invoices]);
+    }, [invoices, selectedSeller]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
         ...uniqueStatuses.map(status => ({
@@ -114,12 +118,6 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             color: StatusColors[status] || 'white',
         }))
     ]), [uniqueStatuses]);
-
-    // useEffect(() => {
-    //     setFilterStatus(prevState => {
-    //         return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
-    //     })
-    // }, [uniqueStatuses]);
 
     const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
 
@@ -223,7 +221,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
             const matchesStatus = !filterStatus.length || filterStatus.map(item=>item.toLowerCase()).includes(invoice.status.toLowerCase());
-            return matchesSearch && matchesStatus;
+            const matchesSeller = !selectedSeller || selectedSeller==='All sellers' || selectedSeller === invoice.seller;
+            return matchesSearch && matchesStatus && matchesSeller;
         });
 
         if (sortColumn) {
@@ -236,9 +235,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             });
         }
         return filtered;
-    }, [invoices, searchTerm, filterStatus, sortColumn, sortDirection]);
-
-    //const [showDatepicker, setShowDatepicker] = useState(false);
+    }, [invoices, searchTerm, filterStatus, sortColumn, sortDirection, selectedSeller]);
 
     const handleDateRangeSave = (newRange) => {
         setCurrentRange(newRange);
@@ -252,6 +249,46 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
     }, []);
+
+    const SellerColumns: TableColumnProps<InvoiceType>[] = [];
+    if (needSeller()) {
+        SellerColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="70px"
+                maxWidth="90px"
+                contentPosition="left"
+                childrenBefore={
+                    <Tooltip title="Seller's name" >
+                        <span className='table-header-title'>Seller</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="70px"
+                        maxWidth="90px"
+                        contentPosition="left"
+                        childrenBefore={
+                            <div className="seller-container">
+                                {getSellerName(record.seller)}
+                            </div>
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'seller',
+            key: 'seller',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<InvoiceType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<InvoiceType>);
+    }
 
     const columns: ColumnType<InvoiceType>[] = useMemo(() => [
         {
@@ -322,6 +359,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof InvoiceType),
             }),
         },
+        ...SellerColumns,
         {
             title: <TitleColumn
                 title="Amount"

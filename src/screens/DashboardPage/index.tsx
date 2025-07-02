@@ -187,7 +187,7 @@ const DashboardPage: React.FC = () => {
           {(isActionIsAccessible(AccessObjectTypes["Dashboard"], AccessActions.View) && isNavItemAccessible('Dashboard')) ? (
               <div>
                 { sellersList && needSeller() ?
-                    <div className='seller-filter-block dashboard-seller-filter'>
+                    <div className='seller-filter-block under-header-seller-filter'>
                       <SelectField
                           key='seller-filter'
                           name='selectedSeller'

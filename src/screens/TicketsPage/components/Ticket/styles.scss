@@ -3,21 +3,16 @@
 .ticket {
   display: block;
 
-  .card {
-    //margin-bottom: 12px;
+  .form-wrapper--seller {
+    margin-bottom: 16px;
+    padding: 0 24px;
 
-    //&:last-child {
-    //  margin-bottom: 0;
-    //}
+    @media (max-width: $upToTablet) {
+      padding: 0 16px;
+    }
   }
 
   &-wrapper {
-    //max-width: 1084px;
-    //
-    //@media (min-width: $tablet) {
-    //  width: 100%;
-    //  min-width: min(90vw, 1084px);
-    //}
 
     @media (max-width: $upToTablet) {
       .width-17,
@@ -27,12 +22,6 @@
         flex: 0 0 100%;
       }
     }
-
-    //&.new-ticket {
-    //  @media (min-width: $laptop) {
-    //    min-width: 550px;
-    //  }
-    //}
   }
 
   &--info {

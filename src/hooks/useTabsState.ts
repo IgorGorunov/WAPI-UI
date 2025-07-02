@@ -11,7 +11,6 @@ export const useTabsState = (tabTitleArray: string[], tabFields: TabFieldType[])
     const [tabTitles, setTabTitles] = useState(initialState);
 
     const updateTabTitles = (errorFields: string[]) => {
-        console.log('tabs update: ', initialState);
         // const updatedState = [...initialState];
         const updatedState = [...noErrors];
         errorFields.forEach((errorField) => {

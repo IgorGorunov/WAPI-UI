@@ -144,7 +144,6 @@ const TicketsPage = () => {
         setIsTicketNew(true);
         setSingleTicketUuid(null);
 
-        console.log('cc')
         if (!isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.CreateObject)) {
             try {
                 sendUserBrowserInfo({...getBrowserInfo('CreateTicket', AccessObjectTypes.Tickets, AccessActions.CreateObject), body: {}});

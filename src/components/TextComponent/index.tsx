@@ -42,7 +42,6 @@ const TextComponent: React.FC<FaqItemPropsType> = (props) => {
                 )
             },
             downloadableFile: ({value}: {value: DownloadableFileType}) => {
-                console.log('file val: ', value)
                 return (
                     <DownloadableFile {...value} />
                 )

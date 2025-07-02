@@ -9,7 +9,7 @@ import {ToastContainer} from "@/components/Toast";
 import Tabs from "@/components/Tabs";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
-import {useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import DropZone from "@/components/Dropzone";
 import {TabFields, TabTitles} from "./TicketTabs";
@@ -24,6 +24,8 @@ import {TicketHints} from "@/screens/TicketsPage/ticketHints.constants";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
+import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
+import {FormFieldTypes, WidthType} from "@/types/forms";
 
 type TicketPropsType = {
     subjectType?: string | null;
@@ -35,11 +37,12 @@ type TicketPropsType = {
     setDocUuid: (uuid: string)=>void;
     subject?: string;
     reFetchTicket: ()=>void;
+    seller?: string;
 };
 
-const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose, reFetchTicket}) => {
+const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUuid=null, ticketUuid=null, ticketParams, singleTicketData, setDocUuid, subject='', onClose, reFetchTicket, seller}) => {
     const { tenantData: { alias }} = useTenant();
-    const {token, superUser, ui, getBrowserInfo} = useAuth();
+    const {token, superUser, ui, getBrowserInfo, needSeller, sellersList, sellersListActive} = useAuth();
 
     //const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
     const [infoHeight, setInfoHeight] = useState(0)
@@ -85,11 +88,11 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
             status: singleTicketData?.status || 'New',
             supportManager: singleTicketData?.supportManager || '',
             result: singleTicketData?.result || '',
+            seller: singleTicketData?.seller || seller || '',
         }
     });
 
     const topicOptions = useMemo(()=>{
-        console.log('subject type: ', subjectType)
         if (!ticketParams || !ticketParams?.topicsVisibleParam) return [];
 
         let visibleTopics = [...ticketParams?.topicsVisibleParam.filter(item=>item.CommonSection)];
@@ -217,12 +220,46 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
             <ToastContainer/>
             <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
                 <Tabs id='ticket-tabs' tabTitles={tabTitles} classNames='inside-modal' needMinHeight={false} curTab={curTab}>
-
                     <div key='main-tab' className='main-tab'>
                         <div className='' ref={ticketInfoBlockRef}>
+                            <>
+                                {needSeller() ? (
+                                <div className='form-wrapper--seller card'>
+                                    <div className='grid-row'>
+                                        <Controller
+                                            key='seller'
+                                            name='seller'
+                                            control={control}
+                                            render={(
+                                                {
+                                                    field: {...props},
+                                                    fieldState: {error}
+                                                }) => (
+                                                <FieldBuilder
+                                                    // disabled={!!isDisabled}
+                                                    {...props}
+                                                    name='seller'
+                                                    label='Seller *: '
+                                                    fieldType={FormFieldTypes.SELECT}
+                                                    options={(isDisabled || !!singleTicketData?.seller || !!seller) ? sellersList : sellersListActive}
+                                                    placeholder={''}
+                                                    errorMessage={error?.message}
+                                                    errors={errors}
+                                                    disabled={isDisabled || !!singleTicketData?.seller || !!seller}
+                                                    width={WidthType.w50}
+                                                    classNames={'seller-filter'}
+                                                    isClearable={false}
+                                                />
+                                            )}
+                                            rules = {{required: "Required field"}}
+                                        />
+                                    </div>
+                                </div>
+                                ) : null}
                             {isTicketNew ?
                                 <CardWithHelpIcon classNames='card ticket--info ticket--info-card' >
                                     <div className='ticket--info-form'>
+
                                         <div className='grid-row'>
                                             <FormFieldsBlock control={control} fieldsArray={createTicketFields}
                                                              errors={errors}/>
@@ -234,7 +271,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                                         {singleTicketData ? <TicketInfoBlock ticketData={singleTicketData}/> : null}
                                     </div>
                                 </div>
-                            }
+                            }</>
                         </div>
                         {isTicketNew ? <div> <CardWithHelpIcon classNames="card ticket--files">
                             <TutorialHintTooltip hint={TicketHints['files'] || ''} position='left' >

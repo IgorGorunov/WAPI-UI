@@ -974,7 +974,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                   notifications={docNotifications}>
                 {isTabAllowed('General', forbiddenTabs) ? <div key='general-tab' className='general-tab'>
                     {needSeller() ? (
-                        <div className='order-info--seller card'>
+                        <div className='form-wrapper--seller card'>
                             <div className='grid-row'>
                                 <Controller
                                     key='seller'
@@ -1198,7 +1198,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
             <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={isOutboundOrStockMovement ? sender : ""} needWarehouses={isOutboundOrStockMovement} seller={selectedSeller}/>
         </Modal>}
-        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} seller={needSeller() ? docData.seller : ''} />}
         {showConfirmModal && <ConfirmModal
             // actionText='Are you sure you want to cancel this document?'
             actionText='cancel this document?'

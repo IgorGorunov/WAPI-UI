@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Table} from 'antd';
+import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
 import {ColumnType} from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
@@ -9,7 +9,6 @@ import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import Head from "next/head";
 import {PageOptions} from '@/constants/pagination';
 import getSymbolFromCurrency from "currency-symbol-map";
 import {DateRangeType} from "@/types/dashboard";
@@ -23,20 +22,22 @@ import SearchContainer from "@/components/SearchContainer";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 
+
 type CodReportsListType = {
     codReports: CodReportType[];
     currentRange: DateRangeType;
     setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
     setFilteredCodReports: React.Dispatch<React.SetStateAction<CodReportType[]>>;
+    selectedSeller: string;
 }
 
-const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, setCurrentRange, setFilteredCodReports}) => {
+const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, setCurrentRange, setFilteredCodReports, selectedSeller}) => {
 
     const [animating, setAnimating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const { tenantData: { alias }} = useTenant();
-    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -52,6 +53,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         setPageSize(size);
         setCurrent(1);
     };
+
+    const getSellerName = useCallback((sellerUid: string) => {
+        const t = sellersList.find(item=>item.value===sellerUid);
+        return t ? t.label : ' - ';
+    }, [sellersList]);
 
     // Sorting
     const [sortColumn, setSortColumn] = useState<keyof CodReportType>();
@@ -80,7 +86,9 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 const value = product[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
-            return matchesSearch;
+
+            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || product.seller === selectedSeller;
+            return matchesSearch && matchesSeller;
         });
 
         if (sortColumn) {
@@ -93,7 +101,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             });
         }
         return filtered;
-    }, [codReports, searchTerm, sortColumn, sortDirection]);
+    }, [codReports, searchTerm, sortColumn, sortDirection, selectedSeller]);
 
     //const [showDatepicker, setShowDatepicker] = useState(false);
 
@@ -160,6 +168,45 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         }
     };
 
+    const SellerColumns: TableColumnProps<CodReportType>[] = [];
+    if (needSeller()) {
+        SellerColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="70px"
+                maxWidth="90px"
+                contentPosition="left"
+                childrenBefore={
+                    <Tooltip title="Seller's name" >
+                        <span className='table-header-title'>Seller</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="70px"
+                        maxWidth="90px"
+                        contentPosition="left"
+                        childrenBefore={
+                            <div className="seller-container">
+                                {getSellerName(record.seller)}
+                            </div>
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'seller',
+            key: 'seller',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<CodReportType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<CodReportType>);
+    }
 
     const columns: ColumnType<CodReportType>[] = useMemo(() => [
         {
@@ -196,6 +243,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
         },
+        ...SellerColumns,
         {
             title: <TitleColumn
                 title="Amount"

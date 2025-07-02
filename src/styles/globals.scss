@@ -562,18 +562,32 @@ input[type="date"]::before {
       margin-left: 50%;
     }
   }
-}
 
-.pt-0 {
-  padding-top: 0!important;
-}
-
-//animations
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
+  &.under-header-seller-filter {
+    margin-top: -8px;
+    margin-bottom: 12px;
   }
 }
+
+.form-wrapper--seller {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+
+  .seller-filter {
+    padding: 0;
+  }
+}
+
+  .pt-0 {
+    padding-top: 0!important;
+  }
+
+  //animations
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }

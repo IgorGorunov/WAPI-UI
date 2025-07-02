@@ -1276,7 +1276,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         </div> : null}>
                     {isTabAllowed('General', forbiddenTabs) ? <div key='general-tab' className='general-tab'>
                         {needSeller() ? (
-                            <div className='order-info--seller card'>
+                            <div className='form-wrapper--seller card'>
                                 <div className='grid-row'>
                                     <Controller
                                         key='seller'
@@ -1624,7 +1624,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
             </Modal>}
 
-            {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+            {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} seller={needSeller() ? orderData.seller : ''} />}
 
             {showConfirmModal && <ConfirmModal
                 actionText='Are you sure you want to cancel this order?'

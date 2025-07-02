@@ -20,9 +20,10 @@ type TicketPropsType = {
     subjectUuid?: string | null;
     subject?: string;
     onClose: ()=>void;
+    seller?: string;
 };
 
-const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose}) => {
+const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose, seller}) => {
     const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
@@ -67,6 +68,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
             if (res && "data" in res) {
                 setSingleTicketData(res.data);
             } else {
+                onClose();
                 console.error("API did not return expected data");
             }
 
@@ -123,14 +125,13 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
         }
     }
 
-
     return (
         <div className={`ticket ticket-wrapper  ${isTicketNew ? 'new-ticket' : 'existing-ticket'}`} >
             {isLoading && <Loader/>}
             <ToastContainer/>
             {ticketParams && (ticketUuid && singleTicketData || !ticketUuid) ?
                 <Modal title={`Ticket`} onClose={onCloseModal} classNames='document-modal'>
-                    <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid}  reFetchTicket={()=>{fetchSingleTicket(ticketUuid)}} onClose={onCloseModal}/>
+                    <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid}  reFetchTicket={()=>{fetchSingleTicket(ticketUuid)}} onClose={onCloseModal} seller={seller}/>
                 </Modal>
                 : null}
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}

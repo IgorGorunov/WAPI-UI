@@ -7,12 +7,14 @@ export type CodReportType = {
     period: string,
     currency: string;
     ordersCount:number,
+    seller?: string;
 }
 
 
 export type CODIndicatorType = {
     currency: string;
     amount: number;
+    seller?: string;
 }
 
 export type CODIndicatorsType = {

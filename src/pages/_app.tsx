@@ -42,7 +42,7 @@ export function App({ Component, pageProps, tenantHost, host }: AppProps & {tena
       // Cookies.set('tenant', tenantHost, { path: '/' });
       setTenant(TENANTS[tenantHost] as TENANT_TYPE );
       setTenantData(getTenantData(TENANTS[tenantHost] as TENANT_TYPE ) || null);
-      console.log("Host", host);
+      console.log("Host", host, tenantHost);
     }
     // console.log('tenant:  ', tenantHost)
   }, [tenantHost]);
@@ -77,15 +77,22 @@ export function App({ Component, pageProps, tenantHost, host }: AppProps & {tena
 App.getInitialProps = async (appContext: AppContext) => {
   const { ctx } = appContext;
 
-  const rawHost = ctx.req?.headers['x-forwarded-host'] || ctx.req?.headers.host || 'localhost:3000';
-  let host = Array.isArray(rawHost) ? rawHost[0] : rawHost;
+  let host: string;
 
-  // 🧹 Normalize: remove port and "www."
-  host = host
-      .replace(/^www\./, '')        // Strip "www."
-      .replace(/:\d+$/, '')         // Strip port like ":3000"
+  if (typeof window === 'undefined') {
+    // SSR: Extract from headers
+    const rawHost = ctx.req?.headers['x-forwarded-host'] || ctx.req?.headers.host || 'localhostq:3000';
+    host = Array.isArray(rawHost) ? rawHost[0] : rawHost;
+  } else {
+    // CSR: Use browser location
+    host = window.location.hostname;
+  }
 
-  const tenant = tenants[host] || tenants['localhost'];
+  // Normalize: remove "www." and port
+  host = host.replace(/^www\./, '').replace(/:\d+$/, '');
+
+  // Resolve tenant based on host
+  const tenantHost = tenants[host] || tenants['ui.wapi.com'];
 
   const componentProps =
       typeof appContext.Component.getInitialProps === 'function'
@@ -94,7 +101,7 @@ App.getInitialProps = async (appContext: AppContext) => {
 
   return {
     ...componentProps,
-    tenantHost: tenant,
+    tenantHost,
     host,
   };
 };

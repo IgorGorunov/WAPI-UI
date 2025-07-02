@@ -1130,20 +1130,15 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         setIsDisabled(!(productData.canEdit || !productData?.uuid ));
     }
 
-
     return <div className='product-info'>
         {isLoading && <Loader />}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='tabs-iddd' tabTitles={tabTitles} classNames='inside-modal' notifications={productNotifications}>
                 {isTabAllowed('Primary', forbiddenTabs) ? <div className='primary-tab'>
-                    <CardWithHelpIcon classNames='card product-info--general'>
-                        <h3 className='product-info__block-title'>
-                            <Icon name='general' />
-                            General
-                        </h3>
+                    <>
                         {needSeller() ? (
-                            <div className='order-info--seller card'>
+                            <div className='form-wrapper--seller card'>
                                 <div className='grid-row'>
                                     <Controller
                                         key='seller'
@@ -1158,7 +1153,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                                 // disabled={!!isDisabled}
                                                 {...props}
                                                 name='seller'
-                                                label='Seller: '
+                                                label='Seller* : '
                                                 fieldType={FormFieldTypes.SELECT}
                                                 options={(productData?.status !=='Draft' && !!productData) ? sellersList : sellersListActive}
                                                 placeholder={''}
@@ -1175,42 +1170,48 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 </div>
                             </div>
                         ) : null}
-                        <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
-                        </div>
-                    </CardWithHelpIcon>
-                    <CardWithHelpIcon classNames='card product-info--sku'>
-                        <h3 className='product-info__block-title'>
-                            <Icon name='sku' />
-                            SKU
-                        </h3>
-                        <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors} isDisabled={isDisabled}/>
-                        </div>
-                    </CardWithHelpIcon>
-                    {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--warehouse'>
-                        <h3 className='product-info__block-title'>
-                            <Icon name='warehouse' />
-                            Warehouse
-                        </h3>
-                        <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={warehouseFields} errors={errors} isDisabled={isDisabled} />
-                        </div>
-                    </CardWithHelpIcon> : null}
-                    {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--additional'>
-                        <h3 className='product-info__block-title'>
-                            <Icon name='additional' />
-                            Additional
-                        </h3>
+                        <CardWithHelpIcon classNames='card product-info--general'>
+                            <h3 className='product-info__block-title'>
+                                <Icon name='general' />
+                                General
+                            </h3>
+                            <div className='grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
+                            </div>
+                        </CardWithHelpIcon>
+                        <CardWithHelpIcon classNames='card product-info--sku'>
+                            <h3 className='product-info__block-title'>
+                                <Icon name='sku' />
+                                SKU
+                            </h3>
+                            <div className='grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors} isDisabled={isDisabled}/>
+                            </div>
+                        </CardWithHelpIcon>
+                        {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--warehouse'>
+                            <h3 className='product-info__block-title'>
+                                <Icon name='warehouse' />
+                                Warehouse
+                            </h3>
+                            <div className='grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={warehouseFields} errors={errors} isDisabled={isDisabled} />
+                            </div>
+                        </CardWithHelpIcon> : null}
+                        {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--additional'>
+                            <h3 className='product-info__block-title'>
+                                <Icon name='additional' />
+                                Additional
+                            </h3>
 
-                        <div className='additional-selects grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
-                        </div>
+                            <div className='additional-selects grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
+                            </div>
 
-                        <div className='product-info__checkboxes grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={additionalCheckboxes} errors={errors} isDisabled={isDisabled} />
-                        </div>
-                    </CardWithHelpIcon> : null}
+                            <div className='product-info__checkboxes grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={additionalCheckboxes} errors={errors} isDisabled={isDisabled} />
+                            </div>
+                        </CardWithHelpIcon> : null}
+                    </>
                 </div> : null }
                 {isTabAllowed('Dimensions', forbiddenTabs) ? <div className="dimensions-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--unitOfMeasures">
@@ -1478,7 +1479,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             onCancel={handleCancelAdditionalService}
         />}
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
-        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={()=>{setShowTicketForm(false); refetchDoc();}} seller={needSeller() ? productData.seller : ''} />}
 
     </div>
 }

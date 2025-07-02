@@ -60,7 +60,6 @@ const AskManagerBtn = () => {
         const questionText = watch('questionText');
 
         const onSubmit: SubmitHandler<AskManagerFormDataType> = async(data: AskManagerFormDataType) => {
-            console.log("Submitted value:", data);
             try {
                 setIsLoading(true);
                 const res: ApiResponseType = await sendQuestion({token, alias, questionText: data.questionText});

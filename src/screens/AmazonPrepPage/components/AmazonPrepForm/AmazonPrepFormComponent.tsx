@@ -652,13 +652,9 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
         {amazonPrepOrderParameters ? <><form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='amazon-prep-tabs' tabTitles={tabTitles} classNames='inside-modal' notifications={amazonPrepNotifications} >
                 {isTabAllowed('General', forbiddenTabs) ? <div key='general-tab' className='general-tab'>
-                    <CardWithHelpIcon classNames='card amazon-prep-info--general'>
-                        <h3 className='amazon-prep-info__block-title'>
-                            <Icon name='general' />
-                            General
-                        </h3>
+                    <>
                         {needSeller() ? (
-                            <div className='order-info--seller card'>
+                            <div className='form-wrapper--seller card'>
                                 <div className='grid-row'>
                                     <Controller
                                         key='seller'
@@ -673,7 +669,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                                 // disabled={!!isDisabled}
                                                 {...props}
                                                 name='seller'
-                                                label='Seller: '
+                                                label='Seller* : '
                                                 fieldType={FormFieldTypes.SELECT}
                                                 options={(amazonPrepOrderData?.status !=='Draft' && !!amazonPrepOrderData) ? sellersList : sellersListActive}
                                                 placeholder={''}
@@ -694,11 +690,16 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                                 </div>
                             </div>
                         ) : null}
-                        <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
-                        </div>
-                    </CardWithHelpIcon>
-
+                        <CardWithHelpIcon classNames='card amazon-prep-info--general'>
+                            <h3 className='amazon-prep-info__block-title'>
+                                <Icon name='general' />
+                                General
+                            </h3>
+                            <div className='grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
+                            </div>
+                        </CardWithHelpIcon>
+                    </>
                 </div> : null }
                 {isTabAllowed('Delivery info', forbiddenTabs) ? <div key='delivery-tab' className='delivery-tab'>
                     <CardWithHelpIcon classNames='card amazon-prep-info--details'>
@@ -867,7 +868,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderP
                 {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
                     <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={warehouse} needOnlyOneWarehouse={false}/>
                 </Modal>}
-                {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.AmazonPrep} subjectUuid={docUuid} subject={`AmazonPrep ${amazonPrepOrderData?.wapiTrackingNumber} ${amazonPrepOrderData?.date ? formatDateStringToDisplayString(amazonPrepOrderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+                {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.AmazonPrep} subjectUuid={docUuid} subject={`AmazonPrep ${amazonPrepOrderData?.wapiTrackingNumber} ${amazonPrepOrderData?.date ? formatDateStringToDisplayString(amazonPrepOrderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} seller={needSeller() ? amazonPrepOrderData.seller : ''}/>}
             </>
         :null}
     </div>
