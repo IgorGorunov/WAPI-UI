@@ -926,6 +926,27 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         setSelectedFiles(files);
     };
 
+    //check receiverCountry + zip (France with zip 98000 - 98099 is Monaco)
+    const receiverCountry = watch('receiverCountry');
+    const receiverZip = watch('receiverZip');
+    const isCountryInCorrect = (receiverCountry, receiverZip) => {
+        return (receiverCountry === 'FR' && (receiverZip >= 98000 && receiverZip <= 98099));
+    }
+    const isMonacoAvailable = (countries: OptionType[]) => {
+        return countries.filter(item => item.value === 'MC').length > 0;
+    }
+
+    useEffect(() => {
+        if (isCountryInCorrect(receiverCountry, receiverZip)) {
+            setError('receiverCountry', {
+                type: 'manual',
+                message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
+            });
+        } else {
+            clearErrors('receiverCountry');
+        }
+    }, [receiverZip, receiverCountry]);
+
     //product selection
     const handleProductSelection = () => {
         setShowProductSelectionModal(true);
@@ -1084,6 +1105,19 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             return null;
         }
 
+        if (isCountryInCorrect(receiverCountry, receiverZip)) {
+            setError('receiverCountry', {
+                type: 'manual',
+                message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
+            })
+            toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
+                position: "top-right",
+                autoClose: 3000,
+            });
+            updateTabTitles(['receiverCountry']);
+            return null;
+        }
+
         clearTabTitles();
 
         if (!isDraft && !products.length) {
@@ -1184,6 +1218,26 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         } else {
             let fieldNames = Object.keys(props);
 
+        console.log('gflkahf;hasf', isMonacoAvailable(countries))
+
+        if (isCountryInCorrect(receiverCountry, receiverZip)) {
+            setError('receiverCountry', {
+                type: 'manual',
+                message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
+            })
+            toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
+                position: "top-right",
+                autoClose: 3000,
+            });
+            fieldNames.push('receiverCountry');
+        }
+
+        if (fieldNames.length > 0) {
+            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+                position: "top-right",
+                autoClose: 3000,
+            });
+        }
             if (fieldNames.length > 0) {
                 toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
                     position: "top-right",
@@ -1209,6 +1263,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
 
 
+        console.log('field names', fieldNames)
+        updateTabTitles(fieldNames);
     };
 
     //validation function for codCurrency field

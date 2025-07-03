@@ -52,7 +52,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
         return date.getFullYear() === 1;
     }
 
-    const [selectedDate, setSelectedDate] = useState(getDate(value as string) || EMPTY_DATE);
+    const [selectedDate, setSelectedDate] = useState(getDate(value as string));
     const [showCalendar, setShowCalendar] = useState(false);
 
     const curDate = new Date();
@@ -118,6 +118,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                                         showMonthAndYearPickers={false}
                                         color="#5380F5"
                                         disabledDay={disableDays}
+                                        weekStartsOn={1}
                                     />
                                     {type==='date-time' ? <div className='time-picker-wrapper'> <Icon name='clock' /><TimePicker
                                         value={selectedTime}
