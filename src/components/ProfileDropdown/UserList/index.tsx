@@ -15,6 +15,8 @@ export type UserType = {
     userPresentation: string;
     userLogin: string;
     uuid: string;
+    whiteLabel?: boolean;
+    alias?: string;
 }
 
 type UserListPropsType = {
@@ -64,6 +66,8 @@ const UserList: React.FC<UserListPropsType> = ({users, onClose}) => {
     }
 
 
+    console.log('%c Users:', filteredUsers, 'color: green');
+
     return (
         <>
             {isLoading && <Loader />}
@@ -77,7 +81,17 @@ const UserList: React.FC<UserListPropsType> = ({users, onClose}) => {
                         </SearchContainer>
                     </div>
                     <ul className='users-list__list has-scroll'>
-                        {filteredUsers.map(item => <li key={item.uuid} className='users-list__list-item'><button onClick={()=>handleUserChange(item)}><Icon name='profile' />{item.userProfile.userInfo.client} ({item.userProfile.userInfo.userLogin})</button></li> )}
+                        {filteredUsers.map(item => (
+                            <li key={item.uuid} className='users-list__list-item'>
+
+                                <button onClick={()=>handleUserChange(item)}>
+                                    {item.whiteLabel ? <span className='is-whitelabel-pref'><Icon name='whitelabel' /></span> : null}
+                                    <Icon name='profile' />
+                                    {item.userProfile.userInfo.client} ({item.userProfile.userInfo.userLogin})
+                                    {item.whiteLabel ? <span className='is-whitelabel'> Whitelabel: {item.alias}</span> : null}
+                                </button>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             : null}
