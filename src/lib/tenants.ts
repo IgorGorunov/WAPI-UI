@@ -52,7 +52,7 @@ export const tenants = {
     'n1globalpay.com': TENANTS.N1,
     'wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
     'ui.wapi.com': TENANTS.WAPI,
-    'localhost': TENANTS.N1,
+    'localhost': TENANTS.WAPI,
     'https://wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
 
 };
@@ -60,7 +60,7 @@ export const tenants = {
 export const tenantsData = {
     [TENANTS.WAPI]: {
         id: TENANTS.WAPI,
-        alias: '',
+        alias: 'wapi',
         name: 'WAPI OÜ',
         logo: '/logo.png',
         email: 'info@wapi.com',

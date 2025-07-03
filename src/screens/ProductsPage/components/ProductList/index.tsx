@@ -27,7 +27,7 @@ import SelectField from "@/components/FormBuilder/Select/SelectField";
 type ProductListType = {
     products: ProductType[];
     setFilteredProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
-    setProductsData: React.Dispatch<React.SetStateAction<ProductType[]>>;
+    // setProductsData: React.Dispatch<React.SetStateAction<ProductType[]>>;
     handleEditProduct(uuid: string): void;
     reFetchData: ()=>void;
 }
@@ -49,7 +49,7 @@ const extraStatusHints = {
 
 
 
-const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setProductsData, handleEditProduct, reFetchData}) => {
+const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, handleEditProduct, reFetchData}) => {
     const { needSeller, sellersList } = useAuth();
     const isTouchDevice = useIsTouchDevice();
     const [animating, setAnimating] = useState(false);
@@ -205,7 +205,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
     useEffect(() => {
         setFilteredProducts(filteredProducts)
-    }, [searchTerm, filterStatus]);
+    }, [filteredProducts]);
 
     // Table
     const SellerColumns: TableColumnProps<ProductType>[] = [];

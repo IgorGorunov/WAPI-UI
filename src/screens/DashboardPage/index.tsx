@@ -93,18 +93,23 @@ const DashboardPage: React.FC = () => {
         if (isActionIsAccessible(AccessObjectTypes["Dashboard"], AccessActions.View) && isNavItemAccessible('Dashboard')) {
           const res: ApiResponseType = await getDasboardData(superUser && ui ? {...requestData, ui} : requestData);
 
-          if (res && "data" in res) {
+          if (res && res.status === 200 && "data" in res) {
             setPageDataArr(res.data);
 
-            if (Array.isArray(res.data) && res.data.length > 0) {
-              setData(JSON.stringify(res.data));
-              lastValidPageData.current = res.data;
-              // setSellerData(res.data[0]);
-              setSelectedSeller(res.data[0].seller);
-              setSellersOptions(res.data.map(item => {
-                const seller = sellersList.find(s => s.value === item.seller);
-                return {label: seller ? seller.label : ' - ', value: item.seller}
-              }));
+            if (Array.isArray(res.data)) {
+               if (res.data.length > 0) {
+                 setData(JSON.stringify(res.data));
+                 lastValidPageData.current = res.data;
+                 // setSellerData(res.data[0]);
+                 setSelectedSeller(res.data[0].seller);
+                 setSellersOptions(res.data.map(item => {
+                   const seller = sellersList.find(s => s.value === item.seller);
+                   return {label: seller ? seller.label : ' - ', value: item.seller}
+                 }));
+               } else {
+                 //no data received
+                 setSellerData({} as DashboardDataType);
+               }
             }
             setIsLoading(false);
           } else {
@@ -203,7 +208,7 @@ const DashboardPage: React.FC = () => {
                     </div>
                     : null
                 }
-                {sellerData ? <div>
+                {sellerData !==null ? <div>
               <div className="dashboard-animated-grid grid-row dashboard-grid-row">
                 <div className="width-33 dashboard-grid-col">
                   <Forecast

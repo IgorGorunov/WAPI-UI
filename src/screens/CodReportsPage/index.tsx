@@ -244,12 +244,12 @@ const CodReportsPage = () => {
                 }
                 {CODIndicatorsBySeller ? (
                     <div className="grid-row indicator-info-block has-cards-block">
-                        {CODIndicatorsBySeller.yearAmount && CODIndicatorsBySeller.yearAmount.length ? (
+                        {CODIndicatorsBySeller.yearAmount ? (
                             <div className='width-33 grid-col-33'>
                                 <CODIndicatorsCard title={"Year to date"} type="amount" indicatorsArray={CODIndicatorsBySeller.yearAmount} classNames='year' />
                             </div>
                         ) : null}
-                        {CODIndicatorsBySeller.monthAmount && CODIndicatorsBySeller.monthAmount.length ? (
+                        {CODIndicatorsBySeller.monthAmount ? (
                             <div className='width-33  grid-col-33'>
                                 <CODIndicatorsCard title={"Month to date"} type="amount" indicatorsArray={CODIndicatorsBySeller.monthAmount} classNames='month' />
                             </div>
