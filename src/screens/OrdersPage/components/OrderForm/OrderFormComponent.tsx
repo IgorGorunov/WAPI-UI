@@ -1105,36 +1105,41 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             return null;
         }
 
-        if (isCountryInCorrect(receiverCountry, receiverZip)) {
-            setError('receiverCountry', {
-                type: 'manual',
-                message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
-            })
-            toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
-                position: "top-right",
-                autoClose: 3000,
-            });
-            updateTabTitles(['receiverCountry']);
-            return null;
-        }
-
         clearTabTitles();
 
-        if (!isDraft && !products.length) {
-            setError('products', {
-                type: 'manual',
-                message: 'Products are empty! Order needs to have at least 1 product!',
-            });
+        const errorTabs: string[] = [];
 
-            toast.warn(`Order needs to have at least 1 product!`, {
-                position: "top-right",
-                autoClose: 3000,
-            });
+        if (!isDraft) {
+            if (!products.length) {
+                setError('products', {
+                    type: 'manual',
+                    message: 'Products are empty! Order needs to have at least 1 product!',
+                });
 
+                toast.warn(`Order needs to have at least 1 product!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
 
-            updateTabTitles(['products']);
+                errorTabs.push('products');
+            }
+            if (isCountryInCorrect(receiverCountry, receiverZip)) {
+                setError('receiverCountry', {
+                    type: 'manual',
+                    message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
+                })
+                toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+                errorTabs.push('receiverCountry');
 
-            return;
+            }
+
+            if (errorTabs.length) {
+                updateTabTitles(errorTabs);
+                return null;
+            }
         }
 
         setIsLoading(true);
@@ -1198,6 +1203,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             clearErrors();
             clearTabTitles();
 
+            const fieldNames: string[] = [];
+
             if (needSeller() && props.seller) {
                 setError('seller', {
                     type: 'manual',
@@ -1209,8 +1216,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     autoClose: 3000,
                 });
 
-                updateTabTitles(['seller']);
+                fieldNames.push('seller');
+                // updateTabTitles(['seller']);
 
+            }
+
+            if (fieldNames.length > 0) {
+                updateTabTitles(['seller']);
+                return null;
             } else {
                 const formData = getValues();
                 return onSubmitForm(formData as SingleOrderFormType);
@@ -1218,26 +1231,18 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         } else {
             let fieldNames = Object.keys(props);
 
-        console.log('gflkahf;hasf', isMonacoAvailable(countries))
+            if (isCountryInCorrect(receiverCountry, receiverZip)) {
+                setError('receiverCountry', {
+                    type: 'manual',
+                    message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
+                })
+                toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+                fieldNames.push('receiverCountry');
+            }
 
-        if (isCountryInCorrect(receiverCountry, receiverZip)) {
-            setError('receiverCountry', {
-                type: 'manual',
-                message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
-            })
-            toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
-                position: "top-right",
-                autoClose: 3000,
-            });
-            fieldNames.push('receiverCountry');
-        }
-
-        if (fieldNames.length > 0) {
-            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
-                position: "top-right",
-                autoClose: 3000,
-            });
-        }
             if (fieldNames.length > 0) {
                 toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
                     position: "top-right",
@@ -1261,10 +1266,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
             updateTabTitles(fieldNames);
         }
-
-
-        console.log('field names', fieldNames)
-        updateTabTitles(fieldNames);
     };
 
     //validation function for codCurrency field
