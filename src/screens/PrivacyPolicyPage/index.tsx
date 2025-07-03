@@ -413,8 +413,10 @@ const PrivacyPolicyPage = () => {
                                         </li>
                                     </ol>
                                 </li>
-                                <li>The rights of the Data Subject referred to in Clause 13.1 of the Privacy
-                                    Policy shall be exercised insofar as the Processing of Personal Data does n
+                                <li>The rights of the Data Subject referred to in Clause 13.1 of the Privacy Policy shall
+                                    be exercised insofar as the Processing of Personal Data does not conflict with the
+                                    obligations of N1ND GLOBAL under applicable laws, or infringe upon the rights and
+                                    freedoms of other individuals, including the right to privacy and data protection.
                                 </li>
                                 <li>In order to prevent unjustified disclosure of a Data Subject's Personal
                                     Data to third parties, {companyName} exercises rights of a Data Subject on the

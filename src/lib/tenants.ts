@@ -52,7 +52,7 @@ export const tenants = {
     'n1globalpay.com': TENANTS.N1,
     'wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
     'ui.wapi.com': TENANTS.WAPI,
-    'localhost': TENANTS.WAPI,
+    'localhost': TENANTS.N1,
     'https://wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
 
 };
@@ -119,8 +119,8 @@ export const tenantsData = {
             },
             websites: [
                 {
-                    text: 'some.website.com7с',
-                    link: 'https://google.com/',
+                    text: 'n1globalpay.com',
+                    link: 'https://n1globalpay.com/',
                 },
             ],
         },
@@ -133,7 +133,7 @@ export const tenantsData = {
             address: '',
         },
         mainWebsite: '',
-        uiLink: 'https://google.com/',
+        uiLink: 'https://n1globalpay.com/',
         orderTitles: {
             trackingNumberTitle: 'Warehouse tracking number',
             carrierTitle: 'N1ND GLOBAL carrier',
