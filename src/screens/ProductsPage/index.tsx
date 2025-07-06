@@ -24,9 +24,12 @@ import {TourGuidePages} from "@/types/tourGuide";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 const ProductsPage = () => {
     const Router = useRouter();
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
@@ -74,7 +77,7 @@ const ProductsPage = () => {
             setIsLoading(true);
             // const prevProductData = productsData || [];
             // setProductsData([]);
-            const requestData = {token: token};
+            const requestData = {token, alias};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetProductsList', AccessObjectTypes["Products/ProductsList"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -178,13 +181,13 @@ const ProductsPage = () => {
         }
 
         const filteredData = filteredProducts.map(item => ({
-            status: item.status,
-            sku: item.sku,
-            name: item.name,
-            dimension: item.dimension,
-            weight: item.weight,
-            aliases: item.aliases,
-            barcodes: item.barcodes,
+            Status: item.status,
+            SKU: item.sku,
+            Name: item.name,
+            Dimension: item.dimension,
+            Weight: item.weight,
+            Aliases: item.aliases,
+            Barcodes: item.barcodes,
         }));
         exportFileXLS(filteredData, "Products")
     }
@@ -195,16 +198,15 @@ const ProductsPage = () => {
 
     return (
         <Layout hasFooter>
+            <SeoHead title='Product list' description='Our product list page' />
             <div className="products-page__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Products' toRight needTutorialBtn>
-                {/*<Header pageTitle='Products' toRight >*/}
-                    {/*<Button icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>*/}
                     <Button classNames='add-product' icon="add" iconOnTheRight onClick={handleAddProduct}>Add product</Button>
                     <Button classNames='import-products' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
                     <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
-                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setProductsData={setProductsData} handleEditProduct={handleEditProduct} reFetchData={fetchData}/>}
+                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct} reFetchData={fetchData}/>}
             </div>
             {showModal && (uuid && !isNew || !uuid && isNew) &&
                 <ProductForm uuid={uuid} products={productsAsOptions} onClose={onModalClose} onCloseSuccess={()=>{setShowModal(false);fetchData();}} />

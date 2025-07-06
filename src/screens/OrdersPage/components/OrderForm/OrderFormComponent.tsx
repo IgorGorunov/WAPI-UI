@@ -1,5 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {
+    CreateOrderRequestType,
     OrderParamsType,
     OrderProductWithTotalInfoType,
     PickupPointsType,
@@ -53,6 +54,8 @@ import {CommonHints} from "@/constants/commonHints";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ImageSlider from "@/components/ImageSlider";
 import CustomerReturns from "./CustomerReturns";
+import useTenant from "@/context/tenantContext";
+import {isTabAllowed} from "@/utils/tabs";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -62,6 +65,7 @@ type OrderFormType = {
     orderUuid?: string;
     closeOrderModal: ()=>void;
     refetchDoc: ()=>void;
+    forbiddenTabs: string[] | null;
 }
 
 const receiverFieldsPickUpPoint = [
@@ -82,9 +86,10 @@ const getCorrectNotifications = (record: SingleOrderType, notifications: Notific
     return orderNotifications;
 }
 
-const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal}) => {
+const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal, forbiddenTabs}) => {
     const {notifications} = useNotifications();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { tenantData: { alias, orderTitles }} = useTenant();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
@@ -103,7 +108,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const fetchPickupPoints = useCallback(async (courierService: string) => {
         try {
             setIsLoading(true);
-            const requestData = {token, courierService};
+            const requestData = {token, alias, courierService};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetPickupPoints'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -128,7 +133,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const fetchPickupPointsForCreatedOrder = useCallback(async (courierService: string) => {
         try {
-            const requestData = {token, courierService};
+            const requestData = {token, alias, courierService};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetPickupPoints'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -258,6 +263,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         uuid: orderData?.uuid || '',
         wapiTrackingNumber: orderData?.wapiTrackingNumber || '',
         warehouse: orderData?.warehouse || '',
+        seller: orderData?.seller && needSeller() ? orderData.seller : '',
         products:
             orderData && orderData?.products && orderData.products.length
                 ? orderData.products.map((product, index: number) => (
@@ -278,7 +284,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 : [],
     }),[orderData]);
 
-    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, setError, clearErrors} = useForm({
+    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors, setError} = useForm({
         mode: 'onSubmit',
         defaultValues: defaultFormValues,
     });
@@ -290,6 +296,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
     const preferredWarehouse = watch('preferredWarehouse');
     //const selectedWarehouse = watch('warehouse');
 
+    useEffect(() => {
+        // console.log('products: ', products);
+    }, [products]);
 
     //tickets
     const [showTicketForm, setShowTicketForm] = useState(false);
@@ -308,7 +317,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             filteredCountries = filteredCountries.filter(item=>item.courierService===selectedCourierService);
         }
 
-        const countryArr = filteredCountries.map(item => item.country);
+        const countryArr =  filteredCountries.map(item => item.country);
 
         return allCountries.filter(item=> countryArr.includes(item.value));
     }
@@ -403,15 +412,30 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         updateTotalProducts();
     },[products]);
 
+    const selectedSeller = watch('seller');
 
+    const handleSelectedSellerChange = (val:string) => {
+        if (val != selectedSeller) setValue('products', []);
+    }
 
     const getProductSku = (productUuid: string) => {
         const product = orderParameters.products.find(item => item.uuid === productUuid);
+        if (product && needSeller()) {
+            return product.seller === selectedSeller ? product?.sku : '';
+        }
         return product?.sku || '';
     }
+
     const productOptions = useMemo(() =>{
-        return orderParameters ? orderParameters.products.map((item)=> ({label: `${item.name}`, value: item.uuid})) : [];
-    },[orderParameters]);
+
+        let sellersProducts = orderParameters ? orderParameters.products : [];
+        if (needSeller()) {
+            sellersProducts = selectedSeller ? sellersProducts.filter(item=>item.seller===selectedSeller) : [];
+        }
+
+        return sellersProducts.map((item)=> ({label: `${item.name}`, value: item.uuid}));
+
+    },[orderParameters, selectedSeller]);
 
     const calcProductTotal = (index: number) => {
         const product = getValues('products')[index];
@@ -825,15 +849,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             // 'receiverZip'
         ];
 
-        // const receiverFieldsPickUpPoint = [
-        //     'receiverPickUpAddress',
-        //     'receiverPickUpCity',
-        //     'receiverPickUpDescription',
-        //     'receiverPickUpID',
-        //     'receiverPickUpName',
-        //     'receiverPickUpCountry'
-        // ];
-
         const changedFields = {}
 
         receiverFieldsMain.forEach(field => {
@@ -900,7 +915,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const linkToTrack = orderData && orderData.trackingLink ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
-    const generalFields = useMemo(()=> GeneralFields(!orderData?.uuid), [orderData])
+    const generalFields = useMemo(()=> GeneralFields(!orderData?.uuid, orderTitles), [orderData, orderTitles])
     const detailsFields = useMemo(()=>DetailsFields({warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange:handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
     const receiverFields = useMemo(()=>ReceiverFields({countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields}),[curPickupPoints, pickupOptions, countries, preferredWarehouse,selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields ])
     const pickUpPointFields = useMemo(()=>PickUpPointFields({countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: ()=>{hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled()}, atLeastOneFieldIsFilled}),[countries, preferredWarehouse,selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions])
@@ -987,7 +1002,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         updateTotalProducts();
     }
 
-    const tabTitleArray =  TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length), !!(orderData?.customerReturns && orderData.customerReturns.length), !!(orderData?.tickets && orderData.tickets.length));
+    const tabTitleArray =  TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length), !!(orderData?.customerReturns && orderData.customerReturns.length), !!(orderData?.tickets && orderData.tickets.length), forbiddenTabs);
     const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
 
     useEffect(() => {
@@ -1008,7 +1023,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const handleCancelOrder = async() => {
         try {
-            const requestData = {token, uuid: orderData?.uuid};
+            const requestData = {token, alias, uuid: orderData?.uuid};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('CancelOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.EditObject), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -1050,10 +1065,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         };
 
         try {
-            const requestData = {
-                token: token,
-                addressData: changedFields
-            };
+            const requestData = {token, alias, addressData: changedFields};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('UpdateAddressShipmentOrder'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -1093,20 +1105,43 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             return null;
         }
 
-        if (isCountryInCorrect(receiverCountry, receiverZip)) {
-            setError('receiverCountry', {
-                type: 'manual',
-                message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
-            })
-            toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
-                position: "top-right",
-                autoClose: 3000,
-            });
-            updateTabTitles(['receiverCountry']);
-            return null;
+        clearTabTitles();
+
+        const errorTabs: string[] = [];
+
+        if (!isDraft) {
+            if (!products.length) {
+                setError('products', {
+                    type: 'manual',
+                    message: 'Products are empty! Order needs to have at least 1 product!',
+                });
+
+                toast.warn(`Order needs to have at least 1 product!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                errorTabs.push('products');
+            }
+            if (isCountryInCorrect(receiverCountry, receiverZip)) {
+                setError('receiverCountry', {
+                    type: 'manual',
+                    message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
+                })
+                toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+                errorTabs.push('receiverCountry');
+
+            }
+
+            if (errorTabs.length) {
+                updateTabTitles(errorTabs);
+                return null;
+            }
         }
 
-        clearTabTitles();
         setIsLoading(true);
         data.draft = isDraft;
         data.attachedFiles= selectedFiles;
@@ -1116,10 +1151,15 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
         }
 
         try {
-            const requestData = {
+            const requestData: CreateOrderRequestType = {
                 token: token,
+                alias,
                 orderData: data
             };
+
+            if (data.seller) {
+                requestData.seller = data.seller;
+            }
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('CreateUpdateOrder'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -1161,36 +1201,71 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
         if (isDraft) {
             clearErrors();
-            const formData = getValues();
+            clearTabTitles();
 
-            return onSubmitForm(formData as SingleOrderFormType);
+            const fieldNames: string[] = [];
+
+            if (needSeller() && props.seller) {
+                setError('seller', {
+                    type: 'manual',
+                    message: 'Seller is required!',
+                });
+
+                toast.warn(`Seller is required for draft orders!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                fieldNames.push('seller');
+                // updateTabTitles(['seller']);
+
+            }
+
+            if (fieldNames.length > 0) {
+                updateTabTitles(['seller']);
+                return null;
+            } else {
+                const formData = getValues();
+                return onSubmitForm(formData as SingleOrderFormType);
+            }
+        } else {
+            let fieldNames = Object.keys(props);
+
+            if (isCountryInCorrect(receiverCountry, receiverZip)) {
+                setError('receiverCountry', {
+                    type: 'manual',
+                    message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
+                })
+                toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+                fieldNames.push('receiverCountry');
+            }
+
+            if (fieldNames.length > 0) {
+                toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+            }
+
+            if (!products.length) {
+                setError('products', {
+                    type: 'manual',
+                    message: 'Products are empty! Order needs to have at least 1 product!',
+                });
+
+                toast.warn(`Order needs to have at least 1 product!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                fieldNames.push('products');
+            }
+
+            updateTabTitles(fieldNames);
         }
-
-        const fieldNames = Object.keys(props);
-
-        console.log('gflkahf;hasf', isMonacoAvailable(countries))
-
-        if (isCountryInCorrect(receiverCountry, receiverZip)) {
-            setError('receiverCountry', {
-                type: 'manual',
-                message: `Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco!' : 'Please, contact your support manager'}`,
-            })
-            toast.warn(`Zip code ${receiverZip} belongs to Monaco, not France. ${isMonacoAvailable(countries) ? 'Please, select Monaco as a receiver country!' : 'Please, contact your support manager'}`, {
-                position: "top-right",
-                autoClose: 3000,
-            });
-            fieldNames.push('receiverCountry');
-        }
-
-        if (fieldNames.length > 0) {
-            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
-                position: "top-right",
-                autoClose: 3000,
-            });
-        }
-
-        console.log('field names', fieldNames)
-        updateTabTitles(fieldNames);
     };
 
     //validation function for codCurrency field
@@ -1239,7 +1314,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
 
     const [showWarehousePhotos, setShowWarehousePhotos] = useState(false);
 
-
     return <div className='order-info'>
         {(isLoading || !orderParameters) && <Loader />}
         <ToastContainer />
@@ -1247,7 +1321,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
                 <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
                 <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal'
-                      notifications={orderNotifications} extraInfo={orderData?.logisticComment || orderData?.warehouseAdditionalInfo ?
+                      notifications={orderNotifications}
+                      extraInfo={(orderData?.logisticComment || orderData?.warehouseAdditionalInfo) && isTabAllowed('Logistic comment', forbiddenTabs) ?
                         <div className='order-info--comments-wrapper'>
                             {orderData?.logisticComment ? <div className='order-info--logistic-comment-wrapper'>
                                 <p className='order-info--logistic-comment-text'>{orderData?.logisticComment}</p>
@@ -1256,7 +1331,44 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 <p className='order-info--address-comment-text'>{orderData?.warehouseAdditionalInfo}</p>
                             </div>: null}
                         </div> : null}>
-                    <div key='general-tab' className='general-tab'>
+                    {isTabAllowed('General', forbiddenTabs) ? <div key='general-tab' className='general-tab'>
+                        {needSeller() ? (
+                            <div className='form-wrapper--seller card'>
+                                <div className='grid-row'>
+                                    <Controller
+                                        key='seller'
+                                        name='seller'
+                                        control={control}
+                                        render={(
+                                            {
+                                                field: {...props},
+                                                fieldState: {error}
+                                            }) => (
+                                            <FieldBuilder
+                                                // disabled={!!isDisabled}
+                                                {...props}
+                                                name='seller'
+                                                label='Seller: '
+                                                fieldType={FormFieldTypes.SELECT}
+                                                options={(orderData?.status !=='Draft' && !!orderData) ? sellersList : sellersListActive}
+                                                placeholder={''}
+                                                errorMessage={error?.message}
+                                                errors={errors}
+                                                disabled={isDisabled || (orderData?.status !=='Draft' && !!orderData)}
+                                                width={WidthType.w50}
+                                                classNames={'seller-filter'}
+                                                isClearable={false}
+                                                onChange={(val: string)=>{
+                                                    handleSelectedSellerChange(val);
+                                                    props.onChange(val);
+                                                }}
+                                            />
+                                        )}
+                                        rules = {{required: "Required field"}}
+                                    />
+                                </div>
+                            </div>
+                        ) : null}
                         <CardWithHelpIcon classNames='card order-info--general'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='general'/>
@@ -1285,8 +1397,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                                  isDisabled={isDisabled}/>
                             </div>
                         </CardWithHelpIcon>
-                    </div>
-                    <div key='delivery-tab' className='delivery-tab'>
+                    </div> : null}
+                    {isTabAllowed('Delivery info', forbiddenTabs) ? <div key='delivery-tab' className='delivery-tab'>
                         <div className='card order-info--receiver'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='receiver'/>
@@ -1338,8 +1450,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors} />
                             </div>
                         </div>
-                    </div>
-                    <div key='product-tab' className='product-tab'>
+                    </div> : null }
+                    {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className='product-tab'>
                         <CardWithHelpIcon classNames="card min-height-600 order-info--products">
                             <h3 className='order-info__block-title '>
                                 <Icon name='goods'/>
@@ -1441,17 +1553,20 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                 </div>
                             </div>
                             <div className='order-info--table table-form-fields form-table'>
-                                <Table
-                                    columns={getProductColumns(control)}
-                                    dataSource={getValues('products')?.map((field, index) => ({key: field.product + '-' + index, ...field})) || []}
-                                    pagination={false}
-                                    rowKey="key"
-                                />
+                                <div className={`products-wrapper${errors?.products ? ' empty-table-error' : ''}`}>
+                                    <Table
+                                        columns={getProductColumns(control)}
+                                        dataSource={getValues('products')?.map((field, index) => ({key: field.product + '-' + index, ...field})) || []}
+                                        pagination={false}
+                                        rowKey="key"
+                                    />
+                                </div>
+                                {errors?.products ? <p className={'error-message'}>{errors.products.message}</p> : null}
                                 <ProductsTotal productsInfo={productsTotalInfo}/>
                             </div>
                         </CardWithHelpIcon>
-                    </div>
-                    {orderData?.uuid && <div key='services-tab' className='services-tab'>
+                    </div> : null}
+                    {orderData?.uuid && isTabAllowed('Services', forbiddenTabs) && <div key='services-tab' className='services-tab'>
                         <div className="card min-height-600 order-info--history">
                             <h3 className='order-info__block-title'>
                                 <Icon name='bundle'/>
@@ -1460,7 +1575,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             <Services services={orderData?.services}/>
                         </div>
                     </div>}
-                    {orderData?.uuid && <div key='status-history-tab' className='status-history-tab'>
+                    {orderData?.uuid && isTabAllowed('Status history', forbiddenTabs) && <div key='status-history-tab' className='status-history-tab'>
                         <div className="min-height-600 order-info--history">
                             <div className='card'>
                                 <h3 className='order-info__block-title'>
@@ -1471,7 +1586,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             </div>
                         </div>
                     </div>}
-                    {orderData?.uuid && <div key='sms-history-tab' className='sms-history-tab'>
+                    {orderData?.uuid && isTabAllowed('SMS history', forbiddenTabs) && <div key='sms-history-tab' className='sms-history-tab'>
                         <div className="card min-height-600 order-info--sms-history">
                             <h3 className='order-info__block-title'>
                                 <Icon name='message'/>
@@ -1480,7 +1595,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             <SmsHistory smsHistory={orderData?.smsHistory}/>
                         </div>
                     </div>}
-                    {orderData?.uuid && orderData?.claims.length ? <div key='claims-tab' className='claims-tab'>
+                    {orderData?.uuid && orderData?.claims.length && isTabAllowed('Claims', forbiddenTabs) ? <div key='claims-tab' className='claims-tab'>
                         <div className="card min-height-600 order-info--claims">
                             <h3 className='order-info__block-title'>
                                 <Icon name='complaint'/>
@@ -1490,7 +1605,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         </div>
                     </div> : null}
                     {/*customer returns*/}
-                    {orderData?.uuid && orderData?.customerReturns.length ? <div key='customer-returns-tab' className='customer-returns-tab'>
+                    {orderData?.uuid && orderData?.customerReturns.length && isTabAllowed('Customer returns', forbiddenTabs) ? <div key='customer-returns-tab' className='customer-returns-tab'>
                         <div className="card min-height-600 order-info--customer-returns">
                             <h3 className='order-info__block-title'>
                                 <Icon name='package-return'/>
@@ -1500,7 +1615,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                         </div>
                     </div> : null}
                     {/*-----*/}
-                    {orderData?.uuid && orderData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                    {orderData?.uuid && orderData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ? <div key='tickets-tab' className='tickets-tab'>
                         <div className="card min-height-600 order-info--tickets">
                             <h3 className='order-info__block-title'>
                                 <Icon name='ticket'/>
@@ -1509,7 +1624,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             <DocumentTickets tickets={orderData.tickets}/>
                         </div>
                     </div> : null}
-                    {orderData?.uuid ? <div key='notes-tab' className='notes-tab'>
+                    {orderData?.uuid && isTabAllowed('Notes', forbiddenTabs) ? <div key='notes-tab' className='notes-tab'>
                         <div className="card min-height-600 order-info--files">
                             <h3 className='order-info__block-title'>
                                 <Icon name='edit'/>
@@ -1520,7 +1635,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             </div>
                         </div>
                     </div> : null}
-                    <div key='files-tab' className='files-tab'>
+                    {isTabAllowed('Files', forbiddenTabs) ? <div key='files-tab' className='files-tab'>
                         <CardWithHelpIcon classNames="card min-height-600 order-info--files">
                             <TutorialHintTooltip hint={OrderHints['files'] || ''} position='left' classNames='mb-md'>
                                 <h3 className='order-info__block-title  title-small' >
@@ -1534,11 +1649,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                                           docUuid={orderData?.canEdit ? orderData?.uuid : ''}/>
                             </div>
                         </CardWithHelpIcon>
-                    </div>
+                    </div> : null}
                 </Tabs>
 
                 <div className='form-submit-btn'>
-                    {orderData && orderData.uuid ?
+                    {orderData && orderData.uuid && isTabAllowed('Tickets', forbiddenTabs) ?
                         <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
                                 onClick={handleCreateTicket}>Create ticket</Button> : null}
                     {orderData?.uuid && orderData?.canEdit ?
@@ -1547,13 +1662,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                     {isDisabled && orderData?.canEdit && !orderData?.addressEditAllowedOnly && <Button type="button" disabled={false}
                                                                  onClick={handleEditClick}
                                                                  variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                    {isDisabled && orderData?.addressEditAllowedOnly && !isAddressAllowed && <Button type="button" disabled={false}
+                    {isDisabled && orderData?.addressEditAllowedOnly && !isAddressAllowed && isTabAllowed('Logistic comment', forbiddenTabs) && <Button type="button" disabled={false}
                                                                                                       onClick={handleEditAddressClick}
                                                                                                       variant={ButtonVariant.PRIMARY}>Edit address</Button>}
-                    {orderData?.uuid && orderData?.status==="In transit" && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
+                    {orderData?.uuid && orderData?.status==="In transit" && isTabAllowed('Comment to courier service', forbiddenTabs) && <Button type="button" disabled={false} onClick={handleShowCommentModal} variant={ButtonVariant.PRIMARY}>Send comment</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} variant={ButtonVariant.PRIMARY} onClick={()=>setIsDraft(true)}>Save as draft</Button>}
                     {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={()=>setIsDraft(false)}  variant={ButtonVariant.PRIMARY}>Send</Button>}
-                    {isDisabled && orderData?.addressEditAllowedOnly && isAddressAllowed && <Button type="submit" disabled={!isAddressAllowed || !addressWasChanged} onClick={()=>setIsAddressChange(true)}  variant={ButtonVariant.PRIMARY}>Send address</Button>}
+                    {isDisabled && orderData?.addressEditAllowedOnly && isAddressAllowed && isTabAllowed('Logistic comment', forbiddenTabs) && <Button type="submit" disabled={!isAddressAllowed || !addressWasChanged} onClick={()=>setIsAddressChange(true)}  variant={ButtonVariant.PRIMARY}>Send address</Button>}
                     </div>
             </form>
             {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
@@ -1562,11 +1677,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             </Modal>}
             {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
                 {/*<ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>*/}
-                <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={preferredWarehouse} needOnlyOneWarehouse={false}/>
+                <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={preferredWarehouse} needOnlyOneWarehouse={false} seller={selectedSeller}/>
 
             </Modal>}
 
-            {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+            {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Fullfilment} subjectUuid={orderUuid} subject={`Fullfilment ${orderData?.wapiTrackingNumber} ${orderData?.date ? formatDateStringToDisplayString(orderData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} seller={needSeller() ? orderData.seller : ''} />}
 
             {showConfirmModal && <ConfirmModal
                 actionText='Are you sure you want to cancel this order?'

@@ -379,10 +379,9 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
                                     {row.getVisibleCells().map((cell,index) => {
                                         return (
                                             <td
-                                                colSpan={Number(`${(cell.getIsGrouped() ? dimensionsCount : index<=groupedCols && !cell.getIsAggregated() ? groupedCols+1  : 1) }`)}
+                                                key={cell.id} colSpan={Number(`${(cell.getIsGrouped() ? dimensionsCount : index<=groupedCols && !cell.getIsAggregated() ? groupedCols+1  : 1) }`)}
                                                 className={`${cell.id} col-${index} ${index<dimensionsCount ? 'is-dimension': 'is-resource'} ${cell.getIsGrouped() ? 'is-grouped' : ''} ${cell.getIsAggregated() ? 'is-aggravated' : ''} ${cell.getIsPlaceholder() ? 'is-placeholder' : ''} ${row.depth}`}
                                                 {...{
-                                                    key: cell.id,
                                                     style: {
                                                         // paddingLeft: index<=groupedCols && !cell.getIsAggregated() ? row.subRows.length ? `${row.depth * 16 +10}px` : `${row.depth * 16 + 30}px` : '10px',
                                                         paddingLeft: calcPadding(index, cell.getIsAggregated(), row.subRows.length !==0, row.depth),

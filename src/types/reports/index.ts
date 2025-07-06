@@ -51,10 +51,12 @@ export type ReportParametersType = {
         name: string;
         sku: string;
         uuid: string;
+        seller: string;
     }[];
     warehouses: {
         country: string;
         warehouse: string;
+        seller: string;
     }[];
     countries: string[];
     courierServices: string[];

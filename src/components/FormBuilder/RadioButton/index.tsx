@@ -54,7 +54,7 @@ const RadioButton = forwardRef<HTMLDivElement, FieldPropsType>(({
         <div className={`radio-button__wrapper ${classNames ? classNames : ""} ${width ? "width-"+width : ""} ${disabled ? 'is-disabled' : 'is-active'}`}>
             {label ? <label className="radio-button-label">{label}</label> : null}
             {options && options.length && <div className={`radio-button__group ${alignFlexH ? 'align-'+alignFlexH : ''}`}>
-                {options && options.length && options.map((item, index) => (
+                {options && options.length >0 ? options.map((item, index) => (
                     item.isDisabled
                         ? <div key={`${name}_${index}`} className={`radio-button__option ${curValue===item.value ? 'is-checked' : ''} is-disabled`}>
                             <span className='radio-button__option-decor'/> <span>{item.label}{isCountry && getCountry(options, item.value as string) ? <span className={`fi fi-${getCountry(options, item.value as string).toLowerCase()} flag-icon`}></span> : null}</span>
@@ -66,7 +66,7 @@ const RadioButton = forwardRef<HTMLDivElement, FieldPropsType>(({
                             >
                             <span className='radio-button__option-decor'/> <span>{item.label}{isCountry && getCountry(options, item.value as string) ? <span className={`fi fi-${getCountry(options, item.value as string).toLowerCase()} flag-icon`}></span> : null}</span>
                         </a>
-                ))}
+                )) : null}
             </div>}
             {errorMessage && <p className="error">{errorMessage}</p>}
 

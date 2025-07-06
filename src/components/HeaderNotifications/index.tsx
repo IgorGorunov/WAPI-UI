@@ -7,6 +7,7 @@ import {checkNewNotifications, getNotifications} from "@/services/notifications"
 import {NOTIFICATION_STATUSES, NotificationResponseType, NotificationType} from "@/types/notifications";
 import NotificationsBlock from "@/components/HeaderNotifications/NotificationsBlock";
 import useNotifications from "@/context/notificationContext";
+import useTenant from "@/context/tenantContext";
 
 const removeEmptyBrackets = (notificationsArray: NotificationType[]) => {
     return notificationsArray.map(item => {
@@ -15,6 +16,7 @@ const removeEmptyBrackets = (notificationsArray: NotificationType[]) => {
 }
 
 const HeaderNotifications: React.FC = () => {
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui } = useAuth();
     const { notifications, setNotifications, newNotifications, setNewNotifications} = useNotifications();
 
@@ -25,7 +27,7 @@ const HeaderNotifications: React.FC = () => {
 
     const checkNotifications = async() => {
         if (token) {
-            const requestData = {token};
+            const requestData = {token, alias};
             const res: ApiResponseType = await checkNewNotifications(superUser && ui ? {
                 ...requestData,
                 ui
@@ -39,7 +41,7 @@ const HeaderNotifications: React.FC = () => {
 
     const fetchNotificationsData = async() => {
         try {
-            const requestData = {token};
+            const requestData = {token, alias};
             const res: ApiResponseType = await getNotifications(superUser && ui ? {...requestData, ui} : requestData);
             if (res && res.data) {
                 const notificationsData = res.data as NotificationResponseType;

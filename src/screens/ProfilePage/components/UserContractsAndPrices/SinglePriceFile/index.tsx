@@ -9,6 +9,7 @@ import {formatDateStringToDisplayString} from "@/utils/date";
 import useAuth from "@/context/authContext";
 import {ContractPriceBlockType} from "@/screens/ProfilePage/components/UserContractsAndPrices/PriceContractBlock";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 type FilePropsType = {
     file: UserContractType | UserPriceType;
@@ -16,11 +17,12 @@ type FilePropsType = {
 }
 
 const SingleFile: React.FC<FilePropsType> = ({file, type}) => {
+    const { tenantData: { alias }} = useTenant();
     const {token, ui, superUser, getBrowserInfo} = useAuth();
     const [fileData, setFileData] = useState<any|null>(null);
 
     const getFile = async(uuid: string, type: ContractPriceBlockType) => {
-        const requestData = superUser ? {uuid, token, ui} : {uuid, token};
+        const requestData = superUser ? {uuid, token, alias, ui} : {uuid, token, alias };
 
         try {
             sendUserBrowserInfo({...getBrowserInfo(type===ContractPriceBlockType.PRICE ? 'GetClientPrice' : 'GetFileByUUID'), body: superUser && ui ? {...requestData, ui} : requestData})

@@ -5,6 +5,7 @@ export const sendDocumentFiles = async (
     data: {
         attachedFiles: AttachedFilesType[],
         token: string;
+        alias: string;
         uuid: string;
         ui?: string;
     }

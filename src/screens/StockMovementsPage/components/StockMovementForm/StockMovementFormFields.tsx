@@ -313,7 +313,7 @@ export const CargoFields = (
         },
         !isCargoInfoFieldsDisplayed ? {
             fieldType: FormFieldTypes.TOGGLE,
-            key: 'labelingNeeds_extra',
+            // key: 'labelingNeeds_extra',
             name: 'labelingNeeds',
             label: "Needs labeling",
             width: WidthType.w25,

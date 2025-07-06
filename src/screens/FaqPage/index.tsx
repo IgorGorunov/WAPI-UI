@@ -8,6 +8,7 @@ import AnswersBlock from "@/screens/FaqPage/components/AnswersBlock";
 import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import Head from "next/head";
+import SeoHead from "@/components/SeoHead";
 
 
 const FaqPage:React.FC<FaqPageType> = (props) => {
@@ -153,12 +154,7 @@ const FaqPage:React.FC<FaqPageType> = (props) => {
 
     return (
         <Layout hasHeader hasFooter >
-            <Head>
-                <title>FAQ</title>
-                <meta name="faq" content="FAQ" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
+            <SeoHead title='FAQ' description='Our FAQ page' />
             <div className="faq-page page-container">
                 {/*{isLoading && <Loader />}*/}
                 <Header pageTitle='FAQ' toRight  />

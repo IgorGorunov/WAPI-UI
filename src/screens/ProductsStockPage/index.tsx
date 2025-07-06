@@ -14,9 +14,11 @@ import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsProductsStock, tourGuideStepsProductsStockNoDocs} from "./productsStockTourGuideSteps.constants";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 const ProductsStockPage = () => {
-
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
@@ -34,7 +36,7 @@ const ProductsStockPage = () => {
                 setIsLoading(true);
                 setProductsData([]);
                 setFilteredProducts([]);
-                const requestData = {token: token};
+                const requestData = {token, alias};
                 try {
                     sendUserBrowserInfo({...getBrowserInfo('GetProductsStock', AccessObjectTypes["Products/ProductsStock"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
                 } catch {}
@@ -74,20 +76,20 @@ const ProductsStockPage = () => {
         }
 
         const filteredData = filteredProducts.map(item => ({
-            sku: item.sku,
-            name: item.name,
-            warehouse: item.warehouse,
-            warehouseSku: item.warehouseSku,
-            country: item.country,
-            available: item.available,
-            reserved: item.reserved,
-            damaged: item.damaged,
-            expired: item.expired,
-            undefinedStatus: item.undefinedStatus,
-            withoutBox: item.withoutBox,
-            forPlacement: item.forPlacement,
-            onShipping: item.onShipping,
-            total: item.total,
+            SKU: item.sku,
+            Name: item.name,
+            Warehouse: item.warehouse,
+            "Warehouse SKU": item.warehouseSku,
+            Country: item.country,
+            Available: item.available,
+            Reserved: item.reserved,
+            Damaged: item.damaged,
+            Expired: item.expired,
+            "Undefined status": item.undefinedStatus,
+            "Without box": item.withoutBox,
+            "For placement": item.forPlacement,
+            "On shipping": item.onShipping,
+            Total: item.total,
         }));
         exportFileXLS(filteredData, `ProductsStock${warehouseForReport ? "_"+warehouseForReport : ""}`)
     }
@@ -110,6 +112,7 @@ const ProductsStockPage = () => {
 
     return (
         <Layout hasHeader hasFooter>
+            <SeoHead title='Product stock' description='Our product stock page' />
             <div className="products-stock__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Products stock' toRight needTutorialBtn >

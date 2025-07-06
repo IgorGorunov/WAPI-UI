@@ -16,6 +16,7 @@ import {DateFields, MainFields, ReceiverFields} from "./CommentFields";
 import {addWorkingDays, formatDateToString} from "@/utils/date";
 import Loader from "@/components/Loader";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 type SendCommentPropsType = {
     orderData: SingleOrderType;
@@ -26,6 +27,7 @@ type SendCommentPropsType = {
 
 const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions, closeSendCommentModal, onSuccess }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui, getBrowserInfo} = useAuth();
 
     const availableOptions = orderData.commentCourierServiceFunctionsList.split(';');
@@ -106,6 +108,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
         try {
             const requestData = {
                 token: token,
+                alias,
                 comment: sendData
             };
 

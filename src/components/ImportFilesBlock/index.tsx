@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {sendOrderFiles} from '@/services/orders';
 import {sendProductFiles} from "@/services/products";
 import Button from '@/components/Button/Button'
@@ -11,10 +11,12 @@ import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {sendInboundFiles} from "@/services/stockMovements";
 import {ImportFilesType, ImportTemplateNamesSanity} from "@/types/importFiles";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
+import {BulkCreateRequestType, STATUS_MODAL_TYPES} from "@/types/utility";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import {getImportTemplate} from "@/sanity/sanity-utils";
 import {toast, ToastContainer} from "@/components/Toast";
+import useTenant from "@/context/tenantContext";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 const getFileData = (importType: ImportFilesType) => {
    switch (importType) {
@@ -62,12 +64,14 @@ type ImportFilesBlockType = {
     setResponseData?: (res: ApiResponseType)=>void;
 }
 const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
-    const { token, superUser, ui, getBrowserInfo } = useAuth();
+    const { tenantData: { alias }} = useTenant();
+    const { token, superUser, ui, getBrowserInfo, needSeller, sellersListActive } = useAuth();
     const [selectedFilesImport, setSelectedFilesImport] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
     const handleFilesChange = (files) => {
         setSelectedFilesImport(files);
     };
+    const [selectedSeller, setSelectedSeller] = useState<string | null>(null);
 
     const fileData = useMemo(()=>getFileData(importFilesType),[]);
 
@@ -99,26 +103,40 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                 autoClose: 5000,
             });
         }
-        // const blob = await res.blob();
-        // const url = window.URL.createObjectURL(new Blob([blob]));
-        // const a = document.createElement('a');
-        // a.href = url;
-        // a.download = fileData.downloadFileName;
-        // document.body.appendChild(a);
-        // a.click();
-        // document.body.removeChild(a);
     };
 
     const sendFunc = fileData.sendFileFunction;
+    const [errorMessageSeller, setErrorMessageSeller] = useState('');
+    const [hasTriedToSend, setHasTriedToSend] = useState(false);
+    useEffect(() => {
+        if (hasTriedToSend && !selectedSeller) {
+            setErrorMessageSeller('Please, select seller');
+        } else {
+            setErrorMessageSeller('');}
+    }, [selectedSeller, hasTriedToSend]);
+
     const sendFiles = async () => {
+        if (needSeller() && !selectedSeller) {
+            setHasTriedToSend(true);
+            setErrorMessageSeller('Please, select seller');
+            return null;
+        } else {
+            setErrorMessageSeller('');
+        }
 
         if (selectedFilesImport.length) {
             setIsLoading(true);
             try {
-                const requestData = {
-                    token: token,
+                const requestData: BulkCreateRequestType = {
+                    token,
+                    alias,
                     files: selectedFilesImport
                 };
+
+                if (needSeller()) {
+                    requestData.seller = selectedSeller;
+                }
+
 
                 try {
                     sendUserBrowserInfo({...getBrowserInfo(fileData.action), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -166,6 +184,21 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
             <p className='import-files__title'>
                 {fileData.title}
             </p>
+            {needSeller() && (
+                <div className='order-list__seller-import-block'>
+                    <SelectField
+                        key='seller-filter'
+                        name='selectedSeller'
+                        label='Seller: '
+                        value={selectedSeller}
+                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        options={[...sellersListActive]}
+                        classNames='seller-filter'
+                        isClearable={false}
+                        errorMessage={errorMessageSeller}
+                    />
+                </div>
+            )}
             <Button icon='download-file' iconOnTheRight onClick={downloadFile}>Download sample</Button>
             <DropZone readOnly={false} files={selectedFilesImport} onFilesChange={handleFilesChange} />
             <Button  onClick={sendFiles}>Send</Button>

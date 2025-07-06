@@ -16,6 +16,8 @@ import useTourGuide from "@/context/tourGuideContext";
 import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {tourGuideStepsLeads} from "@/screens/LeadPage/leadPageTourGuideSteps.constants";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 const getHeaderTitle = (userStatus: string) => {
     switch (userStatus) {
@@ -39,6 +41,8 @@ const getHeaderTitle = (userStatus: string) => {
 }
 
 const LeadPage = () => {
+    const { tenantData } = useTenant();
+    const alias = tenantData?.alias || null;
     const {token, getToken, userStatus, setUserStatus, logout} = useAuth();
     //const [curStatus, setCurStatus] = useState(getUserStatus() as UserStatusType);
     const Router = useRouter();
@@ -61,7 +65,7 @@ const LeadPage = () => {
             try {
                 setIsLoading(true);
 
-                const res: ApiResponseType = await checkLeadStatus({lead: token});
+                const res: ApiResponseType = await checkLeadStatus({lead: token, alias});
 
                 if (res && "data" in res) {
                     setUserStatus(res.data?.userStatus);
@@ -84,7 +88,7 @@ const LeadPage = () => {
         try {
             setIsLoading(true);
 
-            const res: ApiResponseType = await getLeadParameters({token});
+            const res: ApiResponseType = await getLeadParameters({token, alias});
 
             if (res && "data" in res) {
                 setQuestionnaireParams(res.data);
@@ -128,6 +132,7 @@ const LeadPage = () => {
 
     return (
         <Layout hasHeader hasFooter>
+            <SeoHead title='Registration page' description='' />
             {show && <div className="page-component lead-page lead-page__container">
                 {isLoading && <Loader/>}
                 <Header pageTitle={getHeaderTitle(userStatus)} toRight needTutorialBtn  />

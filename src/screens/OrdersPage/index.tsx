@@ -24,11 +24,14 @@ import {ApiResponseType} from "@/types/api";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 
 const OrdersPage = () => {
     const Router = useRouter();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { tenantData: { alias, orderTitles }} = useTenant();
+    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
 
     const [current, setCurrent] = React.useState(1);
 
@@ -110,7 +113,7 @@ const OrdersPage = () => {
         try {
             setIsLoading(true);
             setOrdersData([]);
-            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
+            const requestData = {token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetOrdersList', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -209,35 +212,36 @@ const OrdersPage = () => {
         }
 
         const filteredData = filteredOrders.map(item => ({
-            wapiTrackingNumber: item.wapiTrackingNumber,
-            status: item.status,
-            statusAdditionalInfo: item.statusAdditionalInfo,
-            date: formatDateTimeToStringWithDotWithoutSeconds(item.date),
-            codAmount: item.codAmount,
-            codCurrency: item.codCurrency,
-            clientOrderID: item.clientOrderID,
-            productsByString: item.productsByString,
-            warehouse: item.warehouse,
-            courierService: item.courierService,
-            trackingNumber: item.trackingNumber,
-            receiverCountry: superUser ? '*' : item.receiverCountry,
-            receiverCity: superUser ? '*' : item.receiverCity,
-            receiverZip: superUser ? '*' : item.receiverZip,
-            receiverAddress: superUser ? '*' : item.receiverAddress,
-            receiverFullName: superUser ? '*' : item.receiverFullName,
-            receiverEMail: superUser ? '*' : item.receiverEMail,
-            receiverPhone: superUser ? '*' : item.receiverPhone,
-            lastUpdateDate: item.lastUpdateDate.split("T").join(" "),
-            lastTroubleStatus: `${item.troubleStatuses.length ? item.troubleStatuses[item.troubleStatuses.length-1].period.split("T").join(" ")+'  '+(item.troubleStatuses[item.troubleStatuses.length-1].troubleStatus) : ""}`,
+            [orderTitles.trackingNumberTitle]: item.wapiTrackingNumber,
+            'Status': item.status,
+            "Status additional info": item.statusAdditionalInfo,
+            "Date": formatDateTimeToStringWithDotWithoutSeconds(item.date),
+            "COD amount": item.codAmount,
+            "COD currency": item.codCurrency,
+            "Client order ID": item.clientOrderID,
+            "Products": item.productsByString,
+            "Warehouse": item.warehouse,
+            "Courier service": item.courierService,
+            "Tracking number": item.trackingNumber,
+            "Receiver Country": superUser ? '*' : item.receiverCountry,
+            "Receiver City": superUser ? '*' : item.receiverCity,
+            "Receiver ZIP": superUser ? '*' : item.receiverZip,
+            "Receiver Address": superUser ? '*' : item.receiverAddress,
+            "Receiver Full Name": superUser ? '*' : item.receiverFullName,
+            "Receiver E-mail": superUser ? '*' : item.receiverEMail,
+            "Receiver Phone": superUser ? '*' : item.receiverPhone,
+            "Last update date": item.lastUpdateDate.split("T").join(" "),
+            "Last trouble Status": `${item.troubleStatuses.length ? item.troubleStatuses[item.troubleStatuses.length-1].period.split("T").join(" ")+'  '+(item.troubleStatuses[item.troubleStatuses.length-1].troubleStatus) : ""}`,
             // "Logistic comment": `${item.logisticComment ? (item.logisticComment+(item.warehouseAdditionalInfo ? '; '+item.warehouseAdditionalInfo : '')) : item.warehouseAdditionalInfo ? item.warehouseAdditionalInfo : ''}`,
             "Logistic comment": `${item.logisticComment}`,
-            trackingLink: item.trackingNumber ? item.trackingLink : '',
+            "Tracking link": item.trackingNumber ? item.trackingLink : '',
         }));
         exportFileXLS(filteredData, "Orders");
     }
 
     return (
         <Layout hasHeader hasFooter>
+            <SeoHead title='Orders (fulfillments)' description='Our orders page' />
             <div className="page-component orders-page__container">
                 {isLoading && (<Loader />)}
                 <Header pageTitle='Fulfillment' toRight needTutorialBtn >
@@ -254,6 +258,7 @@ const OrdersPage = () => {
                                           handleRefresh={()=>fetchData()}
                                           current={current}
                                           setCurrent={setCurrent}
+                                          forbiddenTabs={getForbiddenTabs(AccessObjectTypes["Orders/Fullfillment"])}
                 />}
             </div>
             {showOrderModal && (orderUuid || isOrderNew) &&

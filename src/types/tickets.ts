@@ -27,6 +27,7 @@ export type TicketType = {
     fulfillmentCourierService: string | null;
     fulfillmentCountrySender: string | null;
     fulfillmentCountryReceiver: string | null;
+    seller: string;
 }
 
 export type TicketTopicType = {
@@ -58,6 +59,7 @@ export type SingleTicketType = {
     subjectUuid: string | null;
     attachedFiles: AttachedFilesType[];
     supportManager: string;
+    seller: string;
 }
 
 export type ChatMessageType = {

@@ -3,6 +3,7 @@ import {api} from "@/services/api";
 const getDasboardData = async (
   data: {
     startDate: string;
+    alias: string;
     endDate: string;
     token: string;
     ui?: string;

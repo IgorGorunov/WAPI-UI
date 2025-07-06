@@ -7,13 +7,14 @@ import {ApiResponseType} from "@/types/api";
 import {getPriceFile} from "@/services/leads";
 import useAuth from "@/context/authContext";
 import Icon from "@/components/Icon";
+import useTenant from "@/context/tenantContext";
 
 type PricesBlockPropsType = {
     prices: PriceInfoType[];
 }
 
 const PricesBlock: React.FC<PricesBlockPropsType> = ({prices}) => {
-
+    const { tenantData: { alias }} = useTenant();
     const {token} = useAuth();
 
     const handleDownload = (file) => {
@@ -33,12 +34,7 @@ const PricesBlock: React.FC<PricesBlockPropsType> = ({prices}) => {
         e.preventDefault();
 
         try {
-            const res: ApiResponseType = await getPriceFile(
-                {
-                    token: token,
-                    uuid: uuid,
-                }
-            );
+            const res: ApiResponseType = await getPriceFile({token, uuid, alias});
 
             if (res && "status" in res && res?.status === 200) {
                 //success

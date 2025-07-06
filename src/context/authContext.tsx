@@ -2,6 +2,8 @@ import React, {createContext, PropsWithChildren, useContext, useState,} from "re
 import Cookie from "js-cookie";
 import {UserStatusType} from "@/types/leads";
 import useNotifications from "@/context/notificationContext";
+import {OptionType} from "@/types/forms";
+import {SellerType} from "@/types/utility";
 
 export type NavAccessItemType = {
   available: boolean;
@@ -34,6 +36,12 @@ export type UserAccessActionType = {
   forbidden: boolean;
 }
 
+export enum USER_TYPES {
+  OWNER = "Owner",
+  OPERATIONAL_TEAM = "Operations team",
+  SELLER = "Seller",
+}
+
 export enum AccessObjectTypes {
   none = "none",
   'Dashboard' = 'Dashboard',
@@ -58,6 +66,7 @@ export enum AccessObjectTypes {
   "Profile/DeliveryProtocols" = "Profile/DeliveryProtocols",
   "Profile/WarehouseInfo" = "Profile/WarehouseInfo",
   "Profile/ChangePassword" = "Profile/ChangePassword",
+  "FAQ" = 'FAQ',
 }
 
 export enum AccessActions {
@@ -112,6 +121,15 @@ type authContextType = {
   setActionAccess: (val: UserAccessActionType[]) => void;
 
   saveSuperUserName: (val: string)=>void;
+
+  userType: USER_TYPES | null;
+  setCurrentUserType: (val: USER_TYPES | null) => void;
+  getUserType: () => USER_TYPES | null;
+  getForbiddenTabs: (document:AccessObjectTypes)=>string[];
+  sellersList: OptionType[];
+  sellersListActive: OptionType[];
+  setSellers: (val: SellerType[]) => void;
+  needSeller: ()=>boolean;
 };
 
 const AuthContext = createContext<authContextType>({} as authContextType);
@@ -132,17 +150,17 @@ export const getCurrentDate = () => {
 export const AuthProvider = (props: PropsWithChildren) => {
   const [token, setUserToken] = useState<string|undefined|null>(Cookie.get('token'));
   const [userStatus, setCurrentUserStatus] = useState<UserStatusType|undefined|null>(Cookie.get('userStatus')  as UserStatusType || null);
-  const [isCookieConsentReceived, setIsCookieConsentReceived] = useState<boolean>(!!Cookie.get('WAPI_CookieConsent'));
-  const [access, setAccess] = useState<string[]>((Cookie.get('WAPI_navAccess') || '').split(';'));
+  const [isCookieConsentReceived, setIsCookieConsentReceived] = useState<boolean>(!!Cookie.get('CookieConsent'));
+  const [access, setAccess] = useState<string[]>((Cookie.get('navAccess') || '').split(';'));
   const getProfileFromCookie = () => {
-    const profileInfo = Cookie.get('WAPI_profile_info');
+    const profileInfo = Cookie.get('profile_info');
     if (profileInfo && profileInfo !== 'null') {
       return JSON.parse(profileInfo);
     } else return null;
   }
 
   const getUserBrowserInfo = () => {
-    const userBrowserInfo = Cookie.get('userBrowserInfo');
+    const userBrowserInfo = Cookie.get('browser');
     if (userBrowserInfo && userBrowserInfo !== 'null') {
       return JSON.parse(userBrowserInfo);
     } else return null;
@@ -203,43 +221,87 @@ export const AuthProvider = (props: PropsWithChildren) => {
   }
   const getTextInfo = () => Cookie.get('textInfo');
 
-
   const currentDate =  Cookie.get('currentDate') ? new Date(Cookie.get('currentDate')) : new Date();
 
   const {setNotifications} = useNotifications();
 
+  const getUserType = () => Cookie.get('userType') as USER_TYPES || null;
+  const [userType, setUserType] = useState<USER_TYPES | null>(getUserType());
+  const setCurrentUserType = (userType: string) => {
+    Cookie.set('userType', userType);
+    setUserType(userType as USER_TYPES);
+  }
+
+  const getSellersFromCookie = () => {
+    const sellers = Cookie.get('sellers');
+    if (sellers && sellers !== 'null') {
+      return JSON.parse(sellers).map((item: SellerType) => ({ label: item.description, value: item.uid, inactive: item.inactive }));
+    } else return null;
+  }
+  const getSellersActiveFromCookie = () => {
+    const sellers = Cookie.get('sellers');
+    if (sellers && sellers !== 'null') {
+      return JSON.parse(sellers).filter((item: SellerType)=>!item.inactive).map((item: SellerType) => ({ label: item.description, value: item.uid }));
+    } else return null;
+  }
+
+  const [sellersList, setSellersList] = useState<OptionType[] | null>(getSellersFromCookie());
+  const [sellersListActive, setSellersListActive] = useState<OptionType[] | null>(getSellersActiveFromCookie());
+  const setSellers = (val: SellerType[] | null) => {
+    if (val) {
+      const sellerOptions = val.map(item => ({ label: item.description, value: item.uid, inactive: item.inactive }));
+      setSellersList(sellerOptions);
+      const sellerOptionsActive = val.filter(item=>!item.inactive).map(item => ({ label: item.description, value: item.uid }));
+      setSellersListActive(sellerOptionsActive);
+
+      Cookie.set('sellers', JSON.stringify(val));
+    } else {
+      setSellersList(null);
+      setSellersListActive(null);
+      Cookie.remove('sellers');
+    }
+  }
+
+
+  const needSeller = () => {
+    return userType && (userType === USER_TYPES.OWNER || userType === USER_TYPES.OPERATIONAL_TEAM);
+  }
 
   const logout = () => {
     Cookie.remove('token');
-    setToken(null);
+    // setToken(null);
     Cookie.remove('userStatus');
-    setUserStatus(null);
+    // setUserStatus(null);
+    Cookie.remove('userStatus')
     Cookie.remove('userName');
-    setUserName(null);
+    // setUserName(null);
     //Cookie.remove('tutorialData');
     Cookie.remove('textInfo');
     //Cookie.remove('isSU);
     //setIsSuperUser(false);
     //setUserUi('');
     Cookie.remove('isSU');
-    setSuperUser(false);
+    // setSuperUser(false);
     Cookie.remove('ui');
-    setUserUi('')
-    Cookie.remove('WAPI_profile_info');
-    setUserInfoProfile(null);
-    Cookie.remove('WAPI_navAccess');
-    setNavItemsAccess([]);
+    // setUserUi('')
+    Cookie.remove('profile_info');
+    // setUserInfoProfile(null);
+    Cookie.remove('navAccess');
+    //setNavItemsAccess([]);
     Cookie.remove('currentDate');
 
-    Cookie.remove('userBrowserInfo');
+    Cookie.remove('browser');
     Cookie.remove('userActions')
 
     Cookie.remove('suName');
-    setSuperUserName(null);
+    // setSuperUserName(null);
     Cookie.remove('orders-period');
 
     setNotifications(null);
-    setSuperUserName('');
+    // setSuperUserName('');
+
+    Cookie.remove('userType');
+    Cookie.remove('sellers');
   }
 
   const isAuthorizedUser = () => {
@@ -251,7 +313,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
   }
 
   const setCookieConsentReceived = () => {
-    Cookie.set('WAPI_CookieConsent', 'true', {expires: 180});
+    Cookie.set('CookieConsent', 'true', {expires: 180});
     setIsCookieConsentReceived(true);
   }
 
@@ -261,7 +323,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
       if (item.available) arr.push(item.access);
     })
 
-    Cookie.set('WAPI_navAccess', arr.join(';'));
+    Cookie.set('navAccess', arr.join(';'));
     setAccess(arr);
   }
 
@@ -284,7 +346,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
   const setUserInfoProfile = (val: UserInfoType) => {
     setUserInfo(val);
-    Cookie.set('WAPI_profile_info', JSON.stringify(val));
+    Cookie.set('profile_info', JSON.stringify(val));
   }
 
   const setIsSuperUser = (isSU: boolean) => {
@@ -298,7 +360,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
   }
 
   const setUserBrowserInfoFn = (val: UserBrowserInfoType) => {
-    Cookie.set('userBrowserInfo', JSON.stringify(val));
+    Cookie.set('browser', JSON.stringify(val));
     setUserBrowserInfo(val);
   }
 
@@ -340,9 +402,24 @@ export const AuthProvider = (props: PropsWithChildren) => {
     return true;
   }
 
+  const getForbiddenTabs = (document:AccessObjectTypes) => {
+    const forbiddenTabs = accessForActions.filter(item => item.objectType.includes(document+'/') && item.forbidden);
+    return forbiddenTabs.map(item => {
+      const temp = item.objectType.split('/');
+      return temp[temp.length-1];
+    });
+  }
+
 
   return (
-      <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName, currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus, textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived, setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser, setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess, isActionIsAccessible, saveSuperUserName }}>
+      <AuthContext.Provider value={{ token, setToken, getToken, userName, setUserName, getUserName,
+        currentDate, setCurrentDate, getCurrentDate, setTutorialInfo, userStatus, getUserStatus, setUserStatus,
+        textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, isCookieConsentReceived,
+        setCookieConsentReceived, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser,
+        setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess,
+        isActionIsAccessible, saveSuperUserName, userType, setCurrentUserType, getUserType, getForbiddenTabs,
+        sellersList, setSellers, needSeller, sellersListActive
+      }}>
       {props.children}
     </AuthContext.Provider>
   );

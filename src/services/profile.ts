@@ -3,6 +3,7 @@ import {api} from "@/services/api";
 export const getApiProtocols = async (
     data: {
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -22,6 +23,7 @@ export const getApiProtocols = async (
 export const getApiProtocol = async (
     data: {
         uuid: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -41,6 +43,7 @@ export const getApiProtocol = async (
 export const changePassword = async (
     data: {
         token: string;
+        alias: string;
         currentPassword: string;
         newPassword: string;
         ui?: string;
@@ -62,6 +65,7 @@ export const changePassword = async (
 export const getUserPrices = async (
     data: {
         token: string,
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -81,6 +85,7 @@ export const getUserPrices = async (
 export const getUserPriceFile = async (
     data: {
         token: string,
+        alias: string;
         ui?: string;
         uuid: string,
     }
@@ -102,6 +107,7 @@ export const getUserContracts = async (
 
     data: {
         token: string,
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -122,6 +128,7 @@ export const getUserContractFile = async (
 
     data: {
         token: string,
+        alias: string;
         ui?: string;
         uuid: string,
     }
@@ -143,6 +150,7 @@ export const getWarehouseInfo = async (
 
     data: {
         token: string,
+        alias: string;
         ui?: string;
     }
 ) => {

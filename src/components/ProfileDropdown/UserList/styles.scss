@@ -15,6 +15,7 @@
       padding: 4px 24px;
 
       button {
+        position: relative;
         display: flex;
         align-items: center;
         font-weight: bold;
@@ -25,6 +26,35 @@
 
         &:hover {
           transform: scale(1.05);
+        }
+      }
+
+      .is-whitelabel {
+        display: flex;
+        align-items: center;
+        margin-left: 18px;
+        color: var(--color-dark-blue);
+
+        &-pref {
+          position: absolute;
+          top: 5px;
+          left: -16px;
+
+          svg {
+            width: 14px;
+
+            circle {
+              stroke: var(--color-dark-blue);
+            }
+
+            text {
+              fill: var(--color-dark-blue);
+            }
+
+            path {
+              fill: var(--color-dark-blue);
+            }
+          }
         }
       }
 

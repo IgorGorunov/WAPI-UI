@@ -2,13 +2,15 @@ import useNotifications from "@/context/notificationContext";
 import {markNotificationAsRead, setNotificationStatusFn} from "@/utils/notifications";
 import useAuth from "@/context/authContext";
 import {NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import useTenant from "@/context/tenantContext";
 
 export const useMarkNotificationAsRead = () => {
     const {notifications, setNotifications, setNewNotifications} = useNotifications();
+    const { tenantData: { alias }} = useTenant();
     const {token} = useAuth();
 
     const setNotificationAsRead = (uuid: string) => {
-        markNotificationAsRead(token, uuid);
+        markNotificationAsRead(token, alias, uuid);
 
         if (!uuid) {
             //set all notifications status as read
@@ -35,7 +37,7 @@ export const useMarkNotificationAsRead = () => {
     }
 
     const setNotificationAsUnread = (uuid: string) => {
-        setNotificationStatusFn(token, uuid, NOTIFICATION_STATUSES.UNREAD);
+        setNotificationStatusFn(token, alias, uuid, NOTIFICATION_STATUSES.UNREAD);
 
         setNotifications((prevState: NotificationType[]) => {
             const newStatusNotification = prevState.filter(item => item.uuid === uuid && item.status === NOTIFICATION_STATUSES.READ);

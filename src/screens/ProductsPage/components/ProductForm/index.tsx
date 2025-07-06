@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import "./styles.scss";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes, UserAccessActionType} from "@/context/authContext";
 import {ProductParamsType, ProductType, SingleProductType} from "@/types/products";
 import {getProductByUID, getProductParameters, getProducts} from "@/services/products";
 import {ToastContainer} from '@/components/Toast';
@@ -13,6 +13,7 @@ import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
 
 type ProductPropsType = {
     uuid?: string | null;
@@ -24,7 +25,9 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const [productParams, setProductParams] = useState<ProductParamsType|null>(null);
     const [productData, setProductData] = useState<SingleProductType|null>(null);
     const [productsList, setProductsList] = useState<ProductType[]|null>(products);
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[]|null>(null);
 
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
@@ -41,7 +44,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductData = async (uuid) => {
         try {
             setIsLoading(true);
-            const requestData = {token: token, uuid: uuid};
+            const requestData = {token, alias, uuid};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetProductData', AccessObjectTypes["Products/ProductsList"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -72,7 +75,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductParams = useCallback(async () => {
         try {
             setIsLoading(true);
-            const requestData = {token: token};
+            const requestData = {token, alias};
 
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetProductParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -82,6 +85,19 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
 
             if (resParams && "data" in resParams) {
                 setProductParams(resParams.data);
+                if (resParams.data.actionAccessSettings) {
+                    const tabs = resParams.data.actionAccessSettings as UserAccessActionType[];
+                    const tabsInString = [];
+                    tabs.forEach(item => {
+                        if (item.action === 'View' && item.forbidden) {
+                            const temp = item.objectType.split('/');
+                            tabsInString.push(temp[temp.length - 1]);
+                        }
+                    })
+                    setForbiddenTabs(tabsInString);
+                } else {
+                    setForbiddenTabs([]);
+                }
             } else {
                 console.error("API did not return expected data");
             }
@@ -96,7 +112,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     const fetchProductsList = useCallback(async () => {
         try {
             setIsLoading(true);
-            const requestData = {token: token};
+            const requestData = {token, alias};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetProductsList', AccessObjectTypes["Products/ProductsList"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -168,7 +184,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
     return <div className='product-info'>
         {isLoading && <Loader />}
         <ToastContainer />
-        { productParams && (uuid && productData || !uuid) && (productsList !== null) ?
+        { productParams && (uuid && productData || !uuid) && (productsList !== null) && forbiddenTabs !==null ?
             <Modal title={`${productData ? 'Product': 'Product'}`} onClose={onCloseModal} classNames='document-modal'>
                 <ProductFormComponent
                     productParams={productParams}
@@ -177,6 +193,7 @@ const ProductForm:React.FC<ProductPropsType> = ({uuid, products = null, onClose,
                     products={productsAsOptions}
                     closeProductModal={onCloseModalOnSuccess}
                     refetchDoc={()=>{fetchProductData(uuid)}}
+                    forbiddenTabs={forbiddenTabs}
                 />
             </Modal> : null
         }

@@ -21,8 +21,11 @@ import {tourGuideStepsAmazonPrep, tourGuideStepsAmazonPrepNoDocs} from "./amazom
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
+import SeoHead from "@/components/SeoHead";
 
 const AmazonPrepPage = () => {
+    const { tenantData: { alias, orderTitles }} = useTenant();
     const {token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
 
     const today = currentDate;
@@ -71,7 +74,7 @@ const AmazonPrepPage = () => {
         try {
             setIsLoading(true);
             setAmazonPrepOrdersData([]);
-            const requestData = {token: token, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
+            const requestData = {token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepsList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -159,20 +162,21 @@ const AmazonPrepPage = () => {
             return null;
         }
         const filteredData = filteredAmazonPrepOrders.map(item => ({
-            wapiTrackingNumber: item.wapiTrackingNumber,
-            status: item.status,
-            date: item.date,
-            clientOrderID: item.clientOrderID,
-            warehouse: item.warehouse,
-            courierService: item.courierService,
-            trackingNumber: item.trackingNumber,
-            receiverCountry: item.receiverCountry,
+            [orderTitles.trackingNumberTitle]: item.wapiTrackingNumber,
+            Status: item.status,
+            Date: item.date,
+            "Client order ID": item.clientOrderID,
+            Warehouse: item.warehouse,
+            "Courier service": item.courierService,
+            "Tracking number": item.trackingNumber,
+            "Receiver Country": item.receiverCountry,
         }));
         exportFileXLS(filteredData, "Orders");
     }
 
     return (
         <Layout hasHeader hasFooter>
+            <SeoHead title='Amazon prep' description='Our Amazon prep page' />
             <div className="amazon-prep-page__container">
                 {isLoading && <Loader />}
                 <Header pageTitle='Amazon prep' toRight needTutorialBtn >

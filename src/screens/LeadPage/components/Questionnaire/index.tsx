@@ -32,6 +32,7 @@ import Icon from "@/components/Icon";
 import ProductImagesWithPreview from "@/screens/LeadPage/components/Questionnaire/ProductImagesWithPreview";
 import axios from "axios";
 import {AttachedFilesType} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
 
 type ProductTypeDescriptionType = {
     productTypeName: string;
@@ -73,6 +74,7 @@ type QuestionnairePropsType = {
 };
 
 const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) => {
+    const { tenantData: { alias }} = useTenant();
     const { token, setUserStatus, logout } = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -168,7 +170,6 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
         const res = await axios.post("/api/validate-vat", {countryCode: countryCode.toString().toUpperCase(), vatNumber });
 
-        console.log('res:', res)
         if (res.status===200 && res.data) {
             if (res.data.valid) return {status: 'valid'};
             if (res.data.source && !res.data.source.includes('Error')) return {status: 'invalid'};
@@ -235,12 +236,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
         try {
 
-            const res: ApiResponseType = await sendQuestionnaire(
-                {
-                    token: token,
-                    leadData: data
-                }
-            );
+            const res: ApiResponseType = await sendQuestionnaire({ token, alias, leadData: data });
 
             if (res && "status" in res && res?.status === 200) {
                 //success

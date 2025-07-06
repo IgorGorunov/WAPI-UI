@@ -50,7 +50,7 @@ const ModalStatus:React.FC<ModalStatusType> = ({statusModalType=STATUS_MODAL_TYP
 
 
     const modalContent = (
-        <div className={`status-modal-overlay } ${classNames ? classNames : ''}`}>
+        <div className={`status-modal-overlay ${classNames ? classNames : ''}`}>
             <div className="status-modal-wrapper" >
                 <div className={`status-modal ${statusModalType}-modal`}>
                     <div className="status-modal-header">

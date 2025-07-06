@@ -8,6 +8,7 @@ import "./styles.scss";
 
 import ReportsBlock from "@/screens/ReportsListPage/ReportComponents/ReportsBlock";
 import {reportBlocks} from "@/screens/ReportsListPage/reports.constants";
+import SeoHead from "@/components/SeoHead";
 
 const ReportsListPage:React.FC = () => {
     const Router = useRouter();
@@ -19,6 +20,7 @@ const ReportsListPage:React.FC = () => {
 
     return (
         <Layout hasFooter>
+            <SeoHead title='Report list' description='Our report list page' />
             <div className="page-container reports-list-page__container">
                 <Header pageTitle='Reports' toRight >
 

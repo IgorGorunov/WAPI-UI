@@ -10,7 +10,6 @@ import {DateRangeType} from "@/types/dashboard";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, {ButtonVariant} from "@/components/Button/Button";
-import Head from "next/head";
 import {FormFieldTypes} from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
@@ -25,6 +24,8 @@ import FiltersBlockWrapper from "@/components/FiltersBlockWrapper";
 import {Countries} from "@/types/countries";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
+import useAuth from "@/context/authContext";
 
 
 type TicketListType = {
@@ -47,21 +48,28 @@ const noDocType = 'has no document';
 
 const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrentRange, handleEditTicket}) => {
     const router = useRouter();
+    const { needSeller, sellersList } = useAuth();
 
     const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    // useEffect(() => {
-    //     const {page, pageSize, periodStart, periodEnd} = query;
-    //     if (pageSize) {
-    //         setPageSize(+pageSize);
-    //     }
-    //     if (page) {
-    //         setCurrent(+page);
-    //     }
-    // }, [query]);
+    //seller filter
+    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
+
+    const calcSellersAmount = useCallback((seller: string) => {
+        return tickets.filter(order => order.seller.toLowerCase() === seller.toLowerCase()).length || 0;
+    },[tickets]);
+
+    const sellersOptions = useMemo(()=>{
+        return [{label: 'All sellers', value: 'All sellers', amount: tickets.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
+    }, [sellersList, calcSellersAmount]);
+
+    const getSellerName = useCallback((sellerUid: string) => {
+        const t = sellersList.find(item=>item.value===sellerUid);
+        return t ? t.label : ' - ';
+    }, [sellersList]);
 
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
@@ -83,12 +91,12 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
     }
 
     const calcOrderAmount = useCallback((property: string, value: string) => {
-        return tickets.filter(order => order[property] === value || order[property].toLowerCase() === value.toLowerCase()).length || 0;
-    },[tickets]);
+        return tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).filter(order => order[property] === value || order[property].toLowerCase() === value.toLowerCase()).length || 0;
+    },[tickets, selectedSeller]);
 
     const calcDocTypeAmount = useCallback((property: string, value: string) => {
-        return tickets.filter(ticket => ticket[property] === null && value===null || ticket[property] !==null && value !==null && ticket[property].toString().toLowerCase() === value.toString().toLowerCase()).length || 0;
-    },[tickets]);
+        return tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).filter(ticket => ticket[property] === null && value===null || ticket[property] !==null && value !==null && ticket[property].toString().toLowerCase() === value.toString().toLowerCase()).length || 0;
+    },[tickets, selectedSeller]);
 
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
@@ -98,9 +106,9 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         //setQuery({addParams: {page:1}})
     }
     const uniqueStatuses = useMemo(() => {
-        const statuses = tickets.map(order => order.status);
+        const statuses = tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).map(order => order.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [tickets]);
+    }, [tickets, selectedSeller]);
     uniqueStatuses.sort();
     const statusOptions = useMemo(() => ([
         ...uniqueStatuses.map(status => ({
@@ -109,7 +117,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             amount: calcOrderAmount('status', status),
             color: ticketStatusColors.filter(item=>item.value===status)[0]?.color || 'white',
         }))
-    ]), [uniqueStatuses]);
+    ]), [uniqueStatuses, calcOrderAmount]);
 
     // useEffect(() => {
     //     setFilterStatus(prevState => {
@@ -124,16 +132,16 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         //setQuery({addParams: {page:1}})
     }
     const uniqueTopics = useMemo(() => {
-        const topics = tickets.map(order => order.topic);
+        const topics = tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).map(order => order.topic);
         return Array.from(new Set(topics)).filter(topic => topic).sort();
-    }, [tickets]);
+    }, [tickets, selectedSeller]);
     const topicOptions = useMemo(() => ([
         ...uniqueTopics.map(item => ({
             value: item,
             label: item,
             amount: calcOrderAmount('topic', item),
         }))
-    ]), [uniqueTopics]);
+    ]), [uniqueTopics, calcOrderAmount]);
 
     const [filterNewMessages, setFilterNewMessages] = useState<string[]>([]);
     const handleFilterNewMessagesChange = (newMessages: string[]) => {
@@ -145,15 +153,15 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         {
             value: 'Has new messages',
             label: 'Has new messages',
-            amount: tickets ? tickets.filter(item=>item.newMessages).length : 0,
+            amount: tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller) ? tickets.filter(item=>item.newMessages).length : 0,
         },
         {
             value: "Doesn't have new messages",
             label: "Doesn't have new messages",
-            amount: tickets ? tickets.length - tickets.filter(item=>item.newMessages).length : 0,
+            amount: tickets ? tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).length - tickets.filter(item=>item.newMessages).length : 0,
         },
 
-    ]), [uniqueTopics]);
+    ]), [uniqueTopics, selectedSeller]);
 
     const [filterDocType, setFilterDocType] = useState<string[]>([]);
     const handleFilterDocTypeChange = (newDocTypes: string[]) => {
@@ -162,9 +170,9 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         //setQuery({addParams: {page:1}})
     }
     const uniqueDocTypes = useMemo(() => {
-        const docTypes = tickets.map(order => order.subjectType ? order.subjectType : noDocType);
+        const docTypes = tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).map(order => order.subjectType ? order.subjectType : noDocType);
         return Array.from(new Set(docTypes)).filter(item => item).sort();
-    }, [tickets]);
+    }, [tickets, selectedSeller]);
     uniqueStatuses.sort();
     const docTypeOptions = useMemo(() => ([
         ...uniqueDocTypes.map(item => ({
@@ -172,7 +180,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             label: item,
             amount: item === noDocType ? calcDocTypeAmount('subjectType', null) : calcDocTypeAmount('subjectType', item),
         }))
-    ]), [uniqueDocTypes]);
+    ]), [uniqueDocTypes, calcDocTypeAmount]);
 
     const [filterOrderSenderWarehouse, setFilterOrderSenderWarehouse] = useState<string[]>([]);
     const handleFilterOrderSenderWarehouseChange = (newDocTypes: string[]) => {
@@ -181,9 +189,9 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         //setQuery({addParams: {page:1}})
     }
     const uniqueOrderSenderWarehouses = useMemo(() => {
-        const warehouses = tickets.filter(item=>item.fulfillmentWarehouse).map(item => item.fulfillmentWarehouse);
+        const warehouses = tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).filter(item=>item.fulfillmentWarehouse).map(item => item.fulfillmentWarehouse);
         return Array.from(new Set(warehouses)).filter(item => item).sort();
-    }, [tickets]);
+    }, [tickets, selectedSeller]);
     uniqueOrderSenderWarehouses.sort();
     const orderSenderWarehousesOptions = useMemo(() => ([
         ...uniqueOrderSenderWarehouses.map(item => ({
@@ -191,7 +199,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             label: item,
             amount: calcDocTypeAmount('fulfillmentWarehouse', item),
         }))
-    ]), [uniqueOrderSenderWarehouses]);
+    ]), [uniqueOrderSenderWarehouses, calcDocTypeAmount]);
 
     const [filterOrderReceiverCountry, setFilterOrderReceiverCountry] = useState<string[]>([]);
     const handleFilterOrderReceiverCountryChange = (newDocTypes: string[]) => {
@@ -200,17 +208,18 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         //setQuery({addParams: {page:1}})
     }
     const uniqueOrderReceiverCountries = useMemo(() => {
-        const countries = tickets.filter(item=>item.fulfillmentCountryReceiver).map(item => item.fulfillmentCountryReceiver);
+        const countries = tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).filter(item=>item.fulfillmentCountryReceiver).map(item => item.fulfillmentCountryReceiver);
         return Array.from(new Set(countries)).filter(item => item).sort();
-    }, [tickets]);
+    }, [tickets, selectedSeller]);
     uniqueOrderReceiverCountries.sort();
     const orderReceiverCountryOptions = useMemo(() => ([
         ...uniqueOrderReceiverCountries.map(item => ({
-            value: item,
-            label: Countries[item] as string || item,
-            amount: calcDocTypeAmount('fulfillmentCountryReceiver', item),
-        }))
-    ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)), [uniqueOrderReceiverCountries]);
+                value: item,
+                label: Countries[item] as string || item,
+                amount: calcDocTypeAmount('fulfillmentCountryReceiver', item),
+            }))
+        ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)),
+    [uniqueOrderReceiverCountries, calcDocTypeAmount]);
 
     const [filterOrderCourierService, setFilterOrderCourierService] = useState<string[]>([]);
     const handleFilterOrderCourierServiceChange = (newDocTypes: string[]) => {
@@ -219,9 +228,9 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         //setQuery({addParams: {page:1}})
     }
     const uniqueOrderCourierServices = useMemo(() => {
-        const services = tickets.filter(item=>item.fulfillmentCourierService).map(item => item.fulfillmentCourierService);
+        const services = tickets.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).filter(item=>item.fulfillmentCourierService).map(item => item.fulfillmentCourierService);
         return Array.from(new Set(services)).filter(item => item).sort();
-    }, [tickets]);
+    }, [tickets, selectedSeller]);
         uniqueOrderCourierServices.sort();
     const orderCourierServiceOptions = useMemo(() => ([
         ...uniqueOrderCourierServices.map(item => ({
@@ -229,7 +238,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             label: item,
             amount: calcDocTypeAmount('fulfillmentCourierService', item),
         }))
-    ]), [uniqueOrderCourierServices]);
+    ]), [uniqueOrderCourierServices, calcDocTypeAmount]);
 
     const handleClearAllFilters = () => {
         setFilterStatus([]);
@@ -308,8 +317,9 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             const matchesOrderSenderWarehouse = !filterOrderSenderWarehouse.length || filterOrderSenderWarehouse.includes(ticket.fulfillmentWarehouse);
             const matchesOrderReceiverCountry = !filterOrderReceiverCountry.length  || filterOrderReceiverCountry.includes(ticket.fulfillmentCountryReceiver);
             const matchesOrderCourierService = !filterOrderCourierService.length || filterOrderCourierService.includes(ticket.fulfillmentCourierService);
+            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || ticket.seller === selectedSeller;
 
-            return matchesSearch && matchesStatus && matchesTopic && matchesNewMessages && matchesDocType && matchesOrderSenderWarehouse && matchesOrderReceiverCountry && matchesOrderCourierService;
+            return matchesSearch && matchesStatus && matchesTopic && matchesNewMessages && matchesDocType && matchesOrderSenderWarehouse && matchesOrderReceiverCountry && matchesOrderCourierService && matchesSeller;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -318,7 +328,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [tickets, searchTerm, filterStatus, filterTopic, filterNewMessages, filterDocType, filterOrderSenderWarehouse, filterOrderReceiverCountry, filterOrderCourierService, sortColumn, sortDirection, fullTextSearch, currentRange]);
+    }, [tickets, searchTerm, filterStatus, filterTopic, filterNewMessages, filterDocType, filterOrderSenderWarehouse, filterOrderReceiverCountry, filterOrderCourierService, sortColumn, sortDirection, fullTextSearch, currentRange, selectedSeller]);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
         setCurrentRange(newRange);
@@ -433,6 +443,46 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             },
 
         ];
+
+        const SellerColumns: TableColumnProps<TicketType>[] = [];
+        if (needSeller()) {
+            SellerColumns.push({
+                title: <TitleColumn
+                    className='no-padding'
+                    minWidth="70px"
+                    maxWidth="90px"
+                    contentPosition="left"
+                    childrenBefore={
+                        <Tooltip title="Seller's name" >
+                            <span className='table-header-title'>Seller</span>
+                        </Tooltip>
+                    }
+                />,
+                render: (text: string, record) => {
+                    return (
+                        <TableCell
+                            className='no-padding'
+                            minWidth="70px"
+                            maxWidth="90px"
+                            contentPosition="left"
+                            childrenBefore={
+                                <div className="seller-container">
+                                    {getSellerName(record.seller)}
+                                </div>
+                            }
+                        >
+                        </TableCell>
+                    );
+                },
+                dataIndex: 'seller',
+                key: 'seller',
+                sorter: false,
+                onHeaderCell: (column: ColumnType<TicketType>) => ({
+                    onClick: () => handleHeaderCellClick(column.dataIndex as keyof TicketType),
+                }),
+                responsive: ['lg'],
+            } as TableColumnProps<TicketType>);
+        }
 
     const columns: TableColumnProps<TicketType>[]  = [
         {
@@ -569,6 +619,7 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof TicketType),
             }),
         },
+        ...SellerColumns,
         {
             title: <TitleColumn
                 minWidth="90px"
@@ -631,12 +682,6 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
 
     return (
         <div className="table order-list">
-            <Head>
-                <title>Tickets</title>
-                <meta name="orders" content="orders" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
@@ -646,16 +691,26 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                 </div>
             </SearchContainer>
 
+            {needSeller() ?
+                <div className='seller-filter-block'>
+                    <SelectField
+                        key='seller-filter'
+                        name='selectedSeller'
+                        label='Seller: '
+                        value={selectedSeller}
+                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                        options={sellersOptions}
+                        classNames='seller-filter full-sized'
+                        isClearable={false}
+                    />
+                </div>
+                : null
+            }
+
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
                     <FiltersChosen filters={[...ticketFilters, ...ticketExtraFilters]} />
-                    {/*<CurrentFilters title='Status' filterState={filterStatus} options={statusOptions} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
-                    {/*<CurrentFilters title='Topic' filterState={filterTopic} options={topicOptions} onClose={()=>handleFilterTopicChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTopic(true)}} />*/}
-                    {/*<CurrentFilters title='New messages' filterState={filterNewMessages} options={newMessagesOptions} onClose={()=>handleFilterNewMessagesChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNewMessages(true)}} />*/}
-                    {/*<CurrentFilters title='Document type' filterState={filterDocType} options={docTypeOptions} onClose={()=>handleFilterDocTypeChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterDocTypes(true)}} />*/}
-                    {/*<CurrentFilters title='Sender warehouse' options={orderSenderWarehousesOptions} filterState={filterOrderSenderWarehouse} onClose={()=>handleFilterOrderSenderWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderSenderWarehouse(true)}} />*/}
-                    {/*<CurrentFilters title='Receiver country' options={orderReceiverCountryOptions} filterState={filterOrderReceiverCountry} onClose={()=>handleFilterOrderReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderReceiverCountry(true)}} />*/}
-                    {/*<CurrentFilters title='Courier service' options={orderCourierServiceOptions} filterState={filterOrderCourierService} onClose={()=>handleFilterOrderCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterOrderCourierService(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -695,15 +750,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersListWithOptions filters={ticketFilters} />
-                {/*<FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={statusOptions} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
-                {/*<FiltersBlock filterTitle='Topic' filterOptions={topicOptions} filterState={filterTopic} setFilterState={handleFilterTopicChange} isOpen={isOpenFilterTopic} setIsOpen={setIsOpenFilterTopic}/>*/}
-                {/*<FiltersBlock filterTitle='New messages' filterOptions={newMessagesOptions} filterState={filterNewMessages} setFilterState={handleFilterNewMessagesChange} isOpen={isOpenFilterNewMessages} setIsOpen={setIsOpenFilterNewMessages}/>*/}
-                {/*<FiltersBlock filterTitle='Document type' filterOptions={docTypeOptions} filterState={filterDocType} setFilterState={handleFilterDocTypeChange} isOpen={isOpenFilterDocTypes} setIsOpen={setIsOpenFilterDocTypes}/>*/}
                 <FiltersBlockWrapper title={'Fullfilment filters'}>
                     <FiltersListWithOptions filters={ticketExtraFilters} />
-                    {/*<FiltersBlock filterTitle='Sender warehouse' filterOptions={orderSenderWarehousesOptions} filterState={filterOrderSenderWarehouse} setFilterState={handleFilterOrderSenderWarehouseChange} isOpen={isOpenFilterOrderSenderWarehouse} setIsOpen={setIsOpenFilterOrderSenderWarehouse} />*/}
-                    {/*<FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={orderReceiverCountryOptions} filterState={filterOrderReceiverCountry} setFilterState={handleFilterOrderReceiverCountryChange} isOpen={isOpenFilterOrderReceiverCountry} setIsOpen={setIsOpenFilterOrderReceiverCountry} />*/}
-                    {/*<FiltersBlock filterTitle='Courier service' filterOptions={orderCourierServiceOptions} filterState={filterOrderCourierService} setFilterState={handleFilterOrderCourierServiceChange} isOpen={isOpenFilterOrderCourierService} setIsOpen={setIsOpenFilterOrderCourierService} />*/}
                 </FiltersBlockWrapper>
             </FiltersContainer>
         </div>

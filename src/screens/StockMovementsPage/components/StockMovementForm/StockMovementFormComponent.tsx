@@ -10,7 +10,7 @@ import {COUNTRIES} from "@/types/countries";
 import {createOptions} from "@/utils/selectOptions";
 import {CargoFields, DetailsFields, GeneralFields} from "./StockMovementFormFields";
 import {TabFields, TabTitles} from "./StockMovementFormTabs";
-import {FormFieldTypes, OptionType} from "@/types/forms";
+import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
@@ -52,6 +52,8 @@ import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import HintsModal from "@/screens/StockMovementsPage/components/StockMovementForm/HintsModal";
+import useTenant from "@/context/tenantContext";
+import {isTabAllowed} from "@/utils/tabs";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -63,6 +65,7 @@ type StockMovementFormType = {
     docParameters?: StockMovementParamsType;
     closeDocModal: ()=>void;
     refetchDoc: ()=>void;
+    forbiddenTabs: string[] | null;
 }
 
 export enum DELIVERY_METHODS {
@@ -80,13 +83,13 @@ const deliveryMethodOptions = [
     {value: DELIVERY_METHODS.CARTONS, label: 'Cartons'}
 ];
 
-const deliveryTypeOptions: OptionType[] = [
-    {value: 'Standart', label: 'WAPI Standart'},
-    {value: 'Express', label: 'WAPI Express'},
-    {value: 'Customer Carrier', label: 'Customer Carrier'}
-]
 
-const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc}) => {
+
+const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, docData, docParameters, closeDocModal, refetchDoc, forbiddenTabs}) => {
+    const { tenantData: { alias, orderTitles }} = useTenant();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
+    const {notifications} = useNotifications();
+
     const [isDisabled, setIsDisabled] = useState(!!docData?.uuid);
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
@@ -115,11 +118,14 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         setShowAllHints(true);
     }
 
+    const deliveryTypeOptions: OptionType[] = useMemo(() => [
+        {value: 'Standart', label: orderTitles.stockMovStandardDeliveryTitle},
+        {value: 'Express', label: orderTitles.stockMovExpressDeliveryTitle},
+        {value: 'Customer Carrier', label: 'Customer Carrier'}
+    ],[orderTitles]);
+
     //product selection
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
-
-    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
-    const {notifications} = useNotifications();
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -141,7 +147,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
     const handleCancelOrder = async() => {
         try {
-            const requestData = {token: token, uuid: docData?.uuid};
+            const requestData = {token, alias, uuid: docData?.uuid};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('CancelStockMovement/'+docType), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -178,7 +184,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     //tab titles
-    const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length));
+    const tabTitleArray =  TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length), forbiddenTabs);
     const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
 
 
@@ -211,6 +217,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             comment: docData?.comment || '',
             status: docData?.status || '',
             statusAdditionalInfo: docData?.statusAdditionalInfo || '',
+            seller: docData?.seller || '',
 
             products:
                 docData && docData?.products && docData.products.length
@@ -237,11 +244,22 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const receiver = watch('receiver');
     const [importType, setImportType] = useState('');
 
+    const selectedSeller = watch('seller');
+
     //countries
     const allCountries = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
 
     //sender
-    const senderOptions = docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || !docParameters.sender ? [] : docParameters.sender.map(item => ({label: item.warehouse, value: item.warehouse}));
+    const senderOptions = useMemo(() => {
+        if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || !docParameters.sender || needSeller() && !selectedSeller) return [];
+        if (needSeller()) {
+            const senderWarehouses = docParameters.sender.filter(item=>item.seller===selectedSeller).map(item => item.warehouse)
+            return Array.from(new Set(senderWarehouses)).map(item => ({label: item, value: item}));
+        } else {
+            const senderWarehouses = docParameters.sender.map(item => item.warehouse)
+            return Array.from(new Set(senderWarehouses)).map(item => ({label: item, value: item}));
+        }
+    }, [docParameters, selectedSeller]);
     const onSenderChange = (newSender: string) => {
         if (docType===STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE) return;
         const newSenderCountry = docParameters.sender ? docParameters.sender.filter(item=>item.warehouse===newSender) : [];
@@ -249,7 +267,17 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     //receiver
-    const receiverOptions = docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || !docParameters.receiver ? [] : docParameters.receiver.map(item => ({label: item.warehouse, value: item.warehouse}));
+    // const receiverOptions = docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || !docParameters.receiver ? [] : docParameters.receiver.map(item => ({label: item.warehouse, value: item.warehouse}));
+    const receiverOptions = useMemo(() => {
+        if (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || !docParameters.receiver || needSeller() && !selectedSeller) return [];
+        if (needSeller()) {
+            const receiverWarehouses = docParameters.receiver.filter(item=>item.seller===selectedSeller).map(item => item.warehouse)
+            return Array.from(new Set(receiverWarehouses)).map(item => ({label: item, value: item}));
+        } else {
+            const receiverWarehouses = docParameters.receiver.map(item => item.warehouse)
+            return Array.from(new Set(receiverWarehouses)).map(item => ({label: item, value: item}));
+        }
+    }, [docParameters, selectedSeller]);
     const onReceiverChange = (newReceiver: string) => {
         if (docType===STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType===STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE) return;
         const newReceiverCountry = docParameters.receiver ? docParameters.receiver.filter(item=>item.warehouse===newReceiver) : [];
@@ -266,8 +294,15 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     }
 
     const productOptions = useMemo(() =>{
-        return docParameters.products.map((item)=>{return {label: `${item.name}`, value:item.uuid} });
-    },[docParameters]);
+
+        let sellersProducts = docParameters ? docParameters.products : [];
+        if (needSeller()) {
+            sellersProducts = selectedSeller ? sellersProducts.filter(item=>item.seller===selectedSeller) : [];
+        }
+
+        return sellersProducts.map((item)=> ({label: `${item.name}`, value: item.uuid}));
+
+    },[docParameters, selectedSeller]);
 
     const checkSelectedProductValue = (selectedValue) => {
         //console.log('selected val:', selectedValue, productOptions.filter(item=>item.value===selectedValue))
@@ -535,6 +570,20 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
         setSelectAllProducts(false);
     }
 
+    const handleSelectedSellerChange = (val:string) => {
+        if (val != selectedSeller) {
+            setValue('products', []);
+            if (docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT) {
+                setValue('sender', '');
+                setValue('senderCountry', '');
+            }
+            if (docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT) {
+                setValue('receiver', '');
+                setValue('receiverCountry', '');
+            }
+        }
+    }
+
     //product selection
     const handleProductSelection = () => {
         setShowProductSelectionModal(true);
@@ -735,6 +784,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const sendJustETA = async(data) => {
         const requestData = {
             token,
+            alias,
             documentData: {
                 uuid: data.uuid,
                 estimatedTimeArrives: data.estimatedTimeArrives,
@@ -752,6 +802,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
     const sendDocument = async(data) => {
         const requestData = {
             token,
+            alias,
             documentType: docType,
             documentData: data,
         };
@@ -843,25 +894,51 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
 
         if (isDraft || isJustETA) {
             clearErrors();
-            const formData = getValues();
-            return onSubmitForm(formData as SingleStockMovementFormType);
+            clearTabTitles();
+
+            if (needSeller() && props.seller) {
+                setError('seller', {
+                    type: 'manual',
+                    message: 'Seller is required!',
+                });
+
+                toast.warn(`Seller is required for draft orders!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                updateTabTitles(['seller']);
+
+            } else {
+                const formData = getValues();
+                return onSubmitForm(formData as SingleStockMovementFormType);
+            }
+        } else {
+            let fieldNames = Object.keys(props);
+
+            if (fieldNames.length > 0) {
+                toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+            }
+
+            if (!products.length) {
+                setError('products', {
+                    type: 'manual',
+                    message: 'Products are empty! Document needs to have at least 1 product!',
+                });
+
+                toast.warn(`Document needs to have at least 1 product!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                fieldNames.push('products');
+            }
+
+            updateTabTitles(fieldNames);
         }
-
-        const fieldNames = Object.keys(props);
-
-        if (products.length === 0) {
-            fieldNames.push('products');
-            setError("products", { type: "manual", message: "Document needs to have at least one product" });
-        }
-
-        if (fieldNames.length > 0) {
-            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
-                position: "top-right",
-                autoClose: 3000,
-            });
-        }
-
-        updateTabTitles(fieldNames);
     };
 
     const handleEditClick = () => {
@@ -895,7 +972,45 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             <input autoComplete="false" name="hidden" type="text" style={{display:'none'}} />
             <Tabs id='stock-movement-tabs' tabTitles={tabTitles} classNames='inside-modal'
                   notifications={docNotifications}>
-                <div key='general-tab' className='general-tab'>
+                {isTabAllowed('General', forbiddenTabs) ? <div key='general-tab' className='general-tab'>
+                    {needSeller() ? (
+                        <div className='form-wrapper--seller card'>
+                            <div className='grid-row'>
+                                <Controller
+                                    key='seller'
+                                    name='seller'
+                                    control={control}
+                                    render={(
+                                        {
+                                            field: {...props},
+                                            fieldState: {error}
+                                        }) => (
+                                        <FieldBuilder
+                                            // disabled={!!isDisabled}
+                                            {...props}
+                                            name='seller'
+                                            label='Seller: '
+                                            fieldType={FormFieldTypes.SELECT}
+                                            options={(docData?.status !=='Draft' && !!docData) ? sellersList : sellersListActive}
+                                            placeholder={''}
+                                            errorMessage={error?.message}
+                                            errors={errors}
+                                            disabled={isDisabled || (docData?.status !=='Draft' && !!docData)}
+                                            width={WidthType.w50}
+                                            classNames={'seller-filter'}
+                                            isClearable={false}
+                                            onChange={(val: string)=>{
+                                                handleSelectedSellerChange(val);
+                                                props.onChange(val);
+                                            }}
+                                        />
+                                    )}
+                                    rules = {{required: "Required field"}}
+                                />
+                            </div>
+                            {!selectedSeller && <p className={'seller-notice'}>Select Seller to access Products and Sender/Receiver options </p>}
+                        </div>
+                    ) : null}
                     <CardWithHelpIcon classNames='card stock-movement--general' showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='general'/>
@@ -916,8 +1031,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                              isDisabled={isDisabled}/>
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                <div key='cargo-tab' className='cargo-tab'>
+                </div> : null }
+                {isTabAllowed('Cargo info', forbiddenTabs) ? <div key='cargo-tab' className='cargo-tab'>
                     <CardWithHelpIcon classNames='card stock-movement--cargo' showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title'>
                             <Icon name='shipping'/>
@@ -928,9 +1043,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                              isDisabled={isDisabled}/>
                         </div>
                     </CardWithHelpIcon>
-                </div>
+                </div> : null}
 
-                <div key='product-tab' className='product-tab'>
+                {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className='product-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 stock-movement--products" showHintsByDefault={showAllHints}>
                         <h3 className='stock-movement__block-title '>
                             <Icon name='goods'/>
@@ -1006,8 +1121,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                                            packages={docData?.cartonsAmount || 0}/>
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                {docData?.uuid && <div key='services-tab' className='services-tab'>
+                </div> : null }
+                {docData?.uuid && isTabAllowed('Services', forbiddenTabs) &&  <div key='services-tab' className='services-tab'>
                     <div className="card min-height-600 stock-movement--history">
                         <h3 className='stock-movement__block-title'>
                             <Icon name='bundle'/>
@@ -1016,7 +1131,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         <Services services={docData?.services}/>
                     </div>
                 </div>}
-                {docData?.uuid && <div key='status-history-tab' className='status-history-tab'>
+                {docData?.uuid && isTabAllowed('Status history', forbiddenTabs) && <div key='status-history-tab' className='status-history-tab'>
                     <div className="card min-height-600 stock-movement--history">
                         <h3 className='stock-movement__block-title'>
                             <Icon name='history'/>
@@ -1025,7 +1140,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         <StatusHistory statusHistory={docData?.statusHistory}/>
                     </div>
                 </div>}
-                {docData?.uuid && docData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                {docData?.uuid && docData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ? <div key='tickets-tab' className='tickets-tab'>
                     <div className="card min-height-600 stock-movement--tickets">
                         <h3 className='stock-movement__block-title'>
                             <Icon name='ticket'/>
@@ -1034,7 +1149,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                         <DocumentTickets tickets={docData.tickets}/>
                     </div>
                 </div> : null}
-                <div key='files-tab' className='files-tab'>
+                {isTabAllowed('Files', forbiddenTabs) ? <div key='files-tab' className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 stock-movement--files" showHintsByDefault={showAllHints}>
                         {/*<div className="card min-height-600 stock-movement--products">*/}
                         <TutorialHintTooltip hint={StockMovementsHints('')['files'] || ''} position='left'>
@@ -1052,11 +1167,11 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
                             />
                         </div>
                     </CardWithHelpIcon>
-                </div>
+                </div> : null }
             </Tabs>
 
             <div className='form-submit-btn'>
-                {docData && docData.uuid ?
+                {docData && docData.uuid && isTabAllowed('Tickets', forbiddenTabs) ?
                     <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
                             onClick={handleCreateTicket}>Create ticket</Button> : null}
                 {docData?.uuid && docData?.status && docData?.status.toLowerCase() =='draft' ?
@@ -1081,9 +1196,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             </Modal>
         }
         {showProductSelectionModal && <Modal title={`Product selection`} onClose={()=>setShowProductSelectionModal(false)} noHeaderDecor >
-            <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={isOutboundOrStockMovement ? sender : ""} needWarehouses={isOutboundOrStockMovement}/>
+            <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={isOutboundOrStockMovement ? sender : ""} needWarehouses={isOutboundOrStockMovement} seller={selectedSeller}/>
         </Modal>}
-        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={()=>{setShowTicketForm(false); refetchDoc();}} seller={needSeller() ? docData.seller : ''} />}
         {showConfirmModal && <ConfirmModal
             // actionText='Are you sure you want to cancel this document?'
             actionText='cancel this document?'

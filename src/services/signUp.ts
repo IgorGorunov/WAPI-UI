@@ -26,6 +26,7 @@ const signUp = async (
 const confirmEmail = async (
     data: {
         uuid: string;
+        alias: string;
     }
 ) => {
     try {

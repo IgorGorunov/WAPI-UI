@@ -22,6 +22,7 @@ export type AmazonPrepOrderType = {
         quantity: number,
     } [];
     notifications: boolean,
+    seller?: string;
 }
 
 export type ProductInfoType = {
@@ -115,6 +116,7 @@ export type SingleAmazonPrepOrderType = {
     tickets?: TicketType[];
     comment: string;
     warehouseStatusHistory?: AmazonPrepOrderWarehouseStatusHistoryType[];
+    seller?: string;
 }
 
 export type AmazonPrepOrderProductType = {
@@ -198,4 +200,5 @@ export type SingleAmazonPrepOrderFormType = {
     draft?: boolean;
     attachedFiles?: AttachedFilesType[];
     comment: string;
+    seller?: string;
 }

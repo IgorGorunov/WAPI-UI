@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState, useEffect} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
@@ -14,20 +14,26 @@ import {OrderType} from "@/types/orders";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, {ButtonVariant} from "@/components/Button/Button";
-import Head from "next/head";
 import {FormFieldTypes} from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
 import {Countries} from "@/types/countries";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString, formatDateTimeToStringWithDotWithoutSeconds, formatTimeStringFromString} from "@/utils/date";
+import {
+    formatDateStringToDisplayString,
+    formatDateTimeToStringWithDotWithoutSeconds,
+    formatTimeStringFromString
+} from "@/utils/date";
 import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import SimplePopup, {PopupItem} from "@/components/SimplePopup";
 import FiltersChosen from "@/components/FiltersChosen";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import useNotifications from "@/context/notificationContext";
 import {NotificationType} from "@/types/notifications";
+import {isTabAllowed} from "@/utils/tabs";
+import useAuth from "@/context/authContext";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 type OrderListType = {
     orders: OrderType[];
@@ -38,6 +44,7 @@ type OrderListType = {
     handleRefresh: ()=>void;
     current: number;
     setCurrent: (val: number) => void;
+    forbiddenTabs: string[] | null;
 }
 
 const pageOptions = [
@@ -57,10 +64,9 @@ const hasCorrectNotifications = (record: OrderType, notifications: NotificationT
     return true;
 }
 
-const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, handleRefresh}) => {
+const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, forbiddenTabs, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
-
-    //console.log('orders', orders);
+    const {needSeller, sellersList} = useAuth();
 
    // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -87,46 +93,59 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     //notifications
     const {notifications} = useNotifications();
 
-    const calcOrderAmount = useCallback((property: string, value: string) => {
-        return orders.filter(order => order[property].toLowerCase() === value.toLowerCase()).length || 0;
+
+    //filters
+    //seller filter
+    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
+
+    const calcSellersAmount = useCallback((seller: string) => {
+        return orders.filter(order => order.seller?.uid.toLowerCase() === seller.toLowerCase()).length || 0;
     },[orders]);
+
+    const sellersOptions = useMemo(()=>{
+        return [{label: 'All sellers', value: 'All sellers', amount: orders.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
+    }, [sellersList, calcSellersAmount]);
+
+    const calcOrderAmount = useCallback((property: string, value: string) => {
+        return orders.filter(order => order[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderAllTroubleStatuses = useCallback(() => {
-        return orders.filter(order => order.lastTroubleStatus.length).length || 0;
-    },[orders]);
+        return orders.filter(order => order.lastTroubleStatus.length  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithoutTroubleStatuses = useCallback(() => {
-        return orders.filter(order => order.troubleStatuses.length===0).length || 0;
-    },[orders]);
+        return orders.filter(order => order.troubleStatuses.length===0  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithClaims = useCallback(() => {
-        return orders.filter(order => order.claimsExist).length || 0;
-    },[orders]);
+        return orders.filter(order => order.claimsExist  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithCommentsToCourierService = useCallback(() => {
-        return orders.filter(order => order.commentToCourierServiceExist).length || 0;
-    },[orders]);
+        return orders.filter(order => order.commentToCourierServiceExist  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithBooleanProperty = useCallback((property: string, value: boolean) => {
-        return orders.filter(order => order[property] === value).length || 0;
-    },[orders]);
+        return orders.filter(order => order[property] === value  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    },[orders, selectedSeller]);
 
     const calcOrderWithLogisticComment = useCallback(()=> {
-        return orders.filter(order => !!order.logisticComment).length || 0;
-    }, [orders]);
+        return orders.filter(order => !!order.logisticComment && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderWithoutNonTroubleStatuses = useCallback(()=> {
-        return orders.filter(order => !order.nonTroubleEventsExist).length || 0;
-    }, [orders]);
+        return orders.filter(order => !order.nonTroubleEventsExist && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderAllNonTroubleStatuses = useCallback(()=> {
-        return orders.filter(order => !!order.nonTroubleEventsExist).length || 0;
-    }, [orders]);
+        return orders.filter(order => !!order.nonTroubleEventsExist && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderAmountWithNonTroubleEvent = useCallback((event: string) => {
-        const ordersWithEvent = orders.filter(order => order.nonTroubleEvents.filter(orderEvent=> orderEvent.event==event).length > 0);
+        const ordersWithEvent = orders.filter(order => (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller) && order.nonTroubleEvents.filter(orderEvent=> orderEvent.event==event).length > 0);
         return ordersWithEvent.length || 0;
-    }, [orders]);
+    }, [orders, selectedSeller]);
 
     const hasNonTroubleEvents = useCallback((filterArray: string[], order: OrderType) => {
         if (!order.nonTroubleEventsExist) return false;
@@ -135,6 +154,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         return order.nonTroubleEventsByString.split(',').some(item => filterSet.has(item));
     }, []);
 
+
+
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const handleFilterStatusChange = (newStatuses: string[]) => {
         setFilterStatus(newStatuses);
@@ -142,9 +163,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
-        const statuses = orders.map(order => order.status);
+        const statuses = orders.map(order =>  selectedSeller==='All sellers' || order.seller.uid === selectedSeller ? order.status : null).filter(status => status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueStatuses.sort();
     const transformedStatuses = useMemo(() => ([
         ...uniqueStatuses.map(status => ({
@@ -160,9 +181,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
     }
     const uniqueTroubleStatuses = useMemo(() => {
-        const statuses = orders.map(order => order.lastTroubleStatus);
+        const statuses = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.lastTroubleStatus);
         return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueTroubleStatuses.sort();
     const transformedTroubleStatuses = useMemo(() => ([
         {
@@ -190,9 +211,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     const uniqueNonTroubleStatuses = useMemo(() => {
         const nonTroubleEvents= [];
-        orders.forEach(order => order.nonTroubleEventsByString.split(',').forEach(event=>nonTroubleEvents.push(event.trim())));
+        orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).forEach(order => order.nonTroubleEventsByString.split(',').forEach(event=>nonTroubleEvents.push(event.trim())));
         return Array.from(new Set(nonTroubleEvents)).filter(nonTroubleEvent => nonTroubleEvent).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueNonTroubleStatuses.sort();
     const transformedNonTroubleStatuses = useMemo(() => ([
         {
@@ -226,9 +247,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Without claims',
             label: 'Without claims',
-            amount: (orders.length - calcOrderWithClaims()),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithClaims()),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterLogisticComment, setFilterLogisticComment] = useState<string[]>([]);
     const handleFilterLogisticCommentChange = (newValue: string[]) => {
@@ -244,9 +265,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Without order issue',
             label: 'Without order issue',
-            amount: (orders.length - calcOrderWithLogisticComment()),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithLogisticComment()),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterCommentsToCourierService, setFilterCommentsToCourierService] = useState<string[]>([]);
     const handleFilterCommentsToCourierServiceChange = (newValue: string[]) => {
@@ -262,9 +283,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Without comments',
             label: 'Without comments',
-            amount: (orders.length - calcOrderWithCommentsToCourierService()),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithCommentsToCourierService()),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterSelfCollect, setFilterSelfCollect] = useState<string[]>([]);
     const handleFilterSelfCollectChange = (newValue: string[]) => {
@@ -280,9 +301,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Not self collect',
             label: 'Not self collect',
-            amount: (orders.length - calcOrderWithBooleanProperty('selfCollect', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('selfCollect', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterSentSMS, setFilterSentSMS] = useState<string[]>([]);
     const handleFilterSentSMSChange = (newValue: string[]) => {
@@ -298,9 +319,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: "Doesn't have SMS",
             label: "Doesn't have SMS",
-            amount: (orders.length - calcOrderWithBooleanProperty('sentSMSExist', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('sentSMSExist', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
     const handleFilterWarehouseChange = (newValue: string[]) => {
@@ -309,9 +330,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
-        const warehouses = orders.map(order => order.warehouse);
+        const warehouses = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.warehouse);
         return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueWarehouses.sort();
     const transformedWarehouses = useMemo(() => ([
         ...uniqueWarehouses.map(warehouse => ({
@@ -328,9 +349,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = useMemo(() => {
-        const courierServices = orders.map(order => order.courierService);
+        const courierServices = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.courierService);
         return Array.from(new Set(courierServices)).filter(courier => courier).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueCourierServices.sort();
     const transformedCourierServices = useMemo(() => ([
         ...uniqueCourierServices.map(courier => ({
@@ -348,9 +369,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
-        const receiverCountries = orders.map(order => order.receiverCountry);
+        const receiverCountries = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.receiverCountry);
         return Array.from(new Set(receiverCountries)).filter(country => country).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueReceiverCountries.sort();
     const transformedReceiverCountries = useMemo(() => ([
         ...uniqueReceiverCountries.map(country => ({
@@ -375,9 +396,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: "Without tickets",
             label: "Without tickets",
-            amount: (orders.length - calcOrderWithBooleanProperty('ticket', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('ticket', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     // open tickets
     const [filterHasOpenTickets, setFilterHasOpenTickets] = useState<string[]>([]);
@@ -394,9 +415,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: "Without open tickets",
             label: "Without open tickets",
-            amount: (orders.length - calcOrderWithBooleanProperty('ticketopen', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('ticketopen', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     const [filterPhotos, setFilterPhotos] = useState<string[]>([]);
     const handleFilterPhotosChange = (newValue: string[]) => {
@@ -412,9 +433,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Without photos',
             label: 'Without photos',
-            amount: (orders.length - calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     //customer returns
     const [filterCustomerReturns, setFilterCustomerReturns] = useState<string[]>([]);
@@ -431,9 +452,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: "Without customer returns",
             label: "Without customer returns",
-            amount: (orders.length - calcOrderWithBooleanProperty('returnsExist', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('returnsExist', true)),
         },
-    ]), [orders]);
+    ]), [orders, selectedSeller]);
 
     //marketplaces
     const [filterMarketplace, setFilterMarketplace] = useState<string[]>([]);
@@ -442,9 +463,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
     }
     const uniqueMarketplaces = useMemo(() => {
-        const marketplaces = orders.map(order => order.marketplace);
+        const marketplaces = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.marketplace);
         return Array.from(new Set(marketplaces)).filter(item => item).sort();
-    }, [orders]);
+    }, [orders, selectedSeller]);
     uniqueMarketplaces.sort();
     const marketplaceOptions = useMemo(() => ([
         ...uniqueMarketplaces.map(item => ({
@@ -453,8 +474,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             amount: calcOrderAmount('marketplace', item),
         }))
     ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)), [uniqueMarketplaces]);
-
-
 
 
     const handleClearAllFilters = () => {
@@ -562,7 +581,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             const matchesMarketplace = !filterMarketplace.length ||
                 filterMarketplace.map(item=>item.toLowerCase()).includes(order.marketplace.toLowerCase());
 
-            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets && matchesPhotos && matchesReturns && matchesMarketplace;
+            const matchesSeller = selectedSeller === 'All sellers' || selectedSeller === order.seller.uid;
+
+            return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets && matchesPhotos && matchesReturns && matchesMarketplace && matchesSeller;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
             if (sortDirection === 'ascend') {
@@ -571,7 +592,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
         });
-    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos, filterCustomerReturns, filterMarketplace]);
+    }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos, filterCustomerReturns, filterMarketplace, selectedSeller]);
 
     // useEffect(() => {
     //     setCurrent(1)
@@ -644,7 +665,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterNonTroubleStatusChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);},
         },
-        {
+        isTabAllowed('Claims', forbiddenTabs) ? {
             filterTitle: 'Claims',
             icon: 'complaint',
             filterDescriptions: '',
@@ -655,8 +676,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterClaim,
             onClose: ()=>handleFilterClaimsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)},
-        },
-        {
+        } : null,
+        isTabAllowed('Order issues', forbiddenTabs) ? {
             filterTitle: 'Order issues',
             filterDescriptions: '',
             icon: 'issue',
@@ -667,8 +688,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterLogisticComment,
             onClose: ()=>handleFilterLogisticCommentChange([]),
             onClick: ()=>{()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}},
-        },
-        {
+        } : null,
+        isTabAllowed('Comment to courier service', forbiddenTabs) ? {
             filterTitle: 'Comments to courier service',
             icon: 'comment',
             filterDescriptions: '',
@@ -679,7 +700,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterCommentToCourierService,
             onClose: ()=>handleFilterCommentsToCourierServiceChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)},
-        },
+        } : null,
         {
             filterTitle: 'Self collect',
             icon: 'self-collect',
@@ -692,7 +713,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterSelfCollectChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)},
         },
-        {
+        isTabAllowed('SMS history', forbiddenTabs) ? {
             filterTitle: 'Sent SMS',
             icon: 'sms',
             filterDescriptions: '',
@@ -703,7 +724,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterSentSMS,
             onClose: ()=>handleFilterSentSMSChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)},
-        },
+        } : null,
         {
             filterTitle: 'Warehouse',
             icon: 'warehouse',
@@ -741,7 +762,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterReceiverCountryChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
         },
-        {
+        isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets',
             icon: 'ticket-gray',
             // isCountry: true,
@@ -753,8 +774,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterHasTickets,
             onClose: ()=>handleFilterHasTicketsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)},
-        },
-        {
+        } : null,
+        isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets (open)',
             icon: 'ticket-open',
             // isCountry: true,
@@ -766,7 +787,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterHasOpenTickets,
             onClose: ()=>handleFilterHasOpenTicketsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)},
-        },
+        } : null,
         {
             filterTitle: 'Photos from warehouse',
             // isCountry: true,
@@ -780,7 +801,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterPhotosChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)},
         },
-        {
+        isTabAllowed('Customer returns', forbiddenTabs) ? {
             filterTitle: 'Customer returns',
             // isCountry: true,
             icon: 'package-return',
@@ -792,7 +813,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setIsOpen: setIsOpenFilterCustomerReturns,
             onClose: ()=>handleFilterCustomerReturnsChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCustomerReturns(true)},
-        },
+        } : null,
         {
             filterTitle: 'Marketplaces',
             // isCountry: true,
@@ -819,6 +840,167 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         const width = 47+maxAmount*9;
         return width.toString()+'px';
     },[current, pageSize, filteredOrders]);
+
+
+    const ClaimsColumns: TableColumnProps<OrderType>[] = [];
+    if (isTabAllowed('Claims', forbiddenTabs)) {
+        ClaimsColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="26px"
+                maxWidth="26px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="If order has Claims" >
+                        <span><Icon name={"complaint"} className='header-icon' /></span>
+                    </Tooltip>
+                }
+            />,
+                render: (text: string, record) => {
+            return (
+                <TableCell
+                    className='no-padding'
+                    minWidth="26px"
+                    maxWidth="26px"
+                    contentPosition="center"
+                    childrenBefore={
+                        record.claimsExist && (
+                            <Popover
+                                content={record.claims.length ? <SimplePopup
+                                    items={record.claims.map(orderItem => ({
+                                        uuid: record.uuid,
+                                        title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.date),
+                                        description: orderItem.status,
+                                    }))}
+                                /> : null}
+                                trigger={isTouchDevice ? 'click' : 'hover'}
+                                placement="right"
+                                overlayClassName="doc-list-popover"
+                            >
+                                <div style={{
+                                    minHeight: '8px',
+                                    minWidth: '8px',
+                                    backgroundColor: 'red',
+                                    borderRadius: '50%',
+                                    display: 'inline-block',
+                                    alignSelf: 'center',
+                                }} />
+                            </Popover>
+                        )
+                    }
+                >
+                </TableCell>
+            );
+            },
+                dataIndex: 'claimsExist',
+                key: 'claimsExist',
+                sorter: false,
+                onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+                responsive: ['lg'],
+
+        } as TableColumnProps<OrderType>);
+    }
+
+    const OrderIssueColumns: TableColumnProps<OrderType>[] = [];
+    if (isTabAllowed('Order issues', forbiddenTabs)) {
+        OrderIssueColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="42px"
+                maxWidth="46px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="If order has Order issues" >
+                        <span className='table-header-title'>Order issue</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="42px"
+                        maxWidth="46px"
+                        contentPosition="center"
+                        childrenBefore={
+                            !!record.logisticComment && (
+                                <Popover
+                                    content={<SimplePopup
+                                        items={[{
+                                            title: '',
+                                            description: record.logisticComment,
+                                        }] as PopupItem[]}
+                                    />}
+                                    trigger={isTouchDevice ? 'click' : 'hover'}
+                                    placement="right"
+                                    overlayClassName="doc-list-popover"
+                                >
+                                    <div style={{
+                                        minHeight: '8px',
+                                        minWidth: '8px',
+                                        backgroundColor: 'red',
+                                        borderRadius: '50%',
+                                        display: 'inline-block',
+                                        alignSelf: 'center',
+                                    }} />
+                                </Popover>
+                            )
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'logisticComment',
+            key: 'logisticComment',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<OrderType>);
+    }
+
+    const SellerColumns: TableColumnProps<OrderType>[] = [];
+    if (needSeller()) {
+        SellerColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="60px"
+                maxWidth="80px"
+                contentPosition="left"
+                childrenBefore={
+                    <Tooltip title="Seller's name" >
+                        <span className='table-header-title'>Seller</span>
+                    </Tooltip>
+                }
+            />,
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="60px"
+                        maxWidth="80px"
+                        contentPosition="left"
+                        childrenBefore={
+                            <div className="seller-container">
+                                {record.seller.description}
+                            </div>
+                        }
+                    >
+                    </TableCell>
+                );
+            },
+            dataIndex: 'seller',
+            key: 'seller',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<OrderType>);
+    }
 
     const columns: TableColumnProps<OrderType>[]  = [
         {
@@ -913,62 +1095,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             responsive: ['lg'],
         },
-        {
-            title: <TitleColumn
-                className='no-padding'
-                minWidth="26px"
-                maxWidth="26px"
-                contentPosition="center"
-                childrenBefore={
-                    <Tooltip title="If order has Claims" >
-                        <span><Icon name={"complaint"} className='header-icon' /></span>
-                    </Tooltip>
-                }
-            />,
-            render: (text: string, record) => {
-                return (
-                    <TableCell
-                        className='no-padding'
-                        minWidth="26px"
-                        maxWidth="26px"
-                        contentPosition="center"
-                        childrenBefore={
-                            record.claimsExist && (
-                                <Popover
-                                    content={record.claims.length ? <SimplePopup
-                                        items={record.claims.map(orderItem => ({
-                                            uuid: record.uuid,
-                                            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.date),
-                                            description: orderItem.status,
-                                        }))}
-                                    /> : null}
-                                    trigger={isTouchDevice ? 'click' : 'hover'}
-                                    placement="right"
-                                    overlayClassName="doc-list-popover"
-                                >
-                                    <div style={{
-                                        minHeight: '8px',
-                                        minWidth: '8px',
-                                        backgroundColor: 'red',
-                                        borderRadius: '50%',
-                                        display: 'inline-block',
-                                        alignSelf: 'center',
-                                    }} />
-                                </Popover>
-                            )
-                        }
-                    >
-                    </TableCell>
-                );
-            },
-            dataIndex: 'claimsExist',
-            key: 'claimsExist',
-            sorter: false,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
-            responsive: ['lg'],
-        },
+        ...ClaimsColumns,
         {
             title: <TitleColumn
                 className='no-padding'
@@ -1028,61 +1155,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             responsive: ['lg'],
         },
-        {
-            title: <TitleColumn
-                className='no-padding'
-                minWidth="42px"
-                maxWidth="46px"
-                contentPosition="center"
-                childrenBefore={
-                    <Tooltip title="If order has Order issues" >
-                        <span className='table-header-title'>Order issue</span>
-                    </Tooltip>
-                }
-            />,
-            render: (text: string, record) => {
-                return (
-                    <TableCell
-                        className='no-padding'
-                        minWidth="42px"
-                        maxWidth="46px"
-                        contentPosition="center"
-                        childrenBefore={
-                            !!record.logisticComment && (
-                                <Popover
-                                    content={<SimplePopup
-                                        items={[{
-                                            title: '',
-                                            description: record.logisticComment,
-                                        }] as PopupItem[]}
-                                    />}
-                                    trigger={isTouchDevice ? 'click' : 'hover'}
-                                    placement="right"
-                                    overlayClassName="doc-list-popover"
-                                >
-                                    <div style={{
-                                        minHeight: '8px',
-                                        minWidth: '8px',
-                                        backgroundColor: 'red',
-                                        borderRadius: '50%',
-                                        display: 'inline-block',
-                                        alignSelf: 'center',
-                                    }} />
-                                </Popover>
-                            )
-                        }
-                    >
-                    </TableCell>
-                );
-            },
-            dataIndex: 'logisticComment',
-            key: 'logisticComment',
-            sorter: false,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
-            responsive: ['lg'],
-        },
+        ...OrderIssueColumns,
         {
             title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
             />,
@@ -1112,8 +1185,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 const underlineColor = getUnderlineColor(record.status==='Error' ? record.status : record.statusGroup);
                 return (
                     <TableCell
-                        minWidth="60px"
-                        maxWidth="100px"
+                        minWidth="50px"
+                        maxWidth="90px"
                         contentPosition="start"
                         childrenAfter={
                             <Popover
@@ -1193,15 +1266,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             },
         },
         {
-            title: <TitleColumn minWidth="75px" maxWidth="75px" contentPosition="center" childrenBefore={<Tooltip title="The sum of cash on delivery"><span>COD</span></Tooltip>}/>,
+            title: <TitleColumn minWidth="65px" maxWidth="65px" contentPosition="center" childrenBefore={<Tooltip title="The sum of cash on delivery"><span>COD</span></Tooltip>}/>,
             render: (text: string, record) => {
                 if (record.codCurrency) {
                     const currencySymbol = getSymbolFromCurrency(record.codCurrency);
                     return (
                         <TableCell
                             value={`${text} ${currencySymbol}`}
-                            minWidth="75px"
-                            maxWidth="75px"
+                            minWidth="65px"
+                            maxWidth="65px"
                             contentPosition="center">
                         </TableCell>
                     );
@@ -1238,6 +1311,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             responsive: ['md'],
         },
+        ...SellerColumns,
         {
             title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Code of warehouse"><span>Warehouse</span></Tooltip>}/>,
             render: (text: string) => (
@@ -1335,12 +1409,6 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     return (
         <div className="table order-list">
-            <Head>
-                <title>Orders</title>
-                <meta name="orders" content="orders" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
@@ -1351,23 +1419,26 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 </div>
             </SearchContainer>
 
+            {needSeller() ?
+                <div className='seller-filter-block'>
+                    <SelectField
+                        key='seller-filter'
+                        name='selectedSeller'
+                        label='Seller: '
+                        value={selectedSeller}
+                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                        options={sellersOptions}
+                        classNames='seller-filter full-sized'
+                        isClearable={false}
+                    />
+                    </div>
+                : null
+            }
+
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <FiltersChosen filters={orderFilters} />
-                    {/*<CurrentFilters title='Status' filterState={filterStatus} options={transformedStatuses} onClose={()=>handleFilterStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)}} />*/}
-                    {/*<CurrentFilters title='Trouble status' filterState={filterTroubleStatus} options={transformedTroubleStatuses} onClose={()=>handleFilterTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);}}/>*/}
-                    {/*<CurrentFilters title='Non-trouble events' filterState={filterNonTroubleStatus} options={transformedNonTroubleStatuses} onClose={()=>handleFilterNonTroubleStatusChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);}}/>*/}
-                    {/*<CurrentFilters title='Claims' filterState={filterClaims} options={claimFilterOptions} onClose={()=>handleFilterClaimsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)}} />*/}
-                    {/*<CurrentFilters title='Order issues' filterState={filterLogisticComment} options={logisticCommentFilterOptions} onClose={()=>handleFilterLogisticCommentChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}} />*/}
-                    {/*<CurrentFilters title='Comment to courier service' filterState={filterCommentsToCourierService} options={commentToCourierServiceFilterOptions} onClose={()=>handleFilterCommentsToCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)}} />*/}
-                    {/*<CurrentFilters title='Self collect' filterState={filterSelfCollect} options={selfCollectFilterOptions} onClose={()=>handleFilterSelfCollectChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)}} />*/}
-                    {/*<CurrentFilters title='Sent SMS' filterState={filterSentSMS} options={sentSMSFilterOptions} onClose={()=>handleFilterSentSMSChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)}} />*/}
-                    {/*<CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>handleFilterWarehouseChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}}/>*/}
-                    {/*<CurrentFilters title='Courier service' filterState={filterCourierService} options={transformedCourierServices} onClose={()=>handleFilterCourierServiceChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)}}/>*/}
-                    {/*<CurrentFilters title='Receiver country' filterState={filterReceiverCountry} options={transformedReceiverCountries} onClose={()=>handleFilterReceiverCountryChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)}} />*/}
-                    {/*<CurrentFilters title='Tickets' filterState={filterHasTickets} options={hasTicketsOptions} onClose={()=>handleFilterHasTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)}} />*/}
-                    {/*<CurrentFilters title='Open tickets' filterState={filterHasOpenTickets} options={hasOpenTicketsOptions} onClose={()=>handleFilterHasOpenTicketsChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)}} />*/}
-                    {/*<CurrentFilters title='Photos from warehouse' filterState={filterPhotos} options={photoFilterOptions} onClose={()=>handleFilterPhotosChange([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)}} />*/}
+                    <FiltersChosen filters={orderFilters.filter(item=>item!==null)} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -1404,26 +1475,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersListWithOptions filters={orderFilters} />
+                <FiltersListWithOptions filters={orderFilters.filter(item=>item!==null)} />
             </FiltersContainer>
         </div>
     );
 };
 
 export default React.memo(OrderList);
-
-
-{/*<FiltersBlock filterTitle='Status' filterOptions={transformedStatuses} filterState={filterStatus} setFilterState={handleFilterStatusChange} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
-{/*<FiltersBlock filterTitle={'Trouble status'} filterDescriptions={'Shows orders where the selected trouble status was the last in the trouble status list'} filterOptions={transformedTroubleStatuses} filterState={filterTroubleStatus} setFilterState={handleFilterTroubleStatusChange} isOpen={isOpenFilterTroubleStatus} setIsOpen={setIsOpenFilterTroubleStatus}/>*/}
-{/*<FiltersBlock filterTitle='Non-trouble events' filterOptions={transformedNonTroubleStatuses} filterState={filterNonTroubleStatus} setFilterState={handleFilterNonTroubleStatusChange} isOpen={isOpenFilterNonTroubleStatus} setIsOpen={setIsOpenFilterNonTroubleStatus}/>*/}
-{/*<FiltersBlock filterTitle='Claims' filterOptions={claimFilterOptions} filterState={filterClaims} setFilterState={handleFilterClaimsChange} isOpen={isOpenFilterClaim} setIsOpen={setIsOpenFilterClaim}/>*/}
-{/*<FiltersBlock filterTitle='Order issues' filterOptions={logisticCommentFilterOptions} filterState={filterLogisticComment} setFilterState={handleFilterLogisticCommentChange} isOpen={isOpenFilterLogisticComment} setIsOpen={setIsOpenFilterLogisticComment}/>*/}
-{/*<FiltersBlock filterTitle='Comments to courier service' filterOptions={commentToCourierServiceFilterOptions} filterState={filterCommentsToCourierService} setFilterState={handleFilterCommentsToCourierServiceChange} isOpen={isOpenFilterCommentToCourierService} setIsOpen={setIsOpenFilterCommentToCourierService}/>*/}
-{/*<FiltersBlock filterTitle='Self collect' filterOptions={selfCollectFilterOptions} filterState={filterSelfCollect} setFilterState={handleFilterSelfCollectChange} isOpen={isOpenFilterSelfCollect} setIsOpen={setIsOpenFilterSelfCollect}/>*/}
-{/*<FiltersBlock filterTitle='Sent SMS' filterOptions={sentSMSFilterOptions} filterState={filterSentSMS} setFilterState={handleFilterSentSMSChange} isOpen={isOpenFilterSentSMS} setIsOpen={setIsOpenFilterSentSMS}/>*/}
-{/*<FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={handleFilterWarehouseChange} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
-{/*<FiltersBlock filterTitle='Courier service' filterOptions={transformedCourierServices} filterState={filterCourierService} setFilterState={handleFilterCourierServiceChange} isOpen={isOpenFilterCourierStatus} setIsOpen={setIsOpenFilterCourierStatus}/>*/}
-{/*<FiltersBlock filterTitle='Receiver country' isCountry={true} filterOptions={transformedReceiverCountries} filterState={filterReceiverCountry} setFilterState={handleFilterReceiverCountryChange} isOpen={isOpenFilterReceiverCountry} setIsOpen={setIsOpenFilterReceiverCountry}/>*/}
-{/*<FiltersBlock filterTitle='Tickets' filterOptions={hasTicketsOptions} filterState={filterHasTickets} setFilterState={handleFilterHasTicketsChange} isOpen={isOpenFilterHasTickets} setIsOpen={setIsOpenFilterHasTickets}/>*/}
-{/*<FiltersBlock filterTitle='Open tickets' filterOptions={hasOpenTicketsOptions} filterState={filterHasOpenTickets} setFilterState={handleFilterHasOpenTicketsChange} isOpen={isOpenFilterHasOpenTickets} setIsOpen={setIsOpenFilterHasOpenTickets}/>*/}
-{/*<FiltersBlock filterTitle='Photos from warehouse' filterOptions={photoFilterOptions} filterState={filterPhotos} setFilterState={handleFilterPhotosChange} isOpen={isOpenFilterPhotos} setIsOpen={setIsOpenFilterPhotos}/>*/}

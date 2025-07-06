@@ -45,6 +45,8 @@ import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {CommonHints} from "@/constants/commonHints";
 import ConfirmModal from "@/components/ModalConfirm";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
+import {isTabAllowed} from "@/utils/tabs";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -63,12 +65,15 @@ type ProductPropsType = {
     closeProductModal: ()=>void;
     products: {name: string; uuid: string; quantity: number }[];
     refetchDoc: ()=>void;
+    forbiddenTabs: string[] | null;
 }
-const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal, refetchDoc}) => {
+const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal, refetchDoc, forbiddenTabs}) => {
     const {notifications} = useNotifications();
+    const { tenantData: { alias }} = useTenant();
+    const {needSeller, sellersList, sellersListActive} = useAuth();
 
-    const orderIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved') ;
-    const orderIsInDraft = !!(productData && productData?.status.toLowerCase() === 'draft');
+    const productIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved') ;
+    const productIsInDraft = !!(productData && productData?.status.toLowerCase() === 'draft');
 
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
@@ -111,7 +116,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         return products.map(item=>{return{value:item.uuid, label:item.name}})
     }, [products]);
 
-    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors} = useForm({
+    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, setError, clearErrors} = useForm({
         mode: 'onSubmit',
         defaultValues: {
             uuid: productData?.uuid || uuid || '',
@@ -138,6 +143,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             unitOfMeasure: productData?.unitOfMeasure || 'pcs',
             withoutMasterCartonData: productData?.withoutMasterCartonData || productData?.unitOfMeasures.length<=1 || false,
             additionalService: !!productData?.additionalService || false,
+            seller: productData?.seller || '',
             unitOfMeasures:
                 productData && productData.unitOfMeasures
                     ? productData.unitOfMeasures.map((unit, index) => (
@@ -347,7 +353,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             //                 name={'selectedAllUnits'}
             //                 fieldType={FormFieldTypes.CHECKBOX}
             //                 checked ={selectAllUnits}
-            //                 disabled={isDisabled || orderIsApproved}
+            //                 disabled={isDisabled || productIsApproved}
             //                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
             //                     setSelectAllUnits(e.target.checked);
             //                     // Update the values of all checkboxes in the form when "Select All" is clicked
@@ -374,7 +380,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             //                         name={'unitOfMeasures.${index}.selected'}
             //                         fieldType={FormFieldTypes.CHECKBOX}
             //                         {...field}
-            //                         disabled={isDisabled  || orderIsApproved}
+            //                         disabled={isDisabled  || productIsApproved}
             //                     />
             //                 </div>
             //             )}
@@ -397,7 +403,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     onChange={(newValue: string) => {field.onChange(newValue); handleUnitNameChange(newValue, index)}}
-                                    disabled={isDisabled  || orderIsApproved || isAdditionalService}
+                                    disabled={isDisabled  || productIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -423,7 +429,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled  || orderIsApproved || isAdditionalService}
+                                    disabled={isDisabled  || productIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -449,7 +455,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].width`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled  || orderIsApproved || isAdditionalService}
+                                    disabled={isDisabled  || productIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -474,7 +480,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].length`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || orderIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -499,7 +505,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].height`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || orderIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -524,7 +530,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].weightGross`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || orderIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -549,7 +555,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     name={`unitOfMeasures[${index}].weightNet`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || orderIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved || isAdditionalService}
                                 /></div>
 
                         )}
@@ -561,7 +567,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             //     key: 'action',
             //     minWidth: 500,
             //     render: (text, record, index) => (
-            //         <button disabled={checkMasterCarton(record) || isDisabled || orderIsApproved} className='action-btn' onClick={() => removeUnits(index)}>
+            //         <button disabled={checkMasterCarton(record) || isDisabled || productIsApproved} className='action-btn' onClick={() => removeUnits(index)}>
             //             <Icon name='waste-bin' />
             //         </button>
             //     ),
@@ -978,7 +984,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         productNotifications = notifications.filter(item => item.objectUuid === productData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
     }
 
-    const tabTitleArray =  TabTitles(!!productData?.uuid, !!(productData?.tickets && productData.tickets.length));
+    const tabTitleArray =  TabTitles(!!productData?.uuid, !!(productData?.tickets && productData.tickets.length), forbiddenTabs);
     const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
 
     useEffect(() => {
@@ -1009,7 +1015,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
         try {
             const requestData = {
-                token: token,
+                token,
+                alias,
                 productData: prepareProductDataForSending(data)
             };
 
@@ -1053,20 +1060,54 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
         if (sendStatus === SendStatusType.DRAFT) {
             clearErrors();
-            const formData = getValues();
+            clearTabTitles();
 
-            return onSubmitForm(formData as SingleProductFormType);
+            if (needSeller() && props.seller) {
+                setError('seller', {
+                    type: 'manual',
+                    message: 'Seller is required!',
+                });
+
+                toast.warn(`Seller is required for draft orders!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                updateTabTitles(['seller']);
+
+            } else {
+                const formData = getValues();
+                return onSubmitForm(formData as SingleProductFormType);
+            }
+        } else {
+            let fieldNames = Object.keys(props);
+
+            if (fieldNames.length > 0) {
+                toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+            }
+
+            updateTabTitles(fieldNames);
         }
 
-        const fieldNames = Object.keys(props);
-
-        if (fieldNames.length > 0) {
-            toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
-                position: "top-right",
-                autoClose: 1000,
-            });
-        }
-        updateTabTitles(fieldNames);
+        // if (sendStatus === SendStatusType.DRAFT) {
+        //     clearErrors();
+        //     const formData = getValues();
+        //
+        //     return onSubmitForm(formData as SingleProductFormType);
+        // }
+        //
+        // const fieldNames = Object.keys(props);
+        //
+        // if (fieldNames.length > 0) {
+        //     toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
+        //         position: "top-right",
+        //         autoClose: 1000,
+        //     });
+        // }
+        // updateTabTitles(fieldNames);
     };
 
     const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr, isNew: !productData?.uuid, isAdditionalService, handleAdditionalServiceChange}), [COUNTRIES, isAdditionalService])
@@ -1089,56 +1130,90 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         setIsDisabled(!(productData.canEdit || !productData?.uuid ));
     }
 
-
     return <div className='product-info'>
         {isLoading && <Loader />}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)}>
             <Tabs id='tabs-iddd' tabTitles={tabTitles} classNames='inside-modal' notifications={productNotifications}>
-                <div className='primary-tab'>
-                    <CardWithHelpIcon classNames='card product-info--general'>
-                        <h3 className='product-info__block-title'>
-                            <Icon name='general' />
-                            General
-                        </h3>
-                        <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
-                        </div>
-                    </CardWithHelpIcon>
-                    <CardWithHelpIcon classNames='card product-info--sku'>
-                        <h3 className='product-info__block-title'>
-                            <Icon name='sku' />
-                            SKU
-                        </h3>
-                        <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors} isDisabled={isDisabled}/>
-                        </div>
-                    </CardWithHelpIcon>
-                    {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--warehouse'>
-                        <h3 className='product-info__block-title'>
-                            <Icon name='warehouse' />
-                            Warehouse
-                        </h3>
-                        <div className='grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={warehouseFields} errors={errors} isDisabled={isDisabled} />
-                        </div>
-                    </CardWithHelpIcon> : null}
-                    {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--additional'>
-                        <h3 className='product-info__block-title'>
-                            <Icon name='additional' />
-                            Additional
-                        </h3>
+                {isTabAllowed('Primary', forbiddenTabs) ? <div className='primary-tab'>
+                    <>
+                        {needSeller() ? (
+                            <div className='form-wrapper--seller card'>
+                                <div className='grid-row'>
+                                    <Controller
+                                        key='seller'
+                                        name='seller'
+                                        control={control}
+                                        render={(
+                                            {
+                                                field: {...props},
+                                                fieldState: {error}
+                                            }) => (
+                                            <FieldBuilder
+                                                // disabled={!!isDisabled}
+                                                {...props}
+                                                name='seller'
+                                                label='Seller* : '
+                                                fieldType={FormFieldTypes.SELECT}
+                                                options={(productData?.status !=='Draft' && !!productData) ? sellersList : sellersListActive}
+                                                placeholder={''}
+                                                errorMessage={error?.message}
+                                                errors={errors}
+                                                disabled={isDisabled || (productData?.status !=='Draft' && !!productData)}
+                                                width={WidthType.w50}
+                                                classNames={'seller-filter'}
+                                                isClearable={false}
+                                            />
+                                        )}
+                                        rules = {{required: "Required field"}}
+                                    />
+                                </div>
+                            </div>
+                        ) : null}
+                        <CardWithHelpIcon classNames='card product-info--general'>
+                            <h3 className='product-info__block-title'>
+                                <Icon name='general' />
+                                General
+                            </h3>
+                            <div className='grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
+                            </div>
+                        </CardWithHelpIcon>
+                        <CardWithHelpIcon classNames='card product-info--sku'>
+                            <h3 className='product-info__block-title'>
+                                <Icon name='sku' />
+                                SKU
+                            </h3>
+                            <div className='grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors} isDisabled={isDisabled}/>
+                            </div>
+                        </CardWithHelpIcon>
+                        {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--warehouse'>
+                            <h3 className='product-info__block-title'>
+                                <Icon name='warehouse' />
+                                Warehouse
+                            </h3>
+                            <div className='grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={warehouseFields} errors={errors} isDisabled={isDisabled} />
+                            </div>
+                        </CardWithHelpIcon> : null}
+                        {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--additional'>
+                            <h3 className='product-info__block-title'>
+                                <Icon name='additional' />
+                                Additional
+                            </h3>
 
-                        <div className='additional-selects grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
-                        </div>
+                            <div className='additional-selects grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={additionalFields} errors={errors} isDisabled={isDisabled} />
+                            </div>
 
-                        <div className='product-info__checkboxes grid-row'>
-                            <FormFieldsBlock control={control} fieldsArray={additionalCheckboxes} errors={errors} isDisabled={isDisabled} />
-                        </div>
-                    </CardWithHelpIcon> : null}
-                </div>
-                <div className="dimensions-tab">
+                            <div className='product-info__checkboxes grid-row'>
+                                <FormFieldsBlock control={control} fieldsArray={additionalCheckboxes} errors={errors} isDisabled={isDisabled} />
+                            </div>
+                        </CardWithHelpIcon> : null}
+                    </>
+                </div> : null }
+                {isTabAllowed('Dimensions', forbiddenTabs) ? <div className="dimensions-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--unitOfMeasures">
                         <h3 className='product-info__block-title'>
                             <Icon name='dimensions' />
@@ -1168,34 +1243,18 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     )}
                                     rules={{ required: 'Field is required' }}
                                 />
-                                {/*</div>*/}
-                                {/*<div className='product-info--table-btns width-67' aria-disabled={orderIsApproved}>*/}
-                                {/*    <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >*/}
-                                {/*        <Button classNames='add-unit-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={() => append({  key: `unit-${Date.now().toString()}`, selected: false, name: '', coefficient:'', width: '', length: '', height: '', weightGross:'', weightNet: '' })}>*/}
-                                {/*            Add*/}
-                                {/*        </Button>*/}
-                                {/*    </TutorialHintTooltip>*/}
-                                {/*    <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >*/}
-                                {/*        <Button classNames='remove-unit-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || orderIsApproved} variant={ButtonVariant.SECONDARY} onClick={removeDimensions}>*/}
-                                {/*            Remove selected*/}
-                                {/*        </Button>*/}
-                                {/*    </TutorialHintTooltip>*/}
-
-                                {/*</div>*/}
                             </div>
                         </div>
-                        <div className='product-info--table table-form-fields form-table product-info--dimensions has-scroll' aria-disabled={orderIsApproved || isAdditionalService}>
+                        <div className='product-info--table table-form-fields form-table product-info--dimensions has-scroll' aria-disabled={productIsApproved || isAdditionalService}>
                             <Table
                                 columns={getUnitsColumns(control)}
                                 dataSource={getValues('unitOfMeasures')?.map((field) => ({ key: field.name, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
-
-                                //rowClassName={(record)=>{return (checkMasterCarton(record) ? 'is-disabled' : '')}}
                             />
 
                         </div>
-                        {orderIsApproved || productData && productData.unitOfMeasures.length>1 ? null :  <Controller
+                        {productIsApproved || productData && productData.unitOfMeasures.length>1 ? null :  <Controller
                             name="withoutMasterCartonData"
                             control={control}
                             render={({ field , fieldState: {error}}) => (
@@ -1216,8 +1275,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             //rules={{ required: 'Field is required' }}
                         /> }
                     </CardWithHelpIcon>
-                </div>
-                <div className="barcodes-tab">
+                </div> : null }
+                {isTabAllowed('Barcodes', forbiddenTabs ) ? <div className="barcodes-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--barcodes">
                         <h3 className='product-info__block-title title-small'>
                             <Icon name='barcodes'/>
@@ -1257,8 +1316,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                <div className="aliases-tab">
+                </div> : null }
+                {isTabAllowed('Aliases', forbiddenTabs) ? <div className="aliases-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--aliases">
                         <TutorialHintTooltip hint={ProductOtherHints['aliases'] || ''} position='left' >
                             <h3 className='product-info__block-title title-small'>
@@ -1292,8 +1351,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                <div className="bundles-tab">
+                </div> : null }
+                {isTabAllowed('Virtual bundle kit', forbiddenTabs) ? <div className="bundles-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--bundleKit">
                         <TutorialHintTooltip hint={ProductOtherHints['virtualBundleKit'] || ''} position='left' >
                             <h3 className='product-info__block-title title-small'>
@@ -1327,8 +1386,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                <div className="analogues-tab">
+                </div> : null }
+                {isTabAllowed('Analogues', forbiddenTabs) ? <div className="analogues-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--analogues">
                         <TutorialHintTooltip hint={ProductOtherHints['analogues'] || ''} position='left' >
                             <h3 className='product-info__block-title title-small'>
@@ -1361,8 +1420,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
                         </div>
                     </CardWithHelpIcon>
-                </div>
-                {productData?.statusHistory ? <div className="status-history-tab">
+                </div> : null }
+                {productData?.statusHistory && isTabAllowed('Status history', forbiddenTabs) ? <div className="status-history-tab">
                     <div className="card min-height-600 product-info--status-history">
                         <h3 className='product-info__block-title'>
                             <Icon name='history' />
@@ -1371,7 +1430,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <StatusHistory statusHistory={productData?.statusHistory} />
                     </div>
                 </div> : null}
-                {productData?.uuid && productData.tickets.length ? <div key='tickets-tab' className='tickets-tab'>
+                {productData?.uuid && productData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ? <div key='tickets-tab' className='tickets-tab'>
                     <div className="card min-height-600 product-info--tickets">
                         <h3 className='product-info__block-title'>
                             <Icon name='ticket' />
@@ -1380,7 +1439,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         <DocumentTickets tickets={productData.tickets}/>
                     </div>
                 </div> : null}
-                <div className='files-tab'>
+                {isTabAllowed('Files', forbiddenTabs) ? <div className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 product-info--files">
                         <TutorialHintTooltip hint={ProductOtherHints['files'] || ''} position='left' classNames='mb-md' >
                             <h3 className='product-info__block-title title-small'>
@@ -1399,14 +1458,14 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
                         </div>
                     </CardWithHelpIcon>
-                </div>
+                </div> : null }
             </Tabs>
             <div className='form-submit-btn'>
-                {productData && productData.uuid ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
-                {isDisabled && !orderIsApproved && <Button type="button" disabled={false} onClick={handleClickEdit} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                {!isDisabled && !orderIsApproved && <Button type="submit" disabled={isDisabled || orderIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
-                {(!isDisabled && !orderIsApproved || orderIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
-                {!isDisabled && orderIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
+                {productData && productData.uuid && isTabAllowed('Tickets', forbiddenTabs) ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
+                {isDisabled && !productIsApproved && <Button type="button" disabled={false} onClick={handleClickEdit} variant={ButtonVariant.PRIMARY}>Edit</Button>}
+                {!isDisabled && !productIsApproved && <Button type="submit" disabled={isDisabled || productIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
+                {(!isDisabled && !productIsApproved || productIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
+                {!isDisabled && productIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
             </div>
         </form>
         {showConfirmModal && <ConfirmModal
@@ -1420,7 +1479,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             onCancel={handleCancelAdditionalService}
         />}
         {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
-        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={()=>{setShowTicketForm(false); refetchDoc();}} />}
+        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={()=>{setShowTicketForm(false); refetchDoc();}} seller={needSeller() ? productData.seller : ''} />}
 
     </div>
 }

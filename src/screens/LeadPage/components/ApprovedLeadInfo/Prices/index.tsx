@@ -10,11 +10,13 @@ import useAuth from "@/context/authContext";
 import PricesBlock from "./PricesBlock";
 import leadTutorialInfo from "@/screens/LeadPage/components/ApprovedLeadInfo/leadTutorialUrlsAndTexts";
 import LeadTutorialStep from "@/screens/LeadPage/components/LeadTutorialStep";
+import useTenant from "@/context/tenantContext";
 
 type PricesPropsType = {
 }
 
 const Prices: React.FC<PricesPropsType> = () => {
+    const { tenantData: { alias }} = useTenant();
     const {token, userStatus, setUserStatus} = useAuth();
     const [showPrices, setShowPrices] = useState(userStatus === UserStatusType.NoLegalPrices || userStatus === UserStatusType.LegalPrices);
     const [showNDA, setShowNDA] = useState(false);
@@ -22,7 +24,7 @@ const Prices: React.FC<PricesPropsType> = () => {
 
     const fetchPricesInfo = useCallback(async () => {
         try {
-            const res: ApiResponseType = await getPricesInfo({token});
+            const res: ApiResponseType = await getPricesInfo({token, alias});
 
             if (res && "data" in res) {
                 setCurPrices(res.data);
@@ -49,7 +51,8 @@ const Prices: React.FC<PricesPropsType> = () => {
         try {
             const res: ApiResponseType = await sendSignNDA(
                 {
-                    token: token,
+                    token,
+                    alias
                 }
             );
 

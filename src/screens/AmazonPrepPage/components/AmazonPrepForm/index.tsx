@@ -5,7 +5,7 @@ import {
 } from "@/types/amazonPrep";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes, UserAccessActionType} from "@/context/authContext";
 import {getAmazonPrepParameters, getSingleAmazonPrepData} from '@/services/amazonePrep';
 import {ApiResponseType} from '@/types/api';
 import {ToastContainer} from '@/components/Toast';
@@ -16,6 +16,7 @@ import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
 
 type AmazonPrepFormType = {
     docUuid?: string | null;
@@ -25,6 +26,7 @@ type AmazonPrepFormType = {
 
 
 const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, onCloseModalWithSuccess}) => {
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
@@ -32,6 +34,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
 
     const [amazonPrepOrderData, setAmazonPrepOrderData] = useState<SingleAmazonPrepOrderType|null>(null);
     const [amazonPrepOrderParameters, setAmazonPrepOrderParameters] = useState<AmazonPrepOrderParamsType|null>(null);
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[]|null>(null);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -44,7 +47,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
         try {
             setIsLoading(true);
 
-            const requestData = {token, uuid};
+            const requestData = {token, uuid, alias};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepData', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -74,7 +77,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
 
     const fetchAmazonPrepOrderParams = useCallback(async() => {
         try {
-            const requestData = {token};
+            const requestData = {token, alias};
 
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -84,6 +87,20 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
 
             if (responseParams?.data ) {
                 setAmazonPrepOrderParameters(responseParams.data);
+
+                if (responseParams.data.actionAccessSettings) {
+                    const tabs = responseParams.data.actionAccessSettings as UserAccessActionType[];
+                    const tabsInString = [];
+                    tabs.forEach(item => {
+                        if (item.action === 'View' && item.forbidden) {
+                            const temp = item.objectType.split('/');
+                            tabsInString.push(temp[temp.length - 1]);
+                        }
+                    })
+                    setForbiddenTabs(tabsInString);
+                } else {
+                    setForbiddenTabs([]);
+                }
             } else {
                 console.error("API did not return expected data");
             }
@@ -117,7 +134,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
     return <div className='amazon-prep-info'>
         {(isLoading || !amazonPrepOrderParameters) && <Loader />}
         <ToastContainer />
-        {amazonPrepOrderParameters && (docUuid && amazonPrepOrderData || !docUuid) ?
+        {amazonPrepOrderParameters && (docUuid && amazonPrepOrderData || !docUuid) && forbiddenTabs !== null ?
             <Modal title={`Amazon prep`} onClose={onClose} classNames='document-modal'>
                 <AmazonPrepFormComponent
                     amazonPrepOrderData={amazonPrepOrderData}
@@ -125,6 +142,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({docUuid, onCloseModal, on
                     docUuid={docUuid}
                     closeAmazonPrepOrderModal={onCloseWithSuccess}
                     refetchDoc={()=>{fetchSingleAmazonPrepOrder(docUuid)}}
+                    forbiddenTabs={forbiddenTabs}
                 />
             </Modal>
         :null}

@@ -43,6 +43,7 @@ export type StockMovementType = {
     ticket?: boolean;
     ticketopen?: boolean;
     servicesAmount: number;
+    seller?: string;
 }
 
 export type ProductInfoType = {
@@ -118,6 +119,7 @@ export type SingleStockMovementType = {
     tickets?: TicketType[];
     receiverHide?: boolean;
     senderHide?: boolean;
+    seller?: string;
 }
 
 export type StockMovementParamsProductType = {
@@ -132,6 +134,7 @@ export type StockMovementParamsProductType = {
 export type StockMovementWarehouseType = {
     warehouse: string;
     country: string;
+    seller: string;
 }
 
 export type StockMovementParamsType = {
@@ -176,4 +179,5 @@ export type SingleStockMovementFormType = {
     comment: string;
     status: string;
     products: SingleStockMovementProductFormType[];
+    seller?: string;
 }

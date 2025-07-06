@@ -15,10 +15,10 @@ type SingleDocPropsType = {
     subjectType?: string|null;
     subjectUuid?: string|null;
     subject?: string;
-    
+    seller?: string;
 }
 
-const SingleDocument: React.FC<SingleDocPropsType> = ({type, uuid, onClose, subjectType=null, subjectUuid=null, subject=''}) => {
+const SingleDocument: React.FC<SingleDocPropsType> = ({type, uuid, onClose, subjectType=null, subjectUuid=null, subject='', seller}) => {
     switch (type) {
         case NOTIFICATION_OBJECT_TYPES.Product :
             return <ProductForm uuid={uuid} onClose={onClose} onCloseSuccess={onClose} />
@@ -35,7 +35,7 @@ const SingleDocument: React.FC<SingleDocPropsType> = ({type, uuid, onClose, subj
         case NOTIFICATION_OBJECT_TYPES.LogisticService :
             return <StockMovementForm docUuid={uuid} docType={STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE} closeModalOnSuccess={onClose} closeDocModal={onClose} />
         case NOTIFICATION_OBJECT_TYPES.Ticket :
-            return <TicketForm ticketUuid={uuid} subjectUuid={subjectUuid} subjectType={subjectType} subject={subject} onClose={onClose} />
+            return <TicketForm ticketUuid={uuid} subjectUuid={subjectUuid} subjectType={subjectType} subject={subject} onClose={onClose} seller={seller}/>
 //             return <ModalStatus onClose={onClose} statusModalType={STATUS_MODAL_TYPES.MESSAGE} title="Warning" subtitle={`Tickets are temporary unavailable!
 // We are working on resolving this issue! It will be resolved soon.`} />
         default:

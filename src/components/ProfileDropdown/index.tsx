@@ -10,9 +10,11 @@ import UserList, {UserType} from "@/components/ProfileDropdown/UserList";
 import {ApiResponseType} from "@/types/api";
 import {getUserList} from "@/services/auth";
 import Loader from "@/components/Loader";
+import useTenant from "@/context/tenantContext";
 
 const ProfileDropdown = () => {
     const { token, userName, logout, userStatus, superUser } = useAuth();
+    const { tenantData } = useTenant();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showUserList, setShowUserList] = useState(false);
@@ -28,7 +30,7 @@ const ProfileDropdown = () => {
         try {
             setIsLoading(true);
 
-            const res: ApiResponseType = await getUserList({token}
+            const res: ApiResponseType = await getUserList({token, alias: tenantData.alias}
             );
 
             if (res && "data" in res) {

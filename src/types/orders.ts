@@ -2,10 +2,11 @@ import {
     SEND_COMMENT_TYPES,
     AttachedFilesType,
     WarehouseType,
-    DocProductParamsType
+    DocProductParamsType, SellerType
 } from "@/types/utility";
 import {TicketType} from "@/types/tickets";
 import {NoteType} from "@/types/notes";
+import {UserAccessActionType} from "@/context/authContext";
 
 export type ClaimType = {
     date: string;
@@ -90,6 +91,7 @@ export type OrderType = {
         status: string;
     }[];
     marketplace: string;
+    seller?: SellerType;
 }
 
 export type ProductInfoType = {
@@ -213,6 +215,7 @@ export type SingleOrderType = {
     warehouseAdditionalInfo?: string;
     warehouseAssemblyPhotos?: AttachedFilesType[];
     customerReturns: OrderCustomerReturnType[];
+    seller?: string;
 }
 
 export type OrderProductType = {
@@ -240,6 +243,7 @@ export type OrderParamsType = {
     products?: DocProductParamsType[];
     warehouses: WarehouseType[];
     currencies: string[];
+    actionAccessSettings?: UserAccessActionType[];
 }
 
 export type PickupPointsType = {
@@ -335,3 +339,13 @@ export type SingleOrderFormType = {
     warehouse: string;
     products: SingleOrderProductFormType[];
 }
+
+//endpoint types
+export type CreateOrderRequestType = {
+    orderData: SingleOrderType,
+    token: string;
+    alias: string;
+    ui?: string;
+    seller?: string;
+}
+

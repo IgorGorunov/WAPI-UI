@@ -31,8 +31,6 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
                 onChange('');
             }
         }
-
-        //return onChange(selectedOption.value);
     } ,[] )
 
     const CustomValueContainer = ({ children, ...props }: any) => {
@@ -44,6 +42,23 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
         </div>)
     };
 
+    const CustomOption = (props: any) => {
+        const { data, innerRef, innerProps, isFocused, isSelected } = props;
+        return (
+            <div
+                ref={innerRef}
+                {...innerProps}
+                className={`select-field__option${isFocused ? ' is-focused' : ''}${isSelected ? ' is-selected' : ''}${data.amount !== undefined && !data.amount ? ' is-empty' : ''}${data.inactive ? ' is-inactive' : ''}`}
+                role="option"
+            >
+                <span>{data.label}</span>
+                {data.amount !== undefined && (
+                    <span className="amount-circle">{data.amount || 0}</span>
+                )}
+            </div>
+        );
+    };
+
     const filteredOptions = options.filter((option) => option.value === value);
     const selectedOption = filteredOptions.length > 0 ? filteredOptions[0] : null;
 
@@ -51,25 +66,28 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
         <div className={`input-select__container ${classNames ? classNames : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${isSearchable ? "searchable": ''} ${disabled ? 'is-disabled' : ''}`}>
             {label && <label htmlFor={name}>{label}</label>}
-            <Select
-                {...otherProps}
-                value={selectedOption}
-                components={{ SingleValue: CustomValueContainer }}
-                name={name}
-                options={options}
-                placeholder={placeholder}
-                onChange={handleChange} // Use the handleChange function to handle the change
-                isDisabled={!!disabled}
-                //required={!!isRequired}
-                classNamePrefix='select-field'
-                instanceId={`select-${name}`}
-                isClearable={isClearable}
-                aria-autocomplete='none'
-                //ref={ref}
-                //inputProps={{autoComplete: 'off', autoCorrect: 'off', spellCheck: 'off' }}
-                //formatGroupLabel={ CustomValueContainer }
-            />
-            {errorMessage && <p className="error">{errorMessage}</p>}
+            <div>
+                <Select
+                    {...otherProps}
+                    // menuIsOpen={true}
+                    value={selectedOption}
+                    components={{ SingleValue: CustomValueContainer, Option: CustomOption}}
+                    name={name}
+                    options={options}
+                    placeholder={placeholder}
+                    onChange={handleChange} // Use the handleChange function to handle the change
+                    isDisabled={!!disabled}
+                    //required={!!isRequired}
+                    classNamePrefix='select-field'
+                    instanceId={`select-${name}`}
+                    isClearable={isClearable}
+                    aria-autocomplete='none'
+                    //ref={ref}
+                    //inputProps={{autoComplete: 'off', autoCorrect: 'off', spellCheck: 'off' }}
+                    //formatGroupLabel={ CustomValueContainer }
+                />
+                {errorMessage && <p className="error">{errorMessage}</p>}
+            </div>
 
         </div></TutorialHintTooltip>
     );

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth, {AccessActions} from "@/context/authContext";
+import useAuth, {AccessActions, UserAccessActionType} from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {ToastContainer} from '@/components/Toast';
 import {SingleStockMovementType, STOCK_MOVEMENT_DOC_TYPE, StockMovementParamsType} from "@/types/stockMovements";
@@ -15,6 +15,7 @@ import {docNamesSingle, getAccessActionObject} from "@/screens/StockMovementsPag
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
+import useTenant from "@/context/tenantContext";
 
 type StockMovementFormType = {
     docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -26,11 +27,13 @@ type StockMovementFormType = {
 const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=null, closeDocModal, closeModalOnSuccess}) => {
 
     const [isLoading, setIsLoading] = useState(false);
+    const { tenantData: { alias }} = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
 
     const [docData, setDocData] = useState<SingleStockMovementType|null>(null);
     const [docParameters, setDocParameters] = useState<StockMovementParamsType|null>(null);
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[]|null>(null);
 
     //status modal
     const [showStatusModal, setShowStatusModal]=useState(false);
@@ -46,7 +49,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
         try {
             setIsLoading(true);
-            const requestData = {token, uuid, documentType: docType};
+            const requestData = {token, alias, uuid, documentType: docType};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetStockMovementData/'+docType, getAccessActionObject(docType), AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -75,7 +78,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
     const fetchStockMovementParams = useCallback(async() => {
         try {
             setIsLoading(true);
-            const requestData = {token: token, documentType: docType};
+            const requestData = {token, alias, documentType: docType};
 
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetStockMovementParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
@@ -85,6 +88,20 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
 
             if (resp && "data" in resp) {
                 setDocParameters(resp.data);
+
+                if (resp.data.actionAccessSettings) {
+                    const tabs = resp.data.actionAccessSettings as UserAccessActionType[];
+                    const tabsInString = [];
+                    tabs.forEach(item => {
+                        if (item.action === 'View' && item.forbidden) {
+                            const temp = item.objectType.split('/');
+                            tabsInString.push(temp[temp.length - 1]);
+                        }
+                    })
+                    setForbiddenTabs(tabsInString);
+                } else {
+                    setForbiddenTabs([]);
+                }
             } else {
                 console.error("API did not return expected data");
             }
@@ -133,6 +150,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
                                 docData={docData}
                                 closeDocModal={onCloseOnSuccess}
                                 refetchDoc={()=>fetchSingleStockMovement(docUuid)}
+                                forbiddenTabs={forbiddenTabs}
                             />
                         </Modal>
                     ) : null}

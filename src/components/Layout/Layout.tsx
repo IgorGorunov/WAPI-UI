@@ -9,7 +9,6 @@ import useAuth from "@/context/authContext";
 import {Routes} from "@/types/routes";
 import CookieConsent from "@/components/CookieConsent";
 import BackToTop from "@/components/BackToTop";
-//import { clarity } from 'react-microsoft-clarity';
 
 type Props = {
   hasHeader?: boolean;

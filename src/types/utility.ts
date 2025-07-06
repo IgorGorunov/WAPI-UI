@@ -57,6 +57,7 @@ export type DocProductParamsType = {
     aliases: string;
     barcodes: string;
     volumeWeight?: number;
+    seller?: string;
     //unitOfMeasures: string[];
 }
 
@@ -87,6 +88,20 @@ export type BasicDocListQueryType = {
     pageSize?: number;
     periodStart?: string;
     periodEnd?: string;
+}
+
+export type SellerType = {
+    description: string;
+    uid: string;
+    inactive: boolean;
+}
+
+export type BulkCreateRequestType = {
+    files: AttachedFilesType[],
+    token: string;
+    alias: string;
+    ui?: string;
+    seller?: string;
 }
 
 

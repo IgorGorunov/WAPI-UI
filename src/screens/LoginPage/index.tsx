@@ -6,9 +6,13 @@ import "./styles.scss";
 import Head from "next/head";
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
+import SeoHead from "@/components/SeoHead";
+import useTenant from "@/context/tenantContext";
+import {TENANTS} from "@/lib/tenants";
 
 const LoginPage = () => {
     const { logout } = useAuth();
+    const { tenant } = useTenant();
     const router = useRouter();
 
     const [oneTimeToken, setOneTimeToken] = useState<string>('');
@@ -39,20 +43,16 @@ const LoginPage = () => {
 
     return (
         <Layout hasFooter>
-            <Head>
-                <title>Login</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
-
-            <div className="login-page__container">
+            <SeoHead title="Login" description="Login page" />
+            <div className={`login-page__container${tenant === TENANTS.WAPI ? ' has-bg' : ''}`}>
                 <div className="login-page__text-wrapper">
                     <h1>SIGN IN</h1>
                     <h3>Welcome back</h3>
                 </div>
 
                 <LoginForm oneTimeToken={oneTimeToken} setOneTimeToken={setOneTimeToken} />
-                <SignUpBlock utmQuery={utmQuery} />
+                {tenant === TENANTS.WAPI ? <SignUpBlock utmQuery={utmQuery} /> : null}
+
             </div>
         </Layout>
     );

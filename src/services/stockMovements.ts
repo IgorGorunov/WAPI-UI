@@ -9,6 +9,7 @@ const getInbounds = async (
 
     data: {
         token: string;
+        alias: string;
         documentType: STOCK_MOVEMENT_DOC_TYPE;
         startDate: string;
         endDate: string;
@@ -35,6 +36,7 @@ const getInboundData = async (
     //type: STOCK_MOVEMENT_DOC_TYPE,
     data: {
         uuid: string;
+        alias: string;
         documentType: STOCK_MOVEMENT_DOC_TYPE,
         token: string;
         ui?: string;
@@ -59,6 +61,7 @@ const getInboundParameters = async (
     data: {
         documentType: STOCK_MOVEMENT_DOC_TYPE;
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -85,6 +88,7 @@ const sendInboundData = async (
         documentType: STOCK_MOVEMENT_DOC_TYPE,
         documentData: SingleStockMovementType,
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -110,6 +114,7 @@ const updateInboundData = async (
             courierServiceTrackingNumber: string,
         },
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -130,6 +135,7 @@ const sendInboundFiles = async (
     data: {
         files: AttachedFilesType[],
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -149,6 +155,7 @@ const sendInboundFiles = async (
 const fillInboundByStock = async (
     data: {
         token: string;
+        alias: string;
         ui?: string;
         quality: string[];
         warehouse: string;
@@ -171,6 +178,7 @@ export const cancelStockMovement = async (
     data: {
         uuid: string,
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {

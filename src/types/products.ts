@@ -23,6 +23,7 @@ export type ProductType = {
     }[]
     notifications: boolean,
     additionalService?: boolean,
+    seller?: string;
 }
 
 export type ReservedRowType = {
@@ -51,6 +52,7 @@ export type ProductStockType = {
     weightNet: number,
     onShipping: number;
     reservedRows: ReservedRowType[];
+    seller?: string;
 }
 
 export type ProductParamsType = {
@@ -123,6 +125,7 @@ export type SingleProductType = {
     tickets?: TicketType[];
     additionalService?: boolean;
     expiringTerm?: number;
+    seller?: string;
 };
 
 export type UnitOfMeasureFormType = {
@@ -186,6 +189,7 @@ export type SingleProductFormType = {
         analogue: string;
     }[];
     expiringTerm?: number;
+    seller?: string;
     //attachedFiles: AttachedFilesType[];
     // statusHistory: StatusHistoryType[];
     // canEdit: boolean;

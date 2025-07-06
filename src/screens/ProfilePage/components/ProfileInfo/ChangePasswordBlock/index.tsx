@@ -12,12 +12,14 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import {FormBuilderType, FormFieldTypes, WidthType} from "@/types/forms";
 import {sendUserBrowserInfo} from "@/services/userInfo";
+import useTenant from "@/context/tenantContext";
 
 type ChangePasswordPropsType = {
     onClose: ()=>void;
 }
 
 const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
+    const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui, getBrowserInfo} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -98,7 +100,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
     const handleFormSubmit = async (data: any) => {
         try {
             setIsLoading(true);
-            const requestData = {token, currentPassword: data.currentPassword, newPassword: data.newPassword};
+            const requestData = {token, alias, currentPassword: data.currentPassword, newPassword: data.newPassword};
 
             try {
                 sendUserBrowserInfo({...getBrowserInfo('ChangePassword'), body: superUser && ui ? {...requestData, ui} : requestData})

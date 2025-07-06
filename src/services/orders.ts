@@ -1,5 +1,5 @@
-import {SingleOrderType, OrderCommentType} from "@/types/orders";
-import {AttachedFilesType } from '@/types/utility';
+import {OrderCommentType, CreateOrderRequestType} from "@/types/orders";
+import {BulkCreateRequestType} from '@/types/utility';
 import {api} from "@/services/api";
 
 
@@ -7,6 +7,7 @@ const getOrders = async (
     //token: string,
     data: {
         token: string;
+        alias: string;
         startDate: string;
         endDate: string;
         ui?: string;
@@ -29,6 +30,7 @@ const getOrderData= async (
     //token: string,
     data: {
         uuid: string;
+        alias: string;
         token: string;
         ui?: string;
     }
@@ -50,6 +52,7 @@ const getOrderData= async (
 const getOrderParameters = async (
     data: {
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -70,6 +73,7 @@ const getOrderPickupPoints = async (
     data: {
         courierService: string;
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -87,11 +91,7 @@ const getOrderPickupPoints = async (
 };
 
 const sendOrderData = async (
-    data: {
-        orderData: SingleOrderType,
-        token: string;
-        ui?: string;
-    }
+    data: CreateOrderRequestType
 ) => {
     try {
         const response: any = await api.post(
@@ -110,6 +110,7 @@ const sendOrderComment = async (
     data: {
         comment: OrderCommentType,
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -130,6 +131,7 @@ const cancelOrder = async (
     data: {
         uuid: string,
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {
@@ -147,11 +149,7 @@ const cancelOrder = async (
 };
 
 const sendOrderFiles = async (
-    data: {
-        files: AttachedFilesType[],
-        token: string;
-        ui?: string;
-    }
+    data: BulkCreateRequestType
 ) => {
     try {
         const response: any = await api.post(
@@ -186,6 +184,7 @@ const sendAddressData = async (
             receiverZip?: string;
         },
         token: string;
+        alias: string;
         ui?: string;
     }
 ) => {

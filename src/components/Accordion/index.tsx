@@ -4,6 +4,7 @@ import './styles.scss';
 
 type AccordionPropsType = {
     title: string;
+    titleAmount?: string;
     description?: string;
     children?: React.ReactNode;
     isOpen?: boolean;
@@ -12,7 +13,7 @@ type AccordionPropsType = {
     titleIcon?: IconType;
 }
 
-const Accordion: React.FC<AccordionPropsType> = ({ title, titleIcon, description='', children, isOpen= false, setIsOpen, classNames='' }) => {
+const Accordion: React.FC<AccordionPropsType> = ({ title, titleAmount, titleIcon, description='', children, isOpen= false, setIsOpen, classNames='' }) => {
     const [isActive, setIsActive] = useState(isOpen);
     const [height, setHeight] = useState('0px');
     const [showOverflow, setShowOverflow] = useState(isOpen);
@@ -66,6 +67,7 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, titleIcon, description
                     <p className="accordion-item__title-text">
                         {titleIcon ? (<Icon name={titleIcon} className={'title-icon'}/>) : ''}
                         {title}
+                        {titleAmount ? <span className={`accordion-item__title-text__amount${titleAmount && titleAmount !='0' ? ' checked' : ''}`}>{titleAmount}</span> : null}
                     </p>
                     {description ? <p className="accordion-item__title-dscription">{description}</p> : null}
                 </div>

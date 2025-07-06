@@ -3,6 +3,7 @@ import axios from "axios";
 
 //const API_URL = "https://api2.wapi.com/DB1/hs/v1/UI"; //"https://api.wapi.com/WAPI/hs/v1/UI";
 const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
+// const API_URL = "https://api2.wapi.com/DB3/hs/v1/UI";
 //const API_URL = "https://first.wapi.com:4443/DB1/hs/UI/ROOT/";
 
 let setError: (title:string, message: string) => void;

@@ -81,6 +81,8 @@
       padding: 0 8px;
     }
 
+
+
     &__clear-indicator {
       padding-right: 0;
       padding-left: 4px;
@@ -123,8 +125,59 @@
     }
 
     &__option {
-      padding-left: 6px;
-      padding-right: 6px;
+      //padding-left: 6px;
+      //padding-right: 6px;
+      cursor: default;
+      display: block;
+      font-size: inherit;
+      width: 100%;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      background-color: transparent;
+      color: inherit;
+      padding: 8px 6px;
+      box-sizing: border-box;
+
+      &.is-focused {
+        background-color: var(--color-blue-15) !important;
+        color: var(--color-blue) !important;
+        cursor: pointer !important;
+      }
+
+      &.is-selected {
+        background-color: transparent !important;
+        color: var(--color-blue) !important;
+        font-size: 10px;
+
+        &:hover {
+          background-color: transparent !important;
+        }
+      }
+
+      .amount-circle {
+        margin-left: 8px;
+        padding: 2px 4px;
+        font-size: 8px;
+        background-color: var(--color-blue);
+        color: var(--color-white);
+        border-radius: 15px;
+      }
+
+      &.is-empty,
+      &.is-inactive {
+        color: var(--color-light-blue-gray);
+
+        .amount-circle {
+          background-color: var(--color-light-blue-gray);
+        }
+      }
+
+      &.is-inactive:hover {
+        color: var(--color-light-blue-gray) !important;
+      }
     }
 
     &__option--is-selected {
@@ -244,4 +297,38 @@
     }
   }
 
+  &.seller-filter {
+    flex-direction: row;
+    align-items: center;
+
+    & > div {
+      flex: 1 0 auto;
+    }
+
+    label {
+      margin-bottom: 0;
+      margin-right: 16px;
+    }
+
+    .error {
+      top: calc(100% - 3px);
+    }
+  }
+
+  &.full-sized {
+    .select-field {
+      &__value-container {
+        padding-left: 12px;
+      }
+
+      &__menu {
+        padding: 10px 10px;
+      }
+    }
+  }
+
+
+
 }
+
+

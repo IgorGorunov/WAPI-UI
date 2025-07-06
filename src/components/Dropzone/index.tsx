@@ -12,9 +12,11 @@ import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
 import useAuth from "@/context/authContext";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {toast, ToastContainer} from "@/components/Toast";
+import useTenant from "@/context/tenantContext";
 
 const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=false, docUuid = '', showSend=false, allowOnlyFormats= [] as string[]}) => {
     const { token, superUser, ui } = useAuth();
+    const { tenantData: { alias } } = useTenant();
 
     const [isDragging, setIsDragging] = useState(false);
     const inputId = `file-input__${Date.now().toString()}`;
@@ -30,7 +32,6 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
     // }, []);
 
     const onDrop = useCallback(async (acceptedFiles) => {
-        console.log('file -- on drop', acceptedFiles, readOnly, docUuid)
         if (readOnly && !docUuid) {
             return;
         }
@@ -68,7 +69,6 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
     }, [readOnly]);
 
     const onPaste = useCallback(async (e: React.ClipboardEvent<HTMLDivElement>) => {
-        console.log('file -- on paste', e, readOnly, docUuid)
         if (readOnly && !docUuid) {
             return;
         }
@@ -156,6 +156,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
                 setIsDragging(true);
                 const requestData = {
                     token,
+                    alias,
                     uuid: docUuid,
                     attachedFiles: addedFiles,
                 }
