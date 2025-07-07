@@ -102,6 +102,7 @@ const DashboardPage: React.FC = () => {
                  lastValidPageData.current = res.data;
                  // setSellerData(res.data[0]);
                  setSelectedSeller(res.data[0].seller);
+                 setSellerData(res.data[0]);
                  setSellersOptions(res.data.map(item => {
                    const seller = sellersList.find(s => s.value === item.seller);
                    return {label: seller ? seller.label : ' - ', value: item.seller}
