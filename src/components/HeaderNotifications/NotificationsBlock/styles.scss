@@ -31,6 +31,7 @@
     background-color: rgba(0, 0, 0, 0.2);
     animation: fade 0.3s ease;
     z-index: 2;
+    overflow: hidden;
   }
 
 
@@ -43,7 +44,7 @@
     border-radius: 20px;
     border: 2px solid var(--gray-blue-grey-blue-95, #EDEFF2);
     background: #EDEFF2;
-    overflow-y: auto;
+    overflow-y: hidden;
 
     .close-button {
       position: absolute;
@@ -68,8 +69,14 @@
       align-items: center;
       padding: 12px 0;
 
-      .toggle-switch-label-text {
-        margin-left: 6px;
+      .toggle-switch {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 8px 0;
+
+        &-label-text {
+          margin-left: 6px;
+        }
       }
     }
   }
@@ -156,6 +163,15 @@
             &-period {
               font-size: 8px;
               margin-bottom: 8px;
+            }
+
+            &-seller {
+              margin-top: -6px;
+              margin-bottom: 6px;
+
+              &-name {
+                color: var(--color-gray);
+              }
             }
 
             &-topic {
