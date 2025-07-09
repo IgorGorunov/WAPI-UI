@@ -105,7 +105,7 @@ export const tenantsData = {
 
     [TENANTS.N1NDGLOBAL]: {
         id: TENANTS.N1NDGLOBAL,
-        alias: 'dismaroon',
+        alias: 'N1NDGLOBAL',
         name: 'N1ND GLOBAL',
         logo: '/N1-logo.png',
         email: 'info@n1storeworld.com',
