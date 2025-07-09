@@ -43,7 +43,7 @@ export type TenantDataType = {
 
 export enum TENANTS {
     WAPI = 'WAPI',
-    N1 = 'N1',
+    N1 = 'N1NDGLOBAL',
 }
 
 export type TENANT_TYPE = keyof typeof TENANTS;

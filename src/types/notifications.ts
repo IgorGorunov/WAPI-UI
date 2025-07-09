@@ -36,6 +36,7 @@ export type NotificationType = {
     direction?: ChatMessageDirectionType;
     sender?: string;
     topic?: string;
+    seller?: string;
 }
 
 export type NotificationResponseType = {

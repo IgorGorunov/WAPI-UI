@@ -16,8 +16,11 @@ import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {FormFieldTypes} from "@/types/forms";
+import {FormFieldTypes, OptionType} from "@/types/forms";
 import SingleDocument from "@/components/SingleDocument";
+import useAuth from "@/context/authContext";
+import {getSellerName} from "@/utils/seller";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 const formatMessage = (messageText: string, messageLength = 50) => {
     if (messageText.length > messageLength) {
@@ -49,6 +52,17 @@ type NotificationsBlockPropsType = {
 }
 
 const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notificationsList, isNotificationsBlockOpen, onClose}) => {
+    const { needSeller, sellersList } = useAuth();
+    const showSeller = true;
+    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
+    //const [sellerOptions, setSellerOptions] = useState<OptionType[]>([{label: 'All sellers', value: 'All sellers'}]);
+    const sellersOptions: OptionType[] = [{label: 'All sellers', value: 'All sellers'}, ...sellersList];
+
+
+    // useEffect(() => {
+    //     setSellerOptions([{label: 'All sellers', value: 'All sellers'}, ...sellersList])
+    // }, [notificationsList]);
+
     const {setNotificationAsRead, setNotificationAsUnread} = useMarkNotificationAsRead();
     const {newNotifications} = useNotifications();
 
@@ -128,7 +142,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
         label: 'Unread',
         checked: onlyUnread,
         onChange: ()=>{setOnlyUnread(prevState => !prevState)},
-        hideTextOnMobile: true,
+        hideTextOnMobile: false,
     }
 
     //confirm set all to read
@@ -156,13 +170,14 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
             });
 
             const matchesUnreadFilter = !onlyUnread || notification.status !==NOTIFICATION_STATUSES.READ;
+            const matchesSelectedSeller = !selectedSeller || selectedSeller === 'All sellers' || notification.seller === selectedSeller;
 
-            return matchesSearch && matchesUnreadFilter;
+            return matchesSearch && matchesUnreadFilter && matchesSelectedSeller;
         });
 
         setFilteredNotifications(filterNotifications);
 
-    }, [searchTermNotifications, notificationsList, newNotifications, onlyUnread]);
+    }, [searchTermNotifications, notificationsList, newNotifications, onlyUnread, selectedSeller]);
 
 
 
@@ -185,12 +200,28 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                     </div>
                     {/* search */}
                     <div className='notifications-block__search'>
-
                         <SearchContainer>
                             <SearchField searchTerm={searchTermNotifications} handleChange={handleFilterChange} handleClear={()=>{setSearchTermNotifications(""); handleFilterChange("");}} />
                             {/*<FieldBuilder {...fullTextSearchField} />*/}
                         </SearchContainer>
                     </div>
+
+                    {needSeller() ?
+                        <div className='seller-filter-block'>
+                            <SelectField
+                                key='seller-filter'
+                                name='selectedSeller'
+                                label='Seller: '
+                                value={selectedSeller}
+                                onChange={(val)=>setSelectedSeller(val as  string)}
+                                //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                                options={sellersOptions}
+                                classNames='seller-filter full-sized full-width'
+                                isClearable={false}
+                            />
+                        </div>
+                        : null
+                    }
 
                     {/*  notifications  */}
                     <div className='notifications-block__notifications'>
@@ -205,6 +236,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
                                                     onClick={() => handleNotificationClick(item)}>
                                                     <div className='notification-title'>{item.title ? item.title : formatMessage(item.message, 100)}</div>
                                                     <div className='notification-period'>{formatDateTimeToStringWithDotWithoutSeconds(item.period)}</div>
+                                                    {needSeller() ? <div className='notification-seller'>Seller: <span className='notification-seller-name'>{getSellerName(sellersList, item.seller)}</span></div> : null}
                                                     {item.topic || item.objectType===NOTIFICATION_OBJECT_TYPES.Ticket ? (
                                                             <div className='notification-topic'><span>Topic: </span>{item.topic}</div>)
                                                         : null

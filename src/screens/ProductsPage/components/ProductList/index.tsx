@@ -23,6 +23,7 @@ import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
+import {getSellerName} from "@/utils/seller";
 
 type ProductListType = {
     products: ProductType[];
@@ -120,10 +121,10 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         return [{label: 'All sellers', value: 'All sellers', amount: products.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
     }, [sellersList, calcSellersAmount]);
 
-    const getSellerName = useCallback((sellerUid: string) => {
-        const t = sellersList.find(item=>item.value===sellerUid);
-        return t ? t.label : ' - ';
-    }, [sellersList]);
+    // const getSellerName = useCallback((sellerUid: string) => {
+    //     const t = sellersList.find(item=>item.value===sellerUid);
+    //     return t ? t.label : ' - ';
+    // }, [sellersList]);
 
     const calcProductAmount = useCallback((property: string, value: string) => {
         return products.filter(product => product[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller==='All sellers' || product.seller == selectedSeller)).length || 0;
@@ -231,7 +232,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                         contentPosition="left"
                         childrenBefore={
                             <div className="seller-container">
-                                {getSellerName(record.seller)}
+                                {getSellerName(sellersList, record.seller)}
                             </div>
                         }
                     >
