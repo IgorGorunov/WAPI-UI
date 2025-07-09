@@ -43,17 +43,17 @@ export type TenantDataType = {
 
 export enum TENANTS {
     WAPI = 'WAPI',
-    N1 = 'N1NDGLOBAL',
+    N1NDGLOBAL = 'N1NDGLOBAL',
 }
 
 export type TENANT_TYPE = keyof typeof TENANTS;
 
 export const tenants = {
-    'n1globalpay.com': TENANTS.N1,
-    'wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
+    'n1globalpay.com': TENANTS.N1NDGLOBAL,
+    'wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1NDGLOBAL,
     'ui.wapi.com': TENANTS.WAPI,
-    'localhost': TENANTS.WAPI,
-    'https://wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1,
+    'localhost': TENANTS.N1NDGLOBAL,
+    'https://wapi-ui-git-whitelabel-wapi.vercel.app': TENANTS.N1NDGLOBAL,
 
 };
 
@@ -103,8 +103,8 @@ export const tenantsData = {
         },
     } as TenantDataType,
 
-    [TENANTS.N1]: {
-        id: TENANTS.N1,
+    [TENANTS.N1NDGLOBAL]: {
+        id: TENANTS.N1NDGLOBAL,
         alias: 'dismaroon',
         name: 'N1ND GLOBAL',
         logo: '/N1-logo.png',
@@ -144,5 +144,6 @@ export const tenantsData = {
 }
 
 export const getTenantData = (tenant: TENANT_TYPE): TenantDataType => {
+    console.log('tenant data: ', tenant, tenantsData[tenant], '--', tenantsData);
     return tenantsData[tenant] || null;
 }
