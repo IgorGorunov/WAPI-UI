@@ -20,6 +20,7 @@ import {
   sendUserBrowserInfo
 } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
+import useNotifications from "@/context/notificationContext";
 
 type LoginFormPropsType = {
   oneTimeToken?: string;
@@ -39,6 +40,8 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
 
   const [docType, setDocType] = useState('');
   const [docUuid, setDocUuid] = useState('');
+
+  const { setNotifications } = useNotifications();
 
   useEffect(() => {
     const cleanQuery = getCleanParamsFromQuery(Router.query);
@@ -82,6 +85,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
   const setAuthData = async(authData) => {
     const { accessToken, userPresentation, currentDate, traningStatus, userStatus, textInfo, access, userProfile, superUser, actionAccessSettings, whiteLabelUserType, seilers } = authData;
 
+
     setToken(accessToken, userStatus !== UserStatusType.user);
 
     //Cookie.set('token', accessToken);
@@ -105,7 +109,11 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
 
     setOneTimeToken('');
 
+    //
+    setNotifications(null);
+
     await setUserBrowserDataToCookies(authData);
+
 
     switch (userStatus) {
       case 'user':
