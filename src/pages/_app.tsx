@@ -29,7 +29,7 @@ export function App({ Component, pageProps, tenantHost, host }: AppProps & {tena
   const [tenant, setTenant] = useState<null|TENANT_TYPE>(null);
   const [tenantData, setTenantData] = useState<TenantDataType | null>(null);
 
-  console.log("tenant", host, tenantHost);
+  // console.log("tenant", host, tenantHost);
 
   useEffect(() => {
     if (!clarity.hasStarted()) {
@@ -42,9 +42,9 @@ export function App({ Component, pageProps, tenantHost, host }: AppProps & {tena
       // Cookies.set('tenant', tenantHost, { path: '/' });
       setTenant(TENANTS[tenantHost] as TENANT_TYPE );
       setTenantData(getTenantData(TENANTS[tenantHost] as TENANT_TYPE ) || null);
-      console.log("Host", host, tenantHost);
+      console.log("Host", host, tenantHost, '---', TENANTS[tenantHost], '--', getTenantData(TENANTS[tenantHost]));
     }
-    console.log('tenant:  ', tenantHost)
+    // console.log('tenant 11:  ', tenantHost)
   }, [tenantHost]);
 
 

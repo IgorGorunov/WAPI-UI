@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
 import {useRouter} from "next/router";
 import Layout from "@/components/Layout/Layout";
@@ -26,6 +26,7 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
+import {isTabAllowed} from "@/utils/tabs";
 
 
 const OrdersPage = () => {
@@ -34,6 +35,11 @@ const OrdersPage = () => {
     const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
 
     const [current, setCurrent] = React.useState(1);
+
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[]>([]);
+    useEffect(() => {
+        setForbiddenTabs(getForbiddenTabs(AccessObjectTypes["Orders/Fullfillment"]))
+    }, []);
 
     useEffect(() => {
         const { uuid } = Router.query;
@@ -236,6 +242,11 @@ const OrdersPage = () => {
             "Logistic comment": `${item.logisticComment}`,
             "Tracking link": item.trackingNumber ? item.trackingLink : '',
         }));
+
+        if (!isTabAllowed('Logistic comment', forbiddenTabs)) {
+            filteredData.forEach(row=>delete row["Logistic comment"]);
+        }
+
         exportFileXLS(filteredData, "Orders");
     }
 
