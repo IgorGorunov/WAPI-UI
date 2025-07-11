@@ -15,7 +15,7 @@ export const formFields: FormBuilderType[] = [
             // },
             validate: {
                 matchPattern: (v) =>
-                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ||
                     "Please, enter valid email address",
             },
         },
