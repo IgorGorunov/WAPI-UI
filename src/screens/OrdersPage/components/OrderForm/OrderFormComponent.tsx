@@ -78,7 +78,7 @@ const receiverFieldsPickUpPoint = [
 ];
 
 const getCorrectNotifications = (record: SingleOrderType, notifications: NotificationType[]) => {
-    const orderNotifications = notifications.filter(item => item.objectUuid === record.uuid);
+    const orderNotifications = notifications && notifications.length ? notifications.filter(item => item.objectUuid === record.uuid) : [];
 
     if (record.status.toLowerCase().includes('error')) {
         return orderNotifications.filter(item => !item.message.toLowerCase().includes('error'));
