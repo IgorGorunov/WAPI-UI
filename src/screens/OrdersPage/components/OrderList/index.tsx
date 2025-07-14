@@ -58,7 +58,7 @@ const pageOptions = [
 
 const hasCorrectNotifications = (record: OrderType, notifications: NotificationType[]) => {
     if (record.status.toLowerCase().includes('error')) {
-        const orderNotifications = notifications.filter(item => item.objectUuid === record.uuid && !item.message.toLowerCase().includes('error'));
+        const orderNotifications = notifications && notifications.length ? notifications.filter(item => item.objectUuid === record.uuid && !item.message.toLowerCase().includes('error')) : [];
         return !!orderNotifications.length;
     }
     return true;
