@@ -16,7 +16,7 @@ let redirectToLogin: () => void;
 export const setInterceptorRedirectCallback = (callback:()=>void)=> {redirectToLogin = callback;}
 
 const maintenanceErrorText = 'We are sorry for inconvenience. Maintenance is currently underway. Please, try a bit later.';
-const administratorErrorText = 'Something went wrong. We are already fixing this. Please contact Wapi IT department.';
+const administratorErrorText = 'Something went wrong. We are already fixing this. Please contact support manager.';
 const forbiddenErrorText = "You have limited access to this action";
 
 const loginApi = axios.create(
