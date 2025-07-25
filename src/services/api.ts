@@ -15,7 +15,7 @@ export const setInterceptorErrorCallback = (callback: (title: string, message: s
 let redirectToLogin: () => void;
 export const setInterceptorRedirectCallback = (callback:()=>void)=> {redirectToLogin = callback;}
 
-const maintenanceErrorText = 'We are sorry for inconvenience. Maintenance is currently underway. Please, try a bit later.';
+const maintenanceErrorText = 'We are sorry for inconvenience. Maintenance is currently underway. Please, try a bit later. If in 10 minutes this problem is still present, please check your internet connection!';
 const administratorErrorText = 'Something went wrong. We are already fixing this. Please contact support manager.';
 const forbiddenErrorText = "You have limited access to this action";
 
