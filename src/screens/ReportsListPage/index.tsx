@@ -9,14 +9,25 @@ import "./styles.scss";
 import ReportsBlock from "@/screens/ReportsListPage/ReportComponents/ReportsBlock";
 import {reportBlocks} from "@/screens/ReportsListPage/reports.constants";
 import SeoHead from "@/components/SeoHead";
+// import SubmenuSingleItem from "@/components/Navigation/SubmenuSingleItem";
+// import SubmenuBlock from "@/components/Navigation/SubmenuBlock";
+import {ReportsListBlockType} from "@/types/reports";
 
 const ReportsListPage:React.FC = () => {
     const Router = useRouter();
-    const { token } = useAuth();
+    const { token, isNavItemAccessible } = useAuth();
 
     useEffect(() => {
         if (!token) Router.push(Routes.Login);
     }, []);
+
+    const isReportSectionAccessible = (reportBlock: ReportsListBlockType) => {
+        let isAccessible = false;
+        reportBlock.blockReports.forEach(item => {
+            if (isNavItemAccessible(item.reportName)) isAccessible = true;
+        });
+        return isAccessible;
+    }
 
     return (
         <Layout hasFooter>
@@ -27,9 +38,10 @@ const ReportsListPage:React.FC = () => {
                 </Header>
 
                 <div className='reports-list'>
-                    {reportBlocks.map((item, index) =>(
-                        <div key={`${item.blockTitle}__${index}`} className='report-list__item'><ReportsBlock {...item} /></div>
-                        )
+                    {reportBlocks.map((item, index) =>
+                        isReportSectionAccessible(item) ? <div key={`${item.blockTitle}__${index}`} className='report-list__item'>
+                            <ReportsBlock {...item} />
+                        </div> : null
                     )}
                 </div>
             </div>
