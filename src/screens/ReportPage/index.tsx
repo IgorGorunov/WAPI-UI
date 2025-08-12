@@ -195,7 +195,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         const warehouses: string[] = [];
         const countries: string[] = [];
         reportParams && reportParams.warehouses.forEach(item => {
-            if (!selectedSeller || selectedSeller && (selectedSeller === 'All sellers' || selectedSeller === item.seller)) {
+            if (!selectedSeller || !needSeller() || selectedSeller && (selectedSeller === 'All sellers' || selectedSeller === item.seller)) {
                 countries.push(item.country);
                 warehouses.push(item.warehouse);
             }
@@ -226,6 +226,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
             const reportWarehouses = reportData.map(item=> item.warehouse.toUpperCase());
             warehouseOptions =  warehouseOptions.filter(item => reportWarehouses.includes(item.value.toUpperCase()));
         }
+
         return {warehouseOptions, countryOptions}
     }, [reportParams, reportData, reportType, selectedSeller]);
 
@@ -274,7 +275,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
 
     const [filterProduct, setFilterProduct] = useState<string[]>([]);
     const productOptions = useMemo(()=> {
-        const products = reportParams?.products && reportParams.products.length ? reportParams.products.filter(item=>!selectedSeller || selectedSeller && (selectedSeller === 'All sellers' || selectedSeller===item.seller)).map(product => product.name) : [];
+        const products = reportParams?.products && reportParams.products.length ? reportParams.products.filter(item=>!selectedSeller || !needSeller() || selectedSeller && (selectedSeller === 'All sellers' || selectedSeller===item.seller)).map(product => product.name) : [];
         const uniqueProducts = Array.from(new Set(products)).filter(product => product).sort();
         let productOptions =  [
             ...uniqueProducts.map(product => ({
