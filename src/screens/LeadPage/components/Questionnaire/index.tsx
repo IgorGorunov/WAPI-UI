@@ -74,7 +74,8 @@ type QuestionnairePropsType = {
 };
 
 const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) => {
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData } = useTenant();
+    const alias = tenantData?.alias;
     const { token, setUserStatus, logout } = useAuth();
 
     const [isLoading, setIsLoading] = useState(false);

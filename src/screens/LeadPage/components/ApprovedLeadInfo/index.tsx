@@ -19,7 +19,8 @@ type ApprovedLeadInfoPropsType = {
 }
 
 const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData } = useTenant();
+    const alias = tenantData?.alias;
     const {token, userStatus} = useAuth();
     const [legalData, setLegalData] = useState<null|LegalInfoFormType>(null);
 

@@ -15,7 +15,8 @@ import SeoHead from "@/components/SeoHead";
 
 const ConfirmEmailPage = () => {
     const router = useRouter();
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData } = useTenant();
+    const alias = tenantData?.alias || '';
 
     const [confirmToken, setConfirmToken] = useState('');
     const [isLoading, setIsLoading] = useState(false);

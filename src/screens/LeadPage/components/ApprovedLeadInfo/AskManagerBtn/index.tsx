@@ -28,7 +28,8 @@ export const askManagerFields  = [
 ];
 
 const AskManagerBtn = () => {
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData } = useTenant();
+    const alias = tenantData?.alias;
     const {token} = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 

@@ -16,7 +16,8 @@ type PricesPropsType = {
 }
 
 const Prices: React.FC<PricesPropsType> = () => {
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData } = useTenant();
+    const alias = tenantData?.alias;
     const {token, userStatus, setUserStatus} = useAuth();
     const [showPrices, setShowPrices] = useState(userStatus === UserStatusType.NoLegalPrices || userStatus === UserStatusType.LegalPrices);
     const [showNDA, setShowNDA] = useState(false);

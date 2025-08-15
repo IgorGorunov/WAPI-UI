@@ -35,7 +35,8 @@ import {OptionType} from "@/types/forms";
 // };
 
 const DashboardPage: React.FC = () => {
-  const { tenantData: { alias } } = useTenant();
+  const { tenantData } = useTenant();
+  const alias = tenantData?.alias;
   const { token, currentDate, isAuthorizedUser, getBrowserInfo ,superUser, ui, isActionIsAccessible, isNavItemAccessible, needSeller, sellersList } = useAuth();
 
   useEffect(() => {
