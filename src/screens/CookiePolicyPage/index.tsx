@@ -1,13 +1,25 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
+import dynamic from "next/dynamic";
 import Layout from "@/components/Layout/Layout";
 import "./styles.scss";
-import Header from "@/components/Header";
+// import Header from "@/components/Header";
 import Link from "next/link";
 import SeoHead from "@/components/SeoHead";
 import useTenant from "@/context/tenantContext";
 
+// Use your existing Header but render it client-only to avoid SSR side effects.
+const Header = dynamic(() => import("@/components/Header"), { ssr: false });
+
 const CookiePolicyPage = () => {
     const { tenantData } = useTenant();
+
+    const [mounted, setMounted] = useState(false);
+    const [uiLink, setUiLink] = useState("");
+
+    useEffect(() => {
+        setMounted(true);
+        setUiLink(tenantData?.uiLink || "");
+    }, [tenantData]);
 
     return (
         <Layout hasFooter>
@@ -17,7 +29,12 @@ const CookiePolicyPage = () => {
 
                 <div className="cookie-policy-page__text-wrapper">
                     <p>This Cookie Policy explains how we use cookies and similar tracking technologies when you visit
-                        our website <Link className='is-link' href='/'>{tenantData?.uiLink || ''}</Link>. By continuing to
+                        our website&nbsp;
+                        {mounted && uiLink ? (
+                            <Link className="is-link" href="/">
+                                 {uiLink}
+                            </Link>
+                        ) : null}. By continuing to
                         browse the site, you are agreeing to our use
                         of cookies as outlined in this policy.</p>
                     <p className='text-bold'>What are cookies? </p>

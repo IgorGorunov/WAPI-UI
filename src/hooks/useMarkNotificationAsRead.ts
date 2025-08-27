@@ -6,7 +6,8 @@ import useTenant from "@/context/tenantContext";
 
 export const useMarkNotificationAsRead = () => {
     const {notifications, setNotifications, setNewNotifications} = useNotifications();
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData } = useTenant();
+    const alias = tenantData?.alias || '';
     const {token} = useAuth();
 
     const setNotificationAsRead = (uuid: string) => {
