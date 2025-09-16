@@ -321,8 +321,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="120px"  contentPosition="start"/>
             ),
-            dataIndex: 'warehouseSku',
-            key: 'warehouseSku',
+            dataIndex: 'sku',
+            key: 'sku',
             sorter: true,
             onHeaderCell: (column: ColumnType<ProductStockType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
