@@ -79,7 +79,7 @@ const ProductsStockPage = () => {
             SKU: item.sku,
             Name: item.name,
             Warehouse: item.warehouse,
-            "Warehouse SKU": item.warehouseSku,
+            // "Warehouse SKU": item.warehouseSku,
             Country: item.country,
             Available: item.available,
             Reserved: item.reserved,
