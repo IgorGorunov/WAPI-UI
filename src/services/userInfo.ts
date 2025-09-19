@@ -14,8 +14,10 @@ export async function getUserIP(): Promise<string> {
         return response.data.ip;
     } catch (error) {
         console.error('Error fetching IP address:', error);
-        throw new Error('Unable to fetch IP address');
+        //throw new Error('Unable to fetch IP address');
+        return '';
     }
+
 }
 
 
