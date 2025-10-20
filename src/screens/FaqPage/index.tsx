@@ -7,12 +7,11 @@ import FaqTableOfContents from "@/screens/FaqPage/components/FaqTableOfContents"
 import AnswersBlock from "@/screens/FaqPage/components/AnswersBlock";
 import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
-import Head from "next/head";
 import SeoHead from "@/components/SeoHead";
 
 
 const FaqPage:React.FC<FaqPageType> = (props) => {
-    const {isCookieConsentReceived} = useAuth();
+    const {cookieConsent} = useAuth();
 
     const {content} = props;
 
@@ -37,10 +36,10 @@ const FaqPage:React.FC<FaqPageType> = (props) => {
                 0,
                 Math.min(layoutRect.bottom, viewportHeight) - Math.max(layoutRect.top, 0)
             );
-            setVisiblePixels(isCookieConsentReceived ? visibleHeight : visibleHeight - 40);
+            setVisiblePixels(cookieConsent?.essential ? visibleHeight : visibleHeight - 40);
 
             // If sidebar reaches the top of the viewport, stick it
-            if (layoutRect.top < 0 && (footerRect.top + (isCookieConsentReceived ? 0 : -40)) > window.innerHeight) {
+            if (layoutRect.top < 0 && (footerRect.top + (cookieConsent?.essential ? 0 : -40)) > window.innerHeight) {
                 setSidebarStyle({
                     position: "fixed",
                     top: "0px",
@@ -48,7 +47,7 @@ const FaqPage:React.FC<FaqPageType> = (props) => {
                 });
             }
             // Stick sidebar to the footer when it overlaps
-            else if ((footerRect.top + (isCookieConsentReceived ? 0 : -40)) <= sidebarRect.bottom) { //window.innerHeight) {
+            else if ((footerRect.top + (cookieConsent?.essential ? 0 : -40)) <= sidebarRect.bottom) { //window.innerHeight) {
                 if (sidebarRect.top >= 0) {
                     setSidebarStyle({
                         position: "fixed",

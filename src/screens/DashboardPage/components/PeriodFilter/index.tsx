@@ -8,7 +8,6 @@ import {
 import DatepickerComponent from '@/components/Datepicker';
 import "./styles.scss";
 import Icon from "@/components/Icon";
-import useAuth from "@/context/authContext";
 
 export type PeriodFilterProps = {
   currentPeriod: DashboardPeriodType;
@@ -28,7 +27,8 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   const [showCustom, setShowCustom] = useState(false);
   const curPeriodType = currentPeriod.periodType;
 
-  const {currentDate} = useAuth();
+  //const {currentDate} = useAuth();
+  const currentDate = new Date();
 
   const handleDay = () => {
     setShowCustom(false);

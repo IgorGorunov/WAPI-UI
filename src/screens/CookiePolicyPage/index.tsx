@@ -34,28 +34,39 @@ const CookiePolicyPage = () => {
                             <Link className="is-link" href="/">
                                  {uiLink}
                             </Link>
-                        ) : null}. By continuing to
-                        browse the site, you are agreeing to our use
-                        of cookies as outlined in this policy.</p>
+                        ) : null}. By continuing to browse the site, or by setting your cookie preferences in our banner or Cookie Settings,
+                        you are agreeing to our use of cookies as outlined in this policy.
+                    </p>
                     <p className='text-bold'>What are cookies? </p>
 
                     <p>Cookies are small text files that are placed on your computer or mobile device when you visit a
                         website. They are widely used to make websites work more efficiently and to provide information
                         to website owners. </p>
                     <p className='text-bold'>How do we use cookies? </p>
-                    <p>We use cookies for the following purposes: </p>
+                    <p>We group cookies into three categories: </p>
                     <ol className='simple-list'>
-                        <li><p><span className='text-bold'>Essential Cookies:</span> These cookies are necessary for the
-                            website to function properly. They enable you to navigate the website and use its features.
+                        <li><p><span className='text-bold'>Essential Cookies:</span> These cookies are strictly necessary for the website
+                            to function and for you to access secure areas of the site. Without them, our services would not work
+                            properly (e.g., login, security, and access control).
                         </p></li>
-                        <li><p><span className='text-bold'>Functionality Cookies:</span> These cookies are used to
-                            recognize you when you return to our website. This enables us to personalize our content for
-                            you, greet you by name, and remember your preferences (for example, your choice of language
-                            or region).</p></li>
-                        <li><p><span className='text-bold'>Performance Cookies:</span> These cookies collect information
+                        <li>
+                            <p><span className='text-bold'>Functionality Cookies (optional, but useful):</span> These cookies are not required
+                                for the site to work, but they make your experience smoother and more personalized. For example, they can:
+                            </p>
+                            <ul className='list-with-discs'>
+                                <li className='list-with-discs-item'>Remember if you have already completed a tutorial, so it’s not shown again</li>
+                                <li className='list-with-discs-item'>Display your account name so you know which account you are logged in under</li>
+                                <li className='list-with-discs-item'>Collect basic browser information for technical diagnostics</li>
+                            </ul>
+                            <p>You can turn these on or off in <span className='text-bold'>Cookie Settings</span>.</p>
+                        </li>
+                        <li><p><span className='text-bold'>Performance Cookies (optional):</span> These cookies collect information
                             about how visitors use our website, such as which pages are visited most often. This
                             information is aggregated and anonymous, and is used to improve the functionality of the
-                            website. We use Microsoft Clarity to help us understand how our users interact with our website.</p></li>
+                            website. We use Microsoft Clarity to collect anonymized usage data such as clicks, scrolls,
+                            and page navigation.</p>
+                            <p>Clarity cookies are only set if you accept performance cookies in our cookie banner (or after passing a consent signal to Clarity).</p>
+                        </li>
                     </ol>
                     <p className='text-bold'>List of cookies we use: </p>
                     <table className='cookie-policy-page__cookie-list-table'>
@@ -70,7 +81,7 @@ const CookiePolicyPage = () => {
                         </thead>
                         <tbody>
                         <tr>
-                            <td>CookieConsent</td>
+                            <td>cookie_consent</td>
                             <td>Essential</td>
                             <td>Stores user's cookie consent.</td>
                             <td>6 months</td>
@@ -87,44 +98,44 @@ const CookiePolicyPage = () => {
                             <td>Used to identify logged user status.</td>
                             <td>Session</td>
                         </tr>
-                        <tr>
-                            <td>userName</td>
-                            <td>Essential</td>
-                            <td>Stores user's name to display in UI.</td>
-                            <td>Session</td>
-                        </tr>
-                        <tr>
-                            <td>currentDate</td>
-                            <td>Essential</td>
-                            <td>Stores current date.</td>
-                            <td>Session</td>
-                        </tr>
-                        <tr>
-                            <td>tutorialData</td>
-                            <td>Essential</td>
-                            <td>Stores information about UI tutorials user watched to not display these tutorials
-                                again.
-                            </td>
-                            <td>Session</td>
-                        </tr>
-                        <tr>
-                            <td>profile_info</td>
-                            <td>Essential</td>
-                            <td>Stores logged user's profile info.</td>
-                            <td>Session</td>
-                        </tr>
+                        {/*<tr>*/}
+                        {/*    <td>userName</td>*/}
+                        {/*    <td>Essential</td>*/}
+                        {/*    <td>Stores user's name to display in UI.</td>*/}
+                        {/*    <td>Session</td>*/}
+                        {/*</tr>*/}
+                        {/*<tr>*/}
+                        {/*    <td>currentDate</td>*/}
+                        {/*    <td>Essential</td>*/}
+                        {/*    <td>Stores current date.</td>*/}
+                        {/*    <td>Session</td>*/}
+                        {/*</tr>*/}
+                        {/*<tr>*/}
+                        {/*    <td>tutorialData</td>*/}
+                        {/*    <td>Essential</td>*/}
+                        {/*    <td>Stores information about UI tutorials user watched to not display these tutorials*/}
+                        {/*        again.*/}
+                        {/*    </td>*/}
+                        {/*    <td>Session</td>*/}
+                        {/*</tr>*/}
+                        {/*<tr>*/}
+                        {/*    <td>profile_info</td>*/}
+                        {/*    <td>Essential</td>*/}
+                        {/*    <td>Stores logged user's profile info.</td>*/}
+                        {/*    <td>Session</td>*/}
+                        {/*</tr>*/}
                         <tr>
                             <td>navAccess</td>
                             <td>Essential</td>
                             <td>Stores logged user's navigation access info.</td>
                             <td>Session</td>
                         </tr>
-                        <tr>
-                            <td>browser</td>
-                            <td>Essential</td>
-                            <td>Stores browser info for logging.</td>
-                            <td>Session</td>
-                        </tr>
+                        {/*<tr>*/}
+                        {/*    <td>browser</td>*/}
+                        {/*    <td>Essential</td>*/}
+                        {/*    <td>Stores browser info for logging.</td>*/}
+                        {/*    <td>Session</td>*/}
+                        {/*</tr>*/}
                         <tr>
                             <td>userActions</td>
                             <td>Essential</td>
@@ -137,6 +148,52 @@ const CookiePolicyPage = () => {
                             <td>Used to identify the type of user's account and their access to extra features.</td>
                             <td>Session</td>
                         </tr>
+                        <tr>
+                            <td>sellers</td>
+                            <td>Essential</td>
+                            <td>Identifies which seller or sub-tenant account the logged-in user belongs to. For clients with sub-tenants,
+                                this cookie contains the unique system identifiers of those tenants so
+                                that the correct data can be displayed. For standard clients,
+                                it stores their own tenant UUID. This cookie is required for the platform to load the
+                                correct data and permissions and is not used for marketing or analytics.
+                            </td>
+                            <td>Session</td>
+                        </tr>
+                        {/*Functional cookies (optional)*/}
+                        <tr>
+                            <td>userName</td>
+                            <td>Functional</td>
+                            <td>Stores user's name to display in UI.</td>
+                            <td>Session</td>
+                        </tr>
+                        <tr>
+                            <td>tutorialData</td>
+                            <td>Functional</td>
+                            <td>Stores information about UI tutorials user watched to not display these tutorials
+                                again.
+                            </td>
+                            <td>Session</td>
+                        </tr>
+                        <tr>
+                            <td>visited-stock-movements</td>
+                            <td>Functional</td>
+                            <td>Stores infirmation if user created any stock-movements to determine if hints are needed.
+                            </td>
+                            <td>2 years</td>
+                        </tr>
+                        <tr>
+                            <td>inbound-hints-cancel-number</td>
+                            <td>Functional</td>
+                            <td>Stores number of times user rejected viewing hints for Stock-management document creation to stop suggesting hints any more after two refusals.
+                            </td>
+                            <td>2 years</td>
+                        </tr>
+                        {/*<tr>*/}
+                        {/*    <td>browser</td>*/}
+                        {/*    <td>Functional</td>*/}
+                        {/*    <td>Stores browser info for logging.</td>*/}
+                        {/*    <td>Session</td>*/}
+                        {/*</tr>*/}
 
                         {/* clarity cookies */}
                         <tr>
@@ -151,8 +208,20 @@ const CookiePolicyPage = () => {
                             <td>Used by Microsoft Clarity. Connects multiple page views by a user into a single Clarity session recording.</td>
                             <td>1 year</td>
                         </tr>
+                        <tr>
+                            <td>CLID</td>
+                            <td>Performance</td>
+                            <td>Used by Microsoft Clarity. Identifies the first time Clarity saw this user across sites or domains.</td>
+                            <td>1 year</td>
+                        </tr>
                         </tbody>
                     </table>
+                    <p className='text-bold'>Managing your cookies </p>
+                    <p>On your first visit, you will see a cookie banner. Essential cookies are always active, but you can choose
+                        whether to allow Functional and Performance cookies. You can also change your preferences at any time by clicking
+                        Cookie Settings (available in the footer of the website).
+                    </p>
+
                     <p className='text-bold'>Updates to this Cookie Policy </p>
                     <p>We may update this Cookie Policy from time to time to reflect changes in our practices or for
                         other operational, legal, or regulatory reasons. Please revisit this page periodically to stay

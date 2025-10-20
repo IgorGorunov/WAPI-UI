@@ -23,8 +23,8 @@ const Layout: React.FC<Props> = ({
   children,
 }) => {
     const router = useRouter();
-    const {logout, isCookieConsentReceived} = useAuth();
-    const [showCookieConsent, setShowCookieConsent] = useState(false);
+    const {logout} = useAuth();
+    // const [showCookieConsent, setShowCookieConsent] = useState(false);
 
     const [apiErrorTitle, setApiErrorTitle] = useState<string>('');
     const [apiErrorText, setApiErrorText] = useState<string>('');
@@ -58,12 +58,12 @@ const Layout: React.FC<Props> = ({
     //     }
     // }, [isCookieConsentReceived]);
 
-    useEffect(() => {
-        setShowCookieConsent(!isCookieConsentReceived);
-        // if (isCookieConsentReceived && clarity.hasStarted()) {
-        //     clarity.consent();
-        // }
-    }, [isCookieConsentReceived]);
+    // useEffect(() => {
+    //     setShowCookieConsent(!isCookieConsentReceived);
+    //     // if (isCookieConsentReceived && clarity.hasStarted()) {
+    //     //     clarity.consent();
+    //     // }
+    // }, [isCookieConsentReceived]);
 
   return (
       <div className="main">
@@ -71,7 +71,7 @@ const Layout: React.FC<Props> = ({
               {children}
           </div>
           {hasFooter && <Footer/>}
-          {showCookieConsent ? <CookieConsent/> : null}
+          <CookieConsent/>
           <div id="modal-root-main"></div>
           <div id="modal-root-status"></div>
           <div id="modal-root-preview"></div>

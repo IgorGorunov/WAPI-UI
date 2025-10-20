@@ -174,7 +174,14 @@ const PrivacyPolicyPage = () => {
                                         <li>for prevention and detection of criminal offenses;</li>
                                         <li>for obtaining and preservation of evidence in civil disputes;</li>
                                         <li>for reviewing applications / complaints and other documents;</li>
-                                        <li>for other purposes in legally justified cases.</li>
+                                        <li>for other purposes in legally justified cases;</li>
+                                        <li className='list-item--new'>
+                                            for ensuring accountability, audit logging and system security, including recording
+                                            actions performed by users within their accounts and storing related metadata such
+                                            as login identifier (email). These logs are necessary for the provision of services,
+                                            contractual reporting to client account holders, and for the detection and prevention
+                                            of unauthorized access or misuse.
+                                        </li>
                                     </ol>
                                 </li>
                                 <li>In any of cases referred to in Clause 4.1 of the Privacy Policy, {companyName} Processes
@@ -276,6 +283,17 @@ const PrivacyPolicyPage = () => {
                                             organized events or contacted a Data Subject, and data related to the Data
                                             Subject's {companyName} website (incl. visits to Electronic Commerce Systems);
                                         </li>
+                                        <li className='list-item--new'>
+                                            Log and access data, such as user login identifier (email), account role and actions
+                                            performed within the system. This information is recorded automatically for audit, security and
+                                            service-provision purposes;
+                                        </li>
+                                        <li className='list-item--new'>
+                                            Tenant / seller identification data, such as the internal system UUIDs of the client’s
+                                            tenant or sub-tenant accounts used in the whitelabel functionality. These identifiers
+                                            are required to ensure that users can access and manage the correct data sets within
+                                            their respective accounts;
+                                        </li>
                                         <li>Professional data, such as data on education or professional career;</li>
                                         <li>Special category Personal Data, such as data on suitability of a job
                                             vacancy candidate for the position to be held.
@@ -332,6 +350,11 @@ const PrivacyPolicyPage = () => {
                                         </li>
                                     </ol>
                                 </li>
+                                <li className={'list-item--new'}>
+                                    Audit logs and technical data are not shared with third parties except where
+                                    required by law or contract with the main client account holder. They are stored
+                                    within the European Union / EEA data-hosting infrastructure used by {companyName}.
+                                </li>
                                 <li>{companyName} does not regularly or systematically transfer Personal Data to
                                     third countries (countries outside the European Union and the European
                                     Economic Area), however, Personal Data may be processed by Data
@@ -360,6 +383,13 @@ const PrivacyPolicyPage = () => {
                                     period during which {companyName} or the Data Subject may exercise its legitimate
                                     interests (e.g. submit objections and complaints or bring an action).
                                 </li>
+                                <li className={'list-item--new'}>
+                                    Session cookies such as <code>token</code>, <code>userEmail</code> and
+                                    <code>sellers</code> are deleted when the browser session ends. Audit logs containing
+                                    user actions are retained for the minimum period necessary to ensure
+                                    accountability and contractual reporting, normally no longer than 90–180 days, unless
+                                    required longer by law or to resolve incidents.
+                                </li>
                             </ol>
                         </li>
                         {/*10*/}
@@ -373,9 +403,21 @@ const PrivacyPolicyPage = () => {
                         {/*11*/}
                         <li><span className='heading'>Cookies</span>
                             <ol>
-                                <li>{companyName} use cookies on their websites. The cookies used and
-                                    information about them are available in the {companyName} Cookie Policy, which is
-                                    available on the website of the {companyName}.
+                                {/*<li>{companyName} use cookies on their websites. The cookies used and*/}
+                                {/*    information about them are available in the {companyName} Cookie Policy, which is*/}
+                                {/*    available on the website of the {companyName}.*/}
+                                {/*</li>*/}
+                                <li className={'list-item--new'}>
+                                    {companyName} uses cookies and similar technologies on its websites and Electronic
+                                    Commerce System. Essential cookies are required for secure login, permissions,
+                                    and displaying the correct tenant or seller data (e.g., <code>token</code>,
+                                    <code>userStatus</code>, <code>profile_info</code>, <code>sellers</code>).
+                                    Functional cookies improve the user experience (for example, remembering completed
+                                    tutorials or displaying the logged-in account name), and performance cookies
+                                    (Microsoft Clarity) help us understand and improve website usability.
+                                    Optional cookies are used only with the Data Subject’s consent.
+                                    Detailed information about each cookie, its purpose and duration is provided in the
+                                    <a className='is-link' href='/cookie-policy' target='_blank'> Cookie Policy</a>.
                                 </li>
                             </ol>
                         </li>

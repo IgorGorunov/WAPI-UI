@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './styles.scss'
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
@@ -19,6 +19,12 @@ const ProfileDropdown = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [showUserList, setShowUserList] = useState(false);
     const [users, setUsers] = useState<UserType[] | null>(null);
+
+    const [displayedName, setDisplayedName] = useState<string>('user');
+
+    useEffect(() => {
+        setDisplayedName(userName || 'user');
+    }, [userName]);
 
     const router = useRouter();
 
@@ -69,7 +75,7 @@ const ProfileDropdown = () => {
                 <div>
                     <button className='profile-dropdown__user card' onClick={() => setIsOpen(!isOpen)}>
                         {superUser ? <Icon name='admin'/> : <Icon name='user'/>}
-                        <span className='user-name'>{userName}</span>
+                        <span className='user-name'>{displayedName}</span>
                     </button>
                     {isOpen ? (
                         <ul className="profile-dropdown__menu card">

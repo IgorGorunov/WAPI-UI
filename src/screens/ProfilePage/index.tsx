@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import Layout from "@/components/Layout/Layout";
 import "./styles.scss";
-import Head from "next/head";
 import Loader from "@/components/Loader";
 import Header from "@/components/Header";
 import Tabs from "@/components/Tabs";
@@ -9,10 +8,10 @@ import ProfileInfo from "./components/ProfileInfo";
 import ApiProtocols from "./components/ApiProtocols";
 import {ApiProtocolType, UserContractType, UserPriceType, WarehouseInfoType} from "@/types/profile";
 import {getApiProtocols, getUserContracts, getUserPrices, getWarehouseInfo} from "@/services/profile";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes, UserInfoType} from "@/context/authContext";
 import UserContractsAndPrices from "./components/UserContractsAndPrices";
 import WarehouseInfo from "@/screens/ProfilePage/components/WarehouseInfo";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import {getUserProfile, sendUserBrowserInfo} from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 
@@ -24,11 +23,19 @@ const ProfilePage = () => {
     const [pricesData, setPricesData] = useState<UserPriceType[]|null>(null);
     const [contractsData, setContractsData] = useState<UserContractType[]|null>(null);
     const [warehouseInfoData, setWarehouseInfoData] = useState<WarehouseInfoType[]|null>(null);
+    const [profileInfo, setProfileInfo] = useState<UserInfoType|null>(null);
 
     const fetchProfileData = useCallback(async() => {
         try {
             setIsLoading(true);
             const requestData = {token, alias};
+
+            const res = await getUserProfile(superUser && ui ? {...requestData, ui} : requestData);
+            if (res.status === 200) {
+                setProfileInfo(res.data?.userProfile?.userInfo);
+            }
+
+
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocols', AccessObjectTypes["Profile/DeliveryProtocols"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
@@ -106,7 +113,7 @@ const ProfilePage = () => {
                 <div className='card profile-page__container'>
                     <Tabs id='profile-tabs' tabTitles={tabTitles} withHorizontalDivider>
                         <div key='profile-info-tab' className='profile-page-tab'>
-                            <ProfileInfo/>
+                            <ProfileInfo userInfo={profileInfo}/>
                         </div>
                         {apiProtocolsData !==null ? <div key='protocols-tab' className='profile-page-tab'>
                             <ApiProtocols apiProtocols={apiProtocolsData}/>

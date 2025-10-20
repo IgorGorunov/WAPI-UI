@@ -66,7 +66,7 @@ const UserList: React.FC<UserListPropsType> = ({users, onClose}) => {
     }
 
 
-    console.log('%c Users:', filteredUsers, 'color: green');
+    // console.log('%c Users:', filteredUsers, 'color: green');
 
     return (
         <>
