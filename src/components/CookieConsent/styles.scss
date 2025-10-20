@@ -41,9 +41,9 @@
     flex: 0 0 140px;
     fill: var(--color-gray-blue);
 
-    @media (max-width: $upToTablet) {
-      display: none;
-    }
+    //@media (max-width: $upToTablet) {
+    //  display: none;
+    //}
   }
 
   &__text {

@@ -71,17 +71,16 @@ const CookieConsent = () => {
         }
     }, [cookieConsent]);
 
-
-
     useEffect(() => {
-        if (cookieConsentRef?.current && !cookieConsent) {
+        cookieConsentRef?.current
+        if (cookieConsentRef?.current && !cookieConsent?.essential ) {
             const height = cookieConsentRef.current.getBoundingClientRect().height;
             setCookieConsentHeight(height);
         } else {
             setCookieConsentHeight(0)
         }
-        console.log('cookie consent height', cookieConsentHeight);
-    }, [cookieConsent, showCookieSettings]);
+        // console.log('cookie consent height', cookieConsentHeight);
+    }, [cookieConsent, showCookieSettings, showFullCookieBanner]);
 
 
     return (

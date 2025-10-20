@@ -384,8 +384,8 @@ const PrivacyPolicyPage = () => {
                                     interests (e.g. submit objections and complaints or bring an action).
                                 </li>
                                 <li className={'list-item--new'}>
-                                    Session cookies such as <code>token</code>, <code>userEmail</code> and
-                                    <code>sellers</code> are deleted when the browser session ends. Audit logs containing
+                                    Session cookies such as token, userEmail and
+                                    sellers are deleted when the browser session ends. Audit logs containing
                                     user actions are retained for the minimum period necessary to ensure
                                     accountability and contractual reporting, normally no longer than 90–180 days, unless
                                     required longer by law or to resolve incidents.
@@ -410,8 +410,8 @@ const PrivacyPolicyPage = () => {
                                 <li className={'list-item--new'}>
                                     {companyName} uses cookies and similar technologies on its websites and Electronic
                                     Commerce System. Essential cookies are required for secure login, permissions,
-                                    and displaying the correct tenant or seller data (e.g., <code>token</code>,
-                                    <code>userStatus</code>, <code>profile_info</code>, <code>sellers</code>).
+                                    and displaying the correct tenant or seller data (e.g., token,
+                                    userStatus, userEmail, sellers).
                                     Functional cookies improve the user experience (for example, remembering completed
                                     tutorials or displaying the logged-in account name), and performance cookies
                                     (Microsoft Clarity) help us understand and improve website usability.
