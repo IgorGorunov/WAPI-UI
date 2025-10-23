@@ -58,6 +58,7 @@ export const FormFieldsGeneral = ({countries, isNew=false, isAdditionalService=f
             name: 'name',
             label: "Name",
             placeholder: "",
+            maxLength: 75,
             rules: {
                 required: "Required field",
             },
@@ -101,6 +102,7 @@ export const FormFieldsGeneral = ({countries, isNew=false, isAdditionalService=f
             type: "text",
             name: 'fullName',
             label: "Description",
+            maxLength: 250,
             placeholder: "",
             rules: {
                 required: "Required field",
@@ -142,6 +144,7 @@ export const FormFieldsSKU = () => [
             name: 'sku',
             label: "SKU",
             placeholder: "",
+            maxLength: 25,
             rules: {
                 required: "Required field",
             },
