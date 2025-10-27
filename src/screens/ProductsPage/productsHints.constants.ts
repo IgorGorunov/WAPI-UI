@@ -4,7 +4,7 @@ export const ProductHints = {
     purchaseValue: 'Purchase cost',
     fullName: 'Full name of the product. Max length is 250 characters',
     status: "Product's status",
-    sku: 'Stock Keeping Unit (Unique code of the product). Max length is 25 characters.',
+    sku: 'Stock Keeping Unit (Unique code of the product). Max length is 25 characters',
     amazonSku: 'SKU for Amazon',
     hsCode: 'Short for Harmonized Commodity Description and Coding System',
     typeOfStorage: 'Where to keep your products',
