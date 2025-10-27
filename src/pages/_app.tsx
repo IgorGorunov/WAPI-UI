@@ -38,6 +38,22 @@ export function App({ Component, pageProps, tenantHost, host }: AppProps & {tena
   //   }
   // }, []);
   useEffect(() => {
+    // Create a queueing shim if not present
+    (window as any).clarity =
+        (window as any).clarity ||
+        function () {
+          ((window as any).clarity.q = (window as any).clarity.q || []).push(arguments);
+        };
+
+    // Start in denied mode
+    (window as any).clarity("consentv2", {
+      ad_Storage: "denied",
+      analytics_Storage: "denied",
+    });
+  }, []);
+
+
+  useEffect(() => {
     // On first load, read current consent and apply
     const perfAllowed = getPerformanceConsent();
     applyClarityConsent(perfAllowed);

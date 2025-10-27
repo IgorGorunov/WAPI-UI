@@ -151,6 +151,7 @@ const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
                                     <li><strong>_clck</strong> — maintains Clarity user ID and preferences (1 year)</li>
                                     <li><strong>_clsk</strong> — groups multiple page views into a single Clarity session (1 year)</li>
                                     <li><strong>CLID</strong> — identifies the first time Clarity saw this user across sites or domains (1 year)</li>
+                                    <li><strong>MUID</strong> — Identifies unique web browsers visiting Microsoft sites. These cookies are used for advertising, site analytics, and other operational purposes (1 year)</li>
                                 </ul>
                             </p>
                             <p>
