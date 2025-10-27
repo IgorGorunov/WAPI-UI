@@ -10,6 +10,7 @@ import {
     ONLY_ESSENTIAL_CONSENT
 } from "@/components/CookieConsent/index";
 import Cookie from "js-cookie";
+import {removeClarityCookiesForHost} from "@/utils/clarity-consent";
 
 
 const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
@@ -34,6 +35,7 @@ const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
         if (!newConsent?.performance) {
             Cookie.remove('_clck');
             Cookie.remove('_clsk');
+            removeClarityCookiesForHost();
         }
 
         window.dispatchEvent(
