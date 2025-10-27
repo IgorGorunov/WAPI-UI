@@ -7,6 +7,7 @@ import Modal from "@/components/Modal";
 import {ModalTypes} from "@/types/utility";
 import CookieConsentSettings from "@/components/CookieConsent/CookieConsentSettings";
 import Cookie from "js-cookie";
+import {removeClarityCookiesForHost} from "@/utils/clarity-consent";
 
 export type CookieConsentType = {
     essential: boolean;
@@ -55,6 +56,7 @@ const CookieConsent = () => {
         if (!newConsent?.performance) {
             Cookie.remove('_clck');
             Cookie.remove('_clsk');
+            removeClarityCookiesForHost();
         }
 
         window.dispatchEvent(
@@ -76,6 +78,7 @@ const CookieConsent = () => {
             if (!cookieConsent?.performance) {
                 Cookie.remove('_clck');
                 Cookie.remove('_clsk');
+                removeClarityCookiesForHost();
             }
         } else {
             // If unknown/null, keep the banner open
@@ -84,6 +87,7 @@ const CookieConsent = () => {
             //temp
             Cookie.remove('_clck');
             Cookie.remove('_clsk');
+            removeClarityCookiesForHost();
         }
     }, [cookieConsent]);
 

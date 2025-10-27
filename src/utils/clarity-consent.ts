@@ -16,28 +16,49 @@ export function getPerformanceConsent(): boolean {
 
 /** Apply current consent to Clarity (grant or revoke) */
 export function applyClarityConsent(performanceAllowed: boolean) {
-    // If user granted Performance cookies
     if (performanceAllowed) {
-        // 1) Init if needed (safe to call multiple times)
+        // Init only after consent
         if (!clarity.hasStarted()) {
-            clarity.init("mgi3bjcotp");
+            clarity.init('mgi3bjcotp');
         }
-        // 2) Send ConsentV2 (we’re not using ads, so deny ad_Storage)
-        if (typeof window !== "undefined" && (window as any).clarity) {
-            (window as any).clarity("consentv2", {
-                ad_Storage: "denied",
-                analytics_Storage: "granted",
+        // Tell Clarity consent is granted for analytics; ads denied
+        if (typeof window !== 'undefined' && (window as any).clarity) {
+            (window as any).clarity('consentv2', {
+                ad_Storage: 'denied',
+                analytics_Storage: 'granted',
             });
         }
         return;
     }
 
-    // If user denied Performance cookies:
-    // Tell Clarity to erase cookies and remain in no-consent mode
-    if (typeof window !== "undefined" && (window as any).clarity) {
-        (window as any).clarity("consent", false); // clears _clck/_clsk/CLID & ends session
+    // Consent denied: tell Clarity to erase cookies and stay in no-consent mode
+    if (typeof window !== 'undefined' && (window as any).clarity) {
+        (window as any).clarity('consent', false); // clears _clck/_clsk and ends session
     }
-    // Optional: also remove script tag if you inject it elsewhere
-    const tag = document.getElementById("clarity-script");
-    if (tag?.parentNode) tag.parentNode.removeChild(tag);
+    removeClarityCookiesForHost();
+
+    // If a script tag was injected by you somewhere, you may also remove it
+    const tag = document.getElementById('clarity-script');
+    tag?.parentNode?.removeChild(tag);
+}
+
+// utils/cookies.ts
+export function removeClarityCookiesForHost() {
+    try {
+        const host = location.hostname;           // e.g. "ui.wapi.com"
+        const apex = host.replace(/^[^.]+(\.|$)/, '.'); // ".wapi.com" (handles multi-tenant subdomains)
+
+        // Try both with and without explicit domain (covers both cases)
+        const optsList = [
+            { path: '/', domain: apex },
+            { path: '/' },
+        ];
+
+        ['_clck', '_clsk'].forEach((name) => {
+            optsList.forEach((opts) => {
+                // @ts-ignore
+                Cookie.remove(name, opts);
+            });
+        });
+    } catch {/* noop */}
 }

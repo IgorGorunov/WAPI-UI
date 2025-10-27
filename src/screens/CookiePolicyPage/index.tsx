@@ -214,6 +214,12 @@ const CookiePolicyPage = () => {
                             <td>Used by Microsoft Clarity. Identifies the first time Clarity saw this user across sites or domains.</td>
                             <td>1 year</td>
                         </tr>
+                        <tr>
+                            <td>MUID</td>
+                            <td>Performance</td>
+                            <td>Used by Microsoft Clarity. Identifies unique web browsers visiting Microsoft sites. These cookies are used for advertising, site analytics, and other operational purposes.</td>
+                            <td>1 year</td>
+                        </tr>
                         </tbody>
                     </table>
                     <p className='text-bold'>Managing your cookies </p>
