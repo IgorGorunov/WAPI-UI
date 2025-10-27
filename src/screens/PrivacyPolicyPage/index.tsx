@@ -539,7 +539,7 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                     </ol>
-                    <p className='validity-date'>This document is valid as of 10th of May 2024.</p>
+                    <p className='validity-date'>This document is valid as of the 27th of October 2025.</p>
                     {/*<p>This Cookie Policy explains how we use cookies and similar tracking technologies when you visit*/}
                     {/*    our website <Link className='is-link' href='/'>https://ui.wapi.com</Link>. By continuing to browse the site, you are agreeing to our use*/}
                     {/*    of cookies as outlined in this policy.</p>*/}
