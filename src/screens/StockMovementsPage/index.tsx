@@ -25,7 +25,6 @@ import {
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
-import Head from "next/head";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 
@@ -69,7 +68,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     const Router = useRouter();
     const { tenantData: { alias }} = useTenant();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
 
     useEffect(() => {
         if (!token) Router.push(Routes.Login);
@@ -85,7 +84,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
 
     }, [Router.query]);
 
-    const today = currentDate;
+    const today = new Date();
     const firstDay = getLastFewDays(today, 30);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 

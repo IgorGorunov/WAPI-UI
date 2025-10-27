@@ -27,7 +27,7 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
     const [watchedPages, setWatchedPages] = useState( Cookie.get('tutorialData') ? Cookie.get('tutorialData').split(';') : [])
     const [runTour, setRunTour] = useState(false);
 
-    const {token, superUser} = useAuth();
+    const {token, superUser, cookieConsent} = useAuth();
 
     useEffect(() => {
         setWatchedPages(Cookie.get('tutorialData') ? Cookie.get('tutorialData').split(';') : []);
@@ -50,6 +50,8 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
     }
 
     const setTutorialAsWatched = (page: TourGuidePages) => {
+        if (!cookieConsent?.functional) return null; //no consent, we do not set tutorial as watched
+
         if (page === 'Lead') {
             setLeadTutorialAsWatched();
         } else if (!isTutorialWatchedForChecking(page)) {
@@ -68,6 +70,7 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
         if (superUser) {
             return true;
         }
+        if (!cookieConsent?.functional) return null; //no consent, we do not set tutorial as watched
 
         return watchedPages.length > 1 || watchedPages.filter(item => item===TourGuidePages.Navigation).length > 0;
     }
@@ -86,6 +89,7 @@ export const TourGuideProvider = (props: PropsWithChildren) => {
         return !!Cookie.get('WAPI_lead_tutorial');
     }
     const setLeadTutorialAsWatched = () => {
+        if (!cookieConsent?.functional) return null; //no consent, we do not set tutorial as watched
         Cookie.set('WAPI_lead_tutorial', 'true', {expires: 30});
     }
 

@@ -485,6 +485,14 @@ input[type="date"]::before {
   }
 }
 
+.list-with-discs {
+  margin-bottom: 16px;
+  list-style: disc;
+  margin-left: 24px;
+
+
+}
+
 .error-message {
   //margin-top: 6px;
   padding: 0 5px;
@@ -591,3 +599,10 @@ input[type="date"]::before {
       opacity: 1;
     }
   }
+
+
+  //temporary
+.list-item--new {
+  //background-color: palegoldenrod;
+
+}

@@ -5,7 +5,8 @@ import { AuthProvider } from "@/context/authContext";
 import "@/styles/globals.scss";
 import {NotificationsProvider} from "@/context/notificationContext";
 import {TourGuideProvider} from "@/context/tourGuideContext";
-import { clarity } from 'react-microsoft-clarity';
+// import { clarity } from 'react-microsoft-clarity';
+import { applyClarityConsent, getPerformanceConsent } from '@/utils/clarity-consent';
 import {useEffect, useState} from "react";
 import {HintsTrackingProvider} from "@/context/hintsContext";
 import {getTenantData, TENANT_TYPE, TenantDataType, TENANTS, tenants} from '@/lib/tenants';
@@ -31,10 +32,27 @@ export function App({ Component, pageProps, tenantHost, host }: AppProps & {tena
 
   // console.log("tenant", host, tenantHost);
 
+  // useEffect(() => {
+  //   if (!clarity.hasStarted()) {
+  //     clarity.init('mgi3bjcotp');
+  //   }
+  // }, []);
   useEffect(() => {
-    if (!clarity.hasStarted()) {
-      clarity.init('mgi3bjcotp');
-    }
+    // On first load, read current consent and apply
+    const perfAllowed = getPerformanceConsent();
+    applyClarityConsent(perfAllowed);
+
+    // Listen for consent updates coming from your Cookie banner/modal
+    const onConsent = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent<{ performance: boolean }>).detail;
+        if (typeof detail?.performance === "boolean") {
+          applyClarityConsent(detail.performance);
+        }
+      } catch { /* noop */ }
+    };
+    window.addEventListener("clarity-consent", onConsent);
+    return () => window.removeEventListener("clarity-consent", onConsent);
   }, []);
 
   useEffect(() => {

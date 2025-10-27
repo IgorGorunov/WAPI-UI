@@ -31,9 +31,9 @@ import SeoHead from "@/components/SeoHead";
 
 const TicketsPage = () => {
     const { tenantData: { alias }} = useTenant();
-    const {token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
+    const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
 
-    const today = currentDate;
+    const today = new Date();
     const firstDay = getLastFewDays(today, 30);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType >({startDate: firstDay, endDate: today})
 

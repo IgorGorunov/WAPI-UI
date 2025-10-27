@@ -117,6 +117,7 @@ import Package from '@/assets/icons/package.svg';
 import PackageReturn from '@/assets/icons/package-return.svg';
 import Marketplace from '@/assets/icons/shop-icon.svg';
 import Whitelabel from '@/assets/icons/whitelabel.svg';
+import Cookie from '@/assets/icons/cookie.svg';
 
 export const icons = {
   "arrow-left": ArrowLeft,
@@ -236,6 +237,7 @@ export const icons = {
   'package-return': PackageReturn,
   'marketplace': Marketplace,
   'whitelabel': Whitelabel,
+  'cookie': Cookie,
 };
 
 export type IconType = keyof typeof icons;

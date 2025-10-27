@@ -2,8 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import { Icon } from "../Icon";
 import "./styles.scss";
 import {DateRangeType} from "@/types/dashboard";
-import Datepicker from "@/components/Datepicker"
-import useAuth from "@/context/authContext";
+import Datepicker from "@/components/Datepicker";
 import {formatDateToDisplayString} from "@/utils/date";
 import useOutsideClick from "@/hooks/useOutsideClick";
 
@@ -13,7 +12,8 @@ type DateInputType = {
     handleRangeChange: (periodRange: DateRangeType) => void
 }
 const DateInput: React.FC<DateInputType> = ({currentRange, handleRangeChange}) => {
-    const {currentDate} = useAuth();
+    // const {currentDate} = useAuth();
+    const currentDate = new Date();
     const [curRange, setCurRange] = useState<DateRangeType>(currentRange ? currentRange : {startDate: currentDate, endDate: currentDate});
     const [showDateInput, setShowDateInput] = useState(false);
     const handleDateInputClick = () => {

@@ -26,7 +26,7 @@ import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 const CodReportsPage = () => {
     const { tenantData: { alias }} = useTenant();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
     const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType|null>(null);
     const [CODIndicatorsBySeller, setCODIndicatorsBySeller] = useState<CODIndicatorsType|null>(null);
@@ -36,7 +36,7 @@ const CodReportsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     //period
-    const today = currentDate;
+    const today = new Date();
     const firstDay = getLastFewDays(today, 30);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today});
 

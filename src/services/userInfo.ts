@@ -1,5 +1,7 @@
 import axios from 'axios';
+import {api} from "@/services/api";
 
+// const LOGGING_URL = 'https://api.wapi.com/UILOG/hs/v1/UI/WriteLog';
 const LOGGING_URL = 'https://api.wapi.com/UILOG/hs/v1/UI/WriteLog'
 
 export type LocationType = {
@@ -58,6 +60,26 @@ export async function sendUserBrowserInfo(dataToSend: SendUserBrowserInfoType): 
         //console.error('Error sending data to backend:', error);
     }
 }
+
+export const getUserProfile = async (
+    data: {
+        token: string;
+        alias: string;
+        ui?: string;
+    }
+) => {
+    try {
+        const response: any = await api.post(
+            `/GetUserProfile`,
+            data
+        );
+
+        return response;
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
+};
 
 // // Call the function to gather and send user info
 // sendUserInfoToBackend();

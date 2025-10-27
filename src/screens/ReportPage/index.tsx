@@ -55,7 +55,7 @@ type ReportPagePropType = {
 const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
     const Router = useRouter();
     const { tenantData: { alias }} = useTenant();
-    const { token, currentDate, getToken, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
+    const { token, getToken, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
     useEffect(() => {
         if (!getToken()) Router.push(Routes.Login);
@@ -79,7 +79,7 @@ const ReportPage:React.FC<ReportPagePropType> = ({reportType}) => {
         }
     }, [isLoading]);
 
-    const today = currentDate;
+    const today = new Date();
     const firstDay = getLastFewDays(today, 30);
     const [currentRange, setCurrentRange] = useState<DateRangeType>({startDate: firstDay, endDate: today})
 

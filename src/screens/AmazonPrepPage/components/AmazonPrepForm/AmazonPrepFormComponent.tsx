@@ -71,8 +71,9 @@ const getBoxesAmount = (quantityOld :number, quantityBoxOld: number, quantityNew
 
 const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({amazonPrepOrderParameters, amazonPrepOrderData, docUuid, closeAmazonPrepOrderModal, refetchDoc, forbiddenTabs}) => {
     const { tenantData: { alias, orderTitles }} = useTenant();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
     const {notifications} = useNotifications();
+    const currentDate = new Date();
 
     const [isDisabled, setIsDisabled] = useState(!!docUuid);
     const [isLoading, setIsLoading] = useState(false);

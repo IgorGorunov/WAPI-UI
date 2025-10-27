@@ -32,7 +32,7 @@ import {isTabAllowed} from "@/utils/tabs";
 const OrdersPage = () => {
     const Router = useRouter();
     const { tenantData: { alias, orderTitles }} = useTenant();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
 
     const [current, setCurrent] = React.useState(1);
 
@@ -61,7 +61,7 @@ const OrdersPage = () => {
         //         return;
         //     }
         // }
-        const today = currentDate;
+        const today = new Date();
         const firstDay = getLastFewDays(today, 5);
         setCurrentPeriod({startDate: firstDay, endDate: today});
     }, []);

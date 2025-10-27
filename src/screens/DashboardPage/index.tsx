@@ -37,13 +37,13 @@ import {OptionType} from "@/types/forms";
 const DashboardPage: React.FC = () => {
   const { tenantData } = useTenant();
   const alias = tenantData?.alias;
-  const { token, currentDate, isAuthorizedUser, getBrowserInfo ,superUser, ui, isActionIsAccessible, isNavItemAccessible, needSeller, sellersList } = useAuth();
+  const { token, isAuthorizedUser, getBrowserInfo ,superUser, ui, isActionIsAccessible, isNavItemAccessible, needSeller, sellersList } = useAuth();
+
+  const currentDate = new Date();
 
   useEffect(() => {
     if (!isAuthorizedUser) Router.push(Routes.Login);
   }, [token]);
-
-
 
   const [selectedSeller, setSelectedSeller] = useState<string | null>(null);
   const [sellersOptions, setSellersOptions] = useState<OptionType[]>([]);

@@ -1,17 +1,19 @@
 import React, {useEffect, useState} from "react";
 
 import "./styles.scss";
-import useAuth, {AccessActions, AccessObjectTypes, USER_TYPES} from "@/context/authContext";
+import useAuth, {AccessActions, AccessObjectTypes, USER_TYPES, UserInfoType} from "@/context/authContext";
 import Icon from "@/components/Icon";
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal";
 import ChangePasswordBlock from "./ChangePasswordBlock";
 
-const ProfileInfo: React.FC = () => {
+type ProfileInfoPropsType = {
+    userInfo: UserInfoType
+}
 
-    const {userInfo, isActionIsAccessible, userType} = useAuth();
+const ProfileInfo: React.FC<ProfileInfoPropsType> = ({userInfo}) => {
 
-    console.log('userType in profile: ', userType, typeof userType, userType === USER_TYPES.SELLER)
+    const { isActionIsAccessible, userType } = useAuth();
 
     const [showPasswordModal, setShowPasswordModal] = useState(false);
 

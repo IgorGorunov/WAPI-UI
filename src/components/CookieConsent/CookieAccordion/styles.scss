@@ -1,0 +1,135 @@
+.cookie-accordion-item {
+  width: 100%;
+  position: relative;
+  padding-top: 6px;
+  //overflow: hidden;
+  //transition: .3s ease;
+
+  //&.is-active {
+  //  overflow: initial;
+  //}
+
+  &__title {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    //align-items: center;
+    //justify-content: space-between;
+    width: 100%;
+    padding: 8px 16px 8px 28px;
+    background-color: transparent;
+    border: none;
+    color: var(--color-gray);
+    white-space: break-spaces;
+
+    &-wrapper {
+      text-align: start;
+    }
+
+    &-text {
+      padding-right: 60px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: normal;
+      display: flex;
+      align-items: center;
+
+      &.no-toggle {
+        padding-right: 85px;
+      }
+
+      &__amount {
+        font-size: 10px;
+        color: var(--color-white);
+        background-color: var(--color-gray-blue);
+        margin-left: 8px;
+        padding: 2px 5px;
+        border-radius: 50%;
+
+        &.checked {
+          background-color: var(--color-blue);
+        }
+
+      }
+
+      .title-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 6px;
+      }
+    }
+
+
+
+
+
+    &-icon {
+      position: absolute;
+      top: 2px;
+      left: -5px;
+      margin-right: auto;
+      transform: rotate(180deg);
+      transition: all 0.5s ease-in;
+
+      &.active {
+        transform: rotate(0deg);
+      }
+
+      .extra-actions & {
+        margin-left: 0;
+      }
+    }
+
+    .extra-actions & {
+      justify-content: normal;
+    }
+  }
+
+  &__content {
+    padding: 16px 16px 6px;
+    margin-bottom: 16px;
+    background-color: var(--color-gray2);
+    border-radius: 8px;
+
+    &-wrapper {
+      padding-left: 28px;
+
+      border-bottom: 2px solid var(--border-color);
+      transition: max-height 0.3s ease-in;
+      overflow: hidden;
+
+      .deactivated & {
+        overflow: hidden;
+      }
+
+      .is-active & {
+        overflow: initial;
+      }
+
+      .extra-actions & {
+        background-color: transparent;
+      }
+    }
+
+    .extra-actions & {
+      padding: 8px 16px;
+    }
+  }
+
+  &.extra-actions {
+    margin-bottom: -16px;
+  }
+
+  &__title-toggle {
+    position: absolute;
+    top: 4px;
+    right: 0;
+
+    &-title {
+      padding-top: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      color: darkgreen;
+    }
+  }
+}

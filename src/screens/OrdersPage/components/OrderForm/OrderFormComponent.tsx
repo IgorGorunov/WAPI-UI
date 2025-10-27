@@ -89,7 +89,8 @@ const getCorrectNotifications = (record: SingleOrderType, notifications: Notific
 const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal, forbiddenTabs}) => {
     const {notifications} = useNotifications();
     const { tenantData: { alias, orderTitles }} = useTenant();
-    const { token, currentDate, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
+    const currentDate = new Date();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
