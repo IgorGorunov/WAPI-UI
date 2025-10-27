@@ -31,6 +31,11 @@ const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
             Cookie.remove('visited-inbounds-number');
         }
 
+        if (!newConsent?.performance) {
+            Cookie.remove('_clck');
+            Cookie.remove('_clsk');
+        }
+
         window.dispatchEvent(
             new CustomEvent(CLARITY_CONSENT_EVENT, {
                 detail: { performance: newConsent?.performance || false },
