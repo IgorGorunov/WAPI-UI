@@ -52,6 +52,11 @@ const CookieConsent = () => {
             Cookie.remove('visited-inbounds-number');
         }
 
+        if (!newConsent?.performance) {
+            Cookie.remove('_clck');
+            Cookie.remove('_clsk');
+        }
+
         window.dispatchEvent(
             new CustomEvent(CLARITY_CONSENT_EVENT, {
                 detail: { performance: newConsent?.performance || false },
@@ -61,13 +66,24 @@ const CookieConsent = () => {
         setShowFullCookieBanner(false);
     }, []);
 
+
     //get cookies
     useEffect(() => {
         if (cookieConsent) {
             setShowFullCookieBanner(!cookieConsent?.essential);
+
+            //temp
+            if (!cookieConsent?.performance) {
+                Cookie.remove('_clck');
+                Cookie.remove('_clsk');
+            }
         } else {
             // If unknown/null, keep the banner open
             setShowFullCookieBanner(true);
+
+            //temp
+            Cookie.remove('_clck');
+            Cookie.remove('_clsk');
         }
     }, [cookieConsent]);
 
