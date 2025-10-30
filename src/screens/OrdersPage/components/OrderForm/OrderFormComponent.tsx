@@ -434,7 +434,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
             sellersProducts = selectedSeller ? sellersProducts.filter(item=>item.seller===selectedSeller) : [];
         }
 
-        return sellersProducts.map((item)=> ({label: `${item.name}`, value: item.uuid}));
+        return sellersProducts.map((item)=> ({label: `${item.name}`, value: item.uuid, extraSearch: item.sku}));
 
     },[orderParameters, selectedSeller]);
 

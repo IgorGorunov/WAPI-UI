@@ -300,7 +300,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({docType, d
             sellersProducts = selectedSeller ? sellersProducts.filter(item=>item.seller===selectedSeller) : [];
         }
 
-        return sellersProducts.map((item)=> ({label: `${item.name}`, value: item.uuid}));
+        return sellersProducts.map((item)=> ({label: `${item.name}`, value: item.uuid, extraSearch: item.sku}));
 
     },[docParameters, selectedSeller]);
 

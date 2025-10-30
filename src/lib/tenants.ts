@@ -90,7 +90,7 @@ export const tenantsData = {
             logoWidth: 200,
             logoHeight: 100,
             copyright:  'all rights reserved by – WAPI OÜ',
-            address: 'Kadaka tee 7, Mustamae linnaosa, Tallinn, 12915 Estonia WAPI OÜ, Reg no. 14699305',
+            address: 'Laki poik 4, Mustamäe linnaosa, 12919, Tallinn, Estonia WAPI OÜ, Reg no. 14699305',
         },
         mainWebsite: 'https://wapi.com',
         uiLink: 'https://ui.wapi.com',
@@ -144,6 +144,6 @@ export const tenantsData = {
 }
 
 export const getTenantData = (tenant: TENANT_TYPE): TenantDataType => {
-    console.log('tenant data: ', tenant, tenantsData[tenant], '--', tenantsData);
+    // console.log('tenant data: ', tenant, tenantsData[tenant], '--', tenantsData);
     return tenantsData[tenant] || null;
 }

@@ -59,6 +59,16 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
         );
     };
 
+    const filterOption = (option: { label: string; value: string; data: OptionType }, rawInput: string) => {
+        const input = rawInput.trim().toLowerCase();
+        if (!input) return true;
+
+        const label = (option.label ?? '').toLowerCase();
+        const extra = (option.data.extraSearch ?? '').toLowerCase();
+
+        return label.includes(input) || extra.includes(input);
+    };
+
     const filteredOptions = options.filter((option) => option.value === value);
     const selectedOption = filteredOptions.length > 0 ? filteredOptions[0] : null;
 
@@ -82,6 +92,9 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(({
                     instanceId={`select-${name}`}
                     isClearable={isClearable}
                     aria-autocomplete='none'
+
+                    isSearchable={isSearchable}
+                    filterOption={filterOption}
                     //ref={ref}
                     //inputProps={{autoComplete: 'off', autoCorrect: 'off', spellCheck: 'off' }}
                     //formatGroupLabel={ CustomValueContainer }
