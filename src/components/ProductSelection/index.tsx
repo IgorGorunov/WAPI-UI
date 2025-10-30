@@ -122,6 +122,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
         return  uniqueProducts.map(uuid => ({
             value: uuid,
             label: productList.filter(item => item.uuid === uuid)[0].name,
+            extraSearch: productList.filter(item => item.uuid === uuid)[0].sku,
         }));
     },[productList]);
 
