@@ -31,7 +31,7 @@ type ChatFileType = {
     name?: string;
 }
 
-const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, showEmojiPicker, setShowEmojiPicker, canEdit}) => {
+const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, canEdit}) => {
     const { tenantData: { alias }} = useTenant();
     const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
 
@@ -123,12 +123,14 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         setUserInput('');
     }
 
-    const handleFiles = () => {
-
-    }
+    // const handleFiles = () => {
+    //
+    // }
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-        const items = e.clipboardData?.items;
+        console.log("event: ",e);
+        e.preventDefault();
+        const items = e?.clipboardData?.items;
         if (!items || !canEdit) return;
 
         const newFiles: ChatFileType[] = [];
@@ -196,14 +198,14 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         setSelectedFile(null);
     };
 
-    const onAddEmoji = (emoji: string) => {
-        const cursorPos = inputRef.current.selectionStart;
-        const textBeforeCursor = userInput.substring(0, cursorPos);
-        const textAfterCursor = userInput.substring(cursorPos);
-        setUserInput(textBeforeCursor + emoji + textAfterCursor);
-        inputRef.current.focus();
-        inputRef.current.selectionStart = cursorPos + emoji.length;
-    }
+    // const onAddEmoji = (emoji: string) => {
+    //     const cursorPos = inputRef.current.selectionStart;
+    //     const textBeforeCursor = userInput.substring(0, cursorPos);
+    //     const textAfterCursor = userInput.substring(cursorPos);
+    //     setUserInput(textBeforeCursor + emoji + textAfterCursor);
+    //     inputRef.current.focus();
+    //     inputRef.current.selectionStart = cursorPos + emoji.length;
+    // }
 
     //const [showEmojiPicket, setShowEmojiPicker] = useState(false);
 
