@@ -40,7 +40,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
     const [isLoading, setIsLoading] = useState(false)
     const [userInput, setUserInput] = useState('');
-    const [files, setFiles] = useState<ChatFileType[]>(null);
+    const [files, setFiles] = useState<ChatFileType[]>([]);
     const [selectedFile, setSelectedFile] = useState<ChatFileType|null>(null);
 
     const AllowedFileExtensions = ['txt', 'xls', 'xlsx', 'doc', 'docx'];
@@ -111,7 +111,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
             const res: ApiResponseType = await sendTicketMessage(superUser && ui ? {...requestData, ui} : requestData);
             if (res.status === 200) {
                 onSendMessage();
-                setFiles(null);
+                setFiles([]);
             }
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -155,7 +155,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
             }
         }
 
-        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+        setFiles((prevFiles) => [...(prevFiles ?? []), ...newFiles]);
 
     };
 
