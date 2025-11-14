@@ -37,6 +37,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const dropRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [isLoading, setIsLoading] = useState(false)
     const [userInput, setUserInput] = useState('');
@@ -59,6 +60,45 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
     useEffect(() => {
         setFiles([]);
     }, []);
+
+    const processFiles = (incomingFiles: File[]) => {
+        if (!canEdit) return;
+
+        const newFiles: ChatFileType[] = [];
+
+        for (let i = 0; i < incomingFiles.length; i++) {
+            const file = incomingFiles[i];
+
+            if (file.type.startsWith('image')) {
+                const imageUrl = URL.createObjectURL(file);
+                newFiles.push({
+                    file,
+                    fileType: CHAT_FILE_TYPES.IMAGE,
+                    imgSrc: imageUrl,
+                });
+            } else if (file.type === 'application/pdf') {
+                const pdfUrl = URL.createObjectURL(file);
+                newFiles.push({
+                    file,
+                    fileType: CHAT_FILE_TYPES.PDF,
+                    imgSrc: pdfUrl,
+                });
+            } else {
+                if (!isFileAllowed(file.name)) {
+                    setShowFileTypeError(true);
+                    continue;
+                }
+                newFiles.push({
+                    file,
+                    fileType: CHAT_FILE_TYPES.OTHER,
+                });
+            }
+        }
+
+        if (newFiles.length) {
+            setFiles(prevFiles => [...(prevFiles ?? []), ...newFiles]);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement> | string) => {
         if (typeof e === 'string' || e instanceof String) {
@@ -128,35 +168,22 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
     // }
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-        console.log("event: ",e);
         e.preventDefault();
-        const items = e?.clipboardData?.items;
-        if (!items || !canEdit) return;
+        if (!canEdit) return;
 
-        const newFiles: ChatFileType[] = [];
+        const items = e.clipboardData?.items;
+        if (!items) return;
 
+        const files: File[] = [];
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
             if (item.kind === 'file') {
                 const file = item.getAsFile();
-                if (!file) continue;
-                e.preventDefault();
-                //newFiles.push(file);
-                if (file.type.startsWith('image')) {
-                    const imageUrl = URL.createObjectURL(file);
-                    newFiles.push({file: file, fileType: CHAT_FILE_TYPES.IMAGE, imgSrc: imageUrl} as ChatFileType)
-                } else if ((file.type === 'application/pdf')) {
-                    const pdfUrl = URL.createObjectURL(file);
-                    newFiles.push({file: file, fileType: CHAT_FILE_TYPES.PDF, imgSrc: pdfUrl} as ChatFileType)
-                } else {
-                    if (!isFileAllowed(file.name)) { setShowFileTypeError(true); continue;}
-                    newFiles.push({file: file, fileType: CHAT_FILE_TYPES.OTHER} as ChatFileType)
-                }
+                if (file) files.push(file);
             }
         }
 
-        setFiles((prevFiles) => [...(prevFiles ?? []), ...newFiles]);
-
+        processFiles(files);
     };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -164,24 +191,17 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         if (!canEdit) return;
 
         const droppedFiles = Array.from(e.dataTransfer.files);
-        const newFiles: ChatFileType[] = [];
+        processFiles(droppedFiles);
+    };
 
-        for (let i = 0; i < droppedFiles.length; i++) {
-            const file = droppedFiles[i];
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const fileList = e.target.files;
+        if (!fileList) return;
 
-            if (file.type.startsWith('image')) {
-                const imageUrl = URL.createObjectURL(file);
-                newFiles.push({file: file, fileType: CHAT_FILE_TYPES.IMAGE, imgSrc: imageUrl} as ChatFileType)
-            } else if ((file.type === 'application/pdf')) {
-                const pdfUrl = URL.createObjectURL(file);
-                newFiles.push({file: file, fileType: CHAT_FILE_TYPES.PDF, imgSrc: pdfUrl} as ChatFileType)
-            } else {
-                if (!isFileAllowed(file.name)) { setShowFileTypeError(true); continue;}
-                newFiles.push({file: file, fileType: CHAT_FILE_TYPES.OTHER} as ChatFileType)
-            }
-        }
+        const filesArray = Array.from(fileList);
+        processFiles(filesArray);
 
-        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+        e.target.value = '';
     };
 
     const removeFile = (index: number) => {
@@ -198,21 +218,25 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         setSelectedFile(null);
     };
 
-    // const onAddEmoji = (emoji: string) => {
-    //     const cursorPos = inputRef.current.selectionStart;
-    //     const textBeforeCursor = userInput.substring(0, cursorPos);
-    //     const textAfterCursor = userInput.substring(cursorPos);
-    //     setUserInput(textBeforeCursor + emoji + textAfterCursor);
-    //     inputRef.current.focus();
-    //     inputRef.current.selectionStart = cursorPos + emoji.length;
-    // }
-
-    //const [showEmojiPicket, setShowEmojiPicker] = useState(false);
-
     return (
         <div className="send-message-block" ref={dropRef} onDrop={handleDrop}>
             {isLoading && <Loader/>}
+            <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                multiple
+                onChange={handleFileInputChange}
+            />
             <div className='send-message-block__text-block'>
+                <button
+                    type='button'
+                    className={`add-file__btn`}
+                    disabled={!canEdit}
+                    onClick={() => fileInputRef.current?.click()}
+                >
+                    <Icon name={'files'}/>
+                </button>
                 <textarea
                     className={`send-message__input`}
                     name={'chat-message-input'}

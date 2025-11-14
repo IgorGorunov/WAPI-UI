@@ -1,6 +1,7 @@
 .send-message {
   &-block {
-    padding: 8px 24px;
+    padding: 8px 24px 8px 36px;
+
     &__text-block {
       position: relative;
 
@@ -27,6 +28,19 @@
       }
 
 
+    }
+
+    .add-file__btn {
+      position: absolute;
+      top: 50%;
+      left: -32px;
+      transform: translateY(-50%);
+
+      &:disabled {
+        svg path {
+          fill: var(--color-light-blue-gray);
+        }
+      }
     }
     .image-preview {
       position: absolute;
