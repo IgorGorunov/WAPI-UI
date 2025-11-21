@@ -23,7 +23,6 @@ import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
-
 type ProductListType = {
     products: ProductStockType[];
     setFilteredProducts: React.Dispatch<React.SetStateAction<ProductStockType[]>>;
@@ -44,6 +43,18 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             uuid: hoveredReserve.uuid,
             title: stockItem.document,
             description: stockItem.reserved,
+        }));
+    },[]);
+
+    const getOnShippingPopupItems = useCallback((hoveredOnShipping: ProductStockType)=> {
+        if (!hoveredOnShipping) return [];
+
+        return hoveredOnShipping.onShippingRows.map(stockItem => ({
+            uuid: hoveredOnShipping.uuid,
+            title: `${stockItem.type} ${stockItem.number}`,
+            description: stockItem.onshipping,
+            docUuid: stockItem.uid,
+            docType: stockItem.type,
         }));
     },[]);
 
@@ -287,9 +298,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             render: (text: string) => (
                <TableCell
                     minWidth="15px"
-                    maxWidth="15px"
+                    maxWidth="auto"
                     contentPosition="center"
-                    childrenBefore={<span className={`fi fi-${text.toLowerCase()} "flag-icon"`}></span>}>
+                    childrenBefore={<span className={`fi fi-${text.toLowerCase()} flag-icon`}></span>}>
                </TableCell>
             ),
             dataIndex: 'country',
@@ -425,8 +436,25 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         },
         {
             title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products currently in transit in stock movements"><span>On shipping</span></Tooltip>}/>,
-            render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+            render: (text: string, record: ProductStockType) => (
+                <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
+                           childrenBefore={
+                               <Popover
+                                   content={record.onShipping ? <SimplePopup
+                                       items={getOnShippingPopupItems(record)}
+                                       width={300}
+                                       hasCopyBtn={true}
+                                       needScroll={true}
+                                   /> : null}
+                                   trigger={isTouchDevice ? 'click' : 'hover'}
+                                   placement="left"
+                                   overlayClassName="doc-list-popover"
+                               >
+                            <span style={{width: curWidth}} className="products-cell-style">{text} <Icon
+                                name="info"/></span>
+                               </Popover>
+                           }
+                />
             ),
             dataIndex: 'onShipping',
             key: 'onShipping',

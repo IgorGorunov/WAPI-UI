@@ -6,6 +6,9 @@
     margin-left: 10px;
     margin-bottom: 20px;
     padding: 0 15px;
+    background-color: transparent;
+    transition: background-color 0.5s ease;
+    border-radius: 10px;
 
     .nav-arrow-icon {
       margin-left: auto;
@@ -17,11 +20,9 @@
       align-items: flex-start;
       align-self: stretch;
       border-radius: 10px;
-      background: var(--white-white, #FFF);
+      background-color: var(--color-white);
       box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
       margin-bottom: 25px;
-      //margin-right: 10px;
-      //margin-left: 10px;
       padding-bottom: 15px;
 
       .submenu-header {
@@ -32,13 +33,6 @@
         .nav-arrow-icon {
           transform: rotate(0deg);
         }
-      }
-
-      .submenu-items {
-        opacity: 1;
-        transform: translateY(0);
-        height: auto;
-        visibility: visible;
       }
     }
   }
@@ -53,14 +47,26 @@
     font-size: 13px;
     font-weight: 700;
     width: 100%;
-    transition: color 0.3s ease, font-size 0.3s ease;
+    transition: color 0.3s ease;
+
+
+    &__text {
+      font-size: 13px;
+      letter-spacing: 0.1px;
+      transition: color 0.3s ease, letter-spacing 0.3s ease;
+    }
+
+
     &:hover {
       color: var(--color-blue);
-      font-size: 14px;
+
+      .submenu-header__text {
+        letter-spacing: 0.8px;
+      }
     }
 
     .nav-arrow-icon {
-      transform: rotate(180deg);
+      transform: rotate(90deg);
       transition: all 0.3s ease-in;
     }
   }
@@ -75,16 +81,17 @@
     font-size: 13px;
     font-weight: 700;
     width: 100%;
+    max-height: 0;
     opacity: 0;
-    transform: translateY(-20px);
-    height: 0;
-    visibility: hidden;
-    transition:  all 0.5s ease-in-out, opacity 0.5s, transform 0.5s;
+    transform: translateY(-12px);
+    pointer-events: none;
+    transition:  all 0.3s ease;
 
-    &.anim {
+    &-open {
+      max-height: 500px;
       opacity: 1;
       transform: translateY(0);
-      visibility: visible;
+      pointer-events: auto;
     }
   }
 
@@ -95,11 +102,13 @@
     width: 100%;
     padding: 0 10px;
     height: 40px;
-    transition: color 0.3s ease, font-size 0.3s ease;
+    letter-spacing: .1px;
+    transition: color 0.3s ease, letter-spacing 0.3s ease;
 
     &:hover {
       color: var(--color-blue);
-      font-size: 14px;
+      letter-spacing: .8px;
+      //font-size: 14px;
     }
   }
 

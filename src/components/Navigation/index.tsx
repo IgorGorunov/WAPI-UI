@@ -12,6 +12,7 @@ import {TourGuidePages} from "@/types/tourGuide";
 import useAuth from "@/context/authContext";
 import useNotifications from "@/context/notificationContext";
 import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import {usePathname} from "next/navigation";
 
 type NavigationType = {
     isMenuOpen: boolean;
@@ -32,7 +33,16 @@ const getTicketsWithUnreadMessages = (notifications: NotificationType[]) => {
 const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
     const {isNavItemAccessible} = useAuth();
     const {notifications} = useNotifications();
+    const pathname = usePathname();
     const [amountOfTicketsWithUnreadMessages, setAmountOfTicketsWithUnreadMessages] = useState(getTicketsWithUnreadMessages(notifications));
+
+
+    // Close menu whenever route changes
+    useEffect(() => {
+        if (isMenuOpen) {
+            handleClose();
+        }
+    }, [pathname]);
 
     useEffect(() => {
         setAmountOfTicketsWithUnreadMessages(getTicketsWithUnreadMessages(notifications))
@@ -73,7 +83,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                         <Icon name="close" style={{width: "30px", height: "30px"}} />
                     </button>
                     <div className='dashboard-menu-link'>
-                        <Link href="/" className="button-link" passHref onClick={handleClose}>
+                        <Link href="/" className="button-link" passHref >
                             <Icon name="home" className="icon-home"/>
                             <span style={{marginLeft: "20px"}}>Dashboard</span>
                         </Link>
@@ -83,7 +93,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
                             {navBlock.submenuLink && !navBlock.navItems.length ?
                                 <SubmenuSingleItem {...navBlock}/>
                                 :
-                                <SubmenuBlock {...navBlock} handleClose={handleClose} />
+                                <SubmenuBlock {...navBlock} />
                             }
                         </div>) : null
                     ))  : null}

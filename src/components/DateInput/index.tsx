@@ -45,7 +45,11 @@ const DateInput: React.FC<DateInputType> = ({currentRange, handleRangeChange}) =
                 <Icon name='calendar'/>
             </span>
         </div>
-        {showDateInput && (<div className="date-input__datepicker"><Datepicker initialRange={curRange} onDateRangeSave={handleDateState} onClose={handleCloseDatePicker}/></div>)}
+        {showDateInput && (
+            <div className="date-input__datepicker">
+                <Datepicker initialRange={curRange} onDateRangeSave={handleDateState} onClose={handleCloseDatePicker}/>
+            </div>
+        )}
     </div>
 }
 
