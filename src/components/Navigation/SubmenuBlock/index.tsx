@@ -27,14 +27,15 @@ const SubmenuBlock: React.FC<SubmenuBlockType> = ({submenuTitle, submenuIcon, na
     return (
         <div className={`submenu-container ${submenuTitle.replaceAll(' ','')} ${isSubmenuOpen ? 'submenu-container-expanded' : ''}`}>
             <div className="submenu-header" onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}>
-                <Icon name={submenuIcon} style={{width: "30px", height: "30px"}} />
-                <span style={{marginLeft: "20px"}}>{submenuTitle}</span>
-                {setIsSubmenuOpen ?
-                    <span className="nav-arrow-icon"><Icon name="keyboard-arrow-up"/></span> :
+                <Icon name={submenuIcon} style={{width: "30px", height: "30px"}} className='nav-icon'/>
+                <span className={'submenu-header__text'} style={{marginLeft: "20px"}}>{submenuTitle}</span>
+                {isSubmenuOpen ? (
+                    <span className="nav-arrow-icon"><Icon name="keyboard-arrow-up"/></span>
+                ) : (
                     <span className="nav-arrow-icon"><Icon name="keyboard-arrow-right"/></span>
-                }
+                )}
             </div>
-            <div className="submenu-items">
+            <div className={`submenu-items ${isSubmenuOpen ? 'submenu-items-open' : ''}`}>
                 {navItems.map(navItem => (
                     isNavItemAccessible(navItem.name) ? <Link key={navItem.title} href={navItem.link} className="submenu-item" onClick={handleClose}>
                         {navItem.title}

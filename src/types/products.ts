@@ -1,4 +1,5 @@
 import {TicketType} from "@/types/tickets";
+import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 
 export type ProductType = {
     selected?: boolean;
@@ -31,6 +32,14 @@ export type ReservedRowType = {
     reserved: number;
 }
 
+export type OnShippingRowType = {
+    onshipping: number;
+    date: string;
+    number: string;
+    type: NOTIFICATION_OBJECT_TYPES;
+    uid: string;
+}
+
 export type ProductStockType = {
     tableKey: string,
     name: string;
@@ -52,6 +61,7 @@ export type ProductStockType = {
     weightNet: number,
     onShipping: number;
     reservedRows: ReservedRowType[];
+    onShippingRows: OnShippingRowType[];
     seller?: string;
 }
 

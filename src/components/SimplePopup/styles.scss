@@ -135,7 +135,18 @@
       min-width: 12px;
       word-break: break-word;
     }
+    &-btn {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      color: var(--color-light-blue-gray);
+
+      .simple-popup__item-text {
+        text-decoration: underline;
+      }
+    }
   }
+
 }
 
 @keyframes fadeIn {

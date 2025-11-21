@@ -1,11 +1,15 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useState} from "react";
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import {toast, ToastContainer} from '@/components/Toast';
+import SingleDocument from "@/components/SingleDocument";
+import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 
 export type PopupItem = {
     title: string;
     description?: string | number;
+    docType?: NOTIFICATION_OBJECT_TYPES;
+    docUuid?: string;
 };
 
 type PopupPropsType = {
@@ -17,7 +21,7 @@ type PopupPropsType = {
     needScroll?: boolean;
 };
 
-const SimplePopup: React.FC<PopupPropsType> = ({ items, width, handleClose, hasCopyBtn=false, changePositionOnMobile=false, needScroll=false }) => {
+const SimplePopup: React.FC<PopupPropsType> = ({ items, width, hasCopyBtn=false, changePositionOnMobile=false, needScroll=false }) => {
 
     if (items.length === 0) {
         return null;
@@ -63,8 +67,10 @@ const SimplePopup: React.FC<PopupPropsType> = ({ items, width, handleClose, hasC
         copyToClipboard(getInfoToCopy(items, 'title'));
         toast.success('Successfully copied to clipboard!', {
             position: "bottom-center",
-            autoClose: 1500,
-        })
+            autoClose: 30,
+        });
+        console.log('copy');
+        toast.clearWaitingQueue();
     }
 
     const getInfoToCopyTab = (items: PopupItem[]) => {
@@ -78,13 +84,43 @@ const SimplePopup: React.FC<PopupPropsType> = ({ items, width, handleClose, hasC
         copyToClipboard(textToCopy);
         toast.success('Successfully copied to clipboard!', {
             position: "bottom-center",
-            autoClose: 1500,
+            autoClose: 30,
         });
+        console.log('copy');
+        toast.clearWaitingQueue();
     };
+
+    const [docUuid, setDocUuid] = useState<string|null>(null);
+    const [docType, setDocType] = useState<NOTIFICATION_OBJECT_TYPES|null>(null);
+
+    const getNotificationType = (docType: string) => {
+        switch (docType) {
+            case 'Stock movement': return NOTIFICATION_OBJECT_TYPES.StockMovement;
+            case 'Inbound': return NOTIFICATION_OBJECT_TYPES.Inbound;
+            case 'Outbound': return NOTIFICATION_OBJECT_TYPES.Outbound;
+            case 'Logistic service': return NOTIFICATION_OBJECT_TYPES.LogisticService;
+            case 'Fulfillment': return NOTIFICATION_OBJECT_TYPES.Fullfilment;
+        }
+    }
+
+    const handleDocClick = (item: PopupItem) => {
+        console.log('handleDocClick', NOTIFICATION_OBJECT_TYPES[item.docType], item.docType);
+        if (item.docType && item.docUuid) {
+            setDocType(getNotificationType(item.docType));
+            setDocUuid(item.docUuid);
+
+        }
+    }
+
+    const onClose = () => {
+        setDocUuid(null);
+        setDocType(null);
+    }
+
 
     return (
         <>
-            <div className={`simple-popup ${positionClass}  ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle} >
+            {(!docUuid || !docType) && <div className={`simple-popup ${positionClass}  ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle} >
                 {hasCopyBtn && <button className='copy-btn' onClick={handleCopy}>{items.length > 1 ? 'copy all' : 'copy'}<Icon name='copy' /></button> }
                 {hasCopyBtn && <button className='copy-btn copy-btn-tab' onClick={handleCopyTab}>copy as table<Icon name='copy' /></button> }
                 {/*{!!handleClose ? (<a className="simple-popup__close" href="#" onClick={handleClose}>*/}
@@ -93,14 +129,24 @@ const SimplePopup: React.FC<PopupPropsType> = ({ items, width, handleClose, hasC
                 <ul className={`simple-popup__list ${needScroll ? 'has-scroll' : ''}`}>
                     {items.map((item: PopupItem, index: number) => (
                         <li key={item.title + index} className="simple-popup__item">
-                            <p className="simple-popup__item-text">{item.title}</p>
-                            {item.description ? <p className='simple-popup__item-description'>{item.description}</p> : null}
+                            {
+                                item.docUuid && item.docType ? (
+                                        <button className="simple-popup__item-btn" onClick={()=>handleDocClick(item)}>
+                                            <p className="simple-popup__item-text">{item.title}</p>
+                                            {item.description ? <p className='simple-popup__item-description'>{item.description}</p> : null}
+                                        </button>
+                                    ) :
+                                <>
+                                    <p className="simple-popup__item-text">{item.title}</p>
+                                    {item.description ? <p className='simple-popup__item-description'>{item.description}</p> : null}
+                                </>
+                            }
                         </li>
                     ))}
                 </ul>
-
-            </div>
+            </div>}
             <ToastContainer />
+            { docUuid && docType ? <SingleDocument type={docType} uuid={docUuid} onClose={onClose} /> : null}
         </>
     );
 };

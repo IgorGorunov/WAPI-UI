@@ -503,9 +503,10 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             <div style={{maxWidth: '110px'}}>
                                 <FieldBuilder
                                     name={`products.${index}.sku`}
-                                    fieldType={FormFieldTypes.TEXT}
+                                    fieldType={FormFieldTypes.TEXT_AREA}
                                     {...field}
                                     disabled={true}
+                                    rows={1}
                                 />
                             </div>
                         )}
@@ -563,10 +564,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                             <div style={{maxWidth: '180px'}}>
                                 <FieldBuilder
                                     name={`products.${index}.analogue`}
-                                    fieldType={FormFieldTypes.TEXT}
+                                    fieldType={FormFieldTypes.TEXT_AREA}
                                     {...field}
                                     options={productOptions}
                                     disabled={true}
+                                    rows={1}
                                 />
                             </div>
                         )}

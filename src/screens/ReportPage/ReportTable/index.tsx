@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import Icon from "@/components/Icon";
 import './styles.scss';
 import "/node_modules/flag-icons/css/flag-icons.min.css";
@@ -299,6 +299,129 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
         });
     }
 
+    const rowRefs = useRef<Map<string, HTMLTableRowElement>>(new Map());
+    const previousExpandedState = useRef<Map<string, boolean>>(new Map());
+
+    // Helper to check if row should be visible
+    const isRowVisible = useCallback((row: Row<AllReportsRowType>) => {
+        if (row.depth === 0) return true;
+
+        let parent = row.getParentRow();
+        while (parent) {
+            if (!parent.getIsExpanded()) return false;
+            parent = parent.getParentRow();
+        }
+        return true;
+    }, []);
+
+    // Animation effect
+    useEffect(() => {
+        const rows = table.getRowModel().rows;
+
+        rows.forEach(row => {
+            if (row.depth === 0) return; // Skip top-level rows
+
+            const rowElement = rowRefs.current.get(row.id);
+            if (!rowElement) return;
+
+            const shouldBeVisible = isRowVisible(row);
+            const wasVisible = previousExpandedState.current.get(row.id);
+
+            // Only animate if state changed
+            if (wasVisible !== undefined && wasVisible !== shouldBeVisible) {
+                const cells = rowElement.querySelectorAll('td');
+
+                if (shouldBeVisible) {
+                    // EXPANDING
+                    // First, make it visible but height 0
+                    rowElement.style.display = '';
+                    rowElement.style.height = '0px';
+                    rowElement.style.opacity = '0';
+                    rowElement.style.overflow = 'hidden';
+
+                    cells.forEach(cell => {
+                        (cell as HTMLElement).style.paddingTop = '0px';
+                        (cell as HTMLElement).style.paddingBottom = '0px';
+                    });
+
+                    // Force reflow
+                    rowElement.offsetHeight;
+
+                    // Get the natural height
+                    rowElement.style.height = 'auto';
+                    const targetHeight = rowElement.offsetHeight;
+                    rowElement.style.height = '0px';
+
+                    // Force reflow again
+                    rowElement.offsetHeight;
+
+                    // Apply transition
+                    rowElement.style.transition = 'height 300ms ease-out, opacity 300ms ease-out';
+                    cells.forEach(cell => {
+                        (cell as HTMLElement).style.transition = 'padding 300ms ease-out';
+                    });
+
+                    // Animate to target
+                    requestAnimationFrame(() => {
+                        rowElement.style.height = `${targetHeight}px`;
+                        rowElement.style.opacity = '1';
+                        cells.forEach(cell => {
+                            (cell as HTMLElement).style.paddingTop = '6px';
+                            (cell as HTMLElement).style.paddingBottom = '6px';
+                        });
+                    });
+
+                    // Cleanup after animation
+                    setTimeout(() => {
+                        rowElement.style.height = '';
+                        rowElement.style.overflow = '';
+                        rowElement.style.transition = '';
+                        cells.forEach(cell => {
+                            (cell as HTMLElement).style.transition = '';
+                        });
+                    }, 300);
+
+                } else {
+                    // COLLAPSING
+                    const currentHeight = rowElement.offsetHeight;
+                    rowElement.style.height = `${currentHeight}px`;
+                    rowElement.style.overflow = 'hidden';
+
+                    // Force reflow
+                    rowElement.offsetHeight;
+
+                    // Apply transition
+                    rowElement.style.transition = 'height 300ms ease-out, opacity 300ms ease-out';
+                    cells.forEach(cell => {
+                        (cell as HTMLElement).style.transition = 'padding 300ms ease-out';
+                    });
+
+                    // Animate to 0
+                    requestAnimationFrame(() => {
+                        rowElement.style.height = '0px';
+                        rowElement.style.opacity = '0';
+                        cells.forEach(cell => {
+                            (cell as HTMLElement).style.paddingTop = '0px';
+                            (cell as HTMLElement).style.paddingBottom = '0px';
+                        });
+                    });
+
+                    // Hide after animation
+                    setTimeout(() => {
+                        rowElement.style.display = 'none';
+                        rowElement.style.transition = '';
+                        cells.forEach(cell => {
+                            (cell as HTMLElement).style.transition = '';
+                        });
+                    }, 300);
+                }
+            }
+
+            // Update tracking
+            previousExpandedState.current.set(row.id, shouldBeVisible);
+        });
+    }, [table.getRowModel().rows, isRowVisible]);
+
     return (
         <div className='report'>
             <div className="card report-container">
@@ -373,8 +496,22 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
                         </thead>
                         <tbody>
                         {table.getRowModel().rows.map((row) => {
+                            const shouldBeVisible = isRowVisible(row);
                             return (
-                                <tr key={row.id} className={`${row.subRows.length ? 'is-group' : 'is-leaf'} ${row.getIsGrouped ? 'is-grouped' : 'not-grouped'} ${row.getIsExpanded ? 'is-expanded' : 'not-expanded'} depth-${groupedCols - row.depth}`}>
+                                <tr
+                                    key={row.id}
+                                    ref={(el) => {
+                                        if (el) {
+                                            rowRefs.current.set(row.id, el);
+                                        } else {
+                                            rowRefs.current.delete(row.id);
+                                        }
+                                    }}
+                                    className={`${row.subRows.length ? 'is-group' : 'is-leaf'} ${row.getIsGrouped ? 'is-grouped' : 'not-grouped'} ${row.getIsExpanded() ? 'is-expanded' : 'not-expanded'} depth-${groupedCols - row.depth}`}
+                                    style={{
+                                        display: row.depth > 0 && !shouldBeVisible ? 'none' : '',
+                                    }}
+                                >
 
                                     {row.getVisibleCells().map((cell,index) => {
                                         return (

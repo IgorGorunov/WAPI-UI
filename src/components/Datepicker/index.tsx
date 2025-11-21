@@ -7,6 +7,7 @@ import { DateRangeType} from "@/types/dashboard";
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import {formatDateToString} from "@/utils/date";
+import Draggable from "react-draggable";
 
 
 type DatepickerPropsType = {
@@ -72,36 +73,40 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
 
 
     return (
-        <div className="datepicker">
-            <a className="datepicker__close" href="#" onClick={onClose}>
-                <Icon name='close' />
-            </a>
+        <div>
+            <Draggable handle=".date-range-container">
+                <div className="datepicker">
+                    <a className="datepicker__close" href="#" onClick={onClose}>
+                        <Icon name='close' />
+                    </a>
 
-            <div className="date-range-container">
-                <div className='range-preview'>
-                    <div className='range-preview-date__wrapper'>
-                        <input type='date' id='date-range-start'
-                               onChange={handleStartDateChange} ref={refRangeStartPreview}/>
+                    <div className="date-range-container">
+                        <div className='range-preview'>
+                            <div className='range-preview-date__wrapper'>
+                                <input type='date' id='date-range-start'
+                                       onChange={handleStartDateChange} ref={refRangeStartPreview}/>
+                            </div>
+                            <div className='range-preview-date__wrapper'>
+                                <input type='date' id='date-range-end'
+                                       onChange={handleEndDateChange} ref={refRangeEndPreview} />
+                            </div>
+                        </div>
+                        <DateRange
+                            ranges={dateRange}
+                            onChange={handleSelect}
+                            months={1}
+                            direction="horizontal"
+                            weekStartsOn={1}
+                            showMonthAndYearPickers={false}
+                            showPreview={false}
+                            rangeColors={["#5380F5", "#5380F5"]}
+                        />
                     </div>
-                    <div className='range-preview-date__wrapper'>
-                        <input type='date' id='date-range-end'
-                               onChange={handleEndDateChange} ref={refRangeEndPreview} />
+                    <div className="button-container">
+                        <Button icon="search" isFullWidth iconOnTheRight onClick={handleSave}>Search</Button>
                     </div>
                 </div>
-                <DateRange
-                    ranges={dateRange}
-                    onChange={handleSelect}
-                    months={1}
-                    direction="horizontal"
-                    weekStartsOn={1}
-                    showMonthAndYearPickers={false}
-                    showPreview={false}
-                    rangeColors={["#5380F5", "#5380F5"]}
-                />
-            </div>
-            <div className="button-container">
-                <Button icon="search" isFullWidth iconOnTheRight onClick={handleSave}>Search</Button>
-            </div>
+            </Draggable>
         </div>
     );
 };
