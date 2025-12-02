@@ -178,7 +178,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <span className='table-header-title'>Seller</span>
+                        <>
+                            <span className='table-header-title'>Seller</span>
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
                     </Tooltip>
                 }
             />,
@@ -211,10 +215,18 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     const columns: ColumnType<CodReportType>[] = useMemo(() => [
         {
             title: <TitleColumn
-                title="Number"
+                title=""
                 minWidth="80px"
                 maxWidth="80px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Number</span>
+                        {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
+
             />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
@@ -228,10 +240,17 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         },
         {
             title: <TitleColumn
-                title="Date"
+                title=""
                 minWidth="80px"
                 maxWidth="150px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Date</span>
+                        {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
@@ -246,10 +265,17 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         ...SellerColumns,
         {
             title: <TitleColumn
-                title="Amount"
+                title=""
                 minWidth="100px"
                 maxWidth="100px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Amount</span>
+                        {sortColumn==='amount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='amount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
@@ -287,10 +313,17 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         },
         {
             title: <TitleColumn
-                title="Period"
+                title=""
                 minWidth="150px"
                 maxWidth="200px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Period</span>
+                        {sortColumn==='period' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='period' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="150px" maxWidth="200px"  contentPosition="start"/>
@@ -305,10 +338,17 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         },
         {
             title: <TitleColumn
-                title="Orders count"
+                title=""
                 minWidth="80px"
                 maxWidth="150px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Orders count</span>
+                        {sortColumn==='ordersCount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='ordersCount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
@@ -336,7 +376,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             ),
             dataIndex: 'uuid',
             key: 'uuid',
-            sorter: true,
+            sorter: false,
             onHeaderCell: (column: ColumnType<CodReportType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
@@ -347,7 +387,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             },
             responsive: ['lg'],
         },
-    ], [handleHeaderCellClick]);
+    ], [handleHeaderCellClick, sortColumn, sortDirection]);
 
     return (
         <div className='table'>

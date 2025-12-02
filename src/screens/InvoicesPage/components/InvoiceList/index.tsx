@@ -260,7 +260,11 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <span className='table-header-title'>Seller</span>
+                        <>
+                            <span className='table-header-title'>Seller</span>
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
                     </Tooltip>
                 }
             />,
@@ -292,7 +296,19 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
     const columns: ColumnType<InvoiceType>[] = useMemo(() => [
         {
-            title: <TitleColumn title="Status" minWidth="100px" maxWidth="100px" contentPosition="start"/>,
+            title: <TitleColumn
+                title=""
+                minWidth="100px"
+                maxWidth="100px"
+                contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Status</span>
+                        {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
+            />,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.status);
                 return (
@@ -327,10 +343,18 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         },
         {
             title: <TitleColumn
-                title="Number"
+                title=""
                 minWidth="60px"
                 maxWidth="120px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Number</span>
+                        {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
+
             />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="60px" maxWidth="80px"  contentPosition="start"/>
@@ -344,10 +368,17 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         },
         {
             title: <TitleColumn
-                title="Date"
+                title=""
                 minWidth="60px"
                 maxWidth="150px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Date</span>
+                        {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="80px"  contentPosition="start"/>
@@ -362,10 +393,17 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         ...SellerColumns,
         {
             title: <TitleColumn
-                title="Amount"
+                title=""
                 minWidth="60px"
                 maxWidth="150px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Amount</span>
+                        {sortColumn==='amount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='amount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
@@ -403,10 +441,17 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         },
         {
             title: <TitleColumn
-                title="Due date"
+                title=""
                 minWidth="60px"
                 maxWidth="80px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Due date</span>
+                        {sortColumn==='dueDate' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='dueDate' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="150px"  contentPosition="start"/>
@@ -421,10 +466,17 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         },
         {
             title: <TitleColumn
-                title="Overdue"
+                title=""
                 minWidth="80px"
                 maxWidth="80px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Overdue</span>
+                        {sortColumn==='overdue' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='overdue' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
@@ -439,10 +491,17 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         },
         {
             title: <TitleColumn
-                title="Paid"
+                title=""
                 minWidth="75px"
                 maxWidth="75px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Paid</span>
+                        {sortColumn==='paid' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='paid' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
@@ -481,10 +540,17 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
 
         {
             title: <TitleColumn
-                title="Debt"
+                title=""
                 minWidth="75px"
                 maxWidth="75px"
                 contentPosition="start"
+                childrenBefore={
+                    <>
+                        <span className='table-header-title'>Debt</span>
+                        {sortColumn==='debt' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='debt' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+                }
             />,
             render: (text: string, record) => {
                 const isNegative = parseFloat(text) < 0;
@@ -559,7 +625,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         },
 
 
-    ], [handleHeaderCellClick]);
+    ], [handleHeaderCellClick, sortColumn, sortDirection]);
     return (
         <div className='table invoices-list'>
             {isLoading && <Loader />}
