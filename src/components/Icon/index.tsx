@@ -240,8 +240,8 @@ export const icons = {
   'marketplace': Marketplace,
   'whitelabel': Whitelabel,
   'cookie': Cookie,
-  'arrow-up-small': ArrowUpSmall,
-  'arrow-down-small': ArrowDownSmall,
+  'arrow-desc': ArrowUpSmall,
+  'arrow-asc': ArrowDownSmall,
 };
 
 export type IconType = keyof typeof icons;

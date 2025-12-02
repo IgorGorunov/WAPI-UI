@@ -180,8 +180,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -222,8 +222,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Number</span>
-                        {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
 
@@ -247,8 +247,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Date</span>
-                        {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -272,8 +272,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Amount</span>
-                        {sortColumn==='amount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='amount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='amount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='amount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -320,8 +320,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Period</span>
-                        {sortColumn==='period' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='period' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='period' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='period' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -345,8 +345,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Orders count</span>
-                        {sortColumn==='ordersCount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='ordersCount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='ordersCount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='ordersCount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,

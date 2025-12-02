@@ -221,8 +221,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -354,8 +354,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="A unique code for tracking each product in inventory">
                         <>
                             <span>SKU</span>
-                            {sortColumn==='sku' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='sku' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='sku' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='sku' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
                 />,
@@ -379,8 +379,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 childrenBefore={
                     <>
                         <span>Name</span>
-                        {sortColumn==='name' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='name' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='name' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='name' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -409,8 +409,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Length, width, and height in millimeters">
                         <>
                             <span>Dimension | mm</span>
-                            {sortColumn==='dimension' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='dimension' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='dimension' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='dimension' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
             }/>,
@@ -434,8 +434,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 childrenBefore={
                 <>
                         <span>Weight | kg</span>
-                        {sortColumn==='weight' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='weight' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='weight' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='weight' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -459,8 +459,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Alternative names">
                         <>
                             <span>Aliases</span>
-                            {sortColumn==='aliases' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='aliases' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='aliases' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='aliases' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
             }/>,
@@ -485,8 +485,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Alternative names">
                         <>
                             <span>Barcodes</span>
-                            {sortColumn==='barcodes' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='barcodes' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='barcodes' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='barcodes' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -511,8 +511,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Available products for new orders">
                         <>
                             <span>Available</span>
-                            {sortColumn==='available' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='available' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='available' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='available' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
             } />,
