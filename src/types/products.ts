@@ -25,6 +25,7 @@ export type ProductType = {
     notifications: boolean,
     additionalService?: boolean,
     seller?: string;
+    available: number;
 }
 
 export type ReservedRowType = {

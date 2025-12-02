@@ -44,6 +44,7 @@ export type StockMovementType = {
     ticketopen?: boolean;
     servicesAmount: number;
     seller?: string;
+    productLines?: number;
 }
 
 export type ProductInfoType = {

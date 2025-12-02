@@ -261,7 +261,11 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <span className='table-header-title'>Seller</span>
+                        <>
+                            <span className='table-header-title'>Seller</span>
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
                     </Tooltip>
                 }
             />,
@@ -313,12 +317,16 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Code of warehouse" >
-                        <span><Icon name={"warehouse"}/></span>
+                        <span style={{display: 'flex', alignItems: 'center'}}>
+                            <span><Icon name={"warehouse"}/></span>
+                            {sortColumn==='warehouse' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='warehouse' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </span>
                     </Tooltip>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="60px" maxWidth="60px"  contentPosition="start"/>
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
@@ -328,7 +336,19 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="120px" contentPosition="start" childrenBefore={<Tooltip title="A unique code for tracking each product in inventory"><span>SKU</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="80px"
+                maxWidth="120px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="A unique code for tracking each product in inventory">
+                        <>
+                            <span>SKU</span>
+                            {sortColumn==='sku' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='sku' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+                />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="120px"  contentPosition="start"/>
             ),
@@ -341,7 +361,20 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="Name" minWidth="150px" maxWidth="500px"  contentPosition="start"/>,
+            title: <TitleColumn
+                title=""
+                minWidth="150px"
+                maxWidth="500px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="A unique code for tracking each product in inventory">
+                        <>
+                            <span>Name</span>
+                            {sortColumn==='name' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='name' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="150px" maxWidth="500px"  contentPosition="start"/>
             ),
@@ -354,9 +387,21 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         },
         ...SellerColumns,
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px"  contentPosition="center" childrenBefore={<Tooltip title="Available products for new orders"><span>Available</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="Available products for new orders">
+                        <>
+                            <span>Available</span>
+                            {sortColumn==='available' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='available' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px"  contentPosition="center"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="center"/>
             ),
             dataIndex: 'available',
             key: 'available',
@@ -366,9 +411,21 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products that were reserved for orders or movements"><span>Reserve</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="Products that were reserved for orders or movements">
+                        <>
+                            <span>Reserve</span>
+                            {sortColumn==='reserved' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='reserved' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+                />,
             render: (text: number, record: ProductStockType) =>  (
-                <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
+                <TableCell minWidth="80px" maxWidth="80px" contentPosition="center"
                     childrenBefore={
                         <Popover
                             content={record.reserved ? <SimplePopup
@@ -396,9 +453,21 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Damaged products"><span>Damaged</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="Damaged products">
+                        <>
+                            <span>Damaged</span>
+                            {sortColumn==='damaged' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='damaged' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+                />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center"/>
             ),
             dataIndex: 'damaged',
             key: 'damaged',
@@ -409,9 +478,21 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products past usability"><span>Expired</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="70px"
+                maxWidth="70px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="Products past usability">
+                        <>
+                            <span>Expired</span>
+                            {sortColumn==='expired' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='expired' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+                />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="70px" maxWidth="70px" contentPosition="center"/>
             ),
             dataIndex: 'expired',
             key: 'expired',
@@ -422,9 +503,21 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products that are being returned to the warehouse"><span>Returning</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="Products that are being returned to the warehouse">
+                        <>
+                            <span>Returning</span>
+                            {sortColumn==='forPlacement' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='forPlacement' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+                />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center"/>
             ),
             dataIndex: 'forPlacement',
             key: 'forPlacement',
@@ -435,9 +528,21 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Products currently in transit in stock movements"><span>On shipping</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="60px"
+                maxWidth="60px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="Products currently in transit in stock movements">
+                        <span style={{display: 'flex', alignItems: 'center'}}>
+                            <span>On shipping</span>
+                            {sortColumn==='onShipping' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='onShipping' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </span>
+                    </Tooltip>}
+                />,
             render: (text: string, record: ProductStockType) => (
-                <TableCell minWidth="40px" maxWidth="40px" contentPosition="center"
+                <TableCell minWidth="60px" maxWidth="60px" contentPosition="center"
                            childrenBefore={
                                <Popover
                                    content={record.onShipping ? <SimplePopup
@@ -465,9 +570,21 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="All stock including all product statuses"><span>Total</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="60px"
+                maxWidth="60px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="All stock including all product statuses">
+                        <>
+                            <span>Total</span>
+                            {sortColumn==='total' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='total' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+                />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="center"/>
             ),
             dataIndex: 'total',
             key: 'total',
@@ -477,7 +594,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             }),
             responsive: ['md'],
         },
-    ], [handleHeaderCellClick]);
+    ], [handleHeaderCellClick, sortDirection, sortColumn]);
 
     return (
         <div className='product-stock-list table'>

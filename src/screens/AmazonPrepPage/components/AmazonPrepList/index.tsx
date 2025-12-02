@@ -329,7 +329,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <span className='table-header-title'>Seller</span>
+                        <>
+                            <span className='table-header-title'>Seller</span>
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
                     </Tooltip>
                 }
             />,
@@ -366,7 +370,10 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon  name={"car"}/></Tooltip>}>
+                    childrenBefore={
+                        <Tooltip title="Sender country ➔ Receiver country">
+                            <Icon  name={"car"}/>
+                        </Tooltip>}>
                     </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
@@ -412,8 +419,20 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn title="" minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Current condition or state of an order"><span>Status</span></Tooltip>}
-                    />,
+            title: <TitleColumn
+                title=""
+                minWidth="60px"
+                maxWidth="60px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Current condition or state of an order">
+                        <>
+                            <span>Status</span>
+                            {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.statusGroup);
                 return (
@@ -441,7 +460,19 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="When an order was created">
+                        <>
+                            <span>Date</span>
+                            {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
                 <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"  />
             ),
@@ -453,7 +484,19 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             }),
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Order identifier within the WAPI system"><span>WH number</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Order identifier within the WAPI system">
+                        <>
+                            <span>WH number</span>
+                            {sortColumn==='wapiTrackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='wapiTrackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
@@ -470,7 +513,19 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             },
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Amazon Shipment Notification Number"><span>ASN</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="100px"
+                maxWidth="100px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Amazon Shipment Notification Number">
+                        <>
+                            <span>ASN</span>
+                            {sortColumn==='asnNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='asnNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
             ),
@@ -488,7 +543,19 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Unique code for order identification in the seller's system"><span>Order ID</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="100px"
+                maxWidth="100px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Unique code for order identification in the seller's system">
+                        <>
+                            <span>Order ID</span>
+                            {sortColumn==='clientOrderID' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='clientOrderID' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
             ),
@@ -502,7 +569,19 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         },
         ...SellerColumns,
         {
-            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Code of warehouse"><span>Warehouse</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="60px"
+                maxWidth="60px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Code of warehouse">
+                        <>
+                            <span>Warehouse</span>
+                            {sortColumn==='warehouse' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='warehouse' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
@@ -515,7 +594,19 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Service responsible for transporting and delivering packages"><span>Courier</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="60px"
+                maxWidth="60px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Service responsible for transporting and delivering packages">
+                        <>
+                            <span>Courier</span>
+                            {sortColumn==='courierService' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='courierService' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
             ),
@@ -528,7 +619,19 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="40px" maxWidth="40px" contentPosition="center" childrenBefore={<Tooltip title="Type of Amazon Prep Order: LTL or SPD"><span>Method</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="40px"
+                maxWidth="40px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="Type of Amazon Prep Order: LTL or SPD">
+                        <>
+                            <span>Method</span>
+                            {sortColumn==='deliveryMethod' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='deliveryMethod' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
             ),
@@ -547,7 +650,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products" >
-                        <span><Icon name={"shopping-cart"}/></span>
+                        <>
+                            <span><Icon name={"shopping-cart"}/></span>
+                            {sortColumn==='productLines' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='productLines' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
                     </Tooltip>
                 }
             />,

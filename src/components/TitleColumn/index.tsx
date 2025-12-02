@@ -13,7 +13,7 @@ interface TitleColumnProps {
     className?: string;
 }
 
-const TitleColumn: React.FC<TitleColumnProps> = ({ title, minWidth, maxWidth, contentPosition, textColor, cursor, childrenBefore, childrenAfter, children, className=''}) => {
+const TitleColumn: React.FC<TitleColumnProps> = ({ title, minWidth, maxWidth, contentPosition, textColor, cursor, childrenBefore, childrenAfter,  className=''}) => {
     const style: React.CSSProperties = {
         display: 'flex',
         minWidth: minWidth,

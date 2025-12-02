@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
+import {Pagination, Popover, Table, TableColumnProps, TableProps, Tooltip} from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
@@ -34,6 +34,7 @@ import {NotificationType} from "@/types/notifications";
 import {isTabAllowed} from "@/utils/tabs";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
+import {SorterResult} from "antd/lib/table/interface";
 
 type OrderListType = {
     orders: OrderType[];
@@ -93,6 +94,15 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     //notifications
     const {notifications} = useNotifications();
 
+    const [sortedInfo, setSortedInfo] = useState<SorterResult<OrderType>>({});
+    const handleTableChange: TableProps<OrderType>['onChange'] = (
+        pagination,
+        filters,
+        sorter
+    ) => {
+        // setSortedInfo(sorter as SorterResult<OrderType>);
+        console.log('Variable sortedInfo: ',sorter);
+    };
 
     //filters
     //seller filter
@@ -526,6 +536,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
         );
         setSortColumn(columnDataIndex);
+
     }, [sortColumn]);
 
 
@@ -955,6 +966,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             dataIndex: 'logisticComment',
             key: 'logisticComment',
             sorter: false,
+            // sorter: (a, b) => !!a.logisticComment < !!b.logisticComment ? -1 : 1,
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
@@ -972,7 +984,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <span className='table-header-title'>Seller</span>
+                        <>
+                            <span className='table-header-title'>Seller</span>
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
                     </Tooltip>
                 }
             />,
@@ -1157,7 +1173,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         ...OrderIssueColumns,
         {
-            title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
+            title: <TitleColumn
+                title=""
+                minWidth="20px"
+                maxWidth="20px" contentPosition="start"
             />,
             render: (text: string, record: OrderType) => (
                 <TableCell
@@ -1180,7 +1199,18 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['lg'],
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Current condition of an order"><span>Status</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="60px"
+                maxWidth="100px"
+                contentPosition="start"
+                childrenBefore={<Tooltip title="Current condition of an order">
+                    <>
+                        <span>Status</span>
+                        {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                        {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                    </>
+            </Tooltip>}
+            />,
             render: (text: string, record) => {
                 const underlineColor = getUnderlineColor(record.status==='Error' ? record.status : record.statusGroup);
                 return (
@@ -1217,12 +1247,25 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             dataIndex: 'status',
             key: 'status',
             sorter: true,
+            // sorter: (a, b) => a.status < b.status ? 1 : -1,
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
         },
         {
-            title: <TitleColumn minWidth="60px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="When an order was created"><span>Date</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="60px"
+                maxWidth="80px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="When an order was created">
+                        <>
+                            <span>Date</span>
+                            {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
                 <TableCell minWidth="60px" maxWidth="80px" contentPosition="start"
                     childrenAfter={
@@ -1242,7 +1285,18 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
         },
         {
-            title: <TitleColumn minWidth="100px" maxWidth="100px" contentPosition="start" childrenBefore={<Tooltip title="Order identifier within the WAPI system"><span>WH number</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="100px"
+                maxWidth="100px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Order identifier within the WAPI system">
+                        <>
+                            <span>WH number</span>
+                            {sortColumn==='wapiTrackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='wapiTrackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}/>,
             render: (text: string) => (
                 <TableCell
                     value={text}
@@ -1266,7 +1320,18 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             },
         },
         {
-            title: <TitleColumn minWidth="65px" maxWidth="65px" contentPosition="center" childrenBefore={<Tooltip title="The sum of cash on delivery"><span>COD</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="65px"
+                maxWidth="65px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="The sum of cash on delivery">
+                        <>
+                            <span>COD</span>
+                            {sortColumn==='codAmount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='codAmount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}/>,
             render: (text: string, record) => {
                 if (record.codCurrency) {
                     const currencySymbol = getSymbolFromCurrency(record.codCurrency);
@@ -1298,7 +1363,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="80px" maxWidth="80px" contentPosition="start" childrenBefore={<Tooltip title="Unique code for order identification in the seller's system"><span>Order ID</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip
+                        title="Unique code for order identification in the seller's system">
+                        <>
+                            <span>Order ID</span>
+                            {sortColumn==='clientOrderID' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='clientOrderID' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}/>,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
             ),
@@ -1313,9 +1390,21 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         ...SellerColumns,
         {
-            title: <TitleColumn minWidth="60px" maxWidth="60px" contentPosition="start" childrenBefore={<Tooltip title="Code of warehouse"><span>Warehouse</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="90px"
+                maxWidth="90px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Code of warehouse">
+                        <>
+                            <span>Warehouse</span>
+                            {sortColumn==='warehouse' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='warehouse' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
+                <TableCell value={text} minWidth="90px" maxWidth="90px" contentPosition="start"/>
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
@@ -1326,7 +1415,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="75px" maxWidth="75px" contentPosition="start" childrenBefore={<Tooltip title="Service responsible for transporting and delivering packages"><span>Courier</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="75px"
+                maxWidth="75px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Service responsible for transporting and delivering packages">
+                        <>
+                            <span>Courier</span>
+                            {sortColumn==='courierService' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='courierService' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+                />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
             ),
@@ -1339,7 +1440,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             responsive: ['md'],
         },
         {
-            title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="start" childrenBefore={<Tooltip title="Number for monitoring the movement of products during transportation/delivery"><span>Tracking</span></Tooltip>}/>,
+            title: <TitleColumn
+                minWidth="70px"
+                maxWidth="70px"
+                contentPosition="start"
+                childrenBefore={
+                    <Tooltip title="Number for monitoring the movement of products during transportation/delivery">
+                        <>
+                            <span>Tracking</span>
+                            {sortColumn==='trackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='trackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </>
+                    </Tooltip>}
+                />,
             render: (text: string, record) => (
                 <TableCell  minWidth="70px" maxWidth="70px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span  className='track-link' >Track<Icon name='track'/></span> }/>
             ),
@@ -1367,7 +1480,11 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products" >
-                        <span><Icon name={"shopping-cart"}/></span>
+                        <span style={{display:'flex', alignItems:'center'}}>
+                            <span><Icon name={"shopping-cart"}/></span>
+                            {sortColumn==='productLines' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
+                            {sortColumn==='productLines' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        </span>
                     </Tooltip>
                 }
             />,
@@ -1457,6 +1574,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     pagination={false}
                     scroll={{y:700}}
                     showSorterTooltip={false}
+                    onChange={handleTableChange}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
