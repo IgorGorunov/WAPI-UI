@@ -186,7 +186,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         classNames: "",
         isDisplayed: !newObject,
     },
-    {
+    linkToTrack ? {
         fieldType: FormFieldTypes.OTHER,
         name: 'trackingLink',
         label: 'Tracking link',
@@ -194,7 +194,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         width: WidthType.w50,
         classNames: 'order-tracking-link',
         isDisplayed: !newObject,
-    },
+    } : null,
 ];
 
 export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllowed=false, onChangeFn}: { countries: OptionType[]; prefix?:string; isDisabled: boolean; isAddressAllowed: boolean; onChangeFn: ()=>void}) => {
