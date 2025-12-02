@@ -493,8 +493,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -571,8 +571,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     <Tooltip title={`Current condition or state of ${getDocType(docType).substring(0, getDocType(docType).length - 1)} with estimated date`}>
                         <>
                             <span>Status</span>
-                            {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -618,8 +618,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 childrenBefore={<Tooltip title="When an order was created">
                     <>
                         <span>Date</span>
-                        {sortColumn==='incomingDate' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='incomingDate' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='incomingDate' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='incomingDate' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 </Tooltip>}
             />,
@@ -641,8 +641,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 childrenBefore={<Tooltip title="Document identifier within the WAPI system">
                     <>
                         <span>Number</span>
-                        {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 </Tooltip>
             }/>,
@@ -676,8 +676,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 childrenBefore={<Tooltip title="Document number in the seller's system">
                     <>
                         <span>Incoming #</span>
-                        {sortColumn==='incomingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='incomingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='incomingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='incomingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 </Tooltip>}
             />,
@@ -706,8 +706,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 childrenBefore={<Tooltip title="The source responsible for initiating the movement of products">
                     <>
                         <span>Sender</span>
-                        {sortColumn==='sender' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='sender' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='sender' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='sender' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 </Tooltip>
             }/>,
@@ -731,8 +731,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 childrenBefore={<Tooltip title="The recipient of products">
                     <>
                         <span>Receiver</span>
-                        {sortColumn==='receiver' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='receiver' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='receiver' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='receiver' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 </Tooltip>
             }/>,
@@ -755,8 +755,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 childrenBefore={<Tooltip title="Estimated arrival time">
                     <>
                         <span>ETA</span>
-                        {sortColumn==='estimatedTimeArrives' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='estimatedTimeArrives' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='estimatedTimeArrives' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='estimatedTimeArrives' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 </Tooltip>}
             />,
@@ -776,8 +776,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 <Tooltip title="Products" >
                     <span style={{display:'flex', alignItems:'center'}}>
                         <span><Icon name={"shopping-cart"}/></span>
-                        {sortColumn==='productLines' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='productLines' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='productLines' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='productLines' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </span>
                 </Tooltip>
             }/>,

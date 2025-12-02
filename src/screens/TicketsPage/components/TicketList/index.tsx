@@ -455,8 +455,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                     childrenBefore={
                         <Tooltip title="Seller's name" >
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
 
                         </Tooltip>
                     }
@@ -530,8 +530,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                     <Tooltip title="Current ticket status" >
                         <>
                             <span>Status</span>
-                            {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -581,8 +581,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                     <Tooltip title="Ticket number. Click on the number to view the correspondence" >
                         <>
                             <span>Ticket #</span>
-                            {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -618,8 +618,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                     <Tooltip title="When the ticket was created" >
                         <>
                             <span>Date</span>
-                            {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -644,8 +644,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                     <Tooltip title="Ticket subject" >
                         <>
                             <span>Topic</span>
-                            {sortColumn==='topic' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='topic' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='topic' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='topic' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -671,8 +671,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                     <Tooltip title="Ticket title" >
                         <>
                             <span>Title</span>
-                            {sortColumn==='subject' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='subject' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='subject' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='subject' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }

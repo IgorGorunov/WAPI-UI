@@ -986,8 +986,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -1206,8 +1206,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 childrenBefore={<Tooltip title="Current condition of an order">
                     <>
                         <span>Status</span>
-                        {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                        {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                        {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
             </Tooltip>}
             />,
@@ -1261,8 +1261,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="When an order was created">
                         <>
                             <span>Date</span>
-                            {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -1293,8 +1293,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Order identifier within the WAPI system">
                         <>
                             <span>WH number</span>
-                            {sortColumn==='wapiTrackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='wapiTrackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='wapiTrackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='wapiTrackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}/>,
             render: (text: string) => (
@@ -1328,8 +1328,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="The sum of cash on delivery">
                         <>
                             <span>COD</span>
-                            {sortColumn==='codAmount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='codAmount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='codAmount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='codAmount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}/>,
             render: (text: string, record) => {
@@ -1372,8 +1372,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         title="Unique code for order identification in the seller's system">
                         <>
                             <span>Order ID</span>
-                            {sortColumn==='clientOrderID' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='clientOrderID' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='clientOrderID' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='clientOrderID' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}/>,
             render: (text: string) => (
@@ -1398,8 +1398,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Code of warehouse">
                         <>
                             <span>Warehouse</span>
-                            {sortColumn==='warehouse' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='warehouse' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='warehouse' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='warehouse' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -1423,8 +1423,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Service responsible for transporting and delivering packages">
                         <>
                             <span>Courier</span>
-                            {sortColumn==='courierService' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='courierService' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='courierService' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='courierService' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
                 />,
@@ -1448,8 +1448,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Number for monitoring the movement of products during transportation/delivery">
                         <>
                             <span>Tracking</span>
-                            {sortColumn==='trackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='trackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='trackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='trackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
                 />,
@@ -1482,8 +1482,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Products" >
                         <span style={{display:'flex', alignItems:'center'}}>
                             <span><Icon name={"shopping-cart"}/></span>
-                            {sortColumn==='productLines' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-up-small' /></span> : null}
-                            {sortColumn==='productLines' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-down-small' /></span> : null}
+                            {sortColumn==='productLines' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='productLines' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </span>
                     </Tooltip>
                 }
