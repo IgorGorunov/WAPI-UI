@@ -60,8 +60,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     }, [sellersList]);
 
     // Sorting
-    const [sortColumn, setSortColumn] = useState<keyof CodReportType>();
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
+    const [sortColumn, setSortColumn] = useState<keyof CodReportType>('date');
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('descend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof CodReportType) => {
         setSortDirection(currentDirection =>
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'

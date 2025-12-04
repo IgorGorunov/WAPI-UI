@@ -277,8 +277,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
         //setQuery({addParams: {page:1}})
     };
 
-    const [sortColumn, setSortColumn] = useState<keyof TicketType | null>(null);
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
+    const [sortColumn, setSortColumn] = useState<keyof TicketType | null>('date');
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('descend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof TicketType) => {
         setSortDirection(currentDirection =>
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
