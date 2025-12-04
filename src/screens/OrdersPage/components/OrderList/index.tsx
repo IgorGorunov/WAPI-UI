@@ -529,8 +529,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1)
     };
 
-    const [sortColumn, setSortColumn] = useState<keyof OrderType | null>(null);
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
+    const [sortColumn, setSortColumn] = useState<keyof OrderType | null>('date');
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('descend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof OrderType) => {
         setSortDirection(currentDirection =>
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'

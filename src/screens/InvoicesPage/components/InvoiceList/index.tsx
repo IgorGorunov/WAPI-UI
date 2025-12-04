@@ -72,8 +72,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     };
 
     // Sorting
-    const [sortColumn, setSortColumn] = useState<keyof InvoiceType>();
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
+    const [sortColumn, setSortColumn] = useState<keyof InvoiceType>('date');
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('descend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof InvoiceType) => {
         setSortDirection(currentDirection =>
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'

@@ -247,8 +247,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         setCurrent(1)
     };
 
-    const [sortColumn, setSortColumn] = useState<keyof AmazonPrepOrderType | null>(null);
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
+    const [sortColumn, setSortColumn] = useState<keyof AmazonPrepOrderType | null>('date');
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('descend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof AmazonPrepOrderType) => {
         setSortDirection(currentDirection =>
             sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'

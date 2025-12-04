@@ -80,7 +80,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     };
 
     // Sorting
-    const [sortColumn, setSortColumn] = useState<keyof ProductType | null>(null);
+    const [sortColumn, setSortColumn] = useState<keyof ProductType | null>('name');
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof ProductType) => {
         setSortDirection(currentDirection =>
