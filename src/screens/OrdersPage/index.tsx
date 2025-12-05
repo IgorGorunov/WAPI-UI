@@ -241,10 +241,15 @@ const OrdersPage = () => {
             // "Logistic comment": `${item.logisticComment ? (item.logisticComment+(item.warehouseAdditionalInfo ? '; '+item.warehouseAdditionalInfo : '')) : item.warehouseAdditionalInfo ? item.warehouseAdditionalInfo : ''}`,
             "Logistic comment": `${item.logisticComment}`,
             "Tracking link": item.trackingNumber ? item.trackingLink : '',
+            "Has claims": item.claims.length ? "+" : ""
         }));
 
         if (!isTabAllowed('Logistic comment', forbiddenTabs)) {
             filteredData.forEach(row=>delete row["Logistic comment"]);
+        }
+
+        if (!isTabAllowed('Claims', forbiddenTabs)) {
+            filteredData.forEach(row=>delete row["Has claims"]);
         }
 
         exportFileXLS(filteredData, "Orders");
