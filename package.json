@@ -20,7 +20,7 @@
     "@tanstack/react-table": "^8.11.6",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "antd": "5.24",
-    "axios": "^1.7.5",
+    "axios": "^1.12.2",
     "chart.js": "^4.4.0",
     "currency-symbol-map": "^5.1.0",
     "eslint-config-prettier": "^9.0.0",
@@ -30,7 +30,6 @@
     "google-libphonenumber": "^3.2.34",
     "js-cookie": "^3.0.5",
     "next-sanity": "^6.1.4",
-    "npm": "^10.2.0",
     "prettier": "^3.0.3",
     "rc-table": "^7.38.1",
     "rc-tree": "^5.7.1",
@@ -67,8 +66,20 @@
     "@types/react-dom": "^18",
     "@types/styled-components": "^5.1.34",
     "eslint": "^8",
-    "next": "^14.2.28",
+    "next": "^14.2.33",
     "sass": "^1.69.0",
     "typescript": "^5.2.2"
+  },
+  "overrides": {
+    "brace-expansion": "^2.0.2",
+    "js-yaml": "^4.1.1",
+    "tmp": "^0.2.4",
+    "esbuild": "^0.25.0",
+    "form-data": "^4.0.4",
+    "min-document": "^2.19.1",
+    "prismjs": "^1.30.0",
+    "tar-fs": "^2.1.4",
+    "vite": "^6.3.4",
+    "glob": "^10.5.0"
   }
 }
