@@ -371,7 +371,6 @@ export const AuthProvider = (props: PropsWithChildren) => {
     //setUserInfo(val);
     //Cookie.set('profile_info', JSON.stringify(val));
     setUserEmail(val?.userLogin || null);
-    console.log('user changed email:', val, val?.userLogin)
     Cookie.set('userEmail', val?.userLogin || '', {secure: true});
   }
 
