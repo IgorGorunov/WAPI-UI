@@ -231,7 +231,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                                 <Draggable
                                     nodeRef={calendarRef}
                                     handle=".drag-handle"
-                                    cancel="input,textarea,select,.time-picker-wrapper *,.close-calendar"
+                                    cancel="input,textarea,select,button,.time-picker-wrapper *,.close-calendar"
                                     bounds={dragBounds}
                                     defaultPosition={{ x: 0, y: 8 }}
                                 >

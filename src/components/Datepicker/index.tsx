@@ -74,7 +74,10 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
 
     return (
         <div>
-            <Draggable handle=".date-range-container">
+            <Draggable handle=".date-range-container"
+                       cancel="input, textarea, select, option, button, a, .rdrCalendarWrapper, .rdrDay, .rdrMonth, .rdrMonths"
+
+            >
                 <div className="datepicker">
                     <a className="datepicker__close" href="#" onClick={onClose}>
                         <Icon name='close' />
