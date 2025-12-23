@@ -36,6 +36,10 @@ const getProductsByString = (item: StockMovementType) => {
     return  item.products.map(product => product.product).join('; ')
 }
 
+const getProductsWithQuantity = (item: StockMovementType) => {
+    return  item.products.map(product => `${product.product} - ${product.quantity}`).join('; ')
+}
+
 const docNamesPlural = {
     [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbounds',
     [STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT]: 'Stock movements',
@@ -196,6 +200,7 @@ const StockMovementsPage:React.FC<StockMovementPageType> = ({docType}) => {
             Receiver: item.receiver,
             "receiver Country": item.receiverCountry,
             Products: item.productsByString || getProductsByString(item),
+            'Products with quantity': getProductsWithQuantity(item),
             Services: '€ ' + item.servicesAmount,
             // packages: item.packages,
             // palletAmount: item.palletAmount,
