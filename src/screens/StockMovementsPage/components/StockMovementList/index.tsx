@@ -638,7 +638,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                 minWidth="75px"
                 maxWidth="700px"
                 contentPosition="start"
-                childrenBefore={<Tooltip title="Document identifier within the WAPI system">
+                childrenBefore={<Tooltip title="Document identifier within the system">
                     <>
                         <span>Number</span>
                         {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}

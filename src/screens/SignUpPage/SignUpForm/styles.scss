@@ -13,6 +13,15 @@
     .checkbox-label-text {
       color: var(--color-gray);
     }
+
+    input {
+      color: var(--color-placeholder) !important;
+
+      &::placeholder {
+        color: var(--color-placeholder) !important;
+
+      }
+    }
   }
 
   &-submit-block {

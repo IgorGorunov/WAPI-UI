@@ -8,9 +8,15 @@ import {client} from "@/sanity/sanity-utils";
 
 const FaqPage = ({ faqPageData }: { faqPageData: FaqPageType}) => {
     return (
-        <AuthChecker isUser={true}>
-            <FaqPageScreen {...faqPageData} />
-        </AuthChecker>
+        <>
+            {/*<SEO */}
+            {/*    title="FAQ"*/}
+            {/*    description="Frequently asked questions about WAPI logistics services, order management, shipping, and warehouse operations. Find answers to common questions."*/}
+            {/*/>*/}
+            <AuthChecker isUser={true}>
+                <FaqPageScreen {...faqPageData} />
+            </AuthChecker>
+        </>
     );
 };
 

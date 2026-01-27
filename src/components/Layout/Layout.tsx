@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Footer from "@/components/Footer/Footer";
+import dynamic from "next/dynamic";
 import "./styles.scss";
 import {setInterceptorErrorCallback, setInterceptorRedirectCallback} from "@/services/api";
 import {ModalTypes, STATUS_MODAL_TYPES} from "@/types/utility";
@@ -7,8 +7,11 @@ import ModalStatus from "@/components/ModalStatus";
 import {useRouter} from "next/router";
 import useAuth from "@/context/authContext";
 import {Routes} from "@/types/routes";
-import CookieConsent from "@/components/CookieConsent";
 import BackToTop from "@/components/BackToTop";
+
+// Dynamically import non-critical components
+const Footer = dynamic(() => import("@/components/Footer/Footer"), { ssr: false });
+const CookieConsent = dynamic(() => import("@/components/CookieConsent"), { ssr: false });
 
 type Props = {
   hasHeader?: boolean;
@@ -66,7 +69,7 @@ const Layout: React.FC<Props> = ({
     // }, [isCookieConsentReceived]);
 
   return (
-      <div className="main">
+      <main className="main">
           <div className={`main-content ${isWide ? 'is-wide' : ''}`}>
               {children}
           </div>
@@ -85,7 +88,7 @@ const Layout: React.FC<Props> = ({
               onClose={handleClose}/> : null
           }
           <BackToTop />
-      </div>
+      </main>
   );
 };
 

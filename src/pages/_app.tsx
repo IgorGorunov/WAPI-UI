@@ -1,15 +1,15 @@
-import type {AppContext, AppProps} from "next/app";
+import type { AppContext, AppProps } from "next/app";
 import { Roboto } from "next/font/google";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/context/authContext";
 import "@/styles/globals.scss";
-import {NotificationsProvider} from "@/context/notificationContext";
-import {TourGuideProvider} from "@/context/tourGuideContext";
+import { NotificationsProvider } from "@/context/notificationContext";
+import { TourGuideProvider } from "@/context/tourGuideContext";
 // import { clarity } from 'react-microsoft-clarity';
 import { applyClarityConsent, getPerformanceConsent } from '@/utils/clarity-consent';
-import {useEffect, useState} from "react";
-import {HintsTrackingProvider} from "@/context/hintsContext";
-import {getTenantData, TENANT_TYPE, TenantDataType, TENANTS, tenants} from '@/lib/tenants';
+import { useEffect, useState } from "react";
+import { HintsTrackingProvider } from "@/context/hintsContext";
+import { getTenantData, TENANT_TYPE, TenantDataType, TENANTS, tenants } from '@/lib/tenants';
 import { TenantContext } from "@/context/tenantContext";
 
 const roboto = Roboto({
@@ -26,8 +26,8 @@ const inter = Inter({
   display: "swap",
 });
 
-export function App({ Component, pageProps, tenantHost, host }: AppProps & {tenantHost?: string, host?: string}) {
-  const [tenant, setTenant] = useState<null|TENANT_TYPE>(null);
+export function App({ Component, pageProps, tenantHost, host }: AppProps & { tenantHost?: string, host?: string }) {
+  const [tenant, setTenant] = useState<null | TENANT_TYPE>(null);
   const [tenantData, setTenantData] = useState<TenantDataType | null>(null);
 
   // console.log("tenant", host, tenantHost);
@@ -73,8 +73,8 @@ export function App({ Component, pageProps, tenantHost, host }: AppProps & {tena
   useEffect(() => {
     if (tenantHost) {
       // Cookies.set('tenant', tenantHost, { path: '/' });
-      setTenant(TENANTS[tenantHost] as TENANT_TYPE );
-      setTenantData(getTenantData(TENANTS[tenantHost] as TENANT_TYPE ) || null);
+      setTenant(TENANTS[tenantHost] as TENANT_TYPE);
+      setTenantData(getTenantData(TENANTS[tenantHost] as TENANT_TYPE) || null);
       // console.log("Host", host, tenantHost, '---', TENANTS[tenantHost], '--', getTenantData(TENANTS[tenantHost]));
     }
     // console.log('tenant 11:  ', tenantHost)
@@ -91,7 +91,7 @@ export function App({ Component, pageProps, tenantHost, host }: AppProps & {tena
       `}</style>
 
       {
-        <TenantContext.Provider value={{tenant, setTenant, getTenantData, tenantData}}>
+        <TenantContext.Provider value={{ tenant, setTenant, getTenantData, tenantData }}>
           <NotificationsProvider>
             <AuthProvider>
               <TourGuideProvider>
@@ -128,9 +128,9 @@ App.getInitialProps = async (appContext: AppContext) => {
   const tenantHost = tenants[host] || tenants['ui.wapi.com'];
 
   const componentProps =
-      typeof appContext.Component.getInitialProps === 'function'
-          ? await appContext.Component.getInitialProps(ctx)
-          : {};
+    typeof appContext.Component.getInitialProps === 'function'
+      ? await appContext.Component.getInitialProps(ctx)
+      : {};
 
   return {
     ...componentProps,
@@ -140,3 +140,29 @@ App.getInitialProps = async (appContext: AppContext) => {
 };
 
 export default App;
+
+// Web Vitals monitoring for performance tracking
+export function reportWebVitals(metric: any) {
+  if (metric.label === 'web-vital') {
+    // Log to console in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Web Vitals] ${metric.name}:`, Math.round(metric.value), metric.rating);
+    }
+
+    // Send to analytics in production
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', metric.name, {
+        value: Math.round(metric.value),
+        event_label: metric.id,
+        non_interaction: true,
+      });
+    }
+
+    // You can also send to other analytics services here
+    // Example: send to custom analytics endpoint
+    // fetch('/api/analytics', {
+    //   method: 'POST',
+    //   body: JSON.stringify(metric),
+    // });
+  }
+}

@@ -1,14 +1,22 @@
 import React, {useEffect, useState} from "react";
+import dynamic from "next/dynamic";
 import Layout from "@/components/Layout/Layout";
-import LoginForm from "./LoginForm/LoginForm";
-import SignUpBlock from "./SignUpForm/SignUpBlock";
 import "./styles.scss";
-import Head from "next/head";
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
-import SeoHead from "@/components/SeoHead";
 import useTenant from "@/context/tenantContext";
 import {TENANTS} from "@/lib/tenants";
+
+// Dynamically import heavy components to reduce initial JavaScript blocking render
+const LoginForm = dynamic(() => import("./LoginForm/LoginForm"), {
+    ssr: false, // Client-side only to prevent blocking initial HTML render
+    loading: () => <div style={{ minHeight: '285px' }} /> // Reserve space to prevent layout shift
+});
+
+const SignUpBlock = dynamic(() => import("./SignUpForm/SignUpBlock"), {
+    ssr: false,
+    loading: () => <div style={{ minHeight: '200px' }} />
+});
 
 const LoginPage = () => {
     const { logout } = useAuth();
@@ -43,11 +51,11 @@ const LoginPage = () => {
 
     return (
         <Layout hasFooter>
-            <SeoHead title="Login" description="Login page" />
+            {/*<SeoHead title="Login" description="Login page" />*/}
             <div className={`login-page__container${tenant === TENANTS.WAPI ? ' has-bg' : ''}`}>
                 <div className="login-page__text-wrapper">
                     <h1>SIGN IN</h1>
-                    <h3>Welcome back</h3>
+                    <h2>Welcome back</h2>
                 </div>
 
                 <LoginForm oneTimeToken={oneTimeToken} setOneTimeToken={setOneTimeToken} />

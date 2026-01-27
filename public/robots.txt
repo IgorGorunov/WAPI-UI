@@ -1,0 +1,58 @@
+# robots.txt for WAPI User Cabinet
+# Only public pages should be crawled
+
+User-agent: *
+
+# Block everything by default
+Disallow: /
+
+# Explicitly allow public pages (must come AFTER Disallow: /)
+Allow: /login$
+Allow: /sign-up$
+Allow: /get-started$
+Allow: /privacy-policy$
+Allow: /cookie-policy$
+
+# Allow static assets (CSS, JS, images) for proper rendering in search results
+Allow: /_next/static/
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.webp$
+Allow: /*.avif$
+Allow: /*.ico$
+
+# Block API routes explicitly
+Disallow: /api/
+
+# Block authenticated pages (redundant but explicit for clarity)
+Disallow: /orders
+Disallow: /invoices
+Disallow: /profile
+Disallow: /dashboard
+Disallow: /products
+Disallow: /reports/
+Disallow: /tickets
+Disallow: /amazonPrep
+Disallow: /codReports
+Disallow: /inbounds
+Disallow: /outbounds
+Disallow: /productsStock
+Disallow: /stockMovements
+Disallow: /logisticServices
+Disallow: /lead
+Disallow: /email-confirm
+Disallow: /faq
+Disallow: /sanity
+Disallow: /documentation
+
+# Block admin and private resources
+Disallow: /_next/webpack-hmr
+Disallow: /*.json$
+
+# Sitemap location (update with your actual domain)
+Sitemap: https://ui.wapi.com/sitemap.xml

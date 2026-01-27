@@ -150,7 +150,7 @@ const CookieConsent = () => {
                     </div>
                 </div>)
                 : <div className='cookie-consent__wrapper--small'>
-                    <button className={`cookie-consent-settings__btn`} onClick={()=>setShowCookieSettings(true)} >
+                    <button className={`cookie-consent-settings__btn`} aria-label="Cookie settings button" onClick={()=>setShowCookieSettings(true)} >
                         <Icon name='cookie' />
                         <span className="tooltip-text">Change cookie settings</span>
                     </button>

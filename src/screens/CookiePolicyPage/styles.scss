@@ -1,6 +1,12 @@
 @import '@/constants/devices.scss';
 
 .cookie-policy-page {
+  &__container {
+    position: relative;
+    display: block;
+    max-width: 100%;
+  }
+
   &__text-wrapper {
     padding: 24px;
 
@@ -50,6 +56,10 @@
 
     th {
       background-color: var(--color-blue-15);
+    }
+
+    &-wrapper {
+      overflow-x: auto;
     }
   }
 }

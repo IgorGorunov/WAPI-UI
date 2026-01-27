@@ -79,7 +79,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
         <div className={`burger-menu__overlay ${isMenuOpen ? 'burger-menu__overlay-open' : ''}`} onClick={handleCloseClick}>
             <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`} onClick={(e)=>e.stopPropagation()}>
                 <div className={`burger-menu-child`}>
-                    <button className="close-button" onClick={handleClose}>
+                    <button className="close-button" onClick={handleClose} aria-label="Close menu">
                         <Icon name="close" style={{width: "30px", height: "30px"}} />
                     </button>
                     <div className='dashboard-menu-link'>

@@ -28,7 +28,7 @@
     min-height: 36px!important;
 
     &::placeholder {
-      color: var(--color-gray-blue);
+      color: var(--color-placeholder) !important;
       overflow: hidden;
     }
   }

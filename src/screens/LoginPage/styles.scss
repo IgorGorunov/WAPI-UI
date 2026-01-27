@@ -8,6 +8,15 @@
       background: no-repeat center 40px url('../../assets/icons/bg-logo.svg');
       background-size: contain;
     }
+
+    input {
+      color: var(--color-placeholder) !important;
+
+      &::placeholder {
+        color: var(--color-placeholder) !important;
+
+      }
+    }
   }
 
   &__text-wrapper {

@@ -25,7 +25,7 @@ import {AllReportsRowType, AllVariantsType, DeliveryRatesRowType, REPORT_TITLES,
 import {getVariantByReportType} from "@/screens/ReportPage/utils";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 
-import {Workbook} from 'exceljs';
+// ✅ OPTIMIZED: ExcelJS will be imported dynamically when download button is clicked
 import {
     formatDateStringToDisplayString,
     formatDateToShowMonthYear,
@@ -164,6 +164,8 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
             return;
         }
 
+        // ✅ OPTIMIZED: Dynamic import - ExcelJS only loads when download button is clicked
+        const { Workbook } = await import('exceljs');
         const workbook = new Workbook();
         const worksheet = workbook.addWorksheet('Report');
 
