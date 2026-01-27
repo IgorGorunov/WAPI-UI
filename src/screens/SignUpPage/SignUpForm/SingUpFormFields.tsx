@@ -7,6 +7,7 @@ export const signUpFormFields: FormBuilderType[] = [
         type: "text",
         name: "contact",
         label: "Your name",
+        placeholder: "John Smith",
         rules: {
             required:  "Please, enter your name!",
         },
