@@ -38,7 +38,7 @@ const resourceColumns: ColumnDef<CodReportRowType>[] = [
 const documentColumns: ColumnDef<CodReportRowType>[] = [
     {
         accessorKey: 'order',
-        header: () => <Tooltip title="Wapi tracking number">Order</Tooltip> ,
+        header: () => <Tooltip title="Warehouse tracking number">Order</Tooltip> ,
         size: 90,
         maxSize: 500,
     },

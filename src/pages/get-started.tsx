@@ -1,15 +1,20 @@
-import Head from "next/head";
+import SEO from "@/components/SEO";
+import StructuredData from "@/components/StructuredData";
 import GetStartedPage from "@/screens/GetStartedPage";
 
 export default function GetStarted() {
     return (
         <>
-            <Head>
-                <title>Get started with WAPI</title>
-                <meta name="get-started" content="get-started" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
+            <SEO
+                title="Get Started"
+                description="Get started with our logistics services. Learn how to set up your account, manage orders, and streamline your e-commerce fulfillment operations."
+            />
+            <StructuredData
+                type="WebPage"
+                name="Get Started"
+                description="Get started with our logistics services. Learn how to set up your account, manage orders, and streamline your e-commerce fulfillment operations."
+                path="/get-started"
+            />
             <GetStartedPage />
         </>
     );

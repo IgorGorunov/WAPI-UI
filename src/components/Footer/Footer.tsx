@@ -1,14 +1,14 @@
 import React, { memo } from "react";
 import LogoWAPI from "@/assets/icons/LogoWAPI.svg";
 import "./styles.scss";
-import {Routes} from "@/types/routes";
+import { Routes } from "@/types/routes";
 import useTenant from "@/context/tenantContext";
-import {TENANT_TYPE, TenantFooterDataType, TENANTS} from "@/lib/tenants";
+import { TENANT_TYPE, TenantFooterDataType, TENANTS } from "@/lib/tenants";
 import Image from 'next/image';
 import Link from "next/link";
 
 
-const LogoInFooter:React.FC = (tenant:TENANT_TYPE, footer: TenantFooterDataType | null) => {
+const LogoInFooter: React.FC = (tenant: TENANT_TYPE, footer: TenantFooterDataType | null) => {
 
   if (tenant === TENANTS.WAPI) return <LogoWAPI />;
 
@@ -20,20 +20,20 @@ const LogoInFooter:React.FC = (tenant:TENANT_TYPE, footer: TenantFooterDataType 
 }
 
 const Footer: React.FC = () => {
-  const {tenant, tenantData} = useTenant();
+  const { tenant, tenantData } = useTenant();
   const footerData = tenantData?.footer;
 
   return (
     <div className="footer">
       <div className="footer-wrapper">
         <div className="footer-left">
-          <div className="logo" style={{paddingTop: `${footerData?.logoPaddingTop || 0}px`}}>
+          <div className="logo" style={{ paddingTop: `${footerData?.logoPaddingTop || 0}px` }}>
             {LogoInFooter(tenant, footerData)}
           </div>
           {footerData?.copyright ? (
-              <p className="copyright">
-                ©{(new Date).getFullYear()} {footerData?.copyright}
-              </p>
+            <p className="copyright">
+              ©{(new Date).getFullYear()} {footerData?.copyright}
+            </p>
           ) : null}
           {footerData?.address ? <p className="address">{footerData?.address}</p> : null}
         </div>

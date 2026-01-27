@@ -1290,7 +1290,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 maxWidth="100px"
                 contentPosition="start"
                 childrenBefore={
-                    <Tooltip title="Order identifier within the WAPI system">
+                    <Tooltip title="Order identifier within the warehouse system">
                         <>
                             <span>WH number</span>
                             {sortColumn==='wapiTrackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}

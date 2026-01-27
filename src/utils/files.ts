@@ -1,4 +1,4 @@
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx";
 
 const setColWidth = (data: any[]) => {
     const widths = data.map(row =>
@@ -12,11 +12,13 @@ const setColWidth = (data: any[]) => {
     }));
 };
 
-const exportFileXLS = (data: any[], fileName: string) => {
-
+const exportFileXLS = async (data: any[], fileName: string) => {
     if (data.length === 0) {
         return null;
     }
+
+    // Dynamic import
+    const XLSX = await import('xlsx');
 
     const ws = XLSX.utils.json_to_sheet(data);
 

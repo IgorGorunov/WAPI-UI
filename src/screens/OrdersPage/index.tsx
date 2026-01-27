@@ -10,7 +10,7 @@ import Button from "@/components/Button/Button";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateTimeToStringWithDotWithoutSeconds, formatDateToString, getLastFewDays} from "@/utils/date";
 import {OrderType} from "@/types/orders";
-import {exportFileXLS} from "@/utils/files";
+// import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
 import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
@@ -208,7 +208,7 @@ const OrdersPage = () => {
         }
     }
 
-    const handleExportXLS = () => {
+    const handleExportXLS = async () => {
         try {
             sendUserBrowserInfo({...getBrowserInfo('ExportFulfilmentList', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ExportList), body: {startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}});
         } catch {}
@@ -252,7 +252,9 @@ const OrdersPage = () => {
             filteredData.forEach(row=>delete row["Has claims"]);
         }
 
-        exportFileXLS(filteredData, "Orders");
+        // Dynamic import - only loads when export button is clicked
+        const { exportFileXLS } = await import('@/utils/files');
+        await exportFileXLS(filteredData, "Orders");
     }
 
     return (

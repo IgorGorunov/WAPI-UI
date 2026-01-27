@@ -185,7 +185,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({notification
         <div className={`notifications-block__overlay ${isNotificationsBlockOpen ? 'notifications-block__overlay-open' : ''}`} onClick={onClose}>
             <div className={`notifications-block ${isNotificationsBlockOpen ? 'notifications-block--open' : ''}`} onClick={(e)=>e.stopPropagation()}>
                 <div className={`notifications-block__wrapper`}>
-                    <button className="close-button" onClick={onClose}>
+                    <button className="close-button" onClick={onClose} aria-label="Close notifications">
                         <Icon name="close" style={{width: "30px", height: "30px"}}/>
                     </button>
                     {/*clear all*/}

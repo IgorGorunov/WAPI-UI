@@ -1,15 +1,14 @@
-import Head from "next/head";
+import SEO from "@/components/SEO";
 import ConfirmEmailPage from "@/screens/ConfirmEmailPage";
 
 export default function ConfirmEmail() {
     return (
         <>
-            <Head>
-                <title>Confirm email</title>
-                <meta name="email-confirm" content="email-confirm" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/logo.png" type="image/png"/>
-            </Head>
+            <SEO 
+                title="Confirm Email"
+                description="Verify your email address to activate your WAPI account and start using our logistics services."
+                noindex={true}
+            />
             <ConfirmEmailPage />
         </>
     );

@@ -4,7 +4,6 @@ import Layout from "@/components/Layout/Layout";
 import "./styles.scss";
 // import Header from "@/components/Header";
 import Link from "next/link";
-import SeoHead from "@/components/SeoHead";
 import useTenant from "@/context/tenantContext";
 
 // Use your existing Header but render it client-only to avoid SSR side effects.
@@ -23,7 +22,7 @@ const CookiePolicyPage = () => {
 
     return (
         <Layout hasFooter>
-            <SeoHead title='Cookie Policy' description='Our Cookie policy page' />
+            {/*<SeoHead title='Cookie Policy' description='Our Cookie policy page' />*/}
             <div className="cookie-policy-page__container">
                 <Header pageTitle='Cookie policy' toRight  />
 
@@ -69,159 +68,161 @@ const CookiePolicyPage = () => {
                         </li>
                     </ol>
                     <p className='text-bold'>List of cookies we use: </p>
-                    <table className='cookie-policy-page__cookie-list-table'>
-                        <thead>
-                        <tr>
-                            <th><span className='text-bold'>Name</span></th>
-                            <th><span className='text-bold'>Type</span></th>
-                            <th><span className='text-bold'>Description</span></th>
-                            <th><span className='text-bold'>Duration</span></th>
+                    <div className='cookie-policy-page__cookie-list-table-wrapper'>
+                        <table className='cookie-policy-page__cookie-list-table'>
+                            <thead>
+                            <tr>
+                                <th><span className='text-bold'>Name</span></th>
+                                <th><span className='text-bold'>Type</span></th>
+                                <th><span className='text-bold'>Description</span></th>
+                                <th><span className='text-bold'>Duration</span></th>
 
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>cookie_consent</td>
-                            <td>Essential</td>
-                            <td>Stores user's cookie consent.</td>
-                            <td>6 months</td>
-                        </tr>
-                        <tr>
-                            <td>token</td>
-                            <td>Essential</td>
-                            <td>Used to identify the user once logged in.</td>
-                            <td>Session</td>
-                        </tr>
-                        <tr>
-                            <td>userStatus</td>
-                            <td>Essential</td>
-                            <td>Used to identify logged user status.</td>
-                            <td>Session</td>
-                        </tr>
-                        {/*<tr>*/}
-                        {/*    <td>userName</td>*/}
-                        {/*    <td>Essential</td>*/}
-                        {/*    <td>Stores user's name to display in UI.</td>*/}
-                        {/*    <td>Session</td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>currentDate</td>*/}
-                        {/*    <td>Essential</td>*/}
-                        {/*    <td>Stores current date.</td>*/}
-                        {/*    <td>Session</td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>tutorialData</td>*/}
-                        {/*    <td>Essential</td>*/}
-                        {/*    <td>Stores information about UI tutorials user watched to not display these tutorials*/}
-                        {/*        again.*/}
-                        {/*    </td>*/}
-                        {/*    <td>Session</td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>profile_info</td>*/}
-                        {/*    <td>Essential</td>*/}
-                        {/*    <td>Stores logged user's profile info.</td>*/}
-                        {/*    <td>Session</td>*/}
-                        {/*</tr>*/}
-                        <tr>
-                            <td>navAccess</td>
-                            <td>Essential</td>
-                            <td>Stores logged user's navigation access info.</td>
-                            <td>Session</td>
-                        </tr>
-                        {/*<tr>*/}
-                        {/*    <td>browser</td>*/}
-                        {/*    <td>Essential</td>*/}
-                        {/*    <td>Stores browser info for logging.</td>*/}
-                        {/*    <td>Session</td>*/}
-                        {/*</tr>*/}
-                        <tr>
-                            <td>userActions</td>
-                            <td>Essential</td>
-                            <td>Stores actions user is allowed to perform according to their settings.</td>
-                            <td>Session</td>
-                        </tr>
-                        <tr>
-                            <td>userType</td>
-                            <td>Essential</td>
-                            <td>Used to identify the type of user's account and their access to extra features.</td>
-                            <td>Session</td>
-                        </tr>
-                        <tr>
-                            <td>sellers</td>
-                            <td>Essential</td>
-                            <td>Identifies which seller or sub-tenant account the logged-in user belongs to. For clients with sub-tenants,
-                                this cookie contains the unique system identifiers of those tenants so
-                                that the correct data can be displayed. For standard clients,
-                                it stores their own tenant UUID. This cookie is required for the platform to load the
-                                correct data and permissions and is not used for marketing or analytics.
-                            </td>
-                            <td>Session</td>
-                        </tr>
-                        {/*Functional cookies (optional)*/}
-                        <tr>
-                            <td>userName</td>
-                            <td>Functional</td>
-                            <td>Stores user's name to display in UI.</td>
-                            <td>Session</td>
-                        </tr>
-                        <tr>
-                            <td>tutorialData</td>
-                            <td>Functional</td>
-                            <td>Stores information about UI tutorials user watched to not display these tutorials
-                                again.
-                            </td>
-                            <td>Session</td>
-                        </tr>
-                        <tr>
-                            <td>visited-stock-movements</td>
-                            <td>Functional</td>
-                            <td>Stores infirmation if user created any stock-movements to determine if hints are needed.
-                            </td>
-                            <td>2 years</td>
-                        </tr>
-                        <tr>
-                            <td>inbound-hints-cancel-number</td>
-                            <td>Functional</td>
-                            <td>Stores number of times user rejected viewing hints for Stock-management document creation to stop suggesting hints any more after two refusals.
-                            </td>
-                            <td>2 years</td>
-                        </tr>
-                        {/*<tr>*/}
-                        {/*    <td>browser</td>*/}
-                        {/*    <td>Functional</td>*/}
-                        {/*    <td>Stores browser info for logging.</td>*/}
-                        {/*    <td>Session</td>*/}
-                        {/*</tr>*/}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>cookie_consent</td>
+                                <td>Essential</td>
+                                <td>Stores user's cookie consent.</td>
+                                <td>6 months</td>
+                            </tr>
+                            <tr>
+                                <td>token</td>
+                                <td>Essential</td>
+                                <td>Used to identify the user once logged in.</td>
+                                <td>Session</td>
+                            </tr>
+                            <tr>
+                                <td>userStatus</td>
+                                <td>Essential</td>
+                                <td>Used to identify logged user status.</td>
+                                <td>Session</td>
+                            </tr>
+                            {/*<tr>*/}
+                            {/*    <td>userName</td>*/}
+                            {/*    <td>Essential</td>*/}
+                            {/*    <td>Stores user's name to display in UI.</td>*/}
+                            {/*    <td>Session</td>*/}
+                            {/*</tr>*/}
+                            {/*<tr>*/}
+                            {/*    <td>currentDate</td>*/}
+                            {/*    <td>Essential</td>*/}
+                            {/*    <td>Stores current date.</td>*/}
+                            {/*    <td>Session</td>*/}
+                            {/*</tr>*/}
+                            {/*<tr>*/}
+                            {/*    <td>tutorialData</td>*/}
+                            {/*    <td>Essential</td>*/}
+                            {/*    <td>Stores information about UI tutorials user watched to not display these tutorials*/}
+                            {/*        again.*/}
+                            {/*    </td>*/}
+                            {/*    <td>Session</td>*/}
+                            {/*</tr>*/}
+                            {/*<tr>*/}
+                            {/*    <td>profile_info</td>*/}
+                            {/*    <td>Essential</td>*/}
+                            {/*    <td>Stores logged user's profile info.</td>*/}
+                            {/*    <td>Session</td>*/}
+                            {/*</tr>*/}
+                            <tr>
+                                <td>navAccess</td>
+                                <td>Essential</td>
+                                <td>Stores logged user's navigation access info.</td>
+                                <td>Session</td>
+                            </tr>
+                            {/*<tr>*/}
+                            {/*    <td>browser</td>*/}
+                            {/*    <td>Essential</td>*/}
+                            {/*    <td>Stores browser info for logging.</td>*/}
+                            {/*    <td>Session</td>*/}
+                            {/*</tr>*/}
+                            <tr>
+                                <td>userActions</td>
+                                <td>Essential</td>
+                                <td>Stores actions user is allowed to perform according to their settings.</td>
+                                <td>Session</td>
+                            </tr>
+                            <tr>
+                                <td>userType</td>
+                                <td>Essential</td>
+                                <td>Used to identify the type of user's account and their access to extra features.</td>
+                                <td>Session</td>
+                            </tr>
+                            <tr>
+                                <td>sellers</td>
+                                <td>Essential</td>
+                                <td>Identifies which seller or sub-tenant account the logged-in user belongs to. For clients with sub-tenants,
+                                    this cookie contains the unique system identifiers of those tenants so
+                                    that the correct data can be displayed. For standard clients,
+                                    it stores their own tenant UUID. This cookie is required for the platform to load the
+                                    correct data and permissions and is not used for marketing or analytics.
+                                </td>
+                                <td>Session</td>
+                            </tr>
+                            {/*Functional cookies (optional)*/}
+                            <tr>
+                                <td>userName</td>
+                                <td>Functional</td>
+                                <td>Stores user's name to display in UI.</td>
+                                <td>Session</td>
+                            </tr>
+                            <tr>
+                                <td>tutorialData</td>
+                                <td>Functional</td>
+                                <td>Stores information about UI tutorials user watched to not display these tutorials
+                                    again.
+                                </td>
+                                <td>Session</td>
+                            </tr>
+                            <tr>
+                                <td>visited-stock-movements</td>
+                                <td>Functional</td>
+                                <td>Stores infirmation if user created any stock-movements to determine if hints are needed.
+                                </td>
+                                <td>2 years</td>
+                            </tr>
+                            <tr>
+                                <td>inbound-hints-cancel-number</td>
+                                <td>Functional</td>
+                                <td>Stores number of times user rejected viewing hints for Stock-management document creation to stop suggesting hints any more after two refusals.
+                                </td>
+                                <td>2 years</td>
+                            </tr>
+                            {/*<tr>*/}
+                            {/*    <td>browser</td>*/}
+                            {/*    <td>Functional</td>*/}
+                            {/*    <td>Stores browser info for logging.</td>*/}
+                            {/*    <td>Session</td>*/}
+                            {/*</tr>*/}
 
-                        {/* clarity cookies */}
-                        <tr>
-                            <td>_clck</td>
-                            <td>Performance</td>
-                            <td>Used by Microsoft Clarity. Persists the Clarity User ID and preferences, unique to that site, on the browser. This ensures that behavior in subsequent visits to the same site will be attributed to the same user ID.</td>
-                            <td>1 day</td>
-                        </tr>
-                        <tr>
-                            <td>_clsk</td>
-                            <td>Performance</td>
-                            <td>Used by Microsoft Clarity. Connects multiple page views by a user into a single Clarity session recording.</td>
-                            <td>1 year</td>
-                        </tr>
-                        <tr>
-                            <td>CLID</td>
-                            <td>Performance</td>
-                            <td>Used by Microsoft Clarity. Identifies the first time Clarity saw this user across sites or domains.</td>
-                            <td>1 year</td>
-                        </tr>
-                        <tr>
-                            <td>MUID</td>
-                            <td>Performance</td>
-                            <td>Used by Microsoft Clarity. Identifies unique web browsers visiting Microsoft sites. These cookies are used for advertising, site analytics, and other operational purposes.</td>
-                            <td>1 year</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                            {/* clarity cookies */}
+                            <tr>
+                                <td>_clck</td>
+                                <td>Performance</td>
+                                <td>Used by Microsoft Clarity. Persists the Clarity User ID and preferences, unique to that site, on the browser. This ensures that behavior in subsequent visits to the same site will be attributed to the same user ID.</td>
+                                <td>1 day</td>
+                            </tr>
+                            <tr>
+                                <td>_clsk</td>
+                                <td>Performance</td>
+                                <td>Used by Microsoft Clarity. Connects multiple page views by a user into a single Clarity session recording.</td>
+                                <td>1 year</td>
+                            </tr>
+                            <tr>
+                                <td>CLID</td>
+                                <td>Performance</td>
+                                <td>Used by Microsoft Clarity. Identifies the first time Clarity saw this user across sites or domains.</td>
+                                <td>1 year</td>
+                            </tr>
+                            <tr>
+                                <td>MUID</td>
+                                <td>Performance</td>
+                                <td>Used by Microsoft Clarity. Identifies unique web browsers visiting Microsoft sites. These cookies are used for advertising, site analytics, and other operational purposes.</td>
+                                <td>1 year</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <p className='text-bold'>Managing your cookies </p>
                     <p>On your first visit, you will see a cookie banner. Essential cookies are always active, but you can choose
                         whether to allow Functional and Performance cookies. You can also change your preferences at any time by clicking

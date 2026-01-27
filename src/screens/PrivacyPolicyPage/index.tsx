@@ -4,7 +4,6 @@ import "./styles.scss";
 import Header from "@/components/Header";
 import Link from "next/link";
 import useTenant from "@/context/tenantContext";
-import SeoHead from "@/components/SeoHead";
 
 const PrivacyPolicyPage = () => {
     const {tenant, getTenantData} = useTenant();
@@ -33,7 +32,7 @@ const PrivacyPolicyPage = () => {
 
     return (
         <Layout hasFooter>
-            <SeoHead title='Privacy Policy' description='Our privacy policy page' />
+            {/*<SeoHead title='Privacy Policy' description='Our privacy policy page' />*/}
             <div className="privacy-policy-page">
                 <Header pageTitle='Privacy policy' toRight  />
 

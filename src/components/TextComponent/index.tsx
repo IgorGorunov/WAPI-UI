@@ -1,21 +1,30 @@
 import React from 'react';
 import {DownloadableFileType, RichTextType, VideoComponentType} from "@/types/sanity/fragmentTypes";
-import { PortableText, PortableTextComponents } from '@portabletext/react';
 import './styles.scss';
 import ImageComponent from "@/components/ImageComponent";
 import TableComponent from "../TableComponent";
 import {PAGE_REFERENCES} from "@/types/sanity/pageReferences";
 import VideoComponent from "@/components/VideoComponent";
 import DownloadableFile from "@/components/DownloadableFile";
+import dynamic from 'next/dynamic';
+import type { PortableTextComponents } from '@portabletext/react';
 
 type FaqItemPropsType = {
     textContent: RichTextType;
 }
 
+// Dynamic import for PortableText, loads only when needed
+const PortableText = dynamic(
+    () => import('@portabletext/react').then(mod => mod.PortableText),
+    { 
+        ssr: true,
+        loading: () => <div className="rich-text loading">Loading content...</div>
+    }
+);
 
 const TextComponent: React.FC<FaqItemPropsType> = (props) => {
 
-    const components: PortableTextComponents = {
+    const components: Partial<PortableTextComponents> = {
         types: {
             h1: (props: any) => <h1 className="text-h1" {...props} />,
             h2: (props: any) => <h2 className="text-h2" {...props} />,

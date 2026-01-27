@@ -6,7 +6,8 @@
   margin-top: auto;
 
   background-color: var(--color-dark-blue);
-  color: var(--color-gray-blue);
+  //color: var(--color-gray-blue);
+  color: var(--color-footer-font);
 
   &-wrapper {
     max-width: 1200px;
@@ -39,7 +40,7 @@
     list-style: none;
     font-size: 12px;
     font-weight: 700;
-    line-height: 20px;
+    line-height: 25px;
 
     @media (min-width: $mobile) {
       line-height: 40px;
@@ -47,6 +48,7 @@
 
     .is-footer-link {
       display: block;
+      color: var(--color-footer-font) !important;
       //text-decoration: none;
       transform: scale(1);
       transform-origin: left;

@@ -4,7 +4,8 @@ import {authenticate, authenticateWithOneTimeToken} from "@/services/auth";
 import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import useAuth from "@/context/authContext";
-import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
+// Direct import of TextField to avoid loading unnecessary form components
+import TextField from "@/components/FormBuilder/TextInput/TextField";
 import Button from "@/components/Button/Button";
 import "./styles.scss";
 import {UserStatusType} from "@/types/leads";
@@ -203,16 +204,16 @@ const LoginForm: React.FC<LoginFormPropsType> = ({oneTimeToken, setOneTimeToken}
                 name={curField.name}
                 control={control}
                 render={({field: { ...props}, fieldState: {error}}) => (
-                <FieldBuilder
-                    {...curField}
+                <TextField
                     {...props}
                     type={curField.type}
                     name={curField.name}
                     label={curField.label}
-                    fieldType={curField.fieldType}
                     placeholder={curField.placeholder}
                     errorMessage={error?.message}
                     isRequired={!!curField.rules?.required || false}
+                    width={curField.width}
+                    classNames={curField.classNames}
                 /> )}
                rules = {curField.rules}
             />
