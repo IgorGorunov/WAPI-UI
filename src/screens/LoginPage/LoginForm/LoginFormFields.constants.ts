@@ -6,7 +6,7 @@ export const formFields: FormBuilderType[] = [
         type: "text",
         name: "login",
         label: "Your email",
-        placeholder: "",
+        placeholder: "laithoff@gmail.com",
         rules: {
             required: "Email is required!",
             // pattern: {
