@@ -643,7 +643,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 key: 'discount',
                 minWidth: 50,
                 responsive: ['lg'] as ResponsiveBreakpoint[],
-                render: (text, record, index) => (
+                render: (_text, _record, index) => (
                     <Controller
                         name={`products.${index}.discount`}
                         control={control}
@@ -670,7 +670,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({orderData, orderParameters
                 key: 'tax',
                 minWidth: 50,
                 responsive: ['md'] as ResponsiveBreakpoint[],
-                render: (text, record, index) => (
+                render: (_text, _record, index) => (
                     <Controller
                         name={`products.${index}.tax`}
                         control={control}

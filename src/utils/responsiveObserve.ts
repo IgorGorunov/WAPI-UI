@@ -9,7 +9,7 @@ export const responsiveMap: BreakpointMap = {
     sm: '(min-width: 576px)',
     md: '(min-width: 768px)',
     lg: '(min-width: 992px)',
-    xl: '(min-width: 1200px)',
+    xl: '(min-width: 1440px)',
     xxl: '(min-width: 1600px)',
 };
 

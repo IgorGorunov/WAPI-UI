@@ -173,8 +173,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         SellerColumns.push({
             title: <TitleColumn
                 className='no-padding'
-                minWidth="70px"
-                maxWidth="90px"
+                minWidth="90px"
+                maxWidth="100px"
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
@@ -186,12 +186,12 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                     </Tooltip>
                 }
             />,
-            render: (text: string, record) => {
+            render: (_text: string, record) => {
                 return (
                     <TableCell
                         className='no-padding'
-                        minWidth="70px"
-                        maxWidth="90px"
+                        minWidth="90px"
+                        maxWidth="100px"
                         contentPosition="left"
                         childrenBefore={
                             <div className="seller-container">
@@ -363,7 +363,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
         },
         {
              title: <TitleColumn title="" minWidth="100px" maxWidth="800px" contentPosition="end"/>,
-            render: (text: string, record: CodReportType) => (
+            render: (_text: string, _record: CodReportType) => (
                 <TableCell
                     minWidth="100px"
                     maxWidth="800px"
