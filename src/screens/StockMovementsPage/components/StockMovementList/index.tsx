@@ -486,7 +486,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
         SellerColumns.push({
             title: <TitleColumn
                 className='no-padding'
-                minWidth="80px"
+                minWidth="90px"
                 maxWidth="100px"
                 contentPosition="left"
                 childrenBefore={
@@ -499,11 +499,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
                     </Tooltip>
                 }
             />,
-            render: (text: string, record) => {
+            render: (_text: string, record) => {
                 return (
                     <TableCell
                         className='no-padding'
-                        minWidth="80px"
+                        minWidth="90px"
                         maxWidth="100px"
                         contentPosition="left"
                         childrenBefore={

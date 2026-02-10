@@ -255,8 +255,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         SellerColumns.push({
             title: <TitleColumn
                 className='no-padding'
-                minWidth="70px"
-                maxWidth="90px"
+                minWidth="90px"
+                maxWidth="100px"
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
@@ -268,12 +268,12 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     </Tooltip>
                 }
             />,
-            render: (text: string, record) => {
+            render: (_text: string, record) => {
                 return (
                     <TableCell
                         className='no-padding'
-                        minWidth="70px"
-                        maxWidth="90px"
+                        minWidth="90px"
+                        maxWidth="100px"
                         contentPosition="left"
                         childrenBefore={
                             <div className="seller-container">

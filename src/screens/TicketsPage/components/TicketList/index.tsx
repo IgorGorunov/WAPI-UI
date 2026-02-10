@@ -449,8 +449,8 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             SellerColumns.push({
                 title: <TitleColumn
                     className='no-padding'
-                    minWidth="70px"
-                    maxWidth="90px"
+                    minWidth="90px"
+                    maxWidth="100px"
                     contentPosition="left"
                     childrenBefore={
                         <Tooltip title="Seller's name" >
@@ -461,12 +461,12 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
                         </Tooltip>
                     }
                 />,
-                render: (text: string, record) => {
+                render: (_text: string, record) => {
                     return (
                         <TableCell
                             className='no-padding'
-                            minWidth="70px"
-                            maxWidth="90px"
+                            minWidth="90px"
+                            maxWidth="100px"
                             contentPosition="left"
                             childrenBefore={
                                 <div className="seller-container">

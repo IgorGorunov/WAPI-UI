@@ -2,7 +2,7 @@ export const breakpoints = {
     mobile: 600,
     tablet: 900,
     laptop: 1024,
-    desktop: 1200,
+    desktop: 1440,
 };
 
 export const upTo = {

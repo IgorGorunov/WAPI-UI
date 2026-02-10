@@ -996,8 +996,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 return (
                     <TableCell
                         className='no-padding'
-                        minWidth="60px"
-                        maxWidth="80px"
+                        minWidth="90px"
+                        maxWidth="100px"
                         contentPosition="left"
                         childrenBefore={
                             <div className="seller-container">
@@ -1321,8 +1321,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             title: <TitleColumn
-                minWidth="65px"
-                maxWidth="65px"
+                minWidth="55px"
+                maxWidth="55px"
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="The sum of cash on delivery">
@@ -1338,8 +1338,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     return (
                         <TableCell
                             value={`${text} ${currencySymbol}`}
-                            minWidth="65px"
-                            maxWidth="65px"
+                            minWidth="55px"
+                            maxWidth="55px"
                             contentPosition="center">
                         </TableCell>
                     );
@@ -1347,8 +1347,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     return (
                         <TableCell
                             value={'-'}
-                            minWidth="75px"
-                            maxWidth="75px"
+                            minWidth="55px"
+                            maxWidth="55px"
                             contentPosition="center">
                         </TableCell>
                     );
@@ -1364,8 +1364,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             title: <TitleColumn
-                minWidth="80px"
-                maxWidth="80px"
+                minWidth="100px"
+                maxWidth="120px"
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip
@@ -1377,7 +1377,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         </>
                     </Tooltip>}/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
             ),
 
             dataIndex: 'clientOrderID',
@@ -1391,8 +1391,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         ...SellerColumns,
         {
             title: <TitleColumn
-                minWidth="90px"
-                maxWidth="90px"
+                minWidth="70px"
+                maxWidth="70px"
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Code of warehouse">
@@ -1404,7 +1404,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="90px" maxWidth="90px" contentPosition="start"/>
+                <TableCell value={text} minWidth="70px" maxWidth="70px" contentPosition="start"/>
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
