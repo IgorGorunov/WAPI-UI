@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Icon from "@/components/Icon";
 import './styles.scss';
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import {getHeaderNameById, getVariantColumnsByReportType, transformReportType} from '../utils';
+import { getHeaderNameById, getVariantColumnsByReportType, transformReportType } from '../utils';
 
 import {
     ColumnResizeMode,
@@ -21,9 +21,9 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 
-import {AllReportsRowType, AllVariantsType, DeliveryRatesRowType, REPORT_TITLES, REPORT_TYPES} from "@/types/reports";
-import {getVariantByReportType} from "@/screens/ReportPage/utils";
-import Button, {ButtonVariant} from "@/components/Button/Button";
+import { AllReportsRowType, AllVariantsType, DeliveryRatesRowType, REPORT_TITLES, REPORT_TYPES } from "@/types/reports";
+import { getVariantByReportType } from "@/screens/ReportPage/utils";
+import Button, { ButtonVariant } from "@/components/Button/Button";
 
 // ✅ OPTIMIZED: ExcelJS will be imported dynamically when download button is clicked
 import {
@@ -39,8 +39,9 @@ import {
     getDeliveredWithFirstAttemptValue,
     getProbableBuyoutValue
 } from "@/screens/ReportPage/Reports/DeliveryRates";
-import {sendUserBrowserInfo} from "@/services/userInfo";
-import useAuth, {AccessActions} from "@/context/authContext";
+import { sendUserBrowserInfo } from "@/services/userInfo";
+import useAuth from "@/context/authContext";
+import { AccessActions } from "@/types/auth";
 
 type ReportTablePropsType = {
     curPeriod: {
@@ -57,20 +58,20 @@ type ReportTablePropsType = {
     resourceColumnNames?: string[];
 }
 
-const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, reportVariantAsString, reportData,reportGrouping, dimensionsCount, searchText='', sortingCols = [], resourceColumnNames=[]}) => {
-    const {isActionIsAccessible, getBrowserInfo} = useAuth();
+const ReportTable: React.FC<ReportTablePropsType> = ({ curPeriod, reportType, reportVariantAsString, reportData, reportGrouping, dimensionsCount, searchText = '', sortingCols = [], resourceColumnNames = [] }) => {
+    const { isActionIsAccessible, getBrowserInfo } = useAuth();
 
     //resizing
     const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({});
     const [columnResizeMode, setColumnResizeMode] = React.useState<ColumnResizeMode>("onChange");
 
-    const initialSortingState: ColumnSort[] = useMemo(()=> {
-        return sortingCols.map(item => ({id: item, desc: false}))
-    },[sortingCols]);
+    const initialSortingState: ColumnSort[] = useMemo(() => {
+        return sortingCols.map(item => ({ id: item, desc: false }))
+    }, [sortingCols]);
 
-    const [sorting, setSorting] = React.useState<SortingState>( initialSortingState);
+    const [sorting, setSorting] = React.useState<SortingState>(initialSortingState);
     const [grouping, setGrouping] = React.useState<GroupingState>(reportGrouping);
-    const [columnVisibility, setColumnVisibility] = React.useState({'deliveredWithTroubleStatus':false,});
+    const [columnVisibility, setColumnVisibility] = React.useState({ 'deliveredWithTroubleStatus': false, });
     // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     //     []
     // )
@@ -129,8 +130,8 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
         aggregationFns: {
             aggUnique: (columnId, leafRows, childRows) => {
                 if (childRows.length > 0) {
-                    const arr = childRows.map(item => item.original[columnId+"_c"].split(';'));
-                    const uniqueValues = new Set(arr.reduce((acc, curr) => acc.concat(curr), []).filter(item=>item));
+                    const arr = childRows.map(item => item.original[columnId + "_c"].split(';'));
+                    const uniqueValues = new Set(arr.reduce((acc, curr) => acc.concat(curr), []).filter(item => item));
                     return uniqueValues.size;
                 }
                 return 0;
@@ -138,10 +139,10 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
         }
     })
 
-    const calcPadding = useCallback((index: number, isCellAggregated: boolean, hasSubRows:boolean, depth: number ) => {
-        if (index<=groupedCols && !isCellAggregated) {
+    const calcPadding = useCallback((index: number, isCellAggregated: boolean, hasSubRows: boolean, depth: number) => {
+        if (index <= groupedCols && !isCellAggregated) {
             if (hasSubRows) {
-                return `${depth * 16 +10}px`;
+                return `${depth * 16 + 10}px`;
             } else if (groupedCols === 0) {
                 return `16px`;
             } else {
@@ -151,16 +152,16 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
         } else return '10px';
     }, [groupedCols]);
 
-    const getFileName = useCallback((reportType:REPORT_TYPES, curVariant:AllVariantsType) => {
+    const getFileName = useCallback((reportType: REPORT_TYPES, curVariant: AllVariantsType) => {
         return `${REPORT_TITLES[reportType]} (${curVariant}).xlsx`
     }, [reportType, curVariantAsType])
 
     const handleDownload = async () => {
         try {
-            sendUserBrowserInfo({...getBrowserInfo('DownloadReportData/'+reportType, transformReportType(reportType), AccessActions.DownloadReport), body: {startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}})
-        } catch {}
+            sendUserBrowserInfo({ ...getBrowserInfo('DownloadReportData/' + reportType, transformReportType(reportType), AccessActions.DownloadReport), body: { startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) } })
+        } catch { }
 
-        if (!isActionIsAccessible(transformReportType(reportType), AccessActions.DownloadReport) ) {
+        if (!isActionIsAccessible(transformReportType(reportType), AccessActions.DownloadReport)) {
             return;
         }
 
@@ -179,10 +180,10 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
         if (!lastHeaderGroup) {
             return;
         }
-        worksheet.columns = lastHeaderGroup.headers.filter((h)=>h.column.getIsVisible()).map(header=> {
+        worksheet.columns = lastHeaderGroup.headers.filter((h) => h.column.getIsVisible()).map(header => {
 
             return {
-                header:  getHeaderNameById(reportType, header.id) as string,
+                header: getHeaderNameById(reportType, header.id) as string,
                 key: header.id,
                 width: 20,
             }
@@ -198,13 +199,13 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
 
                 const cells = currentRow.getVisibleCells();
 
-                const values = cells.map((cell, index)=> {
+                const values = cells.map((cell, index) => {
                     //check grouping
                     if (cell.getIsPlaceholder()) {
                         return '';
                     }
 
-                    if (isGroup && !cell.getIsGrouped()  && index<dimensionsCount ) {
+                    if (isGroup && !cell.getIsGrouped() && index < dimensionsCount) {
                         return ''
                     }
 
@@ -212,9 +213,9 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
                         return formatDateToShowMonthYear(cell.getValue() as string)
                     } else if (cell.column.id === 'week') {
                         return formatDateToWeekRange(cell.getValue() as string)
-                    } else if (cell.column.id === 'deliveryDate'  || cell.column.id === 'period') {
+                    } else if (cell.column.id === 'deliveryDate' || cell.column.id === 'period') {
                         return cell.getValue<string>() ? formatDateStringToDisplayString(cell.getValue<string>()) : ' '
-                    } else if (cell.column.id === 'price' ) {
+                    } else if (cell.column.id === 'price') {
                         const val = cell.getValue();
                         //@ts-ignore
                         const currency = cell.row.original.hasOwnProperty('currency') ? getSymbolFromCurrency(cell.row.original?.currency) || '' : '';
@@ -237,7 +238,7 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
                         return '';
                     }
 
-                    return  cell.getValue()
+                    return cell.getValue()
                 });
 
                 const addedRow = worksheet.addRow(values);
@@ -251,13 +252,13 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
                     cell.fill = {
                         type: 'pattern',
                         pattern: 'solid',
-                        fgColor: { argb:rowColor }
+                        fgColor: { argb: rowColor }
                     };
-                    cell.border ={
-                        top: {style:'thin', color: {argb: 'FF7D8FB3'}},
-                        left: {style:'thin', color: {argb: 'FF7D8FB3'}},
-                        bottom: {style:'thin', color: {argb: 'FF7D8FB3'}},
-                        right: {style:'thin', color: {argb: 'FF7D8FB3'}},
+                    cell.border = {
+                        top: { style: 'thin', color: { argb: 'FF7D8FB3' } },
+                        left: { style: 'thin', color: { argb: 'FF7D8FB3' } },
+                        bottom: { style: 'thin', color: { argb: 'FF7D8FB3' } },
+                        right: { style: 'thin', color: { argb: 'FF7D8FB3' } },
                     };
                 })
 
@@ -271,22 +272,22 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
 
         addGroupedRows(reportData, 0, 1);
 
-        worksheet.getRow(1).eachCell(cell=> {
-            cell.font = {bold: true};
+        worksheet.getRow(1).eachCell(cell => {
+            cell.font = { bold: true };
             cell.fill = {
                 type: 'pattern',
                 pattern: 'solid',
                 fgColor: { argb: 'FF5380F5' }
             };
             cell.border = {
-                top: {style: 'thin', color: {argb: 'FF7D8FB3'}},
-                left: {style: 'thin', color: {argb: 'FF7D8FB3'}},
-                bottom: {style: 'thin', color: {argb: 'FF7D8FB3'}},
-                right: {style: 'thin', color: {argb: 'FF7D8FB3'}},
+                top: { style: 'thin', color: { argb: 'FF7D8FB3' } },
+                left: { style: 'thin', color: { argb: 'FF7D8FB3' } },
+                bottom: { style: 'thin', color: { argb: 'FF7D8FB3' } },
+                right: { style: 'thin', color: { argb: 'FF7D8FB3' } },
             }
             cell.alignment = { vertical: 'middle', horizontal: 'center' };
         });
-        worksheet.getRow(1).height=40;
+        worksheet.getRow(1).height = 40;
 
 
 
@@ -430,148 +431,146 @@ const ReportTable:React.FC<ReportTablePropsType> = ({curPeriod, reportType, repo
                 <div className="h-2" />
                 <div className='interactive-block'>
                     <Button onClick={handleDownload} icon='download-file' iconOnTheRight variant={ButtonVariant.SECONDARY}>Export to Excel</Button>
-                    {reportGrouping.length ? <Button iconOnTheRight onClick={()=>{table.toggleAllRowsExpanded(!groupsAreOpen); setGroupsAreOpen(prev => !prev);}} icon={ groupsAreOpen ? 'minus' : 'plus'} variant={ButtonVariant.SECONDARY} >{groupsAreOpen ? 'Collapse all' : 'Expand all'}</Button> : null}
-                    {reportType===REPORT_TYPES.SALE_DYNAMIC ? <div className='sales-dynamic-legend'>
+                    {reportGrouping.length ? <Button iconOnTheRight onClick={() => { table.toggleAllRowsExpanded(!groupsAreOpen); setGroupsAreOpen(prev => !prev); }} icon={groupsAreOpen ? 'minus' : 'plus'} variant={ButtonVariant.SECONDARY} >{groupsAreOpen ? 'Collapse all' : 'Expand all'}</Button> : null}
+                    {reportType === REPORT_TYPES.SALE_DYNAMIC ? <div className='sales-dynamic-legend'>
                         <div><Icon name='arrow-up-green' /> Your sales have increased by more than 25 percent</div>
                         <div><Icon name='arrow-down-red' /> Your sales have decreased by more than 25 percent</div>
                     </div> : null}
                 </div>
 
-                <div className={`t-container ${reportType} ${reportType===REPORT_TYPES.SALE_DYNAMIC ? 'is-sticky' : ''}`}>
+                <div className={`t-container ${reportType} ${reportType === REPORT_TYPES.SALE_DYNAMIC ? 'is-sticky' : ''}`}>
                     <table {...{
                         style: {
                             width: table.getCenterTotalSize()
                         }
                     }}>
                         <thead>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((header, index: number) => {
-                                    return (
-                                        <th key={header.id} colSpan={header.colSpan} className={`col-${index}`} {...{
-                                            style: {
-                                                width: header.getSize()
-                                            }
-                                        }}>
-                                            {header.isPlaceholder ? null : (
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((header, index: number) => {
+                                        return (
+                                            <th key={header.id} colSpan={header.colSpan} className={`col-${index}`} {...{
+                                                style: {
+                                                    width: header.getSize()
+                                                }
+                                            }}>
+                                                {header.isPlaceholder ? null : (
+                                                    <div
+                                                        {...{
+                                                            className: `${header.column.getCanSort()
+                                                                ? 'cursor-pointer select-none'
+                                                                : ''}`,
+                                                            onClick: header.column.getToggleSortingHandler(),
+                                                        }}
+                                                    >
+                                                        {flexRender(
+                                                            header.column.columnDef.header,
+                                                            header.getContext()
+                                                        )}
+                                                        {{
+                                                            asc: <span className='sort-icon'><Icon name='sort-asc' /></span>,
+                                                            desc: <span className='sort-icon'><Icon name='sort-desc' /></span>,
+                                                        }[header.column.getIsSorted() as string] ?? null}
+                                                    </div>
+                                                )}
                                                 <div
                                                     {...{
-                                                        className: `${header.column.getCanSort()
-                                                            ? 'cursor-pointer select-none'
-                                                            : ''}`,
-                                                        onClick: header.column.getToggleSortingHandler(),
+                                                        onMouseDown: header.getResizeHandler(),
+                                                        onTouchStart: header.getResizeHandler(),
+                                                        className: `resizer ${header.column.getIsResizing() ? "isResizing" : ""
+                                                            }`,
+                                                        style: {
+                                                            transform:
+                                                                columnResizeMode === "onEnd" &&
+                                                                    header.column.getIsResizing()
+                                                                    ? `translateX(${table.getState().columnSizingInfo.deltaOffset
+                                                                    }px)`
+                                                                    : ""
+                                                        }
                                                     }}
-                                                >
-                                                    {flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext()
-                                                    )}
-                                                    {{
-                                                        asc: <span className='sort-icon'><Icon name='sort-asc'/></span>,
-                                                        desc: <span className='sort-icon'><Icon name='sort-desc'/></span>,
-                                                    }[header.column.getIsSorted() as string] ?? null}
-                                                </div>
-                                            )}
-                                            <div
-                                                {...{
-                                                    onMouseDown: header.getResizeHandler(),
-                                                    onTouchStart: header.getResizeHandler(),
-                                                    className: `resizer ${
-                                                        header.column.getIsResizing() ? "isResizing" : ""
-                                                    }`,
-                                                    style: {
-                                                        transform:
-                                                            columnResizeMode === "onEnd" &&
-                                                            header.column.getIsResizing()
-                                                                ? `translateX(${
-                                                                    table.getState().columnSizingInfo.deltaOffset
-                                                                }px)`
-                                                                : ""
-                                                    }
-                                                }}
-                                            />
-                                        </th>
-                                    );
-                                })}
-                            </tr>
-                        ))}
-                        </thead>
-                        <tbody>
-                        {table.getRowModel().rows.map((row) => {
-                            const shouldBeVisible = isRowVisible(row);
-                            return (
-                                <tr
-                                    key={row.id}
-                                    ref={(el) => {
-                                        if (el) {
-                                            rowRefs.current.set(row.id, el);
-                                        } else {
-                                            rowRefs.current.delete(row.id);
-                                        }
-                                    }}
-                                    className={`${row.subRows.length ? 'is-group' : 'is-leaf'} ${row.getIsGrouped ? 'is-grouped' : 'not-grouped'} ${row.getIsExpanded() ? 'is-expanded' : 'not-expanded'} depth-${groupedCols - row.depth}`}
-                                    style={{
-                                        display: row.depth > 0 && !shouldBeVisible ? 'none' : '',
-                                    }}
-                                >
-
-                                    {row.getVisibleCells().map((cell,index) => {
-                                        return (
-                                            <td
-                                                key={cell.id} colSpan={Number(`${(cell.getIsGrouped() ? dimensionsCount : index<=groupedCols && !cell.getIsAggregated() ? groupedCols+1  : 1) }`)}
-                                                className={`${cell.id} col-${index} ${index<dimensionsCount ? 'is-dimension': 'is-resource'} ${cell.getIsGrouped() ? 'is-grouped' : ''} ${cell.getIsAggregated() ? 'is-aggravated' : ''} ${cell.getIsPlaceholder() ? 'is-placeholder' : ''} ${row.depth}`}
-                                                {...{
-                                                    style: {
-                                                        // paddingLeft: index<=groupedCols && !cell.getIsAggregated() ? row.subRows.length ? `${row.depth * 16 +10}px` : `${row.depth * 16 + 30}px` : '10px',
-                                                        paddingLeft: calcPadding(index, cell.getIsAggregated(), row.subRows.length !==0, row.depth),
-                                                        color: cell.getIsGrouped()
-                                                            ? "rgb(29 78 216)"
-                                                            : "black",
-                                                        background: cell.getIsGrouped()
-                                                            ? "none"
-                                                            : cell.getIsAggregated()
-                                                                ? "none"
-                                                                : cell.getIsPlaceholder()
-                                                                    ? "none"
-                                                                    : "none",
-                                                    },
-                                                }}
-                                            >
-                                                {cell.getIsGrouped() ? (
-                                                    // If it's a grouped cell, add an expander and row count
-                                                    <>
-                                                        <button
-                                                            {...{
-                                                                onClick: row.getToggleExpandedHandler(),
-                                                                className: "btn-expand",
-                                                                style: {
-                                                                    cursor: row.getCanExpand()
-                                                                        ? "pointer"
-                                                                        : "normal",
-                                                                },
-                                                            }}
-                                                        >
-                                                            <Icon name={`${row.getIsExpanded() ? 'minus' : 'plus'}`} className='show-hide-btn' />
-                                                            {flexRender(
-                                                                cell.column.columnDef.cell,
-                                                                cell.getContext()
-                                                            )} <span className='grouped-rows-count'>
-                                                            ({row.subRows.length})</span>
-                                                        </button>
-                                                    </>
-                                                ) : cell.getIsPlaceholder() ? null : ( // For cells with repeated values, render null
-                                                    // Otherwise, just render the regular cell
-                                                    flexRender(
-                                                        cell.column.columnDef.cell,
-                                                        cell.getContext()
-                                                    )
-                                                )}
-                                            </td>
+                                                />
+                                            </th>
                                         );
                                     })}
                                 </tr>
-                            );
-                        })}
+                            ))}
+                        </thead>
+                        <tbody>
+                            {table.getRowModel().rows.map((row) => {
+                                const shouldBeVisible = isRowVisible(row);
+                                return (
+                                    <tr
+                                        key={row.id}
+                                        ref={(el) => {
+                                            if (el) {
+                                                rowRefs.current.set(row.id, el);
+                                            } else {
+                                                rowRefs.current.delete(row.id);
+                                            }
+                                        }}
+                                        className={`${row.subRows.length ? 'is-group' : 'is-leaf'} ${row.getIsGrouped ? 'is-grouped' : 'not-grouped'} ${row.getIsExpanded() ? 'is-expanded' : 'not-expanded'} depth-${groupedCols - row.depth}`}
+                                        style={{
+                                            display: row.depth > 0 && !shouldBeVisible ? 'none' : '',
+                                        }}
+                                    >
+
+                                        {row.getVisibleCells().map((cell, index) => {
+                                            return (
+                                                <td
+                                                    key={cell.id} colSpan={Number(`${(cell.getIsGrouped() ? dimensionsCount : index <= groupedCols && !cell.getIsAggregated() ? groupedCols + 1 : 1)}`)}
+                                                    className={`${cell.id} col-${index} ${index < dimensionsCount ? 'is-dimension' : 'is-resource'} ${cell.getIsGrouped() ? 'is-grouped' : ''} ${cell.getIsAggregated() ? 'is-aggravated' : ''} ${cell.getIsPlaceholder() ? 'is-placeholder' : ''} ${row.depth}`}
+                                                    {...{
+                                                        style: {
+                                                            // paddingLeft: index<=groupedCols && !cell.getIsAggregated() ? row.subRows.length ? `${row.depth * 16 +10}px` : `${row.depth * 16 + 30}px` : '10px',
+                                                            paddingLeft: calcPadding(index, cell.getIsAggregated(), row.subRows.length !== 0, row.depth),
+                                                            color: cell.getIsGrouped()
+                                                                ? "rgb(29 78 216)"
+                                                                : "black",
+                                                            background: cell.getIsGrouped()
+                                                                ? "none"
+                                                                : cell.getIsAggregated()
+                                                                    ? "none"
+                                                                    : cell.getIsPlaceholder()
+                                                                        ? "none"
+                                                                        : "none",
+                                                        },
+                                                    }}
+                                                >
+                                                    {cell.getIsGrouped() ? (
+                                                        // If it's a grouped cell, add an expander and row count
+                                                        <>
+                                                            <button
+                                                                {...{
+                                                                    onClick: row.getToggleExpandedHandler(),
+                                                                    className: "btn-expand",
+                                                                    style: {
+                                                                        cursor: row.getCanExpand()
+                                                                            ? "pointer"
+                                                                            : "normal",
+                                                                    },
+                                                                }}
+                                                            >
+                                                                <Icon name={`${row.getIsExpanded() ? 'minus' : 'plus'}`} className='show-hide-btn' />
+                                                                {flexRender(
+                                                                    cell.column.columnDef.cell,
+                                                                    cell.getContext()
+                                                                )} <span className='grouped-rows-count'>
+                                                                    ({row.subRows.length})</span>
+                                                            </button>
+                                                        </>
+                                                    ) : cell.getIsPlaceholder() ? null : ( // For cells with repeated values, render null
+                                                        // Otherwise, just render the regular cell
+                                                        flexRender(
+                                                            cell.column.columnDef.cell,
+                                                            cell.getContext()
+                                                        )
+                                                    )}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

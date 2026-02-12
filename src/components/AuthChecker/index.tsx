@@ -1,10 +1,10 @@
-import React, {ReactNode, useEffect, useState} from "react";
-import {useRouter} from "next/router";
-import {Routes} from "@/types/routes";
+import React, { ReactNode, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { Routes } from "@/types/routes";
 import useAuth from "@/context/authContext";
-import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
-import {capitalizeFirstLetter} from "@/utils/textMessage";
-import {getCleanParamsFromQuery} from "@/utils/query";
+import { NOTIFICATION_OBJECT_TYPES } from "@/types/notifications";
+import { capitalizeFirstLetter } from "@/utils/textMessage";
+import { getCleanParamsFromQuery } from "@/utils/query";
 
 type AuthCheckerPropsType = {
     isUser?: boolean;
@@ -12,19 +12,20 @@ type AuthCheckerPropsType = {
     children: ReactNode;
 }
 
-const AuthChecker: React.FC<AuthCheckerPropsType> = ({ isUser=true, pageName='', children }) => {
+const AuthChecker: React.FC<AuthCheckerPropsType> = ({ isUser = true, pageName = '', children }) => {
     const Router = useRouter();
     const { token, isAuthorizedUser, isAuthorizedLead, logout, isNavItemAccessible } = useAuth() // Access authentication state
     const [canShow, setCanShow] = useState(false);
 
     useEffect(() => {
-        const checkUser = async() => {
+        const checkUser = async () => {
+            // console.log("AuthChecker: checkUser running", { token, isAuthorized: isAuthorizedUser() });
             if (Router.isReady) {
                 if (!(isUser && isAuthorizedUser() || !isUser && isAuthorizedLead())) {
                     setCanShow(false);
                     logout();
                     //Router.push(Routes.Login);
-                    Router.push({pathname: Routes.Login, query: Router.query || {}});
+                    Router.push({ pathname: Routes.Login, query: Router.query || {} });
                 } else if (pageName && !isNavItemAccessible(pageName)) {
                     Router.replace(Routes.Dashboard);
                 } else {
@@ -35,7 +36,7 @@ const AuthChecker: React.FC<AuthCheckerPropsType> = ({ isUser=true, pageName='',
                     if (type && uuid) {
                         await Router.push({
                             pathname: NOTIFICATION_OBJECT_TYPES[capitalizeFirstLetter(type)],
-                            query: {uuid: uuid}
+                            query: { uuid: uuid }
                         })
                     } else {
                         setCanShow(true);
@@ -44,7 +45,7 @@ const AuthChecker: React.FC<AuthCheckerPropsType> = ({ isUser=true, pageName='',
             }
         }
         checkUser();
-    }, [token, Router.isReady]);
+    }, [token, Router.isReady]); // Removed userStatus dependence as it's handled internally by isAuthorizedUser now
 
     return (
         <>

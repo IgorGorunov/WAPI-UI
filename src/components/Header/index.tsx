@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import "./styles.scss";
+import React, { useEffect, useState } from "react";
+// import "./styles.scss";
 import Icon from "@/components/Icon";
 import Navigation from "@/components/Navigation";
 import HeaderNotifications from "@/components/HeaderNotifications";
@@ -12,11 +12,11 @@ import {
     NOTIFICATION_TYPES,
     NotificationType
 } from "@/types/notifications";
-import {getNotificationIconName} from "@/components/HeaderNotifications/NotificationsBlock";
-import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import { getNotificationIconName } from "@/components/HeaderNotifications/NotificationsBlock";
+import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
 import SingleDocument from "@/components/SingleDocument";
 import useAuth from "@/context/authContext";
-import {UserStatusType} from "@/types/leads";
+import { UserStatusType } from "@/types/leads";
 
 type HeaderType = {
     pageTitle?: string;
@@ -27,7 +27,7 @@ type HeaderType = {
     // needNotifications?: boolean;
 }
 
-const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, needTutorialBtn=false}) => {
+const Header: React.FC<HeaderType> = ({ pageTitle, toRight = false, children, needTutorialBtn = false }) => {
     const { userStatus } = useAuth();
 
     const [needMenu, setNeedMenu] = useState(false);
@@ -44,16 +44,16 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
         setMenuOpen(!isMenuOpen);
     }
 
-    const {runTour, setRunTour} = useTourGuide();
+    const { runTour, setRunTour } = useTourGuide();
 
-    const {notifications} = useNotifications();
-    const {setNotificationAsRead} = useMarkNotificationAsRead();
+    const { notifications } = useNotifications();
+    const { setNotificationAsRead } = useMarkNotificationAsRead();
     const handleMarkAsRead = (uuid) => {
         setNotificationAsRead(uuid);
     }
 
-    const [docUuid, setDocUuid] = useState<string|null>(null);
-    const [docType, setDocType] = useState<NOTIFICATION_OBJECT_TYPES|null>(null);
+    const [docUuid, setDocUuid] = useState<string | null>(null);
+    const [docType, setDocType] = useState<NOTIFICATION_OBJECT_TYPES | null>(null);
 
     const onNotifiedDocClose = () => {
         setDocType(null);
@@ -64,7 +64,7 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
         if (notification.objectType && notification.objectUuid) {
             if (notification.objectType) {
                 // const curDoc = NOTIFICATION_OBJECT_TYPES[notification.objectType];
-                // Router.push(`${curDoc}?uuid=${notification.objectUuid}`);
+                // Router.push(`${ curDoc }?uuid = ${ notification.objectUuid } `);
                 setDocType(NOTIFICATION_OBJECT_TYPES[notification.objectType]);
                 setDocUuid(notification.objectUuid);
             }
@@ -76,20 +76,20 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
         <div className={`main-header`}>
             <div className='main-header__wrapper card'>
                 <div className='main-header__menu-block' onClick={handleClick}>
-                    {needMenu  && <div className='main-header__icon'>
-                        <Icon name={"burger"}/>
+                    {needMenu && <div className='main-header__icon'>
+                        <Icon name={"burger"} />
                     </div>}
-                    <div className={`page-title ${!needMenu ? 'no-margin' : ''}`}><h2>{pageTitle}</h2></div>
+                    <div className={`page-title ${!needMenu ? 'no-margin' : ''} `}><h2>{pageTitle}</h2></div>
                 </div>
 
-                <div className={`main-header__components ${toRight ? "align-right" : ""}`}>
+                <div className={`main-header__components ${toRight ? "align-right" : ""} `}>
                     {children}
                 </div>
 
                 <div className='main-header__user-block'>
                     <ProfileDropdown />
                     {needTutorialBtn ?
-                        <button className={`tour-guide ${runTour ? 'is-active' : ''}`} onClick={()=>setRunTour(!runTour)}><Icon name='book' /></button>
+                        <button className={`tour-guide ${runTour ? 'is-active' : ''} `} onClick={() => setRunTour(!runTour)}><Icon name='book' /></button>
                         : null}
                     {needNotificationsInHeader ? <div className='main-header__notifications'>
                         <HeaderNotifications />
@@ -101,19 +101,19 @@ const Header: React.FC<HeaderType> = ({pageTitle, toRight = false, children, nee
             <ul className='main-header__urgent-notifications-list'>
                 {notifications && notifications.length ?
                     notifications.filter(item => item.type === NOTIFICATION_TYPES.URGENT && item.status !== NOTIFICATION_STATUSES.READ).map(item => (
-                        <li key={item.uuid} className={`card main-header__urgent-notifications-list-item ${item.objectUuid ? 'is-clickable' : ''}`} onClick={()=>handleNotificationClick(item)}>
+                        <li key={item.uuid} className={`card main - header__urgent - notifications - list - item ${item.objectUuid ? 'is-clickable' : ''} `} onClick={() => handleNotificationClick(item)}>
                             <Icon className='main-header__urgent-notifications-list-item--icon' name={getNotificationIconName(item.type)} />
                             <p className='main-header__urgent-notifications-list-item--title'>{item.title}</p>
                             <p className='main-header__urgent-notifications-list-item--text'>{item.message}</p>
-                            <a href="#" className='main-header__urgent-notifications-list-item--close' onClick={()=>handleMarkAsRead(item.uuid)}><Icon name='close' /></a>
+                            <a href="#" className='main-header__urgent-notifications-list-item--close' onClick={() => handleMarkAsRead(item.uuid)}><Icon name='close' /></a>
                         </li>
                     ))
                     : null}
             </ul>
 
-            <Navigation isMenuOpen={isMenuOpen} handleClose={()=>setMenuOpen(false)}/>
+            <Navigation isMenuOpen={isMenuOpen} handleClose={() => setMenuOpen(false)} />
 
-            { docUuid && docType ? <SingleDocument type={docType} uuid={docUuid} onClose={onNotifiedDocClose} /> : null}
+            {docUuid && docType ? <SingleDocument type={docType} uuid={docUuid} onClose={onNotifiedDocClose} /> : null}
         </div>
     );
 };

@@ -11,6 +11,7 @@
     }
 
     input {
+      appearance: none;
       -webkit-appearance: none;
       background-color: var(--color-white);
       border: 2px solid var(--border-color);
@@ -31,7 +32,7 @@
           position: absolute;
           width: 20px;
           height: 20px;
-          background: url('../../../assets/icons/check.svg') no-repeat;
+          background: url('data:image/svg+xml;utf8,<svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 1.2003L4.26078 4.8L3.01437 6L1.76797 4.8L1.77489 4.79334L0 3.0661L1.24674 1.8661L3.02129 3.59365L6.75359 0L8 1.2003Z" fill="white"/></svg>') no-repeat;
           top: calc(50% - 3px);
           left: calc(50% - 4px);
         }

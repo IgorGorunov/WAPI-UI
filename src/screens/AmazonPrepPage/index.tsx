@@ -1,36 +1,37 @@
-import React, {useCallback, useEffect, useState} from "react";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
-import {useRouter} from "next/router";
+import React, { useCallback, useEffect, useState } from "react";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
+import { useRouter } from "next/router";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import AmazonPrepList from "./components/AmazonPrepList";
 import "./styles.scss";
-import {getAmazonPrep} from "@/services/amazonePrep";
+import { getAmazonPrep } from "@/services/amazonePrep";
 import Button from "@/components/Button/Button";
-import {DateRangeType} from "@/types/dashboard";
-import {formatDateToString, getLastFewDays} from "@/utils/date";
-import {AmazonPrepOrderType} from "@/types/amazonPrep";
-import {exportFileXLS} from "@/utils/files";
+import { DateRangeType } from "@/types/dashboard";
+import { formatDateToString, getLastFewDays } from "@/utils/date";
+import { AmazonPrepOrderType } from "@/types/amazonPrep";
+import { exportFileXLS } from "@/utils/files";
 import AmazonPrepForm from "./components/AmazonPrepForm";
-import {ApiResponseType} from "@/types/api";
+import { ApiResponseType } from "@/types/api";
 import Loader from "@/components/Loader";
 import useTourGuide from "@/context/tourGuideContext";
-import {TourGuidePages} from "@/types/tourGuide";
+import { TourGuidePages } from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
-import {tourGuideStepsAmazonPrep, tourGuideStepsAmazonPrepNoDocs} from "./amazomPrepTourGuideSteps.constants";
-import {sendUserBrowserInfo} from "@/services/userInfo";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
+import { tourGuideStepsAmazonPrep, tourGuideStepsAmazonPrepNoDocs } from "./amazomPrepTourGuideSteps.constants";
+import { sendUserBrowserInfo } from "@/services/userInfo";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 
 const AmazonPrepPage = () => {
-    const { tenantData: { alias, orderTitles }} = useTenant();
-    const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
+    const { tenantData: { alias, orderTitles } } = useTenant();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const today = new Date();
     const firstDay = getLastFewDays(today, 30);
-    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today})
+    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({ startDate: firstDay, endDate: today })
     const Router = useRouter();
 
     const [amazonPrepOrdersData, setAmazonPrepOrdersData,] = useState<any | null>(null);
@@ -38,7 +39,7 @@ const AmazonPrepPage = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     //tour guide
-    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+    const { runTour, setRunTour, isTutorialWatched } = useTourGuide();
 
     useEffect(() => {
         if (!isTutorialWatched(TourGuidePages.AmazonPreps)) {
@@ -56,16 +57,16 @@ const AmazonPrepPage = () => {
     //single order data
     const [showAmazonPrepOrderModal, setShowAmazonPrepOrderModal] = useState(false);
     const [isAmazonPrepNew, setIsAmazonPrepNew] = useState(true);
-    const [amazonPrepUuid, setAmazonPrepUuid] = useState<string|null>(null);
+    const [amazonPrepUuid, setAmazonPrepUuid] = useState<string | null>(null);
 
     const onAmazonPrepOrderModalClose = () => {
         setShowAmazonPrepOrderModal(false);
     }
 
     //status modal
-    const [showStatusModal, setShowStatusModal]=useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeErrorModal = useCallback(()=>{
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
+    const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
     }, [])
 
@@ -74,17 +75,17 @@ const AmazonPrepPage = () => {
         try {
             setIsLoading(true);
             setAmazonPrepOrdersData([]);
-            const requestData = {token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}
+            const requestData = { token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepsList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('GetAmazonPrepsList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
             if (isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ListView)) {
-                const res: ApiResponseType = await getAmazonPrep(superUser && ui ? {...requestData, ui} : requestData);
+                const res: ApiResponseType = await getAmazonPrep(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
-                    setAmazonPrepOrdersData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
+                    setAmazonPrepOrdersData(res.data.sort((a, b) => a.date > b.date ? -1 : 1));
                 } else {
                     console.error("API did not return expected data");
                 }
@@ -99,7 +100,7 @@ const AmazonPrepPage = () => {
             setIsLoading(false);
         }
 
-    }, [token,curPeriod]);
+    }, [token, curPeriod]);
 
     useEffect(() => {
         fetchData();
@@ -109,18 +110,18 @@ const AmazonPrepPage = () => {
         setIsAmazonPrepNew(false);
         setAmazonPrepUuid(uuid);
 
-        if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject) ) {
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject), body: {uuid: uuid}});
-            } catch {}
-            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                sendUserBrowserInfo({ ...getBrowserInfo('CreateUpdateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ViewObject), body: { uuid: uuid } });
+            } catch { }
+            setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal })
             setShowStatusModal(true);
         } else {
             setAmazonPrepOrdersData(prevState => {
                 if (prevState && prevState.length) {
                     const el = prevState.filter(item => item.uuid === uuid);
                     if (el.length) {
-                        return [...prevState.filter(item => item.uuid !== uuid), {...el[0], notifications: false}].sort((a,b)=>a.wapiTrackingNumber<b.wapiTrackingNumber ? 1 : -1)
+                        return [...prevState.filter(item => item.uuid !== uuid), { ...el[0], notifications: false }].sort((a, b) => a.wapiTrackingNumber < b.wapiTrackingNumber ? 1 : -1)
                     }
                 }
                 return [...prevState];
@@ -140,14 +141,14 @@ const AmazonPrepPage = () => {
         }
     }, [Router.query]);
 
-    const handleAddAmazonPrepOrder= (
+    const handleAddAmazonPrepOrder = (
     ) => {
         setIsAmazonPrepNew(true);
         setAmazonPrepUuid(null);
         if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject), body: {}});
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('CreateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject), body: {} });
+            } catch { }
         } else {
             setShowAmazonPrepOrderModal(true);
         }
@@ -155,8 +156,8 @@ const AmazonPrepPage = () => {
 
     const handleExportXLS = () => {
         try {
-            sendUserBrowserInfo({...getBrowserInfo('ExportAmazonPrepList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ExportList), body: {startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}});
-        } catch {}
+            sendUserBrowserInfo({ ...getBrowserInfo('ExportAmazonPrepList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ExportList), body: { startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) } });
+        } catch { }
 
         if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ExportList)) {
             return null;
@@ -186,10 +187,10 @@ const AmazonPrepPage = () => {
                 {amazonPrepOrdersData && <AmazonPrepList amazonPrepOrders={amazonPrepOrdersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredAmazonPrepOrders={setFilteredAmazonPrepOrders} handleEditAmazonPrepOrder={handleEditAmazonPrepOrder} />}
             </div>
             {showAmazonPrepOrderModal && (amazonPrepUuid || isAmazonPrepNew) &&
-                <AmazonPrepForm  docUuid={amazonPrepUuid} onCloseModal={onAmazonPrepOrderModalClose} onCloseModalWithSuccess={()=>{setShowAmazonPrepOrderModal(false);fetchData();}}/>
+                <AmazonPrepForm docUuid={amazonPrepUuid} onCloseModal={onAmazonPrepOrderModalClose} onCloseModalWithSuccess={() => { setShowAmazonPrepOrderModal(false); fetchData(); }} />
             }
             {amazonPrepOrdersData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.AmazonPreps} /> : null}
-            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+            {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </Layout>
     )
 }

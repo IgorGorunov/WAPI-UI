@@ -4,9 +4,9 @@ import {
     WarehouseType,
     DocProductParamsType, SellerType
 } from "@/types/utility";
-import {TicketType} from "@/types/tickets";
-import {NoteType} from "@/types/notes";
-import {UserAccessActionType} from "@/context/authContext";
+import { TicketType } from "@/types/tickets";
+import { NoteType } from "@/types/notes";
+import { UserAccessActionType } from "@/types/auth";
 
 export type ClaimType = {
     date: string;
@@ -55,7 +55,7 @@ export type OrderType = {
     products: {
         product: string;
         quantity: number;
-    } [],
+    }[],
     troubleStatusesExist: boolean;
     troubleStatuses: {
         period: string;
@@ -185,8 +185,8 @@ export type SingleOrderType = {
     receiverEMail: string;
     receiverFullName: string;
     receiverPhone: string;
-    receiverPickUpAddress:string;
-    receiverPickUpCity:string;
+    receiverPickUpAddress: string;
+    receiverPickUpCity: string;
     receiverPickUpCountry: string;
     receiverPickUpDescription: string;
     receiverPickUpID: string;
@@ -281,7 +281,7 @@ export type OrderCommentType = {
         phone: string;
         zip: string;
     }
-    deliveryDate?:{
+    deliveryDate?: {
         date: string;
         hourFrom: string;
         hourTo: string;
@@ -324,8 +324,8 @@ export type SingleOrderFormType = {
     receiverEMail: string;
     receiverFullName: string;
     receiverPhone: string;
-    receiverPickUpAddress:string;
-    receiverPickUpCity:string;
+    receiverPickUpAddress: string;
+    receiverPickUpCity: string;
     receiverPickUpCountry: string;
     receiverPickUpDescription: string;
     receiverPickUpID: string;

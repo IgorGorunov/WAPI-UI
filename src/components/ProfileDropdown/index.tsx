@@ -22,6 +22,8 @@ const ProfileDropdown = () => {
 
     const [displayedName, setDisplayedName] = useState<string>('user');
 
+    console.log('user user', userStatus, superUser, token)
+
     useEffect(() => {
         setDisplayedName(userName || 'user');
     }, [userName]);

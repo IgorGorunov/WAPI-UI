@@ -55,7 +55,7 @@ import {
     getCodReportVariantResourceCols,
     getCodReportVariantSortingCols
 } from "@/screens/ReportPage/Reports/CodReport";
-import {AccessObjectTypes} from "@/context/authContext";
+import { AccessObjectTypes } from "@/types/auth";
 
 
 export const getVariantByReportType = (reportType: REPORT_TYPES, variant: string) => {
@@ -97,16 +97,16 @@ export const getVariantColumnsByReportType = (reportType: REPORT_TYPES, variant:
 }
 export const getVariantOptionsByReportType = (reportType: REPORT_TYPES) => {
     switch (reportType) {
-        case REPORT_TYPES.PRODUCTS_ON_STOCKS :
-            return Object.keys(PRODUCTS_ON_STOCKS_VARIANTS).map(item => ({value: item.toString(), label: PRODUCTS_ON_STOCKS_VARIANTS[item],}))
-        case REPORT_TYPES.DELIVERY_RATES :
-            return Object.keys(DELIVERY_RATES_PARTIAL_VARIANTS).map(item => ({value: item.toString(), label: DELIVERY_RATES_PARTIAL_VARIANTS[item],}))
-        case REPORT_TYPES.REPORT_SALES :
-            return Object.keys(REPORT_SALES_PARTIAL_VARIANTS).map(item => ({value: item.toString(), label: REPORT_SALES_PARTIAL_VARIANTS[item],}))
-        case REPORT_TYPES.SALE_DYNAMIC :
-            return Object.keys(SALE_DYNAMIC_VARIANTS).map(item => ({value: item.toString(), label: SALE_DYNAMIC_VARIANTS[item],}))
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS:
+            return Object.keys(PRODUCTS_ON_STOCKS_VARIANTS).map(item => ({ value: item.toString(), label: PRODUCTS_ON_STOCKS_VARIANTS[item], }))
+        case REPORT_TYPES.DELIVERY_RATES:
+            return Object.keys(DELIVERY_RATES_PARTIAL_VARIANTS).map(item => ({ value: item.toString(), label: DELIVERY_RATES_PARTIAL_VARIANTS[item], }))
+        case REPORT_TYPES.REPORT_SALES:
+            return Object.keys(REPORT_SALES_PARTIAL_VARIANTS).map(item => ({ value: item.toString(), label: REPORT_SALES_PARTIAL_VARIANTS[item], }))
+        case REPORT_TYPES.SALE_DYNAMIC:
+            return Object.keys(SALE_DYNAMIC_VARIANTS).map(item => ({ value: item.toString(), label: SALE_DYNAMIC_VARIANTS[item], }))
         case REPORT_TYPES.COD_REPORT:
-            return Object.keys(COD_REPORT_VARIANTS).map(item => ({value: item.toString(), label: COD_REPORT_VARIANTS[item],}))
+            return Object.keys(COD_REPORT_VARIANTS).map(item => ({ value: item.toString(), label: COD_REPORT_VARIANTS[item], }))
 
         default:
             return [];
@@ -115,15 +115,15 @@ export const getVariantOptionsByReportType = (reportType: REPORT_TYPES) => {
 
 export const getVariantDimensionColsByReportType = (reportType: REPORT_TYPES, variant: AllVariantsType) => {
     switch (reportType) {
-        case REPORT_TYPES.PRODUCTS_ON_STOCKS :
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS:
             return getProductsOnStocksVariantDimensionCols(variant as PRODUCTS_ON_STOCKS_VARIANTS)
-        case REPORT_TYPES.DELIVERY_RATES :
+        case REPORT_TYPES.DELIVERY_RATES:
             return getDeliveryRateVariantDimensionCols(variant as DELIVERY_RATES_VARIANTS)
-        case REPORT_TYPES.REPORT_SALES :
+        case REPORT_TYPES.REPORT_SALES:
             return getReportSalesVariantDimensionCols(variant as REPORT_SALES_VARIANTS)
-        case REPORT_TYPES.SALE_DYNAMIC :
+        case REPORT_TYPES.SALE_DYNAMIC:
             return getSaleDynamicVariantDimensionCols(variant as SALE_DYNAMIC_VARIANTS)
-        case REPORT_TYPES.COD_REPORT :
+        case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantDimensionCols(variant as COD_REPORT_VARIANTS)
 
         default:
@@ -133,15 +133,15 @@ export const getVariantDimensionColsByReportType = (reportType: REPORT_TYPES, va
 
 export const getVariantDimensionNumberByReportType = (reportType: REPORT_TYPES, variant: AllVariantsType) => {
     switch (reportType) {
-        case REPORT_TYPES.PRODUCTS_ON_STOCKS :
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS:
             return getProductsOnStocksVariantDimensionNumber(variant as PRODUCTS_ON_STOCKS_VARIANTS);
-        case REPORT_TYPES.DELIVERY_RATES :
+        case REPORT_TYPES.DELIVERY_RATES:
             return getDeliveryRateVariantDimensionNumber(variant as DELIVERY_RATES_VARIANTS);
-        case REPORT_TYPES.REPORT_SALES :
+        case REPORT_TYPES.REPORT_SALES:
             return getReportSalesVariantDimensionNumber(variant as REPORT_SALES_VARIANTS);
-        case REPORT_TYPES.SALE_DYNAMIC :
+        case REPORT_TYPES.SALE_DYNAMIC:
             return getSaleDynamicVariantDimensionNumber(variant as SALE_DYNAMIC_VARIANTS);
-        case REPORT_TYPES.COD_REPORT :
+        case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantDimensionNumber(variant as COD_REPORT_VARIANTS);
 
         default:
@@ -151,11 +151,11 @@ export const getVariantDimensionNumberByReportType = (reportType: REPORT_TYPES, 
 
 export const getVariantGroupColsByReportType = (reportType: REPORT_TYPES, variant: AllVariantsType) => {
     switch (reportType) {
-        case REPORT_TYPES.PRODUCTS_ON_STOCKS :
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS:
             return getProductsOnStocksVariantGroupCols(variant as PRODUCTS_ON_STOCKS_VARIANTS);
-        case REPORT_TYPES.DELIVERY_RATES :
+        case REPORT_TYPES.DELIVERY_RATES:
             return getDeliveryRateVariantGroupCols(variant as DELIVERY_RATES_VARIANTS);
-        case REPORT_TYPES.REPORT_SALES :
+        case REPORT_TYPES.REPORT_SALES:
             return getReportSalesVariantGroupCols(variant as REPORT_SALES_VARIANTS);
         case REPORT_TYPES.SALE_DYNAMIC:
             return getSaleDynamicVariantGroupCols(variant as SALE_DYNAMIC_VARIANTS);
@@ -169,33 +169,33 @@ export const getVariantGroupColsByReportType = (reportType: REPORT_TYPES, varian
 
 export const getVariantResourceColsByReportType = (reportType: REPORT_TYPES, variant: AllVariantsType, arr: AllReportsRowArrayType = []) => {
     switch (reportType) {
-        case REPORT_TYPES.PRODUCTS_ON_STOCKS :
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS:
             return getProductsOnStocksVariantResourceCols(variant as PRODUCTS_ON_STOCKS_VARIANTS);
-        case REPORT_TYPES.DELIVERY_RATES :
+        case REPORT_TYPES.DELIVERY_RATES:
             return getDeliveryRateVariantResourceCols(variant as DELIVERY_RATES_VARIANTS);
-        case REPORT_TYPES.REPORT_SALES :
+        case REPORT_TYPES.REPORT_SALES:
             return getReportSalesVariantResourceCols(variant as REPORT_SALES_VARIANTS);
-        case REPORT_TYPES.SALE_DYNAMIC :
+        case REPORT_TYPES.SALE_DYNAMIC:
             return getSaleDynamicVariantResourceCols(arr, variant as SALE_DYNAMIC_VARIANTS);
-        case REPORT_TYPES.COD_REPORT :
+        case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantResourceCols(variant as COD_REPORT_VARIANTS);
 
         default:
-            return {sumCols: [], uniqueCols: [], concatenatedCols: []};
+            return { sumCols: [], uniqueCols: [], concatenatedCols: [] };
     }
 }
 
 export const isFilterVisibleByReportType = (reportType: REPORT_TYPES, filterName: string) => {
     switch (reportType) {
-        case REPORT_TYPES.PRODUCTS_ON_STOCKS :
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS:
             return ['country', 'warehouse', 'product'].includes(filterName);
-        case REPORT_TYPES.DELIVERY_RATES :
+        case REPORT_TYPES.DELIVERY_RATES:
             return ['receiverCountry', 'warehouse', 'courierService', 'productType', 'product'].includes(filterName);
-        case REPORT_TYPES.REPORT_SALES :
+        case REPORT_TYPES.REPORT_SALES:
             return ['receiverCountry', 'warehouse', 'product', 'status'].includes(filterName);
-        case REPORT_TYPES.SALE_DYNAMIC :
+        case REPORT_TYPES.SALE_DYNAMIC:
             return ['country'].includes(filterName);
-        case REPORT_TYPES.COD_REPORT :
+        case REPORT_TYPES.COD_REPORT:
             return ['status'].includes(filterName);
 
         default:
@@ -205,15 +205,15 @@ export const isFilterVisibleByReportType = (reportType: REPORT_TYPES, filterName
 
 export const getVariantSortingColsByReportType = (reportType: REPORT_TYPES, variant: AllVariantsType) => {
     switch (reportType) {
-        case REPORT_TYPES.PRODUCTS_ON_STOCKS :
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS:
             return getProductsOnStocksVariantSortingCols(variant as PRODUCTS_ON_STOCKS_VARIANTS);
-        case REPORT_TYPES.DELIVERY_RATES :
+        case REPORT_TYPES.DELIVERY_RATES:
             return getDeliveryRateVariantSortingCols(variant as DELIVERY_RATES_VARIANTS);
-        case REPORT_TYPES.REPORT_SALES :
+        case REPORT_TYPES.REPORT_SALES:
             return getReportSalesVariantSortingCols(variant as REPORT_SALES_VARIANTS);
-        case REPORT_TYPES.SALE_DYNAMIC :
+        case REPORT_TYPES.SALE_DYNAMIC:
             return getSaleDynamicVariantSortingCols(variant as SALE_DYNAMIC_VARIANTS);
-        case REPORT_TYPES.COD_REPORT :
+        case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantSortingCols(variant as COD_REPORT_VARIANTS);
 
         default:
@@ -226,20 +226,20 @@ export const formatNumbers = (num: number) => {
 }
 
 export const formatPercent = (num: number) => {
-    return (Math.round(num*10)/10).toFixed(1);
+    return (Math.round(num * 10) / 10).toFixed(1);
 }
 
 export const getHeaderNameById = (reportType: REPORT_TYPES, headerId: string) => {
     switch (reportType) {
-        case REPORT_TYPES.PRODUCTS_ON_STOCKS :
+        case REPORT_TYPES.PRODUCTS_ON_STOCKS:
             return ProductsOnStocksHeaderNames[headerId] || '';
-        case REPORT_TYPES.DELIVERY_RATES :
+        case REPORT_TYPES.DELIVERY_RATES:
             return DeliveryRateHeaderNames[headerId] || '';
-        case REPORT_TYPES.REPORT_SALES :
+        case REPORT_TYPES.REPORT_SALES:
             return ReportSalesHeaderNames[headerId] || '';
-        case REPORT_TYPES.SALE_DYNAMIC :
+        case REPORT_TYPES.SALE_DYNAMIC:
             return getSaleDynamicHeaderNames(headerId) || '';
-        case REPORT_TYPES.COD_REPORT :
+        case REPORT_TYPES.COD_REPORT:
             return CodReportHeaderNames[headerId] || '';
 
         default:
@@ -247,7 +247,7 @@ export const getHeaderNameById = (reportType: REPORT_TYPES, headerId: string) =>
     }
 }
 
-export const transformReportType =(reportType:REPORT_TYPES) => {
+export const transformReportType = (reportType: REPORT_TYPES) => {
     switch (reportType) {
         case REPORT_TYPES.PRODUCTS_ON_STOCKS:
             return AccessObjectTypes["Reports/ProductsOnStocks"];

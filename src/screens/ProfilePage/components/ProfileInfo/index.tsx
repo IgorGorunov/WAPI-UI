@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 import "./styles.scss";
-import useAuth, {AccessActions, AccessObjectTypes, USER_TYPES, UserInfoType} from "@/context/authContext";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes, USER_TYPES, UserInfoType } from "@/types/auth";
 import Icon from "@/components/Icon";
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal";
@@ -11,7 +12,7 @@ type ProfileInfoPropsType = {
     userInfo: UserInfoType
 }
 
-const ProfileInfo: React.FC<ProfileInfoPropsType> = ({userInfo}) => {
+const ProfileInfo: React.FC<ProfileInfoPropsType> = ({ userInfo }) => {
 
     const { isActionIsAccessible, userType } = useAuth();
 
@@ -37,9 +38,9 @@ const ProfileInfo: React.FC<ProfileInfoPropsType> = ({userInfo}) => {
         <div className={`profile-info`}>
             <div className={`profile-info__wrapper`}>
                 <div className='profile-info__user-avatar'>
-                    <Icon name='profile'/>
+                    <Icon name='profile' />
                     {isChangePasswordVisible ? <div className='profile-info__change-password'>
-                        <Button onClick={()=>setShowPasswordModal(true)}>Change password</Button>
+                        <Button onClick={() => setShowPasswordModal(true)}>Change password</Button>
                     </div> : null}
                 </div>
                 <div className='profile-info__user-info'>
@@ -72,11 +73,11 @@ const ProfileInfo: React.FC<ProfileInfoPropsType> = ({userInfo}) => {
                                 </div>
                             </div>
                         </div>
-                    </div> : null }
+                    </div> : null}
                 </div>
                 {showPasswordModal ?
                     <Modal title='Change password' onClose={() => setShowPasswordModal(false)}><ChangePasswordBlock
-                        onClose={() => setShowPasswordModal(false)}/></Modal>
+                        onClose={() => setShowPasswordModal(false)} /></Modal>
                     : null
                 }
             </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import "./styles.scss";
+// import "./styles.scss";
 import { setInterceptorErrorCallback, setInterceptorRedirectCallback } from "@/services/api";
 import { ModalTypes, STATUS_MODAL_TYPES } from "@/types/utility";
 import ModalStatus from "@/components/ModalStatus";

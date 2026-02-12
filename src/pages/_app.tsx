@@ -3,6 +3,8 @@ import { Roboto } from "next/font/google";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/context/authContext";
 import "@/styles/globals.scss";
+import "@/components/Layout/styles.scss";
+import "@/components/Header/styles.scss";
 import { NotificationsProvider } from "@/context/notificationContext";
 import { TourGuideProvider } from "@/context/tourGuideContext";
 // import { clarity } from 'react-microsoft-clarity';
@@ -26,9 +28,12 @@ const inter = Inter({
   display: "swap",
 });
 
-export function App({ Component, pageProps, tenantHost, host }: AppProps & { tenantHost?: string, host?: string }) {
+export function App({ Component, pageProps, tenantHost }: AppProps & { tenantHost?: string, host?: string }) {
   const [tenant, setTenant] = useState<null | TENANT_TYPE>(null);
   const [tenantData, setTenantData] = useState<TenantDataType | null>(null);
+
+  console.log("App: Render");
+  useEffect(() => { console.log("App: Mount (First Load/Reload)"); }, []);
 
   // console.log("tenant", host, tenantHost);
 

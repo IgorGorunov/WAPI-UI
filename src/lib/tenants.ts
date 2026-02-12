@@ -16,8 +16,8 @@ export type PrivacyPolicyDataType = {
         websiteLink: string;
     };
     websites: {
-        text:string,
-        link:string
+        text: string,
+        link: string
     }[];
 };
 
@@ -89,7 +89,7 @@ export const tenantsData = {
             logoPaddingTop: 20,
             logoWidth: 200,
             logoHeight: 100,
-            copyright:  'all rights reserved by – WAPI OÜ',
+            copyright: 'all rights reserved by – WAPI OÜ',
             address: 'Laki poik 4, Mustamäe linnaosa, 12919, Tallinn, Estonia WAPI OÜ, Reg no. 14699305',
         },
         mainWebsite: 'https://wapi.com',

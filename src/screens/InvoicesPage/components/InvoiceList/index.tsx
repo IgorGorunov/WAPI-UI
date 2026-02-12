@@ -1,30 +1,31 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
-import {ColumnType} from "antd/es/table";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
+import { ColumnType } from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
-import {InvoiceType} from "@/types/invoices";
+import { InvoiceType } from "@/types/invoices";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import {PageOptions} from '@/constants/pagination';
+import { PageOptions } from '@/constants/pagination';
 import getSymbolFromCurrency from "currency-symbol-map";
-import {DateRangeType} from "@/types/dashboard";
-import {getInvoiceForm} from "@/services/invoices";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
+import { DateRangeType } from "@/types/dashboard";
+import { getInvoiceForm } from "@/services/invoices";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import Loader from "@/components/Loader";
-import {FormFieldTypes} from "@/types/forms";
-import Button, {ButtonVariant} from "@/components/Button/Button";
+import { FormFieldTypes } from "@/types/forms";
+import Button, { ButtonVariant } from "@/components/Button/Button";
 import SearchField from "@/components/SearchField";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchContainer from "@/components/SearchContainer";
-import {FILTER_TYPE} from "@/types/utility";
+import { FILTER_TYPE } from "@/types/utility";
 import DateInput from "@/components/DateInput";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString} from "@/utils/date";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import { formatDateStringToDisplayString } from "@/utils/date";
+import { sendUserBrowserInfo } from "@/services/userInfo";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useTenant from "@/context/tenantContext";
@@ -40,20 +41,20 @@ export const StatusColors = {
 };
 
 type InvoiceListType = {
-    invoices:InvoiceType[];
+    invoices: InvoiceType[];
     currentRange: DateRangeType;
     setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
     setFilteredInvoices: React.Dispatch<React.SetStateAction<InvoiceType[]>>;
     selectedSeller: string;
 }
 
-const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurrentRange, setFilteredInvoices, selectedSeller}) => {
+const InvoiceList: React.FC<InvoiceListType> = ({ invoices, currentRange, setCurrentRange, setFilteredInvoices, selectedSeller }) => {
 
     const [animating, setAnimating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     //const Router = useRouter();
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
     // Pagination
@@ -82,7 +83,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
     }, [sortColumn]);
 
     const getSellerName = useCallback((sellerUid: string) => {
-        const t = sellersList.find(item=>item.value===sellerUid);
+        const t = sellersList.find(item => item.value === sellerUid);
         return t ? t.label : ' - ';
     }, [sellersList]);
 
@@ -95,18 +96,18 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         name: 'fullTextSearch',
         label: 'Full text search',
         checked: fullTextSearch,
-        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        onChange: () => { setFullTextSearch(prevState => !prevState) },
         classNames: 'full-text-search-toggle',
         hideTextOnMobile: true,
     }
 
     const calcOrderAmount = useCallback((property, value) => {
-        return invoices.filter(item=>!selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).filter(invoice => invoice[property].toLowerCase() === value.toLowerCase()).length || 0;
-    },[invoices, selectedSeller]);
+        return invoices.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).filter(invoice => invoice[property].toLowerCase() === value.toLowerCase()).length || 0;
+    }, [invoices, selectedSeller]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const uniqueStatuses = useMemo(() => {
-        const statuses = invoices.filter(item => !selectedSeller || selectedSeller==='All sellers' || selectedSeller===item.seller).map(invoice => invoice.status);
+        const statuses = invoices.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).map(invoice => invoice.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
     }, [invoices, selectedSeller]);
     uniqueStatuses.sort();
@@ -134,8 +135,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             setFilterState: setFilterStatus,
             isOpen: isOpenFilterStatus,
             setIsOpen: setIsOpenFilterStatus,
-            onClose: ()=>setFilterStatus([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
+            onClose: () => setFilterStatus([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterStatus(true) },
         },
     ];
 
@@ -143,23 +144,23 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
         setIsFiltersVisible(!isFiltersVisible);
     };
 
-    const handleFilterChange = (newSearchTerm :string) => {
+    const handleFilterChange = (newSearchTerm: string) => {
         setSearchTerm(newSearchTerm);
     };
-    const handleDownloadInvoice = async (uuid, type='download') => {
+    const handleDownloadInvoice = async (uuid, type = 'download') => {
         setIsLoading(true);
         try {
             const requestData = { token: token, alias, uuid: uuid, type };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetInvoicePrintForm', AccessObjectTypes["Finances/Invoices"], AccessActions.DownloadPrintForm), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('GetInvoicePrintForm', AccessObjectTypes["Finances/Invoices"], AccessActions.DownloadPrintForm), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
-            if (!isActionIsAccessible(AccessObjectTypes["Finances/Invoices"], AccessActions.DownloadPrintForm) ) {
+            if (!isActionIsAccessible(AccessObjectTypes["Finances/Invoices"], AccessActions.DownloadPrintForm)) {
                 return null;
             }
 
-            const response = await getInvoiceForm(superUser && ui ? {...requestData, ui} : requestData);
+            const response = await getInvoiceForm(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (response && response.data) {
                 const files = response.data;
@@ -220,8 +221,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 const value = invoice[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
-            const matchesStatus = !filterStatus.length || filterStatus.map(item=>item.toLowerCase()).includes(invoice.status.toLowerCase());
-            const matchesSeller = !selectedSeller || selectedSeller==='All sellers' || selectedSeller === invoice.seller;
+            const matchesStatus = !filterStatus.length || filterStatus.map(item => item.toLowerCase()).includes(invoice.status.toLowerCase());
+            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === invoice.seller;
             return matchesSearch && matchesStatus && matchesSeller;
         });
 
@@ -262,8 +263,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -304,8 +305,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Status</span>
-                        {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'status' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'status' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -326,9 +327,10 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                                 height: '16px',
                                 backgroundColor: underlineColor,
                                 marginRight: '5px',
-                                justifyContent: 'center',}}
+                                justifyContent: 'center',
+                            }}
                             >
-                        </span>
+                            </span>
                         }
                     >
                     </TableCell>
@@ -350,14 +352,14 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Number</span>
-                        {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'number' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'number' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
 
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="60px" maxWidth="80px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="60px" maxWidth="80px" contentPosition="start" />
             ),
             dataIndex: 'number',
             key: 'number',
@@ -375,13 +377,13 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Date</span>
-                        {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'date' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'date' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="80px"  contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="80px" contentPosition="start" />
             ),
             dataIndex: 'date',
             key: 'date',
@@ -400,8 +402,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Amount</span>
-                        {sortColumn==='amount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='amount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'amount' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'amount' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -448,13 +450,13 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Due date</span>
-                        {sortColumn==='dueDate' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='dueDate' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'dueDate' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'dueDate' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="150px"  contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="60px" maxWidth="150px" contentPosition="start" />
             ),
             dataIndex: 'dueDate',
             key: 'dueDate',
@@ -473,13 +475,13 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Overdue</span>
-                        {sortColumn==='overdue' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='overdue' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'overdue' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'overdue' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" />
             ),
             dataIndex: 'overdue',
             key: 'overdue',
@@ -498,8 +500,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Paid</span>
-                        {sortColumn==='paid' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='paid' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'paid' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'paid' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -547,8 +549,8 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Debt</span>
-                        {sortColumn==='debt' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='debt' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'debt' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'debt' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -587,7 +589,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
             responsive: ['md'],
         },
         {
-            title: <TitleColumn title="" minWidth="80px" maxWidth="130px" contentPosition="start"/>,
+            title: <TitleColumn title="" minWidth="80px" maxWidth="130px" contentPosition="start" />,
             render: (text: string, record: InvoiceType) => (
                 <div className='services-cell-style__wrapper'>
                     <TableCell
@@ -595,7 +597,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                         maxWidth="60px"
                         contentPosition="center"
                         childrenBefore={
-                            <span className="services-cell-style" onClick={()=>handleDownloadInvoice(record.uuid)}>
+                            <span className="services-cell-style" onClick={() => handleDownloadInvoice(record.uuid)}>
                                 <Icon name="download-file" />
                             </span>}>
                     </TableCell>
@@ -604,9 +606,9 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                         maxWidth="60px"
                         contentPosition="center"
                         childrenBefore={
-                            <span className="services-cell-style" onClick={()=> handleDownloadInvoice(record.uuid, 'preview')}>
-                        <Icon name="preview" />
-                        </span>}>
+                            <span className="services-cell-style" onClick={() => handleDownloadInvoice(record.uuid, 'preview')}>
+                                <Icon name="preview" />
+                            </span>}>
                     </TableCell>
                 </div>
             ),
@@ -634,7 +636,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
-                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
@@ -662,7 +664,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                     }))}
                     columns={columns}
                     pagination={false}
-                    scroll={{y:700}}
+                    scroll={{ y: 700 }}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
@@ -681,7 +683,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({invoices, currentRange, setCurr
                 />
             </div>
 
-            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={()=>setFilterStatus([])}>
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={() => setFilterStatus([])}>
                 <FiltersListWithOptions filters={invoiceFilters} />
                 {/*<FiltersBlock filterTitle='Status' filterType={FILTER_TYPE.COLORED_CIRCLE} filterOptions={transformedWarehouses} filterState={filterStatus} setFilterState={setFilterStatus} isOpen={isOpenFilterStatus} setIsOpen={setIsOpenFilterStatus}/>*/}
             </FiltersContainer>

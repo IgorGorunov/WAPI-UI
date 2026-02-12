@@ -1,24 +1,25 @@
-import React, {useEffect, useState} from "react";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
-import {getProductsStock} from "@/services/products";
+import React, { useEffect, useState } from "react";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
+import { getProductsStock } from "@/services/products";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import ProductList from "./components/ProductList";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
-import {ProductStockType} from "@/types/products";
-import {exportFileXLS} from "@/utils/files";
+import { ProductStockType } from "@/types/products";
+import { exportFileXLS } from "@/utils/files";
 import Loader from "@/components/Loader";
 import useTourGuide from "@/context/tourGuideContext";
-import {TourGuidePages} from "@/types/tourGuide";
+import { TourGuidePages } from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
-import {tourGuideStepsProductsStock, tourGuideStepsProductsStockNoDocs} from "./productsStockTourGuideSteps.constants";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import { tourGuideStepsProductsStock, tourGuideStepsProductsStockNoDocs } from "./productsStockTourGuideSteps.constants";
+import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 
 const ProductsStockPage = () => {
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
@@ -36,18 +37,18 @@ const ProductsStockPage = () => {
                 setIsLoading(true);
                 setProductsData([]);
                 setFilteredProducts([]);
-                const requestData = {token, alias};
+                const requestData = { token, alias };
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo('GetProductsStock', AccessObjectTypes["Products/ProductsStock"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
-                } catch {}
+                    sendUserBrowserInfo({ ...getBrowserInfo('GetProductsStock', AccessObjectTypes["Products/ProductsStock"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
+                } catch { }
 
-                if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsStock"], AccessActions.ListView)){
+                if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsStock"], AccessActions.ListView)) {
                     setProductsData([]);
                     setFilteredProducts([]);
                     setIsLoading(false);
                     return;
                 }
-                const res: ApiResponse = await getProductsStock(superUser && ui ? {...requestData, ui} : requestData);
+                const res: ApiResponse = await getProductsStock(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
                     setProductsData(res.data);
@@ -68,8 +69,8 @@ const ProductsStockPage = () => {
 
     const handleExportXLS = () => {
         try {
-            sendUserBrowserInfo({...getBrowserInfo('ExportProductStockList', AccessObjectTypes["Products/ProductsStock"], AccessActions.ExportList), body: {}});
-        } catch {}
+            sendUserBrowserInfo({ ...getBrowserInfo('ExportProductStockList', AccessObjectTypes["Products/ProductsStock"], AccessActions.ExportList), body: {} });
+        } catch { }
 
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsStock"], AccessActions.ExportList)) {
             return null;
@@ -91,11 +92,11 @@ const ProductsStockPage = () => {
             "On shipping": item.onShipping,
             Total: item.total,
         }));
-        exportFileXLS(filteredData, `ProductsStock${warehouseForReport ? "_"+warehouseForReport : ""}`)
+        exportFileXLS(filteredData, `ProductsStock${warehouseForReport ? "_" + warehouseForReport : ""}`)
     }
 
     //tour guide
-    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+    const { runTour, setRunTour, isTutorialWatched } = useTourGuide();
 
     useEffect(() => {
         if (!isTutorialWatched(TourGuidePages.ProductsStock)) {
@@ -118,7 +119,7 @@ const ProductsStockPage = () => {
                 <Header pageTitle='Products stock' toRight needTutorialBtn >
                     <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
-                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setWarehouseForExport={setWarehouseForReport}/>}
+                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} setWarehouseForExport={setWarehouseForReport} />}
                 {productsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.ProductsStock} /> : null}
             </div>
         </Layout>
