@@ -58,7 +58,7 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
                 return null;
             }
 
-            const res: ApiResponseType = await getOrderData(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getOrderData(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setOrderData(res.data);
@@ -81,7 +81,7 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
             //     sendUserBrowserInfo({...getBrowserInfo('GetOrderParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
             // } catch {}
 
-            const resp: ApiResponseType = await getOrderParameters(superUser && ui ? { ...requestData, ui } : requestData);
+            const resp = await getOrderParameters(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (resp && "data" in resp) {
                 setOrderParameters(resp.data);

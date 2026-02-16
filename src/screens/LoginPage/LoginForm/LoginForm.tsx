@@ -143,7 +143,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken
       setIsLoading(true);
       setError(null);
       //const res = await authenticate("Test@Test.com", "Test");
-      const res: ApiResponseType = await authenticateWithOneTimeToken({ oneTimeToken, alias });
+      const res = await authenticateWithOneTimeToken({ oneTimeToken, alias });
 
       if (res?.status === 200) {
         await setAuthData(res.data);

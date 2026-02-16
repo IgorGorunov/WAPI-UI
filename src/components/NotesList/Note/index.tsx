@@ -34,7 +34,7 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
         try {
             setIsLoading(true);
             const requestData = {token, alias, uuid, note: noteText };
-            const res: ApiResponseType = await sendNote(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await sendNote(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res?.status === 200) {
                 //success

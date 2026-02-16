@@ -106,7 +106,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
                 sendUserBrowserInfo({...getBrowserInfo('ChangePassword'), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
-            const res: ApiResponseType = await changePassword(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await changePassword(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res?.status === 200) {
                 //display success modal

@@ -142,7 +142,7 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
         setIsLoading(true);
 
         try {
-            const res: ApiResponseType = await sendLegalInfo({ token, alias, legalData: data });
+            const res = await sendLegalInfo({ token, alias, legalData: data });
 
             if (res && "status" in res && res?.status === 200) {
                 //success

@@ -26,6 +26,7 @@ import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
+import {FilterComponentType} from "@/types/filters";
 
 
 type AmazonPrepListType = {
@@ -223,7 +224,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             onClose: ()=>handleFilterReceiverCountryChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
         },
-    ];
+    ] as FilterComponentType[];
 
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';

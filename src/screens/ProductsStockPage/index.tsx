@@ -28,10 +28,6 @@ const ProductsStockPage = () => {
     const [warehouseForReport, setWarehouseForReport] = useState('');
 
     useEffect(() => {
-        type ApiResponse = {
-            data: any;
-        };
-
         const fetchData = async () => {
             try {
                 setIsLoading(true);
@@ -48,7 +44,7 @@ const ProductsStockPage = () => {
                     setIsLoading(false);
                     return;
                 }
-                const res: ApiResponse = await getProductsStock(superUser && ui ? { ...requestData, ui } : requestData);
+                const res = await getProductsStock(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
                     setProductsData(res.data);

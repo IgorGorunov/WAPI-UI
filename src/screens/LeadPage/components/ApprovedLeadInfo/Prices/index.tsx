@@ -25,7 +25,7 @@ const Prices: React.FC<PricesPropsType> = () => {
 
     const fetchPricesInfo = useCallback(async () => {
         try {
-            const res: ApiResponseType = await getPricesInfo({token, alias});
+            const res = await getPricesInfo({token, alias});
 
             if (res && "data" in res) {
                 setCurPrices(res.data);
@@ -50,7 +50,7 @@ const Prices: React.FC<PricesPropsType> = () => {
 
         //send info that NDA was signed
         try {
-            const res: ApiResponseType = await sendSignNDA(
+            const res = await sendSignNDA(
                 {
                     token,
                     alias

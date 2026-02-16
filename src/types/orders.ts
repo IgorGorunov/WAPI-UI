@@ -1,12 +1,12 @@
-import {
-    SEND_COMMENT_TYPES,
+import type {
     AttachedFilesType,
-    WarehouseType,
-    DocProductParamsType, SellerType
+    DocProductParamsType,
+    SellerType,
+    SEND_COMMENT_TYPES, WarehouseType
 } from "@/types/utility";
-import { TicketType } from "@/types/tickets";
-import { NoteType } from "@/types/notes";
-import { UserAccessActionType } from "@/types/auth";
+import type { TicketType } from "@/types/tickets";
+import type { NoteType } from "@/types/notes";
+import type { UserAccessActionType } from "@/context/authContext";
 
 export type ClaimType = {
     date: string;
@@ -70,7 +70,7 @@ export type OrderType = {
     }[];
     commentToCourierServiceExist: boolean;
     selfCollect: boolean;
-    sentSMS: {}[];
+    sentSMS: unknown[];
     sentSMSExist: boolean;
     logisticComment: string;
     ticket?: boolean;
@@ -299,6 +299,8 @@ export type SingleOrderProductFormType = {
     total: string | number;
     cod: string | number;
     connectionKey?: string | number;
+    selected?: boolean;
+    key?: string;
 };
 
 export type SingleOrderFormType = {
@@ -338,14 +340,77 @@ export type SingleOrderFormType = {
     wapiTrackingNumber: string;
     warehouse: string;
     products: SingleOrderProductFormType[];
+    seller?: string;
+    draft?: boolean;
+    attachedFiles?: AttachedFilesType[];
 }
 
 //endpoint types
 export type CreateOrderRequestType = {
-    orderData: SingleOrderType,
+    orderData: SingleOrderFormType,
     token: string;
     alias: string;
     ui?: string;
     seller?: string;
 }
 
+////// pagination ///////
+export type TroubleStatusFilterDataType = {
+    name: string;
+    count: number;
+}
+
+export type FilterType = {
+    id: string;
+    name: string;
+    count: number;
+}
+
+// export type CountryFilterDataType = StatusFilterDataType;
+// export type WarehouseFilterDataType = StatusFilterDataType
+
+export type OrderFilterDataType = {
+    tickets: number;
+    orders: number;
+    troubleStatuses: TroubleStatusFilterDataType[];
+    selfCollect: number;
+    statuses: FilterType[];
+    receiverCountries: FilterType[];
+    warehouses: FilterType[];
+    marketplaces: FilterType[];
+    courierServices: FilterType[];
+    sentSMS: number
+    nonTroubleEvents: number;
+    customerReturns: number;
+    warehouseAssemblyPhotos: number;
+    commentToCourierService: number;
+    claims: number;
+}
+
+export type OrderFiltersSelectedType = {
+    claims: boolean;
+    commentToCourierService: boolean;
+    customerReturns: boolean;
+    nonTroubleEvents: boolean
+    warehouseAssemblyPhotos: boolean
+    sentSMS: boolean;
+    selfCollect: boolean;
+
+    troubleStatus: string[];
+    CourierService: string[];
+    Marketplace: string[];
+    ReceiverCountry: string[];
+    Status: string[];
+    Warehouse: string[];
+}
+
+//temporary type
+export type OrderTempPropsType = {
+    tempToken: string;
+    startDate: string;
+    endDate: string;
+    client: string;
+    page?: number;
+    limit?: number;
+    filters?: Partial<OrderFiltersSelectedType>;
+}

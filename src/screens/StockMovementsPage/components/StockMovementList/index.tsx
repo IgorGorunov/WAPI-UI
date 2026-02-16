@@ -26,6 +26,7 @@ import FiltersChosen from "@/components/FiltersChosen";
 import {isTabAllowed} from "@/utils/tabs";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
+import {FilterComponentType} from "@/types/filters";
 
 
 type StockMovementsListType = {
@@ -363,7 +364,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({docType, docs, cu
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)},
         } : null,
 
-    ];
+    ] as FilterComponentType[];
 
 
     const handleChangePage = (page: number) => {

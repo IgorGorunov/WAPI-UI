@@ -44,9 +44,6 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
     }, [])
 
     const fetchSingleStockMovement = async (uuid: string) => {
-        type ApiResponse = {
-            data: any;
-        };
 
         try {
             setIsLoading(true);
@@ -62,7 +59,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
                 setShowStatusModal(true);
                 return null;
             }
-            const res: ApiResponse = await getInboundData(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getInboundData(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setDocData(res.data);
@@ -85,7 +82,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
             //     sendUserBrowserInfo({...getBrowserInfo('GetStockMovementParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
             // } catch {}
 
-            const resp: ApiResponseType = await getInboundParameters(superUser && ui ? { ...requestData, ui } : requestData);
+            const resp = await getInboundParameters(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (resp && "data" in resp) {
                 setDocParameters(resp.data);

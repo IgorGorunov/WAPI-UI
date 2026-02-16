@@ -154,7 +154,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                 sendUserBrowserInfo({ ...getBrowserInfo('CancelStockMovement/' + docType), body: superUser && ui ? { ...requestData, ui } : requestData })
             } catch { }
 
-            const res: ApiResponseType = await cancelStockMovement(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await cancelStockMovement(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "status" in res && res?.status === 200) {
                 //success
@@ -738,7 +738,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         }
     }
 
-    const [importResponse, setImportResponse] = useState<ApiResponseType | null>(null);
+    const [importResponse, setImportResponse] = useState<any | null>(null);
 
     useEffect(() => {
 

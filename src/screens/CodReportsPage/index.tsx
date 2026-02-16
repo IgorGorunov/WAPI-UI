@@ -48,10 +48,6 @@ const CodReportsPage = () => {
     }, [sellersList]);
 
     useEffect(() => {
-        type ApiResponse = {
-            data: any;
-        };
-
         const fetchData = async () => {
             try {
                 setIsLoading(true);
@@ -72,7 +68,7 @@ const CodReportsPage = () => {
 
                 console.log('has access')
 
-                const res: ApiResponse = await getCodReports(superUser && ui ? { ...requestData, ui } : requestData);
+                const res = await getCodReports(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
                     setCodReportsData(res.data.sort((a, b) => a.date > b.date ? -1 : 1));
@@ -121,10 +117,6 @@ const CodReportsPage = () => {
     }
 
     useEffect(() => {
-        type ApiResponse = {
-            data: any;
-        };
-
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
@@ -158,7 +150,7 @@ const CodReportsPage = () => {
                     return null;
                 }
 
-                const res: ApiResponse = await getCODIndicators(superUser && ui ? { ...requestData, ui } : requestData);
+                const res = await getCODIndicators(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
                     setCODIndicators(res.data);

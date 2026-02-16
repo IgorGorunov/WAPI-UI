@@ -1,5 +1,7 @@
-import {TicketType} from "@/types/tickets";
-import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
+import type {TicketType} from "@/types/tickets";
+import type {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
+import type {AttachedFilesType} from "@/types/utility";
+import type {UserAccessActionType} from "@/context/authContext";
 
 export type ProductType = {
     selected?: boolean;
@@ -71,6 +73,7 @@ export type ProductParamsType = {
     specialDeliveryOrStorageRequirements: string[];
     typeOfStorage: string[];
     whoProvideExtraPacking: string[];
+    actionAccessSettings?: UserAccessActionType[];
 };
 
 export type UnitOfMeasuresType = {
@@ -89,12 +92,12 @@ export type BundleKitType = {
     quantity: number;
 }
 
-export type AttachedFilesType = {
-    id: string;
-    name: string;
-    type: string;
-    data: string;
-}
+// export type AttachedFilesType = {
+//     id: string;
+//     name: string;
+//     type: string;
+//     data: string;
+// }
 
 export type StatusHistoryType = {
     date: string;
@@ -199,6 +202,63 @@ export type SingleProductFormType = {
         selected: boolean;
         analogue: string;
     }[];
+    expiringTerm?: number;
+    seller?: string;
+    //attachedFiles: AttachedFilesType[];
+    // statusHistory: StatusHistoryType[];
+    // canEdit: boolean;
+}
+
+export type SingleProductSendFormType = {
+    uuid?: string;
+    status?: string;
+    amazonSku: string;
+    barcodes: string[];
+    // barcodes: {
+    //     key: string;
+    //     selected: boolean;
+    //     barcode:string;
+    // }[];
+    countryOfOrigin: string;
+    fireproof: boolean;
+    fragile: boolean;
+    fullName: string;
+    glass: boolean;
+    hazmat: boolean;
+    hsCode: string;
+    liquid: boolean;
+    name: string;
+    packingBox: boolean;
+    purchaseValue: number;
+    salesPackingMaterial: string;
+    sku: string;
+    specialDeliveryOrStorageRequirements: string;
+    specialTemperatureControl: string;
+    typeOfStorage: string;
+    unitOfMeasure: string;
+    withoutMasterCartonData?: boolean;
+    unitOfMeasures: UnitOfMeasureFormType[];
+    whoProvidesPackagingMaterial: string;
+    additionalService?: boolean;
+    // aliases: {
+    //     key: string;
+    //     selected: boolean;
+    //     alias:string;
+    // }[];
+    aliases: string[];
+    //status: string;
+    bundleKit: {
+        key: string;
+        selected: boolean;
+        uuid: string;
+        quantity: number;
+    }[];
+    // analogues: {
+    //     key: string;
+    //     selected: boolean;
+    //     analogue: string;
+    // }[];
+    analogues: string[];
     expiringTerm?: number;
     seller?: string;
     //attachedFiles: AttachedFilesType[];

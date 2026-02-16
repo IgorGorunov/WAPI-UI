@@ -127,7 +127,7 @@ const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
                 setStockMovementData([]);
                 return;
             }
-            const res: ApiResponseType = await getInbounds(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getInbounds(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setStockMovementData(res.data.map(item => ({ ...item, key: item.uuid })).sort((a, b) => a.incomingDate > b.incomingDate ? -1 : 1));

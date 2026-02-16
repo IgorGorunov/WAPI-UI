@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
-import { getDasboardData } from "@/services/dashboard";
+import { getDashboardData } from "@/services/dashboard";
 import { DashboardDataType, DashboardPeriodType, PeriodType } from "@/types/dashboard";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header"
@@ -141,7 +141,7 @@ const DashboardPage: React.FC = () => {
         } catch { }
 
         if (isActionIsAccessible(AccessObjectTypes["Dashboard"], AccessActions.View) && isNavItemAccessible('Dashboard')) {
-          const res: ApiResponseType = await getDasboardData(superUser && ui ? { ...requestData, ui } : requestData);
+          const res = await getDashboardData(superUser && ui ? { ...requestData, ui } : requestData);
 
           if (res && res.status === 200 && "data" in res) {
             setPageDataArr(res.data);

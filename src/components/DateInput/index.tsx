@@ -12,16 +12,14 @@ type DateInputType = {
     handleRangeChange: (periodRange: DateRangeType) => void
 }
 const DateInput: React.FC<DateInputType> = ({currentRange, handleRangeChange}) => {
-    // const {currentDate} = useAuth();
-    const currentDate = new Date();
-    const [curRange, setCurRange] = useState<DateRangeType>(currentRange ? currentRange : {startDate: currentDate, endDate: currentDate});
+    const [curRange, setCurRange] = useState<DateRangeType>(currentRange ? currentRange : {startDate: new Date() , endDate: new Date()});
     const [showDateInput, setShowDateInput] = useState(false);
     const handleDateInputClick = () => {
         setShowDateInput(prevSate => !prevSate);
     }
 
     useEffect(() => {
-        setCurRange(currentRange);
+        setCurRange(prevState => currentRange ? currentRange : prevState );
     }, [currentRange]);
 
     const handleDateState = (periodRange: DateRangeType) => {

@@ -536,16 +536,16 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                 sendUserBrowserInfo({ ...getBrowserInfo('CreateUpdateAmazonPrep'), body: superUser && ui ? { ...requestData, ui } : requestData })
             } catch { }
 
-            const res: ApiResponseType = await sendAmazonPrepData(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await sendAmazonPrepData(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "status" in res && res?.status === 200) {
                 //success
-                if (res.data && 'errorMessage' in res.data) {
+                if (res.data && res.data.errorMessage) {
                     setModalStatusInfo({
                         statusModalType: STATUS_MODAL_TYPES.WARNING,
                         title: "Warning",
                         subtitle: `Please pay attention, the order has some troubles!`,
-                        text: res.data.errorMessage,
+                        text: res.data.errorMessage || [],
                         onClose: closeSuccessModal
                     })
                     setShowStatusModal(true);

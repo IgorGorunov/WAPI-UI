@@ -34,7 +34,7 @@ const PricesBlock: React.FC<PricesBlockPropsType> = ({prices}) => {
         e.preventDefault();
 
         try {
-            const res: ApiResponseType = await getPriceFile({token, uuid, alias});
+            const res = await getPriceFile({token, uuid, alias});
 
             if (res && "status" in res && res?.status === 200) {
                 //success

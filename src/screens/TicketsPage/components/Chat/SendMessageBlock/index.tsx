@@ -149,7 +149,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({ objectUuid, onSendMe
                 sendUserBrowserInfo({ ...getBrowserInfo('CreateMessageForObject'), body: superUser && ui ? { ...requestData, ui } : requestData })
             } catch { }
 
-            const res: ApiResponseType = await sendTicketMessage(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await sendTicketMessage(superUser && ui ? { ...requestData, ui } : requestData);
             if (res.status === 200) {
                 onSendMessage();
                 setFiles([]);

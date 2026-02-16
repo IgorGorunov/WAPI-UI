@@ -61,7 +61,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({ docUuid, onCloseModal, o
                 return null;
             }
 
-            const res: ApiResponseType = await getSingleAmazonPrepData(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getSingleAmazonPrepData(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setAmazonPrepOrderData(res.data);
@@ -84,7 +84,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({ docUuid, onCloseModal, o
             //     sendUserBrowserInfo({...getBrowserInfo('GetAmazonPrepParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
             // } catch {}
 
-            const responseParams: ApiResponseType = await getAmazonPrepParameters(superUser && ui ? { ...requestData, ui } : requestData);
+            const responseParams = await getAmazonPrepParameters(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (responseParams?.data) {
                 setAmazonPrepOrderParameters(responseParams.data);

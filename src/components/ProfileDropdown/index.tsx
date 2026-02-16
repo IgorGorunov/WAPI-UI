@@ -22,8 +22,6 @@ const ProfileDropdown = () => {
 
     const [displayedName, setDisplayedName] = useState<string>('user');
 
-    console.log('user user', userStatus, superUser, token)
-
     useEffect(() => {
         setDisplayedName(userName || 'user');
     }, [userName]);
@@ -38,7 +36,7 @@ const ProfileDropdown = () => {
         try {
             setIsLoading(true);
 
-            const res: ApiResponseType = await getUserList({token, alias: tenantData.alias}
+            const res = await getUserList({token, alias: tenantData.alias}
             );
 
             if (res && "data" in res) {

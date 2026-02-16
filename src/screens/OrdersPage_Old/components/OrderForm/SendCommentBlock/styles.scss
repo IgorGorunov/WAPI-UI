@@ -1,0 +1,19 @@
+@import '@/constants/devices.scss';
+
+.send-comment {
+  @media (min-width: $desktop) {
+    width: 1090px;
+  }
+
+  .form-submit-btn {
+    display: flex;
+    justify-content: flex-end;
+    gap: 22px;
+    margin-top: 30px;
+
+    @media (max-width: $mobile) {
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+  }
+}

@@ -65,7 +65,7 @@ const LeadPage = () => {
             try {
                 setIsLoading(true);
 
-                const res: ApiResponseType = await checkLeadStatus({lead: token, alias});
+                const res = await checkLeadStatus({lead: token, alias});
 
                 if (res && "data" in res) {
                     setUserStatus(res.data?.userStatus);
@@ -88,7 +88,7 @@ const LeadPage = () => {
         try {
             setIsLoading(true);
 
-            const res: ApiResponseType = await getLeadParameters({token, alias});
+            const res = await getLeadParameters({token, alias});
 
             if (res && "data" in res) {
                 setQuestionnaireParams(res.data);

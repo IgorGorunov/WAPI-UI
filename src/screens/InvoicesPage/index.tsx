@@ -46,10 +46,6 @@ const InvoicesPage = () => {
     }, [sellersList]);
 
     useEffect(() => {
-        type ApiResponse = {
-            data: any;
-        };
-
         const fetchData = async () => {
             try {
                 setIsLoading(true);
@@ -65,7 +61,7 @@ const InvoicesPage = () => {
                     return null;
                 }
 
-                const res: ApiResponse = await getInvoices(superUser && ui ? { ...requestData, ui } : requestData);
+                const res = await getInvoices(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
                     setInvoicesData(res.data.sort((a, b) => a.date > b.date ? -1 : 1));
@@ -86,10 +82,6 @@ const InvoicesPage = () => {
     }, [token, curPeriod]);
 
     useEffect(() => {
-        type ApiResponse = {
-            data: any;
-        };
-
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
@@ -122,7 +114,7 @@ const InvoicesPage = () => {
                     });
                     return;
                 }
-                const res: ApiResponse = await getInvoicesDebts(superUser && ui ? { ...requestData, ui } : requestData);
+                const res = await getInvoicesDebts(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
                     setInvoiceBalance(res.data);

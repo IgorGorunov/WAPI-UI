@@ -70,15 +70,16 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
         });
     };
 
-
+    const nodeRef = useRef(null);
 
     return (
         <div>
-            <Draggable handle=".date-range-container"
-                       cancel="input, textarea, select, option, button, a, .rdrCalendarWrapper, .rdrDay, .rdrMonth, .rdrMonths"
-
+            <Draggable
+                // handle=".date-range-container"
+               cancel="input, textarea, select, option, button, a, .rdrCalendarWrapper, .rdrDay, .rdrMonth, .rdrMonths"
+               nodeRef={nodeRef}
             >
-                <div className="datepicker">
+                <div className="datepicker" ref={nodeRef}>
                     <a className="datepicker__close" href="#" onClick={onClose}>
                         <Icon name='close' />
                     </a>

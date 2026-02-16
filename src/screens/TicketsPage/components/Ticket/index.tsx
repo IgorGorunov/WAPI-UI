@@ -64,7 +64,7 @@ const Ticket: React.FC<TicketPropsType> = ({ ticketUuid = null, subjectType = nu
                 return null;
             }
 
-            const res: ApiResponseType = await getSingleTicket(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getSingleTicket(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setSingleTicketData(res.data);
@@ -94,7 +94,7 @@ const Ticket: React.FC<TicketPropsType> = ({ ticketUuid = null, subjectType = nu
                 setTicketParams(null);
                 return null;
             }
-            const res: ApiResponseType = await getTicketParams(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getTicketParams(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setTicketParams(res.data);

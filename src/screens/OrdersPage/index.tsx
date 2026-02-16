@@ -6,12 +6,16 @@ import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import OrderList from "./components/OrderList";
 import "./styles.scss";
-import { getOrders } from "@/services/orders";
+import {getOrderFilters, getOrders, getOrdersPage} from "@/services/orders";
 import Button from "@/components/Button/Button";
 import { DateRangeType } from "@/types/dashboard";
-import { formatDateTimeToStringWithDotWithoutSeconds, formatDateToString, getLastFewDays } from "@/utils/date";
-import { OrderType } from "@/types/orders";
-// import {exportFileXLS} from "@/utils/files";
+import {
+    formatDateTimeToStringWithDotWithoutSeconds,
+    formatDateToString,
+    getLastFewDays,
+    getOrderedDateRange
+} from "@/utils/date";
+import {OrderType, OrderFilterDataType, FilterType, OrderTempPropsType} from "@/types/orders";
 import Modal from "@/components/Modal";
 import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
@@ -21,7 +25,6 @@ import useTourGuide from "@/context/tourGuideContext";
 import { TourGuidePages } from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import { tourGuideStepsOrders, tourGuideStepsOrdersNoDocs } from "./ordersTourGuideSteps.constants";
-import { ApiResponseType } from "@/types/api";
 import { sendUserBrowserInfo } from "@/services/userInfo";
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import { STATUS_MODAL_TYPES } from "@/types/utility";
@@ -73,8 +76,9 @@ const OrdersPage = () => {
         // Cookies.set('orders-period', JSON.stringify(period), {expires: 1/24});
     }
 
-    const [ordersData, setOrdersData,] = useState<any | null>(null);
-    const [filteredOrders, setFilteredOrders] = useState<OrderType[]>(ordersData);
+    const [availableFilters, setAvailableFilters] = useState<OrderFilterDataType | null>(null)
+    const [ordersData, setOrdersData,] = useState<OrderType[] | null>(null);
+    const [filteredOrders, setFilteredOrders] = useState<OrderType[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     //tour guide
@@ -113,10 +117,43 @@ const OrdersPage = () => {
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
     const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        const fetchFilters = async () => {
+            if (!curPeriod || !token) return;
+            try {
+                setIsLoading(true);
+                const dateRange = getOrderedDateRange(curPeriod);
+                const filterProps: OrderTempPropsType = {
+                    tempToken: "qwert123456BVCXZ",
+                    startDate: dateRange.startDate,
+                    endDate: dateRange.endDate,
+                    client: "1207df90-c9c2-11ee-af7c-04421a1aac94"
+                }
+
+                const res = await getOrderFilters(filterProps);
+                if (res && res.data) {
+                    setAvailableFilters(res.data);
+                    console.log('FILTERS: ', res.data);
+                } else {
+                    setAvailableFilters(null);
+                }
+
+
+            } catch (error) {
+                console.error("Error fetching filters:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        fetchFilters();
+    }, [token, ui, curPeriod]);
 
     const fetchData = useCallback(async () => {
         if (!curPeriod) return;
+        console.log('FETCHING DATA  --  START: ', new Date().toISOString());
         try {
             setIsLoading(true);
             setOrdersData([]);
@@ -132,10 +169,14 @@ const OrdersPage = () => {
                 return null;
             }
 
-            const res: ApiResponseType = await getOrders(superUser && ui ? { ...requestData, ui } : requestData);
+            //temporarily
+            //const temRequestData =
+
+            const res = await getOrders(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setOrdersData(res.data.map(item => ({ ...item, key: item.uuid })).sort((a: OrderType, b: OrderType) => a.date > b.date ? -1 : 1));
+                console.log('FETCHING DATA  --  FETCHED: ', new Date().toISOString());
             } else {
                 console.error("API did not return expected data");
             }
@@ -260,7 +301,7 @@ const OrdersPage = () => {
 
     return (
         <Layout hasHeader hasFooter>
-            <SeoHead title='Orders (fulfillments) 11' description='Our orders page' />
+            <SeoHead title='Orders (fulfillments)' description='Our orders page' />
             <div className="page-component orders-page__container">
                 {isLoading && (<Loader />)}
                 <Header pageTitle='Fulfillment' toRight needTutorialBtn >
@@ -269,7 +310,7 @@ const OrdersPage = () => {
                     <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
 
-                {ordersData && <OrderList orders={ordersData}
+                {ordersData ? <OrderList orders={ordersData}
                     currentRange={curPeriod}
                     setCurrentRange={setCurrentPeriodFn}
                     setFilteredOrders={setFilteredOrders}
@@ -278,7 +319,7 @@ const OrdersPage = () => {
                     current={current}
                     setCurrent={setCurrent}
                     forbiddenTabs={getForbiddenTabs(AccessObjectTypes["Orders/Fullfillment"])}
-                />}
+                /> : null}
             </div>
             {showOrderModal && (orderUuid || isOrderNew) &&
                 <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={() => { onOrderModalClose(); fetchData(); }} />

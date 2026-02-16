@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import "./styles.scss";
-import {ApiResponseType} from "@/types/api";
 import {createTicket, reopenTicket} from "@/services/tickets";
 import useAuth from "@/context/authContext";
 import {SingleTicketType, TICKET_OBJECT_TYPES, TicketParamsType} from "@/types/tickets";
@@ -150,7 +149,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                 sendUserBrowserInfo({...getBrowserInfo('ReopenTicket'), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
-            const res: ApiResponseType = await reopenTicket(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await reopenTicket(superUser && ui ? {...requestData, ui} : requestData);
 
             if (res?.status === 200) {
                 //success
@@ -187,9 +186,9 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                 sendUserBrowserInfo({...getBrowserInfo('CreateTicket'), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
 
-            const res: ApiResponseType = await createTicket(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await createTicket(superUser && ui ? {...requestData, ui} : requestData);
 
-            if (res && "status" in res && res?.status === 200 && res?.data) {
+            if (res && res?.status === 200 && res?.data) {
                 //success
                 setDocUuid(res.data);
             } else if (res && 'response' in res ) {

@@ -76,6 +76,7 @@ export type ProductsSelectionType = {
     volumeWeight: number;
     volume: number;
     key?: string;
+    seller: string;
 }
 
 export const enum ChatMessageDirectionType {

@@ -160,7 +160,7 @@ const DropZone = ({ files, onFilesChange , readOnly = false, hint='', banCSV=fal
                     uuid: docUuid,
                     attachedFiles: addedFiles,
                 }
-                const res: ApiResponseType = await sendDocumentFiles(superUser && ui ? {...requestData, ui} : requestData);
+                const res = await sendDocumentFiles(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (res?.status === 200) {
                    //success

@@ -29,6 +29,7 @@ import { sendUserBrowserInfo } from "@/services/userInfo";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useTenant from "@/context/tenantContext";
+import {FilterComponentType} from "@/types/filters";
 
 
 export const StatusColors = {
@@ -138,7 +139,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({ invoices, currentRange, setCur
             onClose: () => setFilterStatus([]),
             onClick: () => { setIsFiltersVisible(true); setIsOpenFilterStatus(true) },
         },
-    ];
+    ] as FilterComponentType[];
 
     const toggleFilters = () => {
         setIsFiltersVisible(!isFiltersVisible);

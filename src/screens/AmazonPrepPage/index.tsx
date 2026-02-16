@@ -82,7 +82,7 @@ const AmazonPrepPage = () => {
             } catch { }
 
             if (isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ListView)) {
-                const res: ApiResponseType = await getAmazonPrep(superUser && ui ? { ...requestData, ui } : requestData);
+                const res = await getAmazonPrep(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
                     setAmazonPrepOrdersData(res.data.sort((a, b) => a.date > b.date ? -1 : 1));

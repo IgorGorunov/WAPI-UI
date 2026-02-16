@@ -1,5 +1,7 @@
 import axios from 'axios';
-import {api} from "@/services/api";
+import { api } from "@/services/api";
+import { type UserInfoType } from '@/context/authContext';
+import { type ApiResponseType } from "@/types/api";
 
 // const LOGGING_URL = 'https://api.wapi.com/UILOG/hs/v1/UI/WriteLog';
 const LOGGING_URL = 'https://api.wapi.com/UILOG/hs/v1/UI/WriteLog'
@@ -31,16 +33,30 @@ export function getUserTimezone(): string {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
+export type UserInfoBodyType = {
+    startDate?: string;
+    endDate?: string;
+    token?: string;
+    alias?: string;
+    ui?: string;
+    uuid?: string;
+}
 
 export type SendUserBrowserInfoType = {
-    headers: any;
-    body: any;
+    headers?: Record<string, unknown>[];
+    body: UserInfoBodyType;
     action: string;
-    clientName: string;
+    clientName?: string;
     email: string;
     token: string;
     forbidden: boolean;
     superUserName: string;
+}
+
+export type UserInfoTypeResponseType = {
+    userProfile: {
+        userInfo: UserInfoType;
+    }
 }
 
 export async function sendUserBrowserInfo(dataToSend: SendUserBrowserInfoType): Promise<void> {
@@ -67,18 +83,19 @@ export const getUserProfile = async (
         alias: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/GetUserProfile`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<UserInfoTypeResponseType>> => {
+    return api.post(`/GetUserProfile`, data);
+    // try {
+    //     const response: UserInfoType = await api.post(
+    //         `/GetUserProfile`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 // // Call the function to gather and send user info

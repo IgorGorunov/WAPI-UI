@@ -53,11 +53,11 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
         )}
       </label>
       {errorMessage && <p className="error">{errorMessage}</p>}
-      {errors && name in errors ? (
-          <p className="error">
-            {(errors && errors[name]?.message) || errorMessage}
-          </p>
-      ) : null}
+      {/*{errors && name in errors ? (*/}
+      {/*    <p className="error">*/}
+      {/*      {(errors && errors[name]?.message) || errorMessage}*/}
+      {/*    </p>*/}
+      {/*) : null}*/}
     </div>
   );
 });

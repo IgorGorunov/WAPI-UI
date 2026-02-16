@@ -46,7 +46,7 @@ const ConfirmEmailPage = () => {
             const sendConfirm = async(confirmToken: string) => {
                 try {
                     setIsLoading(true);
-                    const res: ApiResponseType = await confirmEmail({uuid: confirmToken, alias});
+                    const res = await confirmEmail({uuid: confirmToken, alias});
 
                     if (res?.status === 200) {
                         setIsLoaded(true);

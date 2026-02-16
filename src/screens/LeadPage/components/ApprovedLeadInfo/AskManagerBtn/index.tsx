@@ -63,7 +63,7 @@ const AskManagerBtn = () => {
         const onSubmit: SubmitHandler<AskManagerFormDataType> = async(data: AskManagerFormDataType) => {
             try {
                 setIsLoading(true);
-                const res: ApiResponseType = await sendQuestion({token, alias, questionText: data.questionText});
+                const res = await sendQuestion({token, alias, questionText: data.questionText});
                 if (res.status === 200) {
                     //success
                     setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Your question was successfully send! Our manager will contact you soon.`, text: ['We will reach out for any necessary additional information.'], onClose: closeSuccessModal, disableAutoClose: true})

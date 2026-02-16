@@ -60,7 +60,7 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({utm}) => {
         try {
             setIsLoading(true);
             setError(null);
-            const res: ApiResponseType = await signUp(lead);
+            const res = await signUp(lead);
 
             if (res?.status === 200) {
                 //success modal

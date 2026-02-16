@@ -1,4 +1,4 @@
-import {ChatMessageDirectionType} from "@/types/utility";
+import type {ChatMessageDirectionType} from "@/types/utility";
 
 export enum NOTIFICATION_STATUSES {
     NEW = 'New',
@@ -46,4 +46,8 @@ export type NotificationResponseType = {
         [NOTIFICATION_STATUSES.READ]: number,
         [NOTIFICATION_STATUSES.UNREAD]: number,
     }
+}
+
+export type NewNotificationsCountType = {
+    newNotifications: number;
 }

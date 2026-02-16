@@ -4,7 +4,7 @@ import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
-import Icon from "@/components/Icon";
+import Icon, {IconType} from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
 import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
 import {ColumnType} from "antd/es/table";
@@ -35,6 +35,7 @@ import {isTabAllowed} from "@/utils/tabs";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
 import {SorterResult} from "antd/lib/table/interface";
+import {FilterComponentType} from "@/types/filters";
 
 type OrderListType = {
     orders: OrderType[];
@@ -68,6 +69,8 @@ const hasCorrectNotifications = (record: OrderType, notifications: NotificationT
 const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, forbiddenTabs, handleRefresh}) => {
     const isTouchDevice = useIsTouchDevice();
     const {needSeller, sellersList} = useAuth();
+
+    console.log('FETCHING DATA  --  RENDER: ', new Date().toISOString(), orders);
 
    // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
@@ -605,6 +608,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         });
     }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos, filterCustomerReturns, filterMarketplace, selectedSeller]);
 
+
+    useEffect(() => {
+        console.log('FETCHING DATA  --  Filtered: ', new Date().toISOString(), orders);
+    }, [filteredOrders]);
     // useEffect(() => {
     //     setCurrent(1)
     // }, [orders, searchTerm]);
@@ -642,7 +649,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     const orderFilters = [
         {
             filterTitle: 'Status',
-            icon: 'status',
+            icon: 'status' as IconType,
             filterDescriptions: '',
             filterOptions: transformedStatuses,
             filterState: filterStatus,
@@ -654,7 +661,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             filterTitle: 'Trouble status',
-            icon: 'trouble',
+            icon: 'trouble' as IconType,
             filterDescriptions: 'Shows orders where the selected trouble status was the last in the trouble status list',
             filterOptions: transformedTroubleStatuses,
             filterState: filterTroubleStatus,
@@ -666,7 +673,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             filterTitle: 'Non-trouble events',
-            icon: 'event',
+            icon: 'event' as IconType,
             filterDescriptions: '',
             filterOptions: transformedNonTroubleStatuses,
             filterState: filterNonTroubleStatus,
@@ -678,7 +685,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         isTabAllowed('Claims', forbiddenTabs) ? {
             filterTitle: 'Claims',
-            icon: 'complaint',
+            icon: 'complaint' as IconType,
             filterDescriptions: '',
             filterOptions: claimFilterOptions,
             filterState: filterClaims,
@@ -702,7 +709,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         } : null,
         isTabAllowed('Comment to courier service', forbiddenTabs) ? {
             filterTitle: 'Comments to courier service',
-            icon: 'comment',
+            icon: 'comment' as IconType,
             filterDescriptions: '',
             filterOptions: commentToCourierServiceFilterOptions,
             filterState: filterCommentsToCourierService,
@@ -714,7 +721,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         } : null,
         {
             filterTitle: 'Self collect',
-            icon: 'self-collect',
+            icon: 'self-collect' as IconType,
             filterDescriptions: '',
             filterOptions: selfCollectFilterOptions,
             filterState: filterSelfCollect,
@@ -726,7 +733,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         isTabAllowed('SMS history', forbiddenTabs) ? {
             filterTitle: 'Sent SMS',
-            icon: 'sms',
+            icon: 'sms' as IconType,
             filterDescriptions: '',
             filterOptions: sentSMSFilterOptions,
             filterState: filterSentSMS,
@@ -738,7 +745,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         } : null,
         {
             filterTitle: 'Warehouse',
-            icon: 'warehouse',
+            icon: 'warehouse' as IconType,
             filterDescriptions: '',
             filterOptions: transformedWarehouses,
             filterState: filterWarehouse,
@@ -750,7 +757,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             filterTitle: 'Courier service',
-            icon: 'courier-service',
+            icon: 'courier-service' as IconType,
             filterDescriptions: '',
             filterOptions: transformedCourierServices,
             filterState: filterCourierService,
@@ -762,7 +769,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         {
             filterTitle: 'Receiver country',
-            icon: 'country-in',
+            icon: 'country-in' as IconType,
             isCountry: true,
             filterDescriptions: '',
             filterOptions: transformedReceiverCountries,
@@ -775,7 +782,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         },
         isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets',
-            icon: 'ticket-gray',
+            icon: 'ticket-gray' as IconType,
             // isCountry: true,
             filterDescriptions: '',
             filterOptions: hasTicketsOptions,
@@ -788,7 +795,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         } : null,
         isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets (open)',
-            icon: 'ticket-open',
+            icon: 'ticket-open' as IconType,
             // isCountry: true,
             filterDescriptions: '',
             filterOptions: hasOpenTicketsOptions,
@@ -802,7 +809,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             filterTitle: 'Photos from warehouse',
             // isCountry: true,
-            icon: 'webcam',
+            icon: 'webcam' as IconType,
             filterDescriptions: '',
             filterOptions: photoFilterOptions,
             filterState: filterPhotos,
@@ -815,7 +822,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         isTabAllowed('Customer returns', forbiddenTabs) ? {
             filterTitle: 'Customer returns',
             // isCountry: true,
-            icon: 'package-return',
+            icon: 'package-return' as IconType,
             filterDescriptions: '',
             filterOptions: customerReturnsOptions,
             filterState: filterCustomerReturns,
@@ -828,7 +835,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             filterTitle: 'Marketplaces',
             // isCountry: true,
-            icon: 'marketplace',
+            icon: 'marketplace' as IconType,
             filterDescriptions: '',
             filterOptions: marketplaceOptions,
             filterState: filterMarketplace,
@@ -838,7 +845,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             onClose: ()=>handleFilterMarketplaceChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterMarketplaces(true)},
         }
-    ];
+    ] as FilterComponentType[];
 
     useEffect(() => {
         setFilteredOrders(filteredOrders);
@@ -1026,7 +1033,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     contentPosition="center"
                     childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon  name={"car"}/></Tooltip>}>
                     </TitleColumn>,
-            render: (text: string, record) =>
+            render: (_text: string, record) =>
                 <TableCell
                     minWidth="50px"
                     maxWidth="50px"
@@ -1555,7 +1562,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <FiltersChosen filters={orderFilters.filter(item=>item!==null)} />
+                    <FiltersChosen filters={orderFilters.filter(item=>item!==null) as FilterComponentType[]} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -1568,8 +1575,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             </div>
 
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
-                <Table
-                    dataSource={filteredOrders.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize)}
+                <Table<OrderType>
+                    dataSource={filteredOrders.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize) as OrderType[]}
                     columns={columns}
                     pagination={false}
                     scroll={{y:700}}

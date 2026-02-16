@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from "react";
 import "./styles.scss";
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
-import {ApiResponseType} from "@/types/api";
 import {checkNewNotifications, getNotifications} from "@/services/notifications";
 import {NOTIFICATION_STATUSES, NotificationResponseType, NotificationType} from "@/types/notifications";
 import NotificationsBlock from "@/components/HeaderNotifications/NotificationsBlock";
@@ -28,7 +27,7 @@ const HeaderNotifications: React.FC = () => {
     const checkNotifications = async() => {
         if (token) {
             const requestData = {token, alias};
-            const res: ApiResponseType = await checkNewNotifications(superUser && ui ? {
+            const res = await checkNewNotifications(superUser && ui ? {
                 ...requestData,
                 ui
             } : requestData);
@@ -42,7 +41,7 @@ const HeaderNotifications: React.FC = () => {
     const fetchNotificationsData = async() => {
         try {
             const requestData = {token, alias};
-            const res: ApiResponseType = await getNotifications(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await getNotifications(superUser && ui ? {...requestData, ui} : requestData);
             if (res && res.data) {
                 const notificationsData = res.data as NotificationResponseType;
                 if (notificationsData.notifications && Array.isArray(notificationsData.notifications)) {

@@ -1,5 +1,5 @@
-import React, { ComponentProps } from "react";
-import { Icon, IconType } from "../Icon";
+import React, { type ComponentProps } from "react";
+import { Icon, type IconType } from "../Icon";
 import "./styles.scss";
 
 export const enum ButtonSize {

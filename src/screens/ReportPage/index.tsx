@@ -112,16 +112,12 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
 
     const [resourceColumnNames, setResourceColumnNames] = useState<string[]>([]);
 
-    type ApiResponse = {
-        data: any;
-    };
-
     const fetchParamsData = useCallback(async () => {
         try {
             setIsLoading(true);
             const requestData = { token, alias };
 
-            const res: ApiResponse = await getReportParams(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getReportParams(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res.data) {
                 setReportParams(res.data);

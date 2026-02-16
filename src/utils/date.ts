@@ -1,3 +1,5 @@
+import {DateRangeType} from "@/types/dashboard";
+
 const formatDateToString = (date: Date) => {
     let d = new Date(date),
         month = "" + (d.getMonth() + 1),
@@ -150,6 +152,14 @@ export const getEndMonth = (date: Date) => {
             return new Date(date.getFullYear(), month, 28);
         }
     }
+}
+
+export const getOrderedDateRange = (curPeriod: DateRangeType) => {
+    return {
+        startDate: `${curPeriod.startDate.toISOString().split('T')[0]}T00:00:00`,
+        endDate: `${curPeriod.endDate.toISOString().split('T')[0]}T23:59:59`,
+    }
+
 }
 
 export {

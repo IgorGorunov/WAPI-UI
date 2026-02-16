@@ -43,6 +43,9 @@ export type ReportSalesRowType = {
     quantity: number;
     orderCount?: string;
     saleEuro: number;
+
+
+    seller?: string;
 }
 
 

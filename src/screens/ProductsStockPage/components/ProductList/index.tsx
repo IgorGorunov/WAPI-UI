@@ -23,6 +23,7 @@ import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
+import {FilterComponentType} from "@/types/filters";
 type ProductListType = {
     products: ProductStockType[];
     setFilteredProducts: React.Dispatch<React.SetStateAction<ProductStockType[]>>;
@@ -175,7 +176,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             onClose: ()=>setFilterCountry([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)},
         },
-    ];
+    ] as FilterComponentType[];
 
     const [fullTextSearch, setFullTextSearch] = useState(true);
     const fullTextSearchField = {

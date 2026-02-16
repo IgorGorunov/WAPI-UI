@@ -26,6 +26,7 @@ import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
 import useAuth from "@/context/authContext";
+import {FilterComponentType} from "@/types/filters";
 
 
 type TicketListType = {
@@ -401,91 +402,91 @@ const TicketList: React.FC<TicketListType> = ({tickets, currentRange, setCurrent
             onClose: ()=>handleFilterDocTypeChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterDocTypes(true)},
         },
-    ];
+    ] as FilterComponentType[];
 
-        const ticketExtraFilters = [
-            {
-                filterTitle: 'Sender warehouse',
-                icon: 'warehouse',
-                filterDescriptions: '',
-                filterOptions: orderSenderWarehousesOptions,
-                filterState: filterOrderSenderWarehouse,
-                setFilterState: handleFilterOrderSenderWarehouseChange,
-                isOpen: isOpenFilterOrderSenderWarehouse,
-                setIsOpen: setIsOpenFilterOrderSenderWarehouse,
-                onClose: ()=>handleFilterOrderSenderWarehouseChange([]),
-                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterOrderSenderWarehouse(true)},
+    const ticketExtraFilters = [
+        {
+            filterTitle: 'Sender warehouse',
+            icon: 'warehouse',
+            filterDescriptions: '',
+            filterOptions: orderSenderWarehousesOptions,
+            filterState: filterOrderSenderWarehouse,
+            setFilterState: handleFilterOrderSenderWarehouseChange,
+            isOpen: isOpenFilterOrderSenderWarehouse,
+            setIsOpen: setIsOpenFilterOrderSenderWarehouse,
+            onClose: ()=>handleFilterOrderSenderWarehouseChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterOrderSenderWarehouse(true)},
+        },
+        {
+            filterTitle: 'Receiver country',
+            icon: 'country-in',
+            isCountry: true,
+            filterDescriptions: '',
+            filterOptions: orderReceiverCountryOptions,
+            filterState: filterOrderReceiverCountry,
+            setFilterState: handleFilterOrderReceiverCountryChange,
+            isOpen: isOpenFilterOrderReceiverCountry,
+            setIsOpen: setIsOpenFilterOrderReceiverCountry,
+            onClose: ()=>handleFilterOrderReceiverCountryChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterOrderReceiverCountry(true)},
+        },
+        {
+            filterTitle: 'Courier service',
+            icon: 'courier-service',
+            filterDescriptions: '',
+            filterOptions: orderCourierServiceOptions,
+            filterState: filterOrderCourierService,
+            setFilterState: handleFilterOrderCourierServiceChange,
+            isOpen: isOpenFilterOrderCourierService,
+            setIsOpen: setIsOpenFilterOrderCourierService,
+            onClose: ()=>handleFilterOrderCourierServiceChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterOrderCourierService(true)},
+        },
+
+    ] as FilterComponentType[];
+
+    const SellerColumns: TableColumnProps<TicketType>[] = [];
+    if (needSeller()) {
+        SellerColumns.push({
+            title: <TitleColumn
+                className='no-padding'
+                minWidth="90px"
+                maxWidth="100px"
+                contentPosition="left"
+                childrenBefore={
+                    <Tooltip title="Seller's name" >
+                        <span className='table-header-title'>Seller</span>
+                        {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+
+                    </Tooltip>
+                }
+            />,
+            render: (_text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="90px"
+                        maxWidth="100px"
+                        contentPosition="left"
+                        childrenBefore={
+                            <div className="seller-container">
+                                {getSellerName(record.seller)}
+                            </div>
+                        }
+                    >
+                    </TableCell>
+                );
             },
-            {
-                filterTitle: 'Receiver country',
-                icon: 'country-in',
-                isCountry: true,
-                filterDescriptions: '',
-                filterOptions: orderReceiverCountryOptions,
-                filterState: filterOrderReceiverCountry,
-                setFilterState: handleFilterOrderReceiverCountryChange,
-                isOpen: isOpenFilterOrderReceiverCountry,
-                setIsOpen: setIsOpenFilterOrderReceiverCountry,
-                onClose: ()=>handleFilterOrderReceiverCountryChange([]),
-                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterOrderReceiverCountry(true)},
-            },
-            {
-                filterTitle: 'Courier service',
-                icon: 'courier-service',
-                filterDescriptions: '',
-                filterOptions: orderCourierServiceOptions,
-                filterState: filterOrderCourierService,
-                setFilterState: handleFilterOrderCourierServiceChange,
-                isOpen: isOpenFilterOrderCourierService,
-                setIsOpen: setIsOpenFilterOrderCourierService,
-                onClose: ()=>handleFilterOrderCourierServiceChange([]),
-                onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterOrderCourierService(true)},
-            },
-
-        ];
-
-        const SellerColumns: TableColumnProps<TicketType>[] = [];
-        if (needSeller()) {
-            SellerColumns.push({
-                title: <TitleColumn
-                    className='no-padding'
-                    minWidth="90px"
-                    maxWidth="100px"
-                    contentPosition="left"
-                    childrenBefore={
-                        <Tooltip title="Seller's name" >
-                            <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-
-                        </Tooltip>
-                    }
-                />,
-                render: (_text: string, record) => {
-                    return (
-                        <TableCell
-                            className='no-padding'
-                            minWidth="90px"
-                            maxWidth="100px"
-                            contentPosition="left"
-                            childrenBefore={
-                                <div className="seller-container">
-                                    {getSellerName(record.seller)}
-                                </div>
-                            }
-                        >
-                        </TableCell>
-                    );
-                },
-                dataIndex: 'seller',
-                key: 'seller',
-                sorter: false,
-                onHeaderCell: (column: ColumnType<TicketType>) => ({
-                    onClick: () => handleHeaderCellClick(column.dataIndex as keyof TicketType),
-                }),
-                responsive: ['lg'],
-            } as TableColumnProps<TicketType>);
-        }
+            dataIndex: 'seller',
+            key: 'seller',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<TicketType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof TicketType),
+            }),
+            responsive: ['lg'],
+        } as TableColumnProps<TicketType>);
+    }
 
     const columns: TableColumnProps<TicketType>[]  = [
         {

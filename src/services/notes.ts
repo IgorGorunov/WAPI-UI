@@ -1,4 +1,5 @@
 import {api} from "@/services/api";
+import type {ApiResponseType} from "@/types/api";
 
 export const getNotes = async (
     data: {
@@ -7,18 +8,19 @@ export const getNotes = async (
         uuid: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/GetNotes`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<unknown>> => {
+    return api.post(`/GetNotes`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/GetNotes`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 export const sendNote = async (
@@ -30,16 +32,17 @@ export const sendNote = async (
         note: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/CreateNote`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<unknown>> => {
+    return api.post(`/CreateNote`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/CreateNote`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };

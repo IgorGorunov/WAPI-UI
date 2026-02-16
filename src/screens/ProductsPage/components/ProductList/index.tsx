@@ -24,6 +24,7 @@ import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
 import {getSellerName} from "@/utils/seller";
+import {FilterComponentType} from "@/types/filters";
 
 type ProductListType = {
     products: ProductType[];
@@ -164,7 +165,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             onClose: ()=>handleFilterStatusChange([]),
             onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
         },
-    ];
+    ] as FilterComponentType[];
 
     const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 

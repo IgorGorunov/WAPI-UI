@@ -35,6 +35,8 @@ export type ProductOnStockRowType = {
 
     reserveClosingBalance: number;
     available: number;
+
+    seller: string;
 }
 
 

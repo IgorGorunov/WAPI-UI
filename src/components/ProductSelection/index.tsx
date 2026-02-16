@@ -14,7 +14,6 @@ import TableCell from "@/components/TableCell";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import RadioButton from "@/components/FormBuilder/RadioButton";
-import {ApiResponseType} from "@/types/api";
 import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
 import {getProductSelection} from "@/services/productSelection";
@@ -72,10 +71,10 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
             try {
                 sendUserBrowserInfo({...getBrowserInfo('GetProductsSelection'), body: superUser && ui ? {...requestData, ui} : requestData})
             } catch {}
-            const resp: ApiResponseType = await getProductSelection(superUser && ui ? {...requestData, ui} : requestData);
+            const resp = await getProductSelection(superUser && ui ? {...requestData, ui} : requestData);
 
             if (resp && "data" in resp) {
-                const productsSelection = needSeller() ? resp.data.filter(item => item.seller === seller) : resp.data ;
+                const productsSelection = needSeller() ? resp.data.filter(item => item?.seller === seller) : resp.data ;
                 setProductList(productsSelection as ProductsSelectionType[]);
 
                 if (needWarehouses) {

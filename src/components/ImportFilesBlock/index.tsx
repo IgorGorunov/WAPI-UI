@@ -4,7 +4,7 @@ import {sendProductFiles} from "@/services/products";
 import Button from '@/components/Button/Button'
 import "./styles.scss";
 import DropZone from "@/components/Dropzone";
-import {AttachedFilesType} from "@/types/products";
+import {AttachedFilesType} from "@/types/utility";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {ApiResponseType} from "@/types/api";
 import useAuth from "@/context/authContext";
@@ -61,7 +61,7 @@ type ImportFilesBlockType = {
     file: string;
     importFilesType: ImportFilesType;
     closeModal: ()=>void;
-    setResponseData?: (res: ApiResponseType)=>void;
+    setResponseData?: (res: ApiResponseType<any>)=>void;
 }
 const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
     const { tenantData: { alias }} = useTenant();
@@ -143,7 +143,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                 } catch {}
 
 
-                const res: ApiResponseType = await sendFunc(superUser && ui ? {...requestData, ui} : requestData);
+                const res = await sendFunc(superUser && ui ? {...requestData, ui} : requestData);
 
                 if (setResponseData) {
                     setResponseData(res);

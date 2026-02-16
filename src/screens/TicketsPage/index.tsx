@@ -97,7 +97,7 @@ const TicketsPage = () => {
                 return null;
             }
 
-            const res: ApiResponseType = await getTickets(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getTickets(superUser && ui ? { ...requestData, ui } : requestData);
             if (res && res.data) {
                 let tickets = res.data;
                 if (ticketUuid) {

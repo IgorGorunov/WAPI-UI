@@ -67,11 +67,7 @@ const ProductsPage = () => {
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
     const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
-    }, [])
-
-    type ApiResponse = {
-        data: any;
-    };
+    }, []);
 
     const fetchData = useCallback(async () => {
         try {
@@ -88,7 +84,7 @@ const ProductsPage = () => {
                 setProductsData([]);
                 return null;
             }
-            const res: ApiResponse = await getProducts(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getProducts(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setProductsData(res.data);

@@ -22,11 +22,12 @@ const TextField: React.FC<FieldPropsType> = ({
                 type={type}
                 placeholder={placeholder}
             />
-            {errors && name in errors ? (
-                <p className="error">
-                    {(errors && errors[name]?.message) || errorMessage}
-                </p>
-            ) : null}
+            {errorMessage && <p className="error">{errorMessage}</p>}
+            {/*{errors && name in errors ? (*/}
+            {/*    <p className="error">*/}
+            {/*        {(errors && errors[name]?.message) || errorMessage}*/}
+            {/*    </p>*/}
+            {/*) : null}*/}
         </div>
     );
 };
