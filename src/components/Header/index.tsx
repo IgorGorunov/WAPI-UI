@@ -101,7 +101,7 @@ const Header: React.FC<HeaderType> = ({ pageTitle, toRight = false, children, ne
             <ul className='main-header__urgent-notifications-list'>
                 {notifications && notifications.length ?
                     notifications.filter(item => item.type === NOTIFICATION_TYPES.URGENT && item.status !== NOTIFICATION_STATUSES.READ).map(item => (
-                        <li key={item.uuid} className={`card main - header__urgent - notifications - list - item ${item.objectUuid ? 'is-clickable' : ''} `} onClick={() => handleNotificationClick(item)}>
+                        <li key={item.uuid} className={`card main-header__urgent-notifications-list-item ${item.objectUuid ? 'is-clickable' : ''} `} onClick={() => handleNotificationClick(item)}>
                             <Icon className='main-header__urgent-notifications-list-item--icon' name={getNotificationIconName(item.type)} />
                             <p className='main-header__urgent-notifications-list-item--title'>{item.title}</p>
                             <p className='main-header__urgent-notifications-list-item--text'>{item.message}</p>

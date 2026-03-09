@@ -1,15 +1,12 @@
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import type { Control } from "react-hook-form";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { FormFieldTypes, WidthType } from "@/types/forms";
 import { COUNTRIES } from "@/types/countries";
 import "./styles.scss";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
-import {
-    ProductParamsType,
-    SingleProductFormType,
-    SingleProductType
-} from "@/types/products";
+import { ProductParamsType, SingleProductFormType, SingleProductType } from "@/types/products";
 import {
     FormFieldsAdditional1,
     FormFieldsAdditional2,
@@ -25,6 +22,7 @@ import FormFieldsBlock from "@/components/FormFieldsBlock";
 import Tabs from "@/components/Tabs";
 import Icon from "@/components/Icon";
 import { sendProductInfo } from "@/services/products";
+import { sendDocumentFiles } from "@/services/files";
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
@@ -34,7 +32,7 @@ import '@/styles/forms.scss';
 import { TabFields, TabTitles } from "./ProductFormTabs";
 import { useTabsState } from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
-import { AttachedFilesType, STATUS_MODAL_TYPES } from "@/types/utility";
+import { AttachedFilesType, PRODUCT_FILE_TYPES, STATUS_MODAL_TYPES } from "@/types/utility";
 import useNotifications from "@/context/notificationContext";
 import { NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType } from "@/types/notifications";
 import DocumentTickets from "@/components/DocumentTickets";
@@ -328,6 +326,48 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
         }
     }
 
+    const handleSendDocFiles = async (event: React.MouseEvent) => {
+        event.preventDefault();
+
+        const newFiles = selectedFiles.filter(file => file.isNew);
+        if (productData?.uuid && isDisabled && newFiles.length) {
+            try {
+                setSendStatus(SendStatusType.PENDING); // Acts as a loader flag conceptually similar to Dropzone
+
+                const requestData = {
+                    token,
+                    alias,
+                    uuid: productData.uuid,
+                    attachedFiles: newFiles,
+                };
+
+                const res = await sendDocumentFiles(superUser && ui ? { ...requestData, ui } : requestData);
+
+                if (res?.status === 200) {
+                    // Update successfully sent files to strip the 'isNew' flag internally
+                    setSelectedFiles(prevState => prevState.map(file => {
+                        if (file.isNew) {
+                            return { ...file, isNew: false };
+                        }
+                        return file;
+                    }));
+
+                    setModalStatusInfo({
+                        statusModalType: STATUS_MODAL_TYPES.SUCCESS,
+                        title: "Success",
+                        subtitle: `Files are successfully send`,
+                        onClose: () => setShowStatusModal(false)
+                    });
+                    setShowStatusModal(true);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setSendStatus(SendStatusType.DRAFT);
+            }
+        }
+    };
+
     const handleMasterCartonDataChange = (val: React.ChangeEvent<HTMLInputElement>, onChange) => {
         const boxes = getBoxes(unitOfMeasures);
         if (val.target.checked) {
@@ -345,49 +385,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
         }
     }
 
-    const getUnitsColumns = (control: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const getUnitsColumns = (control: Control<any>) => {
         return [
-            // {
-            //     title: (
-            //         <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
-            //             <FieldBuilder
-            //                 name={'selectedAllUnits'}
-            //                 fieldType={FormFieldTypes.CHECKBOX}
-            //                 checked ={selectAllUnits}
-            //                 disabled={isDisabled || productIsApproved}
-            //                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            //                     setSelectAllUnits(e.target.checked);
-            //                     // Update the values of all checkboxes in the form when "Select All" is clicked
-            //                     const values = getValues();
-            //                     const fields = values.unitOfMeasures;
-            //                     fields &&
-            //                     fields.forEach((field, index) => {
-            //                         setValue(`unitOfMeasures.${index}.selected`, e.target.checked);
-            //                     });
-            //                 }}
-            //             /></div>
-            //
-            //     ),
-            //     dataIndex: 'selected',
-            //     width: '40px',
-            //     key: 'selected',
-            //     render: (text, record, index) => (
-            //         <Controller
-            //             name={`unitOfMeasures.${index}.selected`}
-            //             control={control}
-            //             render={({ field }) => (
-            //                 <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
-            //                     <FieldBuilder
-            //                         name={'unitOfMeasures.${index}.selected'}
-            //                         fieldType={FormFieldTypes.CHECKBOX}
-            //                         {...field}
-            //                         disabled={isDisabled  || productIsApproved}
-            //                     />
-            //                 </div>
-            //             )}
-            //         />
-            //     ),
-            // },
             {
                 title: <TutorialHintTooltip hint={ProductDimensionsHints['name'] || ''}><div>Name *</div></TutorialHintTooltip>,
                 dataIndex: 'name',
@@ -563,16 +563,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
                     />
                 ),
             },
-            // {
-            //     title: '',
-            //     key: 'action',
-            //     minWidth: 500,
-            //     render: (text, record, index) => (
-            //         <button disabled={checkMasterCarton(record) || isDisabled || productIsApproved} className='action-btn' onClick={() => removeUnits(index)}>
-            //             <Icon name='waste-bin' />
-            //         </button>
-            //     ),
-            // },
         ];
     }
 
@@ -975,8 +965,54 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
     }
 
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(productData?.attachedFiles || []);
-    const handleFilesChange = (files) => {
-        setSelectedFiles(files);
+    const handleFilesChange = (files: AttachedFilesType[], productFileType: PRODUCT_FILE_TYPES, isImage = false) => {
+        setSelectedFiles(prevState => {
+            // Remove existing files of the same type
+            const filteredState = prevState.filter(file => {
+                if (isImage) {
+                    return file.type !== 'image';
+                }
+                if (productFileType === PRODUCT_FILE_TYPES.other) {
+                    return file.type === 'image' || file.productFileType === PRODUCT_FILE_TYPES.certificate || file.productFileType === PRODUCT_FILE_TYPES.purchaseInvoice;
+                }
+                return file.productFileType !== productFileType;
+            });
+            return [...filteredState, ...files.map(file => ({ productFileType, ...file }))];
+        });
+    };
+
+    const handleFileMovedToBlock = (fileId: string, targetBlock: 'certificate' | 'purchaseInvoice' | 'image' | 'other') => {
+        setSelectedFiles(prevState => prevState.map(file => {
+            if (file.id === fileId) {
+                switch (targetBlock) {
+                    case 'certificate':
+                        return {
+                            ...file,
+                            productFileType: PRODUCT_FILE_TYPES.certificate,
+                            type: file.type === 'image' ? 'moved-image' : file.type
+                        };
+                    case 'purchaseInvoice':
+                        return {
+                            ...file,
+                            productFileType: PRODUCT_FILE_TYPES.purchaseInvoice,
+                            type: file.type === 'image' ? 'moved-image' : file.type
+                        };
+                    case 'image':
+                        return {
+                            ...file,
+                            productFileType: PRODUCT_FILE_TYPES.other,
+                            type: 'image'
+                        };
+                    case 'other':
+                        return {
+                            ...file,
+                            productFileType: PRODUCT_FILE_TYPES.other,
+                            type: file.type === 'image' ? 'moved-image' : file.type
+                        };
+                }
+            }
+            return file;
+        }));
     };
 
     //notifications
@@ -992,8 +1028,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
         resetTabTables(tabTitleArray);
     }, [productData]);
 
-    const onSubmitForm = async (data: SingleProductFormType) => {
 
+    const onSubmitForm = async (data: SingleProductFormType) => {
         const curAction = productData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], curAction)) {
             try {
@@ -1092,23 +1128,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
 
             updateTabTitles(fieldNames);
         }
-
-        // if (sendStatus === SendStatusType.DRAFT) {
-        //     clearErrors();
-        //     const formData = getValues();
-        //
-        //     return onSubmitForm(formData as SingleProductFormType);
-        // }
-        //
-        // const fieldNames = Object.keys(props);
-        //
-        // if (fieldNames.length > 0) {
-        //     toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
-        //         position: "top-right",
-        //         autoClose: 1000,
-        //     });
-        // }
-        // updateTabTitles(fieldNames);
     };
 
     const generalFields = useMemo(() => FormFieldsGeneral({ countries: countryArr, isNew: !productData?.uuid, isAdditionalService, handleAdditionalServiceChange }), [COUNTRIES, isAdditionalService])
@@ -1448,16 +1467,69 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
                                 Files
                             </h3>
                         </TutorialHintTooltip>
-                        <div className='dropzoneBlock'>
-                            <DropZone
-                                readOnly={!!isDisabled}
-                                files={selectedFiles}
-                                onFilesChange={handleFilesChange}
-                                docUuid={productData?.canEdit ? productData?.uuid : ''}
-                                allowOnlyFormats={['png', 'jpg', 'jpeg', 'pdf']}
-                                hint={'The supported file formats: PNG, JPEG, PDF'}
-                            />
+                        <div className='dropzoneBlock dropzoneBlock-list'>
+                            <div className='dropzoneBlock-list-item certificate'>
+                                <DropZone
+                                    readOnly={!!isDisabled}
+                                    files={selectedFiles.filter((file) => file.productFileType === 'certificate')}
+                                    onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.certificate)}
+                                    docUuid={productData?.canEdit ? productData?.uuid : ''}
+                                    allowOnlyFormats={['pdf']}
+                                    hint={'The supported file formats: PDF'}
+                                    listType={true}
+                                    title={'Certificate'}
+                                    onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'certificate')}
+                                    needSendBtn={false}
+                                />
+                            </div>
+                            <div className='dropzoneBlock-list-item purchase-invoice'>
+                                <DropZone
+                                    readOnly={!!isDisabled}
+                                    files={selectedFiles.filter((file) => file.productFileType === 'purchaseInvoice')}
+                                    onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.purchaseInvoice)}
+                                    docUuid={productData?.canEdit ? productData?.uuid : ''}
+                                    allowOnlyFormats={['pdf']}
+                                    hint={'The supported file formats: PDF'}
+                                    listType={true}
+                                    title={'Purchase invoice'}
+                                    onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'purchaseInvoice')}
+                                    needSendBtn={false}
+                                />
+                            </div>
+                            <div className='dropzoneBlock-list-item image'>
+                                <DropZone
+                                    readOnly={!!isDisabled}
+                                    files={selectedFiles.filter((file) => file.type === 'image')}
+                                    onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.other, true)}
+                                    docUuid={productData?.canEdit ? productData?.uuid : ''}
+                                    allowOnlyFormats={['png', 'jpg', 'jpeg']}
+                                    hint={'The supported file formats: PNG, JPEG'}
+                                    listType={true}
+                                    title={'Images'}
+                                    onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'image')} // Images conceptually just go as other, mapped logically
+                                    needSendBtn={false}
+                                />
+                            </div>
+                            <div className='dropzoneBlock-list-item other'>
+                                <DropZone
+                                    readOnly={!!isDisabled}
+                                    files={selectedFiles.filter((file) => file.type !== 'image' && file.productFileType !== 'certificate' && file.productFileType !== 'purchaseInvoice')}
+                                    onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.other)}
+                                    docUuid={productData?.canEdit ? productData?.uuid : ''}
+                                    allowOnlyFormats={['png', 'jpg', 'jpeg', 'pdf']}
+                                    hint={'The supported file formats: PNG, JPEG, PDF'}
+                                    listType={true}
+                                    title={'Other'}
+                                    onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'other')}
+                                    needSendBtn={false}
+                                />
+                            </div>
                         </div>
+                        {isDisabled && productData?.uuid && selectedFiles.some(file => file.isNew) ? (
+                            <div className='dropzone__btns'>
+                                <Button onClick={handleSendDocFiles}>Send files</Button>
+                            </div>
+                        ) : null}
                     </CardWithHelpIcon>
                 </div> : null}
             </Tabs>

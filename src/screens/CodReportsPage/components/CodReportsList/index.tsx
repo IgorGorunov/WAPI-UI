@@ -3,7 +3,6 @@ import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
 import { ColumnType } from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { CodReportType } from "@/types/codReports";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"

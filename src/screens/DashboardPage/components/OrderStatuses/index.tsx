@@ -1,6 +1,5 @@
 import React from "react";
 import StatusBar from "./StatusBar";
-import "./styles.scss";
 
 export const enum GroupStatuses {
   "Ready for dispatch" = 'Ready for dispatch',
@@ -52,29 +51,29 @@ export type OrderStatusesPropsType = {
 };
 
 const OrderStatuses: React.FC<OrderStatusesPropsType> = ({
-                                                           ordersByStatuses,
-                                                         }) => {
+  ordersByStatuses,
+}) => {
 
   let maxAmount = 0;
   if (ordersByStatuses) {
-      for (let i = 0; i < ordersByStatuses.length; i++) {
-        if (maxAmount < ordersByStatuses[i].ordersCount) {
-          maxAmount = ordersByStatuses[i].ordersCount;
-        }
+    for (let i = 0; i < ordersByStatuses.length; i++) {
+      if (maxAmount < ordersByStatuses[i].ordersCount) {
+        maxAmount = ordersByStatuses[i].ordersCount;
       }
+    }
   }
 
   return (
-      <div className={`card order-statuses order-statuses__container`}>
-        <p className="title-h4 title">Orders by statuses</p>
-          {ordersByStatuses && ordersByStatuses.sort((a,b)=>GroupStatusesOrder[a.status]>GroupStatusesOrder[b.status] ? 1 : -1 ).map((item: GroupOrderStatusType) => (
-              <StatusBar
-                  key={item.status}
-                  groupStatus={item}
-                  maxAmount={maxAmount}
-              />
-          ))}
-      </div>
+    <div className={`card order-statuses order-statuses__container`}>
+      <p className="title-h4 title">Orders by statuses</p>
+      {ordersByStatuses && ordersByStatuses.sort((a, b) => GroupStatusesOrder[a.status] > GroupStatusesOrder[b.status] ? 1 : -1).map((item: GroupOrderStatusType) => (
+        <StatusBar
+          key={item.status}
+          groupStatus={item}
+          maxAmount={maxAmount}
+        />
+      ))}
+    </div>
   );
 };
 

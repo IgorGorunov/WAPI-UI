@@ -1,23 +1,22 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Popover, Table, TableColumnProps, TableProps, Tooltip} from 'antd';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Pagination, Popover, Table, TableColumnProps, TableProps, Tooltip } from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
-import {StatusColors} from '@/screens/DashboardPage/components/OrderStatuses';
-import {ColumnType} from "antd/es/table";
+import { StatusColors } from '@/screens/DashboardPage/components/OrderStatuses';
+import { ColumnType } from "antd/es/table";
 import DateInput from "@/components/DateInput";
-import {DateRangeType} from "@/types/dashboard";
-import {OrderType} from "@/types/orders";
+import { DateRangeType } from "@/types/dashboard";
+import { OrderType } from "@/types/orders";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
-import Button, {ButtonVariant} from "@/components/Button/Button";
-import {FormFieldTypes} from "@/types/forms";
+import Button, { ButtonVariant } from "@/components/Button/Button";
+import { FormFieldTypes } from "@/types/forms";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchField from "@/components/SearchField";
-import {Countries} from "@/types/countries";
+import { Countries } from "@/types/countries";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
 import {
@@ -25,17 +24,17 @@ import {
     formatDateTimeToStringWithDotWithoutSeconds,
     formatTimeStringFromString
 } from "@/utils/date";
-import {useIsTouchDevice} from "@/hooks/useTouchDevice";
-import SimplePopup, {PopupItem} from "@/components/SimplePopup";
+import { useIsTouchDevice } from "@/hooks/useTouchDevice";
+import SimplePopup, { PopupItem } from "@/components/SimplePopup";
 import FiltersChosen from "@/components/FiltersChosen";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import useNotifications from "@/context/notificationContext";
-import {NotificationType} from "@/types/notifications";
-import {isTabAllowed} from "@/utils/tabs";
+import { NotificationType } from "@/types/notifications";
+import { isTabAllowed } from "@/utils/tabs";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
-import {SorterResult} from "antd/lib/table/interface";
-import {FilterComponentType} from "@/types/filters";
+import { SorterResult } from "antd/lib/table/interface";
+import { FilterComponentType } from "@/types/filters";
 
 type OrderListType = {
     orders: OrderType[];
@@ -43,7 +42,7 @@ type OrderListType = {
     setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
     setFilteredOrders: React.Dispatch<React.SetStateAction<OrderType[]>>;
     handleEditOrder(uuid: string): void;
-    handleRefresh: ()=>void;
+    handleRefresh: () => void;
     current: number;
     setCurrent: (val: number) => void;
     forbiddenTabs: string[] | null;
@@ -66,11 +65,11 @@ const hasCorrectNotifications = (record: OrderType, notifications: NotificationT
     return true;
 }
 
-const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRange, setFilteredOrders,handleEditOrder, current, setCurrent, forbiddenTabs, handleRefresh}) => {
+const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRange, setFilteredOrders, handleEditOrder, current, setCurrent, forbiddenTabs, handleRefresh }) => {
     const isTouchDevice = useIsTouchDevice();
-    const {needSeller, sellersList} = useAuth();
+    const { needSeller, sellersList } = useAuth();
 
-   // const [current, setCurrent] = React.useState(1);
+    // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -93,7 +92,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
 
     //notifications
-    const {notifications} = useNotifications();
+    const { notifications } = useNotifications();
 
     const [sortedInfo, setSortedInfo] = useState<SorterResult<OrderType>>({});
     const handleTableChange: TableProps<OrderType>['onChange'] = (
@@ -102,7 +101,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         sorter
     ) => {
         // setSortedInfo(sorter as SorterResult<OrderType>);
-        console.log('Variable sortedInfo: ',sorter);
+        console.log('Variable sortedInfo: ', sorter);
     };
 
     //filters
@@ -111,50 +110,50 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     const calcSellersAmount = useCallback((seller: string) => {
         return orders.filter(order => order.seller?.uid.toLowerCase() === seller.toLowerCase()).length || 0;
-    },[orders]);
+    }, [orders]);
 
-    const sellersOptions = useMemo(()=>{
-        return [{label: 'All sellers', value: 'All sellers', amount: orders.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
+    const sellersOptions = useMemo(() => {
+        return [{ label: 'All sellers', value: 'All sellers', amount: orders.length }, ...sellersList.map(item => ({ ...item, amount: calcSellersAmount(item.value) }))];
     }, [sellersList, calcSellersAmount]);
 
     const calcOrderAmount = useCallback((property: string, value: string) => {
-        return orders.filter(order => order[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
-    },[orders, selectedSeller]);
+        return orders.filter(order => order[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderAllTroubleStatuses = useCallback(() => {
-        return orders.filter(order => order.lastTroubleStatus.length  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
-    },[orders, selectedSeller]);
+        return orders.filter(order => order.lastTroubleStatus.length && (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderWithoutTroubleStatuses = useCallback(() => {
-        return orders.filter(order => order.troubleStatuses.length===0  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
-    },[orders, selectedSeller]);
+        return orders.filter(order => order.troubleStatuses.length === 0 && (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderWithClaims = useCallback(() => {
-        return orders.filter(order => order.claimsExist  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
-    },[orders, selectedSeller]);
+        return orders.filter(order => order.claimsExist && (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderWithCommentsToCourierService = useCallback(() => {
-        return orders.filter(order => order.commentToCourierServiceExist  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
-    },[orders, selectedSeller]);
+        return orders.filter(order => order.commentToCourierServiceExist && (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
 
     const calcOrderWithBooleanProperty = useCallback((property: string, value: boolean) => {
-        return orders.filter(order => order[property] === value  && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
-    },[orders, selectedSeller]);
-
-    const calcOrderWithLogisticComment = useCallback(()=> {
-        return orders.filter(order => !!order.logisticComment && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+        return orders.filter(order => order[property] === value && (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller)).length || 0;
     }, [orders, selectedSeller]);
 
-    const calcOrderWithoutNonTroubleStatuses = useCallback(()=> {
-        return orders.filter(order => !order.nonTroubleEventsExist && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    const calcOrderWithLogisticComment = useCallback(() => {
+        return orders.filter(order => !!order.logisticComment && (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller)).length || 0;
     }, [orders, selectedSeller]);
 
-    const calcOrderAllNonTroubleStatuses = useCallback(()=> {
-        return orders.filter(order => !!order.nonTroubleEventsExist && (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    const calcOrderWithoutNonTroubleStatuses = useCallback(() => {
+        return orders.filter(order => !order.nonTroubleEventsExist && (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller)).length || 0;
+    }, [orders, selectedSeller]);
+
+    const calcOrderAllNonTroubleStatuses = useCallback(() => {
+        return orders.filter(order => !!order.nonTroubleEventsExist && (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller)).length || 0;
     }, [orders, selectedSeller]);
 
     const calcOrderAmountWithNonTroubleEvent = useCallback((event: string) => {
-        const ordersWithEvent = orders.filter(order => (!selectedSeller || selectedSeller==='All sellers' || order.seller.uid == selectedSeller) && order.nonTroubleEvents.filter(orderEvent=> orderEvent.event==event).length > 0);
+        const ordersWithEvent = orders.filter(order => (!selectedSeller || selectedSeller === 'All sellers' || order.seller.uid == selectedSeller) && order.nonTroubleEvents.filter(orderEvent => orderEvent.event == event).length > 0);
         return ordersWithEvent.length || 0;
     }, [orders, selectedSeller]);
 
@@ -174,7 +173,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
-        const statuses = orders.map(order =>  selectedSeller==='All sellers' || order.seller.uid === selectedSeller ? order.status : null).filter(status => status);
+        const statuses = orders.map(order => selectedSeller === 'All sellers' || order.seller.uid === selectedSeller ? order.status : null).filter(status => status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
     }, [orders, selectedSeller]);
     uniqueStatuses.sort();
@@ -192,7 +191,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
     }
     const uniqueTroubleStatuses = useMemo(() => {
-        const statuses = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.lastTroubleStatus);
+        const statuses = orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).map(order => order.lastTroubleStatus);
         return Array.from(new Set(statuses)).filter(status => status).sort();
     }, [orders, selectedSeller]);
     uniqueTroubleStatuses.sort();
@@ -221,8 +220,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
     }
     const uniqueNonTroubleStatuses = useMemo(() => {
-        const nonTroubleEvents= [];
-        orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).forEach(order => order.nonTroubleEventsByString.split(',').forEach(event=>nonTroubleEvents.push(event.trim())));
+        const nonTroubleEvents = [];
+        orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).forEach(order => order.nonTroubleEventsByString.split(',').forEach(event => nonTroubleEvents.push(event.trim())));
         return Array.from(new Set(nonTroubleEvents)).filter(nonTroubleEvent => nonTroubleEvent).sort();
     }, [orders, selectedSeller]);
     uniqueNonTroubleStatuses.sort();
@@ -253,12 +252,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'With claims',
             label: 'With claims',
-            amount:  calcOrderWithClaims(),
+            amount: calcOrderWithClaims(),
         },
         {
             value: 'Without claims',
             label: 'Without claims',
-            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithClaims()),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).length - calcOrderWithClaims()),
         },
     ]), [orders, selectedSeller]);
 
@@ -271,12 +270,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'With order issue',
             label: 'With order issue',
-            amount:  calcOrderWithLogisticComment(),
+            amount: calcOrderWithLogisticComment(),
         },
         {
             value: 'Without order issue',
             label: 'Without order issue',
-            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithLogisticComment()),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).length - calcOrderWithLogisticComment()),
         },
     ]), [orders, selectedSeller]);
 
@@ -289,12 +288,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'With comments',
             label: 'With comments',
-            amount:  calcOrderWithCommentsToCourierService(),
+            amount: calcOrderWithCommentsToCourierService(),
         },
         {
             value: 'Without comments',
             label: 'Without comments',
-            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithCommentsToCourierService()),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).length - calcOrderWithCommentsToCourierService()),
         },
     ]), [orders, selectedSeller]);
 
@@ -307,12 +306,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'Self collect',
             label: 'Self collect',
-            amount:  calcOrderWithBooleanProperty('selfCollect', true),
+            amount: calcOrderWithBooleanProperty('selfCollect', true),
         },
         {
             value: 'Not self collect',
             label: 'Not self collect',
-            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('selfCollect', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).length - calcOrderWithBooleanProperty('selfCollect', true)),
         },
     ]), [orders, selectedSeller]);
 
@@ -325,12 +324,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'SMS was sent',
             label: 'SMS was sent',
-            amount:  calcOrderWithBooleanProperty('sentSMSExist', true),
+            amount: calcOrderWithBooleanProperty('sentSMSExist', true),
         },
         {
             value: "Doesn't have SMS",
             label: "Doesn't have SMS",
-            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('sentSMSExist', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).length - calcOrderWithBooleanProperty('sentSMSExist', true)),
         },
     ]), [orders, selectedSeller]);
 
@@ -341,7 +340,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
-        const warehouses = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.warehouse);
+        const warehouses = orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).map(order => order.warehouse);
         return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
     }, [orders, selectedSeller]);
     uniqueWarehouses.sort();
@@ -360,7 +359,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allCourierServices = orders.map(order => order.courierService);
     const uniqueCourierServices = useMemo(() => {
-        const courierServices = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.courierService);
+        const courierServices = orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).map(order => order.courierService);
         return Array.from(new Set(courierServices)).filter(courier => courier).sort();
     }, [orders, selectedSeller]);
     uniqueCourierServices.sort();
@@ -380,7 +379,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
     }
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
-        const receiverCountries = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.receiverCountry);
+        const receiverCountries = orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).map(order => order.receiverCountry);
         return Array.from(new Set(receiverCountries)).filter(country => country).sort();
     }, [orders, selectedSeller]);
     uniqueReceiverCountries.sort();
@@ -402,12 +401,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'With tickets',
             label: 'With tickets',
-            amount:  calcOrderWithBooleanProperty('ticket', true),
+            amount: calcOrderWithBooleanProperty('ticket', true),
         },
         {
             value: "Without tickets",
             label: "Without tickets",
-            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('ticket', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).length - calcOrderWithBooleanProperty('ticket', true)),
         },
     ]), [orders, selectedSeller]);
 
@@ -421,12 +420,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'With open tickets',
             label: 'With open tickets',
-            amount:  calcOrderWithBooleanProperty('ticketopen', true),
+            amount: calcOrderWithBooleanProperty('ticketopen', true),
         },
         {
             value: "Without open tickets",
             label: "Without open tickets",
-            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('ticketopen', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).length - calcOrderWithBooleanProperty('ticketopen', true)),
         },
     ]), [orders, selectedSeller]);
 
@@ -439,12 +438,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'With photos',
             label: 'With photos',
-            amount:  calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true),
+            amount: calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true),
         },
         {
             value: 'Without photos',
             label: 'Without photos',
-            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).length - calcOrderWithBooleanProperty('WarehouseAssemblyPhotos', true)),
         },
     ]), [orders, selectedSeller]);
 
@@ -458,12 +457,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         {
             value: 'With customer returns',
             label: 'With customer returns',
-            amount:  calcOrderWithBooleanProperty('returnsExist', true),
+            amount: calcOrderWithBooleanProperty('returnsExist', true),
         },
         {
             value: "Without customer returns",
             label: "Without customer returns",
-            amount: (orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).length - calcOrderWithBooleanProperty('returnsExist', true)),
+            amount: (orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).length - calcOrderWithBooleanProperty('returnsExist', true)),
         },
     ]), [orders, selectedSeller]);
 
@@ -474,7 +473,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
     }
     const uniqueMarketplaces = useMemo(() => {
-        const marketplaces = orders.filter(order => !selectedSeller || selectedSeller==='All sellers' || order.seller.uid===selectedSeller).map(order => order.marketplace);
+        const marketplaces = orders.filter(order => !selectedSeller || selectedSeller === 'All sellers' || order.seller.uid === selectedSeller).map(order => order.marketplace);
         return Array.from(new Set(marketplaces)).filter(item => item).sort();
     }, [orders, selectedSeller]);
     uniqueMarketplaces.sort();
@@ -525,7 +524,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         setCurrent(1);
     };
 
-    const handleFilterChange = (newSearchTerm :string) => {
+    const handleFilterChange = (newSearchTerm: string) => {
         setSearchTerm(newSearchTerm);
         setCurrent(1)
     };
@@ -581,9 +580,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             const matchesHasOpenTickets = !filterHasOpenTickets.length || (filterHasOpenTickets.includes('With open tickets') && order.ticketopen) ||
                 (filterHasOpenTickets.includes("Without open tickets") && !order.ticketopen);
             const matchesWarehouse = !filterWarehouse.length ||
-                filterWarehouse.map(item=>item.toLowerCase()).includes(order.warehouse.toLowerCase());
+                filterWarehouse.map(item => item.toLowerCase()).includes(order.warehouse.toLowerCase());
             const matchesCourierService = !filterCourierService.length ||
-                filterCourierService.map(item=>item.toLowerCase()).includes(order.courierService.toLowerCase());
+                filterCourierService.map(item => item.toLowerCase()).includes(order.courierService.toLowerCase());
             const matchesReceiverCountry = !filterReceiverCountry.length ||
                 filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
             const matchesPhotos = !filterPhotos.length || (filterPhotos.includes('With photos') && order.WarehouseAssemblyPhotos) ||
@@ -591,7 +590,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             const matchesReturns = !filterCustomerReturns.length || (filterCustomerReturns.includes('With customer returns') && order.returnsExist) ||
                 (filterCustomerReturns.includes('Without customer returns') && !order.returnsExist);
             const matchesMarketplace = !filterMarketplace.length ||
-                filterMarketplace.map(item=>item.toLowerCase()).includes(order.marketplace.toLowerCase());
+                filterMarketplace.map(item => item.toLowerCase()).includes(order.marketplace.toLowerCase());
 
             const matchesSeller = selectedSeller === 'All sellers' || selectedSeller === order.seller.uid;
 
@@ -650,8 +649,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterStatusChange,
             isOpen: isOpenFilterStatus,
             setIsOpen: setIsOpenFilterStatus,
-            onClose: ()=>handleFilterStatusChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
+            onClose: () => handleFilterStatusChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterStatus(true) },
         },
         {
             filterTitle: 'Trouble status',
@@ -662,8 +661,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterTroubleStatusChange,
             isOpen: isOpenFilterTroubleStatus,
             setIsOpen: setIsOpenFilterTroubleStatus,
-            onClose: ()=>handleFilterTroubleStatusChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true);},
+            onClose: () => handleFilterTroubleStatusChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterTroubleStatus(true); },
         },
         {
             filterTitle: 'Non-trouble events',
@@ -674,8 +673,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterNonTroubleStatusChange,
             isOpen: isOpenFilterNonTroubleStatus,
             setIsOpen: setIsOpenFilterNonTroubleStatus,
-            onClose: ()=>handleFilterNonTroubleStatusChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true);},
+            onClose: () => handleFilterNonTroubleStatusChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterNonTroubleStatus(true); },
         },
         isTabAllowed('Claims', forbiddenTabs) ? {
             filterTitle: 'Claims',
@@ -686,8 +685,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterClaimsChange,
             isOpen: isOpenFilterClaim,
             setIsOpen: setIsOpenFilterClaim,
-            onClose: ()=>handleFilterClaimsChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterClaim(true)},
+            onClose: () => handleFilterClaimsChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterClaim(true) },
         } : null,
         isTabAllowed('Order issues', forbiddenTabs) ? {
             filterTitle: 'Order issues',
@@ -698,8 +697,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterLogisticCommentChange,
             isOpen: isOpenFilterLogisticComment,
             setIsOpen: setIsOpenFilterLogisticComment,
-            onClose: ()=>handleFilterLogisticCommentChange([]),
-            onClick: ()=>{()=>{setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true)}},
+            onClose: () => handleFilterLogisticCommentChange([]),
+            onClick: () => { () => { setIsFiltersVisible(true); setIsOpenFilterLogisticComment(true) } },
         } : null,
         isTabAllowed('Comment to courier service', forbiddenTabs) ? {
             filterTitle: 'Comments to courier service',
@@ -710,8 +709,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterCommentsToCourierServiceChange,
             isOpen: isOpenFilterCommentToCourierService,
             setIsOpen: setIsOpenFilterCommentToCourierService,
-            onClose: ()=>handleFilterCommentsToCourierServiceChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true)},
+            onClose: () => handleFilterCommentsToCourierServiceChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterCommentToCourierService(true) },
         } : null,
         {
             filterTitle: 'Self collect',
@@ -722,8 +721,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterSelfCollectChange,
             isOpen: isOpenFilterSelfCollect,
             setIsOpen: setIsOpenFilterSelfCollect,
-            onClose: ()=>handleFilterSelfCollectChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true)},
+            onClose: () => handleFilterSelfCollectChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterSelfCollect(true) },
         },
         isTabAllowed('SMS history', forbiddenTabs) ? {
             filterTitle: 'Sent SMS',
@@ -734,8 +733,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterSentSMSChange,
             isOpen: isOpenFilterSentSMS,
             setIsOpen: setIsOpenFilterSentSMS,
-            onClose: ()=>handleFilterSentSMSChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterSentSMS(true)},
+            onClose: () => handleFilterSentSMSChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterSentSMS(true) },
         } : null,
         {
             filterTitle: 'Warehouse',
@@ -746,8 +745,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterWarehouseChange,
             isOpen: isOpenFilterWarehouse,
             setIsOpen: setIsOpenFilterWarehouse,
-            onClose: ()=>handleFilterWarehouseChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)},
+            onClose: () => handleFilterWarehouseChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterWarehouse(true) },
         },
         {
             filterTitle: 'Courier service',
@@ -758,8 +757,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterCourierServiceChange,
             isOpen: isOpenFilterCourierStatus,
             setIsOpen: setIsOpenFilterCourierStatus,
-            onClose: ()=>handleFilterCourierServiceChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true)},
+            onClose: () => handleFilterCourierServiceChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterCourierStatus(true) },
         },
         {
             filterTitle: 'Receiver country',
@@ -771,8 +770,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterReceiverCountryChange,
             isOpen: isOpenFilterReceiverCountry,
             setIsOpen: setIsOpenFilterReceiverCountry,
-            onClose: ()=>handleFilterReceiverCountryChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
+            onClose: () => handleFilterReceiverCountryChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true) },
         },
         isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets',
@@ -784,8 +783,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterHasTicketsChange,
             isOpen: isOpenFilterHasTickets,
             setIsOpen: setIsOpenFilterHasTickets,
-            onClose: ()=>handleFilterHasTicketsChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasTickets(true)},
+            onClose: () => handleFilterHasTicketsChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterHasTickets(true) },
         } : null,
         isTabAllowed('Tickets', forbiddenTabs) ? {
             filterTitle: 'Tickets (open)',
@@ -797,8 +796,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterHasOpenTicketsChange,
             isOpen: isOpenFilterHasOpenTickets,
             setIsOpen: setIsOpenFilterHasOpenTickets,
-            onClose: ()=>handleFilterHasOpenTicketsChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true)},
+            onClose: () => handleFilterHasOpenTicketsChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterHasOpenTickets(true) },
         } : null,
         {
             filterTitle: 'Photos from warehouse',
@@ -810,8 +809,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterPhotosChange,
             isOpen: isOpenFilterPhotos,
             setIsOpen: setIsOpenFilterPhotos,
-            onClose: ()=>handleFilterPhotosChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterPhotos(true)},
+            onClose: () => handleFilterPhotosChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterPhotos(true) },
         },
         isTabAllowed('Customer returns', forbiddenTabs) ? {
             filterTitle: 'Customer returns',
@@ -823,8 +822,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterCustomerReturnsChange,
             isOpen: isOpenFilterCustomerReturns,
             setIsOpen: setIsOpenFilterCustomerReturns,
-            onClose: ()=>handleFilterCustomerReturnsChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCustomerReturns(true)},
+            onClose: () => handleFilterCustomerReturnsChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterCustomerReturns(true) },
         } : null,
         {
             filterTitle: 'Marketplaces',
@@ -836,8 +835,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             setFilterState: handleFilterMarketplaceChange,
             isOpen: isOpenFilterMarketplaces,
             setIsOpen: setIsOpenFilterMarketplaces,
-            onClose: ()=>handleFilterMarketplaceChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterMarketplaces(true)},
+            onClose: () => handleFilterMarketplaceChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterMarketplaces(true) },
         }
     ] as FilterComponentType[];
 
@@ -846,12 +845,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
     }, [filteredOrders]);
 
-    const curWidth = useMemo(()=>{
+    const curWidth = useMemo(() => {
         const displayedData = filteredOrders.slice((current - 1) * pageSize, current * pageSize);
-        const maxAmount = displayedData.reduce((acc,item)=> Math.max(acc, item.productLines),0).toString().length;
-        const width = 47+maxAmount*9;
-        return width.toString()+'px';
-    },[current, pageSize, filteredOrders]);
+        const maxAmount = displayedData.reduce((acc, item) => Math.max(acc, item.productLines), 0).toString().length;
+        const width = 47 + maxAmount * 9;
+        return width.toString() + 'px';
+    }, [current, pageSize, filteredOrders]);
 
 
     const ClaimsColumns: TableColumnProps<OrderType>[] = [];
@@ -868,49 +867,49 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     </Tooltip>
                 }
             />,
-                render: (text: string, record) => {
-            return (
-                <TableCell
-                    className='no-padding'
-                    minWidth="26px"
-                    maxWidth="26px"
-                    contentPosition="center"
-                    childrenBefore={
-                        record.claimsExist && (
-                            <Popover
-                                content={record.claims.length ? <SimplePopup
-                                    items={record.claims.map(orderItem => ({
-                                        uuid: record.uuid,
-                                        title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.date),
-                                        description: orderItem.status,
-                                    }))}
-                                /> : null}
-                                trigger={isTouchDevice ? 'click' : 'hover'}
-                                placement="right"
-                                overlayClassName="doc-list-popover"
-                            >
-                                <div style={{
-                                    minHeight: '8px',
-                                    minWidth: '8px',
-                                    backgroundColor: 'red',
-                                    borderRadius: '50%',
-                                    display: 'inline-block',
-                                    alignSelf: 'center',
-                                }} />
-                            </Popover>
-                        )
-                    }
-                >
-                </TableCell>
-            );
+            render: (text: string, record) => {
+                return (
+                    <TableCell
+                        className='no-padding'
+                        minWidth="26px"
+                        maxWidth="26px"
+                        contentPosition="center"
+                        childrenBefore={
+                            record.claimsExist && (
+                                <Popover
+                                    content={record.claims.length ? <SimplePopup
+                                        items={record.claims.map(orderItem => ({
+                                            uuid: record.uuid,
+                                            title: formatDateTimeToStringWithDotWithoutSeconds(orderItem.date),
+                                            description: orderItem.status,
+                                        }))}
+                                    /> : null}
+                                    trigger={isTouchDevice ? 'click' : 'hover'}
+                                    placement="right"
+                                    overlayClassName="doc-list-popover"
+                                >
+                                    <div style={{
+                                        minHeight: '8px',
+                                        minWidth: '8px',
+                                        backgroundColor: 'red',
+                                        borderRadius: '50%',
+                                        display: 'inline-block',
+                                        alignSelf: 'center',
+                                    }} />
+                                </Popover>
+                            )
+                        }
+                    >
+                    </TableCell>
+                );
             },
-                dataIndex: 'claimsExist',
-                key: 'claimsExist',
-                sorter: false,
-                onHeaderCell: (column: ColumnType<OrderType>) => ({
+            dataIndex: 'claimsExist',
+            key: 'claimsExist',
+            sorter: false,
+            onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
-                responsive: ['lg'],
+            responsive: ['lg'],
 
         } as TableColumnProps<OrderType>);
     }
@@ -987,8 +986,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -1019,14 +1018,14 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
         } as TableColumnProps<OrderType>);
     }
 
-    const columns: TableColumnProps<OrderType>[]  = [
+    const columns: TableColumnProps<OrderType>[] = [
         {
             title: <TitleColumn
-                    minWidth="50px"
-                    maxWidth="50px"
-                    contentPosition="center"
-                    childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon  name={"car"}/></Tooltip>}>
-                    </TitleColumn>,
+                minWidth="50px"
+                maxWidth="50px"
+                contentPosition="center"
+                childrenBefore={<Tooltip title="Sender country ➔ Receiver country"> <Icon name={"car"} /></Tooltip>}>
+            </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
                     minWidth="50px"
@@ -1059,7 +1058,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                             overlayClassName="doc-list-popover"
                         >
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}/>
+                                <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`} />
                                 <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
                             </div>
                         </Popover>
@@ -1121,7 +1120,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="If order has Trouble statuses">
-                        <span><Icon name={"trouble"} className='header-icon'/></span>
+                        <span><Icon name={"trouble"} className='header-icon' /></span>
                     </Tooltip>
                 }
             />,
@@ -1185,8 +1184,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     minWidth="20px"
                     maxWidth="20px"
                     contentPosition="center"
-                    childrenAfter ={
-                        <span style={{marginTop:'3px'}}>{record.notifications && hasCorrectNotifications(record, notifications) ? <Icon name="notification" />: null}</span>}
+                    childrenAfter={
+                        <span style={{ marginTop: '3px' }}>{record.notifications && hasCorrectNotifications(record, notifications) ? <Icon name="notification" /> : null}</span>}
                 >
                 </TableCell>
 
@@ -1207,13 +1206,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 childrenBefore={<Tooltip title="Current condition of an order">
                     <>
                         <span>Status</span>
-                        {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'status' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'status' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
-            </Tooltip>}
+                </Tooltip>}
             />,
             render: (text: string, record) => {
-                const underlineColor = getUnderlineColor(record.status==='Error' ? record.status : record.statusGroup);
+                const underlineColor = getUnderlineColor(record.status === 'Error' ? record.status : record.statusGroup);
                 return (
                     <TableCell
                         minWidth="50px"
@@ -1236,9 +1235,9 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                                 overlayClassName="doc-list-popover"
                             >
                                 <span style={{
-                                        borderBottom: `2px solid ${underlineColor}`,
-                                        display: 'inline-block',
-                                    }}>{text}</span>
+                                    borderBottom: `2px solid ${underlineColor}`,
+                                    display: 'inline-block',
+                                }}>{text}</span>
                             </Popover>
                         }
                     >
@@ -1262,8 +1261,8 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="When an order was created">
                         <>
                             <span>Date</span>
-                            {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'date' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'date' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -1294,10 +1293,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Order identifier within the warehouse system">
                         <>
                             <span>WH number</span>
-                            {sortColumn==='wapiTrackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='wapiTrackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'wapiTrackingNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'wapiTrackingNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
-                    </Tooltip>}/>,
+                    </Tooltip>} />,
             render: (text: string) => (
                 <TableCell
                     value={text}
@@ -1316,7 +1315,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
             }),
             onCell: (record) => {
                 return {
-                    onClick: () => {handleEditOrder(record.uuid)}
+                    onClick: () => { handleEditOrder(record.uuid) }
                 };
             },
         },
@@ -1329,10 +1328,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="The sum of cash on delivery">
                         <>
                             <span>COD</span>
-                            {sortColumn==='codAmount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='codAmount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'codAmount' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'codAmount' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
-                    </Tooltip>}/>,
+                    </Tooltip>} />,
             render: (text: string, record) => {
                 if (record.codCurrency) {
                     const currencySymbol = getSymbolFromCurrency(record.codCurrency);
@@ -1373,12 +1372,12 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         title="Unique code for order identification in the seller's system">
                         <>
                             <span>Order ID</span>
-                            {sortColumn==='clientOrderID' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='clientOrderID' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'clientOrderID' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'clientOrderID' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
-                    </Tooltip>}/>,
+                    </Tooltip>} />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start" />
             ),
 
             dataIndex: 'clientOrderID',
@@ -1399,13 +1398,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Code of warehouse">
                         <>
                             <span>Warehouse</span>
-                            {sortColumn==='warehouse' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='warehouse' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'warehouse' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'warehouse' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="70px" maxWidth="70px" contentPosition="start"/>
+                <TableCell value={text} minWidth="70px" maxWidth="70px" contentPosition="start" />
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
@@ -1424,13 +1423,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Service responsible for transporting and delivering packages">
                         <>
                             <span>Courier</span>
-                            {sortColumn==='courierService' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='courierService' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'courierService' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'courierService' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
-                />,
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start"/>
+                <TableCell value={text} minWidth="75px" maxWidth="75px" contentPosition="start" />
             ),
             dataIndex: 'courierService',
             key: 'courierService',
@@ -1449,13 +1448,13 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     <Tooltip title="Number for monitoring the movement of products during transportation/delivery">
                         <>
                             <span>Tracking</span>
-                            {sortColumn==='trackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='trackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'trackingNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'trackingNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
-                />,
+            />,
             render: (text: string, record) => (
-                <TableCell  minWidth="70px" maxWidth="70px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span  className='track-link' >Track<Icon name='track'/></span> }/>
+                <TableCell minWidth="70px" maxWidth="70px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span className='track-link' >Track<Icon name='track' /></span>} />
             ),
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
@@ -1481,10 +1480,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products" >
-                        <span style={{display:'flex', alignItems:'center'}}>
-                            <span><Icon name={"shopping-cart"}/></span>
-                            {sortColumn==='productLines' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='productLines' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        <span style={{ display: 'flex', alignItems: 'center' }}>
+                            <span><Icon name={"shopping-cart"} /></span>
+                            {sortColumn === 'productLines' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'productLines' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </span>
                     </Tooltip>
                 }
@@ -1494,7 +1493,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                     minWidth="50px"
                     maxWidth="100px"
                     contentPosition="center"
-                    childrenAfter = {
+                    childrenAfter={
                         <Popover
                             content={record.products.length ? <SimplePopup
                                 items={record.products.map(item => ({
@@ -1507,7 +1506,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                             placement="left"
                             overlayClassName="doc-list-popover"
                         >
-                            <span style={{width: curWidth}} className="products-cell-style">{text} <Icon name="info" /></span>
+                            <span style={{ width: curWidth }} className="products-cell-style">{text} <Icon name="info" /></span>
                         </Popover>
                     }
                 >
@@ -1532,7 +1531,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 {/*<Button onClick={handleRefresh}>Refresh</Button>*/}
                 <div className='search-block'>
-                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
@@ -1544,19 +1543,19 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                         name='selectedSeller'
                         label='Seller: '
                         value={selectedSeller}
-                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        onChange={(val) => setSelectedSeller(val as string)}
                         //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
                         options={sellersOptions}
                         classNames='seller-filter full-sized'
                         isClearable={false}
                     />
-                    </div>
+                </div>
                 : null
             }
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <FiltersChosen filters={orderFilters.filter(item=>item!==null)} />
+                    <FiltersChosen filters={orderFilters.filter(item => item !== null)} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -1570,10 +1569,10 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
 
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table<OrderType>
-                    dataSource={filteredOrders.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize)}
+                    dataSource={filteredOrders.map(item => ({ ...item, key: item.uuid })).slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
-                    scroll={{y:700}}
+                    scroll={{ y: 700 }}
                     showSorterTooltip={false}
                     onChange={handleTableChange}
                 />
@@ -1594,7 +1593,7 @@ const OrderList: React.FC<OrderListType> = ({orders, currentRange, setCurrentRan
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
-                <FiltersListWithOptions filters={orderFilters.filter(item=>item!==null)} />
+                <FiltersListWithOptions filters={orderFilters.filter(item => item !== null)} />
             </FiltersContainer>
         </div>
     );

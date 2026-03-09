@@ -11,6 +11,7 @@ import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import type { Control } from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, { ButtonSize, ButtonVariant } from "@/components/Button/Button";
 import { COUNTRIES } from "@/types/countries";
@@ -23,7 +24,6 @@ import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import { Table } from "antd";
 import DropZone from "@/components/Dropzone";
-import { ApiResponseType } from '@/types/api';
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import Services from "./Services";
 import WarehouseStatusHistory from "./WarehouseStatusHistory";
@@ -303,7 +303,8 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
     }, [amazonPrepOrderParameters, warehouse, selectedSeller]);
 
 
-    const getProductColumns = (control: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const getProductColumns = (control: Control<any>) => {
         return [
             {
                 title: (

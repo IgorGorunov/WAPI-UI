@@ -8,12 +8,10 @@ import "./styles.scss";
 import Button from "@/components/Button/Button";
 import { DateRangeType } from "@/types/dashboard";
 import { formatDateToString, getLastFewDays } from "@/utils/date";
-import { ApiResponseType } from "@/types/api";
 import Loader from "@/components/Loader";
 import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
 import { getTickets } from "@/services/tickets";
 import TicketList from "@/screens/TicketsPage/components/TicketList";
-import Modal from "@/components/Modal";
 import Ticket from "./components/Ticket";
 import { TicketType } from "@/types/tickets";
 import useTourGuide from "@/context/tourGuideContext";
@@ -182,10 +180,9 @@ const TicketsPage = () => {
 
                 {ticketsData && <TicketList tickets={ticketsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} handleEditTicket={handleEditTicket} />}
             </div>
-            {showTicketModal && (singleTicketUuid || isTicketNew) &&
-                <Modal title={`Ticket`} onClose={handleTicketModalClose} >
-                    <Ticket ticketUuid={singleTicketUuid} onClose={handleTicketModalClose} />
-                </Modal>
+            {showTicketModal && (singleTicketUuid || isTicketNew) ?
+                <Ticket ticketUuid={singleTicketUuid} onClose={handleTicketModalClose} />
+                : null
             }
             {ticketsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Tickets} /> : null}
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}

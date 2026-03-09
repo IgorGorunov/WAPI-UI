@@ -1,36 +1,36 @@
-import React, {useCallback, useState} from "react";
+import React, { useCallback, useState } from "react";
 
 import "./styles.scss";
 import Button from "@/components/Button/Button";
-import {Controller, useForm} from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import type { FieldValues } from "react-hook-form";
 import Loader from "@/components/Loader";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {changePassword} from "@/services/profile";
+import { changePassword } from "@/services/profile";
 import useAuth from "@/context/authContext";
-import {ApiResponseType} from "@/types/api";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
-import {FormBuilderType, FormFieldTypes, WidthType} from "@/types/forms";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import { STATUS_MODAL_TYPES } from "@/types/utility";
+import { FormBuilderType, FormFieldTypes, WidthType } from "@/types/forms";
+import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 
 type ChangePasswordPropsType = {
-    onClose: ()=>void;
+    onClose: () => void;
 }
 
-const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
-    const { tenantData: { alias }} = useTenant();
-    const {token, superUser, ui, getBrowserInfo} = useAuth();
+const ChangePassword: React.FC<ChangePasswordPropsType> = ({ onClose }) => {
+    const { tenantData: { alias } } = useTenant();
+    const { token, superUser, ui, getBrowserInfo } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     //status modal
-    const [showStatusModal, setShowStatusModal]=useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeSuccessModal = useCallback(()=>{
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
+    const closeSuccessModal = useCallback(() => {
         setShowStatusModal(false);
         onClose();
     }, []);
-    const closeErrorModal = useCallback(()=>{
+    const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
     }, [])
 
@@ -51,7 +51,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
             label: "Current password",
             placeholder: "********",
             rules: {
-                required:  "Please, enter valid password!",
+                required: "Please, enter valid password!",
                 minLength: {
                     value: 3,
                     message: "Password has to be at least 3 symbols!"
@@ -67,7 +67,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
             label: "New password",
             placeholder: "********",
             rules: {
-                required:  "Please, enter valid password!",
+                required: "Please, enter valid password!",
                 minLength: {
                     value: 3,
                     message: "Password has to be at least 3 symbols!"
@@ -84,7 +84,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
             label: "Confirm new password",
             placeholder: "********",
             rules: {
-                required:  "Please, enter valid password!",
+                required: "Please, enter valid password!",
                 minLength: {
                     value: 3,
                     message: "Password has to be at least 3 symbols!"
@@ -97,30 +97,30 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
         },
     ];
 
-    const handleFormSubmit = async (data: any) => {
+    const handleFormSubmit = async (data: FieldValues) => {
         try {
             setIsLoading(true);
-            const requestData = {token, alias, currentPassword: data.currentPassword, newPassword: data.newPassword};
+            const requestData = { token, alias, currentPassword: data.currentPassword, newPassword: data.newPassword };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('ChangePassword'), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('ChangePassword'), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
-            const res = await changePassword(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await changePassword(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res?.status === 200) {
                 //display success modal
-                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Password is changed successfully!`, onClose: closeSuccessModal})
+                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Password is changed successfully!`, onClose: closeSuccessModal })
                 setShowStatusModal(true);
 
-            } else  if (res && 'response' in res ) {
+            } else if (res && 'response' in res) {
                 //show error modal
                 const errResponse = res.response;
 
-                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+                if (errResponse && 'data' in errResponse && 'errorMessage' in errResponse.data) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal })
                     setShowStatusModal(true);
                 }
             }
@@ -135,13 +135,13 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
         <div className={`change-password`}>
             {isLoading && <Loader />}
             <form className='change-password-form' onSubmit={handleSubmit(handleFormSubmit)}>
-                {changePasswordFormFields.map((curField: any ) => (
+                {changePasswordFormFields.map((curField) => (
 
                     <div key={curField.name} className='grid-row'>
                         <Controller
                             name={curField.name}
                             control={control}
-                            render={({field: { ...props}, fieldState: {error}}) => (
+                            render={({ field: { ...props }, fieldState: { error } }) => (
                                 <FieldBuilder
                                     {...curField}
                                     {...props}
@@ -152,8 +152,8 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
                                     placeholder={curField.placeholder}
                                     errorMessage={error?.message}
                                     isRequired={!!curField.rules?.required || false}
-                                /> )}
-                            rules = {curField.rules}
+                                />)}
+                            rules={curField.rules}
                         />
                     </div>
 
@@ -167,7 +167,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({onClose}) => {
                     </Button>
                 </div>
             </form>
-            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+            {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </div>
     );
 };

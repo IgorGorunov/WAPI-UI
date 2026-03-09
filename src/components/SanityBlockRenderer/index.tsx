@@ -5,7 +5,12 @@ import TableBlock from '../TableComponent';
 import VideoComponent from "../VideoComponent";
 import DownloadableFile from "@/components/DownloadableFile";
 
-const componentsMap: { [key: string]: React.ComponentType<any> } = {
+type SanityBlock = {
+    _type: string;
+    [key: string]: unknown;
+};
+
+const componentsMap: Record<string, React.ComponentType<Record<string, unknown>>> = {
     textComponent: TextComponent,
     imageComponent: ImageBlock,
     tableComponent: TableBlock,
@@ -13,7 +18,7 @@ const componentsMap: { [key: string]: React.ComponentType<any> } = {
     downloadableFile: DownloadableFile,
 };
 
-const BlockRenderer: React.FC<{ block: any }> = ({ block }) => {
+const BlockRenderer: React.FC<{ block: SanityBlock }> = ({ block }) => {
     const Component = componentsMap[block._type];
 
     if (!Component) {

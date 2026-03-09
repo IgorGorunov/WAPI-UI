@@ -28,7 +28,7 @@
       flex: 0 0 auto;
       width: 26px;
 
-      &.icon-admin {
+      &:global(.icon-admin) {
         border: 2px solid var(--color-blue);
         border-radius: 50%;
 
@@ -75,6 +75,7 @@
       transform: scale(1);
       transform-origin: left center;
       transition: .3s ease;
+
       &:hover {
         transform: scale(1.05);
         color: var(--color-blue);
@@ -88,9 +89,11 @@
         font-weight: bold;
         white-space: nowrap;
 
-        .icon {
-          width: 26px;
-          margin-right: 4px;
+        :global {
+          .icon {
+            width: 26px;
+            margin-right: 4px;
+          }
         }
       }
     }
@@ -101,6 +104,7 @@
       transform: translateY(-20px);
       opacity: 0;
     }
+
     100% {
       transform: translateY(0);
       opacity: 1;

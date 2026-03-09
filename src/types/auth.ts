@@ -20,7 +20,7 @@ export type UserBrowserInfoType = {
     userIp: string;
     userLang: string;
     userTimezone: string;
-    userAgentData: any;
+    userAgentData: Record<string, unknown> | string;
 }
 
 export type UserAccessActionType = {

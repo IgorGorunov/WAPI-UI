@@ -32,6 +32,7 @@ export type OptionType = {
   isDisabled?: boolean;
   inactive?: boolean;
   extraSearch?: string;
+  country?: string;
 }
 
 export const enum WidthType {

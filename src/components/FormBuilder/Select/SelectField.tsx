@@ -9,8 +9,7 @@ import Select, {
 
 import { FieldPropsType, OptionType } from "@/types/forms";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-
-import "./styles.scss";
+import styles from "./styles.module.scss";
 
 const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
     (
@@ -68,8 +67,8 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
             const { data } = props;
 
             const extraClassNames =
-                `${data.amount !== undefined && !data.amount ? " is-empty" : ""}` +
-                `${data.inactive ? " is-inactive" : ""}`;
+                `${data.amount !== undefined && !data.amount ? ` ${styles['is-empty'] || 'is-empty'}` : ""}` +
+                `${data.inactive ? ` ${styles['is-inactive'] || 'is-inactive'}` : ""}`;
 
             return (
                 <components.Option
@@ -79,7 +78,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
                 >
                     <span>{data.label}</span>
                     {data.amount !== undefined && (
-                        <span className="amount-circle">{data.amount || 0}</span>
+                        <span className={styles['amount-circle'] || "amount-circle"}>{data.amount || 0}</span>
                     )}
                 </components.Option>
             );
@@ -110,13 +109,9 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
                 classNames={`${width ? "width-" + width : ""}`}
             >
                 <div
-                    className={`input-select__container ${
-                        classNames ? classNames : ""
-                    } ${isRequired ? "required" : ""} ${
-                        errorMessage ? "has-error" : ""
-                    } ${isSearchable ? "searchable" : ""} ${
-                        disabled ? "is-disabled" : ""
-                    }`}
+                    className={`${styles['input-select__container']} ${classNames} ${isRequired ? styles['required'] || "required" : ""
+                        } ${isSearchable ? styles['searchable'] || "searchable" : ""} ${errorMessage ? styles['has-error'] || "has-error" : ""} ${disabled ? styles['is-disabled'] || "is-disabled" : ""
+                        }`}
                 >
                     {label && <label htmlFor={name}>{label}</label>}
 
@@ -167,7 +162,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
                             }}
                         />
 
-                        {errorMessage && <p className="error">{errorMessage}</p>}
+                        {errorMessage && <p className={styles.error || "error"}>{errorMessage}</p>}
                     </div>
                 </div>
             </TutorialHintTooltip>

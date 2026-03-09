@@ -1,7 +1,6 @@
 import React from "react";
 import { DashboardPeriodType, PeriodType } from "@/types/dashboard";
 import PeriodFilter from "../PeriodFilter";
-import "./styles.scss";
 
 type HeaderProps = {
   currentPeriod: DashboardPeriodType;

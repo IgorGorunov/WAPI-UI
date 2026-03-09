@@ -1,6 +1,6 @@
 import React, { memo } from "react";
+import styles from "./styles.module.scss";
 import LogoWAPI from "@/assets/icons/LogoWAPI.svg";
-import "./styles.scss";
 import { Routes } from "@/types/routes";
 import useTenant from "@/context/tenantContext";
 import { TENANT_TYPE, TenantFooterDataType, TENANTS } from "@/lib/tenants";
@@ -24,24 +24,24 @@ const Footer: React.FC = () => {
   const footerData = tenantData?.footer;
 
   return (
-    <div className="footer">
-      <div className="footer-wrapper">
-        <div className="footer-left">
-          <div className="logo" style={{ paddingTop: `${footerData?.logoPaddingTop || 0}px` }}>
+    <div className={styles.footer}>
+      <div className={styles['footer-wrapper']}>
+        <div className={styles['footer-left']}>
+          <div className={styles.logo} style={{ paddingTop: `${footerData?.logoPaddingTop || 0}px` }}>
             {LogoInFooter(tenant, footerData)}
           </div>
           {footerData?.copyright ? (
-            <p className="copyright">
+            <p className={styles.copyright}>
               ©{(new Date).getFullYear()} {footerData?.copyright}
             </p>
           ) : null}
-          {footerData?.address ? <p className="address">{footerData?.address}</p> : null}
+          {footerData?.address ? <p className={styles.address}>{footerData?.address}</p> : null}
         </div>
-        <div className="footer-right">
-          <ul className="footer-links">
-            {tenantData?.email ? <li><a className='is-footer-link' href={`mailto:${tenantData?.email}`}>{tenantData?.email}</a></li> : null}
-            <li><Link className='is-footer-link' href={Routes.PrivacyPolicy}>Privacy Policy</Link></li>
-            <li><Link className='is-footer-link' href={Routes.CookiePolicy}>Cookie Policy</Link></li>
+        <div className={styles['footer-right']}>
+          <ul className={styles['footer-links']}>
+            {tenantData?.email ? <li><a className={styles['is-footer-link']} href={`mailto:${tenantData?.email}`}>{tenantData?.email}</a></li> : null}
+            <li><Link className={styles['is-footer-link']} href={Routes.PrivacyPolicy}>Privacy Policy</Link></li>
+            <li><Link className={styles['is-footer-link']} href={Routes.CookiePolicy}>Cookie Policy</Link></li>
           </ul>
         </div>
       </div>

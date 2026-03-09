@@ -6,6 +6,7 @@ import useAuth from "@/context/authContext";
 import { useRouter } from "next/router";
 import useTenant from "@/context/tenantContext";
 import { TENANTS } from "@/lib/tenants";
+import Cookie from "js-cookie";
 
 // Dynamically import heavy components to reduce initial JavaScript blocking render
 const LoginForm = dynamic(() => import("./LoginForm/LoginForm"), {
@@ -30,8 +31,14 @@ const LoginPage = () => {
         setOneTimeToken('');
     }, []);
 
+    // Only clear an EXISTING session when landing on the login page.
+    // Do NOT run logout() if there's no session — this prevents it from
+    // clearing cookies that were just set by a successful login+redirect.
     useEffect(() => {
-        logout();
+        const hadSession = !!Cookie.get('token') || !!Cookie.get('userStatus');
+        if (hadSession) {
+            logout();
+        }
     }, []);
 
     //getting uuid from query

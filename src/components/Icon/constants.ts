@@ -118,6 +118,9 @@ import Whitelabel from '@/assets/icons/whitelabel.svg';
 import Cookie from '@/assets/icons/cookie.svg';
 import ArrowUpSmall from '@/assets/icons/arrow-up-small.svg';
 import ArrowDownSmall from '@/assets/icons/arrow-down-small.svg';
+import ClearFilters from '@/assets/icons/filter-clear.svg';
+import ApplyFilters from '@/assets/icons/filter-apply.svg';
+import BiggestCheck from '@/assets/icons/biggest-check.svg';
 
 export const icons = {
     "arrow-left": ArrowLeft,
@@ -240,4 +243,7 @@ export const icons = {
     'cookie': Cookie,
     'arrow-desc': ArrowUpSmall,
     'arrow-asc': ArrowDownSmall,
+    'clear-filters': ClearFilters,
+    'apply-filters': ApplyFilters,
+    'biggest-check': BiggestCheck,
 };

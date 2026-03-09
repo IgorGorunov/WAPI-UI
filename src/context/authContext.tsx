@@ -93,7 +93,7 @@ type authContextType = {
   setUserName: (token: string) => void;
   getUserName: () => string | null;
   // currentDate: Date;
-  setCurrentDate: (date: string)=>void;
+  setCurrentDate: (date: string) => void;
   getCurrentDate: () => Date;
   setTutorialInfo: (str: string[]) => void;
   userStatus: UserStatusType | null;
@@ -294,42 +294,23 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
   const logout = () => {
     Cookie.remove('token');
-    // setToken(null);
     Cookie.remove('userStatus');
-    // setUserStatus(null);
-    Cookie.remove('userStatus')
     Cookie.remove('userName');
-    // setUserName(null);
-    //Cookie.remove('tutorialData');
     Cookie.remove('textInfo');
-    //Cookie.remove('isSU);
-    //setIsSuperUser(false);
-    //setUserUi('');
     Cookie.remove('isSU');
-    // setSuperUser(false);
     Cookie.remove('ui');
-    // setUserUi('')
     Cookie.remove('profile_info');
-    // setUserInfoProfile(null);
     Cookie.remove('navAccess');
-    //setNavItemsAccess([]);
     Cookie.remove('currentDate');
-
     Cookie.remove('browser');
-    Cookie.remove('userActions')
-
+    Cookie.remove('userActions');
     Cookie.remove('suName');
-    // setSuperUserName(null);
     Cookie.remove('orders-period');
-
-    setNotifications([]);
-    // setSuperUserName('');
-
     Cookie.remove('userType');
     Cookie.remove('sellers');
-
     Cookie.remove('userEmail');
-    Cookie.remove('sellers');
+
+    setNotifications([]);
   }
 
   const isAuthorizedUser = () => {

@@ -1,17 +1,15 @@
 import React from "react";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { GroupOrderStatusType, StatusColors } from "../index";
-import "./styles.scss";
-import {Popover} from "antd";
+import { Popover } from "antd";
 import SimplePopup from "@/components/SimplePopup";
-import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import { useIsTouchDevice } from "@/hooks/useTouchDevice";
 
 type StatusBarPropsType = {
     groupStatus: GroupOrderStatusType;
     maxAmount: number;
 };
 
-const StatusBar: React.FC<StatusBarPropsType> = ({groupStatus, maxAmount}) => {
+const StatusBar: React.FC<StatusBarPropsType> = ({ groupStatus, maxAmount }) => {
 
     const isTouchDevice = useIsTouchDevice();
 

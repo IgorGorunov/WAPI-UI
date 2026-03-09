@@ -3,7 +3,6 @@ import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
 import { ColumnType } from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { InvoiceType } from "@/types/invoices";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
@@ -29,7 +28,7 @@ import { sendUserBrowserInfo } from "@/services/userInfo";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useTenant from "@/context/tenantContext";
-import {FilterComponentType} from "@/types/filters";
+import { FilterComponentType } from "@/types/filters";
 
 
 export const StatusColors = {

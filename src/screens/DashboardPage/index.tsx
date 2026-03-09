@@ -19,11 +19,9 @@ import { TourGuidePages } from "@/types/tourGuide";
 import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
-import { ApiResponseType } from "@/types/api";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
 import { OptionType } from "@/types/forms";
-import Router from "next/router";
-import {Routes} from "@/types/routes";
+
 
 // Moved inline to avoid Fast Refresh violations
 const dashboardSteps = [
@@ -86,13 +84,11 @@ const dashboardSteps = [
 const DashboardPage: React.FC = () => {
   const { tenantData } = useTenant();
   const alias = tenantData?.alias;
-  const { token, isAuthorizedUser, getBrowserInfo, superUser, ui, isActionIsAccessible, isNavItemAccessible, needSeller, sellersList } = useAuth();
+  const { token, getBrowserInfo, superUser, ui, isActionIsAccessible, isNavItemAccessible, needSeller, sellersList } = useAuth();
 
   const currentDate = new Date();
 
-  useEffect(() => {
-    if (!isAuthorizedUser()) Router.push(Routes.Login);
-  }, [token]);
+
 
   const [selectedSeller, setSelectedSeller] = useState<string | null>(null);
   const [sellersOptions, setSellersOptions] = useState<OptionType[]>([]);

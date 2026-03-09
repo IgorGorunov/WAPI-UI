@@ -6,7 +6,7 @@ import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import OrderList from "./components/OrderList";
 import "./styles.scss";
-import { getOrders } from "@/services/orders";
+import {getOrders_Old} from "@/services/orders";
 import Button from "@/components/Button/Button";
 import { DateRangeType } from "@/types/dashboard";
 import { formatDateTimeToStringWithDotWithoutSeconds, formatDateToString, getLastFewDays } from "@/utils/date";
@@ -131,7 +131,7 @@ const OrdersPage = () => {
                 return null;
             }
 
-            const res = await getOrders(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await getOrders_Old(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setOrdersData(res.data.map(item => ({ ...item, key: item.uuid })).sort((a: OrderType, b: OrderType) => a.date > b.date ? -1 : 1));

@@ -1,8 +1,7 @@
-import {toast, ToastContainer} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 import "./styles.scss"
 
-export {toast, ToastContainer};
+export { toast, ToastContainer };
 
 // components/ToastMessage.tsx
 export const showToast = (message: string) => {

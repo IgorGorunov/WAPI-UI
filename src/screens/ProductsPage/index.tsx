@@ -13,7 +13,6 @@ import { exportFileXLS } from "@/utils/files";
 import { ProductType } from "@/types/products";
 import Modal from "@/components/Modal";
 import ProductForm from "@/screens/ProductsPage/components/ProductForm";
-import 'react-toastify/dist/ReactToastify.css';
 import '@/components/Toast/styles.scss'
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";

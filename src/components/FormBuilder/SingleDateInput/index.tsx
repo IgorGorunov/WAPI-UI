@@ -1,12 +1,8 @@
 'use client'
-import React, {useState, forwardRef, useRef, useLayoutEffect, useEffect} from "react";
+import React, { useState, forwardRef, useRef, useLayoutEffect, useEffect } from "react";
 import { Calendar } from 'react-date-range';
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
 
 import TimePicker from 'react-time-picker';
-import 'react-time-picker/dist/TimePicker.css';
-import 'react-clock/dist/Clock.css';
 
 import "./styles.scss";
 import { FieldPropsType } from "@/types/forms";
@@ -33,38 +29,38 @@ import {
 export const EMPTY_DATE_AS_STRING = '0001-01-01T00:00:00';
 export const EMPTY_DATE_AS_STRING2 = '1901-01-01T00:00:00';
 export const EMPTY_DATE = new Date(EMPTY_DATE_AS_STRING);
-export     const isDateEmpty = (date: Date) => {
+export const isDateEmpty = (date: Date) => {
     return date.getFullYear() === 1 || date.getFullYear() === 1901;
 }
 
 type Bounds = { left: number; right: number; top: number; bottom: number };
 
 const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
-                                                                          classNames='',
-                                                                          name,
-                                                                          label='',
-                                                                          type='date',
-                                                                          onChange,
-                                                                          isRequired = false,
-                                                                          placeholder = '',
-                                                                          errorMessage,
-                                                                          disabled ,
-                                                                          value='',
-                                                                          width,
-                                                                          isClearable = false,
-                                                                          hint='',
-                                                                          disableWeekends = false,
-                                                                          disablePreviousDays = false,
-                                                                          disableDaysAfterToday = 0,
-                                                                          disableDaysTime = '0',
-                                                                      }, ref) => {
+    classNames = '',
+    name,
+    label = '',
+    type = 'date',
+    onChange,
+    isRequired = false,
+    placeholder = '',
+    errorMessage,
+    disabled,
+    value = '',
+    width,
+    isClearable = false,
+    hint = '',
+    disableWeekends = false,
+    disablePreviousDays = false,
+    disableDaysAfterToday = 0,
+    disableDaysTime = '0',
+}, ref) => {
 
     // const {currentDate} = useAuth();
 
     const getDate = (dateStr: string) => {
         if (!dateStr) return EMPTY_DATE;
 
-        return  new Date(dateStr);
+        return new Date(dateStr);
     }
 
     // const calendarRef = useRef<HTMLDivElement>(null);
@@ -82,7 +78,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
         refs,
         floatingStyles,
         context
-    }  = useFloating({
+    } = useFloating({
         open,
         onOpenChange: setOpen,
         placement: "bottom-start",
@@ -109,14 +105,14 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
     const { getFloatingProps } = useInteractions([dismiss]);
 
     const handleDateSelect = (date: Date) => {
-        const newDate = setTimeToDate(date, type==='date-time' ? selectedTime : `12:00`);
+        const newDate = setTimeToDate(date, type === 'date-time' ? selectedTime : `12:00`);
         setSelectedDate(newDate);
         // setShowCalendar(false);
         setOpen(false);
         if (onChange) onChange(newDate.toISOString());
     };
 
-    const handleTimeSelect = (time: string|null) => {
+    const handleTimeSelect = (time: string | null) => {
         if (!time) {
             return;
         }
@@ -180,7 +176,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
     }, [open]);
 
     return (
-        <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
+        <TutorialHintTooltip hint={hint} classNames={`${width ? "width-" + width : ""}`}>
             <div className={`form-control form-control-date ${classNames ? classNames : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${disabled ? 'is-disabled' : ''}`}>
                 {label && <label htmlFor={name}>{label}</label>}
                 <div className="date-input" ref={refs.setReference}>
@@ -217,61 +213,61 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
 
                 {open && !disabled && (
                     <>
-                    <FloatingPortal>
-                        <FloatingFocusManager
-                            context={context}
-                            modal={false} // don’t trap focus like a dialog; feel free to set true if you prefer
-                        >
-                            <div
-                                // floating container lives under body — no clipping by parents
-                                ref={refs.setFloating}
-                                {...getFloatingProps()}
-                                style={{ ...floatingStyles, zIndex: 1000 }}
+                        <FloatingPortal>
+                            <FloatingFocusManager
+                                context={context}
+                                modal={false} // don’t trap focus like a dialog; feel free to set true if you prefer
                             >
-                                <Draggable
-                                    nodeRef={calendarRef}
-                                    handle=".drag-handle"
-                                    cancel="input,textarea,select,button,.time-picker-wrapper *,.close-calendar"
-                                    bounds={dragBounds}
-                                    defaultPosition={{ x: 0, y: 8 }}
+                                <div
+                                    // floating container lives under body — no clipping by parents
+                                    ref={refs.setFloating}
+                                    {...getFloatingProps()}
+                                    style={{ ...floatingStyles, zIndex: 1000 }}
                                 >
-                                    <div ref={calendarRef} className="custom-calendar-wrapper">
-                                        <div className="calendar-header drag-handle">
-                                            <a
-                                                href="#"
-                                                className="close-calendar"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    setOpen(false);
-                                                }}
-                                            >
-                                                <Icon name="close" />
-                                            </a>
+                                    <Draggable
+                                        nodeRef={calendarRef}
+                                        handle=".drag-handle"
+                                        cancel="input,textarea,select,button,.time-picker-wrapper *,.close-calendar"
+                                        bounds={dragBounds}
+                                        defaultPosition={{ x: 0, y: 8 }}
+                                    >
+                                        <div ref={calendarRef} className="custom-calendar-wrapper">
+                                            <div className="calendar-header drag-handle">
+                                                <a
+                                                    href="#"
+                                                    className="close-calendar"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setOpen(false);
+                                                    }}
+                                                >
+                                                    <Icon name="close" />
+                                                </a>
 
-                                            <Calendar
-                                                className="custom-calendar"
-                                                date={isDateEmpty(selectedDate) ? new Date() : selectedDate}
-                                                onChange={handleDateSelect}
-                                                showDateDisplay={false}
-                                                showMonthAndYearPickers={false}
-                                                disabledDay={disableDays}
-                                            />
-                                            {type === "date-time" ? (
-                                                <div className="time-picker-wrapper">
-                                                    <Icon name="clock" />
-                                                    <TimePicker
-                                                        value={selectedTime}
-                                                        disableClock={true}
-                                                        onChange={(val) => handleTimeSelect(val)}
-                                                    />
-                                                </div>
-                                            ) : null}
+                                                <Calendar
+                                                    className="custom-calendar"
+                                                    date={isDateEmpty(selectedDate) ? new Date() : selectedDate}
+                                                    onChange={handleDateSelect}
+                                                    showDateDisplay={false}
+                                                    showMonthAndYearPickers={false}
+                                                    disabledDay={disableDays}
+                                                />
+                                                {type === "date-time" ? (
+                                                    <div className="time-picker-wrapper">
+                                                        <Icon name="clock" />
+                                                        <TimePicker
+                                                            value={selectedTime}
+                                                            disableClock={true}
+                                                            onChange={(val) => handleTimeSelect(val)}
+                                                        />
+                                                    </div>
+                                                ) : null}
+                                            </div>
                                         </div>
-                                    </div>
-                                </Draggable>
-                            </div>
-                        </FloatingFocusManager>
-                    </FloatingPortal>
+                                    </Draggable>
+                                </div>
+                            </FloatingFocusManager>
+                        </FloatingPortal>
                     </>
                 )}
                 {errorMessage && <p className="error">{errorMessage}</p>}

@@ -2,7 +2,7 @@
 
 .doc-filters-block {
   position: relative;
-  overflow: hidden;
+  //overflow: hidden;
   z-index: 1002;
 
   &__overlay.is-visible-overlay {
@@ -11,32 +11,74 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(0,0,0,0.2);
+    background-color: rgba(0, 0, 0, 0.2);
     z-index: 1001;
     animation: fade 0.3s ease;
+
+    .filters-actions {
+      //position: absolute;
+      //top: 40px;
+      //left: 370px;
+
+      display: flex;
+      //flex-direction: column;
+      //justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: 0 0 16px;
+
+      @media (max-width: $mobile) {
+        padding-right: 40px;
+      }
+
+      .filters-apply--active {
+        animation: pulse-apply 1s ease-in-out;
+      }
+
+      .btn {
+        flex: 1 1 auto;
+        border-radius: 20px;
+
+        &.primary {
+          border: 2px solid transparent;
+
+          &:hover {
+            color: var(--color-blue);
+            background-color: var(--color-white);
+            border-color: var(--color-blue);
+          }
+        }
+      }
+    }
   }
 
   &__wrapper {
+    position: relative;
+    height: calc(100% - 54px);
+    overflow: hidden scroll;
     border-radius: 15px;
-    overflow: hidden;
-    padding: 10px 0;
-    background-color: white;
+    //background-color: white;
+    margin: 0 -10px;
+    padding: 0 10px;
+    z-index: 2;
+
+    &-inner {
+      border-radius: 15px;
+      padding: 10px 0;
+      background-color: white;
+    }
   }
 
   .filters-close {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 22px;
+    right: 10px;
     display: none;
     cursor: pointer;
+    transform: scale(1.3);
   }
 
-  .filters-clear {
-    display: flex;
-    justify-content: flex-end;
-    margin: 0 0 16px;
 
-  }
 
   &.is-fixed {
     position: fixed;
@@ -48,23 +90,24 @@
     transform: translateX(-100%);
     transition: transform 0.5s ease;
     box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-    padding: 40px 10px;
+    padding: 16px 10px 16px;
     z-index: 1000;
-    overflow-y: scroll;
+    //overflow-y: scroll;
+
     @media (max-width: $mobile) {
       width: 100%;
+      //padding-top: 36px;
     }
 
     &.is-visible {
       transform: translateX(0);
 
-      .filters-close {
-        display: block;
+      @media (max-width: $mobile) {
+        .filters-close {
+          display: block;
+        }
       }
-
     }
-
-
   }
 }
 
@@ -72,6 +115,7 @@
   0% {
     background-color: rgba(0, 0, 0, 0);
   }
+
   100% {
     background-color: rgba(0, 0, 0, 0.2);
   }

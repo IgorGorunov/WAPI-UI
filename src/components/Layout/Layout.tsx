@@ -41,6 +41,7 @@ const Layout: React.FC<Props> = ({
         });
 
         setInterceptorRedirectCallback(async () => {
+            console.log('[Layout] API interceptor triggered redirectToLogin!');
             logout();
             await router.push(Routes.Login)
         })

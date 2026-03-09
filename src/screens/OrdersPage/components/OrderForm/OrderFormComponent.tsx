@@ -14,6 +14,7 @@ import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import type { Control, FieldValues, SubmitErrorHandler } from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, { ButtonSize, ButtonVariant } from "@/components/Button/Button";
 import { COUNTRIES } from "@/types/countries";
@@ -28,7 +29,6 @@ import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import { Table } from "antd";
 import DropZone from "@/components/Dropzone";
-import { ApiResponseType } from '@/types/api';
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "./ProductsTotal";
@@ -88,6 +88,8 @@ const getCorrectNotifications = (record: SingleOrderType, notifications: Notific
 }
 
 const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal, forbiddenTabs }) => {
+
+
     const { notifications } = useNotifications();
     const { tenantData: { alias, orderTitles } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
@@ -449,7 +451,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         setValue(`products.${index}.price`, +product.price === 0 ? '' : product.price, { shouldValidate: true });
     }
 
-    const getProductColumns = (control: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const getProductColumns = (control: Control<any>) => {
         return [
             {
                 title: (
@@ -1195,7 +1198,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         }
     }
 
-    const onError = (props: any) => {
+    const onError: SubmitErrorHandler<FieldValues> = (props) => {
         const curAction = orderData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], curAction)) {
             try {

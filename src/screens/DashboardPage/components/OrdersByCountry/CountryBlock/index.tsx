@@ -1,8 +1,6 @@
 import React from "react";
 import { OrderByCountryType } from "..";
 import { CountryCodes } from "@/types/countries";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
-import "./styles.scss";
 
 type CountryBlockProps = OrderByCountryType & {
   sum: number;

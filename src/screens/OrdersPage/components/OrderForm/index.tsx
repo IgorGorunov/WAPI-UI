@@ -5,7 +5,6 @@ import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes, UserAccessActionType } from "@/types/auth";
 import { getOrderData, getOrderParameters } from '@/services/orders';
-import { ApiResponseType } from '@/types/api';
 import { ToastContainer } from '@/components/Toast';
 import Modal from "@/components/Modal";
 import Loader from "@/components/Loader";
@@ -23,7 +22,8 @@ type OrderFormType = {
 }
 
 const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeOrderModalOnSuccess }) => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingOrder, setIsLoadingOrder] = useState(false);
+    const [isLoadingParams, setIsLoadingParams] = useState(false);
 
     const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
@@ -42,7 +42,7 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
 
     const fetchSingleOrder = async (uuid: string) => {
         try {
-            setIsLoading(true);
+            setIsLoadingOrder(true);
             const requestData = { token, alias, uuid };
 
             try {
@@ -67,14 +67,15 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
             }
         } catch (error) {
             console.error("Error fetching data:", error);
+            closeOrderModal();
         } finally {
-            setIsLoading(false);
+            setIsLoadingOrder(false);
         }
     };
 
     const fetchOrderParams = useCallback(async () => {
         try {
-            setIsLoading(true);
+            setIsLoadingParams(true);
             const requestData = { token, alias };
 
             // try {
@@ -104,9 +105,9 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
             }
 
         } catch (error) {
-            console.error("Error fetching data:", error);
+            // console.error("Error fetching data:", error);
         } finally {
-            setIsLoading(false);
+            setIsLoadingParams(false);
         }
     }, [token]);
 
@@ -131,7 +132,7 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
     }
 
     return <div className='order-info'>
-        {(isLoading || !(orderUuid && orderData || !orderUuid) || !orderParameters) && <Loader />}
+        {(isLoadingOrder || isLoadingParams) && <Loader />}
         <ToastContainer />
         {orderParameters && forbiddenTabs !== null && (orderUuid && orderData || !orderUuid) ?
             <Modal title={`Order`} onClose={onClose} classNames='document-modal'>

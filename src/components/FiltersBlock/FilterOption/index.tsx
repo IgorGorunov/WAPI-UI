@@ -22,7 +22,7 @@ const FilterOption: React.FC<FilterOptionType> = ({option, extraName='', isCheck
                 circleColor={filterType === FILTER_TYPE.COLORED_CIRCLE ? option.color : ''}
                 label={`${option.label}`}
                 isCountry={isCountry}
-                countryName = {option.value}
+                countryName = {option.country || option.value}
                 flagBefore={true}
                 extraLabel={`${option.amount ? ""+option.amount+"" : ''}`}
                 value={isChecked}

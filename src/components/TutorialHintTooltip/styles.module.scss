@@ -4,7 +4,7 @@
   //flex-direction: column;
   margin-top: auto;
 
-  .tutorial-mode & {
+  :global(.tutorial-mode) & {
     margin-bottom: 28px;
   }
 
@@ -12,7 +12,7 @@
     margin-bottom: 0;
   }
 
-  .tutorial-mode .ant-table-cell & {
+  :global(.tutorial-mode .ant-table-cell) & {
     margin-bottom: 0;
   }
 
@@ -77,13 +77,13 @@
       }
     }
 
-    .tutorial-mode & {
+    :global(.tutorial-mode) & {
       display: block;
       opacity: 1;
     }
   }
 
-  .ant-table-thead & {
+  :global(.ant-table-thead) & {
     //margin-bottom: 0;
 
     &__text-container {

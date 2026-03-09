@@ -17,3 +17,22 @@ export type FilterComponentType = {
     icon?: IconType;
     isCountry?: boolean;
 }
+
+// export type FilterType = {
+//     name: string;
+//     count: number;
+// }
+
+export type FilterType = {
+    id?: string;
+    name: string;
+    count: number;
+}
+
+export type BaseFilterMetadata = {
+    [key: string]: number | FilterType[];
+};
+
+export type BaseFiltersSelected = {
+    [key: string]: string[] | boolean | string | number | undefined;
+};

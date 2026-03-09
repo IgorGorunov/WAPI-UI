@@ -1,35 +1,34 @@
 import React from 'react';
-import Joyride, {ACTIONS, ORIGIN, STATUS, CallBackProps} from 'react-joyride';
-import './styles.scss';
+import Joyride, { ACTIONS, ORIGIN, STATUS, CallBackProps } from 'react-joyride';
 import useTourGuide from "@/context/tourGuideContext";
-import {TourGuidePages, TourGuideStepType} from "@/types/tourGuide";
+import { TourGuidePages, TourGuideStepType } from "@/types/tourGuide";
 
 
 type TourGuidePropsType = {
     steps: TourGuideStepType[];
     run: boolean;
-    setRunTourOpt?: (val:boolean)=>void;
+    setRunTourOpt?: (val: boolean) => void;
     pageName: TourGuidePages;
     disableAnimation?: boolean;
     //handleStop?: ()=>void;
 }
 
-export const handleTourGuideCallback = (props: CallBackProps, setRun: (val:boolean)=>void, setTutorialAsWatched, pageName) => {
+export const handleTourGuideCallback = (props: CallBackProps, setRun: (val: boolean) => void, setTutorialAsWatched, pageName) => {
     const { action, origin, status } = props;
 
     if (action === ACTIONS.CLOSE && origin === ORIGIN.KEYBOARD) {
         // do something
     }
 
-    if (status && (status===STATUS.FINISHED || status===STATUS.SKIPPED)) {
+    if (status && (status === STATUS.FINISHED || status === STATUS.SKIPPED)) {
         // Need to set our running state to false, so we can restart if we click start again.
         setRun(false);
         setTutorialAsWatched(pageName);
     }
 }
 
-const TourGuide: React.FC<TourGuidePropsType> = ({steps, run, setRunTourOpt, pageName, disableAnimation=true}) => {
-    const {setRunTour, setTutorialAsWatched} = useTourGuide();
+const TourGuide: React.FC<TourGuidePropsType> = ({ steps, run, setRunTourOpt, pageName, disableAnimation = true }) => {
+    const { setRunTour, setTutorialAsWatched } = useTourGuide();
 
     const handleStop = (data: CallBackProps) => {
         handleTourGuideCallback(data, setRunTourOpt ? setRunTourOpt : setRunTour, setTutorialAsWatched, pageName)
@@ -44,8 +43,8 @@ const TourGuide: React.FC<TourGuidePropsType> = ({steps, run, setRunTourOpt, pag
             run={run}
             steps={steps}
             callback={handleStop}
-            floaterProps={{disableAnimation: disableAnimation}}
-            locale={{last: 'Finish'}}
+            floaterProps={{ disableAnimation: disableAnimation }}
+            locale={{ last: 'Finish' }}
             styles={{
                 options: {
                     primaryColor: 'var(--color-light-blue-gray)',

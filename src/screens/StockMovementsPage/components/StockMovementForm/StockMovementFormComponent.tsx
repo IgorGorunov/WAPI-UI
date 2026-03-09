@@ -5,6 +5,7 @@ import useAuth from "@/context/authContext";
 import { AccessActions } from "@/types/auth";
 import useHintsTracking from "@/context/hintsContext";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import type { Control } from "react-hook-form";
 import Tabs from '@/components/Tabs';
 import Button, { ButtonSize, ButtonVariant } from "@/components/Button/Button";
 import { COUNTRIES } from "@/types/countries";
@@ -31,7 +32,6 @@ import {
 } from "@/types/stockMovements";
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import { cancelStockMovement, sendInboundData, updateInboundData } from "@/services/stockMovements";
-import { ApiResponseType } from "@/types/api";
 import { SingleOrderProductFormType } from "@/types/orders";
 import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
@@ -219,6 +219,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             status: docData?.status || '',
             statusAdditionalInfo: docData?.statusAdditionalInfo || '',
             seller: docData?.seller || '',
+            senderZIP: docData?.senderZIP || '',
+            receiverZIP: docData?.receiverZIP || '',
 
             products:
                 docData && docData?.products && docData.products.length
@@ -279,6 +281,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             return Array.from(new Set(receiverWarehouses)).map(item => ({ label: item, value: item }));
         }
     }, [docParameters, selectedSeller]);
+
     const onReceiverChange = (newReceiver: string) => {
         if (docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType === STOCK_MOVEMENT_DOC_TYPE.LOGISTIC_SERVICE) return;
         const newReceiverCountry = docParameters.receiver ? docParameters.receiver.filter(item => item.warehouse === newReceiver) : [];
@@ -336,7 +339,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
 
     const isQuantityActualHidden = !(docData?.status && docData?.status.toLowerCase() === 'finished');
 
-    const getProductColumns = (control: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const getProductColumns = (control: Control<any>) => {
         return [
             {
                 title: (
@@ -692,7 +696,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             receiverHide: !!docData?.receiverHide,
             sender: sender, receiver: receiver,
             isSenderDisabled: isSenderDisabled,
-        }), [docData, products, sender, receiver, isSenderDisabled]);
+            isEditMode: !isDisabled,
+        }), [docData, products, sender, receiver, isSenderDisabled, isDisabled]);
     //const productsTotalFields = useMemo(()=>ProductsTotalFields(), [docData]);
 
     const cargoFields = useMemo(() => CargoFields(

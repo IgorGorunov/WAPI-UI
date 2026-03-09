@@ -122,6 +122,8 @@ export type SingleStockMovementType = {
     receiverHide?: boolean;
     senderHide?: boolean;
     seller?: string;
+    senderZIP?: string;
+    receiverZIP?: string;
 }
 
 export type StockMovementParamsProductType = {
@@ -188,4 +190,6 @@ export type SingleStockMovementFormType = {
     statusAdditionalInfo?: string;
     draft?: boolean;
     attachedFiles?: AttachedFilesType[];
+    senderZIP?: string;
+    receiverZIP?: string;
 }

@@ -6,16 +6,9 @@ import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import OrderList from "./components/OrderList";
 import "./styles.scss";
-import {getOrderFilters, getOrders, getOrdersPage} from "@/services/orders";
 import Button from "@/components/Button/Button";
-import { DateRangeType } from "@/types/dashboard";
-import {
-    formatDateTimeToStringWithDotWithoutSeconds,
-    formatDateToString,
-    getLastFewDays,
-    getOrderedDateRange
-} from "@/utils/date";
-import {OrderType, OrderFilterDataType, FilterType, OrderTempPropsType} from "@/types/orders";
+import { formatDateTimeToStringWithDotWithoutSeconds, getLastFewDays } from "@/utils/date";
+import { OrderType, OrderFilterDataType } from "@/types/orders";
 import Modal from "@/components/Modal";
 import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
@@ -31,235 +24,156 @@ import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 import { isTabAllowed } from "@/utils/tabs";
-
+import { usePagedListState, usePagedData, useFilterMetadata } from "@/components/PagedList";
+import { OrdersFilters } from "./types";
 
 const OrdersPage = () => {
     const Router = useRouter();
     const { tenantData: { alias, orderTitles } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
 
-    const [current, setCurrent] = React.useState(1);
+    // universal state management via url
+    const { state, updatePeriod, updateFilters, updateSearch, updatePage, updatePageSize, updateSort, clearAllFilters } = usePagedListState<OrdersFilters>(
+        {} as Partial<OrdersFilters>, // default filters
+        {
+            defaultPageSize: 10,
+            defaultDateRange: { startDate: getLastFewDays(new Date(), 5), endDate: new Date() },
+            defaultSortBy: 'date',
+            defaultSortOrder: 'desc',
+        }
+    );
 
+    // fetch paginated orders
+    const { data: orders, count: totalOrders, isLoading: isLoadingOrders } = usePagedData<OrderType>(
+        '/GetPagedOrdersList',
+        state,
+        { token, alias, ui, enabled: !!token }
+    );
+
+    console.log('121212', orders.length, totalOrders)
+
+    // fetch filter metadata
+    const { metadata: filterMetadata, isLoading: isLoadingFilters } = useFilterMetadata<OrderFilterDataType>(
+        '/GetPagedFilters',
+        { startDate: state.startDate, endDate: state.endDate },
+        { token, alias, ui, enabled: !!token }
+    );
+
+    const isLoading = isLoadingOrders || isLoadingFilters;
+
+    // track forbidden tabs
     const [forbiddenTabs, setForbiddenTabs] = useState<string[]>([]);
     useEffect(() => {
-        setForbiddenTabs(getForbiddenTabs(AccessObjectTypes["Orders/Fullfillment"]))
+        setForbiddenTabs(getForbiddenTabs(AccessObjectTypes["Orders/Fullfillment"]));
     }, []);
 
+    // handle direct order uid navigation (from emails, etc.)
     useEffect(() => {
         const { uuid } = Router.query;
-
         if (uuid) {
             handleEditOrder(Array.isArray(uuid) ? uuid[0] : uuid);
-            Router.replace('/orders');
+            Router.replace('/orders', undefined, { shallow: true });
         }
-    }, [Router.query]);
+    }, [Router.query.uuid]);
 
-    const [curPeriod, setCurrentPeriod] = useState<DateRangeType | null>(null);
-
-    useEffect(() => {
-        // const ordersPeriodFromCookie = Cookies.get('orders-period');
-        // if (ordersPeriodFromCookie) {
-        //     const period = JSON.parse(ordersPeriodFromCookie);
-        //     if (period && period?.startDate && period.endDate) {
-        //         setCurrentPeriod({startDate: new Date(period.startDate), endDate: new Date(period.endDate)});
-        //         return;
-        //     }
-        // }
-        const today = new Date();
-        const firstDay = getLastFewDays(today, 5);
-        setCurrentPeriod({ startDate: firstDay, endDate: today });
-    }, []);
-
-    const setCurrentPeriodFn = (period: DateRangeType) => {
-        setCurrentPeriod(period);
-        //const exp = new Date(new Date().getTime() + 15 * 60 * 1000);
-        // Cookies.set('orders-period', JSON.stringify(period), {expires: 1/24});
-    }
-
-    const [availableFilters, setAvailableFilters] = useState<OrderFilterDataType | null>(null)
-    const [ordersData, setOrdersData,] = useState<OrderType[] | null>(null);
-    const [filteredOrders, setFilteredOrders] = useState<OrderType[] | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    //tour guide
+    // Tour guide
     const { runTour, setRunTour, isTutorialWatched } = useTourGuide();
-
     useEffect(() => {
         if (!isTutorialWatched(TourGuidePages.Orders)) {
-            if (!isLoading && ordersData) {
+            if (!isLoading && orders && orders.length > 0) {
                 setTimeout(() => setRunTour(true), 1000);
             }
         }
-    }, [isLoading]);
+    }, [isLoading, orders]);
 
     const [steps, setSteps] = useState([]);
     useEffect(() => {
-        setSteps(ordersData?.length ? tourGuideStepsOrders : tourGuideStepsOrdersNoDocs);
-    }, [ordersData]);
+        setSteps(orders?.length ? tourGuideStepsOrders : tourGuideStepsOrdersNoDocs);
+    }, [orders]);
 
-    //import files modal
+    // import modal
     const [showImportModal, setShowImportModal] = useState(false);
-    const onImportModalClose = () => {
-        setShowImportModal(false);
-    }
+    const onImportModalClose = () => setShowImportModal(false);
 
-    //single order data
+    // order form modal
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [orderUuid, setOrderUuid] = useState('');
     const [isOrderNew, setIsOrderNew] = useState(true);
+    const onOrderModalClose = () => setShowOrderModal(false);
 
-    const onOrderModalClose = () => {
-        setShowOrderModal(false);
-    }
-
-    //status modal
+    // status modal
     const [showStatusModal, setShowStatusModal] = useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
-    const closeErrorModal = useCallback(() => {
-        setShowStatusModal(false);
-    }, []);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) });
+    const closeErrorModal = useCallback(() => setShowStatusModal(false), []);
 
-    useEffect(() => {
-        const fetchFilters = async () => {
-            if (!curPeriod || !token) return;
-            try {
-                setIsLoading(true);
-                const dateRange = getOrderedDateRange(curPeriod);
-                const filterProps: OrderTempPropsType = {
-                    tempToken: "qwert123456BVCXZ",
-                    startDate: dateRange.startDate,
-                    endDate: dateRange.endDate,
-                    client: "1207df90-c9c2-11ee-af7c-04421a1aac94"
-                }
-
-                const res = await getOrderFilters(filterProps);
-                if (res && res.data) {
-                    setAvailableFilters(res.data);
-                    console.log('FILTERS: ', res.data);
-                } else {
-                    setAvailableFilters(null);
-                }
-
-
-            } catch (error) {
-                console.error("Error fetching filters:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-
-        fetchFilters();
-    }, [token, ui, curPeriod]);
-
-    const fetchData = useCallback(async () => {
-        if (!curPeriod) return;
-        console.log('FETCHING DATA  --  START: ', new Date().toISOString());
-        try {
-            setIsLoading(true);
-            setOrdersData([]);
-            const requestData = { token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
-
-            try {
-                sendUserBrowserInfo({ ...getBrowserInfo('GetOrdersList', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
-            } catch { }
-
-            if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ListView)) {
-                setOrdersData([]);
-
-                return null;
-            }
-
-            //temporarily
-            //const temRequestData =
-
-            const res = await getOrders(superUser && ui ? { ...requestData, ui } : requestData);
-
-            if (res && "data" in res) {
-                setOrdersData(res.data.map(item => ({ ...item, key: item.uuid })).sort((a: OrderType, b: OrderType) => a.date > b.date ? -1 : 1));
-                console.log('FETCHING DATA  --  FETCHED: ', new Date().toISOString());
-            } else {
-                console.error("API did not return expected data");
-            }
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setIsLoading(false);
-        }
-        setCurrent(1);
-
-    }, [token, curPeriod, ui]);
-
-    useEffect(() => {
-        fetchData();
-    }, [token, curPeriod, ui]);
-
-
-
+    // edit order handler
     const handleEditOrder = (uuid: string) => {
+        console.log('click ', uuid, orderUuid, showOrderModal);
         setIsOrderNew(false);
         setOrderUuid(uuid);
+
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject)) {
             try {
-                sendUserBrowserInfo({ ...getBrowserInfo('ViewEditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: { uuid: uuid } });
+                sendUserBrowserInfo({ ...getBrowserInfo('ViewEditOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: { uuid } });
             } catch { }
 
-            setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal })
-            setShowStatusModal(true);
-            return null;
-        } else {
-            setOrdersData(prevState => {
-                if (prevState && prevState.length) {
-                    const el = prevState.filter(item => item.uuid === uuid);
-
-                    if (el.length) {
-                        return [...prevState.filter(item => item.uuid !== uuid), {
-                            ...el[0],
-                            notifications: false
-                        }].sort((a, b) => a.wapiTrackingNumber < b.wapiTrackingNumber ? 1 : -1)
-                    }
-                    return [...prevState];
-                }
-                return [];
+            setModalStatusInfo({
+                statusModalType: STATUS_MODAL_TYPES.ERROR,
+                title: "Warning",
+                subtitle: `You have limited access to this action`,
+                onClose: closeErrorModal
             });
-
-            setShowOrderModal(true);
+            setShowStatusModal(true);
+            return;
         }
-    }
 
+        setShowOrderModal(true);
+    };
+
+    useEffect(() => {
+        console.log('showOrderModal ', showOrderModal, 'orderUuid ', orderUuid);
+    }, [showOrderModal, orderUuid]);
+
+    // Add order handler
     const handleAddOrder = () => {
         setIsOrderNew(true);
         setOrderUuid(null);
+
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.CreateObject)) {
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('CreateOrder', AccessObjectTypes["Orders/Fullfillment"], AccessActions.CreateObject), body: {} });
             } catch { }
-            return null;
-        } else {
-            setShowOrderModal(true);
+            return;
         }
-    }
+
+        setShowOrderModal(true);
+    };
+
+    // Import handler
     const handleImportXLS = () => {
-        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ExportList)) {
+        if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.BulkCreate)) {
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('BulkOrdersCreate', AccessObjectTypes["Orders/Fullfillment"], AccessActions.BulkCreate), body: {} });
             } catch { }
-            return null;
-        } else {
-            setShowImportModal(true)
+            return;
         }
-    }
+        setShowImportModal(true);
+    };
 
+    // Export handler
     const handleExportXLS = async () => {
         try {
-            sendUserBrowserInfo({ ...getBrowserInfo('ExportFulfilmentList', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ExportList), body: { startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) } });
+            sendUserBrowserInfo({
+                ...getBrowserInfo('ExportFulfilmentList', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ExportList),
+                body: { startDate: state.startDate, endDate: state.endDate }
+            });
         } catch { }
 
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ExportList)) {
-            return null;
+            return;
         }
 
-        const filteredData = filteredOrders.map(item => ({
+        const filteredData = orders.map(item => ({
             [orderTitles.trackingNumberTitle]: item.wapiTrackingNumber,
             'Status': item.status,
             "Status additional info": item.statusAdditionalInfo,
@@ -280,7 +194,6 @@ const OrdersPage = () => {
             "Receiver Phone": superUser ? '*' : item.receiverPhone,
             "Last update date": item.lastUpdateDate.split("T").join(" "),
             "Last trouble Status": `${item.troubleStatuses.length ? item.troubleStatuses[item.troubleStatuses.length - 1].period.split("T").join(" ") + '  ' + (item.troubleStatuses[item.troubleStatuses.length - 1].troubleStatus) : ""}`,
-            // "Logistic comment": `${item.logisticComment ? (item.logisticComment+(item.warehouseAdditionalInfo ? '; '+item.warehouseAdditionalInfo : '')) : item.warehouseAdditionalInfo ? item.warehouseAdditionalInfo : ''}`,
             "Logistic comment": `${item.logisticComment}`,
             "Tracking link": item.trackingNumber ? item.trackingLink : '',
             "Has claims": item.claims.length ? "+" : ""
@@ -294,45 +207,96 @@ const OrdersPage = () => {
             filteredData.forEach(row => delete row["Has claims"]);
         }
 
-        // Dynamic import - only loads when export button is clicked
         const { exportFileXLS } = await import('@/utils/files');
         await exportFileXLS(filteredData, "Orders");
-    }
+    };
+
+    // Refresh orders after create/update
+    const handleRefresh = () => {
+        // The usePagedData hook will automatically refetch when we force a re-render
+        // We can trigger this by updating the page to itself
+        updatePage(state.page);
+    };
 
     return (
         <Layout hasHeader hasFooter>
             <SeoHead title='Orders (fulfillments)' description='Our orders page' />
             <div className="page-component orders-page__container">
                 {isLoading && (<Loader />)}
-                <Header pageTitle='Fulfillment' toRight needTutorialBtn >
-                    <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddOrder}>Add order</Button>
-                    <Button classNames='import-orders' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
-                    <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
+
+                <Header pageTitle='Fulfillment' toRight needTutorialBtn>
+                    <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddOrder}>
+                        Add order
+                    </Button>
+                    <Button classNames='import-orders' icon="import-file" iconOnTheRight onClick={handleImportXLS}>
+                        Import xls
+                    </Button>
+                    <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>
+                        Export list
+                    </Button>
                 </Header>
 
-                {ordersData ? <OrderList orders={ordersData}
-                    currentRange={curPeriod}
-                    setCurrentRange={setCurrentPeriodFn}
-                    setFilteredOrders={setFilteredOrders}
-                    handleEditOrder={handleEditOrder}
-                    handleRefresh={() => fetchData()}
-                    current={current}
-                    setCurrent={setCurrent}
-                    forbiddenTabs={getForbiddenTabs(AccessObjectTypes["Orders/Fullfillment"])}
-                /> : null}
+                {orders && (
+                    <OrderList
+                        orders={orders}
+                        isLoading={isLoading}
+                        totalOrders={totalOrders}
+                        filterMetadata={filterMetadata}
+                        currentPage={state.page}
+                        pageSize={state.limit}
+                        searchTerm={state.search}
+                        fullTextSearch={state.fullTextSearch}
+                        sortBy={state.sortBy}
+                        sortOrder={state.sortOrder}
+                        selectedFilters={state.filters}
+                        onPageChange={updatePage}
+                        onPageSizeChange={updatePageSize}
+                        onSearchChange={updateSearch}
+                        onSortChange={updateSort}
+                        onFiltersChange={updateFilters}
+                        onClearFilters={clearAllFilters}
+                        handleEditOrder={handleEditOrder}
+                        handleRefresh={handleRefresh}
+                        forbiddenTabs={forbiddenTabs}
+                        startDate={state.startDate}
+                        endDate={state.endDate}
+                        onPeriodChange={updatePeriod}
+                    />
+                )}
             </div>
-            {showOrderModal && (orderUuid || isOrderNew) &&
-                <OrderForm orderUuid={orderUuid} closeOrderModal={onOrderModalClose} closeOrderModalOnSuccess={() => { onOrderModalClose(); fetchData(); }} />
-            }
-            {showImportModal &&
-                <Modal title={`Import xls`} onClose={onImportModalClose} >
-                    <ImportFilesBlock file='OrderTemplate.xlsx' importFilesType={ImportFilesType.ORDERS} closeModal={() => setShowImportModal(false)} />
+
+            {/* Order Form Modal (unchanged) */}
+            {showOrderModal && (orderUuid || isOrderNew) && (
+                <OrderForm
+                    orderUuid={orderUuid}
+                    closeOrderModal={onOrderModalClose}
+                    closeOrderModalOnSuccess={() => {
+                        onOrderModalClose();
+                        handleRefresh();
+                    }}
+                />
+            )}
+
+            {/* Import Modal */}
+            {showImportModal && (
+                <Modal title={`Import xls`} onClose={onImportModalClose}>
+                    <ImportFilesBlock
+                        file='OrderTemplate.xlsx'
+                        importFilesType={ImportFilesType.ORDERS}
+                        closeModal={() => setShowImportModal(false)}
+                    />
                 </Modal>
-            }
-            {ordersData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Orders} /> : null}
+            )}
+
+            {/* Tour Guide */}
+            {orders && runTour && steps ? (
+                <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Orders} />
+            ) : null}
+
+            {/* Status Modal */}
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </Layout>
-    )
-}
+    );
+};
 
 export default OrdersPage;

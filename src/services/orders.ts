@@ -3,7 +3,7 @@ import {
     OrderCommentType, OrderFiltersSelectedType,
     OrderParamsType,
     OrderType, OrderFilterDataType, PickupPointsType,
-    SingleOrderType, OrderTempPropsType
+    SingleOrderType, OrderTempPropsType, PagedOrderListType
 } from "@/types/orders";
 import type {BulkCreateRequestType} from '@/types/utility';
 import {api} from "@/services/api";
@@ -22,7 +22,7 @@ const getOrders = async (
         // page: number;
         // limit: number;
     }
-): Promise<ApiResponseType<OrderType[]>> => {
+): Promise<ApiResponseType<PagedOrderListType>> => {
     return api.post(`/GetOrdersList`, data);
     // try {
     //     const response: unknown = await api.post(
@@ -277,7 +277,7 @@ export const getOrdersPage = async (
         page: number;
         limit: number;
         ui?: string;
-        filters?: Partial<OrderFiltersSelectedType>;
+        filter?: Partial<OrderFiltersSelectedType>;
     }
 ): Promise<ApiResponseType<OrderType[]>> => {
     return api.post(`/GetPagedOrdersList`, data);

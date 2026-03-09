@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Icon from "@/components/Icon";
 import './styles.scss';
-import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { getHeaderNameById, getVariantColumnsByReportType, transformReportType } from '../utils';
 
 import {

@@ -7,6 +7,7 @@ import type {
 import type { TicketType } from "@/types/tickets";
 import type { NoteType } from "@/types/notes";
 import type { UserAccessActionType } from "@/context/authContext";
+import { BaseFilterMetadata, BaseFiltersSelected, FilterType } from "@/types/filters";
 
 export type ClaimType = {
     date: string;
@@ -355,24 +356,15 @@ export type CreateOrderRequestType = {
 }
 
 ////// pagination ///////
-export type TroubleStatusFilterDataType = {
-    name: string;
-    count: number;
-}
 
-export type FilterType = {
-    id: string;
-    name: string;
-    count: number;
-}
 
 // export type CountryFilterDataType = StatusFilterDataType;
 // export type WarehouseFilterDataType = StatusFilterDataType
 
-export type OrderFilterDataType = {
+export type OrderFilterDataType = BaseFilterMetadata & {
     tickets: number;
     orders: number;
-    troubleStatuses: TroubleStatusFilterDataType[];
+    troubleStatuses: FilterType[];
     selfCollect: number;
     statuses: FilterType[];
     receiverCountries: FilterType[];
@@ -387,7 +379,7 @@ export type OrderFilterDataType = {
     claims: number;
 }
 
-export type OrderFiltersSelectedType = {
+export type OrderFiltersSelectedType = BaseFiltersSelected & {
     claims: boolean;
     commentToCourierService: boolean;
     customerReturns: boolean;
@@ -397,11 +389,11 @@ export type OrderFiltersSelectedType = {
     selfCollect: boolean;
 
     troubleStatus: string[];
-    CourierService: string[];
-    Marketplace: string[];
-    ReceiverCountry: string[];
-    Status: string[];
-    Warehouse: string[];
+    courierService: string[];
+    marketplace: string[];
+    receiverCountry: string[];
+    status: string[];
+    warehouse: string[];
 }
 
 //temporary type
@@ -413,4 +405,12 @@ export type OrderTempPropsType = {
     page?: number;
     limit?: number;
     filters?: Partial<OrderFiltersSelectedType>;
+
+    alias?: string;
+    ui?: string;
+}
+
+export type PagedOrderListType = {
+    count: number;
+    data: OrderType[];
 }

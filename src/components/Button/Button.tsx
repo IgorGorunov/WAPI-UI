@@ -20,6 +20,8 @@ export const enum ButtonVariant {
   PRIMARY = 'primary',
   SECONDARY = 'secondary',
   FILTER = 'filter',
+  //tertiary, quaternary, quinary, senary, septenary, octonary, nonary, and denary
+  TETRIARY = 'tertiary',
 }
 
 export type ButtonType = ComponentProps<"button"> & {

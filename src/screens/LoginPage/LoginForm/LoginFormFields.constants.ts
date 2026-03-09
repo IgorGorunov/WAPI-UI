@@ -6,7 +6,7 @@ export const formFields: FormBuilderType[] = [
         type: "text",
         name: "login",
         label: "Your email",
-        placeholder: "laithoff@gmail.com",
+        placeholder: "",
         rules: {
             required: "Email is required!",
             // pattern: {
@@ -29,7 +29,7 @@ export const formFields: FormBuilderType[] = [
         type: "password",
         name: "password",
         label: "Your password",
-        placeholder: "********",
+        placeholder: "",
         rules: {
             required:  "Please, enter valid password!",
             minLength: {

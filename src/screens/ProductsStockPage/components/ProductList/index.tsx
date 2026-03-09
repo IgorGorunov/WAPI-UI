@@ -1,43 +1,42 @@
-import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Table, Pagination, Tooltip, Popover, TableColumnProps} from 'antd';
-import {ColumnType} from "antd/es/table";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
+import { Table, Pagination, Tooltip, Popover, TableColumnProps } from 'antd';
+import { ColumnType } from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
-import {ProductStockType} from "@/types/products";
+import { ProductStockType } from "@/types/products";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import {PageOptions} from '@/constants/pagination';
+import { PageOptions } from '@/constants/pagination';
 import SearchField from "@/components/SearchField";
-import Button, {ButtonVariant} from "@/components/Button/Button";
+import Button, { ButtonVariant } from "@/components/Button/Button";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {FormFieldTypes} from "@/types/forms";
+import { FormFieldTypes } from "@/types/forms";
 import SearchContainer from "@/components/SearchContainer";
-import {Countries} from "@/types/countries";
+import { Countries } from "@/types/countries";
 import FiltersContainer from "@/components/FiltersContainer";
 import SimplePopup from "@/components/SimplePopup";
-import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import { useIsTouchDevice } from "@/hooks/useTouchDevice";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
-import {FilterComponentType} from "@/types/filters";
+import { FilterComponentType } from "@/types/filters";
 type ProductListType = {
     products: ProductStockType[];
     setFilteredProducts: React.Dispatch<React.SetStateAction<ProductStockType[]>>;
-    setWarehouseForExport: (warehouse: string)=>void
+    setWarehouseForExport: (warehouse: string) => void
 }
 
-const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, setWarehouseForExport}) => {
-    const {sellersList, needSeller} = useAuth();
+const ProductList: React.FC<ProductListType> = ({ products, setFilteredProducts, setWarehouseForExport }) => {
+    const { sellersList, needSeller } = useAuth();
 
     const [animating, setAnimating] = useState(false);
     const isTouchDevice = useIsTouchDevice();
 
     // Popup
-    const getPopupItems = useCallback((hoveredReserve)=> {
+    const getPopupItems = useCallback((hoveredReserve) => {
         if (!hoveredReserve) return [];
 
         return hoveredReserve.reservedRows.map(stockItem => ({
@@ -45,9 +44,9 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             title: stockItem.document,
             description: stockItem.reserved,
         }));
-    },[]);
+    }, []);
 
-    const getOnShippingPopupItems = useCallback((hoveredOnShipping: ProductStockType)=> {
+    const getOnShippingPopupItems = useCallback((hoveredOnShipping: ProductStockType) => {
         if (!hoveredOnShipping) return [];
 
         return hoveredOnShipping.onShippingRows.map(stockItem => ({
@@ -57,7 +56,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             docUuid: stockItem.uid,
             docType: stockItem.type,
         }));
-    },[]);
+    }, []);
 
     // Pagination
     const [current, setCurrent] = React.useState(1);
@@ -91,14 +90,14 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
 
     const calcOrderAmount = useCallback((property: string, value: string) => {
         return products.filter(product => product[property].toLowerCase() === value.toLowerCase()).length || 0;
-    },[products]);
+    }, [products]);
 
-    const sellersOptions = useMemo(()=>{
-        return [{label: 'All sellers', value: 'All sellers', amount: products.length}, ...sellersList.map(item=>({...item, amount: calcOrderAmount('seller', item.value)}))];
+    const sellersOptions = useMemo(() => {
+        return [{ label: 'All sellers', value: 'All sellers', amount: products.length }, ...sellersList.map(item => ({ ...item, amount: calcOrderAmount('seller', item.value) }))];
     }, [sellersList, calcOrderAmount])
 
     const getSellerName = useCallback((sellerUid: string) => {
-        const t = sellersList.find(item=>item.value===sellerUid);
+        const t = sellersList.find(item => item.value === sellerUid);
         return t ? t.label : ' - ';
     }, [sellersList]);
 
@@ -107,7 +106,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
 
     const uniqueWarehouses = useMemo(() => {
-        const warehouses = products.filter(item=>selectedSeller==='All sellers' || selectedSeller===item.seller).map(product => product.warehouse);
+        const warehouses = products.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(product => product.warehouse);
         return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
     }, [products, selectedSeller]);
     uniqueWarehouses.sort();
@@ -130,7 +129,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
     const [filterCountry, setFilterCountry] = useState<string[]>([]);
 
     const uniqueCountries = useMemo(() => {
-        const countries = products.filter(item=>selectedSeller==='All sellers' || selectedSeller===item.seller).map(product => product.country);
+        const countries = products.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(product => product.country);
         return Array.from(new Set(countries)).filter(country => country).sort();
     }, [products, selectedSeller]);
     uniqueCountries.sort();
@@ -160,8 +159,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             setFilterState: setFilterWarehouse,
             isOpen: isOpenFilterWarehouse,
             setIsOpen: setIsOpenFilterWarehouse,
-            onClose: ()=>setFilterWarehouse([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)},
+            onClose: () => setFilterWarehouse([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterWarehouse(true) },
         },
         {
             filterTitle: 'Country',
@@ -173,8 +172,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             setFilterState: setFilterCountry,
             isOpen: isOpenFilterCountry,
             setIsOpen: setIsOpenFilterCountry,
-            onClose: ()=>setFilterCountry([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)},
+            onClose: () => setFilterCountry([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterCountry(true) },
         },
     ] as FilterComponentType[];
 
@@ -184,7 +183,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         name: 'fullTextSearch',
         label: 'Full text search',
         checked: fullTextSearch,
-        onChange: ()=>{setFullTextSearch(prevState => !prevState)},
+        onChange: () => { setFullTextSearch(prevState => !prevState) },
         classNames: 'full-text-search-toggle',
         hideTextOnMobile: true,
     }
@@ -203,7 +202,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         //setIsFiltersVisible(false);
     }
 
-    const handleFilterChange = (newSearchTerm :string) => {
+    const handleFilterChange = (newSearchTerm: string) => {
         setSearchTerm(newSearchTerm);
     };
 
@@ -215,8 +214,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 const value = product[key];
                 return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
             });
-            const matchesWarehouse = !filterWarehouse.length || filterWarehouse.map(item=>item.toLowerCase()).includes(product.warehouse.toLowerCase());
-            const matchesCountry = !filterCountry.length || filterCountry.map(item=>item.toLowerCase()).includes(product.country.toLowerCase());
+            const matchesWarehouse = !filterWarehouse.length || filterWarehouse.map(item => item.toLowerCase()).includes(product.warehouse.toLowerCase());
+            const matchesCountry = !filterCountry.length || filterCountry.map(item => item.toLowerCase()).includes(product.country.toLowerCase());
             const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === product.seller;
 
             return matchesSearch && matchesWarehouse && matchesCountry && matchesSeller;
@@ -242,13 +241,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
         setWarehouseForExport(filterWarehouse.join('_'))
     }, [filterWarehouse]);
 
-    const curWidth = useMemo(()=>{
+    const curWidth = useMemo(() => {
         const displayedData = filteredProducts.slice((current - 1) * pageSize, current * pageSize);
-        const maxAmount = displayedData.reduce((acc,item)=> Math.max(acc, item.reserved),0).toString().length;
+        const maxAmount = displayedData.reduce((acc, item) => Math.max(acc, item.reserved), 0).toString().length;
 
-        const width = 63+maxAmount*9;
-        return width.toString()+'px';
-    },[current, pageSize, filteredProducts]);
+        const width = 63 + maxAmount * 9;
+        return width.toString() + 'px';
+    }, [current, pageSize, filteredProducts]);
 
 
     //Columns
@@ -264,8 +263,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -301,12 +300,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             title: <TitleColumn title="" minWidth="15px" maxWidth="15px" contentPosition="center"
             />,
             render: (text: string) => (
-               <TableCell
+                <TableCell
                     minWidth="15px"
                     maxWidth="auto"
                     contentPosition="center"
                     childrenBefore={<span className={`fi fi-${text.toLowerCase()} flag-icon`}></span>}>
-               </TableCell>
+                </TableCell>
             ),
             dataIndex: 'country',
             key: 'country',
@@ -318,16 +317,16 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Code of warehouse" >
-                        <span style={{display: 'flex', alignItems: 'center'}}>
-                            <span><Icon name={"warehouse"}/></span>
-                            {sortColumn==='warehouse' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='warehouse' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        <span style={{ display: 'flex', alignItems: 'center' }}>
+                            <span><Icon name={"warehouse"} /></span>
+                            {sortColumn === 'warehouse' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'warehouse' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </span>
                     </Tooltip>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="60px" maxWidth="60px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start" />
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
@@ -345,13 +344,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="A unique code for tracking each product in inventory">
                         <>
                             <span>SKU</span>
-                            {sortColumn==='sku' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='sku' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'sku' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'sku' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
-                />,
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="120px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="120px" contentPosition="start" />
             ),
             dataIndex: 'sku',
             key: 'sku',
@@ -371,13 +370,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="A unique code for tracking each product in inventory">
                         <>
                             <span>Name</span>
-                            {sortColumn==='name' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='name' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'name' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'name' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="150px" maxWidth="500px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="150px" maxWidth="500px" contentPosition="start" />
             ),
             dataIndex: 'name',
             key: 'name',
@@ -396,13 +395,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Available products for new orders">
                         <>
                             <span>Available</span>
-                            {sortColumn==='available' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='available' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'available' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'available' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px"  contentPosition="center"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center" />
             ),
             dataIndex: 'available',
             key: 'available',
@@ -420,12 +419,12 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Products that were reserved for orders or movements">
                         <>
                             <span>Reserve</span>
-                            {sortColumn==='reserved' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='reserved' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'reserved' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'reserved' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
-                />,
-            render: (text: number, record: ProductStockType) =>  (
+            />,
+            render: (text: number, record: ProductStockType) => (
                 <TableCell minWidth="80px" maxWidth="80px" contentPosition="center"
                     childrenBefore={
                         <Popover
@@ -439,8 +438,8 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                             placement="left"
                             overlayClassName="doc-list-popover"
                         >
-                            <span style={{width: curWidth}} className="products-cell-style">{text} <Icon
-                                name="info"/></span>
+                            <span style={{ width: curWidth }} className="products-cell-style">{text} <Icon
+                                name="info" /></span>
                         </Popover>
                     }
                 />
@@ -462,13 +461,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Damaged products">
                         <>
                             <span>Damaged</span>
-                            {sortColumn==='damaged' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='damaged' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'damaged' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'damaged' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
-                />,
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center" />
             ),
             dataIndex: 'damaged',
             key: 'damaged',
@@ -487,13 +486,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Products past usability">
                         <>
                             <span>Expired</span>
-                            {sortColumn==='expired' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='expired' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'expired' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'expired' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
-                />,
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="70px" maxWidth="70px" contentPosition="center"/>
+                <TableCell value={text} minWidth="70px" maxWidth="70px" contentPosition="center" />
             ),
             dataIndex: 'expired',
             key: 'expired',
@@ -512,13 +511,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="Products that are being returned to the warehouse">
                         <>
                             <span>Returning</span>
-                            {sortColumn==='forPlacement' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='forPlacement' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'forPlacement' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'forPlacement' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
-                />,
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center" />
             ),
             dataIndex: 'forPlacement',
             key: 'forPlacement',
@@ -535,31 +534,31 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products currently in transit in stock movements">
-                        <span style={{display: 'flex', alignItems: 'center'}}>
+                        <span style={{ display: 'flex', alignItems: 'center' }}>
                             <span>On shipping</span>
-                            {sortColumn==='onShipping' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='onShipping' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'onShipping' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'onShipping' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </span>
                     </Tooltip>}
-                />,
+            />,
             render: (text: string, record: ProductStockType) => (
                 <TableCell minWidth="60px" maxWidth="60px" contentPosition="center"
-                           childrenBefore={
-                               <Popover
-                                   content={record.onShipping ? <SimplePopup
-                                       items={getOnShippingPopupItems(record)}
-                                       width={300}
-                                       hasCopyBtn={true}
-                                       needScroll={true}
-                                   /> : null}
-                                   trigger={isTouchDevice ? 'click' : 'hover'}
-                                   placement="left"
-                                   overlayClassName="doc-list-popover"
-                               >
-                            <span style={{width: curWidth}} className="products-cell-style">{text} <Icon
-                                name="info"/></span>
-                               </Popover>
-                           }
+                    childrenBefore={
+                        <Popover
+                            content={record.onShipping ? <SimplePopup
+                                items={getOnShippingPopupItems(record)}
+                                width={300}
+                                hasCopyBtn={true}
+                                needScroll={true}
+                            /> : null}
+                            trigger={isTouchDevice ? 'click' : 'hover'}
+                            placement="left"
+                            overlayClassName="doc-list-popover"
+                        >
+                            <span style={{ width: curWidth }} className="products-cell-style">{text} <Icon
+                                name="info" /></span>
+                        </Popover>
+                    }
                 />
             ),
             dataIndex: 'onShipping',
@@ -579,13 +578,13 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     <Tooltip title="All stock including all product statuses">
                         <>
                             <span>Total</span>
-                            {sortColumn==='total' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='total' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'total' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'total' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
-                />,
+            />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="center"/>
+                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="center" />
             ),
             dataIndex: 'total',
             key: 'total',
@@ -602,19 +601,19 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <div className='search-block'>
-                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
 
-            { sellersList && needSeller() ?
+            {sellersList && needSeller() ?
                 <div className='seller-filter-block'>
                     <SelectField
                         key='seller-filter'
                         name='selectedSeller'
                         label='Seller: '
                         value={selectedSeller}
-                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        onChange={(val) => setSelectedSeller(val as string)}
                         //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
                         options={sellersOptions}
                         classNames='seller-filter full-sized'
@@ -647,7 +646,7 @@ const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, 
                     }))}
                     columns={columns}
                     pagination={false}
-                    scroll={{y:700}}
+                    scroll={{ y: 700 }}
                     showSorterTooltip={false}
                 />
                 <div className="order-products-total">

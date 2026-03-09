@@ -1,14 +1,15 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import './styles.scss'
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import './styles.module.scss'
+// Note: due to the number of classes we will just let it be global for now if it's too complex, wait, actually I must import it as styles and use it.
+import styles from './styles.module.scss';
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
-import {Routes} from "@/types/routes";
-import Router, {useRouter} from "next/router";
+import { Routes } from "@/types/routes";
+import Router, { useRouter } from "next/router";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import Modal from "@/components/Modal";
-import UserList, {UserType} from "@/components/ProfileDropdown/UserList";
-import {ApiResponseType} from "@/types/api";
-import {getUserList} from "@/services/auth";
+import UserList, { UserType } from "@/components/ProfileDropdown/UserList";
+import { getUserList } from "@/services/auth";
 import Loader from "@/components/Loader";
 import useTenant from "@/context/tenantContext";
 
@@ -30,13 +31,13 @@ const ProfileDropdown = () => {
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    useOutsideClick(dropdownRef, ()=>setIsOpen(false));
+    useOutsideClick(dropdownRef, () => setIsOpen(false));
 
-    const fetchUsers = useCallback(async()=> {
+    const fetchUsers = useCallback(async () => {
         try {
             setIsLoading(true);
 
-            const res = await getUserList({token, alias: tenantData.alias}
+            const res = await getUserList({ token, alias: tenantData.alias }
             );
 
             if (res && "data" in res) {
@@ -50,7 +51,7 @@ const ProfileDropdown = () => {
         } finally {
             setIsLoading(false);
         }
-    },[token] );
+    }, [token]);
 
 
     const handleOpenProfile = async () => {
@@ -58,7 +59,7 @@ const ProfileDropdown = () => {
     }
 
 
-    const handleLogOut = async() => {
+    const handleLogOut = async () => {
         logout();
         await Router.push(Routes.Login);
     }
@@ -69,39 +70,39 @@ const ProfileDropdown = () => {
     }
 
     return (
-        <div className="profile-dropdown" ref={dropdownRef}>
+        <div className={styles["profile-dropdown"]} ref={dropdownRef}>
             {isLoading && <Loader />}
             {userStatus == 'user' ?
                 <div>
-                    <button className='profile-dropdown__user card' onClick={() => setIsOpen(!isOpen)}>
-                        {superUser ? <Icon name='admin'/> : <Icon name='user'/>}
-                        <span className='user-name'>{displayedName}</span>
+                    <button className={`${styles['profile-dropdown__user']} card`} onClick={() => setIsOpen(!isOpen)}>
+                        {superUser ? <Icon name='admin' /> : <Icon name='user' />}
+                        <span className={styles['user-name']}>{displayedName}</span>
                     </button>
                     {isOpen ? (
-                        <ul className="profile-dropdown__menu card">
-                            <li key='profile' className="profile-dropdown__menu-item"> <button className="profile-dropdown__menu-item-btn" onClick={handleOpenProfile}><Icon name='profile' /> Profile</button></li>
-                            {superUser ? <li key='user-list' className="profile-dropdown__menu-item">
-                                <button className="profile-dropdown__menu-item-btn" onClick={handleUserList}><Icon
-                                    name='lines'/>Switch user
+                        <ul className={`${styles["profile-dropdown__menu"]} card`}>
+                            <li key='profile' className={styles["profile-dropdown__menu-item"]}> <button className={styles["profile-dropdown__menu-item-btn"]} onClick={handleOpenProfile}><Icon name='profile' /> Profile</button></li>
+                            {superUser ? <li key='user-list' className={styles["profile-dropdown__menu-item"]}>
+                                <button className={styles["profile-dropdown__menu-item-btn"]} onClick={handleUserList}><Icon
+                                    name='lines' />Switch user
                                 </button>
                             </li> : null}
-                            <li key='logout' className="profile-dropdown__menu-item">
-                                <button className="profile-dropdown__menu-item-btn" onClick={handleLogOut}><Icon name='exit' /> Log out</button></li>
+                            <li key='logout' className={styles["profile-dropdown__menu-item"]}>
+                                <button className={styles["profile-dropdown__menu-item-btn"]} onClick={handleLogOut}><Icon name='exit' /> Log out</button></li>
                         </ul>
                     ) : null}
                 </div>
                 : <div>
-                    {userStatus ? <div className='profile-dropdown__user card' onClick={handleLogOut}>
-                        <span className='user-name'>{userName}</span>
-                        <Icon name='exit'/>
+                    {userStatus ? <div className={`${styles['profile-dropdown__user']} card`} onClick={handleLogOut}>
+                        <span className={styles['user-name']}>{userName}</span>
+                        <Icon name='exit' />
                     </div> : null}
                 </div>
             }
             {showUserList ?
-                <Modal title="Clients" onClose={()=>setShowUserList(false)}>
+                <Modal title="Clients" onClose={() => setShowUserList(false)}>
                     {users && users.length ?
-                        <UserList users={users} onClose={()=>{setShowUserList(false); setIsOpen(false); router.reload()}}/>
-                        : <div className='empty-list' />
+                        <UserList users={users} onClose={() => { setShowUserList(false); setIsOpen(false); router.reload() }} />
+                        : <div className={styles['empty-list']} />
                     }
                 </Modal> : null
             }
