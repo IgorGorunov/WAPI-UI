@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FiArrowUp } from "react-icons/fi";
-import './styles.scss';
+import styles from './styles.module.scss';
 
 
 const BackToTop: React.FC = () => {
@@ -26,10 +26,10 @@ const BackToTop: React.FC = () => {
 
     return (
         <>
-            {isVisible ?  (
-                <button onClick={scrollToTop} title="Back to top" className='back-to-top'>
+            {isVisible ? (
+                <button onClick={scrollToTop} title="Back to top" className={styles['back-to-top']}>
                     {/*<Icon name={'keyboard-arrow-up'} />*/}
-                    <FiArrowUp className={'back-to-top__icon'} />
+                    <FiArrowUp className={styles['back-to-top__icon']} />
                 </button>
             ) : null}
         </>

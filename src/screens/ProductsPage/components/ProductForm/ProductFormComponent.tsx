@@ -1,14 +1,12 @@
-import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
-import {Controller, useFieldArray, useForm} from "react-hook-form";
-import {FormFieldTypes, WidthType} from "@/types/forms";
-import {COUNTRIES} from "@/types/countries";
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import type { Control } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { FormFieldTypes, WidthType } from "@/types/forms";
+import { COUNTRIES } from "@/types/countries";
 import "./styles.scss";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
-import {
-    ProductParamsType,
-    SingleProductFormType,
-    SingleProductType
-} from "@/types/products";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
+import { ProductParamsType, SingleProductFormType, SingleProductType } from "@/types/products";
 import {
     FormFieldsAdditional1,
     FormFieldsAdditional2,
@@ -17,36 +15,37 @@ import {
     FormFieldsWarehouse,
 } from "./ProductFormFields";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
-import {createOptions} from "@/utils/selectOptions";
-import {Table} from 'antd';
+import Button, { ButtonSize, ButtonVariant } from "@/components/Button/Button";
+import { createOptions } from "@/utils/selectOptions";
+import { Table } from 'antd';
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import Tabs from "@/components/Tabs";
 import Icon from "@/components/Icon";
-import {sendProductInfo} from "@/services/products";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import { sendProductInfo } from "@/services/products";
+import { sendDocumentFiles } from "@/services/files";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
-import {toast, ToastContainer} from '@/components/Toast';
+import { toast, ToastContainer } from '@/components/Toast';
 import "@/styles/tables.scss";
 import '@/styles/forms.scss';
-import {TabFields, TabTitles} from "./ProductFormTabs";
-import {useTabsState} from "@/hooks/useTabsState";
+import { TabFields, TabTitles } from "./ProductFormTabs";
+import { useTabsState } from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
-import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
+import { AttachedFilesType, PRODUCT_FILE_TYPES, STATUS_MODAL_TYPES } from "@/types/utility";
 import useNotifications from "@/context/notificationContext";
-import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import { NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType } from "@/types/notifications";
 import DocumentTickets from "@/components/DocumentTickets";
 import SingleDocument from "@/components/SingleDocument";
-import {TICKET_OBJECT_TYPES} from "@/types/tickets";
+import { TICKET_OBJECT_TYPES } from "@/types/tickets";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
-import {ProductDimensionsHints, ProductOtherHints} from "@/screens/ProductsPage/productsHints.constants";
+import { ProductDimensionsHints, ProductOtherHints } from "@/screens/ProductsPage/productsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-import {CommonHints} from "@/constants/commonHints";
+import { CommonHints } from "@/constants/commonHints";
 import ConfirmModal from "@/components/ModalConfirm";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
-import {isTabAllowed} from "@/utils/tabs";
+import { isTabAllowed } from "@/utils/tabs";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -62,17 +61,17 @@ type ProductPropsType = {
     uuid?: string | null;
     productParams: ProductParamsType;
     productData?: SingleProductType | null;
-    closeProductModal: ()=>void;
-    products: {name: string; uuid: string; quantity: number }[];
-    refetchDoc: ()=>void;
+    closeProductModal: () => void;
+    products: { name: string; uuid: string; quantity: number }[];
+    refetchDoc: () => void;
     forbiddenTabs: string[] | null;
 }
-const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, productParams, productData, closeProductModal, refetchDoc, forbiddenTabs}) => {
-    const {notifications} = useNotifications();
-    const { tenantData: { alias }} = useTenant();
-    const {needSeller, sellersList, sellersListActive} = useAuth();
+const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, productParams, productData, closeProductModal, refetchDoc, forbiddenTabs }) => {
+    const { notifications } = useNotifications();
+    const { tenantData: { alias } } = useTenant();
+    const { needSeller, sellersList, sellersListActive } = useAuth();
 
-    const productIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved') ;
+    const productIsApproved = !!(productData && productData?.status.toLowerCase() === 'approved');
     const productIsInDraft = !!(productData && productData?.status.toLowerCase() === 'draft');
 
     const [isDisabled, setIsDisabled] = useState(!!productData?.uuid);
@@ -81,13 +80,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     //status modal
-    const [showStatusModal, setShowStatusModal]=useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeSuccessModal = useCallback(()=>{
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
+    const closeSuccessModal = useCallback(() => {
         setShowStatusModal(false);
         closeProductModal();
     }, []);
-    const closeErrorModal = useCallback(()=>{
+    const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
     }, [])
 
@@ -101,7 +100,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         setShowTicketForm(true)
     }
 
-    const countryArr = COUNTRIES.map(item => ({label: item.label, value: item.value.toUpperCase()}));
+    const countryArr = COUNTRIES.map(item => ({ label: item.label, value: item.value.toUpperCase() }));
 
     type ApiResponse = {
         data?: any;
@@ -112,11 +111,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         }
     };
 
-    const analogueOptions = useMemo(()=>{
-        return products.map(item=>{return{value:item.uuid, label:item.name}})
+    const analogueOptions = useMemo(() => {
+        return products.map(item => { return { value: item.uuid, label: item.name } })
     }, [products]);
 
-    const {control, handleSubmit, formState: { errors }, getValues, setValue, watch, setError, clearErrors} = useForm({
+    const { control, handleSubmit, formState: { errors }, getValues, setValue, watch, setError, clearErrors } = useForm({
         mode: 'onSubmit',
         defaultValues: {
             uuid: productData?.uuid || uuid || '',
@@ -129,7 +128,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             amazonSku: productData?.amazonSku || '',
             hsCode: productData?.hsCode || '',
             typeOfStorage: productData?.typeOfStorage || '',
-            salesPackingMaterial : productData?.salesPackingMaterial || '',
+            salesPackingMaterial: productData?.salesPackingMaterial || '',
             specialTemperatureControl: productData?.specialTemperatureControl || '',
             specialDeliveryOrStorageRequirements: productData?.specialDeliveryOrStorageRequirements || '',
             whoProvidesPackagingMaterial: productData?.whoProvideExtraPacking || '',
@@ -141,7 +140,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             packingBox: productData?.packingBox,
             hazmat: productData?.hazmat,
             unitOfMeasure: productData?.unitOfMeasure || 'pcs',
-            withoutMasterCartonData: productData?.withoutMasterCartonData || productData?.unitOfMeasures.length<=1 || false,
+            withoutMasterCartonData: productData?.withoutMasterCartonData || productData?.unitOfMeasures.length <= 1 || false,
             additionalService: !!productData?.additionalService || false,
             seller: productData?.seller || '',
             unitOfMeasures:
@@ -166,7 +165,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             coefficient: 1,
                             width: 0,
                             length: 0,
-                            height:  0,
+                            height: 0,
                             weightGross: 0,
                             weightNet: 0,
                         },
@@ -177,7 +176,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             coefficient: 0,
                             width: 0,
                             length: 0,
-                            height:  0,
+                            height: 0,
                             weightGross: 0,
                             weightNet: 0,
                         }
@@ -240,11 +239,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
     const getBoxes = useCallback((arr) => {
         return arr.filter(item => item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton'));
-    },[]);
+    }, []);
 
     const getPieces = useCallback((arr) => {
         return arr.filter(item => !(item.name.toLowerCase().includes('box') || item.name.toLowerCase().includes('carton')));
-    },[]);
+    }, []);
 
     //additional virtual product
     const isAdditionalService = watch('additionalService');
@@ -280,8 +279,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         } else if (withoutMasterCartonData !== !!productData?.withoutMasterCartonData) {
             // setValue('additionalService', false);
             setValue('withoutMasterCartonData', productData?.withoutMasterCartonData);
-            if (unitOfMeasures.length <=1 && !boxes.length) {
-                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:0, width: 0, length: 0, height: 0, weightGross:0, weightNet: 0 })
+            if (unitOfMeasures.length <= 1 && !boxes.length) {
+                append({ key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient: 0, width: 0, length: 0, height: 0, weightGross: 0, weightNet: 0 })
             }
         }
     }
@@ -306,7 +305,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         // Update the unitOfMeasureOptions based on the changed "Unit Name"
         setUnitOfMeasureOptions(prevState => {
             const arr = [...prevState];
-            arr[index]=newValue;
+            arr[index] = newValue;
             return arr;
         });
     };
@@ -327,6 +326,48 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         }
     }
 
+    const handleSendDocFiles = async (event: React.MouseEvent) => {
+        event.preventDefault();
+
+        const newFiles = selectedFiles.filter(file => file.isNew);
+        if (productData?.uuid && isDisabled && newFiles.length) {
+            try {
+                setSendStatus(SendStatusType.PENDING); // Acts as a loader flag conceptually similar to Dropzone
+
+                const requestData = {
+                    token,
+                    alias,
+                    uuid: productData.uuid,
+                    attachedFiles: newFiles,
+                };
+
+                const res = await sendDocumentFiles(superUser && ui ? { ...requestData, ui } : requestData);
+
+                if (res?.status === 200) {
+                    // Update successfully sent files to strip the 'isNew' flag internally
+                    setSelectedFiles(prevState => prevState.map(file => {
+                        if (file.isNew) {
+                            return { ...file, isNew: false };
+                        }
+                        return file;
+                    }));
+
+                    setModalStatusInfo({
+                        statusModalType: STATUS_MODAL_TYPES.SUCCESS,
+                        title: "Success",
+                        subtitle: `Files are successfully send`,
+                        onClose: () => setShowStatusModal(false)
+                    });
+                    setShowStatusModal(true);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setSendStatus(SendStatusType.DRAFT);
+            }
+        }
+    };
+
     const handleMasterCartonDataChange = (val: React.ChangeEvent<HTMLInputElement>, onChange) => {
         const boxes = getBoxes(unitOfMeasures);
         if (val.target.checked) {
@@ -338,55 +379,15 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             }
         } else {
             onChange(val);
-            if (unitOfMeasures.length <=1 && !boxes.length) {
-                append({  key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient:0, width: 0, length: 0, height: 0, weightGross:0, weightNet: 0 })
+            if (unitOfMeasures.length <= 1 && !boxes.length) {
+                append({ key: `unit-box-${Date.now().toString()}`, selected: false, name: 'master carton', coefficient: 0, width: 0, length: 0, height: 0, weightGross: 0, weightNet: 0 })
             }
         }
     }
 
-    const getUnitsColumns = (control: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const getUnitsColumns = (control: Control<any>) => {
         return [
-            // {
-            //     title: (
-            //         <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
-            //             <FieldBuilder
-            //                 name={'selectedAllUnits'}
-            //                 fieldType={FormFieldTypes.CHECKBOX}
-            //                 checked ={selectAllUnits}
-            //                 disabled={isDisabled || productIsApproved}
-            //                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            //                     setSelectAllUnits(e.target.checked);
-            //                     // Update the values of all checkboxes in the form when "Select All" is clicked
-            //                     const values = getValues();
-            //                     const fields = values.unitOfMeasures;
-            //                     fields &&
-            //                     fields.forEach((field, index) => {
-            //                         setValue(`unitOfMeasures.${index}.selected`, e.target.checked);
-            //                     });
-            //                 }}
-            //             /></div>
-            //
-            //     ),
-            //     dataIndex: 'selected',
-            //     width: '40px',
-            //     key: 'selected',
-            //     render: (text, record, index) => (
-            //         <Controller
-            //             name={`unitOfMeasures.${index}.selected`}
-            //             control={control}
-            //             render={({ field }) => (
-            //                 <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
-            //                     <FieldBuilder
-            //                         name={'unitOfMeasures.${index}.selected'}
-            //                         fieldType={FormFieldTypes.CHECKBOX}
-            //                         {...field}
-            //                         disabled={isDisabled  || productIsApproved}
-            //                     />
-            //                 </div>
-            //             )}
-            //         />
-            //     ),
-            // },
             {
                 title: <TutorialHintTooltip hint={ProductDimensionsHints['name'] || ''}><div>Name *</div></TutorialHintTooltip>,
                 dataIndex: 'name',
@@ -396,21 +397,21 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].name`}
                         control={control}
-                        render={({ field , fieldState: {error}}) => (
+                        render={({ field, fieldState: { error } }) => (
                             <div style={{}}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].name`}
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
-                                    onChange={(newValue: string) => {field.onChange(newValue); handleUnitNameChange(newValue, index)}}
-                                    disabled={isDisabled  || productIsApproved || isAdditionalService}
+                                    onChange={(newValue: string) => { field.onChange(newValue); handleUnitNameChange(newValue, index) }}
+                                    disabled={isDisabled || productIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
                                     onlyAllowedSymbols={true}
                                 /></div>
                         )}
-                        rules={{required: "Required field"}}
+                        rules={{ required: "Required field" }}
                     />
                 ),
             },
@@ -423,13 +424,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].coefficient`}
                         control={control}
-                        render={({ field , fieldState: {error}}) => (
-                            <div style={{maxWidth: '100px'}}>
+                        render={({ field, fieldState: { error } }) => (
+                            <div style={{ maxWidth: '100px' }}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled  || productIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -449,13 +450,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].width`}
                         control={control}
-                        render={({ field , fieldState: {error}}) => (
-                            <div style={{maxWidth: '110px'}}>
+                        render={({ field, fieldState: { error } }) => (
+                            <div style={{ maxWidth: '110px' }}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].width`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled  || productIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved || isAdditionalService}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -474,8 +475,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].length`}
                         control={control}
-                        render={({ field , fieldState: {error}}) => (
-                            <div style={{maxWidth: '110px'}}>
+                        render={({ field, fieldState: { error } }) => (
+                            <div style={{ maxWidth: '110px' }}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].length`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -499,8 +500,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].height`}
                         control={control}
-                        render={({ field , fieldState: {error}}) => (
-                            <div style={{maxWidth: '110px'}}>
+                        render={({ field, fieldState: { error } }) => (
+                            <div style={{ maxWidth: '110px' }}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].height`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -524,8 +525,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`unitOfMeasures[${index}].weightGross`}
                         control={control}
-                        render={({ field , fieldState: {error}}) => (
-                            <div style={{maxWidth: '120px'}}>
+                        render={({ field, fieldState: { error } }) => (
+                            <div style={{ maxWidth: '120px' }}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].weightGross`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -550,7 +551,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         name={`unitOfMeasures[${index}].weightNet`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{maxWidth: '110px'}}>
+                            <div style={{ maxWidth: '110px' }}>
                                 <FieldBuilder
                                     name={`unitOfMeasures[${index}].weightNet`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -562,16 +563,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     />
                 ),
             },
-            // {
-            //     title: '',
-            //     key: 'action',
-            //     minWidth: 500,
-            //     render: (text, record, index) => (
-            //         <button disabled={checkMasterCarton(record) || isDisabled || productIsApproved} className='action-btn' onClick={() => removeUnits(index)}>
-            //             <Icon name='waste-bin' />
-            //         </button>
-            //     ),
-            // },
         ];
     }
 
@@ -586,11 +577,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         return [
             {
                 title: (
-                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                    <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
                         <FieldBuilder
                             name={'selectedAllBarcodes'}
                             fieldType={FormFieldTypes.CHECKBOX}
-                            checked ={selectAllBarcodes}
+                            checked={selectAllBarcodes}
                             disabled={isDisabled}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setSelectAllBarcodes(e.target.checked);
@@ -598,9 +589,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 const values = getValues();
                                 const fields = values.barcodes;
                                 fields &&
-                                fields.forEach((field, index) => {
-                                    setValue(`barcodes.${index}.selected`, e.target.checked);
-                                });
+                                    fields.forEach((field, index) => {
+                                        setValue(`barcodes.${index}.selected`, e.target.checked);
+                                    });
                             }}
                         />
                     </div>
@@ -614,7 +605,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         name={`barcodes.${index}.selected`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                            <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
                                 <FieldBuilder
                                     name={'barcodes.${index}.selected'}
                                     fieldType={FormFieldTypes.CHECKBOX}
@@ -674,11 +665,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         return [
             {
                 title: (
-                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                    <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
                         <FieldBuilder
                             name={'selectedAllAliases'}
                             fieldType={FormFieldTypes.CHECKBOX}
-                            checked ={selectAllAliases}
+                            checked={selectAllAliases}
                             disabled={isDisabled}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setSelectAllAliases(e.target.checked);
@@ -686,9 +677,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 const values = getValues();
                                 const fields = values.aliases;
                                 fields &&
-                                fields.forEach((field, index) => {
-                                    setValue(`aliases.${index}.selected`, e.target.checked);
-                                });
+                                    fields.forEach((field, index) => {
+                                        setValue(`aliases.${index}.selected`, e.target.checked);
+                                    });
                             }}
                         />
                     </div>
@@ -702,7 +693,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         name={`aliases.${index}.selected`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                            <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
                                 <FieldBuilder
                                     name={'aliases.${index}.selected'}
                                     fieldType={FormFieldTypes.CHECKBOX}
@@ -750,7 +741,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     }
 
     const removeAliases = () => {
-        setValue('aliases', aliases.filter(item => !item.selected ));
+        setValue('aliases', aliases.filter(item => !item.selected));
         setSelectAllAliases(false);
     }
 
@@ -762,11 +753,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         return [
             {
                 title: (
-                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                    <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
                         <FieldBuilder
                             name={'selectedAllBundles'}
                             fieldType={FormFieldTypes.CHECKBOX}
-                            checked ={selectAllBundles}
+                            checked={selectAllBundles}
                             disabled={isDisabled}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setSelectAllBundles(e.target.checked);
@@ -774,9 +765,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 const values = getValues();
                                 const fields = values.bundleKit;
                                 fields &&
-                                fields.forEach((field, index) => {
-                                    setValue(`bundleKit.${index}.selected`, e.target.checked);
-                                });
+                                    fields.forEach((field, index) => {
+                                        setValue(`bundleKit.${index}.selected`, e.target.checked);
+                                    });
                             }}
                         />
                     </div>
@@ -790,7 +781,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         name={`bundleKit.${index}.selected`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                            <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
                                 <FieldBuilder
                                     name={'bundleKit.${index}.selected'}
                                     fieldType={FormFieldTypes.CHECKBOX}
@@ -811,7 +802,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`bundleKit[${index}].uuid`}
                         control={control}
-                        render={({ field , fieldState: {error}}) => (
+                        render={({ field, fieldState: { error } }) => (
                             <div style={{}}>
                                 <FieldBuilder
                                     name={`bundleKit.${index}.uuid`}
@@ -837,8 +828,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                     <Controller
                         name={`bundleKit[${index}].quantity`}
                         control={control}
-                        render={({ field , fieldState: {error}}) => (
-                            <div style={{maxWidth: '80px'}}>
+                        render={({ field, fieldState: { error } }) => (
+                            <div style={{ maxWidth: '80px' }}>
                                 <FieldBuilder
                                     name={`bundleKit.${index}.quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -867,7 +858,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     }
 
     const removeBundles = () => {
-        setValue('bundleKit', bundleKit.filter(item => !item.selected ));
+        setValue('bundleKit', bundleKit.filter(item => !item.selected));
         setSelectAllBundles(false);
     }
 
@@ -880,11 +871,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         return [
             {
                 title: (
-                    <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                    <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
                         <FieldBuilder
                             name={'selectedAllAnalogues'}
                             fieldType={FormFieldTypes.CHECKBOX}
-                            checked ={selectAllAnalogues}
+                            checked={selectAllAnalogues}
                             disabled={isDisabled}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setSelectAllAnalogues(e.target.checked);
@@ -892,9 +883,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 const values = getValues();
                                 const fields = values.analogues;
                                 fields &&
-                                fields.forEach((field, index) => {
-                                    setValue(`analogues.${index}.selected`, e.target.checked);
-                                });
+                                    fields.forEach((field, index) => {
+                                        setValue(`analogues.${index}.selected`, e.target.checked);
+                                    });
                             }}
                         />
                     </div>
@@ -908,7 +899,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                         name={`analogues.${index}.selected`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{width: '40px', justifyContent: 'center', alignItems: 'center'}}>
+                            <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
                                 <FieldBuilder
                                     name={'analogues.${index}.selected'}
                                     fieldType={FormFieldTypes.CHECKBOX}
@@ -958,7 +949,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     }
 
     const removeAnalogues = () => {
-        setValue('analogues', analogues.filter(item => !item.selected ));
+        setValue('analogues', analogues.filter(item => !item.selected));
         setSelectAllAnalogues(false);
     }
 
@@ -974,8 +965,54 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
     }
 
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(productData?.attachedFiles || []);
-    const handleFilesChange = (files) => {
-        setSelectedFiles(files);
+    const handleFilesChange = (files: AttachedFilesType[], productFileType: PRODUCT_FILE_TYPES, isImage = false) => {
+        setSelectedFiles(prevState => {
+            // Remove existing files of the same type
+            const filteredState = prevState.filter(file => {
+                if (isImage) {
+                    return file.type !== 'image';
+                }
+                if (productFileType === PRODUCT_FILE_TYPES.other) {
+                    return file.type === 'image' || file.productFileType === PRODUCT_FILE_TYPES.certificate || file.productFileType === PRODUCT_FILE_TYPES.purchaseInvoice;
+                }
+                return file.productFileType !== productFileType;
+            });
+            return [...filteredState, ...files.map(file => ({ productFileType, ...file }))];
+        });
+    };
+
+    const handleFileMovedToBlock = (fileId: string, targetBlock: 'certificate' | 'purchaseInvoice' | 'image' | 'other') => {
+        setSelectedFiles(prevState => prevState.map(file => {
+            if (file.id === fileId) {
+                switch (targetBlock) {
+                    case 'certificate':
+                        return {
+                            ...file,
+                            productFileType: PRODUCT_FILE_TYPES.certificate,
+                            type: file.type === 'image' ? 'moved-image' : file.type
+                        };
+                    case 'purchaseInvoice':
+                        return {
+                            ...file,
+                            productFileType: PRODUCT_FILE_TYPES.purchaseInvoice,
+                            type: file.type === 'image' ? 'moved-image' : file.type
+                        };
+                    case 'image':
+                        return {
+                            ...file,
+                            productFileType: PRODUCT_FILE_TYPES.other,
+                            type: 'image'
+                        };
+                    case 'other':
+                        return {
+                            ...file,
+                            productFileType: PRODUCT_FILE_TYPES.other,
+                            type: file.type === 'image' ? 'moved-image' : file.type
+                        };
+                }
+            }
+            return file;
+        }));
     };
 
     //notifications
@@ -984,20 +1021,20 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         productNotifications = notifications.filter(item => item.objectUuid === productData.uuid && item.status !== NOTIFICATION_STATUSES.READ)
     }
 
-    const tabTitleArray =  TabTitles(!!productData?.uuid, !!(productData?.tickets && productData.tickets.length), forbiddenTabs);
-    const {tabTitles, updateTabTitles, clearTabTitles, resetTabTables} = useTabsState(tabTitleArray, TabFields);
+    const tabTitleArray = TabTitles(!!productData?.uuid, !!(productData?.tickets && productData.tickets.length), forbiddenTabs);
+    const { tabTitles, updateTabTitles, clearTabTitles, resetTabTables } = useTabsState(tabTitleArray, TabFields);
 
     useEffect(() => {
         resetTabTables(tabTitleArray);
     }, [productData]);
 
-    const onSubmitForm = async (data: SingleProductFormType) => {
 
+    const onSubmitForm = async (data: SingleProductFormType) => {
         const curAction = productData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: {uuid: data?.uuid || ''}});
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: { uuid: data?.uuid || '' } });
+            } catch { }
 
             return null;
         }
@@ -1021,22 +1058,22 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
             };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct'), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('CreateUpdateProduct'), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
-            const res: ApiResponse = await sendProductInfo(superUser && ui ? {...requestData, ui} : requestData);
+            const res: ApiResponse = await sendProductInfo(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "status" in res && res?.status === 200) {
                 //success
-                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Product is successfully ${ productData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal})
+                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Product is successfully ${productData?.uuid ? 'edited' : 'created'}!`, onClose: closeSuccessModal })
                 setShowStatusModal(true);
-            } else if (res && 'response' in res ) {
+            } else if (res && 'response' in res) {
                 const errResponse = res.response;
 
-                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+                if (errResponse && 'data' in errResponse && 'errorMessage' in errResponse.data) {
                     const errorMessages = errResponse?.data.errorMessage;
 
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix these errors!`, text: errorMessages, onClose: closeErrorModal })
                     setShowStatusModal(true);
                 }
             }
@@ -1052,8 +1089,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
         const curAction = productData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], curAction)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: {uuid: productData?.uuid || ''}});
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('CreateUpdateProduct', AccessObjectTypes["Products/ProductsList"], curAction), body: { uuid: productData?.uuid || '' } });
+            } catch { }
 
             return null;
         }
@@ -1091,30 +1128,13 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
             updateTabTitles(fieldNames);
         }
-
-        // if (sendStatus === SendStatusType.DRAFT) {
-        //     clearErrors();
-        //     const formData = getValues();
-        //
-        //     return onSubmitForm(formData as SingleProductFormType);
-        // }
-        //
-        // const fieldNames = Object.keys(props);
-        //
-        // if (fieldNames.length > 0) {
-        //     toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
-        //         position: "top-right",
-        //         autoClose: 1000,
-        //     });
-        // }
-        // updateTabTitles(fieldNames);
     };
 
-    const generalFields = useMemo(()=> FormFieldsGeneral({countries: countryArr, isNew: !productData?.uuid, isAdditionalService, handleAdditionalServiceChange}), [COUNTRIES, isAdditionalService])
-    const skuFields = useMemo(()=>FormFieldsSKU(), []);
-    const warehouseFields = useMemo(()=>FormFieldsWarehouse({typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial:createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements), isAdditionalService}),[productParams, isAdditionalService])
-    const additionalFields = useMemo(()=> FormFieldsAdditional1({whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking)}), [])
-    const additionalCheckboxes = useMemo(()=>FormFieldsAdditional2(), []);
+    const generalFields = useMemo(() => FormFieldsGeneral({ countries: countryArr, isNew: !productData?.uuid, isAdditionalService, handleAdditionalServiceChange }), [COUNTRIES, isAdditionalService])
+    const skuFields = useMemo(() => FormFieldsSKU(), []);
+    const warehouseFields = useMemo(() => FormFieldsWarehouse({ typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial: createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements), isAdditionalService }), [productParams, isAdditionalService])
+    const additionalFields = useMemo(() => FormFieldsAdditional1({ whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking) }), [])
+    const additionalCheckboxes = useMemo(() => FormFieldsAdditional2(), []);
 
 
     const handleClickEdit = () => {
@@ -1122,12 +1142,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.EditObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('EditProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.EditObject), body: {uuid: productData?.uuid || ''}});
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('EditProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.EditObject), body: { uuid: productData?.uuid || '' } });
+            } catch { }
 
             return null;
         }
-        setIsDisabled(!(productData.canEdit || !productData?.uuid ));
+        setIsDisabled(!(productData.canEdit || !productData?.uuid));
     }
 
     return <div className='product-info'>
@@ -1146,8 +1166,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                         control={control}
                                         render={(
                                             {
-                                                field: {...props},
-                                                fieldState: {error}
+                                                field: { ...props },
+                                                fieldState: { error }
                                             }) => (
                                             <FieldBuilder
                                                 // disabled={!!isDisabled}
@@ -1155,17 +1175,17 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                                 name='seller'
                                                 label='Seller* : '
                                                 fieldType={FormFieldTypes.SELECT}
-                                                options={(productData?.status !=='Draft' && !!productData) ? sellersList : sellersListActive}
+                                                options={(productData?.status !== 'Draft' && !!productData) ? sellersList : sellersListActive}
                                                 placeholder={''}
                                                 errorMessage={error?.message}
                                                 errors={errors}
-                                                disabled={isDisabled || (productData?.status !=='Draft' && !!productData)}
+                                                disabled={isDisabled || (productData?.status !== 'Draft' && !!productData)}
                                                 width={WidthType.w50}
                                                 classNames={'seller-filter'}
                                                 isClearable={false}
                                             />
                                         )}
-                                        rules = {{required: "Required field"}}
+                                        rules={{ required: "Required field" }}
                                     />
                                 </div>
                             </div>
@@ -1176,7 +1196,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 General
                             </h3>
                             <div className='grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled}/>
+                                <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors} isDisabled={isDisabled} />
                             </div>
                         </CardWithHelpIcon>
                         <CardWithHelpIcon classNames='card product-info--sku'>
@@ -1185,7 +1205,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 SKU
                             </h3>
                             <div className='grid-row'>
-                                <FormFieldsBlock control={control} fieldsArray={skuFields}  errors={errors} isDisabled={isDisabled}/>
+                                <FormFieldsBlock control={control} fieldsArray={skuFields} errors={errors} isDisabled={isDisabled} />
                             </div>
                         </CardWithHelpIcon>
                         {!isAdditionalService ? <CardWithHelpIcon classNames='card product-info--warehouse'>
@@ -1212,7 +1232,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             </div>
                         </CardWithHelpIcon> : null}
                     </>
-                </div> : null }
+                </div> : null}
                 {isTabAllowed('Dimensions', forbiddenTabs) ? <div className="dimensions-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--unitOfMeasures">
                         <h3 className='product-info__block-title'>
@@ -1225,7 +1245,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 <Controller
                                     name="unitOfMeasure"
                                     control={control}
-                                    render={({ field , fieldState: {error}}) => (
+                                    render={({ field, fieldState: { error } }) => (
                                         <FieldBuilder
                                             fieldType={FormFieldTypes.SELECT}
                                             name='unitOfMeasure'
@@ -1254,10 +1274,10 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
 
                         </div>
-                        {productIsApproved || productData && productData.unitOfMeasures.length>1 ? null :  <Controller
+                        {productIsApproved || productData && productData.unitOfMeasures.length > 1 ? null : <Controller
                             name="withoutMasterCartonData"
                             control={control}
-                            render={({ field , fieldState: {error}}) => (
+                            render={({ field, fieldState: { error } }) => (
                                 <FieldBuilder
                                     fieldType={FormFieldTypes.TOGGLE}
                                     name='withoutMasterCartonData'
@@ -1268,18 +1288,18 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                     errors={errors}
                                     isRequired={true}
                                     disabled={isDisabled || isAdditionalService}
-                                    onChange={(val: React.ChangeEvent<HTMLInputElement>)=>{handleMasterCartonDataChange(val, field.onChange); }}
-                                    //hint={ProductDimensionsHints['unitOfMeasure'] || ''}
+                                    onChange={(val: React.ChangeEvent<HTMLInputElement>) => { handleMasterCartonDataChange(val, field.onChange); }}
+                                //hint={ProductDimensionsHints['unitOfMeasure'] || ''}
                                 />
                             )}
-                            //rules={{ required: 'Field is required' }}
-                        /> }
+                        //rules={{ required: 'Field is required' }}
+                        />}
                     </CardWithHelpIcon>
-                </div> : null }
-                {isTabAllowed('Barcodes', forbiddenTabs ) ? <div className="barcodes-tab">
+                </div> : null}
+                {isTabAllowed('Barcodes', forbiddenTabs) ? <div className="barcodes-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--barcodes">
                         <h3 className='product-info__block-title title-small'>
-                            <Icon name='barcodes'/>
+                            <Icon name='barcodes' />
                             Barcodes
                         </h3>
                         <div className='product-info--barcodes-btns'>
@@ -1287,18 +1307,18 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 <div className='product-info--table-btns small-paddings width-100'>
                                     <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
                                         <Button classNames='add-barcode-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL}
-                                                disabled={isDisabled} variant={ButtonVariant.SECONDARY}
-                                                onClick={() => appendBarcode({
-                                                    key: `barcode-${Date.now().toString()}`,
-                                                    selected: false,
-                                                    barcode: ''
-                                                })}>
+                                            disabled={isDisabled} variant={ButtonVariant.SECONDARY}
+                                            onClick={() => appendBarcode({
+                                                key: `barcode-${Date.now().toString()}`,
+                                                selected: false,
+                                                barcode: ''
+                                            })}>
                                             Add
                                         </Button>
                                     </TutorialHintTooltip>
                                     <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
                                         <Button classNames='remove-barcode-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL}
-                                                disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
+                                            disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeBarcodes}>
                                             Remove selected
                                         </Button>
                                     </TutorialHintTooltip>
@@ -1316,7 +1336,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
                         </div>
                     </CardWithHelpIcon>
-                </div> : null }
+                </div> : null}
                 {isTabAllowed('Aliases', forbiddenTabs) ? <div className="aliases-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--aliases">
                         <TutorialHintTooltip hint={ProductOtherHints['aliases'] || ''} position='left' >
@@ -1329,12 +1349,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
                                     <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
-                                        <Button classNames='add-alias-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY}  onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
+                                        <Button classNames='add-alias-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendAlias({ key: `alias-${Date.now().toString()}`, selected: false, alias: '' })}>
                                             Add
                                         </Button>
                                     </TutorialHintTooltip>
                                     <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
-                                        <Button classNames='remove-alias-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
+                                        <Button classNames='remove-alias-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeAliases}>
                                             Remove selected
                                         </Button>
                                     </TutorialHintTooltip>
@@ -1351,7 +1371,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
                         </div>
                     </CardWithHelpIcon>
-                </div> : null }
+                </div> : null}
                 {isTabAllowed('Virtual bundle kit', forbiddenTabs) ? <div className="bundles-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--bundleKit">
                         <TutorialHintTooltip hint={ProductOtherHints['virtualBundleKit'] || ''} position='left' >
@@ -1364,12 +1384,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
                                     <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
-                                        <Button classNames='add-bundle-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity:0 })}>
+                                        <Button classNames='add-bundle-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendBundle({ key: `bundle-${Date.now().toString()}`, selected: false, uuid: '', quantity: 0 })}>
                                             Add
                                         </Button>
                                     </TutorialHintTooltip>
                                     <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
-                                        <Button classNames='remove-bundle-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
+                                        <Button classNames='remove-bundle-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeBundles}>
                                             Remove selected
                                         </Button>
                                     </TutorialHintTooltip>
@@ -1386,7 +1406,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
 
                         </div>
                     </CardWithHelpIcon>
-                </div> : null }
+                </div> : null}
                 {isTabAllowed('Analogues', forbiddenTabs) ? <div className="analogues-tab">
                     <CardWithHelpIcon classNames="card min-height-600 product-info--analogues">
                         <TutorialHintTooltip hint={ProductOtherHints['analogues'] || ''} position='left' >
@@ -1399,12 +1419,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             <div className='grid-row'>
                                 <div className='product-info--table-btns small-paddings width-100'>
                                     <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn >
-                                        <Button classNames='add-analogue-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY}  onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
+                                        <Button classNames='add-analogue-btn' type="button" icon='add-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => appendAnalogue({ key: `analogues-${Date.now().toString()}`, selected: false, analogue: '' })}>
                                             Add
                                         </Button>
                                     </TutorialHintTooltip>
                                     <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn >
-                                        <Button classNames='remove-analogue-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled}  variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
+                                        <Button classNames='remove-analogue-btn' type="button" icon='remove-table-row' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={removeAnalogues}>
                                             Remove selected
                                         </Button>
                                     </TutorialHintTooltip>
@@ -1420,7 +1440,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             />
                         </div>
                     </CardWithHelpIcon>
-                </div> : null }
+                </div> : null}
                 {productData?.statusHistory && isTabAllowed('Status history', forbiddenTabs) ? <div className="status-history-tab">
                     <div className="card min-height-600 product-info--status-history">
                         <h3 className='product-info__block-title'>
@@ -1436,7 +1456,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                             <Icon name='ticket' />
                             Tickets
                         </h3>
-                        <DocumentTickets tickets={productData.tickets}/>
+                        <DocumentTickets tickets={productData.tickets} />
                     </div>
                 </div> : null}
                 {isTabAllowed('Files', forbiddenTabs) ? <div className='files-tab'>
@@ -1447,39 +1467,92 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({uuid, products, produ
                                 Files
                             </h3>
                         </TutorialHintTooltip>
-                        <div className='dropzoneBlock'>
-                            <DropZone
-                                readOnly={!!isDisabled}
-                                files={selectedFiles}
-                                onFilesChange={handleFilesChange}
-                                docUuid={productData?.canEdit ? productData?.uuid : ''}
-                                allowOnlyFormats={['png', 'jpg', 'jpeg', 'pdf']}
-                                hint={'The supported file formats: PNG, JPEG, PDF'}
-                            />
+                        <div className='dropzoneBlock dropzoneBlock-list'>
+                            <div className='dropzoneBlock-list-item certificate'>
+                                <DropZone
+                                    readOnly={!!isDisabled}
+                                    files={selectedFiles.filter((file) => file.productFileType === 'certificate')}
+                                    onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.certificate)}
+                                    docUuid={productData?.canEdit ? productData?.uuid : ''}
+                                    allowOnlyFormats={['pdf']}
+                                    hint={'The supported file formats: PDF'}
+                                    listType={true}
+                                    title={'Certificate'}
+                                    onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'certificate')}
+                                    needSendBtn={false}
+                                />
+                            </div>
+                            <div className='dropzoneBlock-list-item purchase-invoice'>
+                                <DropZone
+                                    readOnly={!!isDisabled}
+                                    files={selectedFiles.filter((file) => file.productFileType === 'purchaseInvoice')}
+                                    onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.purchaseInvoice)}
+                                    docUuid={productData?.canEdit ? productData?.uuid : ''}
+                                    allowOnlyFormats={['pdf']}
+                                    hint={'The supported file formats: PDF'}
+                                    listType={true}
+                                    title={'Purchase invoice'}
+                                    onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'purchaseInvoice')}
+                                    needSendBtn={false}
+                                />
+                            </div>
+                            <div className='dropzoneBlock-list-item image'>
+                                <DropZone
+                                    readOnly={!!isDisabled}
+                                    files={selectedFiles.filter((file) => file.type === 'image')}
+                                    onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.other, true)}
+                                    docUuid={productData?.canEdit ? productData?.uuid : ''}
+                                    allowOnlyFormats={['png', 'jpg', 'jpeg']}
+                                    hint={'The supported file formats: PNG, JPEG'}
+                                    listType={true}
+                                    title={'Images'}
+                                    onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'image')} // Images conceptually just go as other, mapped logically
+                                    needSendBtn={false}
+                                />
+                            </div>
+                            <div className='dropzoneBlock-list-item other'>
+                                <DropZone
+                                    readOnly={!!isDisabled}
+                                    files={selectedFiles.filter((file) => file.type !== 'image' && file.productFileType !== 'certificate' && file.productFileType !== 'purchaseInvoice')}
+                                    onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.other)}
+                                    docUuid={productData?.canEdit ? productData?.uuid : ''}
+                                    allowOnlyFormats={['png', 'jpg', 'jpeg', 'pdf']}
+                                    hint={'The supported file formats: PNG, JPEG, PDF'}
+                                    listType={true}
+                                    title={'Other'}
+                                    onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'other')}
+                                    needSendBtn={false}
+                                />
+                            </div>
                         </div>
+                        {isDisabled && productData?.uuid && selectedFiles.some(file => file.isNew) ? (
+                            <div className='dropzone__btns'>
+                                <Button onClick={handleSendDocFiles}>Send files</Button>
+                            </div>
+                        ) : null}
                     </CardWithHelpIcon>
-                </div> : null }
+                </div> : null}
             </Tabs>
             <div className='form-submit-btn'>
                 {productData && productData.uuid && isTabAllowed('Tickets', forbiddenTabs) ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
                 {isDisabled && !productIsApproved && <Button type="button" disabled={false} onClick={handleClickEdit} variant={ButtonVariant.PRIMARY}>Edit</Button>}
-                {!isDisabled && !productIsApproved && <Button type="submit" disabled={isDisabled || productIsApproved} onClick={()=>setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
-                {(!isDisabled && !productIsApproved || productIsInDraft) && <Button type="submit"  onClick={()=>setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
-                {!isDisabled && productIsApproved && <Button type="submit" disabled={isDisabled} onClick={()=>setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
+                {!isDisabled && !productIsApproved && <Button type="submit" disabled={isDisabled || productIsApproved} onClick={() => setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
+                {(!isDisabled && !productIsApproved || productIsInDraft) && <Button type="submit" onClick={() => setSendStatus(SendStatusType.PENDING)} variant={ButtonVariant.PRIMARY}>Send to approve</Button>}
+                {!isDisabled && productIsApproved && <Button type="submit" disabled={isDisabled} onClick={() => setSendStatus(SendStatusType.APPROVED)} variant={ButtonVariant.PRIMARY}>Send</Button>}
             </div>
         </form>
         {showConfirmModal && <ConfirmModal
             actionText={`Are you sure you want to remove data about master carton? It's data will be cleared and row will be removed.`}
             onOk={handleConfirmToRemoveMasterCarton}
-            onCancel={()=>setShowConfirmModal(false)}
+            onCancel={() => setShowConfirmModal(false)}
         />}
         {showConfirmModalAdditionalService && <ConfirmModal
             actionText={`You have a master carton data for this product, which will be cleared. Do you want to mark this product as Additional virtual product and clear master carton data?`}
             onOk={handleConfirmAdditionalService}
             onCancel={handleCancelAdditionalService}
         />}
-        {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
-        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={()=>{setShowTicketForm(false); refetchDoc();}} seller={needSeller() ? productData.seller : ''} />}
+        {showStatusModal && <ModalStatus {...modalStatusInfo} />}
+        {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES.Product} subjectUuid={uuid} subject={productData?.name} onClose={() => { setShowTicketForm(false); refetchDoc(); }} seller={needSeller() ? productData.seller : ''} />}
 
     </div>
 }

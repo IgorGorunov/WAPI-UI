@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Layout from "@/components/Layout/Layout";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import useAuth from "@/context/authContext";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import useTenant from "@/context/tenantContext";
-import {TENANTS} from "@/lib/tenants";
+import { TENANTS } from "@/lib/tenants";
+import Cookie from "js-cookie";
 
 // Dynamically import heavy components to reduce initial JavaScript blocking render
 const LoginForm = dynamic(() => import("./LoginForm/LoginForm"), {
@@ -30,8 +31,14 @@ const LoginPage = () => {
         setOneTimeToken('');
     }, []);
 
+    // Only clear an EXISTING session when landing on the login page.
+    // Do NOT run logout() if there's no session — this prevents it from
+    // clearing cookies that were just set by a successful login+redirect.
     useEffect(() => {
-        logout();
+        const hadSession = !!Cookie.get('token') || !!Cookie.get('userStatus');
+        if (hadSession) {
+            logout();
+        }
     }, []);
 
     //getting uuid from query
@@ -41,9 +48,9 @@ const LoginPage = () => {
 
         const query = router.query;
         const utmQuery = {};
-        const keys = Object.keys(query).filter(key => key!=='oneTimeToken');
+        const keys = Object.keys(query).filter(key => key !== 'oneTimeToken');
         keys.map(key => {
-            utmQuery[key.replace('amp;','')]=query[key];
+            utmQuery[key.replace('amp;', '')] = query[key];
         })
 
         setUtmQuery(utmQuery);
@@ -52,8 +59,8 @@ const LoginPage = () => {
     return (
         <Layout hasFooter>
             {/*<SeoHead title="Login" description="Login page" />*/}
-            <div className={`login-page__container${tenant === TENANTS.WAPI ? ' has-bg' : ''}`}>
-                <div className="login-page__text-wrapper">
+            <div className={`${styles['login-page__container']}${tenant === TENANTS.WAPI ? ` ${styles['has-bg']}` : ''}`}>
+                <div className={styles['login-page__text-wrapper']}>
                     <h1>SIGN IN</h1>
                     <h2>Welcome back</h2>
                 </div>

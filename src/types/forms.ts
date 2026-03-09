@@ -1,7 +1,9 @@
-import React, {ChangeEvent } from 'react'
-import {E164Number} from "libphonenumber-js";
+// import type React from 'react';
+import type { ChangeEvent, ClipboardEvent, DragEvent, ReactNode, Ref } from 'react';
+import type { E164Number } from "libphonenumber-js";
+import type {FieldErrors, FieldValues, Path, RegisterOptions, UseFormRegisterReturn} from 'react-hook-form';
 
-type RefType=any;
+type RefType = React.RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | ((instance: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null) => void) | null;
 
 export const enum FormFieldTypes {
   NUMBER = 'number',
@@ -30,6 +32,7 @@ export type OptionType = {
   isDisabled?: boolean;
   inactive?: boolean;
   extraSearch?: string;
+  country?: string;
 }
 
 export const enum WidthType {
@@ -45,17 +48,18 @@ export const enum WidthType {
 }
 
 export enum ALIGN_FLEX {
-  CENTER ='center',
+  CENTER = 'center',
   START = 'start',
   END = 'end',
 }
 
 export type ChangeEventType = ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType | E164Number;
 
-export type FieldPropsType = {
+export type FieldPropsType<T extends FieldValues = FieldValues> = {
   classNames?: string
   key?: string
-  name: string
+  name: Path<T>;
+  rules?: RegisterOptions<T, Path<T>>;
   label?: string
   type?: string
   placeholder?: string
@@ -70,26 +74,26 @@ export type FieldPropsType = {
   disabled?: boolean
   // size?: SizeTypes.large | SizeTypes.medium | SizeTypes.small;
   innerRef?: RefType
-  value?: E164Number | string | number | boolean | Date ;
+  value?: E164Number | string | number | boolean | Date;
   valPhone?: E164Number;
-  onPhoneChange?: (value: E164Number)=>void;
+  onPhoneChange?: (value: E164Number) => void;
   checked?: boolean;
   onChange?: (event: ChangeEventType) => void;
-  onPaste?: (event: React.ClipboardEvent<HTMLTextAreaElement> | React.ClipboardEvent<HTMLInputElement> | ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType) => void
-  onDrop?: (event: React.DragEvent<HTMLDivElement> | React.DragEvent<HTMLTextAreaElement>)=>void;
-  onDragOver?: (event: React.DragEvent<HTMLDivElement> | React.DragEvent<HTMLTextAreaElement>)=>void;
+  onPaste?: (event: ClipboardEvent<HTMLTextAreaElement> | ClipboardEvent<HTMLInputElement> | ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType) => void
+  onDrop?: (event: DragEvent<HTMLDivElement> | DragEvent<HTMLTextAreaElement>) => void;
+  onDragOver?: (event: DragEvent<HTMLDivElement> | DragEvent<HTMLTextAreaElement>) => void;
   inputValue?: string
-  registerInput?: any
-  rules?: any
+  registerInput?: UseFormRegisterReturn
+  // rules?: RegisterOptions
   // onInputChange?: (inputValue: string, meta: InputActionMeta) => void;
   options?: OptionType[]
-  errors?: any;
+  errors?: FieldErrors;
   isClearable?: boolean;
   needToasts?: boolean;
-  otherComponent?: any;
+  otherComponent?: ReactNode;
   isDisplayed?: boolean;
   autoComplete?: string;
-  ref?: any | null;
+  ref?: Ref<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
   hideTextOnMobile?: boolean;
   extraLabel?: string;
   isCheckboxHidden?: boolean;
@@ -102,12 +106,13 @@ export type FieldPropsType = {
   hint?: string;
   notDisable?: boolean;
   disableWeekends?: boolean;
-  disablePreviousDays?: boolean; //today is considered as previous day (as per delivery assumption)
+  disablePreviousDays?: boolean; //today is considered as a previous day (as per delivery assumption)
   disableDaysAfterToday?: number;
   disableDaysTime?: string; //if current time (in Italy) if before this time, disableDaysAfterToday=disableDaysAfterToday-1
   onlyAllowedSymbols?: boolean;
   countryName?: string;
   onlyWholeNumbers?: boolean;
+  fieldType?: FormFieldTypes
 }
 
 export type FormBuilderType = FieldPropsType & {

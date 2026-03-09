@@ -1,6 +1,13 @@
-import {SingleProductType} from '@/types/products';
-import {AttachedFilesType} from "@/types/utility";
+import type {
+    ProductParamsType,
+    ProductStockType,
+    ProductType,
+    SingleProductSendFormType,
+    SingleProductType
+} from '@/types/products';
+import type {AttachedFilesType} from "@/types/utility";
 import {api} from "@/services/api";
+import type {ApiResponseType} from "@/types/api";
 
 
 const getProducts = async (
@@ -10,18 +17,19 @@ const getProducts = async (
         alias: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/GetProductsList`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<ProductType[]>> => {
+    return api.post<ProductType[]>(`/GetProductsList`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/GetProductsList`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 const getProductByUID = async (
@@ -31,18 +39,19 @@ const getProductByUID = async (
         uuid: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/GetProductData`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<SingleProductType>> => {
+    return api.post(`/GetProductData`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/GetProductData`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 const getProductParameters = async (
@@ -52,18 +61,19 @@ const getProductParameters = async (
         alias: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/GetProductParameters`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<ProductParamsType>> => {
+    return api.post(`/GetProductParameters`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/GetProductParameters`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 const getProductsStock = async (
@@ -73,42 +83,44 @@ const getProductsStock = async (
         alias: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/GetProductsStock`,
-            data
-
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<ProductStockType[]>> => {
+    return api.post(`/GetProductsStock`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/GetProductsStock`,
+    //         data
+    //
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 //send product info
 
 const sendProductInfo = async (
     data: {
-        productData: SingleProductType,
+        productData: SingleProductSendFormType,
         token: string;
         alias: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/CreateUpdateProduct`,
-            data
-
-        );
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<unknown>> => {
+    return api.post(`/CreateUpdateProduct`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/CreateUpdateProduct`,
+    //         data
+    //
+    //     );
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 }
 
 const sendProductFiles = async (
@@ -118,18 +130,19 @@ const sendProductFiles = async (
         alias: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/BulkProductsCreate`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<unknown>> => {
+    return api.post(`/BulkProductsCreate`, data);
+    // try {
+    //     const response: Aunknown = await api.post(
+    //         `/BulkProductsCreate`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 export { getProducts, getProductByUID, getProductParameters, getProductsStock, sendProductInfo, sendProductFiles};

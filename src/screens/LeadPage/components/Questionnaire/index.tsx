@@ -237,7 +237,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
         try {
 
-            const res: ApiResponseType = await sendQuestionnaire({ token, alias, leadData: data });
+            const res = await sendQuestionnaire({ token, alias, leadData: data });
 
             if (res && "status" in res && res?.status === 200) {
                 //success

@@ -28,11 +28,19 @@ export const SendCommentTypesArray = [
     SEND_COMMENT_TYPES.BACK_TO_SENDER,
 ]
 
+export enum PRODUCT_FILE_TYPES {
+    "certificate" = "certificate",
+    "purchaseInvoice" = "purchaseInvoice",
+    "other" = "other",
+}
+
 export type AttachedFilesType = {
     id: string;
     name: string;
     type: string;
     data: string;
+    productFileType?: PRODUCT_FILE_TYPES;
+    isNew?: boolean;
 }
 
 export type WarehouseType = {
@@ -76,6 +84,7 @@ export type ProductsSelectionType = {
     volumeWeight: number;
     volume: number;
     key?: string;
+    seller: string;
 }
 
 export const enum ChatMessageDirectionType {

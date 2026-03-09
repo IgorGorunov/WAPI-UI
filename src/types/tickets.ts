@@ -1,4 +1,4 @@
-import {AttachedFilesType} from "@/types/utility";
+import type {AttachedFilesType} from "@/types/utility";
 
 export const ticketStatusColors = [
     { value: 'All statuses', label: 'All statuses' , color: 'var(--color-light-blue-gray)'},
@@ -58,6 +58,22 @@ export type SingleTicketType = {
     subjectType: string | null;
     subjectUuid: string | null;
     attachedFiles: AttachedFilesType[];
+    supportManager: string;
+    seller: string;
+}
+
+export type SingleTicketFormType = {
+    status: string;
+    uuid: string;
+    description: string;
+    result: string;
+    number: string;
+    date: string;
+    topic: string;
+    subject: string;
+    subjectType: string | null;
+    subjectUuid: string | null;
+    attachedFiles?: AttachedFilesType[];
     supportManager: string;
     seller: string;
 }

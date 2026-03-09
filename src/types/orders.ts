@@ -1,12 +1,13 @@
-import {
-    SEND_COMMENT_TYPES,
+import type {
     AttachedFilesType,
-    WarehouseType,
-    DocProductParamsType, SellerType
+    DocProductParamsType,
+    SellerType,
+    SEND_COMMENT_TYPES, WarehouseType
 } from "@/types/utility";
-import {TicketType} from "@/types/tickets";
-import {NoteType} from "@/types/notes";
-import {UserAccessActionType} from "@/context/authContext";
+import type { TicketType } from "@/types/tickets";
+import type { NoteType } from "@/types/notes";
+import type { UserAccessActionType } from "@/context/authContext";
+import { BaseFilterMetadata, BaseFiltersSelected, FilterType } from "@/types/filters";
 
 export type ClaimType = {
     date: string;
@@ -55,7 +56,7 @@ export type OrderType = {
     products: {
         product: string;
         quantity: number;
-    } [],
+    }[],
     troubleStatusesExist: boolean;
     troubleStatuses: {
         period: string;
@@ -70,7 +71,7 @@ export type OrderType = {
     }[];
     commentToCourierServiceExist: boolean;
     selfCollect: boolean;
-    sentSMS: {}[];
+    sentSMS: unknown[];
     sentSMSExist: boolean;
     logisticComment: string;
     ticket?: boolean;
@@ -185,8 +186,8 @@ export type SingleOrderType = {
     receiverEMail: string;
     receiverFullName: string;
     receiverPhone: string;
-    receiverPickUpAddress:string;
-    receiverPickUpCity:string;
+    receiverPickUpAddress: string;
+    receiverPickUpCity: string;
     receiverPickUpCountry: string;
     receiverPickUpDescription: string;
     receiverPickUpID: string;
@@ -281,7 +282,7 @@ export type OrderCommentType = {
         phone: string;
         zip: string;
     }
-    deliveryDate?:{
+    deliveryDate?: {
         date: string;
         hourFrom: string;
         hourTo: string;
@@ -299,6 +300,8 @@ export type SingleOrderProductFormType = {
     total: string | number;
     cod: string | number;
     connectionKey?: string | number;
+    selected?: boolean;
+    key?: string;
 };
 
 export type SingleOrderFormType = {
@@ -324,8 +327,8 @@ export type SingleOrderFormType = {
     receiverEMail: string;
     receiverFullName: string;
     receiverPhone: string;
-    receiverPickUpAddress:string;
-    receiverPickUpCity:string;
+    receiverPickUpAddress: string;
+    receiverPickUpCity: string;
     receiverPickUpCountry: string;
     receiverPickUpDescription: string;
     receiverPickUpID: string;
@@ -338,14 +341,76 @@ export type SingleOrderFormType = {
     wapiTrackingNumber: string;
     warehouse: string;
     products: SingleOrderProductFormType[];
+    seller?: string;
+    draft?: boolean;
+    attachedFiles?: AttachedFilesType[];
 }
 
 //endpoint types
 export type CreateOrderRequestType = {
-    orderData: SingleOrderType,
+    orderData: SingleOrderFormType,
     token: string;
     alias: string;
     ui?: string;
     seller?: string;
 }
 
+////// pagination ///////
+
+
+// export type CountryFilterDataType = StatusFilterDataType;
+// export type WarehouseFilterDataType = StatusFilterDataType
+
+export type OrderFilterDataType = BaseFilterMetadata & {
+    tickets: number;
+    orders: number;
+    troubleStatuses: FilterType[];
+    selfCollect: number;
+    statuses: FilterType[];
+    receiverCountries: FilterType[];
+    warehouses: FilterType[];
+    marketplaces: FilterType[];
+    courierServices: FilterType[];
+    sentSMS: number
+    nonTroubleEvents: number;
+    customerReturns: number;
+    warehouseAssemblyPhotos: number;
+    commentToCourierService: number;
+    claims: number;
+}
+
+export type OrderFiltersSelectedType = BaseFiltersSelected & {
+    claims: boolean;
+    commentToCourierService: boolean;
+    customerReturns: boolean;
+    nonTroubleEvents: boolean
+    warehouseAssemblyPhotos: boolean
+    sentSMS: boolean;
+    selfCollect: boolean;
+
+    troubleStatus: string[];
+    courierService: string[];
+    marketplace: string[];
+    receiverCountry: string[];
+    status: string[];
+    warehouse: string[];
+}
+
+//temporary type
+export type OrderTempPropsType = {
+    tempToken: string;
+    startDate: string;
+    endDate: string;
+    client: string;
+    page?: number;
+    limit?: number;
+    filters?: Partial<OrderFiltersSelectedType>;
+
+    alias?: string;
+    ui?: string;
+}
+
+export type PagedOrderListType = {
+    count: number;
+    data: OrderType[];
+}

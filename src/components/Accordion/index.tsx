@@ -1,6 +1,6 @@
-import React, {useState, useRef, useEffect} from 'react';
-import Icon, {IconType} from "@/components/Icon";
-import './styles.scss';
+import React, { useState, useRef, useEffect } from 'react';
+import Icon, { IconType } from "@/components/Icon";
+import styles from "./styles.module.scss";
 
 type AccordionPropsType = {
     title: string;
@@ -8,19 +8,19 @@ type AccordionPropsType = {
     description?: string;
     children?: React.ReactNode;
     isOpen?: boolean;
-    setIsOpen?: (val: boolean)=> void;
+    setIsOpen?: (val: boolean) => void;
     classNames?: string;
     titleIcon?: IconType;
 }
 
-const Accordion: React.FC<AccordionPropsType> = ({ title, titleAmount, titleIcon, description='', children, isOpen= false, setIsOpen, classNames='' }) => {
+const Accordion: React.FC<AccordionPropsType> = ({ title, titleAmount, titleIcon, description = '', children, isOpen = false, setIsOpen, classNames = '' }) => {
     const [isActive, setIsActive] = useState(isOpen);
     const [height, setHeight] = useState('0px');
     const [showOverflow, setShowOverflow] = useState(isOpen);
 
     const contentSpace = useRef<HTMLDivElement>(null);
 
-    useEffect(()=>{
+    useEffect(() => {
         if (isOpen && contentSpace?.current) {
             setHeight(`${contentSpace.current.scrollHeight}px`);
 
@@ -51,34 +51,34 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, titleAmount, titleIcon
 
     useEffect(() => {
         if (isActive) {
-            setTimeout(()=>setShowOverflow(true), 300)
+            setTimeout(() => setShowOverflow(true), 300)
         } else {
             setShowOverflow(false);
         }
     }, [isActive]);
 
     return (
-        <div className={`accordion-item ${classNames} ${showOverflow ? "is-active" : 'deactivated'}`}>
+        <div className={`${styles['accordion-item']} ${classNames} ${showOverflow ? styles['is-active'] || 'is-active' : styles['deactivated'] || 'deactivated'}`}>
             <button
-                className={`accordion-item__title ${isActive ? "is-active" : ''}`}
+                className={`${styles['accordion-item__title']} ${isActive ? styles['is-active'] || 'is-active' : ''}`}
                 onClick={toggleAccordion}
             >
-                <div className="accordion-item__title-wrapper">
-                    <p className="accordion-item__title-text">
-                        {titleIcon ? (<Icon name={titleIcon} className={'title-icon'}/>) : ''}
+                <div className={styles['accordion-item__title-wrapper']}>
+                    <p className={styles['accordion-item__title-text']}>
+                        {titleIcon ? (<Icon name={titleIcon} className={styles['title-icon'] || 'title-icon'} />) : ''}
                         {title}
-                        {titleAmount ? <span className={`accordion-item__title-text__amount${titleAmount && titleAmount !='0' ? ' checked' : ''}`}>{titleAmount}</span> : null}
+                        {titleAmount ? <span className={`${styles['accordion-item__title-text__amount']} ${titleAmount && titleAmount != '0' ? styles['checked'] || 'checked' : ''}`}>{titleAmount}</span> : null}
                     </p>
                     {description ? <p className="accordion-item__title-dscription">{description}</p> : null}
                 </div>
-                <Icon name='keyboard-arrow-up' className={`accordion-item__title-icon ${isActive ? 'active' : ''}`}/>
+                <Icon name='keyboard-arrow-up' className={`${styles['accordion-item__title-icon']} ${isActive ? styles['active'] || 'active' : ''}`} />
             </button>
             <div
                 ref={contentSpace}
                 style={{ maxHeight: `${height}` }}
-                className="accordion-item__content-wrapper"
+                className={styles['accordion-item__content-wrapper']}
             >
-                <div className='accordion-item__content'>{children}</div>
+                <div className={styles['accordion-item__content']}>{children}</div>
             </div>
         </div>
     );

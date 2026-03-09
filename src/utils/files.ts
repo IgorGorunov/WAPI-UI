@@ -1,6 +1,8 @@
 // import * as XLSX from "xlsx";
 
-const setColWidth = (data: any[]) => {
+type ExportRow = Record<string, string | number | boolean | null | undefined>;
+
+const setColWidth = (data: ExportRow[]) => {
     const widths = data.map(row =>
         Object.values(row).map(val =>
             (val ? String(val).length : 0) + 5
@@ -12,7 +14,7 @@ const setColWidth = (data: any[]) => {
     }));
 };
 
-const exportFileXLS = async (data: any[], fileName: string) => {
+const exportFileXLS = async (data: ExportRow[], fileName: string) => {
     if (data.length === 0) {
         return null;
     }
@@ -49,16 +51,16 @@ const exportFileXLS = async (data: any[], fileName: string) => {
 
 
 // download / send files
-const readFileAsArrayBuffer = (file) => {
+const readFileAsArrayBuffer = (file: File): Promise<ArrayBuffer> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
+        reader.onload = () => resolve(reader.result as ArrayBuffer);
         reader.onerror = reject;
         reader.readAsArrayBuffer(file);
     });
 };
 
-const arrayBufferToBase64 = (arrayBuffer) => {
+const arrayBufferToBase64 = (arrayBuffer: ArrayBuffer) => {
     const bytes = new Uint8Array(arrayBuffer);
     let binary = '';
     for (let i = 0; i < bytes.length; i++) {
@@ -67,7 +69,7 @@ const arrayBufferToBase64 = (arrayBuffer) => {
     return btoa(binary);
 };
 
-const base64ToBlob = (base64String, type) => {
+const base64ToBlob = (base64String: string, type: string) => {
     const binaryString = window.atob(base64String);
     const len = binaryString.length;
     const bytes = new Uint8Array(len);
@@ -80,4 +82,4 @@ const base64ToBlob = (base64String, type) => {
 };
 
 
-export {exportFileXLS, readFileAsArrayBuffer, arrayBufferToBase64, base64ToBlob}
+export { exportFileXLS, readFileAsArrayBuffer, arrayBufferToBase64, base64ToBlob }

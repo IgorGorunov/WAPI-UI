@@ -1,13 +1,10 @@
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
-// Lazy load google-libphonenumber to reduce initial bundle size
-export const isPhoneValid = async (phone: string): Promise<boolean> => {
+export const isPhoneValid = (phone: string): boolean => {
+    if (!phone || phone.length <= 4) return false;
     try {
-        // Dynamic import - only loads when function is called
-        const { PhoneNumberUtil } = await import('google-libphonenumber');
-        const phoneUtil = PhoneNumberUtil.getInstance();
-
-        return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phone));
-    } catch (error) {
+        return isValidPhoneNumber(phone);
+    } catch {
         return false;
     }
 };

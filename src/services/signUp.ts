@@ -1,4 +1,6 @@
-import {api} from "@/services/api";
+import { api } from "@/services/api";
+import { type ApiResponseType } from "@/types/api";
+
 const signUp = async (
     //token: string,
     data: {
@@ -7,20 +9,21 @@ const signUp = async (
             phone: string;
             email: string;
         }
-        utm: any;
+        utm: Record<string, unknown>;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/CreateLead`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<unknown>> => {
+    return api.post(`/CreateLead`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/CreateLead`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 const confirmEmail = async (
@@ -28,18 +31,19 @@ const confirmEmail = async (
         uuid: string;
         alias: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/LeadEmailConfirmation`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<unknown>> => {
+    return api.post(`/LeadEmailConfirmation`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/LeadEmailConfirmation`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 

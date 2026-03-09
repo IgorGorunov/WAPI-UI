@@ -6,7 +6,6 @@ import {
 } from "@/types/dashboard";
 //import Datepicker from "./Datepicker";
 import DatepickerComponent from '@/components/Datepicker';
-import "./styles.scss";
 import Icon from "@/components/Icon";
 
 export type PeriodFilterProps = {
@@ -145,59 +144,53 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   return (
     <div className="period-filter period-filter__container">
       <div onClick={() => setIsPeriodDropdownOpen(!isPeriodDropdownOpen)} className="period-filter__dropdown">
-        <span className="nav-arrow-icon">  {selectedPeriodType} <Icon name="expand" className="icon-right"  /> </span>
+        <span className="nav-arrow-icon">  {selectedPeriodType} <Icon name="expand" className="icon-right" /> </span>
       </div>
       <ul className={`period-filter__list ${isPeriodDropdownOpen ? "open" : ""}`}>
         <li
           key={PeriodTypes.DAY}
-          className={`period-filter__list-item ${
-            clickedPeriod === "DAY" ? "active" : ""
-          }`}
+          className={`period-filter__list-item ${clickedPeriod === "DAY" ? "active" : ""
+            }`}
           onClick={handleDay}
         >
           Day
         </li>
         <li
           key={PeriodTypes.WEEK}
-          className={`period-filter__list-item ${
-            clickedPeriod === "WEEK" ? "active" : ""
-          }`}
+          className={`period-filter__list-item ${clickedPeriod === "WEEK" ? "active" : ""
+            }`}
           onClick={handleWeek}
         >
           Week
         </li>
         <li
           key={PeriodTypes.MONTH}
-          className={`period-filter__list-item ${
-            clickedPeriod === "MONTH" ? "active" : ""
-          }`}
+          className={`period-filter__list-item ${clickedPeriod === "MONTH" ? "active" : ""
+            }`}
           onClick={handleMonth}
         >
           Month
         </li>
         <li
           key={PeriodTypes.QUARTER}
-          className={`period-filter__list-item ${
-            clickedPeriod === "QUARTER" ? "active" : ""
-          }`}
+          className={`period-filter__list-item ${clickedPeriod === "QUARTER" ? "active" : ""
+            }`}
           onClick={handleQuarter}
         >
           Quarter
         </li>
         <li
           key={PeriodTypes.YEAR}
-          className={`period-filter__list-item ${
-            clickedPeriod === "YEAR" ? "active" : ""
-          }`}
+          className={`period-filter__list-item ${clickedPeriod === "YEAR" ? "active" : ""
+            }`}
           onClick={handleYear}
         >
           Year
         </li>
         <li
           key={PeriodTypes.CUSTOM}
-          className={`period-filter__list-item ${
-            clickedPeriod === "CUSTOM" ? "active" : ""
-          }`}
+          className={`period-filter__list-item ${clickedPeriod === "CUSTOM" ? "active" : ""
+            }`}
           onClick={handleCustom}
         >
           Custom

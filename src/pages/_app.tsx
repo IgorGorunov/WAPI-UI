@@ -3,6 +3,47 @@ import { Roboto } from "next/font/google";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/context/authContext";
 import "@/styles/globals.scss";
+import "@/styles/forms.scss";
+import "@/styles/tables.scss";
+import "@/components/Layout/styles.scss";
+import "@/components/Header/styles.scss";
+
+// Centralized component styles to prevent Fast Refresh reloads on navigation
+import "@/components/Skeleton/styles.scss";
+import "@/components/Navigation/styles.scss";
+import "@/components/Navigation/SubmenuBlock/styles.scss";
+import "@/components/Navigation/SubmenuSingleItem/styles.scss";
+import "@/components/TourGuide/styles.scss";
+import "@/components/ProfileDropdown/UserList/styles.scss";
+import "@/components/CookieConsent/styles.scss";
+
+// Third-party CSS
+import "flag-icons/css/flag-icons.min.css";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
+import "react-international-phone/style.css";
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
+import 'react-toastify/dist/ReactToastify.css';
+import "react-phone-number-input/style.css";
+
+import "@/components/HeaderNotifications/styles.scss";
+import "@/components/HeaderNotifications/NotificationsBlock/styles.scss";
+
+// Dashboard internal components
+import "@/screens/DashboardPage/components/Header/styles.scss";
+import "@/screens/DashboardPage/components/Diagram/styles.scss";
+import "@/screens/DashboardPage/components/Forecast/styles.scss";
+import "@/screens/DashboardPage/components/OrderStatuses/styles.scss";
+import "@/screens/DashboardPage/components/OrderStatuses/StatusBar/styles.scss";
+import "@/screens/DashboardPage/components/OrdersByCountry/styles.scss";
+import "@/screens/DashboardPage/components/OrdersByCountry/CountryList/styles.scss";
+import "@/screens/DashboardPage/components/OrdersByCountry/CountryBlock/styles.scss";
+import "@/screens/DashboardPage/components/PeriodFilter/styles.scss";
+import "@/screens/DashboardPage/components/PeriodFilter/Datepicker/styles.scss";
+
 import { NotificationsProvider } from "@/context/notificationContext";
 import { TourGuideProvider } from "@/context/tourGuideContext";
 // import { clarity } from 'react-microsoft-clarity';
@@ -26,9 +67,12 @@ const inter = Inter({
   display: "swap",
 });
 
-export function App({ Component, pageProps, tenantHost, host }: AppProps & { tenantHost?: string, host?: string }) {
+export function App({ Component, pageProps, tenantHost }: AppProps & { tenantHost?: string, host?: string }) {
   const [tenant, setTenant] = useState<null | TENANT_TYPE>(null);
   const [tenantData, setTenantData] = useState<TenantDataType | null>(null);
+
+  console.log("App: Render");
+  useEffect(() => { console.log("App: Mount (First Load/Reload)"); }, []);
 
   // console.log("tenant", host, tenantHost);
 

@@ -14,20 +14,19 @@ import {
   scales, TooltipItem,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import "./styles.scss";
 import { PeriodType, PeriodTypes } from "@/types/dashboard";
 
 ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    BarController,
-    elements,
-    plugins,
-    scales,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarController,
+  elements,
+  plugins,
+  scales,
 );
 
 export type DataPoint = {
@@ -55,28 +54,28 @@ function hexToRgba(hex: string, opacity: number): string {
 }
 
 function getBackgroundColor(value: number): string {
-  if (value < 1 ) {
+  if (value < 1) {
     return "#5380F5";
   } else {
     return hexToRgba("#5380F5", 0.05);
-   }
+  }
 }
 
 
 let Diagram: React.FC<DashboardDataProps> = ({
   diagramData,
-    diagramType = "DAY",
-    setDiagramType
+  diagramType = "DAY",
+  setDiagramType
 }) => {
 
   let chartRef = useRef<ChartJS<"bar", number[], string> | null>(null);
 
   let labels = diagramData && diagramData[diagramType]
-      ? diagramData[diagramType].map((item) => item.Key)
-      : [];
+    ? diagramData[diagramType].map((item) => item.Key)
+    : [];
   let values = diagramData && diagramData[diagramType]
-      ? diagramData[diagramType].map((item) => item.Value)
-      : [];
+    ? diagramData[diagramType].map((item) => item.Value)
+    : [];
 
   let backgroundColors = values.map(value => getBackgroundColor(value));
 
@@ -184,25 +183,22 @@ let Diagram: React.FC<DashboardDataProps> = ({
         <p className='title-h4'>Orders</p>
         <div className="dashboard-diagram__diagram-types">
           <div
-            className={`dashboard-diagram__option ${
-              diagramType === "DAY" ? "active" : ""
-            }`}
+            className={`dashboard-diagram__option ${diagramType === "DAY" ? "active" : ""
+              }`}
             onClick={() => setDiagramType("DAY")}
           >
             Days
           </div>
           <div
-            className={`dashboard-diagram__option ${
-              diagramType === "WEEK" ? "active" : ""
-            }`}
+            className={`dashboard-diagram__option ${diagramType === "WEEK" ? "active" : ""
+              }`}
             onClick={() => setDiagramType("WEEK")}
           >
             Weeks
           </div>
           <div
-            className={`dashboard-diagram__option ${
-              diagramType === "MONTH" ? "active" : ""
-            }`}
+            className={`dashboard-diagram__option ${diagramType === "MONTH" ? "active" : ""
+              }`}
             onClick={() => setDiagramType("MONTH")}
           >
             Months

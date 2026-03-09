@@ -13,6 +13,7 @@ export type CodReportRowType = {
     codAmount: number;
     reported: number;
     codBalance: string;
+    seller?: string;
 }
 
 

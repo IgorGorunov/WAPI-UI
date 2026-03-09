@@ -87,6 +87,41 @@
 
     }
   }
+
+  &.is-list {
+    .file-item {
+      //flex-direction: row;
+      width: 180px;
+      height: 120px;
+      padding: 8px;
+
+      //align-items: center;
+      //justify-content: space-between;
+      //padding: 20px;
+      //border: 1px solid var(--color-white);
+      //box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+      //background-color: white;
+      //height: 200px;
+      //width: 150px;
+      //border-radius: 8px;
+    }
+
+    &__wrapper {
+      padding: 8px;
+    }
+
+    .file-icon {
+      //display: none;
+      width: 24px;
+      height: 24px;
+
+    }
+
+    //.file-actions {
+    //  flex-direction: column;
+    //  width: auto;
+    //}
+  }
 }
 
 .read-only .is-exist .delete-button {

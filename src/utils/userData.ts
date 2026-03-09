@@ -1,5 +1,5 @@
-import {AuthApiResponseType} from "@/types/api";
-import {setCurrentDate} from "@/context/authContext";
+import { AuthApiResponseType } from "@/types/api";
+import { setCurrentDate } from "@/utils/auth";
 
 export const checkCurrentDate = (currentDate: Date, newDate: string) => {
     if (newDate && new Date(newDate).getDate() !== currentDate.getDate()) {

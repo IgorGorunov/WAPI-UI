@@ -1,6 +1,7 @@
-import {AttachedFilesType, DocProductParamsType} from "@/types/utility";
-import {TicketType} from "@/types/tickets";
-import {Routes} from '@/types/routes';
+import type { AttachedFilesType, DocProductParamsType } from "@/types/utility";
+import type { TicketType } from "@/types/tickets";
+import { Routes } from '@/types/routes';
+import type {UserAccessActionType} from "@/context/authContext";
 
 export const enum STOCK_MOVEMENT_DOC_TYPE {
     INBOUNDS = 'Inbound',
@@ -29,7 +30,7 @@ export type StockMovementType = {
     estimatedTimeArrives: string;
     incomingDate: string;
     incomingNumber: string;
-    products: {quantity: number; product: string;}[];
+    products: { quantity: number; product: string; }[];
     productsByString: string;
     receiver: string;
     receiverCountry: string;
@@ -121,6 +122,8 @@ export type SingleStockMovementType = {
     receiverHide?: boolean;
     senderHide?: boolean;
     seller?: string;
+    senderZIP?: string;
+    receiverZIP?: string;
 }
 
 export type StockMovementParamsProductType = {
@@ -143,15 +146,18 @@ export type StockMovementParamsType = {
     sender: StockMovementWarehouseType[] | null;
     receiver: StockMovementWarehouseType[] | null;
     quality: string[];
+    actionAccessSettings: UserAccessActionType[]
 }
 
 //send form types
 export type SingleStockMovementProductFormType = {
     product: string;
-    quantityPlan: number|string;
-    quantity: number|string;
+    quantityPlan: number | string;
+    quantity: number | string;
     quality: string;
-    //unitOfMeasure: string;
+    unitOfMeasure: string;
+    key?: string;
+    selected?: boolean;
 };
 
 export type SingleStockMovementFormType = {
@@ -181,4 +187,9 @@ export type SingleStockMovementFormType = {
     status: string;
     products: SingleStockMovementProductFormType[];
     seller?: string;
+    statusAdditionalInfo?: string;
+    draft?: boolean;
+    attachedFiles?: AttachedFilesType[];
+    senderZIP?: string;
+    receiverZIP?: string;
 }

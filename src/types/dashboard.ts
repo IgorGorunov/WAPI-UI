@@ -1,8 +1,7 @@
-import {DataPoint} from "@/screens/DashboardPage/components/Diagram";
-import {GroupOrderStatusType} from "@/screens/DashboardPage/components/OrderStatuses";
-import {OrderByCountryType} from "@/screens/DashboardPage/components/OrdersByCountry";
+import type {GroupOrderStatusType} from "@/screens/DashboardPage/components/OrderStatuses";
+import type {OrderByCountryType} from "@/screens/DashboardPage/components/OrdersByCountry";
 
-export const enum PeriodTypes {
+export enum PeriodTypes {
   DAY = "DAY",
   WEEK = "WEEK",
   MONTH = "MONTH",
@@ -12,6 +11,11 @@ export const enum PeriodTypes {
 }
 
 export type PeriodType = keyof typeof PeriodTypes;
+
+export type DataPoint = {
+  Key: string;
+  Value: number;
+};
 
 export type DateRangeType = {
   startDate: Date;

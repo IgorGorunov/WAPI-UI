@@ -37,7 +37,7 @@
       text-align: center;
       border-radius: 4px;
       background-color: var(--color-white);
-      box-shadow: 0 1px 2px 0 rgba(35,57,66,.21);
+      box-shadow: 0 1px 2px 0 rgba(35, 57, 66, .21);
       border: 1px solid transparent;
 
       &:active,
@@ -71,12 +71,12 @@
     overflow: hidden;
     border: 2px solid #F5F6F7;
 
-    .rdrDateDisplayWrapper {
+    :global(.rdrDateDisplayWrapper) {
       display: none;
     }
   }
 
-  .rdrMonthName {
+  :global(.rdrMonthName) {
     display: none;
   }
 }

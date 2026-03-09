@@ -110,8 +110,12 @@
     @media (max-width: $upToLaptop) {
       font-size: 0;
       min-width: 0;
-      padding: 5px 11px 5px 6px;
+      padding: 5px 8px 5px 8px;
       gap: 0;
+
+      .icon-right {
+        margin-right: 0;
+      }
     }
   }
 

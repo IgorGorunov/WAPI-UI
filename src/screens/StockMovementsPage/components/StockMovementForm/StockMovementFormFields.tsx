@@ -125,6 +125,7 @@ export const DetailsFields = (
         sender,
         receiver,
         isSenderDisabled,
+        isEditMode,
     }:{
         newObject: boolean,
         docType: STOCK_MOVEMENT_DOC_TYPE,
@@ -139,6 +140,7 @@ export const DetailsFields = (
         sender: string;
         receiver: string;
         isSenderDisabled?: boolean;
+        isEditMode: boolean;
     }
 ) => {
     const isInbound = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS;
@@ -151,7 +153,7 @@ export const DetailsFields = (
 
     return [
         {
-            fieldType: isInbound || isLogisticService ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
+            fieldType: isInbound || isLogisticService || !isEditMode ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
             type: "text",
             name: 'sender',
             label: 'Sender',
@@ -163,7 +165,7 @@ export const DetailsFields = (
             errorMessage: "Required field",
             options: isInbound || isLogisticService ? [] : isStockMovement && !!receiver ? senderOptions.filter(item => item.value !== receiver) : senderOptions,
             onChange: onSenderChange,
-            width: WidthType.w33,
+            width: isInbound || isLogisticService ? WidthType.w17 : WidthType.w33,
             classNames: "",
             hint: docHintsObj['sender'] || '',
         },
@@ -181,10 +183,28 @@ export const DetailsFields = (
             disabled: !isInbound && !isLogisticService,
             width: WidthType.w17,
             classNames: "",
-            hint: docHintsObj['senderCountry'] || '',
+            hint: '',
         },
+        isInbound || isLogisticService ? {
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: 'senderZIP',
+            label: 'Sender ZIP',
+            placeholder: "",
+            disabled: senderHide || isSenderDisabled,
+            maxLength: 10,
+            rules: {
+                required: (isInbound || isLogisticService) && "Required field",
+                maxLength: 10,
+            },
+            errorMessage: "Required field",
+            width: WidthType.w17,
+            classNames: "",
+            hint: docHintsObj['sender'] || '',
+        } : null,
+
         {
-            fieldType: isOutbound || isLogisticService ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
+            fieldType: isOutbound || isLogisticService || !isEditMode ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
             type: "text",
             name: 'receiver',
             label: 'Receiver',
@@ -196,7 +216,7 @@ export const DetailsFields = (
             options: isOutbound || isLogisticService ? [] : isStockMovement && !!sender ? receiverOptions.filter(item => item.value !== sender) : receiverOptions,
             onChange: onReceiverChange,
             disabled: receiverHide,
-            width: WidthType.w33,
+            width: isOutbound || isLogisticService ? WidthType.w17 : WidthType.w33,
             classNames: "",
             hint: docHintsObj['receiver'] || '',
         },
@@ -217,6 +237,23 @@ export const DetailsFields = (
             classNames: "",
             hint: docHintsObj['receiverCountry'] || '',
         },
+        isOutbound || isLogisticService ? {
+            fieldType: FormFieldTypes.TEXT,
+            type: "text",
+            name: 'receiverZIP',
+            label: 'Receiver ZIP',
+            placeholder: "",
+            maxLength: 10,
+            rules: {
+                required: isLogisticService || isOutbound ? "Required field" : false,
+                maxLength: 10,
+            },
+            errorMessage: "Required field",
+            disabled: receiverHide,
+            width: WidthType.w17,
+            classNames: "",
+            hint: '',
+        } : null,
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",

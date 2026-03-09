@@ -1,5 +1,4 @@
 import React from 'react';
-import './styles.scss';
 
 const Skeleton = ({ type, width, height }) => {
     if (type === 'spinner') {

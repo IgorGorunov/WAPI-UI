@@ -1,14 +1,14 @@
-import {IconType} from "@/components/Icon";
-import {
+import type { IconType } from "@/components/Icon";
+import type {
     ProductOnStockRowType,
     PRODUCTS_ON_STOCKS_VARIANTS,
     ProductsOnStocksReportType
 } from "@/types/reports/productsOnStocks";
-import {DELIVERY_RATES_VARIANTS, DeliveryRatesReportType, DeliveryRatesRowType} from "@/types/reports/deliveryRates";
-import {REPORT_SALES_VARIANTS, ReportSalesReportType, ReportSalesRowType} from "@/types/reports/reportSales";
-import {SALE_DYNAMIC_VARIANTS, SaleDynamicReportType, SaleDynamicRowType} from "@/types/reports/saleDynamic";
-import {CodReportType} from "@/types/codReports";
-import {COD_REPORT_VARIANTS, CodReportRowType} from "@/types/reports/codReport";
+import type { DELIVERY_RATES_VARIANTS, DeliveryRatesReportType, DeliveryRatesRowType } from "@/types/reports/deliveryRates";
+import type { REPORT_SALES_VARIANTS, ReportSalesReportType, ReportSalesRowType } from "@/types/reports/reportSales";
+import type { SALE_DYNAMIC_VARIANTS, SaleDynamicReportType, SaleDynamicRowType } from "@/types/reports/saleDynamic";
+import type { CodReportType } from "@/types/codReports";
+import type { COD_REPORT_VARIANTS, CodReportRowType } from "@/types/reports/codReport";
 
 export * from './productsOnStocks';
 export * from './deliveryRates';
@@ -65,7 +65,7 @@ export type ReportParametersType = {
 
 export type AllReportsType = ProductsOnStocksReportType | DeliveryRatesReportType | ReportSalesReportType | SaleDynamicReportType | CodReportType;
 
-export type AllReportsRowType =  ProductOnStockRowType | DeliveryRatesRowType | ReportSalesRowType | SaleDynamicRowType | CodReportRowType;
-export type AllReportsRowArrayType =  ProductOnStockRowType[] | DeliveryRatesRowType[] | ReportSalesRowType[] | SaleDynamicRowType[] | CodReportRowType[];
+export type AllReportsRowType = ProductOnStockRowType | DeliveryRatesRowType | ReportSalesRowType | SaleDynamicRowType | CodReportRowType;
+export type AllReportsRowArrayType = (ProductOnStockRowType | DeliveryRatesRowType | ReportSalesRowType | SaleDynamicRowType | CodReportRowType)[];
 
 export type AllVariantsType = PRODUCTS_ON_STOCKS_VARIANTS | DELIVERY_RATES_VARIANTS | REPORT_SALES_VARIANTS | SALE_DYNAMIC_VARIANTS | COD_REPORT_VARIANTS;

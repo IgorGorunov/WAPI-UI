@@ -1,20 +1,20 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Icon from "@/components/Icon";
-import './styles.scss';
 import ToggleSwitch from "@/components/FormBuilder/ToggleSwitch";
+import styles from "./styles.module.scss";
 
 type AccordionPropsType = {
     title: string;
     description?: string;
     children?: React.ReactNode;
     isOpen?: boolean;
-    setIsOpen?: (val: boolean)=> void;
+    setIsOpen?: (val: boolean) => void;
     classNames?: string;
     hasToggle?: boolean;
     toggleName?: string;
     toggleTitle?: string;
     toggleValue?: boolean;
-    onToggleChange?: ()=>void;
+    onToggleChange?: () => void;
 }
 
 const Accordion: React.FC<AccordionPropsType> = (
@@ -24,7 +24,7 @@ const Accordion: React.FC<AccordionPropsType> = (
         children,
         isOpen = false,
         setIsOpen,
-        classNames='' ,
+        classNames = '',
         hasToggle = false,
         toggleTitle = '',
         toggleName = '',
@@ -38,7 +38,7 @@ const Accordion: React.FC<AccordionPropsType> = (
 
     const contentSpace = useRef<HTMLDivElement>(null);
 
-    useEffect(()=>{
+    useEffect(() => {
         if (isOpen && contentSpace?.current) {
             setHeight(`${contentSpace.current.scrollHeight}px`);
 
@@ -69,21 +69,21 @@ const Accordion: React.FC<AccordionPropsType> = (
 
     useEffect(() => {
         if (isActive) {
-            setTimeout(()=>setShowOverflow(true), 300)
+            setTimeout(() => setShowOverflow(true), 300)
         } else {
             setShowOverflow(false);
         }
     }, [isActive]);
 
     return (
-        <div className={`cookie-accordion-item ${classNames} ${showOverflow ? "is-active" : 'deactivated'}`}>
+        <div className={`${styles['cookie-accordion-item']} ${classNames} ${showOverflow ? styles['is-active'] || "is-active" : styles['deactivated'] || "deactivated"}`}>
             <button
-                className={`cookie-accordion-item__title ${isActive ? "is-active" : ''}`}
+                className={`${styles['cookie-accordion-item__title']} ${isActive ? styles['is-active'] || "is-active" : ''}`}
                 onClick={toggleAccordion}
             >
-                <div className="cookie-accordion-item__title-wrapper">
-                    <Icon name='keyboard-arrow-up' className={`cookie-accordion-item__title-icon ${isActive ? 'active' : ''}`}/>
-                    <p className={`cookie-accordion-item__title-text ${hasToggle ? 'has-toggle' : 'no-toggle'} ${isActive ? 'active' : ''}`}>
+                <div className={styles['cookie-accordion-item__title-wrapper']}>
+                    <Icon name='keyboard-arrow-up' className={`${styles['cookie-accordion-item__title-icon']} ${isActive ? styles['active'] || 'active' : ''}`} />
+                    <p className={`${styles['cookie-accordion-item__title-text']} ${hasToggle ? styles['has-toggle'] || 'has-toggle' : styles['no-toggle'] || 'no-toggle'} ${isActive ? styles['active'] || 'active' : ''}`}>
                         {title}
                     </p>
                     {description ? <p className="cookie-accordion-item__title-dscription">{description}</p> : null}
@@ -91,17 +91,17 @@ const Accordion: React.FC<AccordionPropsType> = (
                 </div>
                 {/*<Icon name='keyboard-arrow-up' className={`accordion-item__title-icon ${isActive ? 'active' : ''}`}/>*/}
             </button>
-            <div className={`cookie-accordion-item__title-toggle`}>
+            <div className={styles['cookie-accordion-item__title-toggle']}>
                 {hasToggle ?
                     <ToggleSwitch name={toggleName} value={toggleValue} onChange={onToggleChange} />
-                    : <p className={'cookie-accordion-item__title-toggle-title'}>{toggleTitle}</p>}
+                    : <p className={styles['cookie-accordion-item__title-toggle-title']}>{toggleTitle}</p>}
             </div>
             <div
                 ref={contentSpace}
                 style={{ maxHeight: `${height}` }}
-                className="cookie-accordion-item__content-wrapper"
+                className={styles['cookie-accordion-item__content-wrapper']}
             >
-                <div className='cookie-accordion-item__content'>{children}</div>
+                <div className={styles['cookie-accordion-item__content']}>{children}</div>
             </div>
         </div>
     );

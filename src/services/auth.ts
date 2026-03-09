@@ -1,9 +1,10 @@
-import {loginApi} from "@/services/api";
+import { loginApi } from "@/services/api";
+import type { AuthApiResponseType } from "@/types/api";
 
 
-const authenticate = async (login: string, password: string, alias='') => {
+const authenticate = async (login: string, password: string, alias = '') => {
   try {
-    const response: any = await loginApi.post(
+    const response: AuthApiResponseType = await loginApi.post(
       `/Authorize`,
       {
         login,
@@ -28,9 +29,9 @@ const authenticateWithOneTimeToken = async (data: {
   alias: string,
 }) => {
   try {
-    const response: any = await loginApi.post(
-        `/Authorize`,
-        data
+    const response: AuthApiResponseType = await loginApi.post(
+      `/Authorize`,
+      data
     );
     return response;
   } catch (err) {
@@ -44,9 +45,9 @@ const getUserList = async (data: {
   alias: string,
 }) => {
   try {
-    const response: any = await loginApi.post(
-        `/GetUIList`,
-        data
+    const response: AuthApiResponseType = await loginApi.post(
+      `/GetUIList`,
+      data
     );
     return response;
   } catch (err) {

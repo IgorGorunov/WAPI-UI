@@ -1,5 +1,6 @@
-import {DocProductParamsType} from "@/types/utility";
-import {TicketType} from "@/types/tickets";
+import type {AttachedFilesType, DocProductParamsType} from "@/types/utility";
+import type { TicketType } from "@/types/tickets";
+import { type UserAccessActionType } from "@/context/authContext";
 
 export type AmazonPrepOrderType = {
     key?: string;
@@ -20,7 +21,7 @@ export type AmazonPrepOrderType = {
     products: {
         product: string,
         quantity: number,
-    } [];
+    }[];
     notifications: boolean,
     seller?: string;
 }
@@ -73,12 +74,12 @@ export type PalletType = {
     palletTrackingNumber: string;
 }
 
-export type AttachedFilesType = {
-    id: string;
-    name: string;
-    type: string;
-    data: string;
-}
+// export type AttachedFilesType = {
+//     id: string;
+//     name: string;
+//     type: string;
+//     data: string;
+// }
 
 export type SingleAmazonPrepOrderType = {
     asnNumber: string;
@@ -153,6 +154,7 @@ export type AmazonPrepOrderParamsType = {
     deliveryMethod: string[];
     carrierTypes?: string[];
     boxesTypes?: string[];
+    actionAccessSettings?: UserAccessActionType[];
 }
 
 export type AmazonPrepOrderProductWithTotalInfoType = {

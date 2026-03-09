@@ -1,25 +1,25 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Pagination, Table, TableColumnProps, Tooltip} from 'antd';
-import {ColumnType} from "antd/es/table";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
+import { ColumnType } from "antd/es/table";
 import "./styles.scss";
 import "@/styles/tables.scss";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
-import {CodReportType} from "@/types/codReports";
+import { CodReportType } from "@/types/codReports";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import {PageOptions} from '@/constants/pagination';
+import { PageOptions } from '@/constants/pagination';
 import getSymbolFromCurrency from "currency-symbol-map";
-import {DateRangeType} from "@/types/dashboard";
+import { DateRangeType } from "@/types/dashboard";
 import DateInput from "@/components/DateInput";
-import {getCODReportForm} from "@/services/codReports";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
+import { getCODReportForm } from "@/services/codReports";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import Loader from "@/components/Loader";
-import {formatDateStringToDisplayString} from "@/utils/date";
+import { formatDateStringToDisplayString } from "@/utils/date";
 import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 
 
@@ -31,12 +31,12 @@ type CodReportsListType = {
     selectedSeller: string;
 }
 
-const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, setCurrentRange, setFilteredCodReports, selectedSeller}) => {
+const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange, setCurrentRange, setFilteredCodReports, selectedSeller }) => {
 
     const [animating, setAnimating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
     // Pagination
@@ -55,7 +55,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     };
 
     const getSellerName = useCallback((sellerUid: string) => {
-        const t = sellersList.find(item=>item.value===sellerUid);
+        const t = sellersList.find(item => item.value === sellerUid);
         return t ? t.label : ' - ';
     }, [sellersList]);
 
@@ -115,19 +115,19 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
     };
 
     const handleDownloadCORReport = async (uuid) => {
-       setIsLoading(true);
+        setIsLoading(true);
         try {
             const requestData = { token: token, alias, uuid: uuid };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetCODReportPrintForm', AccessObjectTypes["Finances/CODReports"], AccessActions.DownloadPrintForm), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('GetCODReportPrintForm', AccessObjectTypes["Finances/CODReports"], AccessActions.DownloadPrintForm), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
             if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.DownloadPrintForm)) {
                 return null;
             }
 
-            const response = await getCODReportForm(superUser && ui ? {...requestData, ui} : requestData);
+            const response = await getCODReportForm(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (response && response.data) {
                 const files = response.data;
@@ -180,8 +180,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -222,14 +222,14 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Number</span>
-                        {sortColumn==='number' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='number' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'number' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'number' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
 
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" />
             ),
             dataIndex: 'number',
             key: 'number',
@@ -247,13 +247,13 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Date</span>
-                        {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'date' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'date' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="150px" contentPosition="start" />
             ),
             dataIndex: 'date',
             key: 'date',
@@ -272,8 +272,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Amount</span>
-                        {sortColumn==='amount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='amount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'amount' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'amount' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
@@ -320,13 +320,13 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Period</span>
-                        {sortColumn==='period' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='period' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'period' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'period' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="150px" maxWidth="200px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="150px" maxWidth="200px" contentPosition="start" />
             ),
             dataIndex: 'period',
             key: 'period',
@@ -345,13 +345,13 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                 childrenBefore={
                     <>
                         <span className='table-header-title'>Orders count</span>
-                        {sortColumn==='ordersCount' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn==='ordersCount' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'ordersCount' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn === 'ordersCount' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="150px"  contentPosition="start"/>
+                <TableCell value={text} minWidth="80px" maxWidth="150px" contentPosition="start" />
             ),
             dataIndex: 'ordersCount',
             key: 'ordersCount',
@@ -362,7 +362,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             responsive: ['md'],
         },
         {
-             title: <TitleColumn title="" minWidth="100px" maxWidth="800px" contentPosition="end"/>,
+            title: <TitleColumn title="" minWidth="100px" maxWidth="800px" contentPosition="end" />,
             render: (_text: string, _record: CodReportType) => (
                 <TableCell
                     minWidth="100px"
@@ -370,7 +370,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                     contentPosition="end"
                     childrenBefore={
                         <span className="lines-cell-style">
-                        <Icon name="download-file" />
+                            <Icon name="download-file" />
                         </span>}>
                 </TableCell>
             ),
@@ -382,7 +382,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             }),
             onCell: (record) => {
                 return {
-                    onClick: () => {handleDownloadCORReport(record.uuid)}
+                    onClick: () => { handleDownloadCORReport(record.uuid) }
                 };
             },
             responsive: ['lg'],
@@ -404,7 +404,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
             <SearchContainer>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
-                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
                 </div>
             </SearchContainer>
             <div className="page-size-container">
@@ -423,7 +423,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({codReports,currentRange, 
                     }))}
                     columns={columns}
                     pagination={false}
-                    scroll={{y:700}}
+                    scroll={{ y: 700 }}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>

@@ -1,4 +1,6 @@
 import {api} from "@/services/api";
+import type {ApiResponseType} from "@/types/api";
+import type {AllReportsRowArrayType, ReportParametersType} from "@/types/reports";
 
 
 const getReportData = async (
@@ -11,18 +13,19 @@ const getReportData = async (
         endDate: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/GetReportData`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<AllReportsRowArrayType>> => {
+    return api.post(`/GetReportData`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/GetReportData`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 const getReportParams = async (
@@ -33,18 +36,19 @@ const getReportParams = async (
         ui?: string;
         // reportType: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/GetReportParameters`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<ReportParametersType>> => {
+    return api.post(`/GetReportParameters`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/GetReportParameters`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };
 
 export {getReportData, getReportParams}

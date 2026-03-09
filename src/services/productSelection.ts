@@ -1,4 +1,6 @@
-import {api} from "@/services/api";
+import { api } from "@/services/api";
+import type {ApiResponseType} from "@/types/api";
+import type {ProductsSelectionType} from "@/types/utility";
 
 export const getProductSelection = async (
     data: {
@@ -6,16 +8,17 @@ export const getProductSelection = async (
         alias: string;
         ui?: string;
     }
-) => {
-    try {
-        const response: any = await api.post(
-            `/GetProductsSelection`,
-            data
-        );
-
-        return response;
-    } catch (err) {
-        console.error(err);
-        return err;
-    }
+): Promise<ApiResponseType<ProductsSelectionType[]>> => {
+    return api.post(`/GetProductsSelection`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/GetProductsSelection`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
 };

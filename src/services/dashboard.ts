@@ -1,27 +1,36 @@
-import {api} from "@/services/api";
+import { api } from "@/services/api";
+import { type ApiResponseType } from "@/types/api";
+import { type DashboardDataType } from "@/types/dashboard";
 
-const getDasboardData = async (
-  data: {
-    startDate: string;
-    alias: string;
-    endDate: string;
-    token: string;
+export type DashboardRequestParams = {
+    startDate?: string;
+    endDate?: string;
+    alias?: string;
+    token?: string;
     ui?: string;
-  }
-) => {
-  try {
-    const response: any = await api.post(
-      `/GetDashboardData`,
-      data
-    );
+}
 
-    return response;
-  } catch (err) {
-    console.error(err);
-    return err;
-  }
+const getDashboardData = async (
+  data: DashboardRequestParams
+): Promise<ApiResponseType<DashboardDataType[]>> => {
+    return api.post<DashboardDataType[]>(`/GetDashboardData`, data);
+
+  // try {
+  //   // const response = await api.post(
+  //   //   `/GetDashboardData`,
+  //   //   data
+  //   // );
+  //
+  //     ret
+  //
+  //
+  //   // return response;
+  // } catch (err) {
+  //   console.error(err);
+  //   return err;
+  // }
 };
 
 
 
-export { getDasboardData };
+export { getDashboardData };

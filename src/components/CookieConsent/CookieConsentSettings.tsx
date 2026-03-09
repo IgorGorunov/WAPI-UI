@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import './styles.scss';
+import React, { useState } from 'react';
 import Accordion from "./CookieAccordion";
 import useAuth from "@/context/authContext";
 import Button from "@/components/Button/Button";
@@ -10,11 +9,11 @@ import {
     ONLY_ESSENTIAL_CONSENT
 } from "@/components/CookieConsent/index";
 import Cookie from "js-cookie";
-import {removeClarityCookiesForHost} from "@/utils/clarity-consent";
+import { removeClarityCookiesForHost } from "@/utils/clarity-consent";
 
 
-const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
-    const {cookieConsent, setReceivedCookieConsent} = useAuth();
+const CookieConsentSettings = ({ onSuccess }: { onSuccess: () => void }) => {
+    const { cookieConsent, setReceivedCookieConsent } = useAuth();
 
     const [functionalCookiesEnabled, setFunctionalCookiesEnabled] = useState(cookieConsent?.functional || false);
     const [performanceCookiesEnabled, setPerformanceCookiesEnabled] = useState(cookieConsent?.performance || false);
@@ -64,7 +63,7 @@ const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
                     <Accordion
                         title={'Essential Cookies (always active)'}
                         description={'Required for login, session management, permissions, and security. They include the cookie used for\n' +
-                        'mandatory audit logging of user actions. Without these cookies, our service cannot operate properly.'}
+                            'mandatory audit logging of user actions. Without these cookies, our service cannot operate properly.'}
                         toggleName={'essential_cookies'}
                         hasToggle={false}
                         toggleTitle={'Always active'}
@@ -79,7 +78,7 @@ const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
                                 </ul>
                             </p>
                             <p>These cookies do not require your consent.</p>
-                       </>
+                        </>
                     </Accordion>
                     {/*<p className={'text-bold'}> Essential Cookies (always active) </p>*/}
 
@@ -105,7 +104,7 @@ const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
                         toggleName={'functional_cookies'}
                         hasToggle={true}
                         toggleValue={functionalCookiesEnabled}
-                        onToggleChange={()=>setFunctionalCookiesEnabled((prevState)=>!prevState)}
+                        onToggleChange={() => setFunctionalCookiesEnabled((prevState) => !prevState)}
                     >
                         <>
                             <p>
@@ -145,7 +144,7 @@ const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
                         toggleName={'performance_cookies'}
                         hasToggle={true}
                         toggleValue={performanceCookiesEnabled}
-                        onToggleChange={()=>setPerformanceCookiesEnabled((prevState)=>!prevState)}
+                        onToggleChange={() => setPerformanceCookiesEnabled((prevState) => !prevState)}
                     >
                         <>
                             <p>
@@ -178,7 +177,7 @@ const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
                     {/*<p>*/}
                     {/*    If disabled, we won’t collect analytics data about how you use our site.*/}
                     {/*</p>*/}
-                    <p/>
+                    <p />
                     <p className={'text-bold'}>Your choices</p>
                     <p>
                         <ul>
@@ -199,9 +198,9 @@ const CookieConsentSettings = ({onSuccess}: {onSuccess:() => void}) => {
                 </div>
             </div>
             <div className='cookie-consent-settings__btns'>
-                <Button classNames='cookie-consent' onClick={()=>handleSave(FULL_CONSENT)}>Accept All</Button>
-                <Button classNames='cookie-consent' onClick={()=>handleSave(ONLY_ESSENTIAL_CONSENT)}>Reject Non-Essential</Button>
-                <Button classNames='cookie-consent' onClick={()=>handleSave({essential: true, functional: functionalCookiesEnabled, performance: performanceCookiesEnabled} as CookieConsentType)}>Save selected</Button>
+                <Button classNames='cookie-consent' onClick={() => handleSave(FULL_CONSENT)}>Accept All</Button>
+                <Button classNames='cookie-consent' onClick={() => handleSave(ONLY_ESSENTIAL_CONSENT)}>Reject Non-Essential</Button>
+                <Button classNames='cookie-consent' onClick={() => handleSave({ essential: true, functional: functionalCookiesEnabled, performance: performanceCookiesEnabled } as CookieConsentType)}>Save selected</Button>
             </div>
 
         </div>

@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import './styles.scss'
+import React, { useEffect, useState } from 'react';
 import Icon from "@/components/Icon";
-import useAuth, {NavAccessItemType, UserInfoType} from "@/context/authContext";
+import useAuth from "@/context/authContext";
+import { NavAccessItemType, UserInfoType } from "@/types/auth";
 import Loader from "@/components/Loader";
 import SearchContainer from "@/components/SearchContainer";
 import SearchField from "@/components/SearchField";
@@ -21,10 +21,10 @@ export type UserType = {
 
 type UserListPropsType = {
     users: UserType[];
-    onClose: ()=>void;
+    onClose: () => void;
 }
 
-const UserList: React.FC<UserListPropsType> = ({users, onClose}) => {
+const UserList: React.FC<UserListPropsType> = ({ users, onClose }) => {
     const { setUserUi, setUserName, setUserInfoProfile, setNavItemsAccess } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     //const [users, setUsers] = useState<UserType[] | null>(null);
@@ -52,11 +52,11 @@ const UserList: React.FC<UserListPropsType> = ({users, onClose}) => {
 
     }, [searchTermClients]);
 
-    const handleSearchChange = (newSearchTerm :string) => {
+    const handleSearchChange = (newSearchTerm: string) => {
         setSearchTermClients(newSearchTerm);
     };
 
-    const handleUserChange = async(user: UserType) => {
+    const handleUserChange = async (user: UserType) => {
         setUserUi(user.uuid);
         setUserName(`SU - ${user.userPresentation}`);
         setNavItemsAccess(user.access);
@@ -76,7 +76,7 @@ const UserList: React.FC<UserListPropsType> = ({users, onClose}) => {
                     {/* search */}
                     <div className='notifications-block__search'>
                         <SearchContainer>
-                            <SearchField searchTerm={searchTermClients} handleChange={handleSearchChange} handleClear={()=>{setSearchTermClients("");}} />
+                            <SearchField searchTerm={searchTermClients} handleChange={handleSearchChange} handleClear={() => { setSearchTermClients(""); }} />
                             {/*<FieldBuilder {...fullTextSearchField} />*/}
                         </SearchContainer>
                     </div>
@@ -84,7 +84,7 @@ const UserList: React.FC<UserListPropsType> = ({users, onClose}) => {
                         {filteredUsers.map(item => (
                             <li key={item.uuid} className='users-list__list-item'>
 
-                                <button onClick={()=>handleUserChange(item)}>
+                                <button onClick={() => handleUserChange(item)}>
                                     {item.whiteLabel ? <span className='is-whitelabel-pref'><Icon name='whitelabel' /></span> : null}
                                     <Icon name='profile' />
                                     {item.userProfile.userInfo.client} ({item.userProfile.userInfo.userLogin})
@@ -94,7 +94,7 @@ const UserList: React.FC<UserListPropsType> = ({users, onClose}) => {
                         ))}
                     </ul>
                 </div>
-            : null}
+                : null}
         </>
     );
 };

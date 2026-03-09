@@ -72,6 +72,8 @@
   .icon {
     display: flex;
     align-items: center;
+    width: 24px;
+    height: 24px;
 
     &-right {
       margin-right: -5px;
@@ -109,6 +111,34 @@
     @media (max-width: $upToTablet) {
       display: flex;
     }
+  }
+
+  &.tertiary {
+    background-color: var(--color-white);
+    box-shadow: 0 2px 5px 0 var(--color-gray2);
+    transition: all 0.3s ease-in;
+    color: var(--color-gray-blue);
+    border: 2px solid var(--color-gray-blue);
+    border-radius: 20px;
+
+    svg {
+      fill: var(--color-gray-blue);
+      transition: all 0.3s ease-in;
+    }
+
+    &:hover {
+      color: var(--color-blue);
+      //background-color: var(--color-blue);
+      border-color: var(--color-blue);
+      box-shadow: 0 2px 5px 0 var(--color-gray2);
+
+      svg {
+        fill: var(--color-blue);
+      }
+    }
+
+
+
   }
 
 

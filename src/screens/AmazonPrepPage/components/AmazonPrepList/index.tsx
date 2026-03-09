@@ -1,31 +1,31 @@
-import React, {useCallback, useMemo, useState, useEffect} from "react";
-import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
+import React, { useCallback, useMemo, useState, useEffect } from "react";
+import { Pagination, Popover, Table, TableColumnProps, Tooltip } from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "@/styles/tables.scss";
 import Icon from "@/components/Icon";
-import {ColumnType} from "antd/es/table";
+import { ColumnType } from "antd/es/table";
 import DateInput from "@/components/DateInput";
-import {DateRangeType} from "@/types/dashboard";
-import {AmazonPrepOrderType} from "@/types/amazonPrep";
+import { DateRangeType } from "@/types/dashboard";
+import { AmazonPrepOrderType } from "@/types/amazonPrep";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
-import Button, {ButtonVariant} from "@/components/Button/Button";
-import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
+import Button, { ButtonVariant } from "@/components/Button/Button";
+import { StatusColors } from "@/screens/DashboardPage/components/OrderStatuses";
 import SearchField from "@/components/SearchField";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {FormFieldTypes} from "@/types/forms";
-import {Countries} from "@/types/countries";
+import { FormFieldTypes } from "@/types/forms";
+import { Countries } from "@/types/countries";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString} from "@/utils/date";
-import {useIsTouchDevice} from "@/hooks/useTouchDevice";
+import { formatDateStringToDisplayString } from "@/utils/date";
+import { useIsTouchDevice } from "@/hooks/useTouchDevice";
 import SimplePopup from "@/components/SimplePopup";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
+import { FilterComponentType } from "@/types/filters";
 
 
 type AmazonPrepListType = {
@@ -45,7 +45,7 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
-const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, currentRange, setCurrentRange, setFilteredAmazonPrepOrders,handleEditAmazonPrepOrder}) => {
+const AmazonPrepList: React.FC<AmazonPrepListType> = ({ amazonPrepOrders, currentRange, setCurrentRange, setFilteredAmazonPrepOrders, handleEditAmazonPrepOrder }) => {
     const isTouchDevice = useIsTouchDevice();
     const { needSeller, sellersList } = useAuth();
 
@@ -83,14 +83,14 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     const [selectedSeller, setSelectedSeller] = useState<string | null>('All sellers');
     const calcSellersAmount = useCallback((seller: string) => {
         return amazonPrepOrders.filter(order => order.seller.toLowerCase() === seller.toLowerCase()).length || 0;
-    },[amazonPrepOrders]);
+    }, [amazonPrepOrders]);
 
-    const sellersOptions = useMemo(()=>{
-        return [{label: 'All sellers', value: 'All sellers', amount: amazonPrepOrders.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
+    const sellersOptions = useMemo(() => {
+        return [{ label: 'All sellers', value: 'All sellers', amount: amazonPrepOrders.length }, ...sellersList.map(item => ({ ...item, amount: calcSellersAmount(item.value) }))];
     }, [sellersList, calcSellersAmount]);
 
     const getSellerName = useCallback((sellerUid: string) => {
-        const t = sellersList.find(item=>item.value===sellerUid);
+        const t = sellersList.find(item => item.value === sellerUid);
         return t ? t.label : ' - ';
     }, [sellersList]);
 
@@ -100,8 +100,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
 
     const calcOrderAmount = useCallback((property: string, value: string) => {
-        return amazonPrepOrders.filter(order => order[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller==='All sellers' || order.seller == selectedSeller)).length || 0;
-    },[amazonPrepOrders, selectedSeller]);
+        return amazonPrepOrders.filter(order => order[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller === 'All sellers' || order.seller == selectedSeller)).length || 0;
+    }, [amazonPrepOrders, selectedSeller]);
 
     const [filterStatus, setFilterStatus] = useState<string[]>([]);
     const handleFilterStatusChange = (newStatuses: string[]) => {
@@ -110,7 +110,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }
     // const allStatuses = orders.map(order => order.status);
     const uniqueStatuses = useMemo(() => {
-        const statuses = amazonPrepOrders.filter(item=>selectedSeller==='All sellers' || selectedSeller===item.seller).map(order => order.status);
+        const statuses = amazonPrepOrders.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(order => order.status);
         return Array.from(new Set(statuses)).filter(status => status).sort();
     }, [amazonPrepOrders, selectedSeller]);
     uniqueStatuses.sort();
@@ -135,7 +135,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }
     // const allWarehouses = orders.map(order => order.warehouse);
     const uniqueWarehouses = useMemo(() => {
-        const warehouses = amazonPrepOrders.filter(item=>selectedSeller==='All sellers' || selectedSeller===item.seller).map(order => order.warehouse);
+        const warehouses = amazonPrepOrders.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(order => order.warehouse);
         return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
     }, [amazonPrepOrders, selectedSeller]);
     uniqueWarehouses.sort();
@@ -160,7 +160,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
     }
     // const allReceiverCountries = orders.map(order => order.receiverCountry);
     const uniqueReceiverCountries = useMemo(() => {
-        const receiverCountries = amazonPrepOrders.filter(item=>selectedSeller==='All sellers' || selectedSeller===item.seller).map(order => order.receiverCountry);
+        const receiverCountries = amazonPrepOrders.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(order => order.receiverCountry);
         return Array.from(new Set(receiverCountries)).filter(country => country).sort();
     }, [amazonPrepOrders, selectedSeller]);
     uniqueReceiverCountries.sort();
@@ -195,8 +195,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             setFilterState: handleFilterStatusChange,
             isOpen: isOpenFilterStatus,
             setIsOpen: setIsOpenFilterStatus,
-            onClose: ()=>handleFilterStatusChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
+            onClose: () => handleFilterStatusChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterStatus(true) },
         },
         {
             filterTitle: 'Warehouse',
@@ -207,8 +207,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             setFilterState: handleFilterWarehouseChange,
             isOpen: isOpenFilterWarehouse,
             setIsOpen: setIsOpenFilterWarehouse,
-            onClose: ()=>handleFilterWarehouseChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)},
+            onClose: () => handleFilterWarehouseChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterWarehouse(true) },
         },
         {
             filterTitle: 'Receiver country',
@@ -220,10 +220,10 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             setFilterState: handleFilterReceiverCountryChange,
             isOpen: isOpenFilterReceiverCountry,
             setIsOpen: setIsOpenFilterReceiverCountry,
-            onClose: ()=>handleFilterReceiverCountryChange([]),
-            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true)},
+            onClose: () => handleFilterReceiverCountryChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true) },
         },
-    ];
+    ] as FilterComponentType[];
 
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
@@ -242,7 +242,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         setCurrent(1);
     };
 
-    const handleFilterChange = (newSearchTerm :string) => {
+    const handleFilterChange = (newSearchTerm: string) => {
         setSearchTerm(newSearchTerm);
         setCurrent(1)
     };
@@ -277,11 +277,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             const matchesStatus = !filterStatus.length ||
                 (filterStatus.includes(order.status));
             const matchesWarehouse = !filterWarehouse.length ||
-                filterWarehouse.map(item=>item.toLowerCase()).includes(order.warehouse.toLowerCase());
+                filterWarehouse.map(item => item.toLowerCase()).includes(order.warehouse.toLowerCase());
             const matchesReceiverCountry = !filterReceiverCountry.length ||
                 filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
 
-            const matchesSeller = !selectedSeller || selectedSeller==='All sellers' || order.seller.toLowerCase() === selectedSeller.toLowerCase();
+            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || order.seller.toLowerCase() === selectedSeller.toLowerCase();
 
             return matchesSearch && matchesStatus && matchesWarehouse && matchesReceiverCountry && matchesSeller;
         }).sort((a, b) => {
@@ -312,12 +312,12 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
     }, [filteredOrders]);
 
-    const curWidth = useMemo(()=>{
+    const curWidth = useMemo(() => {
         const displayedData = filteredOrders.slice((current - 1) * pageSize, current * pageSize);
-        const maxAmount = displayedData.reduce((acc,item)=> Math.max(acc, item.productLines),0).toString().length;
-        const width = 47+maxAmount*9;
-        return width.toString()+'px';
-    },[current, pageSize, filteredOrders]);
+        const maxAmount = displayedData.reduce((acc, item) => Math.max(acc, item.productLines), 0).toString().length;
+        const width = 47 + maxAmount * 9;
+        return width.toString() + 'px';
+    }, [current, pageSize, filteredOrders]);
 
     const SellerColumns: TableColumnProps<AmazonPrepOrderType>[] = [];
     if (needSeller()) {
@@ -331,8 +331,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -363,18 +363,18 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
         } as TableColumnProps<AmazonPrepOrderType>);
     }
 
-    const columns: TableColumnProps<AmazonPrepOrderType>[]  = [
+    const columns: TableColumnProps<AmazonPrepOrderType>[] = [
         {
             key: 'warehouseCountries',
             title: <TitleColumn
-                    minWidth="50px"
-                    maxWidth="50px"
-                    contentPosition="center"
-                    childrenBefore={
-                        <Tooltip title="Sender country ➔ Receiver country">
-                            <Icon  name={"car"}/>
-                        </Tooltip>}>
-                    </TitleColumn>,
+                minWidth="50px"
+                maxWidth="50px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="Sender country ➔ Receiver country">
+                        <Icon name={"car"} />
+                    </Tooltip>}>
+            </TitleColumn>,
             render: (text: string, record) =>
                 <TableCell
                     minWidth="50px"
@@ -392,7 +392,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                             <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`}></span>
                             <div style={{ fontSize: '8px' }}>{record.receiverCountry}</div>
                         </div>
-                }
+                    }
                 >
                 </TableCell>,
             dataIndex: 'icon',
@@ -407,8 +407,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     minWidth="20px"
                     maxWidth="20px"
                     contentPosition="center"
-                    childrenAfter ={
-                        <span style={{marginTop:'3px'}}>{record.notifications ? <Icon name="notification" />: null}</span>}
+                    childrenAfter={
+                        <span style={{ marginTop: '3px' }}>{record.notifications ? <Icon name="notification" /> : null}</span>}
                 >
                 </TableCell>
 
@@ -428,8 +428,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     <Tooltip title="Current condition or state of an order">
                         <>
                             <span>Status</span>
-                            {sortColumn==='status' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='status' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'status' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'status' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -445,8 +445,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                                 borderBottom: `2px solid ${underlineColor}`,
                                 display: 'inline-block',
                             }}>
-                        {text}
-                        </span>
+                                {text}
+                            </span>
                         }
                     >
                     </TableCell>
@@ -468,13 +468,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     <Tooltip title="When an order was created">
                         <>
                             <span>Date</span>
-                            {sortColumn==='date' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='date' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'date' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'date' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start"  />
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start" />
             ),
             dataIndex: 'date',
             key: 'date',
@@ -492,13 +492,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     <Tooltip title="Order identifier within the WAPI system">
                         <>
                             <span>WH number</span>
-                            {sortColumn==='wapiTrackingNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='wapiTrackingNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'wapiTrackingNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'wapiTrackingNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' />
             ),
             dataIndex: 'wapiTrackingNumber',
             key: 'wapiTrackingNumber',
@@ -508,7 +508,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             }),
             onCell: (record) => {
                 return {
-                    onClick: () => {handleEditAmazonPrepOrder(record.uuid)}
+                    onClick: () => { handleEditAmazonPrepOrder(record.uuid) }
                 };
             },
         },
@@ -521,13 +521,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     <Tooltip title="Amazon Shipment Notification Number">
                         <>
                             <span>ASN</span>
-                            {sortColumn==='asnNumber' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='asnNumber' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'asnNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'asnNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start" />
             ),
             dataIndex: 'asnNumber',
             key: 'asnNumber',
@@ -537,7 +537,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             }),
             onCell: (record) => {
                 return {
-                    onClick: () => {handleEditAmazonPrepOrder(record.uuid)}
+                    onClick: () => { handleEditAmazonPrepOrder(record.uuid) }
                 };
             },
             responsive: ['md'],
@@ -551,13 +551,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     <Tooltip title="Unique code for order identification in the seller's system">
                         <>
                             <span>Order ID</span>
-                            {sortColumn==='clientOrderID' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='clientOrderID' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'clientOrderID' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'clientOrderID' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start"/>
+                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="start" />
             ),
             dataIndex: 'clientOrderID',
             key: 'clientOrderID',
@@ -577,13 +577,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     <Tooltip title="Code of warehouse">
                         <>
                             <span>Warehouse</span>
-                            {sortColumn==='warehouse' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='warehouse' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'warehouse' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'warehouse' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
+                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start" />
             ),
             dataIndex: 'warehouse',
             key: 'warehouse',
@@ -602,13 +602,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     <Tooltip title="Service responsible for transporting and delivering packages">
                         <>
                             <span>Courier</span>
-                            {sortColumn==='courierService' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='courierService' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'courierService' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'courierService' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start"/>
+                <TableCell value={text} minWidth="60px" maxWidth="60px" contentPosition="start" />
             ),
             dataIndex: 'courierService',
             key: 'courierService',
@@ -627,13 +627,13 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     <Tooltip title="Type of Amazon Prep Order: LTL or SPD">
                         <>
                             <span>Method</span>
-                            {sortColumn==='deliveryMethod' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='deliveryMethod' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'deliveryMethod' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'deliveryMethod' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center"/>
+                <TableCell value={text} minWidth="40px" maxWidth="40px" contentPosition="center" />
             ),
             dataIndex: 'deliveryMethod',
             key: 'deliveryMethod',
@@ -651,9 +651,9 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                 childrenBefore={
                     <Tooltip title="Products" >
                         <>
-                            <span><Icon name={"shopping-cart"}/></span>
-                            {sortColumn==='productLines' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn==='productLines' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            <span><Icon name={"shopping-cart"} /></span>
+                            {sortColumn === 'productLines' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'productLines' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -663,7 +663,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     minWidth="50px"
                     maxWidth="50px"
                     contentPosition="center"
-                    childrenAfter ={
+                    childrenAfter={
                         <Popover
                             content={record.products.length ? <SimplePopup
                                 items={getProductItems(record)}
@@ -672,7 +672,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                             placement="left"
                             overlayClassName="doc-list-popover"
                         >
-                            <span style={{width: curWidth}} className="products-cell-style">{text} <Icon name="info" /></span>
+                            <span style={{ width: curWidth }} className="products-cell-style">{text} <Icon name="info" /></span>
                         </Popover>
                     }
                 />
@@ -685,14 +685,14 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
             }),
             responsive: ['lg'],
         },
-        ];
+    ];
     return (
         <div className="table">
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
-                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={()=>{setSearchTerm(""); handleFilterChange("");}} />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
@@ -704,7 +704,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                         name='selectedSeller'
                         label='Seller: '
                         value={selectedSeller}
-                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        onChange={(val) => setSelectedSeller(val as string)}
                         //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
                         options={sellersOptions}
                         classNames='seller-filter full-sized'
@@ -730,10 +730,10 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
 
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table
-                    dataSource={filteredOrders.map(item => ({...item, key:item.uuid})).slice((current - 1) * pageSize, current * pageSize)}
+                    dataSource={filteredOrders.map(item => ({ ...item, key: item.uuid })).slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
-                    scroll={{y:700}}
+                    scroll={{ y: 700 }}
                     showSorterTooltip={false}
                 />
                 <div className="order-products-total">
@@ -751,7 +751,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({amazonPrepOrders, current
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
-             </div>
+            </div>
 
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersListWithOptions filters={orderFilters} />

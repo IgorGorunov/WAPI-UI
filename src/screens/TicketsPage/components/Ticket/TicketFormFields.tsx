@@ -1,4 +1,4 @@
-import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import {FormBuilderType, FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {TicketHints} from "@/screens/TicketsPage/ticketHints.constants";
 
 export const CreateTicketFields = (topicOptions: OptionType[], subjectUuid: string|null) => {
@@ -48,7 +48,7 @@ export const CreateTicketFields = (topicOptions: OptionType[], subjectUuid: stri
             hint: TicketHints['description'] || '',
         },
 
-    ];
+    ] as FormBuilderType[];
 }
 
 

@@ -26,7 +26,7 @@ const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
 
     const fetchLegalData = useCallback(async () => {
         try {
-            const res: ApiResponseType = await getLegalData({token: token, alias});
+            const res = await getLegalData({token: token, alias});
 
             if (res && "data" in res) {
                 setLegalData(res.data);

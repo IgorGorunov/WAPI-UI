@@ -1,24 +1,25 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./styles.scss";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
-import {sendTicketMessage} from "@/services/tickets";
-import {ApiResponseType} from "@/types/api";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
+import { sendTicketMessage } from "@/services/tickets";
+import { ApiResponseType } from "@/types/api";
 import Loader from "@/components/Loader";
 import Icon from "@/components/Icon";
 import ModalPreview from "@/components/ModalPreview";
-import {arrayBufferToBase64, readFileAsArrayBuffer} from "@/utils/files";
-import {CHAT_FILE_TYPES} from "@/types/tickets";
+import { arrayBufferToBase64, readFileAsArrayBuffer } from "@/utils/files";
+import { CHAT_FILE_TYPES } from "@/types/tickets";
 //import EmojiPicker from './EmojiPicker';
 import ModalStatus from "@/components/ModalStatus";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import { STATUS_MODAL_TYPES } from "@/types/utility";
+import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 
 type SendMessagePropsType = {
     objectUuid: string;
-    onSendMessage: ()=>void;
+    onSendMessage: () => void;
     showEmojiPicker: boolean;
-    setShowEmojiPicker: (val:boolean)=>void;
+    setShowEmojiPicker: (val: boolean) => void;
     canEdit?: boolean;
 }
 
@@ -31,9 +32,9 @@ type ChatFileType = {
     name?: string;
 }
 
-const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMessage, canEdit}) => {
-    const { tenantData: { alias }} = useTenant();
-    const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
+const SendMessageBlock: React.FC<SendMessagePropsType> = ({ objectUuid, onSendMessage, canEdit }) => {
+    const { tenantData: { alias } } = useTenant();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const dropRef = useRef<HTMLDivElement>(null);
@@ -42,20 +43,20 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
     const [isLoading, setIsLoading] = useState(false)
     const [userInput, setUserInput] = useState('');
     const [files, setFiles] = useState<ChatFileType[]>([]);
-    const [selectedFile, setSelectedFile] = useState<ChatFileType|null>(null);
+    const [selectedFile, setSelectedFile] = useState<ChatFileType | null>(null);
 
     const AllowedFileExtensions = ['txt', 'xls', 'xlsx', 'doc', 'docx'];
     const isFileAllowed = (fileName: string) => {
         const fileNameArray = fileName.split('.');
         if (fileNameArray.length > 1) {
-            return AllowedFileExtensions.includes(fileNameArray[fileNameArray.length-1].toLowerCase());
+            return AllowedFileExtensions.includes(fileNameArray[fileNameArray.length - 1].toLowerCase());
         }
 
         return false;
     }
 
     const [showFileTypeError, setShowFileTypeError] = useState(false);
-    const handleCloseErrorModal = () => { setShowFileTypeError(false)};
+    const handleCloseErrorModal = () => { setShowFileTypeError(false) };
 
     useEffect(() => {
         setFiles([]);
@@ -104,12 +105,12 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
         if (typeof e === 'string' || e instanceof String) {
             setUserInput(e as string);
         }
-        else if (e && (e?.target?.value || e?.target?.value==='')) {
+        else if (e && (e?.target?.value || e?.target?.value === '')) {
             setUserInput(e.target.value);
         }
     };
 
-    const sendMessage = async(e) => {
+    const sendMessage = async (e) => {
         e.preventDefault();
 
         if (!isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.EditObject)) {
@@ -145,10 +146,10 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
             };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateMessageForObject'), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('CreateMessageForObject'), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
-            const res: ApiResponseType = await sendTicketMessage(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await sendTicketMessage(superUser && ui ? { ...requestData, ui } : requestData);
             if (res.status === 200) {
                 onSendMessage();
                 setFiles([]);
@@ -220,7 +221,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
 
     return (
         <div className="send-message-block" ref={dropRef} onDrop={handleDrop}>
-            {isLoading && <Loader/>}
+            {isLoading && <Loader />}
             <input
                 type="file"
                 ref={fileInputRef}
@@ -235,7 +236,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
                     disabled={!canEdit}
                     onClick={() => fileInputRef.current?.click()}
                 >
-                    <Icon name={'files'}/>
+                    <Icon name={'files'} />
                 </button>
                 <textarea
                     className={`send-message__input`}
@@ -249,7 +250,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
                     disabled={!canEdit}
                 />
                 <button type='button' className={`send-message__btn`} disabled={!canEdit || !userInput && (!files || !files.length)} onClick={sendMessage}><Icon
-                    name={'send'}/>
+                    name={'send'} />
                 </button>
                 {/*<button type='button' className={'emoji-btn'} onClick={()=>setShowEmojiPicker(!showEmojiPicker)}>*/}
                 {/*    <Icon name='emoji' />*/}
@@ -257,24 +258,24 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
             </div>
             {/*{showEmojiPicker ? <EmojiPicker onEmojiClick={onAddEmoji} />: null}*/}
             <div className={`send-message__file-preview`} onDrop={handleDrop}
-                 onDragOver={(e) => e.preventDefault()}>
+                onDragOver={(e) => e.preventDefault()}>
                 {files && files.length ? files.map((file, index) => (
                     <div key={index} className="file-container">
                         {file.fileType === CHAT_FILE_TYPES.IMAGE ?
                             <div className="send-message__file-preview-image" onClick={() => handleFileClick(index)}>
                                 <img className={`send-message__file-preview-image__img`} src={file.imgSrc}
-                                     alt={`Pasted Screenshot ${index + 1}`}
+                                    alt={`Pasted Screenshot ${index + 1}`}
                                 />
                             </div>
                             :
                             <div className={`send-message__file-preview-file ${file.fileType === CHAT_FILE_TYPES.PDF ? 'pdf' : ''}`} onClick={() => handleFileClick(index)}>
-                                <Icon name='files'/>
+                                <Icon name='files' />
                                 <div>{file.file.name}</div>
                                 {/*<div>{file.file.type}</div>*/}
                             </div>
                         }
                         <button className='file-container__remove-file'
-                                onClick={() => removeFile(index)}><Icon name='waste-bin'/></button>
+                            onClick={() => removeFile(index)}><Icon name='waste-bin' /></button>
                     </div>
                 )) : null}
 
@@ -282,16 +283,16 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({objectUuid, onSendMes
             {selectedFile && (
                 <ModalPreview onClose={handleCloseModal}>
                     {selectedFile.fileType === CHAT_FILE_TYPES.IMAGE ?
-                        <img src={selectedFile.imgSrc} alt="Selected Image"/> :
+                        <img src={selectedFile.imgSrc} alt="Selected Image" /> :
 
                         selectedFile.fileType === CHAT_FILE_TYPES.PDF ?
 
-                        <iframe
-                            src={selectedFile.imgSrc}
-                            title="Selected PDF"
-                            style={{width: '100%', height: '100%'}}
-                        />
-                            :null
+                            <iframe
+                                src={selectedFile.imgSrc}
+                                title="Selected PDF"
+                                style={{ width: '100%', height: '100%' }}
+                            />
+                            : null
                     }
                 </ModalPreview>
 

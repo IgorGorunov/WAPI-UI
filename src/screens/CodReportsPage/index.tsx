@@ -1,35 +1,36 @@
-import React, {useState, useEffect, useMemo, useCallback} from "react";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
-import { getCodReports , getCODIndicators} from "@/services/codReports";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
+import { getCodReports, getCODIndicators } from "@/services/codReports";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import CodReportsList from "./components/CodReportsList";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
-import {CODIndicatorsType, CODIndicatorType, CodReportType} from "@/types/codReports";
-import {exportFileXLS} from "@/utils/files";
-import {formatDateToString, getLastFewDays} from "@/utils/date";
-import {DateRangeType} from "@/types/dashboard";
+import { CODIndicatorsType, CODIndicatorType, CodReportType } from "@/types/codReports";
+import { exportFileXLS } from "@/utils/files";
+import { formatDateToString, getLastFewDays } from "@/utils/date";
+import { DateRangeType } from "@/types/dashboard";
 import CODIndicatorsCard from "@/screens/CodReportsPage/components/CODIndicators";
 import Loader from "@/components/Loader";
 import useTourGuide from "@/context/tourGuideContext";
-import {TourGuidePages} from "@/types/tourGuide";
+import { TourGuidePages } from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
 import {
     tourGuideStepsCodReports,
     tourGuideStepsCodReportsNoDocs
 } from "./codReportTourGuideSteps.constants";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 const CodReportsPage = () => {
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
-    const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType|null>(null);
-    const [CODIndicatorsBySeller, setCODIndicatorsBySeller] = useState<CODIndicatorsType|null>(null);
+    const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType | null>(null);
+    const [CODIndicatorsBySeller, setCODIndicatorsBySeller] = useState<CODIndicatorsType | null>(null);
 
     const [codReportsData, setCodReportsData] = useState<any | null>(null);
     const [filteredCodReports, setFilteredCodReports] = useState<CodReportType[] | null>(null);
@@ -38,27 +39,23 @@ const CodReportsPage = () => {
     //period
     const today = new Date();
     const firstDay = getLastFewDays(today, 30);
-    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({startDate: firstDay, endDate: today});
+    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({ startDate: firstDay, endDate: today });
 
     //seller filter
     const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
-    const sellersOptions = useMemo(()=>{
-        return [ {label: 'All sellers', value: 'All sellers'}, ...sellersList.map(item=>({...item}))];
+    const sellersOptions = useMemo(() => {
+        return [{ label: 'All sellers', value: 'All sellers' }, ...sellersList.map(item => ({ ...item }))];
     }, [sellersList]);
 
     useEffect(() => {
-        type ApiResponse = {
-            data: any;
-        };
-
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const requestData = {token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
+                const requestData = { token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
 
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo('GetCODReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
-                } catch {}
+                    sendUserBrowserInfo({ ...getBrowserInfo('GetCODReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
+                } catch { }
 
                 if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.ListView)) {
                     console.log('no access')
@@ -71,12 +68,12 @@ const CodReportsPage = () => {
 
                 console.log('has access')
 
-                const res: ApiResponse = await getCodReports(superUser && ui ? {...requestData, ui} : requestData);
+                const res = await getCodReports(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
-                    setCodReportsData(res.data.sort((a,b) => a.date > b.date ? -1 : 1));
+                    setCodReportsData(res.data.sort((a, b) => a.date > b.date ? -1 : 1));
                     const filtered = !selectedSeller || selectedSeller === 'All sellers' ? res.data : res.data.filter(item => item.seller === selectedSeller);
-                    setFilteredCodReports(filtered.sort((a,b) => a.date > b.date ? -1 : 1));
+                    setFilteredCodReports(filtered.sort((a, b) => a.date > b.date ? -1 : 1));
                 } else {
                     console.error("API did not return expected data");
                 }
@@ -120,18 +117,14 @@ const CodReportsPage = () => {
     }
 
     useEffect(() => {
-        type ApiResponse = {
-            data: any;
-        };
-
         const fetchDebtData = async () => {
             try {
                 setIsLoading(true);
-                const requestData = {token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
+                const requestData = { token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
 
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo('GetCODIndicators', AccessObjectTypes["Finances/CODReports"], AccessActions.View), body: superUser && ui ? {...requestData, ui} : requestData})
-                } catch {}
+                    sendUserBrowserInfo({ ...getBrowserInfo('GetCODIndicators', AccessObjectTypes["Finances/CODReports"], AccessActions.View), body: superUser && ui ? { ...requestData, ui } : requestData })
+                } catch { }
 
                 if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.View)) {
                     setCODIndicators({
@@ -157,7 +150,7 @@ const CodReportsPage = () => {
                     return null;
                 }
 
-                const res: ApiResponse = await getCODIndicators(superUser && ui ? {...requestData, ui} : requestData);
+                const res = await getCODIndicators(superUser && ui ? { ...requestData, ui } : requestData);
 
                 if (res && "data" in res) {
                     setCODIndicators(res.data);
@@ -184,8 +177,8 @@ const CodReportsPage = () => {
 
     const handleExportXLS = () => {
         try {
-            sendUserBrowserInfo({...getBrowserInfo('ExportCodReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ExportList), body: {startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate)}});
-        } catch {}
+            sendUserBrowserInfo({ ...getBrowserInfo('ExportCodReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ExportList), body: { startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) } });
+        } catch { }
 
         if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.ExportList)) {
             return null;
@@ -203,11 +196,11 @@ const CodReportsPage = () => {
     }
 
     //tour guide
-    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+    const { runTour, setRunTour, isTutorialWatched } = useTourGuide();
 
     useEffect(() => {
         if (!isTutorialWatched(TourGuidePages.CodReports)) {
-            if (!isLoading && codReportsData!==null) {
+            if (!isLoading && codReportsData !== null) {
                 setTimeout(() => setRunTour(true), 1000);
             }
         }
@@ -233,7 +226,7 @@ const CodReportsPage = () => {
                             name='selectedSeller'
                             label='Seller: '
                             value={selectedSeller}
-                            onChange={(val)=>{handleSelectedSellerChange(val as string)}}
+                            onChange={(val) => { handleSelectedSellerChange(val as string) }}
                             //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
                             options={sellersOptions}
                             classNames='seller-filter seller-filter--with-inactive-options full-sized'
@@ -261,9 +254,9 @@ const CodReportsPage = () => {
                         ) : null}
                     </div>
                 ) : null}
-                {codReportsData && <CodReportsList selectedSeller={selectedSeller || 'All sellers'} codReports={codReportsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod}  setFilteredCodReports={setFilteredCodReports}/>}
+                {codReportsData && <CodReportsList selectedSeller={selectedSeller || 'All sellers'} codReports={codReportsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredCodReports={setFilteredCodReports} />}
             </div>
-            {codReportsData!==null && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.CodReports} /> : null}
+            {codReportsData !== null && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.CodReports} /> : null}
         </Layout>
     )
 }

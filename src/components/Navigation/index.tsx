@@ -1,22 +1,21 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Icon from "@/components/Icon";
 import Link from "next/link";
-import SubmenuBlock, {SubmenuBlockType} from "@/components/Navigation/SubmenuBlock";
-import {navBlocks} from "@/components/Navigation/navItems.constants";
-import './styles.scss'
+import SubmenuBlock, { SubmenuBlockType } from "@/components/Navigation/SubmenuBlock";
+import { navBlocks } from "@/components/Navigation/navItems.constants";
 import SubmenuSingleItem from "@/components/Navigation/SubmenuSingleItem";
 import useTourGuide from "@/context/tourGuideContext";
-import {navigationStepsFull} from "./navigationTourGuideSteps.constants";
+import { navigationStepsFull } from "./navigationTourGuideSteps.constants";
 import TourGuide from "@/components/TourGuide";
-import {TourGuidePages} from "@/types/tourGuide";
+import { TourGuidePages } from "@/types/tourGuide";
 import useAuth from "@/context/authContext";
 import useNotifications from "@/context/notificationContext";
-import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
-import {usePathname} from "next/navigation";
+import { NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType } from "@/types/notifications";
+import { usePathname } from "next/navigation";
 
 type NavigationType = {
     isMenuOpen: boolean;
-    handleClose: ()=>void;
+    handleClose: () => void;
 }
 
 const getTicketsWithUnreadMessages = (notifications: NotificationType[]) => {
@@ -30,9 +29,9 @@ const getTicketsWithUnreadMessages = (notifications: NotificationType[]) => {
     return uniqueTickets.size;
 }
 
-const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
-    const {isNavItemAccessible} = useAuth();
-    const {notifications} = useNotifications();
+const Navigation: React.FC<NavigationType> = ({ isMenuOpen, handleClose }) => {
+    const { isNavItemAccessible } = useAuth();
+    const { notifications } = useNotifications();
     const pathname = usePathname();
     const [amountOfTicketsWithUnreadMessages, setAmountOfTicketsWithUnreadMessages] = useState(getTicketsWithUnreadMessages(notifications));
 
@@ -49,7 +48,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
     }, [notifications]);
 
     //tour guide
-    const {isNavigationWatched} = useTourGuide();
+    const { isNavigationWatched } = useTourGuide();
     const [runNavigationTour, setRunNavigationTour] = useState(false);
 
     const navigationSteps = [];
@@ -57,7 +56,7 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
         if (item.submenuName === 'Dashboard' || isNavItemAccessible(item.submenuName)) {
             navigationSteps.push(item);
         }
-    } )
+    })
 
     useEffect(() => {
         if (isMenuOpen && !isNavigationWatched()) {
@@ -70,33 +69,33 @@ const Navigation: React.FC<NavigationType> = ({isMenuOpen, handleClose}) => {
         if (!runNavigationTour) {
             handleClose();
         }
-    },[runNavigationTour]);
+    }, [runNavigationTour]);
 
-    const navBlocksArray = useMemo(()=>navBlocks(amountOfTicketsWithUnreadMessages) as SubmenuBlockType[],[amountOfTicketsWithUnreadMessages]);
+    const navBlocksArray = useMemo(() => navBlocks(amountOfTicketsWithUnreadMessages) as SubmenuBlockType[], [amountOfTicketsWithUnreadMessages]);
 
 
     return (
         <div className={`burger-menu__overlay ${isMenuOpen ? 'burger-menu__overlay-open' : ''}`} onClick={handleCloseClick}>
-            <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`} onClick={(e)=>e.stopPropagation()}>
+            <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`} onClick={(e) => e.stopPropagation()}>
                 <div className={`burger-menu-child`}>
                     <button className="close-button" onClick={handleClose} aria-label="Close menu">
-                        <Icon name="close" style={{width: "30px", height: "30px"}} />
+                        <Icon name="close" style={{ width: "30px", height: "30px" }} />
                     </button>
                     <div className='dashboard-menu-link'>
                         <Link href="/" className="button-link" passHref >
-                            <Icon name="home" className="icon-home"/>
-                            <span style={{marginLeft: "20px"}}>Dashboard</span>
+                            <Icon name="home" className="icon-home" />
+                            <span style={{ marginLeft: "20px" }}>Dashboard</span>
                         </Link>
                     </div>
-                    {navBlocksArray && navBlocksArray.length ? navBlocksArray.map((navBlock, index)=> (
+                    {navBlocksArray && navBlocksArray.length ? navBlocksArray.map((navBlock, index) => (
                         (isNavItemAccessible(navBlock.submenuName)) ? (<div key={`${navBlock.submenuTitle}-${index}`}>
                             {navBlock.submenuLink && !navBlock.navItems.length ?
-                                <SubmenuSingleItem {...navBlock}/>
+                                <SubmenuSingleItem {...navBlock} />
                                 :
                                 <SubmenuBlock {...navBlock} />
                             }
                         </div>) : null
-                    ))  : null}
+                    )) : null}
                 </div>
             </div>
             {isMenuOpen && runNavigationTour && navigationSteps ? <TourGuide steps={navigationSteps} run={runNavigationTour} setRunTourOpt={setRunNavigationTour} pageName={TourGuidePages.Navigation} disableAnimation={true} /> : null}

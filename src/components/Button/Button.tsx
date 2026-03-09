@@ -1,5 +1,5 @@
-import React, { ComponentProps } from "react";
-import { Icon, IconType } from "../Icon";
+import React, { type ComponentProps } from "react";
+import { Icon, type IconType } from "../Icon";
 import "./styles.scss";
 
 export const enum ButtonSize {
@@ -20,6 +20,8 @@ export const enum ButtonVariant {
   PRIMARY = 'primary',
   SECONDARY = 'secondary',
   FILTER = 'filter',
+  //tertiary, quaternary, quinary, senary, septenary, octonary, nonary, and denary
+  TETRIARY = 'tertiary',
 }
 
 export type ButtonType = ComponentProps<"button"> & {

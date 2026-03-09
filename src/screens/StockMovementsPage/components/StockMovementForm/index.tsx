@@ -1,67 +1,65 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth, {AccessActions, UserAccessActionType} from "@/context/authContext";
+import useAuth from "@/context/authContext";
+import { AccessActions, UserAccessActionType } from "@/types/auth";
 import Loader from "@/components/Loader";
-import {ToastContainer} from '@/components/Toast';
-import {SingleStockMovementType, STOCK_MOVEMENT_DOC_TYPE, StockMovementParamsType} from "@/types/stockMovements";
-import {getInboundData, getInboundParameters} from "@/services/stockMovements";
-import {ApiResponseType} from "@/types/api";
+import { ToastContainer } from '@/components/Toast';
+import { SingleStockMovementType, STOCK_MOVEMENT_DOC_TYPE, StockMovementParamsType } from "@/types/stockMovements";
+import { getInboundData, getInboundParameters } from "@/services/stockMovements";
+import { ApiResponseType } from "@/types/api";
 import Modal from "@/components/Modal";
 import StockMovementFormComponent
     from "@/screens/StockMovementsPage/components/StockMovementForm/StockMovementFormComponent";
-import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
-import {docNamesSingle, getAccessActionObject} from "@/screens/StockMovementsPage";
-import {sendUserBrowserInfo} from "@/services/userInfo";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
+import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
+import { docNamesSingle, getAccessActionObject } from "@/screens/StockMovementsPage";
+import { sendUserBrowserInfo } from "@/services/userInfo";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 
 type StockMovementFormType = {
     docType: STOCK_MOVEMENT_DOC_TYPE,
     docUuid?: string;
-    closeDocModal: ()=>void;
-    closeModalOnSuccess: ()=>void;
+    closeDocModal: () => void;
+    closeModalOnSuccess: () => void;
 }
 
-const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=null, closeDocModal, closeModalOnSuccess}) => {
+const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid = null, closeDocModal, closeModalOnSuccess }) => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
-    const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
+    const { setDocNotificationsAsRead } = useMarkNotificationAsRead();
 
-    const [docData, setDocData] = useState<SingleStockMovementType|null>(null);
-    const [docParameters, setDocParameters] = useState<StockMovementParamsType|null>(null);
-    const [forbiddenTabs, setForbiddenTabs] = useState<string[]|null>(null);
+    const [docData, setDocData] = useState<SingleStockMovementType | null>(null);
+    const [docParameters, setDocParameters] = useState<StockMovementParamsType | null>(null);
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[] | null>(null);
 
     //status modal
-    const [showStatusModal, setShowStatusModal]=useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeErrorModal = useCallback(()=>{
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
+    const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
     }, [])
 
     const fetchSingleStockMovement = async (uuid: string) => {
-        type ApiResponse = {
-            data: any;
-        };
 
         try {
             setIsLoading(true);
-            const requestData = {token, alias, uuid, documentType: docType};
+            const requestData = { token, alias, uuid, documentType: docType };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetStockMovementData/'+docType, getAccessActionObject(docType), AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('GetStockMovementData/' + docType, getAccessActionObject(docType), AccessActions.ViewObject), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
             if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.ViewObject)) {
                 setDocData(null);
-                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal })
                 setShowStatusModal(true);
                 return null;
             }
-            const res: ApiResponse = await getInboundData(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await getInboundData(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setDocData(res.data);
@@ -75,16 +73,16 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
         }
     };
 
-    const fetchStockMovementParams = useCallback(async() => {
+    const fetchStockMovementParams = useCallback(async () => {
         try {
             setIsLoading(true);
-            const requestData = {token, alias, documentType: docType};
+            const requestData = { token, alias, documentType: docType };
 
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetStockMovementParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
             // } catch {}
 
-            const resp: ApiResponseType = await getInboundParameters(superUser && ui ? {...requestData, ui} : requestData);
+            const resp = await getInboundParameters(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (resp && "data" in resp) {
                 setDocParameters(resp.data);
@@ -109,7 +107,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
         } catch (error) {
             console.error("Error fetching data:", error);
         }
-    },[token]);
+    }, [token]);
 
     useEffect(() => {
         fetchStockMovementParams();
@@ -149,15 +147,15 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({docType, docUuid=nu
                                 docParameters={docParameters}
                                 docData={docData}
                                 closeDocModal={onCloseOnSuccess}
-                                refetchDoc={()=>fetchSingleStockMovement(docUuid)}
+                                refetchDoc={() => fetchSingleStockMovement(docUuid)}
                                 forbiddenTabs={forbiddenTabs}
                             />
                         </Modal>
                     ) : null}
                 </div>
-                )
-            : null)}
-            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+            )
+                : null)}
+            {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </div>
     );
 }

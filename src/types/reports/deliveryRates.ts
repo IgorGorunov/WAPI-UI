@@ -46,6 +46,8 @@ export type DeliveryRatesRowType = {
     returned: string;
     inTransit: string;
     otherStatuses: string;
+
+    seller?: string;
 }
 
 

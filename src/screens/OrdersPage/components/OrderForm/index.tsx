@@ -1,63 +1,64 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {OrderParamsType, SingleOrderType} from "@/types/orders";
+import React, { useCallback, useEffect, useState } from 'react';
+import { OrderParamsType, SingleOrderType } from "@/types/orders";
 import "./styles.scss";
 import '@/styles/forms.scss';
-import useAuth, {AccessActions, AccessObjectTypes, UserAccessActionType} from "@/context/authContext";
-import {getOrderData, getOrderParameters} from '@/services/orders';
-import {ApiResponseType} from '@/types/api';
-import {ToastContainer} from '@/components/Toast';
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes, UserAccessActionType } from "@/types/auth";
+import { getOrderData, getOrderParameters } from '@/services/orders';
+import { ToastContainer } from '@/components/Toast';
 import Modal from "@/components/Modal";
 import Loader from "@/components/Loader";
 import OrderFormComponent from "@/screens/OrdersPage/components/OrderForm/OrderFormComponent";
-import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
-import {sendUserBrowserInfo} from "@/services/userInfo";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
+import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
+import { sendUserBrowserInfo } from "@/services/userInfo";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 
 type OrderFormType = {
     orderUuid?: string;
-    closeOrderModal: ()=>void;
-    closeOrderModalOnSuccess: ()=>void;
+    closeOrderModal: () => void;
+    closeOrderModalOnSuccess: () => void;
 }
 
-const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOrderModalOnSuccess}) => {
-    const [isLoading, setIsLoading] = useState(false);
+const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeOrderModalOnSuccess }) => {
+    const [isLoadingOrder, setIsLoadingOrder] = useState(false);
+    const [isLoadingParams, setIsLoadingParams] = useState(false);
 
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
-    const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
+    const { setDocNotificationsAsRead } = useMarkNotificationAsRead();
 
-    const [orderData, setOrderData] = useState<SingleOrderType|null>(null);
-    const [orderParameters, setOrderParameters] = useState<OrderParamsType|null>(null);
-    const [forbiddenTabs, setForbiddenTabs] = useState<string[]|null>(null);
+    const [orderData, setOrderData] = useState<SingleOrderType | null>(null);
+    const [orderParameters, setOrderParameters] = useState<OrderParamsType | null>(null);
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[] | null>(null);
 
     //status modal
-    const [showStatusModal, setShowStatusModal]=useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeErrorModal = useCallback(()=>{
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
+    const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
     }, [])
 
     const fetchSingleOrder = async (uuid: string) => {
         try {
-            setIsLoading(true);
-            const requestData = {token, alias, uuid};
+            setIsLoadingOrder(true);
+            const requestData = { token, alias, uuid };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetOrderData',AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('GetOrderData', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
             if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject)) {
                 setOrderData(null);
 
-                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal })
                 setShowStatusModal(true);
 
                 return null;
             }
 
-            const res: ApiResponseType = await getOrderData(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await getOrderData(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setOrderData(res.data);
@@ -66,21 +67,22 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
             }
         } catch (error) {
             console.error("Error fetching data:", error);
+            closeOrderModal();
         } finally {
-            setIsLoading(false);
+            setIsLoadingOrder(false);
         }
     };
 
-    const fetchOrderParams = useCallback(async() => {
+    const fetchOrderParams = useCallback(async () => {
         try {
-            setIsLoading(true);
-            const requestData = {token, alias};
+            setIsLoadingParams(true);
+            const requestData = { token, alias };
 
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetOrderParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
             // } catch {}
 
-            const resp: ApiResponseType = await getOrderParameters(superUser && ui ? {...requestData, ui} : requestData);
+            const resp = await getOrderParameters(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (resp && "data" in resp) {
                 setOrderParameters(resp.data);
@@ -103,11 +105,11 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
             }
 
         } catch (error) {
-            console.error("Error fetching data:", error);
+            // console.error("Error fetching data:", error);
         } finally {
-            setIsLoading(false);
+            setIsLoadingParams(false);
         }
-    },[token]);
+    }, [token]);
 
     useEffect(() => {
         fetchOrderParams();
@@ -130,21 +132,21 @@ const OrderForm: React.FC<OrderFormType> = ({orderUuid, closeOrderModal, closeOr
     }
 
     return <div className='order-info'>
-        {(isLoading || !(orderUuid && orderData || !orderUuid) || !orderParameters) && <Loader />}
+        {(isLoadingOrder || isLoadingParams) && <Loader />}
         <ToastContainer />
-        {orderParameters && forbiddenTabs !==null && (orderUuid && orderData || !orderUuid) ?
+        {orderParameters && forbiddenTabs !== null && (orderUuid && orderData || !orderUuid) ?
             <Modal title={`Order`} onClose={onClose} classNames='document-modal'>
                 <OrderFormComponent
                     orderData={orderData}
                     orderParameters={orderParameters}
                     orderUuid={orderUuid}
                     closeOrderModal={onCloseWithSuccess}
-                    refetchDoc={()=>{fetchSingleOrder(orderUuid);}}
-                    forbiddenTabs = {forbiddenTabs}
+                    refetchDoc={() => { fetchSingleOrder(orderUuid); }}
+                    forbiddenTabs={forbiddenTabs}
                 />
             </Modal>
-        : null}
-        {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+            : null}
+        {showStatusModal && <ModalStatus {...modalStatusInfo} />}
     </div>
 }
 

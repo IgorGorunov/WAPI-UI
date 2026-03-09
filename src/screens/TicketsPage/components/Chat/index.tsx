@@ -78,7 +78,7 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
             //     sendUserBrowserInfo({...getBrowserInfo('GetMessagesByObject'), body: superUser && ui ? {...requestData, ui} : requestData})
             // } catch {}
 
-            const res: ApiResponseType = await getTicketMessages(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await getTicketMessages(superUser && ui ? {...requestData, ui} : requestData);
             if (res.status === 200) {
                 setChatMessages(res.data);
             }

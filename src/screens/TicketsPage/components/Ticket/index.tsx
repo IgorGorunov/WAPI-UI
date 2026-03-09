@@ -1,17 +1,18 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./styles.scss";
-import {ApiResponseType} from "@/types/api";
-import {getSingleTicket, getTicketParams} from "@/services/tickets";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
-import {SingleTicketType, TicketParamsType} from "@/types/tickets";
+import { ApiResponseType } from "@/types/api";
+import { getSingleTicket, getTicketParams } from "@/services/tickets";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
+import { SingleTicketType, TicketParamsType } from "@/types/tickets";
 import Loader from "@/components/Loader";
-import {ToastContainer} from "@/components/Toast";
+import { ToastContainer } from "@/components/Toast";
 import Modal from "@/components/Modal";
 import TicketComponent from "@/screens/TicketsPage/components/Ticket/TicketComponent";
-import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
-import {sendUserBrowserInfo} from "@/services/userInfo";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
+import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
+import { sendUserBrowserInfo } from "@/services/userInfo";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 
 type TicketPropsType = {
@@ -19,16 +20,16 @@ type TicketPropsType = {
     subjectType?: string | null;
     subjectUuid?: string | null;
     subject?: string;
-    onClose: ()=>void;
+    onClose: () => void;
     seller?: string;
 };
 
-const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, subjectUuid=null, subject='', onClose, seller}) => {
-    const { tenantData: { alias }} = useTenant();
-    const {token, superUser, ui, getBrowserInfo, isActionIsAccessible} = useAuth();
-    const {setDocNotificationsAsRead} = useMarkNotificationAsRead();
+const Ticket: React.FC<TicketPropsType> = ({ ticketUuid = null, subjectType = null, subjectUuid = null, subject = '', onClose, seller }) => {
+    const { tenantData: { alias } } = useTenant();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { setDocNotificationsAsRead } = useMarkNotificationAsRead();
 
-    const [docUuid, setDocUuid] = useState<string|null>(ticketUuid);
+    const [docUuid, setDocUuid] = useState<string | null>(ticketUuid);
 
     const [isTicketNew, setIsTicketNew] = useState(!ticketUuid);
 
@@ -41,29 +42,29 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
     const [singleTicketData, setSingleTicketData] = useState<SingleTicketType | null>(null);
 
     //status modal
-    const [showStatusModal, setShowStatusModal]=useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeErrorModal = useCallback(()=>{
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
+    const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
     }, [])
 
     const fetchSingleTicket = useCallback(async (uuid: string) => {
         try {
             setIsLoading(true);
-            const requestData = {token, alias, uuid};
+            const requestData = { token, alias, uuid };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetTicketData', AccessObjectTypes.Tickets, AccessActions.ViewObject), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('GetTicketData', AccessObjectTypes.Tickets, AccessActions.ViewObject), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
             if (!isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.ViewObject)) {
                 setSingleTicketData(null);
-                setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal })
                 setShowStatusModal(true);
                 return null;
             }
 
-            const res: ApiResponseType = await getSingleTicket(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await getSingleTicket(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setSingleTicketData(res.data);
@@ -77,23 +78,23 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
         } finally {
             setIsLoading(false);
         }
-    },[token, docUuid]);
+    }, [token, docUuid]);
 
     const fetchTicketParams = useCallback(async () => {
         try {
             setIsLoading(true);
-            const requestData = {token, alias};
+            const requestData = { token, alias };
             // try {
             //     sendUserBrowserInfo({...getBrowserInfo('GetTicketParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
             // } catch {}
-            if (!ticketUuid && !isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.CreateObject) ) {
+            if (!ticketUuid && !isActionIsAccessible(AccessObjectTypes.Tickets, AccessActions.CreateObject)) {
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo('CreateTicket', AccessObjectTypes.Tickets, AccessActions.CreateObject), body: superUser && ui ? {...requestData, ui} : requestData})
-                } catch {}
+                    sendUserBrowserInfo({ ...getBrowserInfo('CreateTicket', AccessObjectTypes.Tickets, AccessActions.CreateObject), body: superUser && ui ? { ...requestData, ui } : requestData })
+                } catch { }
                 setTicketParams(null);
                 return null;
             }
-            const res: ApiResponseType = await getTicketParams(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await getTicketParams(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setTicketParams(res.data);
@@ -106,7 +107,7 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
         } finally {
             setIsLoading(false);
         }
-    },[token]);
+    }, [token]);
 
 
     useEffect(() => {
@@ -127,14 +128,14 @@ const Ticket: React.FC<TicketPropsType> = ({ticketUuid=null, subjectType=null, s
 
     return (
         <div className={`ticket ticket-wrapper  ${isTicketNew ? 'new-ticket' : 'existing-ticket'}`} >
-            {isLoading && <Loader/>}
-            <ToastContainer/>
+            {isLoading && <Loader />}
+            <ToastContainer />
             {ticketParams && (ticketUuid && singleTicketData || !ticketUuid) ?
                 <Modal title={`Ticket`} onClose={onCloseModal} classNames='document-modal'>
-                    <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid}  reFetchTicket={()=>{fetchSingleTicket(ticketUuid)}} onClose={onCloseModal} seller={seller}/>
+                    <TicketComponent setDocUuid={setDocUuid} ticketParams={ticketParams} singleTicketData={singleTicketData} subjectType={subjectType} subjectUuid={subjectUuid} subject={subject} ticketUuid={docUuid} reFetchTicket={() => { fetchSingleTicket(ticketUuid) }} onClose={onCloseModal} seller={seller} />
                 </Modal>
                 : null}
-            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+            {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </div>
     );
 };

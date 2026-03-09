@@ -1,8 +1,8 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom"
 import Icon from "@/components/Icon";
-import "./styles.scss";
-import {ModalTypes, STATUS_MODAL_TYPES} from "@/types/utility";
+import { ModalTypes, STATUS_MODAL_TYPES } from "@/types/utility";
+import styles from "./styles.module.scss";
 
 export type ObjectErrorText = {
     title: string;
@@ -16,7 +16,7 @@ export type ModalStatusType = {
     subtitle?: string;
     text?: string[];
     multipleObjectsErrorText?: ObjectErrorText[];
-    onClose: ()=> void;
+    onClose: () => void;
     modalType?: ModalTypes;
     disableAutoClose?: boolean;
 }
@@ -36,61 +36,61 @@ const getStatusModalIconName = (statusModalType: STATUS_MODAL_TYPES) => {
     }
 }
 
-const ModalStatus:React.FC<ModalStatusType> = ({statusModalType=STATUS_MODAL_TYPES.ERROR, title, subtitle, text, multipleObjectsErrorText, onClose, classNames='', modalType=ModalTypes.STATUS, disableAutoClose=false}) => {
+const ModalStatus: React.FC<ModalStatusType> = ({ statusModalType = STATUS_MODAL_TYPES.ERROR, title, subtitle, text, multipleObjectsErrorText, onClose, classNames = '', modalType = ModalTypes.STATUS, disableAutoClose = false }) => {
     const handleCloseClick = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         onClose();
     };
 
     useEffect(() => {
-        if (statusModalType===STATUS_MODAL_TYPES.SUCCESS && !disableAutoClose) {
-            setTimeout(()=>onClose(), 2000);
+        if (statusModalType === STATUS_MODAL_TYPES.SUCCESS && !disableAutoClose) {
+            setTimeout(() => onClose(), 2000);
         }
     }, []);
 
 
     const modalContent = (
-        <div className={`status-modal-overlay ${classNames ? classNames : ''}`}>
-            <div className="status-modal-wrapper" >
-                <div className={`status-modal ${statusModalType}-modal`}>
-                    <div className="status-modal-header">
-                        {title && <div className='status-modal-header__title'>
+        <div className={`${styles['status-modal-overlay']} ${classNames ? classNames : ''}`}>
+            <div className={styles['status-modal-wrapper']} >
+                <div className={`${styles['status-modal']} ${styles[`${statusModalType}-modal`] || ''}`}>
+                    <div className={styles['status-modal-header']}>
+                        {title && <div className={styles['status-modal-header__title']}>
                             {title}
                         </div>}
-                        <div className='status-modal-header__close'>
+                        <div className={styles['status-modal-header__close']}>
                             <a href="#" onClick={handleCloseClick}>
                                 <Icon name='close-in-circle' />
                             </a>
                         </div>
                     </div>
 
-                    <div className="status-modal-body">
-                        {statusModalType!==STATUS_MODAL_TYPES.MESSAGE && (<div className={`status-icon ${statusModalType}`}>
-                            <Icon name={getStatusModalIconName(statusModalType)}/>
+                    <div className={styles['status-modal-body']}>
+                        {statusModalType !== STATUS_MODAL_TYPES.MESSAGE && (<div className={`${styles['status-icon']} ${styles[statusModalType] ? styles[statusModalType] : statusModalType}`}>
+                            <Icon name={getStatusModalIconName(statusModalType)} />
                         </div>)}
-                        {subtitle ? <div className='status-modal__subtitle'>
+                        {subtitle ? <div className={styles['status-modal__subtitle']}>
                             {/*{splitMessage(subtitle, '\n')}*/}
                             {subtitle}
                         </div> : null}
 
                         {text && text.length &&
-                            <div className='status-modal__text'>
-                                <ul className='status-modal__text-list'>
-                                    {text.map((item: string, index: number)=> <li key={`${item}-${index}-${new Date().toISOString()}`} className={'status-modal__text-list-item'}>{item}</li> )}
+                            <div className={styles['status-modal__text']}>
+                                <ul className={styles['status-modal__text-list']}>
+                                    {text.map((item: string, index: number) => <li key={`${item}-${index}-${new Date().toISOString()}`} className={styles['status-modal__text-list-item']}>{item}</li>)}
                                 </ul>
                             </div>
                         }
                         {multipleObjectsErrorText && multipleObjectsErrorText.length ?
-                            <div className='status-modal__multiple-text'>
-                                <ul className='status-modal__multiple-text-list'>
+                            <div className={styles['status-modal__multiple-text']}>
+                                <ul className={styles['status-modal__multiple-text-list']}>
                                     {multipleObjectsErrorText.map((item: ObjectErrorText, index: number) => (
-                                        <li key={`${item.title}-${index}-${new Date().toISOString()}`} className={'status-modal__multiple-text-list-item'}>
-                                            <p className='status-modal__multiple-text-title'>
+                                        <li key={`${item.title}-${index}-${new Date().toISOString()}`} className={styles['status-modal__multiple-text-list-item']}>
+                                            <p className={styles['status-modal__multiple-text-title']}>
                                                 {item.title}
                                             </p>
-                                            <ul className='status-modal__multiple-text-inner-list'>
+                                            <ul className={styles['status-modal__multiple-text-inner-list']}>
                                                 {item.text ? item.text.map(((innerText, innerIndex) => (
-                                                    <li  key={`${innerText}-${innerIndex}-${new Date().toISOString()}`} className={'status-modal__multiple-text-inner-list-item'}>{innerText}</li>
+                                                    <li key={`${innerText}-${innerIndex}-${new Date().toISOString()}`} className={styles['status-modal__multiple-text-inner-list-item']}>{innerText}</li>
                                                 ))) : null}
                                             </ul>
                                         </li>)

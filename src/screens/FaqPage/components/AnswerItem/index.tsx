@@ -1,6 +1,6 @@
-import React, {memo} from "react";
+import React, { memo } from "react";
 import SanityBlockRenderer from "@/components/SanityBlockRenderer";
-import {FaqPageContentItemType} from "@/types/sanity/fragmentTypes";
+import { FaqPageContentItemType } from "@/types/sanity/fragmentTypes";
 
 type FaqAnswerItemPropsType = {
     item: FaqPageContentItemType;
@@ -8,7 +8,7 @@ type FaqAnswerItemPropsType = {
     level?: number;
 }
 
-const AnswerItem: React.FC<FaqAnswerItemPropsType> = ({ item, setRef, level =0 }) => {
+const AnswerItem: React.FC<FaqAnswerItemPropsType> = ({ item, setRef, level = 0 }) => {
     return (
         <section id={item.anchorId} ref={setRef(item.anchorId)} className={`faq-answers__question-wrapper ${'questionGroupText' in item ? 'question-group' : "single-question"}`}>
             {'questionGroupText' in item && (
@@ -26,18 +26,18 @@ const AnswerItem: React.FC<FaqAnswerItemPropsType> = ({ item, setRef, level =0 }
                 <ul className={`faq-answers__answer faq-answers__list`}>
                     {/*<span className="qa-icon a-icon">A:</span>*/}
                     {item.answer && item.answer.length ?
-                    item.answer.map((item, index) => <div
-                        key={'_id' in item ? item._id as string : `pt-${index}`}
-                        className='sanity-component-wrapper'>
-                        <SanityBlockRenderer block={item}/>
-                    </div>)
-                    : null
-                }
+                        item.answer.map((item, index) => <div
+                            key={'_id' in item ? item._id as string : `pt-${index}`}
+                            className='sanity-component-wrapper'>
+                            <SanityBlockRenderer block={item as { _type: string } & Record<string, unknown>} />
+                        </div>)
+                        : null
+                    }
                 </ul>)}
             {'questions' in item && (
                 <div className={`faq-answers__subquestions`}>
                     {item.questions.map((subItem) => (
-                        <AnswerItem key={subItem._id} item={subItem} setRef={setRef} level={level + 1}/>
+                        <AnswerItem key={subItem._id} item={subItem} setRef={setRef} level={level + 1} />
                     ))}
                 </div>
             )}

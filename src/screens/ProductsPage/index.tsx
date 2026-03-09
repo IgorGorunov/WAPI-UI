@@ -1,46 +1,46 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import useAuth, {AccessActions, AccessObjectTypes} from "@/context/authContext";
-import {useRouter} from "next/router";
-import {getProducts} from "@/services/products";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import useAuth from "@/context/authContext";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
+import { useRouter } from "next/router";
+import { getProducts } from "@/services/products";
 
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header";
 import ProductList from "./components/ProductList";
 import "./styles.scss";
 import Button from "@/components/Button/Button";
-import {exportFileXLS} from "@/utils/files";
-import {ProductType} from "@/types/products";
+import { exportFileXLS } from "@/utils/files";
+import { ProductType } from "@/types/products";
 import Modal from "@/components/Modal";
 import ProductForm from "@/screens/ProductsPage/components/ProductForm";
-import 'react-toastify/dist/ReactToastify.css';
 import '@/components/Toast/styles.scss'
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
-import {ImportFilesType} from "@/types/importFiles";
+import { ImportFilesType } from "@/types/importFiles";
 import TourGuide from "@/components/TourGuide";
 import useTourGuide from "@/context/tourGuideContext";
-import {tourGuideStepsProduct, tourGuideStepsProductNoDocs} from "./productListTourGuideSteps.constants";
-import {TourGuidePages} from "@/types/tourGuide";
-import {sendUserBrowserInfo} from "@/services/userInfo";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
+import { tourGuideStepsProduct, tourGuideStepsProductNoDocs } from "./productListTourGuideSteps.constants";
+import { TourGuidePages } from "@/types/tourGuide";
+import { sendUserBrowserInfo } from "@/services/userInfo";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 
 const ProductsPage = () => {
     const Router = useRouter();
-    const { tenantData: { alias }} = useTenant();
+    const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const [productsData, setProductsData] = useState<any | null>(null);
-    const [uuid, setUuid]=useState<string|null>(null);
+    const [uuid, setUuid] = useState<string | null>(null);
     const [isNew, setIsNew] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
     //tour guide
-    const {runTour, setRunTour, isTutorialWatched} = useTourGuide();
+    const { runTour, setRunTour, isTutorialWatched } = useTourGuide();
 
     useEffect(() => {
         if (!isTutorialWatched(TourGuidePages.Products)) {
@@ -62,32 +62,28 @@ const ProductsPage = () => {
     }
 
     //status modal
-    const [showStatusModal, setShowStatusModal]=useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeErrorModal = useCallback(()=>{
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
+    const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
-    }, [])
-
-    type ApiResponse = {
-        data: any;
-    };
+    }, []);
 
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
             // const prevProductData = productsData || [];
             // setProductsData([]);
-            const requestData = {token, alias};
+            const requestData = { token, alias };
 
             try {
-                sendUserBrowserInfo({...getBrowserInfo('GetProductsList', AccessObjectTypes["Products/ProductsList"], AccessActions.ListView), body: superUser && ui ? {...requestData, ui} : requestData})
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('GetProductsList', AccessObjectTypes["Products/ProductsList"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
 
             if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.ListView)) {
                 setProductsData([]);
                 return null;
             }
-            const res: ApiResponse = await getProducts(superUser && ui ? {...requestData, ui} : requestData);
+            const res = await getProducts(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
                 setProductsData(res.data);
@@ -101,7 +97,7 @@ const ProductsPage = () => {
         } finally {
             setIsLoading(false);
         }
-    },[]);
+    }, []);
 
     useEffect(() => {
         fetchData();
@@ -109,13 +105,13 @@ const ProductsPage = () => {
 
     const [filteredProducts, setFilteredProducts] = useState<ProductType[]>(productsData)
 
-    const productsAsOptions = useMemo(()=>{
+    const productsAsOptions = useMemo(() => {
         return productsData ? productsData.map(item => {
-            const sum = item.stock.reduce((sum: number, cur)=> sum+cur.available, 0);
-            return {...item, quantity: sum};
+            const sum = item.stock.reduce((sum: number, cur) => sum + cur.available, 0);
+            return { ...item, quantity: sum };
         }) : [];
 
-    },[productsData])
+    }, [productsData])
 
     const handleEditProduct = (uuid: string) => {
         setUuid(uuid);
@@ -149,9 +145,9 @@ const ProductsPage = () => {
 
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('CreateProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject), body: {}});
-            } catch {}
-            setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal})
+                sendUserBrowserInfo({ ...getBrowserInfo('CreateProduct', AccessObjectTypes["Products/ProductsList"], AccessActions.CreateObject), body: {} });
+            } catch { }
+            setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal })
             setShowStatusModal(true);
             return null;
         }
@@ -162,8 +158,8 @@ const ProductsPage = () => {
     const handleImportXLS = () => {
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.BulkCreate)) {
             try {
-                sendUserBrowserInfo({...getBrowserInfo('BulkCreateProducts', AccessObjectTypes["Products/ProductsList"], AccessActions.BulkCreate), body: {}});
-            } catch {}
+                sendUserBrowserInfo({ ...getBrowserInfo('BulkCreateProducts', AccessObjectTypes["Products/ProductsList"], AccessActions.BulkCreate), body: {} });
+            } catch { }
 
             return null;
         }
@@ -173,8 +169,8 @@ const ProductsPage = () => {
 
     const handleExportXLS = () => {
         try {
-            sendUserBrowserInfo({...getBrowserInfo('ExportProductList', AccessObjectTypes["Products/ProductsList"], AccessActions.ExportList), body: {}});
-        } catch {}
+            sendUserBrowserInfo({ ...getBrowserInfo('ExportProductList', AccessObjectTypes["Products/ProductsList"], AccessActions.ExportList), body: {} });
+        } catch { }
 
         if (!isActionIsAccessible(AccessObjectTypes["Products/ProductsList"], AccessActions.ExportList)) {
             return null;
@@ -192,7 +188,7 @@ const ProductsPage = () => {
         exportFileXLS(filteredData, "Products")
     }
 
-    const onModalClose =() => {
+    const onModalClose = () => {
         setShowModal(false);
     }
 
@@ -206,18 +202,18 @@ const ProductsPage = () => {
                     <Button classNames='import-products' icon="import-file" iconOnTheRight onClick={handleImportXLS}>Import xls</Button>
                     <Button classNames='export-products' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
-                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct} reFetchData={fetchData}/>}
+                {productsData && <ProductList products={productsData} setFilteredProducts={setFilteredProducts} handleEditProduct={handleEditProduct} reFetchData={fetchData} />}
             </div>
             {showModal && (uuid && !isNew || !uuid && isNew) &&
-                <ProductForm uuid={uuid} products={productsAsOptions} onClose={onModalClose} onCloseSuccess={()=>{setShowModal(false);fetchData();}} />
+                <ProductForm uuid={uuid} products={productsAsOptions} onClose={onModalClose} onCloseSuccess={() => { setShowModal(false); fetchData(); }} />
             }
             {showImportModal &&
                 <Modal title={`Import xls`} onClose={onImportModalClose} >
-                    <ImportFilesBlock file='Master data.xlsx' importFilesType={ImportFilesType.PRODUCTS} closeModal={()=>setShowImportModal(false)}/>
+                    <ImportFilesBlock file='Master data.xlsx' importFilesType={ImportFilesType.PRODUCTS} closeModal={() => setShowImportModal(false)} />
                 </Modal>
             }
             {productsData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Products} /> : null}
-            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+            {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </Layout>
     )
 }

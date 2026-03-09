@@ -1,5 +1,6 @@
 
-import {E164Number} from "libphonenumber-js";
+import type { E164Number } from "libphonenumber-js";
+import type { AttachedFilesType } from "@/types/utility";
 
 export const enum UserStatusType {
     'user' = 'user',
@@ -32,10 +33,28 @@ export type QuestionnaireFormType = {
     needsCOD: boolean;
     vatNo: string;
     companyWorksWithoutVAT: boolean;
+    productTypeDescriptions: ProductTypeDescriptionType[];
 }
 
+export type ProductTypeDescriptionType = {
+    productTypeName: string;
+    productLink: string;
+    productPhoto: AttachedFilesType[],
+    hazmat: boolean;
+    hasSerialNumbers: boolean;
+    batches: boolean;
+    cbdProduct: boolean;
+    food: boolean;
+    alcohol: boolean;
+    cigarettes: boolean;
+    fragile: boolean;
+    glass: boolean;
+    flammable: boolean;
+    liquid: boolean;
+};
+
 export type LegalInfoFormType = {
-    companyName : string;
+    companyName: string;
     registrationCountry: string;
     regNo: string;
     legalAddress: string;

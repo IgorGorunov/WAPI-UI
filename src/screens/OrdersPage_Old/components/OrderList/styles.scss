@@ -1,0 +1,67 @@
+@import '@/constants/devices.scss';
+
+.order-list {
+  .track-link {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    gap: 0;
+    padding: 0 3px 0 10px;
+    //border: 2px solid var(--color-blue);
+    background: var(--color-blue);
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: 0.5s ease;
+
+    svg {
+      transform: scale(0.75);
+
+      path {
+        transition: 0.5s ease;
+      }
+    }
+
+    &:hover {
+      color: var(--color-gray-blue);
+      background-color: var(--color-blue-15);
+
+      svg path {
+        fill: var(--color-gray-blue);
+      }
+    }
+  }
+
+  .filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    @media (max-width: $upToTablet) {
+      flex-direction: column;
+    }
+  }
+
+  .icon-notification {
+    width: 10px;
+
+    path {
+      fill: var(--color-blue);
+    }
+  }
+
+  .table-date-time-container {
+    display: flex;
+    flex-direction: column;
+
+    .table-date {
+
+    }
+
+    .table-time {
+      font-size: 10px;
+    }
+
+  }
+}

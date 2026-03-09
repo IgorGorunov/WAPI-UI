@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Country } from "@/types/countries";
 import CountryList from "./CountryList";
-import "./styles.scss";
 
 export type OrderByCountryType = {
   ordersCount: number;
@@ -25,9 +24,8 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
       <div className="orders-by-country__wrapper">
         <ul className="orders-by-country__tablist" role="tablist">
           <li
-            className={`tab ${
-              activeTab === 0 ? "active-tab" : ""
-            } orders-by-country-of-departure`}
+            className={`tab ${activeTab === 0 ? "active-tab" : ""
+              } orders-by-country-of-departure`}
             key="departure"
             role="tab"
             aria-controls="panel-id-0"
@@ -47,9 +45,8 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
             </a>
           </li>
           <li
-            className={`tab ${
-              activeTab === 1 ? "active-tab" : ""
-            } orders-by-country-of-arrival`}
+            className={`tab ${activeTab === 1 ? "active-tab" : ""
+              } orders-by-country-of-arrival`}
             key="arrival"
             role="tab"
             aria-controls="panel-id-1"
