@@ -4,9 +4,9 @@ import { type BackendError } from "@/types/api";
 const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
 // const API_URL = "https://api2.wapi.com/DB3/hs/v1/UI";
 
-let setError: (title: string, message: string) => void;
+let setError: (title: string, messages: string[]) => void;
 
-export const setInterceptorErrorCallback = (callback: (title: string, message: string) => void) => {
+export const setInterceptorErrorCallback = (callback: (title: string, messages: string[]) => void) => {
     setError = callback;
 };
 
@@ -20,6 +20,8 @@ const forbiddenErrorText = "You have limited access to this action";
 const handleGlobalError = (error: AxiosError<BackendError>) => {
     let errorMessage = '';
     let errorTitle = '';
+
+    console.log('error: ')
 
     // Logic for Timeouts
     if (error.code === "ECONNABORTED") {
@@ -50,6 +52,10 @@ const handleGlobalError = (error: AxiosError<BackendError>) => {
                 errorMessage = maintenanceErrorText;
             }
         } else {
+            // For errorMessage, let the calling component handle the display
+            if (errorData?.errorMessage) {
+                return Promise.reject(error);
+            }
             errorTitle = 'Error';
             errorMessage = administratorErrorText;
         }
@@ -57,7 +63,7 @@ const handleGlobalError = (error: AxiosError<BackendError>) => {
 
     // Trigger your UI callback
     if (errorMessage && setError) {
-        setError(errorTitle, errorMessage);
+        setError(errorTitle, [errorMessage]);
     }
 
     // IMPORTANT: Always reject so the service/component knows it failed

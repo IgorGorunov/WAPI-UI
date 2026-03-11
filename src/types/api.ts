@@ -17,7 +17,7 @@ export type ApiResponseType<T> = {
 
 export type BackendError = {
     message?: string;
-    errorMessage?: string;
+    errorMessage?: string | string[];
     code?: string;
 }
 
