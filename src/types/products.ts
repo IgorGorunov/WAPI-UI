@@ -140,6 +140,7 @@ export type SingleProductType = {
     additionalService?: boolean;
     expiringTerm?: number;
     seller?: string;
+    merywoodProduction: boolean;
 };
 
 export type UnitOfMeasureFormType = {
@@ -207,6 +208,7 @@ export type SingleProductFormType = {
     //attachedFiles: AttachedFilesType[];
     // statusHistory: StatusHistoryType[];
     // canEdit: boolean;
+    merywoodProduction: boolean;
 }
 
 export type SingleProductSendFormType = {
@@ -264,4 +266,5 @@ export type SingleProductSendFormType = {
     //attachedFiles: AttachedFilesType[];
     // statusHistory: StatusHistoryType[];
     // canEdit: boolean;
+    merywoodProduction: boolean;
 }
