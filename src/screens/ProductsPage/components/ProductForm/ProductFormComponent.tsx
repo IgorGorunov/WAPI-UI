@@ -139,6 +139,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
             fireproof: productData?.fireproof,
             packingBox: productData?.packingBox,
             hazmat: productData?.hazmat,
+            merywoodProduction: productData?.merywoodProduction,
             unitOfMeasure: productData?.unitOfMeasure || 'pcs',
             withoutMasterCartonData: productData?.withoutMasterCartonData || productData?.unitOfMeasures.length <= 1 || false,
             additionalService: !!productData?.additionalService || false,

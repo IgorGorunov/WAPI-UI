@@ -103,7 +103,7 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
         sorter
     ) => {
         // setSortedInfo(sorter as SorterResult<OrderType>);
-        console.log('Variable sortedInfo: ', sorter);
+        // console.log('Variable sortedInfo: ', sorter);
     };
 
     //filters
@@ -595,8 +595,6 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
 
             const matchesSeller = selectedSeller === 'All sellers' || selectedSeller === order.seller.uid;
 
-            if (matchesSearch) console.log('matchesSearch', order );
-
             return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets && matchesPhotos && matchesReturns && matchesMarketplace && matchesSeller;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
@@ -848,8 +846,6 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
         const maxAmount = displayedData.reduce((acc, item) => Math.max(acc, item.productLines), 0).toString().length;
         const width = 47 + maxAmount * 9;
         return width.toString() + 'px';
-
-        console.log('curWidth', curWidth, filteredOrdersToDisplay);
     }, [current, pageSize, filteredOrdersToDisplay]);
 
 

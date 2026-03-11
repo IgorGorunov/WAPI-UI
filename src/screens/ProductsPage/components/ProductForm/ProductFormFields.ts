@@ -298,12 +298,21 @@ export const FormFieldsAdditional2 = () => [
         },
         {
             fieldType: FormFieldTypes.TOGGLE,
+            name: 'merywoodProduction',
+            label: "Merywood production", //"Product is a box",
+            width: WidthType.w17,
+            classNames: "",
+            hint: '',
+        },
+        {
+            fieldType: FormFieldTypes.TOGGLE,
             name: 'packingBox',
             label: "Is the product itself a package?", //"Product is a box",
-            width: WidthType.w17,
+            width: WidthType.w33,
             classNames: "",
             hint: ProductHints['packingBox'] || '',
         },
+
 
     ];
 
