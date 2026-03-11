@@ -69,6 +69,8 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
     const isTouchDevice = useIsTouchDevice();
     const { needSeller, sellersList } = useAuth();
 
+    const [filteredOrdersToDisplay, setFilteredOrdersToDisplay] = useState<OrderType[]>(orders);
+
     // const [current, setCurrent] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
@@ -540,9 +542,8 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
     }, [sortColumn]);
 
 
-    const filteredOrders = useMemo(() => {
-        //setCurrent(1);
-        return orders.filter(order => {
+    useEffect(() => {
+        setFilteredOrdersToDisplay(orders.filter(order => {
 
             const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
                 const value = order[key];
@@ -594,6 +595,8 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
 
             const matchesSeller = selectedSeller === 'All sellers' || selectedSeller === order.seller.uid;
 
+            if (matchesSearch) console.log('matchesSearch', order );
+
             return matchesSearch && matchesStatus && matchesTroubleStatus && matchesNonTroubleEvent && matchesClaims && matchesLogisticComment && matchesCommentsToCourierService && matchesSelfCollect && matchesSentSMS && matchesWarehouse && matchesCourierService && matchesReceiverCountry && matchesHasTickets && matchesHasOpenTickets && matchesPhotos && matchesReturns && matchesMarketplace && matchesSeller;
         }).sort((a, b) => {
             if (!sortColumn) return 0;
@@ -602,13 +605,8 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
             } else {
                 return a[sortColumn] < b[sortColumn] ? 1 : -1;
             }
-        });
+        }))
     }, [orders, searchTerm, filterStatus, filterTroubleStatus, filterNonTroubleStatus, filterClaims, filterLogisticComment, filterCommentsToCourierService, filterWarehouse, filterCourierService, filterSelfCollect, filterSentSMS, filterReceiverCountry, sortColumn, sortDirection, fullTextSearch, filterHasTickets, filterHasOpenTickets, filterPhotos, filterCustomerReturns, filterMarketplace, selectedSeller]);
-
-    // useEffect(() => {
-    //     setCurrent(1)
-    // }, [orders, searchTerm]);
-    //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
         setCurrentRange(newRange);
@@ -841,16 +839,18 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
     ] as FilterComponentType[];
 
     useEffect(() => {
-        setFilteredOrders(filteredOrders);
+        setFilteredOrders(filteredOrdersToDisplay);
 
-    }, [filteredOrders]);
+    }, [filteredOrdersToDisplay]);
 
     const curWidth = useMemo(() => {
-        const displayedData = filteredOrders.slice((current - 1) * pageSize, current * pageSize);
+        const displayedData = filteredOrdersToDisplay.slice((current - 1) * pageSize, current * pageSize);
         const maxAmount = displayedData.reduce((acc, item) => Math.max(acc, item.productLines), 0).toString().length;
         const width = 47 + maxAmount * 9;
         return width.toString() + 'px';
-    }, [current, pageSize, filteredOrders]);
+
+        console.log('curWidth', curWidth, filteredOrdersToDisplay);
+    }, [current, pageSize, filteredOrdersToDisplay]);
 
 
     const ClaimsColumns: TableColumnProps<OrderType>[] = [];
@@ -1567,9 +1567,9 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
                 </div>
             </div>
 
-            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
+            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrdersToDisplay?.length ? '' : 'is-empty'}`}>
                 <Table<OrderType>
-                    dataSource={filteredOrders.map(item => ({ ...item, key: item.uuid })).slice((current - 1) * pageSize, current * pageSize)}
+                    dataSource={filteredOrdersToDisplay.map(item => ({ ...item, key: item.uuid })).slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
                     scroll={{ y: 700 }}
@@ -1578,7 +1578,7 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total orders:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                        <li className='order-products-total__list-item'>Total orders:<span className='order-products-total__list-item__value'>{filteredOrdersToDisplay.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -1587,7 +1587,7 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
                     current={current}
                     pageSize={pageSize}
                     onChange={handleChangePage}
-                    total={filteredOrders.length}
+                    total={filteredOrdersToDisplay.length}
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
