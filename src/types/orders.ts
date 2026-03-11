@@ -363,6 +363,7 @@ export type CreateOrderRequestType = {
 
 export type OrderFilterDataType = BaseFilterMetadata & {
     tickets: number;
+    ticketsOpen: number;
     orders: number;
     troubleStatuses: FilterType[];
     selfCollect: number;
@@ -394,6 +395,8 @@ export type OrderFiltersSelectedType = BaseFiltersSelected & {
     receiverCountry: string[];
     status: string[];
     warehouse: string[];
+    tickets: boolean[];
+    ticketsOpen: boolean[]
 }
 
 //temporary type

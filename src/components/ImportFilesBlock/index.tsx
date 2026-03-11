@@ -1,70 +1,70 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {sendOrderFiles} from '@/services/orders';
-import {sendProductFiles} from "@/services/products";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { sendOrderFiles } from '@/services/orders';
+import { sendProductFiles } from "@/services/products";
 import Button from '@/components/Button/Button'
 import "./styles.scss";
 import DropZone from "@/components/Dropzone";
-import {AttachedFilesType} from "@/types/utility";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {ApiResponseType} from "@/types/api";
+import { AttachedFilesType } from "@/types/utility";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import { ApiResponseType } from "@/types/api";
 import useAuth from "@/context/authContext";
 import Loader from "@/components/Loader";
-import {sendInboundFiles} from "@/services/stockMovements";
-import {ImportFilesType, ImportTemplateNamesSanity} from "@/types/importFiles";
-import {BulkCreateRequestType, STATUS_MODAL_TYPES} from "@/types/utility";
-import {sendUserBrowserInfo} from "@/services/userInfo";
-import {getImportTemplate} from "@/sanity/sanity-utils";
-import {toast, ToastContainer} from "@/components/Toast";
+import { sendInboundFiles } from "@/services/stockMovements";
+import { ImportFilesType, ImportTemplateNamesSanity } from "@/types/importFiles";
+import { BulkCreateRequestType, STATUS_MODAL_TYPES } from "@/types/utility";
+import { sendUserBrowserInfo } from "@/services/userInfo";
+import { getImportTemplate } from "@/sanity/sanity-utils";
+import { toast, ToastContainer } from "@/components/Toast";
 import useTenant from "@/context/tenantContext";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
 
 const getFileData = (importType: ImportFilesType) => {
-   switch (importType) {
-       case ImportFilesType.ORDERS:
-           return {
-               action: 'BulkOrdersCreate',
-               downloadFileName: 'Orders mass upload file.xlsx',
-               templateName: ImportTemplateNamesSanity.ORDERS,
-               sendFileFunction: sendOrderFiles,
-               title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
-           }
-       case ImportFilesType.PRODUCTS:
-           return {
-               action: 'BulkProductsCreate',
-               downloadFileName: 'Master data.xlsx',
-               templateName: ImportTemplateNamesSanity.PRODUCTS,
-               sendFileFunction: sendProductFiles,
-               title: `To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system.
+    switch (importType) {
+        case ImportFilesType.ORDERS:
+            return {
+                action: 'BulkOrdersCreate',
+                downloadFileName: 'Orders mass upload file.xlsx',
+                templateName: ImportTemplateNamesSanity.ORDERS,
+                sendFileFunction: sendOrderFiles,
+                title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
+            }
+        case ImportFilesType.PRODUCTS:
+            return {
+                action: 'BulkProductsCreate',
+                downloadFileName: 'Master data.xlsx',
+                templateName: ImportTemplateNamesSanity.PRODUCTS,
+                sendFileFunction: sendProductFiles,
+                title: `To upload the products in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system.
                After uploading a document, you need to send draft products for approve (open a product and click "Send")`,
-           }
-       case ImportFilesType.STOCK_MOVEMENTS_PRODUCTS:
-           return {
-               action: 'FillStockMovementFromFile',
-               downloadFileName: 'Products import.xlsx',
-               templateName: ImportTemplateNamesSanity.STOCK_MOVEMENTS_PRODUCTS,
-               sendFileFunction: sendInboundFiles,
-               title: 'To upload products in the document it is necessary to download the master data draft file, fill it with data and then upload back to system',
-           }
+            }
+        case ImportFilesType.STOCK_MOVEMENTS_PRODUCTS:
+            return {
+                action: 'FillStockMovementFromFile',
+                downloadFileName: 'Products import.xlsx',
+                templateName: ImportTemplateNamesSanity.STOCK_MOVEMENTS_PRODUCTS,
+                sendFileFunction: sendInboundFiles,
+                title: 'To upload products in the document it is necessary to download the master data draft file, fill it with data and then upload back to system',
+            }
 
-       default:
-           return {
-               action: 'BulkOrdersCreate',
-               downloadFileName: 'Orders mass upload file.xlsx',
-               templateName: ImportTemplateNamesSanity.ORDERS,
-               sendFileFunction: sendOrderFiles,
-               title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
-           }
-   }
+        default:
+            return {
+                action: 'BulkOrdersCreate',
+                downloadFileName: 'Orders mass upload file.xlsx',
+                templateName: ImportTemplateNamesSanity.ORDERS,
+                sendFileFunction: sendOrderFiles,
+                title: 'To upload the orders in bulk it is necessary to download the master data draft file, fill it with data and then upload back to system',
+            }
+    }
 }
 
 type ImportFilesBlockType = {
     file: string;
     importFilesType: ImportFilesType;
-    closeModal: ()=>void;
-    setResponseData?: (res: ApiResponseType<any>)=>void;
+    closeModal: () => void;
+    setResponseData?: (res: ApiResponseType<any>) => void;
 }
-const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData}) => {
-    const { tenantData: { alias }} = useTenant();
+const ImportFilesBlock: React.FC<ImportFilesBlockType> = ({ file, importFilesType = ImportFilesType.ORDERS, closeModal, setResponseData }) => {
+    const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, needSeller, sellersListActive } = useAuth();
     const [selectedFilesImport, setSelectedFilesImport] = useState<AttachedFilesType[]>([]);
     const [isLoading, setIsLoading] = useState(false)
@@ -73,16 +73,16 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
     };
     const [selectedSeller, setSelectedSeller] = useState<string | null>(null);
 
-    const fileData = useMemo(()=>getFileData(importFilesType),[]);
+    const fileData = useMemo(() => getFileData(importFilesType), []);
 
     //status modal
-    const [showStatusModal, setShowStatusModal]=useState(false);
-    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({onClose: ()=>setShowStatusModal(false)})
-    const closeSuccessModal = useCallback(()=>{
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
+    const closeSuccessModal = useCallback(() => {
         setShowStatusModal(false);
         closeModal();
     }, []);
-    const closeErrorModal = useCallback(()=>{
+    const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
     }, [])
 
@@ -112,7 +112,8 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
         if (hasTriedToSend && !selectedSeller) {
             setErrorMessageSeller('Please, select seller');
         } else {
-            setErrorMessageSeller('');}
+            setErrorMessageSeller('');
+        }
     }, [selectedSeller, hasTriedToSend]);
 
     const sendFiles = async () => {
@@ -139,11 +140,13 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
 
 
                 try {
-                    sendUserBrowserInfo({...getBrowserInfo(fileData.action), body: superUser && ui ? {...requestData, ui} : requestData})
-                } catch {}
+                    sendUserBrowserInfo({ ...getBrowserInfo(fileData.action), body: superUser && ui ? { ...requestData, ui } : requestData })
+                } catch { }
 
 
-                const res = await sendFunc(superUser && ui ? {...requestData, ui} : requestData);
+                const res = await sendFunc(superUser && ui ? { ...requestData, ui } : requestData);
+
+                console.log('res: ', res)
 
                 if (setResponseData) {
                     setResponseData(res);
@@ -152,27 +155,24 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
 
                 if (res && "status" in res && res?.status === 200) {
                     //success
-                    setModalStatusInfo({statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Files are sent successfully!`, onClose: closeSuccessModal})
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Files are sent successfully!`, onClose: closeSuccessModal })
                     setShowStatusModal(true);
-
-                } else if (res && 'response' in res ) {
-                    const errResponse = res.response;
-
-                    if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
-                        const errorMessages = errResponse?.data.errorMessage;
-
-                        setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
-                        setShowStatusModal(true);
-                    }
                 }
 
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error("Error fetching data:", error);
+                const axiosError = error as { response?: { data?: { errorMessage?: string | string[] } } };
+                const errorMessages = axiosError?.response?.data?.errorMessage;
+                if (errorMessages) {
+                    const messagesArray = Array.isArray(errorMessages) ? errorMessages : [errorMessages];
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: messagesArray, onClose: closeErrorModal });
+                    setShowStatusModal(true);
+                }
             } finally {
                 setIsLoading(false);
             }
         } else {
-            setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: ["I haven't uploaded any files to send"], onClose: closeErrorModal})
+            setModalStatusInfo({ title: "Error", subtitle: `Please, fix errors!`, text: ["I haven't uploaded any files to send"], onClose: closeErrorModal })
             setShowStatusModal(true);
         }
     }
@@ -191,7 +191,7 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
                         name='selectedSeller'
                         label='Seller: '
                         value={selectedSeller}
-                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        onChange={(val) => setSelectedSeller(val as string)}
                         options={[...sellersListActive]}
                         classNames='seller-filter'
                         isClearable={false}
@@ -201,10 +201,10 @@ const ImportFilesBlock:React.FC<ImportFilesBlockType> = ({file, importFilesType 
             )}
             <Button icon='download-file' iconOnTheRight onClick={downloadFile}>Download sample</Button>
             <DropZone readOnly={false} files={selectedFilesImport} onFilesChange={handleFilesChange} />
-            <Button  onClick={sendFiles}>Send</Button>
-            {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
+            <Button onClick={sendFiles}>Send</Button>
+            {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </div>
     );
 }
 
-export default  ImportFilesBlock;
+export default ImportFilesBlock;

@@ -32,12 +32,12 @@ const Layout: React.FC<Props> = ({
     const [showCookieConsent, setShowCookieConsent] = useState(false);
 
     const [apiErrorTitle, setApiErrorTitle] = useState<string>('');
-    const [apiErrorText, setApiErrorText] = useState<string>('');
+    const [apiErrorMessages, setApiErrorMessages] = useState<string[]>([]);
 
     useEffect(() => {
-        setInterceptorErrorCallback((title: string, message: string) => {
+        setInterceptorErrorCallback((title: string, messages: string[]) => {
             setApiErrorTitle(title);
-            setApiErrorText(message);
+            setApiErrorMessages(messages);
         });
 
         setInterceptorRedirectCallback(async () => {
@@ -64,7 +64,7 @@ const Layout: React.FC<Props> = ({
 
     const handleClose = () => {
         setApiErrorTitle('');
-        setApiErrorText('');
+        setApiErrorMessages([]);
     };
 
     return (
@@ -79,11 +79,11 @@ const Layout: React.FC<Props> = ({
             <div id="modal-root-preview"></div>
             <div id="modal-root-confirm"></div>
             <div id="modal-root-api-error"></div>
-            {apiErrorText ? <ModalStatus
+            {apiErrorMessages.length > 0 ? <ModalStatus
                 statusModalType={STATUS_MODAL_TYPES.ERROR}
                 modalType={ModalTypes.API_ERROR}
                 title={apiErrorTitle || ''}
-                subtitle={apiErrorText || ''}
+                text={apiErrorMessages}
                 onClose={handleClose} /> : null
             }
             <BackToTop />
