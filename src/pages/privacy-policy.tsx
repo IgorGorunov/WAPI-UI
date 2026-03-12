@@ -8,12 +8,12 @@ export default function PrivacyPolicy() {
         <>
             <SEO
                 title="Privacy Policy"
-                description="Learn about WAPI's privacy policy, data protection practices, and how we handle your personal information in our logistics platform."
+                description="Learn about our privacy policy, data protection practices, and how we handle your personal information in our logistics platform."
             />
             <StructuredData
                 type="WebPage"
-                name="Privacy Policy - WAPI"
-                description="Learn about WAPI's privacy policy, data protection practices, and how we handle your personal information in our logistics platform."
+                name="Privacy Policy"
+                description="Learn about our privacy policy, data protection practices, and how we handle your personal information in our logistics platform."
                 path="/privacy-policy"
             />
             <Head>
