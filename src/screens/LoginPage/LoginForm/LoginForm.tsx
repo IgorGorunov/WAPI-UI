@@ -170,7 +170,16 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken
   const {
     control,
     handleSubmit,
+    getValues,
   } = useForm({ mode: "onSubmit" });
+
+  const handleForgotPassword = useCallback(() => {
+    const email = getValues('login');
+    Router.push({
+      pathname: Routes.ForgottenPassword,
+      ...(email ? { query: { email } } : {}),
+    });
+  }, [Router, getValues]);
 
 
   const handleFormSubmit = async (data: FieldValues) => {
@@ -222,7 +231,6 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken
         ))}
         {error && <p className={styles['login-error']}>{error}</p>}
         <div className={styles['login-submit-block']}>
-          {/*<p id='login-recovery-link' className="login-recovery-link">Password recovery</p>*/}
           <Button
             type="submit"
             icon={"arrow-right"}
@@ -231,9 +239,14 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken
           >
             Sign in
           </Button>
-          {/*<a className={styles['login-recovery-link']} href={process.env.NEXT_PUBLIC_RECOVERY_URL}>*/}
-          {/*  Forgot password?*/}
-          {/*</a>*/}
+          <p
+            id='login-recovery-link'
+            className={styles['login-recovery-link']}
+            onClick={handleForgotPassword}
+            style={{ cursor: 'pointer' }}
+          >
+            Forgot password?
+          </p>
         </div>
       </form>
     </div>

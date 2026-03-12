@@ -21,4 +21,7 @@ export const enum Routes {
 
   //other
   Profile = '/profile',
+  ForgottenPassword = '/password/recover',
+  EmailValidation = '/password/email-validation',
+  CreatePassword = '/password/create',
 }
