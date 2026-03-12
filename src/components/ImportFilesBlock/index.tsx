@@ -157,7 +157,16 @@ const ImportFilesBlock: React.FC<ImportFilesBlockType> = ({ file, importFilesTyp
                     //success
                     setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Files are sent successfully!`, onClose: closeSuccessModal })
                     setShowStatusModal(true);
+                } else if (res && 'response' in res ) {
+                const errResponse = res.response;
+
+                if (errResponse && 'data' in errResponse &&  'errorMessage' in errResponse.data ) {
+                    const errorMessages = errResponse?.data.errorMessage;
+
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal})
+                    setShowStatusModal(true);
                 }
+            }
 
             } catch (error: unknown) {
                 console.error("Error fetching data:", error);

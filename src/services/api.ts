@@ -21,7 +21,7 @@ const handleGlobalError = (error: AxiosError<BackendError>) => {
     let errorMessage = '';
     let errorTitle = '';
 
-    console.log('error: ')
+    console.log('error 123: ', error, error.response.data)
 
     // Logic for Timeouts
     if (error.code === "ECONNABORTED") {
@@ -41,6 +41,9 @@ const handleGlobalError = (error: AxiosError<BackendError>) => {
         if (errorStatus === 403) {
             errorTitle = 'Error';
             errorMessage = forbiddenErrorText;
+        } else if (errorStatus === 404) {
+            // Let calling components handle 404 with their own inline error message
+            return Promise.reject(error);
         } else if (errorStatus === 500) {
             // Check if backend provided a specific message
             const hasDetail = errorData?.message || errorData?.errorMessage;
@@ -54,7 +57,7 @@ const handleGlobalError = (error: AxiosError<BackendError>) => {
         } else {
             // For errorMessage, let the calling component handle the display
             if (errorData?.errorMessage) {
-                return Promise.reject(error);
+                return Promise.resolve(error);
             }
             errorTitle = 'Error';
             errorMessage = administratorErrorText;
