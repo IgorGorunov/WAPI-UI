@@ -921,6 +921,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
 
     }, [setAtLeastOneFieldIsFilled, getValues]);
 
+    const clearPickUpPointFields = useCallback(()=>{
+        setValue('receiverPickUpCountry', '');
+        setValue('receiverPickUpName', '');
+        setValue('receiverPickUpCity', '');
+        setValue('receiverPickUpAddress', '');
+    }, [setValue]);
+
 
     const linkToTrack = orderData && orderData.trackingLink && orderData.trackingLink.at(-1) != '=' ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
@@ -1446,6 +1453,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                             errors={errors}
                                             disabled={isDisabled && !((orderData?.receiverPickUpID || orderData?.receiverPickUpName) && isAddressAllowed)}
                                             onChange={(selectedOption) => {
+                                                if (!selectedOption) {
+                                                    clearPickUpPointFields();
+                                                }
                                                 setSelectedPickupPoint(selectedOption as string);
                                                 props.onChange(selectedOption);
                                                 hasChangedAddressFields();
