@@ -85,17 +85,6 @@ export const getUserProfile = async (
     }
 ): Promise<ApiResponseType<UserInfoTypeResponseType>> => {
     return api.post(`/GetUserProfile`, data);
-    // try {
-    //     const response: UserInfoType = await api.post(
-    //         `/GetUserProfile`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 // // Call the function to gather and send user info

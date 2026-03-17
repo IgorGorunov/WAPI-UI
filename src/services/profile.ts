@@ -11,17 +11,6 @@ export const getApiProtocols = async (
     }
 ): Promise<ApiResponseType<ApiProtocolType[]>> => {
     return api.post('/GetDeliveryProtocols', data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetDeliveryProtocols`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 export const getApiProtocol = async (
@@ -32,17 +21,6 @@ export const getApiProtocol = async (
     }
 ): Promise<ApiResponseType<AttachedFilesType[]>> => {
     return api.post('/GetDeliveryProtocolFile', data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetDeliveryProtocolFile`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 export const changePassword = async (
@@ -54,18 +32,7 @@ export const changePassword = async (
         ui?: string;
     }
 ): Promise<ApiResponseType<unknown>> => {
-    return api.post('/ChangePassword', data)
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/ChangePassword`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
+    return api.post('/ChangePassword', data);
 }
 
 export const getUserPrices = async (
@@ -76,17 +43,6 @@ export const getUserPrices = async (
     }
 ): Promise<ApiResponseType<UserPriceType[]>> => {
     return api.post(`/GetClientPriceList`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `GetClientPriceList`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 export const getUserPriceFile = async (
@@ -97,18 +53,7 @@ export const getUserPriceFile = async (
         uuid: string,
     }
 ): Promise<ApiResponseType<AttachedFilesType[]>> => {
-    return api.post(`/GetFileByUUID`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetClientPrice`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
+    return api.post(`/GetClientPrice`, data);
 };
 
 export const getUserContracts = async (
@@ -119,17 +64,6 @@ export const getUserContracts = async (
     }
 ): Promise<ApiResponseType<UserContractType[]>> => {
     return api.post(`/GetContractsList`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetContractsList`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 export const getUserContractFile = async (
@@ -142,17 +76,6 @@ export const getUserContractFile = async (
     }
 ): Promise<ApiResponseType<AttachedFilesType[]>> => {
     return api.post(`/GetFileByUUID`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetFileByUUID`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 export const getWarehouseInfo = async (
@@ -163,15 +86,4 @@ export const getWarehouseInfo = async (
     }
 ): Promise<ApiResponseType<WarehouseInfoType[]>> => {
     return api.post(`/GetWarehouseInfo`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetWarehouseInfo`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
