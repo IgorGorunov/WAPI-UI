@@ -24,7 +24,6 @@ import {
 } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import useNotifications from "@/context/notificationContext";
-import {TENANTS} from "@/lib/tenants";
 
 type LoginFormPropsType = {
   oneTimeToken?: string;
@@ -32,7 +31,7 @@ type LoginFormPropsType = {
 }
 
 const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken }) => {
-  const { tenantData, tenant } = useTenant();
+  const { tenantData } = useTenant();
   const alias = tenantData?.alias;
 
   const Router = useRouter();
@@ -240,7 +239,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken
           >
             Sign in
           </Button>
-          {tenant===TENANTS.WAPI ? <button
+          {tenantData.needsPasswordRecover ? <button
             id='login-recovery-link'
             className={styles['login-recovery-link']}
             onClick={handleForgotPassword}

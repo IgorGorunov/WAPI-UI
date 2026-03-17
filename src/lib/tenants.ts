@@ -39,6 +39,7 @@ export type TenantDataType = {
     mainWebsite: string;
     uiLink: string;
     orderTitles: OrdersTenantDataType;
+    needsPasswordRecover?: boolean;
 }
 
 export enum TENANTS {
@@ -101,6 +102,7 @@ export const tenantsData = {
             stockMovStandardDeliveryTitle: 'WAPI Standard',
 
         },
+        needsPasswordRecover: true,
     } as TenantDataType,
 
     [TENANTS.N1NDGLOBAL]: {
@@ -139,7 +141,8 @@ export const tenantsData = {
             carrierTitle: 'N1ND GLOBAL carrier',
             stockMovExpressDeliveryTitle: 'N1ND GLOBAL Express',
             stockMovStandardDeliveryTitle: 'N1ND GLOBAL Standard',
-        }
+        },
+        needsPasswordRecover: false,
     } as TenantDataType,
 }
 

@@ -14,18 +14,6 @@ const getTickets = async (
     }
 ): Promise<ApiResponseType<TicketType[]>> => {
     return api.post(`/GetTicketList`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetTicketList`,
-    //         data
-    //
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 const getSingleTicket = async (
     //token: string,
@@ -37,17 +25,6 @@ const getSingleTicket = async (
     }
 ): Promise<ApiResponseType<SingleTicketType>> => {
     return api.post(`/GetTicketData`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetTicketData`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getTicketParams = async (
@@ -59,17 +36,6 @@ const getTicketParams = async (
     }
 ): Promise<ApiResponseType<TicketParamsType>> => {
     return api.post(`/GetTicketParameters`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetTicketParameters`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const createTicket = async (
@@ -81,17 +47,6 @@ const createTicket = async (
     }
 ): Promise<ApiResponseType<string>> => {
     return api.post(`/CreateTicket`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/CreateTicket`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const reopenTicket = async (
@@ -103,17 +58,6 @@ const reopenTicket = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/ReopenTicket`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/ReopenTicket`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const sendTicketMessage = async (
@@ -127,17 +71,6 @@ const sendTicketMessage = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/CreateMessageForObject`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/CreateMessageForObject`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getTicketMessages = async (
@@ -149,17 +82,6 @@ const getTicketMessages = async (
     }
 ): Promise<ApiResponseType<ChatMessageType[]>> => {
     return api.post(`/GetMessagesByObject`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `GetMessagesByObject`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 
