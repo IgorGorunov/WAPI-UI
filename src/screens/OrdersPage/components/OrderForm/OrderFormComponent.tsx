@@ -57,6 +57,7 @@ import ImageSlider from "@/components/ImageSlider";
 import CustomerReturns from "./CustomerReturns";
 import useTenant from "@/context/tenantContext";
 import { isTabAllowed } from "@/utils/tabs";
+import ToggleSwitch from "@/components/FormBuilder/ToggleSwitch";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -89,11 +90,12 @@ const getCorrectNotifications = (record: SingleOrderType, notifications: Notific
 
 const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal, forbiddenTabs }) => {
 
-
     const { notifications } = useNotifications();
     const { tenantData: { alias, orderTitles } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
     const currentDate = new Date();
+
+    const [isSelfCollect, setIsSelfCollect] = useState(!!orderData?.receiverPickUpID || !!orderData?.receiverPickUpName);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
@@ -934,7 +936,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const generalFields = useMemo(() => GeneralFields(!orderData?.uuid, orderTitles), [orderData, orderTitles])
     const detailsFields = useMemo(() => DetailsFields({ warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange: handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
     const receiverFields = useMemo(() => ReceiverFields({ countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields }), [curPickupPoints, pickupOptions, countries, preferredWarehouse, selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields])
-    const pickUpPointFields = useMemo(() => PickUpPointFields({ countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: () => { hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled() }, atLeastOneFieldIsFilled }), [countries, preferredWarehouse, selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions])
+    const pickUpPointFields = useMemo(() => PickUpPointFields({ countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: () => { hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled() }, atLeastOneFieldIsFilled, isSelfCollect }), [countries, preferredWarehouse, selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions, isSelfCollect])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
 
@@ -1164,6 +1166,14 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
 
         if (isAddressChange) {
             return sendAddressChangedData(data);
+        }
+
+        if (!isSelfCollect) {
+            data.receiverPickUpID = '';
+            data.receiverPickUpName = '';
+            data.receiverPickUpCity = '';
+            data.receiverPickUpAddress = '';
+            data.receiverPickUpCountry = '';
         }
 
         try {
@@ -1426,7 +1436,15 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                 />
                             </div>
                         </div>
-                        <div className='card order-info--pick-up-point'>
+                        <ToggleSwitch
+                            name='isSelfCollect'
+                            label="Self-collect form pickup point"
+                            value={isSelfCollect}
+                            onChange={(val) => {
+                                setIsSelfCollect(typeof val === 'object' && 'target' in val && 'checked' in val.target ? val.target.checked : false);
+                            }}
+                        />
+                        {isSelfCollect ? <div className='card order-info--pick-up-point'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='general' />
                                 Pick up point
@@ -1468,7 +1486,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                 />
                                 <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors} />
                             </div>
-                        </div>
+                        </div> : null}
                     </div> : null}
                     {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className='product-tab'>
                         <CardWithHelpIcon classNames="card min-height-600 order-info--products">
