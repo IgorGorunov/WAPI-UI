@@ -117,6 +117,13 @@
   }
 }
 
+.select-field {
+  &__input {
+    max-height: 10px;
+    line-height: 1 !important;
+  }
+}
+
 .select-field__menu-portal {
   color: var(--color-gray-blue) !important;
   font-feature-settings: 'clig' off, 'liga' off;
@@ -155,6 +162,10 @@
       color: inherit;
       padding: 8px 6px;
       box-sizing: border-box;
+
+      span {
+        line-height: 1 !important;
+      }
 
       &.is-focused {
         background-color: var(--color-blue-15) !important;
