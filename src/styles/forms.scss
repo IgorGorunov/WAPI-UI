@@ -121,6 +121,10 @@
   &__input {
     max-height: 10px;
     line-height: 1 !important;
+
+    &-container {
+      line-height: 1 !important;
+    }
   }
 }
 
