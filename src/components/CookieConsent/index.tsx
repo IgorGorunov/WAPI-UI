@@ -7,11 +7,13 @@ import { ModalTypes } from "@/types/utility";
 import CookieConsentSettings from "@/components/CookieConsent/CookieConsentSettings";
 import Cookie from "js-cookie";
 import { removeClarityCookiesForHost } from "@/utils/clarity-consent";
+import styles from "./styles.module.scss";
 
 export type CookieConsentType = {
     essential: boolean;
     functional: boolean;
     performance: boolean;
+    isConsentGiven?: boolean;
 }
 
 export const CONSENT_COOKIE = 'cookie_consent';
@@ -20,12 +22,14 @@ export const FULL_CONSENT = {
     essential: true,
     functional: true,
     performance: true,
+    isConsentGiven: true,
 } as CookieConsentType;
 
 export const ONLY_ESSENTIAL_CONSENT = {
     essential: true,
     functional: false,
     performance: false,
+    isConsentGiven: true,
 } as CookieConsentType;
 
 export const CLARITY_CONSENT_EVENT = "clarity-consent";
@@ -71,7 +75,7 @@ const CookieConsent = () => {
     //get cookies
     useEffect(() => {
         if (cookieConsent) {
-            setShowFullCookieBanner(!cookieConsent?.essential);
+            setShowFullCookieBanner(!cookieConsent?.isConsentGiven);
 
             //temp
             if (!cookieConsent?.performance) {
@@ -92,7 +96,7 @@ const CookieConsent = () => {
 
     useEffect(() => {
         cookieConsentRef?.current
-        if (cookieConsentRef?.current && !cookieConsent?.essential) {
+        if (cookieConsentRef?.current && !cookieConsent?.isConsentGiven) {
             const height = cookieConsentRef.current.getBoundingClientRect().height;
             setCookieConsentHeight(height);
         } else {
@@ -103,20 +107,20 @@ const CookieConsent = () => {
 
 
     return (
-        <div className={`cookie-consent`} style={{ height: cookieConsentHeight }}>
+        <div className={styles['cookie-consent'] || 'cookie-consent'} style={{ height: cookieConsentHeight }}>
             {showCookieSettings && (
-                <div className={`cookie-consent__settings`}>
-                    <Modal modalType={ModalTypes.MAIN} title="Cookie settings" onClose={() => setShowCookieSettings(false)} classNames={'cookie-consent__settings-modal'}>
+                <div className={styles['cookie-consent__settings'] || 'cookie-consent__settings'}>
+                    <Modal modalType={ModalTypes.MAIN} title="Cookie settings" onClose={() => setShowCookieSettings(false)} classNames={styles['cookie-consent__settings-modal'] || 'cookie-consent__settings-modal'}>
                         <CookieConsentSettings onSuccess={() => setShowCookieSettings(false)} />
                     </Modal>
                 </div>
             )}
             {!showCookieSettings ? showFullCookieBanner ? (
-                <div className={`cookie-consent-container`}>
-                    <div className='cookie-consent__wrapper' ref={cookieConsentRef}>
+                <div className={styles['cookie-consent-container'] || 'cookie-consent-container'}>
+                    <div className={styles['cookie-consent__wrapper'] || 'cookie-consent__wrapper'} ref={cookieConsentRef}>
 
                         <Icon name='cookie' />
-                        <div className='cookie-consent__text'>
+                        <div className={styles['cookie-consent__text'] || 'cookie-consent__text'}>
                             {/*<p> We use essential cookies to run our site (login, security, access control).*/}
                             {/*    We’d also like to use <strong>functional cookies</strong> that make your*/}
                             {/*    experience smoother (remembering completed tutorials and showing your*/}
@@ -134,10 +138,10 @@ const CookieConsent = () => {
                                 You can accept or reject optional cookies now or change your choice later in Cookie Settings.
                             </p>
                             <p>Learn more in our <a className='is-link' href={'/cookie-policy'} target='_blank'> Cookie Policy</a>.</p>
-                            <div className='cookie-consent__text-buttons'>
-                                <Button classNames='cookie-consent' onClick={() => saveConsent(FULL_CONSENT)}>Accept All</Button>
-                                <Button classNames='cookie-consent' onClick={() => saveConsent(ONLY_ESSENTIAL_CONSENT)}>Reject Non-Essential</Button>
-                                <Button classNames='cookie-consent' onClick={() => setShowCookieSettings(true)}>Cookie settings</Button>
+                            <div className={styles['cookie-consent__text-buttons'] || 'cookie-consent__text-buttons'}>
+                                <Button classNames={styles['cookie-consent'] || 'cookie-consent'} onClick={() => saveConsent(FULL_CONSENT)}>Accept All</Button>
+                                <Button classNames={styles['cookie-consent'] || 'cookie-consent'} onClick={() => saveConsent(ONLY_ESSENTIAL_CONSENT)}>Reject Non-Essential</Button>
+                                <Button classNames={styles['cookie-consent'] || 'cookie-consent'} onClick={() => setShowCookieSettings(true)}>Cookie settings</Button>
                             </div>
 
                         </div>
@@ -145,13 +149,13 @@ const CookieConsent = () => {
                         {/*<p>We use cookies to enhance your experience on our site. Review our cookie policy*/}
                         {/*    <Link className='is-link' href={Routes.CookiePolicy} target='_blank'>here</Link>*/}
                         {/*</p>*/}
-                        {/*<Button classNames='cookie-consent__consent-btn' onClick={handleConsent}>OK</Button>*/}
+                        {/*<Button classNames={styles['cookie-consent__consent-btn']} onClick={handleConsent}>OK</Button>*/}
                     </div>
                 </div>)
-                : <div className='cookie-consent__wrapper--small'>
-                    <button className={`cookie-consent-settings__btn`} aria-label="Cookie settings button" onClick={() => setShowCookieSettings(true)} >
+                : <div className={styles['cookie-consent__wrapper--small'] || 'cookie-consent__wrapper--small'}>
+                    <button className={styles['cookie-consent-settings__btn'] || 'cookie-consent-settings__btn'} aria-label="Cookie settings button" onClick={() => setShowCookieSettings(true)} >
                         <Icon name='cookie' />
-                        <span className="tooltip-text">Change cookie settings</span>
+                        <span className={styles['tooltip-text'] || 'tooltip-text'}>Change cookie settings</span>
                     </button>
 
                 </div>
