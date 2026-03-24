@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import {TicketType} from "@/types/tickets";
 import Accordion from "@/components/Accordion";
@@ -13,9 +13,9 @@ type DocTicketsPropsType = {
 const DocumentTickets: React.FC<DocTicketsPropsType> = ({ tickets }) => {
 
     return (
-        <div className="doc-tickets">
+        <div className={`${styles['doc-tickets'] || 'doc-tickets'} doc-tickets`}>
 
-                {tickets.map(item => (<div key={item.uuid + item.status} className='doc-tickets-wrapper'>
+                {tickets.map(item => (<div key={item.uuid + item.status} className={`${styles['doc-tickets-wrapper'] || 'doc-tickets-wrapper'} doc-tickets-wrapper`}>
                     <Accordion title={`Ticket #${item.number} from ${formatDateStringToDisplayString(item.date)}. Status: ${item.status}`}>
                         <TicketInfo ticket={item}/>
                     </Accordion>

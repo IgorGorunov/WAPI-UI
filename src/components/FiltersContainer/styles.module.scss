@@ -31,15 +31,15 @@
         padding-right: 40px;
       }
 
-      .filters-apply--active {
+      :global(.filters-apply--active) {
         animation: pulse-apply 1s ease-in-out;
       }
 
-      .btn {
+      :global(.btn) {
         flex: 1 1 auto;
         border-radius: 20px;
 
-        &.primary {
+        &:global(.primary) {
           border: 2px solid transparent;
 
           &:hover {
@@ -84,7 +84,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 370px;
+    width: 380px;
     height: 100%;
     background: #EDEFF2;
     transform: translateX(-100%);

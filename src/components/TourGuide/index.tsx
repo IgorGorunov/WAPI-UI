@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './styles.module.scss';
 import Joyride, { ACTIONS, ORIGIN, STATUS, CallBackProps } from 'react-joyride';
 import useTourGuide from "@/context/tourGuideContext";
 import { TourGuidePages, TourGuideStepType } from "@/types/tourGuide";
@@ -34,7 +35,7 @@ const TourGuide: React.FC<TourGuidePropsType> = ({ steps, run, setRunTourOpt, pa
         handleTourGuideCallback(data, setRunTourOpt ? setRunTourOpt : setRunTour, setTutorialAsWatched, pageName)
     }
 
-    return <div className='tour-guide'>
+    return <div className={styles['tour-guide'] || 'tour-guide'}>
         <Joyride
             continuous={true}
             showSkipButton={true}

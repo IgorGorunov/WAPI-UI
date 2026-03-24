@@ -1,6 +1,6 @@
 import React, {forwardRef} from "react";
 import {FieldPropsType} from "@/types/forms";
-import "./styles.scss"
+import styles from "./styles.module.scss"
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
 const ToggleSwitch =  forwardRef<HTMLInputElement, FieldPropsType>(({
@@ -23,10 +23,10 @@ const ToggleSwitch =  forwardRef<HTMLInputElement, FieldPropsType>(({
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`} position='left'>
             <div
-                className={`toggle-switch ${classNames ? classNames : ""} ${hideTextOnMobile ? 'hide-text-on-mobile' : ''}`}>
+                className={`${styles['toggle-switch'] || 'toggle-switch'} toggle-switch ${classNames ? classNames : ""} ${hideTextOnMobile ? `${styles['hide-text-on-mobile'] || 'hide-text-on-mobile'} hide-text-on-mobile` : ''}`}>
                 <input
                     {...otherProps}
-                    className='toggle-switch-checkbox'
+                    className={`${styles['toggle-switch-checkbox'] || 'toggle-switch-checkbox'} toggle-switch-checkbox`}
                     type='checkbox'
                     name={name}
                     id={`${name}-toggle`}
@@ -38,15 +38,15 @@ const ToggleSwitch =  forwardRef<HTMLInputElement, FieldPropsType>(({
                         e.key === 'Enter' && e.preventDefault();
                     }}
                 />
-                <label className={`toggle-switch-label ${disabled ? 'is-disabled' : ''}`} htmlFor={`${name}-toggle`}
+                <label className={`${styles['toggle-switch-label'] || 'toggle-switch-label'} toggle-switch-label ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''}`} htmlFor={`${name}-toggle`}
                        aria-disabled={disabled}>
-                    <span className="toggle-switch-inner">
-                        <span className="toggle-switch-inner--before" />
-                        <span className="toggle-switch-inner--after" />
+                    <span className={`${styles['toggle-switch-inner'] || 'toggle-switch-inner'} toggle-switch-inner`}>
+                        <span className={`${styles['toggle-switch-inner--before'] || 'toggle-switch-inner--before'} toggle-switch-inner--before`} />
+                        <span className={`${styles['toggle-switch-inner--after'] || 'toggle-switch-inner--after'} toggle-switch-inner--after`} />
                     </span>
-                    <span className="toggle-switch-switch"/>
+                    <span className={`${styles['toggle-switch-switch'] || 'toggle-switch-switch'} toggle-switch-switch`}/>
                 </label>
-                <span className='toggle-switch-label-text'>{label}</span>
+                <span className={`${styles['toggle-switch-label-text'] || 'toggle-switch-label-text'} toggle-switch-label-text`}>{label}</span>
             </div>
         </TutorialHintTooltip>
     );

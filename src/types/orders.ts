@@ -373,7 +373,7 @@ export type OrderFilterDataType = BaseFilterMetadata & {
     marketplaces: FilterType[];
     courierServices: FilterType[];
     sentSMS: number
-    nonTroubleEvents: number;
+    nonTroubleEvents: FilterType[];
     customerReturns: number;
     warehouseAssemblyPhotos: number;
     commentToCourierService: number;
@@ -384,7 +384,7 @@ export type OrderFiltersSelectedType = BaseFiltersSelected & {
     claims: boolean;
     commentToCourierService: boolean;
     customerReturns: boolean;
-    nonTroubleEvents: boolean
+    nonTroubleEvents: string[];
     warehouseAssemblyPhotos: boolean
     sentSMS: boolean;
     selfCollect: boolean;
@@ -401,10 +401,10 @@ export type OrderFiltersSelectedType = BaseFiltersSelected & {
 
 //temporary type
 export type OrderTempPropsType = {
-    tempToken: string;
+    token: string;
     startDate: string;
     endDate: string;
-    client: string;
+    // client: string;
     page?: number;
     limit?: number;
     filters?: Partial<OrderFiltersSelectedType>;

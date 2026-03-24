@@ -2,6 +2,7 @@ import React from "react";
 // import Icon from "@/components/Icon";
 import { ForecastType } from "@/types/dashboard";
 // import Skeleton from "@/components/Skeleton/Skeleton";
+import styles from "./styles.module.scss";
 
 type ForecastPropsType = {
   type?: ForecastType;
@@ -49,47 +50,47 @@ const Forecast: React.FC<ForecastPropsType> = (props) => {
 
   return (
     <div
-      className={`card forecast forecast__container ${isGMV ? "gmv" : "orders"}`}
+      className={`card ${styles['forecast'] || 'forecast'} forecast ${styles['forecast__container'] || 'forecast__container'} forecast__container ${isGMV ? `${styles['gmv'] || 'gmv'} gmv` : `${styles['orders'] || 'orders'} orders`}`}
     >
-      <div className="forecast__wrapper">
-        <p className="title-h4 title">{isGMV ? "GMV" : "Orders"}</p>
-        {isError ? (<div className='forecast__error-message'>{errorMessage}</div>) : (<>
-          <p className="forecast__main-amount">
+      <div className={`${styles['forecast__wrapper'] || 'forecast__wrapper'} forecast__wrapper`}>
+        <p className={`${styles['title-h4'] || 'title-h4'} title-h4 ${styles['title'] || 'title'} title`}>{isGMV ? "GMV" : "Orders"}</p>
+        {isError ? (<div className={`${styles['forecast__error-message'] || 'forecast__error-message'} forecast__error-message`}>{errorMessage}</div>) : (<>
+          <p className={`${styles['forecast__main-amount'] || 'forecast__main-amount'} forecast__main-amount`}>
             {amountPrefix}
             {Formatter.format(Math.floor(amountInPeriod)).replaceAll(",", " ")}
           </p>
-          <p className="mb">In period</p>
+          <p className={`${styles['mb'] || 'mb'} mb`}>In period</p>
           <div className="">
-            <div className="grid-row forecast__row">
-              <div className={`grid-col-2 forecast__col`}>
-                <p className={`forecast__amount`}>
+            <div className={`grid-row ${styles['forecast__row'] || 'forecast__row'} forecast__row`}>
+              <div className={`grid-col-2 ${styles['forecast__col'] || 'forecast__col'} forecast__col`}>
+                <p className={`${styles['forecast__amount'] || 'forecast__amount'} forecast__amount`}>
                   {amountPrefix}
                   {amounts.beginOfMonth}
                 </p>
-                <p className={`forecast__small-text`}>Month to date</p>
+                <p className={`${styles['forecast__small-text'] || 'forecast__small-text'} forecast__small-text`}>Month to date</p>
               </div>
-              <div className={`grid-col-2 line forecast__col`}>
-                <p className={`forecast__amount`}>
+              <div className={`grid-col-2 ${styles['line'] || 'line'} line ${styles['forecast__col'] || 'forecast__col'} forecast__col`}>
+                <p className={`${styles['forecast__amount'] || 'forecast__amount'} forecast__amount`}>
                   {amountPrefix}
                   {amounts.beginOfYear}
                 </p>
-                <p className={`forecast__small-text`}>Year to date</p>
+                <p className={`${styles['forecast__small-text'] || 'forecast__small-text'} forecast__small-text`}>Year to date</p>
               </div>
             </div>
-            <div className="grid-row forecast__row">
+            <div className={`grid-row ${styles['forecast__row'] || 'forecast__row'} forecast__row`}>
               <div className={`grid-col-2 `}>
-                <p className={`forecast__amount`}>
+                <p className={`${styles['forecast__amount'] || 'forecast__amount'} forecast__amount`}>
                   {amountPrefix}
                   {amounts.forecastByMonth}
                 </p>
-                <p className={`forecast__small-text`}>Month forecast</p>
+                <p className={`${styles['forecast__small-text'] || 'forecast__small-text'} forecast__small-text`}>Month forecast</p>
               </div>
-              <div className={`grid-col-2 line `}>
-                <p className={`forecast__amount`}>
+              <div className={`grid-col-2 ${styles['line'] || 'line'} line `}>
+                <p className={`${styles['forecast__amount'] || 'forecast__amount'} forecast__amount`}>
                   {amountPrefix}
                   {amounts.forecastByYear}
                 </p>
-                <p className={`forecast__small-text`}>Year forecast</p>
+                <p className={`${styles['forecast__small-text'] || 'forecast__small-text'} forecast__small-text`}>Year forecast</p>
               </div>
             </div>
           </div>

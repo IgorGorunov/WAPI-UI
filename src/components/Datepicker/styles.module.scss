@@ -62,14 +62,17 @@
   .button-container {
     display: flex;
     justify-content: center;
-    padding: 10px;
+    padding: 0 15px;
+    margin-top: -56px;
   }
 
   .date-range-container {
     width: 100%;
+    padding-bottom: 56px;
     border-radius: 15px;
     overflow: hidden;
     border: 2px solid #F5F6F7;
+    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.2);
 
     :global(.rdrDateDisplayWrapper) {
       display: none;

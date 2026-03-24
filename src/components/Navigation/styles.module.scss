@@ -43,6 +43,10 @@
     background: #EDEFF2;
     overflow-y: auto;
 
+    .dashboard-menu-link {
+      margin: 10px 10px 10px 10px;
+    }
+
     .button-link {
       width: 250px;
       display: flex;
@@ -59,21 +63,26 @@
       font-style: normal;
       font-weight: 900;
       line-height: 25px;
-      transition: background-color 0.3s ease, color 0.3s ease, font-size 0.3s ease;
+      transition: all 0.5s ease;
       margin-bottom: 10px;
+      border: 2px solid transparent;
     }
 
     .icon-home path {
-      transition: all 0.3s ease, color 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     .button-link:hover {
-      background-color: var(--color-blue-15);
+      //background-color: var(--color-blue-15);
+      background-color: var(--color-white);
       box-shadow: 0 2px 5px 0 var(--color-blue-15);
-      font-size: 14px;
-      color: var(--color-gray-blue);
+      //font-size: 14px;
+      //color: var(--color-gray-blue);
+      color: var(--color-blue);
+      border-color: var(--color-blue);
       .icon-home path{
-        fill: var(--color-gray-blue);;
+        //fill: var(--color-gray-blue);;
+        fill: var(--color-blue);
       }
     }
 

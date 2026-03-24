@@ -1,6 +1,6 @@
 import React from 'react';
 import VideoEmbedded from "@/components/VideoEmbedded";
-import './styles.scss';
+import styles from './styles.module.scss';
 
 type VideoComponentPropsType = {
     _id: string;
@@ -16,9 +16,9 @@ const VideoComponent: React.FC<VideoComponentPropsType> = (props) => {
     const {heading, videoSource, videoUrl, videoFileUrl, mimeType} = props;
 
     return (
-        <div className='video-component'>
+        <div className={`${styles['video-component'] || 'video-component'} video-component`}>
             {heading ? <h3>{heading}</h3> : null}
-            <div className='video-component__wrapper'>
+            <div className={`${styles['video-component__wrapper'] || 'video-component__wrapper'} video-component__wrapper`}>
                 {videoSource === 'url' && videoUrl ? (
                     // <iframe
                     //     width="560"

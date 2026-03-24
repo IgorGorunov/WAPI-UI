@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import Icon from "@/components/Icon";
-import './styles.scss';
+import styles from './styles.module.scss';
 
 type AccordionFilePropsType = {
     title: string;
@@ -28,21 +28,21 @@ const AccordionFile: React.FC<AccordionFilePropsType> = ({ title, children, isOp
     }
 
     return (
-        <div className="accordion-file-item">
+        <div className={styles["accordion-file-item"]}>
             <button
-                className={`accordion-file-item__title ${isActive ? "is-active" : ''}`}
+                className={`${styles["accordion-file-item__title"]} ${isActive ? styles["is-active"] || "is-active" : ''}`}
                 onClick={toggleAccordion}
             >
-                {/*<Icon name='minus' className={`accordion-file-item__title-icon active`} />*/}
-                <Icon name='keyboard-arrow-up' className={`accordion-file-item__title-icon ${isActive ? 'active' : ''}`}/>
-                <p className="accordion-file-item__title-text"><Icon name='folder' className='folder-icon' />{title}</p>
+                {/*<Icon name='minus' className={`${styles["accordion-file-item__title-icon"]} ${styles.active}`} />*/}
+                <Icon name='keyboard-arrow-up' className={`${styles["accordion-file-item__title-icon"]} ${isActive ? styles.active || 'active' : ''}`}/>
+                <p className={styles["accordion-file-item__title-text"]}><Icon name='folder' className={styles["folder-icon"] || "folder-icon"} />{title}</p>
 
             </button>
             <div
                 ref={contentSpace}
-                className="accordion-file-item__content-wrapper"
+                className={styles["accordion-file-item__content-wrapper"]}
             >
-                {isActive ? <div className='accordion-file-item__content'>{children}</div> : null}
+                {isActive ? <div className={styles['accordion-file-item__content']}>{children}</div> : null}
             </div>
         </div>
     );

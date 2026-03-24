@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 import {NoteType} from "@/types/notes";
 import Button, { ButtonVariant} from "@/components/Button/Button";
@@ -29,23 +29,23 @@ const NotesList: React.FC<NotesListPropsType> = ({object, notes, refetch}) => {
     }
 
     return (
-        <div className="user-notes">
-            <div className='user-notes__create-btn form-table--btns'>
+        <div className={`${styles['user-notes'] || 'user-notes'} user-notes`}>
+            <div className={`${styles['user-notes__create-btn'] || 'user-notes__create-btn'} user-notes__create-btn form-table--btns`}>
                 <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateNewNote} >Create new note</Button>
             </div>
             {notes && notes.length ?
                 <>
-                    <div className="user-notes__list-header">
+                    <div className={`${styles['user-notes__list-header'] || 'user-notes__list-header'} user-notes__list-header`}>
                         <div className='date-column'>Period</div>
                         <div className='column user-column'>User</div>
                         <div className='column comment-column'>Note</div>
                     </div>
-                    <ul className="user-notes__list">
+                    <ul className={`${styles['user-notes__list'] || 'user-notes__list'} user-notes__list`}>
                         {notes.sort((a,b)=>a.period<b.period ? 1 : -1).map((note: NoteType, index)=> (
                                 <li
                                     key={note.period + "_" + index}
-                                    className={`user-notes__list-item ${
-                                        index % 2 === 1 ? "highlight" : " "
+                                    className={`${styles['user-notes__list-item'] || 'user-notes__list-item'} user-notes__list-item ${
+                                        index % 2 === 1 ? `${styles['highlight'] || 'highlight'} highlight` : " "
                                     }`}
                                 >
                                     <div className='date-column'>{formatDateTimeToStringWithDotWithoutSeconds(note.period)}</div>
@@ -54,7 +54,7 @@ const NotesList: React.FC<NotesListPropsType> = ({object, notes, refetch}) => {
                                 </li>
                             ))}
                     </ul></>
-                : <p className='user-notes__empty'>You don't have any notes yet.</p>
+                : <p className={`${styles['user-notes__empty'] || 'user-notes__empty'} user-notes__empty`}>You don't have any notes yet.</p>
             }
 
             {showCreateNoteModal ? <Modal title={`Create note`} onClose={onModalClose} >

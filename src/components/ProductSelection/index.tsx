@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import '@/styles/tables.scss';
 import '@/styles/forms.scss';
 import Button from "@/components/Button/Button";
@@ -462,18 +462,18 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
     }
 
     return (
-        <div className="product-selection">
+        <div className={`${styles['product-selection'] || 'product-selection'} product-selection`}>
             {(isLoading) && <Loader />}
-            <div className={`product-selection__container ${needWarehouses && warehouseOptions && warehouseOptions.length ? 'with-filter' : "without-filter"} has-scroll`}>
+            <div className={`${styles['product-selection__container'] || 'product-selection__container'} product-selection__container ${needWarehouses && warehouseOptions && warehouseOptions.length ? `${styles['with-filter'] || 'with-filter'} with-filter` : `${styles['without-filter'] || 'without-filter'} without-filter`} has-scroll`}>
                 {needWarehouses && warehouseOptions && warehouseOptions.length ?
-                    <div className='product-selection__warehouses'>
+                    <div className={`${styles['product-selection__warehouses'] || 'product-selection__warehouses'} product-selection__warehouses`}>
                         <RadioButton name='warehouseSelection' isCountry={true} options={warehouseOptions}
                             value={selectedWarehouse} onChange={(val) => setSelectedWarehouse(val as string)}
                             alignFlexH={ALIGN_FLEX.CENTER} />
                     </div>
                     : null
                 }
-                <div className="product-selection__search">
+                <div className={`${styles['product-selection__search'] || 'product-selection__search'} product-selection__search`}>
                     <SearchContainer>
                         <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => {
                             setSearchTerm("");
@@ -482,8 +482,8 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                         <FieldBuilder {...fullTextSearchField} />
                     </SearchContainer>
                 </div>
-                <div className="product-selection__wrapper">
-                    <div className='card table form-table product-selection__items product-selection__table '>
+                <div className={`${styles['product-selection__wrapper'] || 'product-selection__wrapper'} product-selection__wrapper`}>
+                    <div className={`card table form-table ${styles['product-selection__items'] || 'product-selection__items'} product-selection__items ${styles['product-selection__table'] || 'product-selection__table'} product-selection__table `}>
                         <Table
                             dataSource={filteredProducts.map((item, index) => ({ key: item.uuid + '_' + item.warehouse + '_' + index, ...item }))}
                             columns={needWarehouses ? allProductsColumnsWithFilter : allProductsColumnsWithoutFilter}
@@ -491,14 +491,14 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                             scroll={{ y: 220 }}
                         />
                     </div>
-                    <div className="product-selection__select-all-btn">
+                    <div className={`${styles['product-selection__select-all-btn'] || 'product-selection__select-all-btn'} product-selection__select-all-btn`}>
                         <Button icon='add-table-row' onClick={handleSelectAll}> Select all </Button>
                     </div>
-                    <div className='product-selection__table-title title-h4'>
+                    <div className={`${styles['product-selection__table-title'] || 'product-selection__table-title'} product-selection__table-title title-h4`}>
                         Selected into document products:
                     </div>
                     <div
-                        className='card table form-table table-form-fields product-selection__selected product-selection__table'>
+                        className={`card table form-table table-form-fields ${styles['product-selection__selected'] || 'product-selection__selected'} product-selection__selected ${styles['product-selection__table'] || 'product-selection__table'} product-selection__table`}>
                         <Table
                             columns={getSelectedProductColumns(control)}
                             dataSource={getValues('products')?.map((field, index) => ({ key: field.uuid + '-' + index + '_' + (new Date()).toISOString(), ...field })) || []}
@@ -507,7 +507,7 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                             rowKey="key"
                         />
                     </div>
-                    <div className='product-selection__buttons'>
+                    <div className={`${styles['product-selection__buttons'] || 'product-selection__buttons'} product-selection__buttons`}>
                         <Button onClick={() => handleAddSelection(selectedProducts as SelectedProductType[])}>Add to
                             document</Button>
                     </div>

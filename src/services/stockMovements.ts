@@ -1,5 +1,5 @@
-import type {
-    SingleStockMovementFormType,
+import {
+    SingleStockMovementFormType, SingleStockMovementProductType,
     SingleStockMovementType,
     STOCK_MOVEMENT_DOC_TYPE,
     StockMovementParamsType,
@@ -167,27 +167,28 @@ const sendInboundFiles = async (
     // }
 };
 
-// const fillInboundByStock = async (
-//     data: {
-//         token: string;
-//         alias: string;
-//         ui?: string;
-//         quality: string[];
-//         warehouse: string;
-//     }
-// ) => {
-//     try {
-//         const response: unknown = await api.post(
-//             `/FillStockMovementAllStock`,
-//             data
-//         );
-//
-//         return response;
-//     } catch (err) {
-//         console.error(err);
-//         return err;
-//     }
-// };
+export const fillInboundByStock = async (
+    data: {
+        token: string;
+        alias: string;
+        ui?: string;
+        // quality: string[];
+        warehouse: string;
+    }
+): Promise<ApiResponseType<SingleStockMovementProductType[]>> => {
+    return api.post(`/FillStockMovementAllStock`, data);
+    // try {
+    //     const response: unknown = await api.post(
+    //         `/FillStockMovementAllStock`,
+    //         data
+    //     );
+    //
+    //     return response;
+    // } catch (err) {
+    //     console.error(err);
+    //     return err;
+    // }
+};
 
 export const cancelStockMovement = async (
     data: {

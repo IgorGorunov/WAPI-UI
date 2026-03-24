@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { sendOrderFiles } from '@/services/orders';
 import { sendProductFiles } from "@/services/products";
 import Button from '@/components/Button/Button'
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import DropZone from "@/components/Dropzone";
 import { AttachedFilesType } from "@/types/utility";
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
@@ -187,14 +187,14 @@ const ImportFilesBlock: React.FC<ImportFilesBlockType> = ({ file, importFilesTyp
     }
 
     return (
-        <div className='import-files'>
+        <div className={`${styles['import-files'] || 'import-files'} import-files`}>
             {isLoading && <Loader />}
             <ToastContainer />
-            <p className='import-files__title'>
+            <p className={`${styles['import-files__title'] || 'import-files__title'} import-files__title`}>
                 {fileData.title}
             </p>
             {needSeller() && (
-                <div className='order-list__seller-import-block'>
+                <div className={`${styles['order-list__seller-import-block'] || 'order-list__seller-import-block'} order-list__seller-import-block`}>
                     <SelectField
                         key='seller-filter'
                         name='selectedSeller'

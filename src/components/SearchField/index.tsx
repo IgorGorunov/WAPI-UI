@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {Input} from "antd";
 import Button from "@/components/Button/Button";
 import Icon from "@/components/Icon";
@@ -20,8 +20,8 @@ const SearchField: React.FC<SearchFieldPropsType> = ({ searchTerm, handleClear, 
     }, [searchTerm]);
 
     return (
-        <div className="search-field">
-            <Icon name='search' className={`search-icon ${manualSearch ? "manual-search" : ""}`}/>
+        <div className={styles['search-field'] || 'search-field'}>
+            <Icon name='search' className={`${styles['icon-search'] || 'icon-search'} icon-search ${manualSearch ? `${styles['manual-search'] || 'manual-search'} manual-search` : ""}`}/>
             <Input
                 id={`search-input`}
                 placeholder="Search..."
@@ -40,17 +40,17 @@ const SearchField: React.FC<SearchFieldPropsType> = ({ searchTerm, handleClear, 
                         handleSearch(currentSearchTerm.trim());
                     }
                 }}
-                className={`search-input ${manualSearch ? "manual-search" : ""}`}
+                className={`${styles['search-input'] || 'search-input'} search-input ${manualSearch ? `${styles['manual-search'] || 'manual-search'} manual-search` : ""}`}
             />
-            {currentSearchTerm ? <div className={`search-btns ${manualSearch ? "manual-search" : ""}`}>
+            {currentSearchTerm ? <div className={`${styles['search-btns'] || 'search-btns'} search-btns ${manualSearch ? `${styles['manual-search'] || 'manual-search'} manual-search` : ""}`}>
                 <Button
-                    className='clear-search'
+                    className={`${styles['clear-search'] || 'clear-search'} clear-search`}
                     icon='close'
                     onClick={e => {handleClear(); setCurrentSearchTerm('')}}
                 />
                 {manualSearch ?
                     <Button
-                        className='apply-search'
+                        className={`${styles['apply-search'] || 'apply-search'} apply-search`}
                         onClick={e => {
                             handleSearch(currentSearchTerm);
                         }}>Search

@@ -5,7 +5,7 @@ import {
     OrderType, OrderFilterDataType, PickupPointsType,
     SingleOrderType, OrderTempPropsType, PagedOrderListType
 } from "@/types/orders";
-import type {BulkCreateRequestType} from '@/types/utility';
+import type {BulkCreateRequestType, AttachedFilesType} from '@/types/utility';
 import {api} from "@/services/api";
 import type {ApiResponseType} from "@/types/api";
 
@@ -283,5 +283,22 @@ export const getOrdersPage = async (
     return api.post(`/GetPagedOrdersList`, data);
 }
 
+// https://api.wapi.com/WAPI/hs/v1/UI/GetPagedOrderListFile
+export const getOrdersExcel = async (
+    data: {
+        token: string;
+        alias?: string;
+        startDate: string;
+        endDate: string;
+        ui?: string;
+        filter?: Partial<OrderFiltersSelectedType>;
+        search?: string;
+        fullTextSearch?: boolean;
+        sortBy?: string;
+        sortOrder?: string;
+    }
+): Promise<ApiResponseType<AttachedFilesType>> => {
+    return api.post(`/GetPagedOrderListFile`, data);
+}
 
 export { getOrders, getOrders_Old, getOrderData, getOrderParameters, getOrderPickupPoints, sendOrderData, sendOrderFiles, sendOrderComment, cancelOrder, sendAddressData};

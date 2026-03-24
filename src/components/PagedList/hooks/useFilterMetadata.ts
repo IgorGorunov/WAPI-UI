@@ -41,11 +41,11 @@ export function useFilterMetadata<
 
             try {
                 const requestData: Record<string, string | number | boolean> = {
-                    // token,
-                    tempToken: "qwert123456BVCXZ",
+                    token,
+                    // tempToken: "qwert123456BVCXZ",
                     startDate: state.startDate,
                     endDate: state.endDate,
-                    client: "1207df90-c9c2-11ee-af7c-04421a1aac94"
+                    ui: ui || '',
                 };
 
                 if (alias) requestData.alias = alias;

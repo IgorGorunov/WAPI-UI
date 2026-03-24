@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Icon from "@/components/Icon";
 import {Tooltip} from "antd";
 
@@ -21,9 +21,9 @@ const CardWithHelpIcon: React.FC<CardWithHelpIconPropsType> = ({ classNames='', 
     }, [showHintsByDefault]);
 
     return (
-        <div className={`card card-with-help-icon ${showHelp ? 'tutorial-mode' : ''} ${classNames}`}>
+        <div className={`card ${styles['card-with-help-icon'] || 'card-with-help-icon'} ${showHelp ? 'tutorial-mode' : ''} ${classNames}`}>
             <Tooltip title={`${showHelp ? 'Click this icon to hide hints' : 'Click this icon to display hints'}`}>
-                <button className='card-question-btn' type='button' onClick={()=>setShowHelp(prevState=>!prevState)}>
+                <button className={styles['card-question-btn'] || 'card-question-btn'} type='button' onClick={()=>setShowHelp(prevState=>!prevState)}>
                    <Icon name='question' />
                 </button>
             </Tooltip>

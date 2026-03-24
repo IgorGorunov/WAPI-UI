@@ -107,7 +107,7 @@ const Datepicker: React.FC<DatepickerPropsType> = ({ initialRange, onDateRangeSa
                             rangeColors={["#5380F5", "#5380F5"]}
                         />
                     </div>
-                    <div className="button-container">
+                    <div className={`${styles['button-container']} 'button-container'`}>
                         <Button icon="search" isFullWidth iconOnTheRight onClick={handleSave}>Search</Button>
                     </div>
                 </div>

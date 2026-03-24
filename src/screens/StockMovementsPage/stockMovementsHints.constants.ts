@@ -19,6 +19,7 @@ export const StockMovementsHints = (docType = '') => {
     container40Amount: ``,
 
     // products
+    fillByStock: 'Click here to fill the products by remaining stock of the selected warehouse',
     importProducts: 'Click here to import products from Excel file',
     selection: `Click here to choose multiple products for the  ${docType.toLowerCase()}`,
     // addProduct: `Add a product to the ${docType.toLowerCase()} one by one`,

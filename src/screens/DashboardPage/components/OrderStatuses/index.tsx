@@ -1,5 +1,6 @@
 import React from "react";
 import StatusBar from "./StatusBar";
+import styles from "./styles.module.scss";
 
 export const enum GroupStatuses {
   "Ready for dispatch" = 'Ready for dispatch',
@@ -64,8 +65,8 @@ const OrderStatuses: React.FC<OrderStatusesPropsType> = ({
   }
 
   return (
-    <div className={`card order-statuses order-statuses__container`}>
-      <p className="title-h4 title">Orders by statuses</p>
+    <div className={`card ${styles['order-statuses'] || 'order-statuses'} order-statuses ${styles['order-statuses__container'] || 'order-statuses__container'} order-statuses__container`}>
+      <p className={`${styles['title-h4'] || 'title-h4'} title-h4 ${styles['title'] || 'title'} title`}>Orders by statuses</p>
       {ordersByStatuses && ordersByStatuses.sort((a, b) => GroupStatusesOrder[a.status] > GroupStatusesOrder[b.status] ? 1 : -1).map((item: GroupOrderStatusType) => (
         <StatusBar
           key={item.status}

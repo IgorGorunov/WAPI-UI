@@ -8,7 +8,7 @@
     z-index: 2;
   }
 
-  &.tutorial-mode {
+  &:global(.tutorial-mode) {
     .card-question-btn {
       svg path {
         fill: var(--color-blue)

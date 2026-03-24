@@ -124,7 +124,7 @@
   }
 }
 
-.read-only .is-exist .delete-button {
+:global(.read-only) .is-exist .delete-button {
   &:hover {
     border-color: transparent;
     svg path {

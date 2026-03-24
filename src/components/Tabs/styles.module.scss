@@ -99,9 +99,7 @@
       }
     }
 
-    &-notification {
-      //display: inline-block;
-    }
+
 
     &-panel.active {
       display: flex;
@@ -111,7 +109,7 @@
   }
 
 
-  &.inside-modal {
+  &:global(.inside-modal) {
     margin-top: -90px;
 
     @media (max-width: $laptop) {

@@ -1,7 +1,7 @@
-import React, {useRef, useEffect, useState} from "react";
+import React, {useRef, useState} from "react";
 import ReactDOM from "react-dom";
 import Icon from "@/components/Icon";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {ModalTypes} from "@/types/utility";
 
 type ModalType = {
@@ -34,16 +34,16 @@ const Modal: React.FC<ModalType> = ({ title, children, needTutorial=false, onClo
     const [isTutorial, setIsTutorial] = useState(false);
 
     const modalContent = (
-        <div className={`modal-overlay ${classNames}`}>
-            <div className="modal-wrapper" ref={modalWrapperRef}>
-                <div className={`modal ${needTutorial && isTutorial ? 'tutorial-state' : ''}`}>
-                    <div className={`modal-header ${noHeaderDecor ? 'no-header-decor' : ''}`}>
+        <div className={`${styles['modal-overlay'] || 'modal-overlay'} ${classNames}`}>
+            <div className={styles['modal-wrapper'] || 'modal-wrapper'} ref={modalWrapperRef}>
+                <div className={`${styles.modal || 'modal'} ${needTutorial && isTutorial ? 'tutorial-state' : ''}`}>
+                    <div className={`${styles['modal-header'] || 'modal-header'} ${noHeaderDecor ? styles['no-header-decor'] || 'no-header-decor' : ''}`}>
                         {title && (
-                            <div className="modal-header__title">
+                            <div className={styles['modal-header__title'] || 'modal-header__title'}>
                                 {title}
                             </div>
                         )}
-                        <div className="modal-header__close">
+                        <div className={styles['modal-header__close'] || 'modal-header__close'}>
                             {needTutorial ? <button className={`tour-guide ${isTutorial ? 'is-active' : ''}`} onClick={()=>setIsTutorial(!isTutorial)}><Icon name='book' /></button>
                                 : null}
                             <a href="#" onClick={handleCloseClick}>
@@ -51,7 +51,7 @@ const Modal: React.FC<ModalType> = ({ title, children, needTutorial=false, onClo
                             </a>
                         </div>
                     </div>
-                    <div className="modal-body">{children}</div>
+                    <div className={styles['modal-body'] || 'modal-body'}>{children}</div>
                 </div>
             </div>
         </div>

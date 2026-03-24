@@ -2,5 +2,6 @@
 export { usePagedListState } from './usePagedListState';
 export type { PagedListUrlState } from './usePagedListState';
 
-export { usePagedData } from './usePagedData';
+export { usePagedData, processFiltersForApi } from './usePagedData';
+export type { FilterValue } from './usePagedData';
 export { useFilterMetadata } from './useFilterMetadata';

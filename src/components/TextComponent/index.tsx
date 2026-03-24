@@ -1,6 +1,6 @@
 import React from 'react';
 import {DownloadableFileType, RichTextType, VideoComponentType} from "@/types/sanity/fragmentTypes";
-import './styles.scss';
+import styles from './styles.module.scss';
 import ImageComponent from "@/components/ImageComponent";
 import TableComponent from "../TableComponent";
 import {PAGE_REFERENCES} from "@/types/sanity/pageReferences";
@@ -18,7 +18,7 @@ const PortableText = dynamic(
     () => import('@portabletext/react').then(mod => mod.PortableText),
     { 
         ssr: true,
-        loading: () => <div className="rich-text loading">Loading content...</div>
+        loading: () => <div className={`${styles['rich-text'] || 'rich-text'} rich-text loading`}>Loading content...</div>
     }
 );
 
@@ -83,7 +83,7 @@ const TextComponent: React.FC<FaqItemPropsType> = (props) => {
     };
 
     return (
-        <div className="rich-text">
+        <div className={`${styles['rich-text'] || 'rich-text'} rich-text`}>
             <PortableText value={props.textContent} components={components} />
         </div>
     );

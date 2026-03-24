@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import dynamic from "next/dynamic";
 import Layout from "@/components/Layout/Layout";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 // import Header from "@/components/Header";
 import Link from "next/link";
 import useTenant from "@/context/tenantContext";
@@ -23,43 +23,43 @@ const CookiePolicyPage = () => {
     return (
         <Layout hasFooter>
             {/*<SeoHead title='Cookie Policy' description='Our Cookie policy page' />*/}
-            <div className="cookie-policy-page__container">
+            <div className={`${styles['cookie-policy-page__container'] || 'cookie-policy-page__container'} cookie-policy-page__container`}>
                 <Header pageTitle='Cookie policy' toRight  />
 
-                <div className="cookie-policy-page__text-wrapper">
+                <div className={`${styles['cookie-policy-page__text-wrapper'] || 'cookie-policy-page__text-wrapper'} cookie-policy-page__text-wrapper`}>
                     <p>This Cookie Policy explains how we use cookies and similar tracking technologies when you visit
                         our website&nbsp;
                         {mounted && uiLink ? (
-                            <Link className="is-link" href="/">
+                            <Link className={`${styles['is-link'] || 'is-link'} is-link`} href="/">
                                  {uiLink}
                             </Link>
                         ) : null}. By continuing to browse the site, or by setting your cookie preferences in our banner or Cookie Settings,
                         you are agreeing to our use of cookies as outlined in this policy.
                     </p>
-                    <p className='text-bold'>What are cookies? </p>
+                    <p className={`${styles['text-bold'] || 'text-bold'} text-bold`}>What are cookies? </p>
 
                     <p>Cookies are small text files that are placed on your computer or mobile device when you visit a
                         website. They are widely used to make websites work more efficiently and to provide information
                         to website owners. </p>
-                    <p className='text-bold'>How do we use cookies? </p>
+                    <p className={`${styles['text-bold'] || 'text-bold'} text-bold`}>How do we use cookies? </p>
                     <p>We group cookies into three categories: </p>
-                    <ol className='simple-list'>
-                        <li><p><span className='text-bold'>Essential Cookies:</span> These cookies are strictly necessary for the website
+                    <ol className={`${styles['simple-list'] || 'simple-list'} simple-list`}>
+                        <li><p><span className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Essential Cookies:</span> These cookies are strictly necessary for the website
                             to function and for you to access secure areas of the site. Without them, our services would not work
                             properly (e.g., login, security, and access control).
                         </p></li>
                         <li>
-                            <p><span className='text-bold'>Functionality Cookies (optional, but useful):</span> These cookies are not required
+                            <p><span className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Functionality Cookies (optional, but useful):</span> These cookies are not required
                                 for the site to work, but they make your experience smoother and more personalized. For example, they can:
                             </p>
-                            <ul className='list-with-discs'>
-                                <li className='list-with-discs-item'>Remember if you have already completed a tutorial, so it’s not shown again</li>
-                                <li className='list-with-discs-item'>Display your account name so you know which account you are logged in under</li>
-                                <li className='list-with-discs-item'>Collect basic browser information for technical diagnostics</li>
+                            <ul className={`${styles['list-with-discs'] || 'list-with-discs'} list-with-discs`}>
+                                <li className={`${styles['list-with-discs-item'] || 'list-with-discs-item'} list-with-discs-item`}>Remember if you have already completed a tutorial, so it’s not shown again</li>
+                                <li className={`${styles['list-with-discs-item'] || 'list-with-discs-item'} list-with-discs-item`}>Display your account name so you know which account you are logged in under</li>
+                                <li className={`${styles['list-with-discs-item'] || 'list-with-discs-item'} list-with-discs-item`}>Collect basic browser information for technical diagnostics</li>
                             </ul>
-                            <p>You can turn these on or off in <span className='text-bold'>Cookie Settings</span>.</p>
+                            <p>You can turn these on or off in <span className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Cookie Settings</span>.</p>
                         </li>
-                        <li><p><span className='text-bold'>Performance Cookies (optional):</span> These cookies collect information
+                        <li><p><span className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Performance Cookies (optional):</span> These cookies collect information
                             about how visitors use our website, such as which pages are visited most often. This
                             information is aggregated and anonymous, and is used to improve the functionality of the
                             website. We use Microsoft Clarity to collect anonymized usage data such as clicks, scrolls,
@@ -67,15 +67,15 @@ const CookiePolicyPage = () => {
                             <p>Clarity cookies are only set if you accept performance cookies in our cookie banner (or after passing a consent signal to Clarity).</p>
                         </li>
                     </ol>
-                    <p className='text-bold'>List of cookies we use: </p>
-                    <div className='cookie-policy-page__cookie-list-table-wrapper'>
-                        <table className='cookie-policy-page__cookie-list-table'>
+                    <p className={`${styles['text-bold'] || 'text-bold'} text-bold`}>List of cookies we use: </p>
+                    <div className={`${styles['cookie-policy-page__cookie-list-table-wrapper'] || 'cookie-policy-page__cookie-list-table-wrapper'} cookie-policy-page__cookie-list-table-wrapper`}>
+                        <table className={`${styles['cookie-policy-page__cookie-list-table'] || 'cookie-policy-page__cookie-list-table'} cookie-policy-page__cookie-list-table`}>
                             <thead>
                             <tr>
-                                <th><span className='text-bold'>Name</span></th>
-                                <th><span className='text-bold'>Type</span></th>
-                                <th><span className='text-bold'>Description</span></th>
-                                <th><span className='text-bold'>Duration</span></th>
+                                <th><span className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Name</span></th>
+                                <th><span className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Type</span></th>
+                                <th><span className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Description</span></th>
+                                <th><span className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Duration</span></th>
 
                             </tr>
                             </thead>
@@ -223,13 +223,13 @@ const CookiePolicyPage = () => {
                             </tbody>
                         </table>
                     </div>
-                    <p className='text-bold'>Managing your cookies </p>
+                    <p className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Managing your cookies </p>
                     <p>On your first visit, you will see a cookie banner. Essential cookies are always active, but you can choose
                         whether to allow Functional and Performance cookies. You can also change your preferences at any time by clicking
                         Cookie Settings (available in the footer of the website).
                     </p>
 
-                    <p className='text-bold'>Updates to this Cookie Policy </p>
+                    <p className={`${styles['text-bold'] || 'text-bold'} text-bold`}>Updates to this Cookie Policy </p>
                     <p>We may update this Cookie Policy from time to time to reflect changes in our practices or for
                         other operational, legal, or regulatory reasons. Please revisit this page periodically to stay
                         informed about our use of cookies. </p>

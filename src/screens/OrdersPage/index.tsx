@@ -23,8 +23,7 @@ import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
-import { isTabAllowed } from "@/utils/tabs";
-import { usePagedListState, usePagedData, useFilterMetadata } from "@/components/PagedList";
+import { usePagedListState, usePagedData, useFilterMetadata, processFiltersForApi, FilterValue } from "@/components/PagedList";
 import { OrdersFilters } from "./types";
 
 const OrdersPage = () => {
@@ -173,42 +172,68 @@ const OrdersPage = () => {
             return;
         }
 
-        const filteredData = orders.map(item => ({
-            [orderTitles.trackingNumberTitle]: item.wapiTrackingNumber,
-            'Status': item.status,
-            "Status additional info": item.statusAdditionalInfo,
-            "Date": formatDateTimeToStringWithDotWithoutSeconds(item.date),
-            "COD amount": item.codAmount,
-            "COD currency": item.codCurrency,
-            "Client order ID": item.clientOrderID,
-            "Products": item.productsByString,
-            "Warehouse": item.warehouse,
-            "Courier service": item.courierService,
-            "Tracking number": item.trackingNumber,
-            "Receiver Country": superUser ? '*' : item.receiverCountry,
-            "Receiver City": superUser ? '*' : item.receiverCity,
-            "Receiver ZIP": superUser ? '*' : item.receiverZip,
-            "Receiver Address": superUser ? '*' : item.receiverAddress,
-            "Receiver Full Name": superUser ? '*' : item.receiverFullName,
-            "Receiver E-mail": superUser ? '*' : item.receiverEMail,
-            "Receiver Phone": superUser ? '*' : item.receiverPhone,
-            "Last update date": item.lastUpdateDate.split("T").join(" "),
-            "Last trouble Status": `${item.troubleStatuses.length ? item.troubleStatuses[item.troubleStatuses.length - 1].period.split("T").join(" ") + '  ' + (item.troubleStatuses[item.troubleStatuses.length - 1].troubleStatus) : ""}`,
-            "Logistic comment": `${item.logisticComment}`,
-            "Tracking link": item.trackingNumber ? item.trackingLink : '',
-            "Has claims": item.claims.length ? "+" : ""
-        }));
+        const exportPromise = async () => {
+            const { getOrdersExcel } = await import('@/services/orders');
+            const res = await getOrdersExcel({
+                token,
+                alias,
+                ui,
+                startDate: state.startDate,
+                endDate: state.endDate,
+                filter: processFiltersForApi(state.filters as Record<string, FilterValue>) as any,
+                search: state.search,
+                fullTextSearch: state.fullTextSearch,
+                sortBy: state.sortBy,
+                sortOrder: state.sortOrder
+            });
 
-        if (!isTabAllowed('Logistic comment', forbiddenTabs)) {
-            filteredData.forEach(row => delete row["Logistic comment"]);
+            if (res && res.data) {
+                const { base64ToBlob } = await import('@/utils/files');
+                const attachedFile = res.data;
+                const blob = base64ToBlob(attachedFile.data, attachedFile.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+
+                // Ensure extension exists and append unique timestamp to bypass OS "Save As/Overwrite" dialogs
+                let downloadName = attachedFile.name || "Orders.xlsx";
+
+                const dateStr = formatDateTimeToStringWithDotWithoutSeconds(new Date().toISOString()).replace(/[.:\s]/g, '-');
+                const parts = downloadName.split('.');
+                const ext = parts.length > 1 ? parts.pop() || 'xlsx' : 'xlsx';
+                const baseName = parts.length > 0 ? parts.join('.') : downloadName;
+
+                const finalExt = ext.toLowerCase().startsWith('xls') ? ext : 'xlsx';
+                a.download = `${baseName}_${dateStr}.${finalExt}`;
+
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } else {
+                throw new Error("Empty response");
+            }
+        };
+
+        try {
+            const { toast } = await import('@/components/Toast');
+            toast.promise(
+                exportPromise(),
+                {
+                    pending: 'Downloading Orders...',
+                    success: {
+                        render: 'File downloaded successfully!',
+                        autoClose: 2000 //disappear in 2 seconds
+                    },
+                    error: 'Failed to download file'
+                },
+                {
+                    className: 'download-toast'
+                }
+            );
+        } catch (error) {
+            console.error("Export failed", error);
         }
-
-        if (!isTabAllowed('Claims', forbiddenTabs)) {
-            filteredData.forEach(row => delete row["Has claims"]);
-        }
-
-        const { exportFileXLS } = await import('@/utils/files');
-        await exportFileXLS(filteredData, "Orders");
     };
 
     // Refresh orders after create/update

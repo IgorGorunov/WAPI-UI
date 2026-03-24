@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import "./styles.scss";
+import styles from "./styles.module.scss";
 import Icon from "@/components/Icon";
 import Navigation from "@/components/Navigation";
 import HeaderNotifications from "@/components/HeaderNotifications";
@@ -73,39 +73,39 @@ const Header: React.FC<HeaderType> = ({ pageTitle, toRight = false, children, ne
     }
 
     return (
-        <div className={`main-header`}>
-            <div className='main-header__wrapper card'>
-                <div className='main-header__menu-block' onClick={handleClick}>
-                    {needMenu && <div className='main-header__icon'>
+        <div className={styles['main-header'] || 'main-header'}>
+            <div className={`${styles['main-header__wrapper'] || 'main-header__wrapper'} card`}>
+                <div className={styles['main-header__menu-block'] || 'main-header__menu-block'} onClick={handleClick}>
+                    {needMenu && <div className={styles['main-header__icon'] || 'main-header__icon'}>
                         <Icon name={"burger"} />
                     </div>}
-                    <div className={`page-title ${!needMenu ? 'no-margin' : ''} `}><h2>{pageTitle}</h2></div>
+                    <div className={`${styles['page-title'] || 'page-title'} ${!needMenu ? styles['no-margin'] || 'no-margin' : ''} `}><h2>{pageTitle}</h2></div>
                 </div>
 
-                <div className={`main-header__components ${toRight ? "align-right" : ""} `}>
+                <div className={`${styles['main-header__components'] || 'main-header__components'} ${toRight ? styles["align-right"] || "align-right" : ""} `}>
                     {children}
                 </div>
 
-                <div className='main-header__user-block'>
+                <div className={styles['main-header__user-block'] || 'main-header__user-block'}>
                     <ProfileDropdown />
                     {needTutorialBtn ?
                         <button className={`tour-guide ${runTour ? 'is-active' : ''} `} onClick={() => setRunTour(!runTour)}><Icon name='book' /></button>
                         : null}
-                    {needNotificationsInHeader ? <div className='main-header__notifications'>
+                    {needNotificationsInHeader ? <div className={styles['main-header__notifications'] || 'main-header__notifications'}>
                         <HeaderNotifications />
                     </div> : null}
                 </div>
             </div>
 
             {/*urgent notifications*/}
-            <ul className='main-header__urgent-notifications-list'>
+            <ul className={styles['main-header__urgent-notifications-list'] || 'main-header__urgent-notifications-list'}>
                 {notifications && notifications.length ?
                     notifications.filter(item => item.type === NOTIFICATION_TYPES.URGENT && item.status !== NOTIFICATION_STATUSES.READ).map(item => (
-                        <li key={item.uuid} className={`card main-header__urgent-notifications-list-item ${item.objectUuid ? 'is-clickable' : ''} `} onClick={() => handleNotificationClick(item)}>
-                            <Icon className='main-header__urgent-notifications-list-item--icon' name={getNotificationIconName(item.type)} />
-                            <p className='main-header__urgent-notifications-list-item--title'>{item.title}</p>
-                            <p className='main-header__urgent-notifications-list-item--text'>{item.message}</p>
-                            <a href="#" className='main-header__urgent-notifications-list-item--close' onClick={() => handleMarkAsRead(item.uuid)}><Icon name='close' /></a>
+                        <li key={item.uuid} className={`card ${styles['main-header__urgent-notifications-list-item'] || 'main-header__urgent-notifications-list-item'} ${item.objectUuid ? styles['is-clickable'] || 'is-clickable' : ''} `} onClick={() => handleNotificationClick(item)}>
+                            <Icon className={styles['main-header__urgent-notifications-list-item--icon'] || 'main-header__urgent-notifications-list-item--icon'} name={getNotificationIconName(item.type)} />
+                            <p className={styles['main-header__urgent-notifications-list-item--title'] || 'main-header__urgent-notifications-list-item--title'}>{item.title}</p>
+                            <p className={styles['main-header__urgent-notifications-list-item--text'] || 'main-header__urgent-notifications-list-item--text'}>{item.message}</p>
+                            <a href="#" className={styles['main-header__urgent-notifications-list-item--close'] || 'main-header__urgent-notifications-list-item--close'} onClick={() => handleMarkAsRead(item.uuid)}><Icon name='close' /></a>
                         </li>
                     ))
                     : null}

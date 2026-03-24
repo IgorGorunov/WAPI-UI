@@ -6,7 +6,7 @@ import {
     flexRender,
     getCoreRowModel,
 } from '@tanstack/react-table';
-import './styles.scss';
+import styles from './styles.module.scss';
 
 export type TableComponentPropsType = {
     heading?: string;
@@ -37,16 +37,16 @@ const TableComponent: React.FC<TableComponentPropsType> = (props) => {
     });
 
     return (
-        <div className='table-block'>
-            { heading ? <h3 className={'table-block__heading'}>{heading}</h3> : null }
-            <div className={`card table-block__container ${isFirstColumnAHeader ? 'is-sticky' : ''} has-scroll`}>
+        <div className={`${styles['table-block'] || 'table-block'} table-block`}>
+            { heading ? <h3 className={`${styles['table-block__heading'] || 'table-block__heading'} table-block__heading`}>{heading}</h3> : null }
+            <div className={`card ${styles['table-block__container'] || 'table-block__container'} table-block__container ${isFirstColumnAHeader ? `${styles['is-sticky'] || 'is-sticky'} is-sticky` : ''} has-scroll`}>
                 <table>
                     {isFirstRowAHeader && (
                         <thead>
                         {tanstackTable.getHeaderGroups().map((headerGroup) => (
                             <tr key={headerGroup.id}>
                                 {headerGroup.headers.map((header, index) => (
-                                    <th key={header.id} className={`col-${index} table-cell header-cell`}>
+                                    <th key={header.id} className={`col-${index} ${styles['table-cell'] || 'table-cell'} table-cell header-cell`}>
                                         {flexRender(header.column.columnDef.header, header.getContext())}
                                     </th>
                                 ))}
@@ -58,7 +58,7 @@ const TableComponent: React.FC<TableComponentPropsType> = (props) => {
                     {tanstackTable.getRowModel().rows.map(row => (
                         <tr key={row.id}>
                             {row.getVisibleCells().map((cell, index) => (
-                                <td key={cell.id} className={`col-${index} table-cell`}>
+                                <td key={cell.id} className={`col-${index} ${styles['table-cell'] || 'table-cell'} table-cell`}>
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </td>
                             ))}

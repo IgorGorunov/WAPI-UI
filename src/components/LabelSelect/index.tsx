@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
-import './style.scss';
+import styles from './style.module.scss';
 
 const CustomSelect = ({ options, value , onChange }) => {
 
@@ -8,12 +8,12 @@ const CustomSelect = ({ options, value , onChange }) => {
 
 
     return (
-        <div className="label-select-container">
+        <div className={`${styles['label-select-container'] || 'label-select-container'} label-select-container`}>
             <Select
                 options={options}
                 value={selectedOption}
                 onChange={selected => onChange(selected.value)}
-                className="label-select"
+                className={`${styles['label-select'] || 'label-select'} label-select`}
                 classNamePrefix="label-select"
                 isSearchable={false}
             />

@@ -23,9 +23,31 @@
     width: 100%;
     transition: color 0.3s ease, font-size 0.3s ease;
 
+    .nav-icon {
+      transform: scale(1);
+      transition: all 0.3s ease;
+    }
+
+    &__text {
+      display: inline-block;
+      font-size: 13px;
+      letter-spacing: 0.1px;
+      transform: scaleX(1);
+      transform-origin: left;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
     &:hover {
       color: var(--color-blue);
-      font-size: 14px;
+      //font-size: 14px;
+
+      .submenu-header__text {
+        transform: scaleX(1.1);
+      }
+
+      .nav-icon {
+        transform: scale(1.1);
+      }
     }
 
     .nav-arrow-icon {
@@ -33,7 +55,7 @@
       transition: all 0.3s ease-in;
     }
 
-    .icon-faq {
+    :global(.icon-faq) {
       width: 26px;
       height: auto;
       margin-left: 4px;

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import FileDisplay from '@/components/FileDisplay';
-import './styles.scss';
+import styles from './styles.module.scss';
 import Icon from '@/components/Icon'
 import Loader from "@/components/Loader";
 import { arrayBufferToBase64, readFileAsArrayBuffer } from "@/utils/files";
@@ -220,12 +220,12 @@ const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = 
     }, [files, onFilesChange]);
 
     return (
-        <div className={`dropzone-wrapper${listType ? ' is-list' : ''}`}>
+        <div className={`${styles['dropzone-wrapper'] || 'dropzone-wrapper'} dropzone-wrapper${listType ? ` ${styles['is-list'] || 'is-list'} is-list` : ''}`}>
             <ToastContainer />
             <div
                 onClick={openFileDialog}
                 onPaste={onPaste}
-                className={`dropzone-container ${readOnly ? 'read-only' : ''} ${readOnly && !docUuid ? 'is-disabled' : ''} ${listType ? 'is-list' : ''}`}
+                className={`${styles['dropzone-container'] || 'dropzone-container'} dropzone-container ${readOnly ? 'read-only' : ''} ${readOnly && !docUuid ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''} ${listType ? `${styles['is-list'] || 'is-list'} is-list` : ''}`}
                 onDropCapture={handleNativeDrop}
                 onDragOverCapture={handleNativeDragOverEnter}
                 onDragEnterCapture={handleNativeDragOverEnter}
@@ -234,17 +234,17 @@ const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = 
                 <div
                     {...getRootProps()}
                     onClick={openFileDialog}
-                    className={`dropzone ${isDragActive ? 'active' : ''} ${listType ? 'is-list' : ''}`}
+                    className={`${styles['dropzone'] || 'dropzone'} dropzone ${isDragActive ? `${styles['active'] || 'active'} active` : ''} ${listType ? `${styles['is-list'] || 'is-list'} is-list` : ''}`}
                 >
                     <input {...getInputProps()} id={inputId} disabled={readOnly && !docUuid} />
-                    {files && files.length == 0 && (<div className="circle" onClick={openFileDialog}>
+                    {files && files.length == 0 && (<div className={`${styles['circle'] || 'circle'} circle`} onClick={openFileDialog}>
                         <Icon name='upload' />
                     </div>)}
-                    <div onClick={openFileDialog} className={`dropzone-title ${listType ? 'is-list' : ''}`}>
-                        {title ? <p className="extra-title">{title}</p> : null}
+                    <div onClick={openFileDialog} className={`${styles['dropzone-title'] || 'dropzone-title'} dropzone-title ${listType ? `${styles['is-list'] || 'is-list'} is-list` : ''}`}>
+                        {title ? <p className={`${styles['extra-title'] || 'extra-title'} extra-title`}>{title}</p> : null}
                         {/*{title ? <p>{title}</p> : <p>Drop or paste files here</p>}*/}
                         <p>Drop or paste files here</p>
-                        {hint ? <p className='hint'>{hint}</p> : null}
+                        {hint ? <p className={`${styles['hint'] || 'hint'} hint`}>{hint}</p> : null}
                     </div>
                     {files && files.length > 0 && (
                         <FileDisplay files={files} onFileDelete={onFileDelete} addedFiles={addedFiles} listType={listType} />
@@ -252,7 +252,7 @@ const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = 
                 </div>
             </div>
             {needSendBtn && (readOnly || showSend) && docUuid && addedFiles.length ?
-                <div className='dropzone__btns'><Button onClick={handleSendDocFile}>Send files</Button></div>
+                <div className={`${styles['dropzone__btns'] || 'dropzone__btns'} dropzone__btns`}><Button onClick={handleSendDocFile}>Send files</Button></div>
                 : null}
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </div>

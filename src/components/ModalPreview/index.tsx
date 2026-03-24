@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import ReactDOM from "react-dom";
 import Icon from "@/components/Icon";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {ModalTypes} from "@/types/utility";
 
 type ModalType = {
@@ -30,14 +30,14 @@ const Modal: React.FC<ModalType> = ({ children, onClose, classNames = "" , modal
     };
 
     const modalContent = (
-        <div className={`preview-modal__overlay ${classNames}`}  onClick={onClose}>
-            <div className="preview-modal__close">
+        <div className={`${styles['preview-modal__overlay'] || 'preview-modal__overlay'} preview-modal__overlay ${classNames}`}  onClick={onClose}>
+            <div className={`${styles['preview-modal__close'] || 'preview-modal__close'} preview-modal__close`}>
                 <a href="#" onClick={handleCloseClick}>
                     <Icon name="close"/>
                 </a>
             </div>
-            <div className="preview-modal" ref={modalWrapperRef} onClick={(e) => e.stopPropagation()}>
-                <div className="preview-modal__content">
+            <div className={`${styles['preview-modal'] || 'preview-modal'} preview-modal`} ref={modalWrapperRef} onClick={(e) => e.stopPropagation()}>
+                <div className={`${styles['preview-modal__content'] || 'preview-modal__content'} preview-modal__content`}>
 
                     {children}
                 </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Icon from "@/components/Icon";
 import Button, { ButtonVariant } from "@/components/Button/Button";
 
@@ -15,9 +15,9 @@ type PropsType = {
 
 const FiltersContainer: React.FC<PropsType> = ({ isFiltersVisible, setIsFiltersVisible, classNames = '', children, onClearFilters, onApplyFilters, hasUnappliedChanges }) => {
     return (
-        <div className={`doc-filters-block__overlay ${isFiltersVisible ? 'is-visible-overlay' : ''} ${classNames}`} onClick={() => { setIsFiltersVisible(false); }} >
+        <div className={`${styles['doc-filters-block__overlay'] || 'doc-filters-block__overlay'} ${isFiltersVisible ? styles['is-visible-overlay'] || 'is-visible-overlay' : ''} ${classNames}`} onClick={() => { setIsFiltersVisible(false); }} >
 
-            <div className={`doc-filters-block ${isFiltersVisible ? 'is-visible' : ''} is-fixed`} onClick={(e) => e.stopPropagation()}>
+            <div className={`${styles['doc-filters-block'] || 'doc-filters-block'} ${isFiltersVisible ? styles['is-visible'] || 'is-visible' : ''} ${styles['is-fixed'] || 'is-fixed'}`} onClick={(e) => e.stopPropagation()}>
                 {/*<div className='filters-actions'>*/}
                 {/*    <Button onClick={onClearFilters}>Clear all filters</Button>*/}
                 {/*    {onApplyFilters && (*/}
@@ -30,13 +30,13 @@ const FiltersContainer: React.FC<PropsType> = ({ isFiltersVisible, setIsFiltersV
                 {/*        </Button>*/}
                 {/*    )}*/}
                 {/*</div>*/}
-                <div className='filters-close' onClick={() => setIsFiltersVisible(false)}>
+                <div className={styles['filters-close'] || 'filters-close'} onClick={() => setIsFiltersVisible(false)}>
                     <Icon name='close' />
                 </div>
-                <div className='filters-actions'>
+                <div className={styles['filters-actions'] || 'filters-actions'}>
                     <Button
                         variant={ButtonVariant.TETRIARY}
-                        classNames='filters-clear'
+                        classNames={`${styles['filters-clear'] || 'filters-clear'} filters-clear`}
                         icon='waste-bin'
                         onClick={onClearFilters}
                     >
@@ -47,17 +47,17 @@ const FiltersContainer: React.FC<PropsType> = ({ isFiltersVisible, setIsFiltersV
                             onClick={() => { onApplyFilters(); setIsFiltersVisible(false); }}
                             variant={ButtonVariant.PRIMARY}
                             icon='biggest-check'
-                            classNames={hasUnappliedChanges ? 'filters-apply--active' : ''}
+                            classNames={hasUnappliedChanges ? `${styles['filters-apply--active'] || 'filters-apply--active'} filters-apply--active` : ''}
                         >
                             Apply filters
                         </Button>
                     )}
                 </div>
-                <div className='doc-filters-block__wrapper'>
+                <div className={styles['doc-filters-block__wrapper'] || 'doc-filters-block__wrapper'}>
                     {/*<div className='filters-close' onClick={() => setIsFiltersVisible(false)}>*/}
                     {/*    <Icon name='close' />*/}
                     {/*</div>*/}
-                    <div className='doc-filters-block__wrapper-inner'>
+                    <div className={styles['doc-filters-block__wrapper-inner'] || 'doc-filters-block__wrapper-inner'}>
                         {children}
                     </div>
                     {/*<div className='filters-clear'>*/}

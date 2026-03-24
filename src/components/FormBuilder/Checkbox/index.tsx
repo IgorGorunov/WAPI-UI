@@ -1,6 +1,6 @@
 import React, {forwardRef} from "react";
 import { FieldPropsType } from "@/types/forms";
-import "./styles.scss"
+import styles from "./styles.module.scss";
 
 const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
   classNames= '',
@@ -27,8 +27,8 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
 
 
   return (
-    <div className={`checkbox ${classNames ? classNames : ""} ${width ? "width-"+width : ""}`}>
-      <label htmlFor={`${name}-checkbox`} className={`checkbox-label ${isCheckboxHidden ? 'hide-checkbox' : ''}`}>
+    <div className={`${styles.checkbox || 'checkbox'} checkbox ${classNames ? classNames : ""} ${width ? "width-"+width : ""}  ${styles['vertical-center'] ? '' : ''}`}>
+      <label htmlFor={`${name}-checkbox`} className={`${styles['checkbox-label'] || 'checkbox-label'} checkbox-label ${isCheckboxHidden ? `${styles['hide-checkbox'] || 'hide-checkbox'} hide-checkbox` : ''}`}>
         <input
             {...otherProps}
           type='checkbox'
@@ -40,14 +40,14 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
           onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
         />
         {label && (
-            <span className='checkbox-label-wrapper'>
+            <span className={`${styles['checkbox-label-wrapper'] || 'checkbox-label-wrapper'} checkbox-label-wrapper`}>
               {circleColor ? <span className='colored-circle' style={{ backgroundColor: circleColor}}></span> : null}
 
-              <span className='checkbox-label-text' >
+              <span className={`${styles['checkbox-label-text'] || 'checkbox-label-text'} checkbox-label-text`} >
                 {isCountry && countryName && flagBefore ? <span className={`fi fi-${countryName.toLowerCase()} flag-icon flag-first`}></span> : null}
                 {label}
                 {isCountry && countryName && !flagBefore ? <span className={`fi fi-${countryName.toLowerCase()} flag-icon`}></span> : null}
-                {extraLabel ? <span className='checkbox-label-extra-text'>{extraLabel}</span> : null }
+                {extraLabel ? <span className={`${styles['checkbox-label-extra-text'] || 'checkbox-label-extra-text'} checkbox-label-extra-text`}>{extraLabel}</span> : null }
               </span>
             </span>
         )}

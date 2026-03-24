@@ -124,6 +124,7 @@ export type SingleStockMovementType = {
     seller?: string;
     senderZIP?: string;
     receiverZIP?: string;
+    allCollect?: boolean;
 }
 
 export type StockMovementParamsProductType = {

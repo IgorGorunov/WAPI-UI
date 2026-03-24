@@ -13,9 +13,9 @@ type TutorialHintTooltipPropsType = {
 }
 const TutorialHintTooltip: React.FC<TutorialHintTooltipPropsType> = ({ hint, classNames = '', children, position = 'center', noMargin = false, forBtn = false }) => {
     return (
-        <div className={`${styles['tutorial-hint-tooltip']} ${classNames} ${!!hint ? styles['has-hint'] || 'has-hint' : styles['no-hint'] || 'no-hint'} ${noMargin ? styles['no-margin'] || 'no-margin' : ''}`}>
+        <div className={`${styles['tutorial-hint-tooltip']} tutorial-hint-tooltip ${classNames} ${!!hint ? `${styles['has-hint'] || 'has-hint'} has-hint` : `${styles['no-hint'] || 'no-hint'} no-hint`} ${noMargin ? `${styles['no-margin'] || 'no-margin'} no-margin` : ''}`}>
             {children}
-            {hint ? <div className={`${styles['tutorial-hint-tooltip__text-container']} ${styles[`is-${position}`] || `is-${position}`} ${forBtn ? styles['for-btn'] || 'for-btn' : ''}`}><span className={styles['tutorial-hint-tooltip__text']}>{hint}</span></div> : null}
+            {hint ? <div className={`${styles['tutorial-hint-tooltip__text-container']} tutorial-hint-tooltip__text-container ${styles[`is-${position}`] || `is-${position}`} ${forBtn ? `${styles['for-btn'] || 'for-btn'} for-btn` : ''}`}><span className={`${styles['tutorial-hint-tooltip__text']} tutorial-hint-tooltip__text`}>{hint}</span></div> : null}
         </div>
     );
 }

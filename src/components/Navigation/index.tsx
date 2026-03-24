@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import styles from './styles.module.scss';
 import Icon from "@/components/Icon";
 import Link from "next/link";
 import SubmenuBlock, { SubmenuBlockType } from "@/components/Navigation/SubmenuBlock";
@@ -75,15 +76,15 @@ const Navigation: React.FC<NavigationType> = ({ isMenuOpen, handleClose }) => {
 
 
     return (
-        <div className={`burger-menu__overlay ${isMenuOpen ? 'burger-menu__overlay-open' : ''}`} onClick={handleCloseClick}>
-            <div className={`burger-menu ${isMenuOpen ? 'burger-menu-open' : ''}`} onClick={(e) => e.stopPropagation()}>
-                <div className={`burger-menu-child`}>
-                    <button className="close-button" onClick={handleClose} aria-label="Close menu">
+        <div className={`${styles['burger-menu__overlay'] || 'burger-menu__overlay'} ${isMenuOpen ? styles['burger-menu__overlay-open'] || 'burger-menu__overlay-open' : ''}`} onClick={handleCloseClick}>
+            <div className={`${styles['burger-menu'] || 'burger-menu'} ${isMenuOpen ? styles['burger-menu-open'] || 'burger-menu-open' : ''}`} onClick={(e) => e.stopPropagation()}>
+                <div className={styles['burger-menu-child'] || 'burger-menu-child'}>
+                    <button className={styles['close-button'] || 'close-button'} onClick={handleClose} aria-label="Close menu">
                         <Icon name="close" style={{ width: "30px", height: "30px" }} />
                     </button>
-                    <div className='dashboard-menu-link'>
-                        <Link href="/" className="button-link" passHref >
-                            <Icon name="home" className="icon-home" />
+                    <div className={styles['dashboard-menu-link'] || 'dashboard-menu-link'}>
+                        <Link href="/" className={styles['button-link'] || 'button-link'} passHref >
+                            <Icon name="home" className={styles['icon-home'] || 'icon-home'} />
                             <span style={{ marginLeft: "20px" }}>Dashboard</span>
                         </Link>
                     </div>

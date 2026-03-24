@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
-import './styles.scss';
+import styles from './styles.module.scss';
 import { AttachedFilesType } from "@/types/utility";
 import { Zoom } from "yet-another-react-lightbox/plugins";
 
@@ -15,7 +15,7 @@ const ImageSlider: React.FC<ImagePreviewPropsType> = ({ images, show, setShow })
     const [index, setIndex] = useState(0);
 
     return (
-        <div className={`image-slider image-slider__wrapper ${show ? 'active' : ''}`}>
+        <div className={`${styles['image-slider'] || 'image-slider'} image-slider ${styles['image-slider__wrapper'] || 'image-slider__wrapper'} image-slider__wrapper ${show ? `${styles['active'] || 'active'} active` : ''}`}>
             <Lightbox
                 open={show}
                 close={() => setShow(false)}
