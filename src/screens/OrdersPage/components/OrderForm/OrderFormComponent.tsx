@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {
     CreateOrderRequestType,
     OrderParamsType,
@@ -8,55 +8,55 @@ import {
     SingleOrderProductFormType,
     SingleOrderType
 } from "@/types/orders";
-import { AttachedFilesType, STATUS_MODAL_TYPES, WarehouseType } from "@/types/utility";
+import {AttachedFilesType, STATUS_MODAL_TYPES, WarehouseType} from "@/types/utility";
 import "./styles.scss";
 import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
-import { AccessActions, AccessObjectTypes } from "@/types/auth";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import type { Control, FieldValues, SubmitErrorHandler } from "react-hook-form";
+import {AccessActions, AccessObjectTypes} from "@/types/auth";
+import type {Control, FieldValues, SubmitErrorHandler} from "react-hook-form";
+import {Controller, useFieldArray, useForm} from "react-hook-form";
 import Tabs from '@/components/Tabs';
-import Button, { ButtonSize, ButtonVariant } from "@/components/Button/Button";
-import { COUNTRIES } from "@/types/countries";
-import { createOptions } from "@/utils/selectOptions";
-import { cancelOrder, getOrderPickupPoints, sendAddressData, sendOrderData } from '@/services/orders';
-import { DetailsFields, GeneralFields, PickUpPointFields, ReceiverFields } from "./OrderFormFields";
-import { TabFields, TabTitles } from "./OrderFormTabs";
-import { FormFieldTypes, OptionType, WidthType } from "@/types/forms";
+import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
+import {COUNTRIES} from "@/types/countries";
+import {createOptions} from "@/utils/selectOptions";
+import {cancelOrder, getOrderPickupPoints, sendAddressData, sendOrderData} from '@/services/orders';
+import {DetailsFields, GeneralFields, PickUpPointFields, ReceiverFields} from "./OrderFormFields";
+import {TabFields, TabTitles} from "./OrderFormTabs";
+import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import { Table } from "antd";
+import {Table} from "antd";
 import DropZone from "@/components/Dropzone";
-import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "./ProductsTotal";
-import { toast, ToastContainer } from '@/components/Toast';
-import { useTabsState } from "@/hooks/useTabsState";
+import {toast, ToastContainer} from '@/components/Toast';
+import {useTabsState} from "@/hooks/useTabsState";
 import Modal from "@/components/Modal";
 import SendComment from "./SendCommentBlock";
 import SmsHistory from "./SmsHistory";
 import Loader from "@/components/Loader";
 import Claims from "@/screens/OrdersPage/components/OrderForm/Claims";
-import ProductSelection, { SelectedProductType } from "@/components/ProductSelection";
+import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
 import useNotifications from "@/context/notificationContext";
-import { NOTIFICATION_OBJECT_TYPES, NotificationType } from "@/types/notifications";
+import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 import SingleDocument from "@/components/SingleDocument";
 import DocumentTickets from "@/components/DocumentTickets";
-import { addCurrentTimeToDate, formatDateStringToDisplayString } from "@/utils/date";
-import { TICKET_OBJECT_TYPES } from "@/types/tickets";
+import {addCurrentTimeToDate, formatDateStringToDisplayString} from "@/utils/date";
+import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import ConfirmModal from "@/components/ModalConfirm";
 import NotesList from "@/components/NotesList";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-import { OrderHints } from "@/screens/OrdersPage/ordersHints.constants";
-import { CommonHints } from "@/constants/commonHints";
-import { sendUserBrowserInfo } from "@/services/userInfo";
+import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
+import {CommonHints} from "@/constants/commonHints";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 import ImageSlider from "@/components/ImageSlider";
 import CustomerReturns from "./CustomerReturns";
 import useTenant from "@/context/tenantContext";
-import { isTabAllowed } from "@/utils/tabs";
+import {isTabAllowed} from "@/utils/tabs";
 import ToggleSwitch from "@/components/FormBuilder/ToggleSwitch";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -80,7 +80,7 @@ const receiverFieldsPickUpPoint = [
 ];
 
 const getCorrectNotifications = (record: SingleOrderType, notifications: NotificationType[]) => {
-    const orderNotifications = notifications && notifications.length ? notifications.filter(item => item.objectUuid === record.uuid) : [];
+    const orderNotifications = notifications && notifications.length ? notifications.filter(item => item.objectUuid === record.uuid && item.status !== NOTIFICATION_STATUSES.READ) : [];
 
     if (record.status.toLowerCase().includes('error')) {
         return orderNotifications.filter(item => !item.message.toLowerCase().includes('error'));

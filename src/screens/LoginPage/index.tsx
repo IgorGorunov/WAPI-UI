@@ -10,12 +10,12 @@ import Cookie from "js-cookie";
 
 // Dynamically import heavy components to reduce initial JavaScript blocking render
 const LoginForm = dynamic(() => import("./LoginForm/LoginForm"), {
-    ssr: false, // Client-side only to prevent blocking initial HTML render
+    // ssr: false, // Client-side only to prevent blocking initial HTML render
     loading: () => <div style={{ minHeight: '285px' }} /> // Reserve space to prevent layout shift
 });
 
 const SignUpBlock = dynamic(() => import("./SignUpForm/SignUpBlock"), {
-    ssr: false,
+    // ssr: false,
     loading: () => <div style={{ minHeight: '200px' }} />
 });
 
