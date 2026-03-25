@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+import LoginForm from "./LoginForm/LoginForm";
+import SignUpBlock from "./SignUpForm/SignUpBlock";
 import Layout from "@/components/Layout/Layout";
 import styles from "./styles.module.scss";
 import useAuth from "@/context/authContext";
@@ -8,16 +9,7 @@ import useTenant from "@/context/tenantContext";
 import { TENANTS } from "@/lib/tenants";
 import Cookie from "js-cookie";
 
-// Dynamically import heavy components to reduce initial JavaScript blocking render
-const LoginForm = dynamic(() => import("./LoginForm/LoginForm"), {
-    // ssr: false, // Client-side only to prevent blocking initial HTML render
-    loading: () => <div style={{ minHeight: '285px' }} /> // Reserve space to prevent layout shift
-});
 
-const SignUpBlock = dynamic(() => import("./SignUpForm/SignUpBlock"), {
-    // ssr: false,
-    loading: () => <div style={{ minHeight: '200px' }} />
-});
 
 const LoginPage = () => {
     const { logout } = useAuth();

@@ -1,15 +1,16 @@
 import React from "react";
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 import Layout from "@/components/Layout/Layout";
 import useTenant from "@/context/tenantContext";
 import {TENANTS} from "@/lib/tenants";
 import "./styles.scss";
+import SignUpForm from "@/screens/SignUpPage/SignUpForm";
 
 // Dynamically import heavy form component to reduce blocking JavaScript
-const SignUpForm = dynamic(() => import("@/screens/SignUpPage/SignUpForm"), {
-    // ssr: false,
-    loading: () => <div style={{ minHeight: '400px' }} />
-});
+// const SignUpForm = dynamic(() => import("@/screens/SignUpPage/SignUpForm"), {
+//     // ssr: false,
+//     loading: () => <div style={{ minHeight: '400px' }} />
+// });
 
 const SignUpPage = () => {
     const { tenant } = useTenant();
