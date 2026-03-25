@@ -239,7 +239,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken
           >
             Sign in
           </Button>
-          {tenantData.needsPasswordRecover ? <button
+          {tenantData?.needsPasswordRecover ? <button
             id='login-recovery-link'
             className={styles['login-recovery-link']}
             onClick={handleForgotPassword}

@@ -4,6 +4,7 @@ import ImageBlock from '../ImageComponent';
 import TableBlock from '../TableComponent';
 import VideoComponent from "../VideoComponent";
 import DownloadableFile from "@/components/DownloadableFile";
+// import styles from "./styles.module.scss";
 
 type SanityBlock = {
     _type: string;

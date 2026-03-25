@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Country } from "@/types/countries";
 import CountryList from "./CountryList";
+import styles from "./styles.module.scss";
 
 export type OrderByCountryType = {
   ordersCount: number;
@@ -19,13 +20,13 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className={`orders-by-country orders-by-country__container card mb-md`}>
-      <p className="title-h4 title">Orders by countries</p>
-      <div className="orders-by-country__wrapper">
-        <ul className="orders-by-country__tablist" role="tablist">
+    <div className={`${styles['orders-by-country'] || 'orders-by-country'} orders-by-country ${styles['orders-by-country__container'] || 'orders-by-country__container'} orders-by-country__container card ${styles['mb-md'] || 'mb-md'} mb-md`}>
+      <p className={`${styles['title-h4'] || 'title-h4'} title-h4 ${styles['title'] || 'title'} title`}>Orders by countries</p>
+      <div className={`${styles['orders-by-country__wrapper'] || 'orders-by-country__wrapper'} orders-by-country__wrapper`}>
+        <ul className={`${styles['orders-by-country__tablist'] || 'orders-by-country__tablist'} orders-by-country__tablist`} role="tablist">
           <li
-            className={`tab ${activeTab === 0 ? "active-tab" : ""
-              } orders-by-country-of-departure`}
+            className={`tab ${styles['tab'] || 'tab'} ${activeTab === 0 ? `${styles['active-tab'] || 'active-tab'} active-tab` : ""
+              } ${styles['orders-by-country-of-departure'] || 'orders-by-country-of-departure'} orders-by-country-of-departure`}
             key="departure"
             role="tab"
             aria-controls="panel-id-0"
@@ -34,7 +35,7 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
           >
             <a
               key="tab-0"
-              className="tab-link"
+              className={`${styles['tab-link'] || 'tab-link'} tab-link`}
               href="#"
               onClick={(event) => {
                 event.preventDefault();
@@ -45,8 +46,8 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
             </a>
           </li>
           <li
-            className={`tab ${activeTab === 1 ? "active-tab" : ""
-              } orders-by-country-of-arrival`}
+            className={`tab ${styles['tab'] || 'tab'} ${activeTab === 1 ? `${styles['active-tab'] || 'active-tab'} active-tab` : ""
+              } ${styles['orders-by-country-of-arrival'] || 'orders-by-country-of-arrival'} orders-by-country-of-arrival`}
             key="arrival"
             role="tab"
             aria-controls="panel-id-1"
@@ -55,7 +56,7 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
           >
             <a
               key="tab-1"
-              className="tab-link"
+              className={`${styles['tab-link'] || 'tab-link'} tab-link`}
               href="#"
               onClick={(event) => {
                 event.preventDefault();
@@ -67,10 +68,10 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
             </a>
           </li>
         </ul>
-        <div className="orders-by-country__content">
+        <div className={`${styles['orders-by-country__content'] || 'orders-by-country__content'} orders-by-country__content`}>
           <div
             key="tabpanel-0"
-            className="panel"
+            className={`${styles['panel'] || 'panel'} panel`}
             hidden={activeTab !== 0}
             role="tabpanel"
             aria-labelledby="tab-id-0"
@@ -80,7 +81,7 @@ const OrdersByCountry: React.FC<OrdersByCountryPropsType> = ({
           </div>
           <div
             key="tabpanel-1"
-            className="panel"
+            className={`${styles['panel'] || 'panel'} panel`}
             hidden={activeTab !== 1}
             role="tabpanel"
             aria-labelledby="tab-id-1"

@@ -3,6 +3,7 @@ import { GroupOrderStatusType, StatusColors } from "../index";
 import { Popover } from "antd";
 import SimplePopup from "@/components/SimplePopup";
 import { useIsTouchDevice } from "@/hooks/useTouchDevice";
+import styles from "./styles.module.scss";
 
 type StatusBarPropsType = {
     groupStatus: GroupOrderStatusType;
@@ -28,7 +29,7 @@ const StatusBar: React.FC<StatusBarPropsType> = ({ groupStatus, maxAmount }) => 
 
     // @ts-ignore
     return (
-        <div className={`status-bar status-bar__wrapper`}>
+        <div className={`${styles['status-bar'] || 'status-bar'} status-bar ${styles['status-bar__wrapper'] || 'status-bar__wrapper'} status-bar__wrapper`}>
             <Popover
                 content={<SimplePopup
                     items={popupItems}
@@ -38,14 +39,14 @@ const StatusBar: React.FC<StatusBarPropsType> = ({ groupStatus, maxAmount }) => 
                 placement="right"
                 overlayClassName="doc-list-popover"
             >
-                <div className="status-bar__label">
+                <div className={`${styles['status-bar__label'] || 'status-bar__label'} status-bar__label`}>
                     {groupStatus.status}
-                    <div className="status-bar__count">
+                    <div className={`${styles['status-bar__count'] || 'status-bar__count'} status-bar__count`}>
                         <span>{groupStatus.ordersCount}</span>
                     </div>
                 </div>
             </Popover>
-            <div className="colored-bar">
+            <div className={`${styles['colored-bar'] || 'colored-bar'} colored-bar`}>
                 <div
                     style={{
                         background: barColor,

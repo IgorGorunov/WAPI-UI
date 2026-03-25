@@ -1,6 +1,6 @@
 import React, {FormEvent, useCallback, forwardRef } from "react";
 import { FieldPropsType } from "@/types/forms";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
 const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
@@ -59,7 +59,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
 
   return (
     <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
-        <div className={`form-control ${classNames ? classNames : ""}  ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
+        <div className={`${styles['form-control'] || 'form-control'} ${styles[classNames] || classNames}  ${isRequired ? "required" : ''} ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''}  ${errorMessage ? 'has-error' : ''}`}>
             {label && <label htmlFor={name}>{label}</label>}
               <input
                 ref={ref}
@@ -75,7 +75,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
                 aria-autocomplete='none'
                 className={noCounters ? 'no-counters' : ''}
               />
-            {errorMessage && <p className="error">{errorMessage}</p>}
+            {errorMessage && <p className={styles.error || 'error'}>{errorMessage}</p>}
           {/*{errors && name in errors ? (*/}
           {/*  <p className="error er1">*/}
           {/*    {(errors && errors[name]?.message) || errorMessage}*/}

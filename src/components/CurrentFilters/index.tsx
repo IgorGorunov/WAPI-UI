@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
 
@@ -16,14 +16,14 @@ const CurrentFilters: React.FC<CurrentFilterType> = ({filterTitle, filterOptions
     return (
         <>
             {valuesAsString ?
-                <div className="current-filters">
-                    <div className="current-filters__wrapper" onClick={onClick}>
-                        <span className='current-filters__title'>{filterTitle}:</span>
-                        <span className='current-filters__values'>
+                <div className={styles["current-filters"] || "current-filters"}>
+                    <div className={styles["current-filters__wrapper"] || "current-filters__wrapper"} onClick={onClick}>
+                        <span className={styles['current-filters__title'] || 'current-filters__title'}>{filterTitle}:</span>
+                        <span className={styles['current-filters__values'] || 'current-filters__values'}>
                             {valuesAsString}
                         </span>
                     </div>
-                    <div className='current-filters__close' onClick={onClose}>
+                    <div className={styles['current-filters__close'] || 'current-filters__close'} onClick={onClose}>
                         <Icon name='close'/>
                     </div>
                 </div> : null

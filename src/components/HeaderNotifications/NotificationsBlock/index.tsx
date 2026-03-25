@@ -20,6 +20,7 @@ import SingleDocument from "@/components/SingleDocument";
 import useAuth from "@/context/authContext";
 import { getSellerName } from "@/utils/seller";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
+import styles from "./styles.module.scss";
 
 const formatMessage = (messageText: string, messageLength = 50) => {
     if (messageText.length > messageLength) {
@@ -181,24 +182,24 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({ notificatio
 
 
     return (
-        <div className={`notifications-block__overlay ${isNotificationsBlockOpen ? 'notifications-block__overlay-open' : ''}`} onClick={onClose}>
-            <div className={`notifications-block ${isNotificationsBlockOpen ? 'notifications-block--open' : ''}`} onClick={(e) => e.stopPropagation()}>
-                <div className={`notifications-block__wrapper`}>
-                    <button className="close-button" onClick={onClose} aria-label="Close notifications">
+        <div className={`${styles['notifications-block__overlay'] || 'notifications-block__overlay'} notifications-block__overlay ${isNotificationsBlockOpen ? `${styles['notifications-block__overlay-open'] || 'notifications-block__overlay-open'} notifications-block__overlay-open` : ''}`} onClick={onClose}>
+            <div className={`${styles['notifications-block'] || 'notifications-block'} notifications-block ${isNotificationsBlockOpen ? `${styles['notifications-block--open'] || 'notifications-block--open'} notifications-block--open` : ''}`} onClick={(e) => e.stopPropagation()}>
+                <div className={`${styles['notifications-block__wrapper'] || 'notifications-block__wrapper'} notifications-block__wrapper`}>
+                    <button className={`${styles['close-button'] || 'close-button'} close-button`} onClick={onClose} aria-label="Close notifications">
                         <Icon name="close" style={{ width: "30px", height: "30px" }} />
                     </button>
                     {/*clear all*/}
-                    <div className='filter-and-clear-all'>
+                    <div className={`${styles['filter-and-clear-all'] || 'filter-and-clear-all'} filter-and-clear-all`}>
                         <FieldBuilder {...onlyUnreadField} />
                         <button
-                            className='notifications-block__clear-all'
+                            className={`${styles['notifications-block__clear-all'] || 'notifications-block__clear-all'} notifications-block__clear-all`}
                             onClick={() => setShowConfirmModal(true)}
                         >Set all notifications as read
                         </button>
 
                     </div>
                     {/* search */}
-                    <div className='notifications-block__search'>
+                    <div className={`${styles['notifications-block__search'] || 'notifications-block__search'} notifications-block__search`}>
                         <SearchContainer>
                             <SearchField searchTerm={searchTermNotifications} handleChange={handleFilterChange} handleClear={() => { setSearchTermNotifications(""); handleFilterChange(""); }} />
                             {/*<FieldBuilder {...fullTextSearchField} />*/}
@@ -206,7 +207,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({ notificatio
                     </div>
 
                     {needSeller() ?
-                        <div className='seller-filter-block'>
+                        <div className={`${styles['seller-filter-block'] || 'seller-filter-block'} seller-filter-block`}>
                             <SelectField
                                 key='seller-filter'
                                 name='selectedSeller'
@@ -223,42 +224,42 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({ notificatio
                     }
 
                     {/*  notifications  */}
-                    <div className='notifications-block__notifications'>
-                        <div className={`notifications-block__notifications-list-wrapper`} >
+                    <div className={`${styles['notifications-block__notifications'] || 'notifications-block__notifications'} notifications-block__notifications`}>
+                        <div className={`${styles['notifications-block__notifications-list-wrapper'] || 'notifications-block__notifications-list-wrapper'} notifications-block__notifications-list-wrapper`} >
                             {filteredNotifications.length > 0 ? (
                                 <>
-                                    <ul className='notifications-block__notifications-list'>
+                                    <ul className={`${styles['notifications-block__notifications-list'] || 'notifications-block__notifications-list'} notifications-block__notifications-list`}>
                                         {filteredNotifications?.slice(0, notificationsLoaded)?.map(item => (
-                                            <li key={item.uuid} className={`card notifications-block__notifications-list-item ${item.status === NOTIFICATION_STATUSES.READ ? 'read' : 'unread'} type-${item.type || 'Info'}`}>
+                                            <li key={item.uuid} className={`card ${styles['notifications-block__notifications-list-item'] || 'notifications-block__notifications-list-item'} notifications-block__notifications-list-item ${item.status === NOTIFICATION_STATUSES.READ ? `${styles['read'] || 'read'} read` : `${styles['unread'] || 'unread'} unread`} ${styles[`type-${item.type || 'Info'}`] || `type-${item.type || 'Info'}`} type-${item.type || 'Info'}`}>
                                                 <button
-                                                    className={`notifications-block__notifications-list-item-btn`}
+                                                    className={`${styles['notifications-block__notifications-list-item-btn'] || 'notifications-block__notifications-list-item-btn'} notifications-block__notifications-list-item-btn`}
                                                     onClick={() => handleNotificationClick(item)}>
-                                                    <div className='notification-title'>{item.title ? item.title : formatMessage(item.message, 100)}</div>
-                                                    <div className='notification-period'>{formatDateTimeToStringWithDotWithoutSeconds(item.period)}</div>
-                                                    {needSeller() ? <div className='notification-seller'>Seller: <span className='notification-seller-name'>{getSellerName(sellersList, item.seller)}</span></div> : null}
+                                                    <div className={`${styles['notification-title'] || 'notification-title'} notification-title`}>{item.title ? item.title : formatMessage(item.message, 100)}</div>
+                                                    <div className={`${styles['notification-period'] || 'notification-period'} notification-period`}>{formatDateTimeToStringWithDotWithoutSeconds(item.period)}</div>
+                                                    {needSeller() ? <div className={`${styles['notification-seller'] || 'notification-seller'} notification-seller`}>Seller: <span className={`${styles['notification-seller-name'] || 'notification-seller-name'} notification-seller-name`}>{getSellerName(sellersList, item.seller)}</span></div> : null}
                                                     {item.topic || item.objectType === NOTIFICATION_OBJECT_TYPES.Ticket ? (
-                                                        <div className='notification-topic'><span>Topic: </span>{item.topic}</div>)
+                                                        <div className={`${styles['notification-topic'] || 'notification-topic'} notification-topic`}><span>Topic: </span>{item.topic}</div>)
                                                         : null
                                                     }
-                                                    <div className='notification-message'> {formatMessage(item.message, 200)}</div>
-                                                    <div className={`notification-icon type-${item.type}`}>
+                                                    <div className={`${styles['notification-message'] || 'notification-message'} notification-message`}> {formatMessage(item.message, 200)}</div>
+                                                    <div className={`${styles['notification-icon'] || 'notification-icon'} notification-icon ${styles[`type-${item.type}`] || `type-${item.type}`} type-${item.type}`}>
                                                         <Icon name={getNotificationIconName(item.type) as IconType} />
                                                     </div>
                                                 </button>
-                                                <button className={`notification-toggle-status-btn ${item.status === NOTIFICATION_STATUSES.READ ? 'is-read' : 'is-unread'} type-${item.type}`} onClick={() => handleToggleStatus(item)} />
+                                                <button className={`${styles['notification-toggle-status-btn'] || 'notification-toggle-status-btn'} notification-toggle-status-btn ${item.status === NOTIFICATION_STATUSES.READ ? 'is-read' : 'is-unread'} type-${item.type}`} onClick={() => handleToggleStatus(item)} />
                                             </li>
                                         ))}
                                     </ul>
                                     {notificationsLoaded < filteredNotifications?.length && (
                                         <button
-                                            className="notifications-block__notifications-load-more-btn"
+                                            className={`${styles['notifications-block__notifications-load-more-btn'] || 'notifications-block__notifications-load-more-btn'} notifications-block__notifications-load-more-btn`}
                                             onClick={handleLoadMore}
                                         >
                                             Load more
                                         </button>
                                     )}
                                 </>
-                            ) : <div className='no-notifications'>
+                            ) : <div className={`${styles['no-notifications'] || 'no-notifications'} no-notifications`}>
                                 No notifications
                             </div>
                             }

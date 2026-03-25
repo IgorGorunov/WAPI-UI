@@ -1,11 +1,9 @@
 import React, {useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {
-    formatDateStringToDisplayString,
-    formatDateTimeToStringWithDot,
     formatDateTimeToStringWithDotWithoutSeconds
 } from "@/utils/date";
-import {TICKET_OBJECT_TYPES, TicketType} from "@/types/tickets";
+import {TicketType} from "@/types/tickets";
 import SingleDocument from "@/components/SingleDocument";
 import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 
@@ -20,7 +18,7 @@ const TicketInfo: React.FC<PropsType> = ({ ticket }) => {
         setDisplayDocModal(false);
     }
     return (
-        <div className="ticket-info-item">
+        <div className={`${styles['ticket-info-item'] || 'ticket-info-item'} ticket-info-item`}>
             <p>Date: <span>{formatDateTimeToStringWithDotWithoutSeconds(ticket.date)}</span></p>
             <p>Ticket #: <span className='is-link' onClick={() => setDisplayDocModal(true)}>{ticket.number}</span></p>
             <p>Status: <span>{ticket.status}</span></p>

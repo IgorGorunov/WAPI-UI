@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 
 type PropsType = {
     classNames?: string;
@@ -9,8 +9,8 @@ type PropsType = {
 
 const FiltersBlockWrapper: React.FC<PropsType> = ({ title, classNames='', children}) => {
     return (
-        <div className={`doc-filters-wrapper ${classNames ? classNames : ''}`}>
-            {title ? <p className='doc-filters-wrapper__title'>{title}: </p> : null}
+        <div className={`${styles['doc-filters-wrapper'] || 'doc-filters-wrapper'} ${classNames ? classNames : ''}`}>
+            {title ? <p className={styles['doc-filters-wrapper__title'] || 'doc-filters-wrapper__title'}>{title}: </p> : null}
             {children}
         </div>
     )

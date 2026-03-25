@@ -1,3 +1,5 @@
+@import '@/constants/devices.scss';
+
 .form-control {
     position: relative;
     display: flex;
@@ -16,7 +18,6 @@
       padding: 7px 16px;
       outline: none;
       box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-
 
       &.no-counters {
         &[type="number"]::-webkit-inner-spin-button,
@@ -43,7 +44,7 @@
       color: var(--color-error);
   }
 
-  .table-form-fields & {
+  :global(.table-form-fields) & {
     padding: 0;
     margin-bottom: 0;
 
@@ -88,5 +89,3 @@
     }
   }
 }
-
-

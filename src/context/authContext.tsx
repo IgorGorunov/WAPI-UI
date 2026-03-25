@@ -441,7 +441,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
     try {
       const cookies = JSON.parse(raw) as CookieConsentType;
       if (cookies) {
-        return cookies as CookieConsentType;
+        return { ...cookies, isConsentGiven: true } as CookieConsentType;
       } else {
         return null;
       }
@@ -452,7 +452,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
 
   }
 
-  const [cookieConsent, setCookieConsent] = useState<CookieConsentType>(getFullCookieConsentFromCookie() || { essential: true, functional: false, performance: false });
+  const [cookieConsent, setCookieConsent] = useState<CookieConsentType>(getFullCookieConsentFromCookie() || { essential: true, functional: false, performance: false, isConsentGiven: false });
   const setReceivedCookieConsent = (cookieConsent: CookieConsentType) => {
     Cookie.set(CONSENT_COOKIE, JSON.stringify(cookieConsent), { expires: 365 });
     setCookieConsent(cookieConsent);

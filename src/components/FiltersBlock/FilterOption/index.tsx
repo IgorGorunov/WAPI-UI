@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {OptionType} from "@/types/forms";
 import Checkbox from "@/components/FormBuilder/Checkbox";
 import {FILTER_TYPE} from "@/types/utility";
@@ -16,7 +16,7 @@ export type FilterOptionType = {
 const FilterOption: React.FC<FilterOptionType> = ({option, extraName='', isChecked=false, filterType = FILTER_TYPE.CHECKBOX, onClick, isCountry=false }) => {
 
     return (
-        <div className={`filter-option ${isChecked ? "checked" : ""} ${filterType}-type`} >
+        <div className={`${styles['filter-option'] || 'filter-option'} filter-option ${isChecked ? styles.checked || 'checked' : ''} ${filterType}-type`} >
             <Checkbox
                 name={option.value+extraName.split(' ').join('_')}
                 circleColor={filterType === FILTER_TYPE.COLORED_CIRCLE ? option.color : ''}

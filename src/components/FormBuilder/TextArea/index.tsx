@@ -7,7 +7,7 @@ import React, {
     useImperativeHandle,
 } from "react";
 import { FieldPropsType } from "@/types/forms";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
 const TextArea = forwardRef<HTMLTextAreaElement, FieldPropsType>(
@@ -68,9 +68,9 @@ const TextArea = forwardRef<HTMLTextAreaElement, FieldPropsType>(
                 classNames={`${width ? "width-" + width : ""}`}
             >
                 <div
-                    className={`form-control ${classNames ? classNames : ""} ${
+                    className={`${styles['form-control'] || 'form-control'} ${classNames ? classNames : ""} ${
                         isRequired ? "required" : ""
-                    } ${disabled ? "is-disabled" : ""} ${
+                    } ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ""} ${
                         errorMessage ? "has-error" : ""
                     }`}
                 >
@@ -87,7 +87,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, FieldPropsType>(
                         autoComplete="new-user-email"
                         aria-autocomplete="none"
                     />
-                    {errorMessage && <p className="error">{errorMessage}</p>}
+                    {errorMessage && <p className={styles.error || 'error'}>{errorMessage}</p>}
                 </div>
             </TutorialHintTooltip>
         );

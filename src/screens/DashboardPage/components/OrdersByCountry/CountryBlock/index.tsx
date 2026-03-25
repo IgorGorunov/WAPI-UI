@@ -1,6 +1,7 @@
 import React from "react";
 import { OrderByCountryType } from "..";
 import { CountryCodes } from "@/types/countries";
+import styles from "./styles.module.scss";
 
 type CountryBlockProps = OrderByCountryType & {
   sum: number;
@@ -15,12 +16,12 @@ const CountryBlock: React.FC<CountryBlockProps> = ({
   const countryCode = CountryCodes[country];
 
   return (
-    <div className="country-block country-block__wrapper">
-      <div className="flag">
-        <span className={`fi fi-${countryCode} "flag-icon"`}></span>
+    <div className={`${styles['country-block'] || 'country-block'} country-block ${styles['country-block__wrapper'] || 'country-block__wrapper'} country-block__wrapper`}>
+      <div className={`${styles['flag'] || 'flag'} flag`}>
+        <span className={`fi fi-${countryCode} ${styles['flag-icon'] || 'flag-icon'} flag-icon`}></span>
       </div>
-      <div className="country-block__name">{country}</div>
-      <div className="country-block__bar">
+      <div className={`${styles['country-block__name'] || 'country-block__name'} country-block__name`}>{country}</div>
+      <div className={`${styles['country-block__bar'] || 'country-block__bar'} country-block__bar`}>
         <div
           style={{
             background: "#5380F5",
@@ -30,7 +31,7 @@ const CountryBlock: React.FC<CountryBlockProps> = ({
           }}
         ></div>
       </div>
-      <div className="country-block__count">{ordersCount}</div>
+      <div className={`${styles['country-block__count'] || 'country-block__count'} country-block__count`}>{ordersCount}</div>
     </div>
   );
 };

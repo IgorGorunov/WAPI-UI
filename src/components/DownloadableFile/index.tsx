@@ -1,7 +1,7 @@
 import React, {memo} from 'react';
 import {DownloadableFileType} from "@/types/sanity/fragmentTypes";
 import Icon from "@/components/Icon";
-import './styles.scss';
+import styles from './styles.module.scss';
 
 
 const DownloadableFile: React.FC<DownloadableFileType> = ({_id, fileLabel, fileUrl, fileMimeType}) => {
@@ -21,14 +21,14 @@ const DownloadableFile: React.FC<DownloadableFileType> = ({_id, fileLabel, fileU
     };
 
     return (
-        <div className={`download-file`}>
-            <button className='download-file__action-btn' onClick={handleDownload}>
+        <div className={styles['download-file'] || 'download-file'}>
+            <button className={styles['download-file__action-btn'] || 'download-file__action-btn'} onClick={handleDownload}>
                 <Icon name='download-file'/>
             </button>
-            <button className='download-file__action-btn' onClick={handlePreview}>
+            <button className={styles['download-file__action-btn'] || 'download-file__action-btn'} onClick={handlePreview}>
                 <Icon name='preview'/>
             </button>
-            <span className='download-file__name'>{fileLabel}</span>
+            <span className={styles['download-file__name'] || 'download-file__name'}>{fileLabel}</span>
         </div>
     )
 }

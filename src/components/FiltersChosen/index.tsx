@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {FilterComponentType} from "@/types/filters";
 import CurrentFilters from "@/components/CurrentFilters";
 
@@ -11,7 +11,7 @@ const FiltersChosen: React.FC<FilterListPropsType> = ({filters}) => {
     return (
         <>
             {filters && filters.length
-                ? filters.map(filter => <div className="current-filter-item" key={filter.filterTitle.replaceAll(' ','_')}><CurrentFilters {...filter} /></div>)
+                ? filters.map(filter => <div className={styles['current-filter-item'] || 'current-filter-item'} key={filter.filterTitle.replaceAll(' ','_')}><CurrentFilters {...filter} /></div>)
                 : null
             }
         </>

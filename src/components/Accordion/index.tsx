@@ -60,7 +60,7 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, titleAmount, titleIcon
     return (
         <div className={`${styles['accordion-item']} ${classNames} ${showOverflow ? styles['is-active'] || 'is-active' : styles['deactivated'] || 'deactivated'}`}>
             <button
-                className={`${styles['accordion-item__title']} ${isActive ? styles['is-active'] || 'is-active' : ''}`}
+                className={`${styles['accordion-item__title']} accordion-item__title ${isActive ? `${styles['is-active'] || 'is-active'} is-active` : ''}`}
                 onClick={toggleAccordion}
             >
                 <div className={styles['accordion-item__title-wrapper']}>

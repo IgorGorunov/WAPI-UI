@@ -13,7 +13,7 @@ import { exportFileXLS } from "@/utils/files";
 import { ProductType } from "@/types/products";
 import Modal from "@/components/Modal";
 import ProductForm from "@/screens/ProductsPage/components/ProductForm";
-import '@/components/Toast/styles.scss'
+import '@/components/Toast/styles.module.scss'
 import ImportFilesBlock from "@/components/ImportFilesBlock";
 import Loader from "@/components/Loader";
 import { ImportFilesType } from "@/types/importFiles";

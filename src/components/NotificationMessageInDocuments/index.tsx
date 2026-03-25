@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {NOTIFICATION_TYPES} from "@/types/notifications";
 import Icon from "@/components/Icon";
 import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
@@ -21,20 +21,20 @@ const NotificationMessageInDocuments: React.FC<NotificationMessageInDocumentsTyp
     // }
 
     return (
-        <div className={`document-notification-message notification-${type}`}>
+        <div className={`${styles['document-notification-message'] || 'document-notification-message'} document-notification-message ${styles[`notification-${type}`] || `notification-${type}`} notification-${type}`}>
             {/*{title ? <div className='document-notification-message__title'>{title}</div> : null}*/}
             {/*<div className='document-notification-message__period'>{formatDateTimeToStringWithDotWithoutSeconds(period)}</div>*/}
             {/*<div className='document-notification-message__icon-bell'>*/}
             {/*    <Icon name={`notification`} />*/}
             {/*</div>*/}
-            <div className='document-notification-message__icon'>
+            <div className={`${styles['document-notification-message__icon'] || 'document-notification-message__icon'} document-notification-message__icon`}>
                 {/*<Icon name={getNotificationIconName(type)} />*/}
                 <Icon name={"notification"} />
             </div>
-            <div className='document-notification-message__message'>
+            <div className={`${styles['document-notification-message__message'] || 'document-notification-message__message'} document-notification-message__message`}>
 
-                <span className='document-notification-message__text'>{message}</span>
-                <span className='document-notification-message__date'>
+                <span className={`${styles['document-notification-message__text'] || 'document-notification-message__text'} document-notification-message__text`}>{message}</span>
+                <span className={`${styles['document-notification-message__date'] || 'document-notification-message__date'} document-notification-message__date`}>
                     {formatDateTimeToStringWithDotWithoutSeconds(period)}
                 </span>
             </div>

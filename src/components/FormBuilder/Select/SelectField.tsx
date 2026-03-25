@@ -14,7 +14,7 @@ import styles from "./styles.module.scss";
 const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
     (
         {
-            classNames,
+            classNames = '',
             name,
             label = "",
             placeholder = "",
@@ -109,7 +109,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
                 classNames={`${width ? "width-" + width : ""}`}
             >
                 <div
-                    className={`${styles['input-select__container']} ${classNames} ${isRequired ? styles['required'] || "required" : ""
+                    className={`${styles['input-select__container']} input-select__container ${classNames} ${isRequired ? styles['required'] || "required" : ""
                         } ${isSearchable ? styles['searchable'] || "searchable" : ""} ${errorMessage ? styles['has-error'] || "has-error" : ""} ${disabled ? styles['is-disabled'] || "is-disabled" : ""
                         }`}
                 >
@@ -140,16 +140,16 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
                                 SingleValue: CustomSingleValue,
                                 Option: CustomOption,
                             }}
+                            // menuIsOpen={true}
                             styles={{
-                                // keep portal on top of modals
                                 menuPortal: (base) => ({
                                     ...base,
                                     zIndex: 10000,
                                 }),
-                                // IMPORTANT: let height shrink/grow (works nicely in table rows)
+
                                 control: (base) => ({
                                     ...base,
-                                    minHeight: 30, // or 35 if you prefer a bit taller
+                                    minHeight: 30,
                                     height: "auto",
                                     alignItems: "flex-start",
                                 }),

@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import "./styles.module.scss";
 import {FilterComponentType} from "@/types/filters";
 import FiltersBlock from "@/components/FiltersBlock";
 

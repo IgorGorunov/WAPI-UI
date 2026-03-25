@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import styles from './styles.module.scss';
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
 import { NavAccessItemType, UserInfoType } from "@/types/auth";
@@ -72,23 +73,23 @@ const UserList: React.FC<UserListPropsType> = ({ users, onClose }) => {
         <>
             {isLoading && <Loader />}
             {users && users.length ?
-                <div className="users-list">
+                <div className={styles['users-list'] || 'users-list'}>
                     {/* search */}
-                    <div className='notifications-block__search'>
+                    <div className={styles['notifications-block__search'] || 'notifications-block__search'}>
                         <SearchContainer>
                             <SearchField searchTerm={searchTermClients} handleChange={handleSearchChange} handleClear={() => { setSearchTermClients(""); }} />
                             {/*<FieldBuilder {...fullTextSearchField} />*/}
                         </SearchContainer>
                     </div>
-                    <ul className='users-list__list has-scroll'>
+                    <ul className={`${styles['users-list__list'] || 'users-list__list'} ${styles['has-scroll'] || 'has-scroll'}`}>
                         {filteredUsers.map(item => (
-                            <li key={item.uuid} className='users-list__list-item'>
+                            <li key={item.uuid} className={styles['users-list__list-item'] || 'users-list__list-item'}>
 
                                 <button onClick={() => handleUserChange(item)}>
-                                    {item.whiteLabel ? <span className='is-whitelabel-pref'><Icon name='whitelabel' /></span> : null}
+                                    {item.whiteLabel ? <span className={styles['is-whitelabel-pref'] || 'is-whitelabel-pref'}><Icon name='whitelabel' /></span> : null}
                                     <Icon name='profile' />
                                     {item.userProfile.userInfo.client} ({item.userProfile.userInfo.userLogin})
-                                    {item.whiteLabel ? <span className='is-whitelabel'> Whitelabel: {item.alias}</span> : null}
+                                    {item.whiteLabel ? <span className={styles['is-whitelabel'] || 'is-whitelabel'}> Whitelabel: {item.alias}</span> : null}
                                 </button>
                             </li>
                         ))}

@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles.scss';
+import styles from './styles.module.scss';
 
 type VideoEmbeddedProps = {
     url: string;
@@ -35,18 +35,18 @@ const formatEmbedUrl = (url: string) => {
     return url;
 };
 
-const VideoEmbedded: React.FC<VideoEmbeddedProps> = ({ url, mimeType='' }) => {
+const VideoEmbedded: React.FC<VideoEmbeddedProps> = ({ url, mimeType = '' }) => {
 
     const embedUrl = url ? formatEmbedUrl(url) : null;
 
     return (
-        <div className='embedded-video-wrapper'>
-            <iframe className='embedded-video-iframe'
-                    src={embedUrl}
-                    loading="lazy"
-                    allowFullScreen
-                    sandbox="allow-scripts allow-same-origin"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        <div className={`${styles['embedded-video-wrapper'] || 'embedded-video-wrapper'} embedded-video-wrapper`}>
+            <iframe className={`${styles['embedded-video-iframe'] || 'embedded-video-iframe'} embedded-video-iframe`}
+                src={embedUrl}
+                loading="lazy"
+                allowFullScreen
+                sandbox="allow-scripts allow-same-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             ></iframe>
         </div>
     );

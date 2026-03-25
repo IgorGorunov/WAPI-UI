@@ -53,6 +53,7 @@
 
     svg {
       transition: all 0.3s ease;
+      width: 28px;
     }
 
     &:hover {
@@ -92,6 +93,11 @@
     &-row {
       &.is-disabled {
         background-color: var(--color-light-gray) !important;
+      }
+
+      .input-select__container {
+        padding-top: 0;
+        padding-bottom: 0;
       }
     }
 

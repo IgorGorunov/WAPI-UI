@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 
 type PropsType = {
     classNames?: string;
@@ -8,7 +8,7 @@ type PropsType = {
 
 const SearchContainer: React.FC<PropsType> = ({ classNames, children}) => {
     return (
-        <div className={`search-container ${classNames ? classNames : ''}`}>
+        <div className={`${styles['search-container'] || 'search-container'} ${classNames ? classNames : ''}`}>
             {/*{children.map((child, index) => child)}*/}
             {children}
         </div>

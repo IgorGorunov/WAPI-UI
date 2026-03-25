@@ -49,11 +49,19 @@
     width: 100%;
     transition: color 0.3s ease;
 
+    .nav-icon {
+      transform: scale(1);
+      transition: all 0.3s ease;
+    }
+
 
     &__text {
+      display: inline-block;
       font-size: 13px;
       letter-spacing: 0.1px;
-      transition: color 0.3s ease, letter-spacing 0.3s ease;
+      transform: scaleX(1);
+      transform-origin: left;
+      transition: color 0.3s ease, transform 0.3s ease;
     }
 
 
@@ -61,7 +69,11 @@
       color: var(--color-blue);
 
       .submenu-header__text {
-        letter-spacing: 0.8px;
+        transform: scaleX(1.1);
+      }
+
+      .nav-icon {
+        transform: scale(1.1);
       }
     }
 

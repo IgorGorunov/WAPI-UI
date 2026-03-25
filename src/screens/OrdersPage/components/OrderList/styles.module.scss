@@ -38,12 +38,13 @@
     gap: 10px;
     margin-bottom: 10px;
     justify-content: space-between;
+
     @media (max-width: $upToTablet) {
       flex-direction: column;
     }
   }
 
-  .icon-notification {
+  :global(.icon-notification) {
     width: 10px;
 
     path {
@@ -54,10 +55,6 @@
   .table-date-time-container {
     display: flex;
     flex-direction: column;
-
-    .table-date {
-
-    }
 
     .table-time {
       font-size: 10px;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Lightbox from "yet-another-react-lightbox";
 import { Zoom } from "yet-another-react-lightbox/plugins";
-import './styles.scss';
+import styles from './styles.module.scss';
 
 type ImageBlockPropsType = {
     imageUrl: string;
@@ -16,8 +16,8 @@ const ImageComponent: React.FC<ImageBlockPropsType> = (props) => {
     const [openImageView, setOpenImageView] = useState(false);
 
     return (
-        <div className='image-component'>
-            <div className='image-component__wrapper'>
+        <div className={`${styles['image-component'] || 'image-component'} image-component`}>
+            <div className={`${styles['image-component__wrapper'] || 'image-component__wrapper'} image-component__wrapper`}>
                 <Image src={imageUrl}
                     alt={alt}
                     width={0}
@@ -26,7 +26,7 @@ const ImageComponent: React.FC<ImageBlockPropsType> = (props) => {
                     loading="eager"
                     onClick={() => setOpenImageView(true)}
                 />
-                {caption ? <p className='image-component__caption'>{caption}</p> : null}
+                {caption ? <p className={`${styles['image-component__caption'] || 'image-component__caption'} image-component__caption`}>{caption}</p> : null}
             </div>
             <Lightbox
                 open={openImageView}

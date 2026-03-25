@@ -1,6 +1,6 @@
 import React from "react";
 import {FieldPropsType, WidthType} from "@/types/forms";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 
 const TextField: React.FC<FieldPropsType> = ({
          name,
@@ -15,14 +15,14 @@ const TextField: React.FC<FieldPropsType> = ({
          // ...props
     }) => {
     return (
-        <div className="form-control">
+        <div className={styles['form-control'] || 'form-control'}>
             <label htmlFor={name}>{label}</label>
             <input
                 id={name}
                 type={type}
                 placeholder={placeholder}
             />
-            {errorMessage && <p className="error">{errorMessage}</p>}
+            {errorMessage && <p className={styles.error || 'error'}>{errorMessage}</p>}
             {/*{errors && name in errors ? (*/}
             {/*    <p className="error">*/}
             {/*        {(errors && errors[name]?.message) || errorMessage}*/}

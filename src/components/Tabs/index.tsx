@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import NotificationMessageInDocuments, {NotificationMessageInDocumentsType} from "@/components/NotificationMessageInDocuments";
 
 type TabTitle = {
@@ -76,12 +76,12 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
         }
     }
 
-    return <div className={`tabs-block ${classNames ? classNames : ''}`} id={id}>
-        <div className='tabs-block__wrapper'>
-            <ul id='tabList' className={`tabs-block__tablist${withHorizontalDivider ? ' with-h-divider' : ''}`} role='tablist' ref={tabListRef}>
-                {tabTitles.map((tab, index) => <li className={`tabs-block__tab ${index===activeTab ? 'active-tab' : ''}`} key={`tab-${index}`}>
+    return <div className={`${styles['tabs-block'] || 'tabs-block'} ${classNames ? classNames : ''}`} id={id}>
+        <div className={styles['tabs-block__wrapper'] || 'tabs-block__wrapper'}>
+            <ul id='tabList' className={`${styles['tabs-block__tablist'] || 'tabs-block__tablist'}${withHorizontalDivider ? ` ${styles['with-h-divider'] || 'with-h-divider'}` : ''}`} role='tablist' ref={tabListRef}>
+                {tabTitles.map((tab, index) => <li className={`${styles['tabs-block__tab'] || 'tabs-block__tab'} ${index===activeTab ? 'active-tab' : ''}`} key={`tab-${index}`}>
                     <a key={`tab-link-${index}`}
-                       className={`tabs-block__tab-link ${index === activeTab ? 'active' : ''} ${tab.hasError ? 'has-error' : ''} ${tab.title.replaceAll(' ','-').toLowerCase()+'-tab'}`}
+                       className={`${styles['tabs-block__tab-link'] || 'tabs-block__tab-link'} ${index === activeTab ? styles.active || 'active' : ''} ${tab.hasError ? styles['has-error'] || 'has-error' : ''} ${tab.title.replaceAll(' ','-').toLowerCase()+'-tab'}`}
                        href='#' role='tab'
                        aria-controls={`panel-id-${index}`}
                        aria-selected={activeTab===index}
@@ -91,13 +91,13 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
                 </li> )}
             </ul>
 
-            <div className={`tabs-block__content ${needMinHeight ? 'min-height' : ''} ${needMinHeightSmall ? 'min-height-small' : ''}`} >
-                <div className={`tabs-block__content-wrapper`} ref={tabContentRef}>
+            <div className={`${styles['tabs-block__content'] || 'tabs-block__content'} ${needMinHeight ? styles['min-height'] || 'min-height' : ''} ${needMinHeightSmall ? styles['min-height-small'] || 'min-height-small' : ''}`} >
+                <div className={styles['tabs-block__content-wrapper'] || 'tabs-block__content-wrapper'} ref={tabContentRef}>
                     {extraInfo ? extraInfo : null}
                     {notifications && notifications.length ?
-                        <div className='tabs-block__content-notifications'>
+                        <div className={styles['tabs-block__content-notifications'] || 'tabs-block__content-notifications'}>
                             {notifications.map(notification => (
-                                <div key={notification.uuid} className='tabs-block__content-notification'>
+                                <div key={notification.uuid} className={styles['tabs-block__content-notification'] || 'tabs-block__content-notification'}>
                                     <NotificationMessageInDocuments {...notification} />
                                 </div>
                             ))}
@@ -107,7 +107,7 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
                     {React.Children.toArray(children).map((tabCntent, index)=> (
                         <div
                             key={`tabs-block__content-panel_${index}`}
-                            className={`tabs-block__content-panel ${index===activeTab ? 'active' : ''}`}
+                            className={`${styles['tabs-block__content-panel'] || 'tabs-block__content-panel'} ${index===activeTab ? styles.active || 'active' : ''}`}
                             role='tabpanel'
                             hidden={index!==activeTab}
                         >

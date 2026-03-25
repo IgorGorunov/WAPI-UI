@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import { Icon } from "../Icon";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {DateRangeType} from "@/types/dashboard";
 import Datepicker from "@/components/Datepicker";
 import {formatDateToDisplayString} from "@/utils/date";
@@ -36,15 +36,15 @@ const DateInput: React.FC<DateInputType> = ({currentRange, handleRangeChange}) =
 
     useOutsideClick(datePickerRef, handleCloseDatePicker);
 
-    return <div className='date-input-field' ref={datePickerRef}>
-        <div className='date-input-btn card' onClick={handleDateInputClick}>
-            <span className='date-input-btn__text'>{formatDateToDisplayString(curRange.startDate)} - {formatDateToDisplayString(curRange.endDate)}</span>
-            <span className="date-input-icon">
+    return <div className={`${styles['date-input-field']} date-input-field`} ref={datePickerRef}>
+        <div className={`${styles['date-input-btn'] || 'date-input-btn'} card`} onClick={handleDateInputClick}>
+            <span className={styles['date-input-btn__text'] || 'date-input-btn__text'}>{formatDateToDisplayString(curRange.startDate)} - {formatDateToDisplayString(curRange.endDate)}</span>
+            <span className={styles["date-input-icon"] || "date-input-icon"}>
                 <Icon name='calendar'/>
             </span>
         </div>
         {showDateInput && (
-            <div className="date-input__datepicker">
+            <div className={styles["date-input__datepicker"] || "date-input__datepicker"}>
                 <Datepicker initialRange={curRange} onDateRangeSave={handleDateState} onClose={handleCloseDatePicker}/>
             </div>
         )}

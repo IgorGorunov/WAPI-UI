@@ -1,6 +1,6 @@
 import React, {forwardRef} from "react";
 import { FieldPropsType } from "@/types/forms";
-import "./styles.scss"
+import styles from "./styles.module.scss";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
 const Other = forwardRef<HTMLDivElement, FieldPropsType>(({
@@ -14,9 +14,9 @@ const Other = forwardRef<HTMLDivElement, FieldPropsType>(({
 
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`} position='left'>
-            <div className={`other-component ${classNames ? classNames : ""} `}>
+            <div className={`${styles['other-component'] || 'other-component'} ${classNames ? classNames : ""} `}>
                 {label && <label htmlFor={name}>{label}</label>}
-                <div className="other-component__content">
+                <div className={styles['other-component__content'] || 'other-component__content'}>
                     {otherComponent}
                 </div>
             </div>

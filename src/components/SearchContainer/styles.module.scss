@@ -8,11 +8,11 @@
   margin-bottom: 10px;
   justify-content: space-between;
 
-  .full-text-search-toggle {
+  :global(.full-text-search-toggle) {
     flex: 0 0 auto;
   }
 
-  .date-input-field {
+  :global(.date-input-field) {
     max-width: 240px;
 
     @media (max-width: $upToTablet) {
@@ -25,12 +25,12 @@
   @media (max-width: $mobile) {
     flex-wrap: wrap;
 
-    .search-input {
+    :global(.search-input) {
       order: 1;
     }
   }
 
-  .search-block {
+  :global(.search-block) {
     flex: 1 1 auto;
     display: flex;
     align-items: center;
@@ -40,11 +40,11 @@
       max-width: calc(100% - 60px);
     }
 
-    .toggle-switch {
+    :global(.toggle-switch) {
       margin-bottom: 8px;
     }
 
-    .tutorial-hint-tooltip.no-hint {
+    :global(.tutorial-hint-tooltip.no-hint) {
       margin-top: 0;
     }
   }

@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "@/components/Layout/Layout";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Header from "@/components/Header";
 import Link from "next/link";
 import useTenant from "@/context/tenantContext";
@@ -18,7 +18,7 @@ const PrivacyPolicyPage = () => {
                     {privacyPolicy.websites.map((website, index) => {
                         return (
                             <>
-                                {index >0 ? ' or ' : ''}<Link className='is-link' href={website.link} target='_blank'>{website.text}</Link>
+                                {index >0 ? ' or ' : ''}<Link className={`${styles['is-link'] || 'is-link'} is-link`} href={website.link} target='_blank'>{website.text}</Link>
                             </>
                         )
                     }) }
@@ -33,15 +33,15 @@ const PrivacyPolicyPage = () => {
     return (
         <Layout hasFooter>
             {/*<SeoHead title='Privacy Policy' description='Our privacy policy page' />*/}
-            <div className="privacy-policy-page">
+            <div className={`${styles['privacy-policy-page'] || 'privacy-policy-page'} privacy-policy-page`}>
                 <Header pageTitle='Privacy policy' toRight  />
 
-                <div className="privacy-policy-page__text-wrapper">
+                <div className={`${styles['privacy-policy-page__text-wrapper'] || 'privacy-policy-page__text-wrapper'} privacy-policy-page__text-wrapper`}>
                     <ol>
                         {/*1*/}
-                        <li> <span className='heading'>General provisions</span>
+                        <li> <span className={`${styles['heading'] || 'heading'} heading`}>General provisions</span>
                             <ol>
-                                <li className='list-item-1'>
+                                <li className={`${styles['list-item-1'] || 'list-item-1'} list-item-1`}>
                                     The purpose of this “Privacy Policy” (hereinafter - Privacy Policy) is to
                                     provide a Data Subject with information on purpose, legal basis, scope,
                                     terms of processing, protection measures performed by {companyName}, as well as
@@ -75,7 +75,7 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*2*/}
-                        <li><span className='heading'>Terms and abbreviations used in the Privacy Policy</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Terms and abbreviations used in the Privacy Policy</span>
                             <ol>
                                 <li>Processing - is any action or set of operations performed with or without
                                     automated means on Personal Data or on sets of Personal Data, such as
@@ -119,7 +119,7 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*3*/}
-                        <li><span className='heading'>Information about Data Controller</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Information about Data Controller</span>
                             <ol>
                                 <li>{companyName} may be a Data Controller, Data Processor or Joint Controller
                                     when processing Personal Data of the Data Subject.
@@ -138,9 +138,9 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*4*/}
-                        <li><span className='heading'>Purposes of Personal Data Processing</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Purposes of Personal Data Processing</span>
                             <ol>
-                                <li><span className='sub-heading' >{companyName} processes Personal Data mainly for the following purposes:</span>
+                                <li><span className={`${styles['sub-heading'] || 'sub-heading'} sub-heading`} >{companyName} processes Personal Data mainly for the following purposes:</span>
                                     <ol>
                                         <li>compliance with legal requirements;</li>
                                         <li>conclusion and execution of contracts;</li>
@@ -174,7 +174,7 @@ const PrivacyPolicyPage = () => {
                                         <li>for obtaining and preservation of evidence in civil disputes;</li>
                                         <li>for reviewing applications / complaints and other documents;</li>
                                         <li>for other purposes in legally justified cases;</li>
-                                        <li className='list-item--new'>
+                                        <li className={`${styles['list-item--new'] || 'list-item--new'} list-item--new`}>
                                             for ensuring accountability, audit logging and system security, including recording
                                             actions performed by users within their accounts and storing related metadata such
                                             as login identifier (email). These logs are necessary for the provision of services,
@@ -191,9 +191,9 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*5*/}
-                        <li><span className='heading'>Legal basis for Personal Data processing</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Legal basis for Personal Data processing</span>
                             <ol>
-                                <li><span className='sub-heading' >{companyName} processes Personal Data on the basis of
+                                <li><span className={`${styles['sub-heading'] || 'sub-heading'} sub-heading`} >{companyName} processes Personal Data on the basis of
                                     the following legal grounds:</span>
                                     <ol>
                                         <li>For conclusion and execution of an agreement - Personal Data
@@ -242,9 +242,9 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*6*/}
-                        <li><span className='heading'>Categories of personal data and their types</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Categories of personal data and their types</span>
                             <ol>
-                                <li><span className='sub-heading' >The amount and categories of Personal Data to be
+                                <li><span className={`${styles['sub-heading'] || 'sub-heading'} sub-heading`} >The amount and categories of Personal Data to be
                                     processed depend on the purpose of the Processing, which may differ in different
                                     situations. {companyName} mainly processes the following categories and types of
                                     Personal Data:</span>
@@ -282,12 +282,12 @@ const PrivacyPolicyPage = () => {
                                             organized events or contacted a Data Subject, and data related to the Data
                                             Subject's {companyName} website (incl. visits to Electronic Commerce Systems);
                                         </li>
-                                        <li className='list-item--new'>
+                                        <li className={`${styles['list-item--new'] || 'list-item--new'} list-item--new`}>
                                             Log and access data, such as user login identifier (email), account role and actions
                                             performed within the system. This information is recorded automatically for audit, security and
                                             service-provision purposes;
                                         </li>
-                                        <li className='list-item--new'>
+                                        <li className={`${styles['list-item--new'] || 'list-item--new'} list-item--new`}>
                                             Tenant / seller identification data, such as the internal system UUIDs of the client’s
                                             tenant or sub-tenant accounts used in the whitelabel functionality. These identifiers
                                             are required to ensure that users can access and manage the correct data sets within
@@ -302,7 +302,7 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*7*/}
-                        <li><span className='heading'>Personal Data Protection Measures</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Personal Data Protection Measures</span>
                             <ol>
                                 <li>For the protection of Personal Data, {companyName} uses various technical and
                                     organizational security measures to protect Personal Data from unauthorized
@@ -316,7 +316,7 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*8*/}
-                        <li><span className='heading'>Transfer / Disclosure of Personal Data</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Transfer / Disclosure of Personal Data</span>
                             <ol>
                                 <li>{companyName} may transfer Personal Data to persons to whom {companyName} has
                                     the right to disclose them (for example, Data Processors, legal service
@@ -324,7 +324,7 @@ const PrivacyPolicyPage = () => {
                                     enactments or concluded agreements, or if the Data Subject's consent has
                                     been obtained.
                                 </li>
-                                <li><span className='sub-heading' >{companyName} may transfer Personal Data mainly to the following recipients:</span>
+                                <li><span className={`${styles['sub-heading'] || 'sub-heading'} sub-heading`} >{companyName} may transfer Personal Data mainly to the following recipients:</span>
                                     <ol>
                                         <li>to another {companyName}, if relevant processes related to the Processing of
                                             Personal Data within {companyName} are provided by the relevant company or in
@@ -349,7 +349,7 @@ const PrivacyPolicyPage = () => {
                                         </li>
                                     </ol>
                                 </li>
-                                <li className={'list-item--new'}>
+                                <li className={`${styles['list-item--new'] || 'list-item--new'} list-item--new`}>
                                     Audit logs and technical data are not shared with third parties except where
                                     required by law or contract with the main client account holder. They are stored
                                     within the European Union / EEA data-hosting infrastructure used by {companyName}.
@@ -366,7 +366,7 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*9*/}
-                        <li><span className='heading'>Duration of storage of Personal Data</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Duration of storage of Personal Data</span>
                             <ol>
                                 <li>{companyName} does not store Personal Data for longer than it is necessary for
                                     the respective purpose of Personal Data Processing, or longer than specified
@@ -382,7 +382,7 @@ const PrivacyPolicyPage = () => {
                                     period during which {companyName} or the Data Subject may exercise its legitimate
                                     interests (e.g. submit objections and complaints or bring an action).
                                 </li>
-                                <li className={'list-item--new'}>
+                                <li className={`${styles['list-item--new'] || 'list-item--new'} list-item--new`}>
                                     Session cookies such as token, userEmail and
                                     sellers are deleted when the browser session ends. Audit logs containing
                                     user actions are retained for the minimum period necessary to ensure
@@ -392,7 +392,7 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*10*/}
-                        <li><span className='heading'>Profiling and automated decision making</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Profiling and automated decision making</span>
                             <ol>
                                 <li>{companyName} does not perform profiling and automated decision-making in
                                     relation to the Data Subject.
@@ -400,13 +400,13 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*11*/}
-                        <li><span className='heading'>Cookies</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Cookies</span>
                             <ol>
                                 {/*<li>{companyName} use cookies on their websites. The cookies used and*/}
                                 {/*    information about them are available in the {companyName} Cookie Policy, which is*/}
                                 {/*    available on the website of the {companyName}.*/}
                                 {/*</li>*/}
-                                <li className={'list-item--new'}>
+                                <li className={`${styles['list-item--new'] || 'list-item--new'} list-item--new`}>
                                     {companyName} uses cookies and similar technologies on its websites and Electronic
                                     Commerce System. Essential cookies are required for secure login, permissions,
                                     and displaying the correct tenant or seller data (e.g., token,
@@ -416,14 +416,14 @@ const PrivacyPolicyPage = () => {
                                     (Microsoft Clarity) help us understand and improve website usability.
                                     Optional cookies are used only with the Data Subject’s consent.
                                     Detailed information about each cookie, its purpose and duration is provided in the
-                                    <a className='is-link' href='/cookie-policy' target='_blank'> Cookie Policy</a>.
+                                    <a className={`${styles['is-link'] || 'is-link'} is-link`} href='/cookie-policy' target='_blank'> Cookie Policy</a>.
                                 </li>
                             </ol>
                         </li>
                         {/*12*/}
-                        <li><span className='heading'>Rights of the Data Subject</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Rights of the Data Subject</span>
                             <ol>
-                                <li><span className='sub-heading' >In accordance with the General Data Protection Regulation, the Data
+                                <li><span className={`${styles['sub-heading'] || 'sub-heading'} sub-heading`} >In accordance with the General Data Protection Regulation, the Data
                                     Subject has the following rights with regard to the processing of his / her
                                     Personal Data:</span>
                                     <ol>
@@ -432,7 +432,7 @@ const PrivacyPolicyPage = () => {
                                         </li>
                                     </ol>
                                 </li>
-                                <li><span className='sub-heading' >To request correction of the Data Subject's Personal Data if they are
+                                <li><span className={`${styles['sub-heading'] || 'sub-heading'} sub-heading`} >To request correction of the Data Subject's Personal Data if they are
                                     inappropriate, incomplete or incorrect (Data Subject has no right to request
                                     correction or supplementation of video recordings, as this would be
                                     considered as falsification or distortion of information):</span>
@@ -463,7 +463,7 @@ const PrivacyPolicyPage = () => {
                                     Data to third parties, {companyName} exercises rights of a Data Subject on the
                                     basis of a written application, having previously identified the Data Subject.
                                 </li>
-                                <li><span className='sub-heading' >Application can be submitted in one of the following ways (contact information of
+                                <li><span className={`${styles['sub-heading'] || 'sub-heading'} sub-heading`} >Application can be submitted in one of the following ways (contact information of
                                     the respective {companyName} is available on its website):</span>
                                     <ol>
                                         <li>
@@ -492,7 +492,7 @@ const PrivacyPolicyPage = () => {
                                 <li>{companyName} is entitled to refuse to comply with the requirements
                                     specified in the Data Subject's application if the Data Subject unreasonably
                                     refuses to provide his / her identifying information.</li>
-                                <li><span className='sub-heading' >{companyName} reserves the right not to issue Personal Data, incl. Personal
+                                <li><span className={`${styles['sub-heading'] || 'sub-heading'} sub-heading`} >{companyName} reserves the right not to issue Personal Data, incl. Personal
                                     Data obtained during video surveillance in cases where such issuance:</span>
                                     <ol>
                                         <li>affect other Data Subjects and there would be no technical
@@ -517,16 +517,16 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                         {/*13*/}
-                        <li><span className='heading'>Contact information</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Contact information</span>
                             <ol>
                                 <li>In case of doubt or for additional information regarding processing of
                                     Personal Data by {companyName}, please contact {companyName} by sending an e-mail
-                                    to: <a className='is-link' href={`mailto:${tenantData?.email || ''}`}>{tenantData?.email || ''}</a>
+                                    to: <a className={`${styles['is-link'] || 'is-link'} is-link`} href={`mailto:${tenantData?.email || ''}`}>{tenantData?.email || ''}</a>
                                 </li>
                             </ol>
                         </li>
                         {/*14*/}
-                        <li><span className='heading'>Privacy Policy Availability and Amendments</span>
+                        <li><span className={`${styles['heading'] || 'heading'} heading`}>Privacy Policy Availability and Amendments</span>
                             <ol>
                                 <li><span>{companyName} is entitled to unilaterally make changes and additions to the
                                     Privacy Policy at any time by publishing the current version of the Privacy
@@ -538,7 +538,7 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                     </ol>
-                    <p className='validity-date'>This document is valid as of the 27th of October 2025.</p>
+                    <p className={`${styles['validity-date'] || 'validity-date'} validity-date`}>This document is valid as of the 27th of October 2025.</p>
                     {/*<p>This Cookie Policy explains how we use cookies and similar tracking technologies when you visit*/}
                     {/*    our website <Link className='is-link' href='/'>https://ui.wapi.com</Link>. By continuing to browse the site, you are agreeing to our use*/}
                     {/*    of cookies as outlined in this policy.</p>*/}

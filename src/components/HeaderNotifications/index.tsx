@@ -6,6 +6,7 @@ import { NOTIFICATION_STATUSES, NotificationResponseType, NotificationType } fro
 import NotificationsBlock from "@/components/HeaderNotifications/NotificationsBlock";
 import useNotifications from "@/context/notificationContext";
 import useTenant from "@/context/tenantContext";
+import styles from "./styles.module.scss";
 
 const removeEmptyBrackets = (notificationsArray: NotificationType[]) => {
     return notificationsArray.map(item => {
@@ -83,14 +84,14 @@ const HeaderNotifications: React.FC = () => {
     }
 
     return (
-        <div className={`header-notifications`} ref={notificationsListRef}>
+        <div className={`${styles['header-notifications'] || 'header-notifications'} header-notifications`} ref={notificationsListRef}>
             <button
-                className={`header-notifications__wrapper ${notifications && newNotifications ? 'has-notifications' : ''}  ${needAnimation ? ' animated' : ''}`}
+                className={`${styles['header-notifications__wrapper'] || 'header-notifications__wrapper'} header-notifications__wrapper ${notifications && newNotifications ? `${styles['has-notifications'] || 'has-notifications'} has-notifications` : ''}  ${needAnimation ? ` ${styles['animated'] || 'animated'} animated` : ''}`}
                 onClick={handleClick}
             >
                 <Icon name='notification' />
                 {notifications && newNotifications > 0 ? (
-                    <div className='notifications-amount'>{newNotifications > 99 ? '99' : newNotifications}</div>
+                    <div className={`${styles['notifications-amount'] || 'notifications-amount'} notifications-amount`}>{newNotifications > 99 ? '99' : newNotifications}</div>
                 ) : null}
             </button>
             {notifications ? <NotificationsBlock notificationsList={notifications || []} isNotificationsBlockOpen={isNotificationsListOpen} onClose={() => setIsNotificationsListOpen(false)} /> : null}

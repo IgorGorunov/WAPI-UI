@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Icon from "@/components/Icon";
 import {toast, ToastContainer} from '@/components/Toast';
 import SingleDocument from "@/components/SingleDocument";
@@ -27,7 +27,7 @@ const SimplePopup: React.FC<PopupPropsType> = ({ items, width, hasCopyBtn=false,
         return null;
     }
 
-    const positionClass = `simple-popup__wrapper ${changePositionOnMobile ? 'change-on-mobile' : ''}`;
+    const positionClass = `${styles['simple-popup__wrapper'] || 'simple-popup__wrapper'} ${changePositionOnMobile ? 'change-on-mobile' : ''}`;
     const wrapperStyle = width !== null ? { width: width + 'px' } : {};
 
     const copyToClipboard = useCallback((text: string) => {
@@ -120,25 +120,25 @@ const SimplePopup: React.FC<PopupPropsType> = ({ items, width, hasCopyBtn=false,
 
     return (
         <>
-            {(!docUuid || !docType) && <div className={`simple-popup ${positionClass}  ${hasCopyBtn ? 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle} >
-                {hasCopyBtn && <button className='copy-btn' onClick={handleCopy}>{items.length > 1 ? 'copy all' : 'copy'}<Icon name='copy' /></button> }
-                {hasCopyBtn && <button className='copy-btn copy-btn-tab' onClick={handleCopyTab}>copy as table<Icon name='copy' /></button> }
+            {(!docUuid || !docType) && <div className={`${styles['simple-popup'] || 'simple-popup'} ${positionClass}  ${hasCopyBtn ? styles['has-copy-icon'] || 'has-copy-icon' : ''} ${needScroll ? '' : 'hide-close-btn'}`} style={wrapperStyle} >
+                {hasCopyBtn && <button className={`${styles['copy-btn'] || 'copy-btn'} copy-btn`} onClick={handleCopy}>{items.length > 1 ? 'copy all' : 'copy'}<Icon name='copy' /></button> }
+                {hasCopyBtn && <button className={`${styles['copy-btn'] || 'copy-btn'} copy-btn ${styles['copy-btn-tab'] || 'copy-btn-tab'} copy-btn-tab`} onClick={handleCopyTab}>copy as table<Icon name='copy' /></button> }
                 {/*{!!handleClose ? (<a className="simple-popup__close" href="#" onClick={handleClose}>*/}
                 {/*    <Icon name='close' />*/}
                 {/*</a>) : null }*/}
-                <ul className={`simple-popup__list ${needScroll ? 'has-scroll' : ''}`}>
+                <ul className={`${styles['simple-popup__list'] || 'simple-popup__list'} ${needScroll ? styles['has-scroll'] || 'has-scroll' : ''}`}>
                     {items.map((item: PopupItem, index: number) => (
-                        <li key={item.title + index} className="simple-popup__item">
+                        <li key={item.title + index} className={styles['simple-popup__item'] || 'simple-popup__item'}>
                             {
                                 item.docUuid && item.docType ? (
-                                        <button className="simple-popup__item-btn" onClick={()=>handleDocClick(item)}>
-                                            <p className="simple-popup__item-text">{item.title}</p>
-                                            {item.description ? <p className='simple-popup__item-description'>{item.description}</p> : null}
+                                        <button className={styles['simple-popup__item-btn'] || 'simple-popup__item-btn'} onClick={()=>handleDocClick(item)}>
+                                            <p className={styles['simple-popup__item-text'] || 'simple-popup__item-text'}>{item.title}</p>
+                                            {item.description ? <p className={styles['simple-popup__item-description'] || 'simple-popup__item-description'}>{item.description}</p> : null}
                                         </button>
                                     ) :
                                 <>
-                                    <p className="simple-popup__item-text">{item.title}</p>
-                                    {item.description ? <p className='simple-popup__item-description'>{item.description}</p> : null}
+                                    <p className={styles['simple-popup__item-text'] || 'simple-popup__item-text'}>{item.title}</p>
+                                    {item.description ? <p className={styles['simple-popup__item-description'] || 'simple-popup__item-description'}>{item.description}</p> : null}
                                 </>
                             }
                         </li>

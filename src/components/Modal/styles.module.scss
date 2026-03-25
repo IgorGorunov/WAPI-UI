@@ -9,7 +9,7 @@
     width: 100%;
   }
 
-  .document-modal & {
+  :global(.document-modal) & {
     //  width: calc(100% - 32px);
     width: calc(1440px - 50px);
 
@@ -19,7 +19,7 @@
     }
   }
 
-  .hints-modal & {
+  :global(.hints-modal) & {
     width: 600px;
     top: 50%;
     transform: translateY(-50%);

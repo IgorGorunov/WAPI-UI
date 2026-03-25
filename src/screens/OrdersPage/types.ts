@@ -8,7 +8,7 @@ export type OrdersFilters = {
     warehouse?: string;
     courierService?: string;
     troubleStatus?: string;
-    nonTroubleStatus?: string;
+    nonTroubleEvents?: string;
     marketplace?: string;
     seller?: string;
     receiverCountry?: string;

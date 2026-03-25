@@ -4,7 +4,7 @@ import { Calendar } from 'react-date-range';
 
 import TimePicker from 'react-time-picker';
 
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import { FieldPropsType } from "@/types/forms";
 import {
     addWorkingDays, formatDateToDisplayString,
@@ -177,10 +177,10 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
 
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-" + width : ""}`}>
-            <div className={`form-control form-control-date ${classNames ? classNames : ""} ${isRequired ? "required" : ''} ${errorMessage ? 'has-error' : ''} ${disabled ? 'is-disabled' : ''}`}>
+            <div className={`form-control ${styles['form-control-date'] || 'form-control-date'} form-control-date ${classNames ? classNames : ""} ${isRequired ? `${styles['required'] || 'required'} required` : ''} ${errorMessage ? `${styles['has-error'] || 'has-error'} has-error` : ''} ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''}`}>
                 {label && <label htmlFor={name}>{label}</label>}
-                <div className="date-input" ref={refs.setReference}>
-                    <div className="date-input__wrapper">
+                <div className={`${styles['date-input'] || 'date-input'} date-input`} ref={refs.setReference}>
+                    <div className={`${styles['date-input__wrapper'] || 'date-input__wrapper'} date-input__wrapper`}>
                         <input
                             type="text"
                             value={
@@ -201,11 +201,11 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                             ref={ref}
                         />
                         {!disabled && isClearable && !isDateEmpty(selectedDate) ? (
-                            <div className="clear-icon" onClick={() => handleDateSelect(EMPTY_DATE)}>
+                            <div className={`${styles['clear-icon'] || 'clear-icon'} clear-icon`} onClick={() => handleDateSelect(EMPTY_DATE)}>
                                 <Icon name="clear" />
                             </div>
                         ) : null}
-                        <div className="calendar-icon" onClick={() => !disabled && setOpen((v) => !v)}>
+                        <div className={`${styles['calendar-icon'] || 'calendar-icon'} calendar-icon`} onClick={() => !disabled && setOpen((v) => !v)}>
                             <Icon name="calendar" />
                         </div>
                     </div>
@@ -231,11 +231,11 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                                         bounds={dragBounds}
                                         defaultPosition={{ x: 0, y: 8 }}
                                     >
-                                        <div ref={calendarRef} className="custom-calendar-wrapper">
+                                        <div ref={calendarRef} className={`${styles['custom-calendar-wrapper'] || 'custom-calendar-wrapper'} custom-calendar-wrapper`}>
                                             <div className="calendar-header drag-handle">
                                                 <a
                                                     href="#"
-                                                    className="close-calendar"
+                                                    className={`${styles['close-calendar'] || 'close-calendar'} close-calendar`}
                                                     onClick={(e) => {
                                                         e.preventDefault();
                                                         setOpen(false);
@@ -253,7 +253,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                                                     disabledDay={disableDays}
                                                 />
                                                 {type === "date-time" ? (
-                                                    <div className="time-picker-wrapper">
+                                                    <div className={`${styles['time-picker-wrapper'] || 'time-picker-wrapper'} time-picker-wrapper`}>
                                                         <Icon name="clock" />
                                                         <TimePicker
                                                             value={selectedTime}
@@ -270,7 +270,7 @@ const SingleDateInput = forwardRef<HTMLInputElement, FieldPropsType>(({
                         </FloatingPortal>
                     </>
                 )}
-                {errorMessage && <p className="error">{errorMessage}</p>}
+                {errorMessage && <p className={`${styles['error'] || 'error'} error`}>{errorMessage}</p>}
             </div>
         </TutorialHintTooltip>
     )

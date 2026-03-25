@@ -13,15 +13,15 @@
     border-bottom: 2px solid var(--border-color);
   }
 
-  .accordion-item__title {
+  :global(.accordion-item__title) {
     color: var(--color-gray);
 
-    &.is-active {
+    &:global(.is-active) {
       border-bottom: 2px solid var(--border-color);
     }
 
-    .icon-marketplace,
-    .icon-package-return {
+    :global(.icon-marketplace),
+    :global(.icon-package-return) {
       transform: scale(.85);
     }
 

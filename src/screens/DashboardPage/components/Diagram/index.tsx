@@ -15,6 +15,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { PeriodType, PeriodTypes } from "@/types/dashboard";
+import styles from "./styles.module.scss";
 
 ChartJS.register(
   CategoryScale,
@@ -178,26 +179,26 @@ let Diagram: React.FC<DashboardDataProps> = ({
   }, [data]);
 
   return (
-    <div className={`card dashboard-diagram__wrapper mb-md`}>
-      <div className="dashboard-diagram__header">
-        <p className='title-h4'>Orders</p>
-        <div className="dashboard-diagram__diagram-types">
+    <div className={`card ${styles['dashboard-diagram__wrapper'] || 'dashboard-diagram__wrapper'} dashboard-diagram__wrapper ${styles['mb-md'] || 'mb-md'} mb-md`}>
+      <div className={`${styles['dashboard-diagram__header'] || 'dashboard-diagram__header'} dashboard-diagram__header`}>
+        <p className={`${styles['title-h4'] || 'title-h4'} title-h4`}>Orders</p>
+        <div className={`${styles['dashboard-diagram__diagram-types'] || 'dashboard-diagram__diagram-types'} dashboard-diagram__diagram-types`}>
           <div
-            className={`dashboard-diagram__option ${diagramType === "DAY" ? "active" : ""
+            className={`${styles['dashboard-diagram__option'] || 'dashboard-diagram__option'} dashboard-diagram__option ${diagramType === "DAY" ? `${styles['active'] || 'active'} active` : ""
               }`}
             onClick={() => setDiagramType("DAY")}
           >
             Days
           </div>
           <div
-            className={`dashboard-diagram__option ${diagramType === "WEEK" ? "active" : ""
+            className={`${styles['dashboard-diagram__option'] || 'dashboard-diagram__option'} dashboard-diagram__option ${diagramType === "WEEK" ? `${styles['active'] || 'active'} active` : ""
               }`}
             onClick={() => setDiagramType("WEEK")}
           >
             Weeks
           </div>
           <div
-            className={`dashboard-diagram__option ${diagramType === "MONTH" ? "active" : ""
+            className={`${styles['dashboard-diagram__option'] || 'dashboard-diagram__option'} dashboard-diagram__option ${diagramType === "MONTH" ? `${styles['active'] || 'active'} active` : ""
               }`}
             onClick={() => setDiagramType("MONTH")}
           >

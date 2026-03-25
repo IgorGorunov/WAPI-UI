@@ -1,6 +1,6 @@
 import React, { useCallback, forwardRef } from "react";
 import { FieldPropsType } from "@/types/forms";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import { E164Number } from "libphonenumber-js";
 import dynamic from 'next/dynamic';
@@ -42,7 +42,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(
 
         return (
             <TutorialHintTooltip hint={hint} classNames={`${width ? "width-" + width : ""}`}>
-                <div className={`form-control phone-number ${classNames ? classNames : ""}  ${isRequired ? "required" : ''} ${disabled ? "is-disabled" : ''}  ${errorMessage ? 'has-error' : ''}`}>
+                <div className={`${styles['form-control'] || 'form-control'} phone-number ${classNames ? classNames : ""}  ${isRequired ? "required" : ''} ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''}  ${errorMessage ? 'has-error' : ''}`}>
                     {label && <label htmlFor={name}>{label}</label>}
                     <PhoneInput
                         name={name}
@@ -52,7 +52,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(
                         onChange={handleChange}
                         disabled={disabled}
                     />
-                    {errorMessage && <p className="error">{errorMessage}</p>}
+                    {errorMessage && <p className={styles.error || 'error'}>{errorMessage}</p>}
                 </div>
             </TutorialHintTooltip>
         );

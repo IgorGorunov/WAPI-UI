@@ -10,6 +10,7 @@ import {
 } from "@/components/CookieConsent/index";
 import Cookie from "js-cookie";
 import { removeClarityCookiesForHost } from "@/utils/clarity-consent";
+import styles from "./styles.module.scss";
 
 
 const CookieConsentSettings = ({ onSuccess }: { onSuccess: () => void }) => {
@@ -47,9 +48,9 @@ const CookieConsentSettings = ({ onSuccess }: { onSuccess: () => void }) => {
     }
 
     return (
-        <div className='cookie-consent-settings'>
-            <div className='cookie-consent-settings__content'>
-                <div className='cookie-consent-settings__content-wrapper'>
+        <div className={styles['cookie-consent-settings'] || 'cookie-consent-settings'}>
+            <div className={styles['cookie-consent-settings__content'] || 'cookie-consent-settings__content'}>
+                <div className={styles['cookie-consent-settings__content-wrapper'] || 'cookie-consent-settings__content-wrapper'}>
                     <p>
                         We use cookies to make our website work and to improve your experience. Some cookies are essential
                         for the site to function, while others are optional and help us make your experience smoother or
@@ -197,10 +198,10 @@ const CookieConsentSettings = ({ onSuccess }: { onSuccess: () => void }) => {
                         details on how we use and protect your information.</p>
                 </div>
             </div>
-            <div className='cookie-consent-settings__btns'>
-                <Button classNames='cookie-consent' onClick={() => handleSave(FULL_CONSENT)}>Accept All</Button>
-                <Button classNames='cookie-consent' onClick={() => handleSave(ONLY_ESSENTIAL_CONSENT)}>Reject Non-Essential</Button>
-                <Button classNames='cookie-consent' onClick={() => handleSave({ essential: true, functional: functionalCookiesEnabled, performance: performanceCookiesEnabled } as CookieConsentType)}>Save selected</Button>
+            <div className={styles['cookie-consent-settings__btns'] || 'cookie-consent-settings__btns'}>
+                <Button classNames={styles['cookie-consent'] || 'cookie-consent'} onClick={() => handleSave(FULL_CONSENT)}>Accept All</Button>
+                <Button classNames={styles['cookie-consent'] || 'cookie-consent'} onClick={() => handleSave(ONLY_ESSENTIAL_CONSENT)}>Reject Non-Essential</Button>
+                <Button classNames={styles['cookie-consent'] || 'cookie-consent'} onClick={() => handleSave({ essential: true, functional: functionalCookiesEnabled, performance: performanceCookiesEnabled, isConsentGiven: true } as CookieConsentType)}>Save selected</Button>
             </div>
 
         </div>

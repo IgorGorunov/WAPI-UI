@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { DateRange as DateRangeBase } from "react-date-range";
 import Button from "@/components/Button/Button";
 import Icon from "@/components/Icon";
+import styles from "./styles.module.scss";
 
 
 
@@ -52,11 +53,11 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
   };
 
   return (
-    <div className="datepicker">
-      <a className="datepicker__close" href="#" onClick={() => setShowCustom(false)}>
+    <div className={`${styles['datepicker'] || 'datepicker'} datepicker`}>
+      <a className={`${styles['datepicker__close'] || 'datepicker__close'} datepicker__close`} href="#" onClick={() => setShowCustom(false)}>
         <Icon name='close' />
       </a>
-      <div className="date-range-container">
+      <div className={`${styles['date-range-container'] || 'date-range-container'} date-range-container`}>
         <DateRange
           ranges={dateRange}
           onChange={handleSelect}
@@ -67,7 +68,7 @@ const Datepicker: React.FC<DatePickerPropsType> = ({
           rangeColors={["#5380F5", "#5380F5"]}
         />
       </div>
-      <div className="button-container">
+      <div className={`${styles['button-container'] || 'button-container'} button-container`}>
         <Button icon="search" isFullWidth iconOnTheRight onClick={handleSave}>Search</Button>
       </div>
     </div>

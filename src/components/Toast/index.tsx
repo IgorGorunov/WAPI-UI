@@ -1,5 +1,9 @@
-import { toast, ToastContainer } from 'react-toastify';
-import "./styles.scss"
+import { toast, ToastContainer as OriginalToastContainer } from 'react-toastify';
+import styles from "./styles.module.scss";
+
+const ToastContainer = (props: any) => (
+    <OriginalToastContainer className={styles.toastWrapper} {...props} />
+);
 
 export { toast, ToastContainer };
 

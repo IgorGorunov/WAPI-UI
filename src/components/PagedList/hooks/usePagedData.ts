@@ -3,7 +3,7 @@ import { api } from '@/services/api';
 import type { ApiResponseType } from '@/types/api';
 import { PagedListUrlState } from './usePagedListState';
 
-type FilterValue = string | number | boolean | string[] | boolean[];
+export type FilterValue = string | number | boolean | string[] | boolean[];
 
 type SortPayload = {
     column: string;
@@ -11,10 +11,10 @@ type SortPayload = {
 };
 
 type RequestPayload = {
-    tempToken: string;
+    token: string;
     startDate: string;
     endDate: string;
-    client: string;
+    // client: string;
     page: number;
     limit: number;
     alias?: string;
@@ -38,6 +38,60 @@ type PagedResponse<T> = {
     page?: number;
     limit?: number;
 }
+
+export const processFiltersForApi = (filters?: Record<string, FilterValue>) => {
+    if (!filters || Object.keys(filters).length === 0) {
+        return undefined;
+    }
+
+    const processedFilters: Record<string, FilterValue> = {};
+    Object.entries(filters).forEach(([key, value]) => {
+        // Skip undefined, null, or empty string values
+        if (value === undefined || value === null || value === '') {
+            return;
+        }
+
+        if (value === 'true') {
+            processedFilters[key] = [true];
+        } else if (value === 'false') {
+            processedFilters[key] = [false];
+        } else if (typeof value === 'string') {
+            // Convert comma-separated strings to array, and wrap single values in array
+            // This ensures backend receives ["id1", "id2"] or ["id1"] instead of strings
+            processedFilters[key] = value.includes(',') ? value.split(',') : [value];
+        } else {
+            processedFilters[key] = value as FilterValue;
+        }
+    });
+
+    // Only attach filter object if we have actual filters
+    const actualFilters: Record<string, FilterValue> = {};
+
+    Object.entries(processedFilters).forEach(([key, val]) => {
+        // Check for boolean "All" case (both true and false selected)
+        // Value can be array or comma-separated string
+        let valuesArray: string[] = [];
+        if (Array.isArray(val)) {
+            valuesArray = val.map(v => String(v));
+        } else if (typeof val === 'string') {
+            valuesArray = val.split(',');
+        } else {
+            valuesArray = [String(val)];
+        }
+
+        if (valuesArray.includes('true') && valuesArray.includes('false')) {
+            return; // Skip this filter completely (implies All)
+        }
+
+        actualFilters[key] = val;
+    });
+
+    if (Object.keys(actualFilters).length > 0) {
+        return actualFilters;
+    }
+    
+    return undefined;
+};
 
 /**
  * Universal hook for fetching paginated data from any endpoint
@@ -70,10 +124,12 @@ export function usePagedData<TData = object>(
 
                 // Build request payload
                 const requestData: RequestPayload = {
-                    tempToken: "qwert123456BVCXZ",
+                    // tempToken: "qwert123456BVCXZ",
+                    token: token,
                     startDate: state.startDate,
                     endDate: state.endDate,
-                    client: "1207df90-c9c2-11ee-af7c-04421a1aac94",
+                    // client: "1207df90-c9c2-11ee-af7c-04421a1aac94",
+                    ui: ui || '',
                     page: page || 1,
                     limit: limit || 10,
                 };
@@ -91,52 +147,9 @@ export function usePagedData<TData = object>(
                 }
 
                 // Add filters (convert string "true"/"false" to actual booleans for API)
-                if (filters && Object.keys(filters).length > 0) {
-                    const processedFilters: Record<string, FilterValue> = {};
-                    Object.entries(filters).forEach(([key, value]) => {
-                        // Skip undefined, null, or empty string values
-                        if (value === undefined || value === null || value === '') {
-                            return;
-                        }
-
-                        if (value === 'true') {
-                            processedFilters[key] = [true];
-                        } else if (value === 'false') {
-                            processedFilters[key] = [false];
-                        } else if (typeof value === 'string') {
-                            // Convert comma-separated strings to array, and wrap single values in array
-                            // This ensures backend receives ["id1", "id2"] or ["id1"] instead of strings
-                            processedFilters[key] = value.includes(',') ? value.split(',') : [value];
-                        } else {
-                            processedFilters[key] = value as FilterValue;
-                        }
-                    });
-
-                    // Only attach filter object if we have actual filters
-                    const actualFilters: Record<string, FilterValue> = {};
-
-                    Object.entries(processedFilters).forEach(([key, val]) => {
-                        // Check for boolean "All" case (both true and false selected)
-                        // Value can be array or comma-separated string
-                        let valuesArray: string[] = [];
-                        if (Array.isArray(val)) {
-                            valuesArray = val.map(v => String(v));
-                        } else if (typeof val === 'string') {
-                            valuesArray = val.split(',');
-                        } else {
-                            valuesArray = [String(val)];
-                        }
-
-                        if (valuesArray.includes('true') && valuesArray.includes('false')) {
-                            return; // Skip this filter completely (implies All)
-                        }
-
-                        actualFilters[key] = val;
-                    });
-
-                    if (Object.keys(actualFilters).length > 0) {
-                        requestData.filter = actualFilters;
-                    }
+                const apiFilters = processFiltersForApi(filters as Record<string, FilterValue>);
+                if (apiFilters) {
+                    requestData.filter = apiFilters;
                 }
 
                 const response: ApiResponseType<PagedResponse<TData>> = await api.post(endpoint, requestData);

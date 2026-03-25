@@ -4,8 +4,7 @@ import useAuth from "@/context/authContext";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button from "@/components/Button/Button";
 
-import "./styles.scss";
-import {ApiResponseType} from "@/types/api";
+import styles from "./styles.module.scss";
 import {sendNote} from "@/services/notes";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
@@ -57,7 +56,7 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
     };
 
     return (
-        <div className={`create-note`}>
+        <div className={`${styles['create-note'] || 'create-note'} create-note`}>
             <div className='grid-row'>
                 <FieldBuilder
                     name='note'
@@ -70,7 +69,7 @@ const Note: React.FC<NotePropsType> = ({uuid, onCloseOnSuccess}) => {
                     onChange={(val: string)=>setNoteText(val)}
                 />
             </div>
-            <div className="note-submit">
+            <div className={`${styles['note-submit'] || 'note-submit'} note-submit`}>
                 <Button
                     type="button"
                     disabled={isLoading || !noteText}

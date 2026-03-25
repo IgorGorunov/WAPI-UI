@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pagination, Popover, Table, TableColumnProps, Tooltip } from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import getSymbolFromCurrency from 'currency-symbol-map';
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import SearchContainer from "@/components/SearchContainer";
 import SearchField from "@/components/SearchField";
 import Icon from "@/components/Icon";
@@ -82,11 +82,11 @@ function hasCorrectNotifications(record: OrderType, notifications: NotificationT
 
 // convert server FilterType[] to OptionType[]
 function filterTypeToOptions(items: { name: string; count: number; id?: string }[]): { value: string; label: string; amount: number }[] {
-    return items.map(item => ({
+    return items && items.length ? items.map(item => ({
         value: item.id || item.name,
         label: item.name || '-Empty-',
         amount: item.count,
-    })).sort((a, b) => a.label.localeCompare(b.label));
+    })).sort((a, b) => a.label.localeCompare(b.label)) : []
 }
 
 // build boolean filter options
@@ -311,12 +311,12 @@ const OrderList: React.FC<OrderListType> = ({
         ];
     }, [filterMetadata?.troubleStatuses, totalCount]);
 
-    const transformedNonTroubleStatuses = useMemo(() => {
+    const transformedNonTroubleEvents = useMemo(() => {
         if (!filterMetadata) return [];
-        const nonTroubleCount = filterMetadata.nonTroubleEvents || 0;
+        const items = filterTypeToOptions(filterMetadata.nonTroubleEvents);
+        // const allNonTroubleCount = items.reduce((sum, i) => sum + (i.amount || 0), 0);
         return [
-            { value: 'ANY', label: '-All non-trouble events-', amount: nonTroubleCount },
-            { value: 'NONE', label: '-NO non-trouble events-', amount: totalCount - nonTroubleCount },
+            ...items
         ];
     }, [filterMetadata, totalCount]);
 
@@ -376,11 +376,10 @@ const OrderList: React.FC<OrderListType> = ({
         [filterMetadata, totalCount]
     );
 
-    // Server doesn't yet provide openTickets count — calculate from orders
-    const hasOpenTicketsOptions = useMemo(() => {
-        const withCount = orders.filter(order => !!order.ticketopen).length;
-        return booleanFilterOptions('With open tickets', 'Without open tickets', withCount, totalCount);
-    }, [orders, totalCount]);
+    const hasOpenTicketsOptions = useMemo(() =>
+        filterMetadata ? booleanFilterOptions('With open tickets', 'Without open tickets', filterMetadata.ticketsOpen || 0, totalCount) : [],
+        [filterMetadata, totalCount]
+    );
 
     const photoFilterOptions = useMemo(() =>
         filterMetadata ? booleanFilterOptions('With photos', 'Without photos', filterMetadata.warehouseAssemblyPhotos || 0, totalCount) : [],
@@ -429,7 +428,7 @@ const OrderList: React.FC<OrderListType> = ({
         }[] = [
                 { key: 'status', title: 'Status', icon: 'status', options: transformedStatuses },
                 { key: 'troubleStatus', title: 'Trouble status', icon: 'trouble', description: 'Shows orders where the selected trouble status was the last in the trouble status list', options: transformedTroubleStatuses },
-                { key: 'nonTroubleStatus', title: 'Non-trouble events', icon: 'event', options: transformedNonTroubleStatuses },
+                { key: 'nonTroubleEvents', title: 'Non-trouble events', icon: 'event', options: transformedNonTroubleEvents },
             ];
 
         if (isTabAllowed('Claims', forbiddenTabs)) {
@@ -456,7 +455,7 @@ const OrderList: React.FC<OrderListType> = ({
             configs.push({ key: 'tickets', title: 'Tickets', icon: 'ticket-gray', options: hasTicketsOptions });
         }
         if (isTabAllowed('Tickets', forbiddenTabs)) {
-            configs.push({ key: 'hasOpenTickets', title: 'Tickets (open)', icon: 'ticket-open', options: hasOpenTicketsOptions });
+            configs.push({ key: 'ticketsOpen', title: 'Tickets (open)', icon: 'ticket-open', options: hasOpenTicketsOptions });
         }
 
         configs.push({ key: 'warehouseAssemblyPhotos', title: 'Photos from warehouse', icon: 'webcam', options: photoFilterOptions });
@@ -469,7 +468,7 @@ const OrderList: React.FC<OrderListType> = ({
 
         return configs;
     }, [
-        transformedStatuses, transformedTroubleStatuses, transformedNonTroubleStatuses, claimFilterOptions,
+        transformedStatuses, transformedTroubleStatuses, transformedNonTroubleEvents, claimFilterOptions,
         logisticCommentFilterOptions, commentToCourierServiceFilterOptions, selfCollectFilterOptions,
         sentSMSFilterOptions, transformedWarehouses, transformedCourierServices, transformedReceiverCountries,
         hasTicketsOptions, hasOpenTicketsOptions, photoFilterOptions, customerReturnsOptions, marketplaceOptions,
@@ -935,9 +934,9 @@ const OrderList: React.FC<OrderListType> = ({
             render: (text: string) => (
                 <TableCell minWidth="60px" maxWidth="80px" contentPosition="start"
                     childrenAfter={
-                        <div className="table-date-time-container">
-                            <span className="table-date">{formatDateStringToDisplayString(text)}</span>
-                            <span className="table-time">{formatTimeStringFromString(text)}</span>
+                        <div className={styles["table-date-time-container"] || "table-date-time-container"}>
+                            <span className={styles["table-date"] || "table-date"}>{formatDateStringToDisplayString(text)}</span>
+                            <span className={styles["table-time"] || "table-time"}>{formatTimeStringFromString(text)}</span>
                         </div>
                     }
                 />
@@ -1120,7 +1119,7 @@ const OrderList: React.FC<OrderListType> = ({
                     </Tooltip>}
             />,
             render: (_text: string, record) => (
-                <TableCell minWidth="70px" maxWidth="70px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span className='track-link' >Track<Icon name='track' /></span>} />
+                <TableCell minWidth="70px" maxWidth="70px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' childrenBefore={record.trackingNumber && <span className={styles['track-link'] || 'track-link'} >Track<Icon name='track' /></span>} />
             ),
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
@@ -1191,7 +1190,7 @@ const OrderList: React.FC<OrderListType> = ({
     ];
 
     return (
-        <div className="table order-list">
+        <div className={`table ${styles["order-list"] || "order-list"}`}>
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={() => setIsFiltersVisible(prev => !prev)} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 {startDate && endDate && onPeriodChange && (

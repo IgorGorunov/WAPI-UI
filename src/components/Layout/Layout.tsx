@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-// import "./styles.scss";
+import styles from "./styles.module.scss";
 import { setInterceptorErrorCallback, setInterceptorRedirectCallback } from "@/services/api";
 import { ModalTypes, STATUS_MODAL_TYPES } from "@/types/utility";
 import ModalStatus from "@/components/ModalStatus";
@@ -68,8 +68,8 @@ const Layout: React.FC<Props> = ({
     };
 
     return (
-        <main className="main">
-            <div className={`main-content ${isWide ? 'is-wide' : ''}`}>
+        <main className={`${styles['main'] || 'main'} main`}>
+            <div className={`${styles['main-content'] || 'main-content'} main-content ${isWide ? `${styles['is-wide'] || 'is-wide'} is-wide` : ''}`}>
                 {children}
             </div>
             {hasFooter && <Footer />}

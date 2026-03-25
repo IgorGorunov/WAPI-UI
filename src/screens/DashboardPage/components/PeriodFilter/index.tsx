@@ -7,6 +7,7 @@ import {
 //import Datepicker from "./Datepicker";
 import DatepickerComponent from '@/components/Datepicker';
 import Icon from "@/components/Icon";
+import styles from "./styles.module.scss";
 
 export type PeriodFilterProps = {
   currentPeriod: DashboardPeriodType;
@@ -142,14 +143,14 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
   }
 
   return (
-    <div className="period-filter period-filter__container">
-      <div onClick={() => setIsPeriodDropdownOpen(!isPeriodDropdownOpen)} className="period-filter__dropdown">
-        <span className="nav-arrow-icon">  {selectedPeriodType} <Icon name="expand" className="icon-right" /> </span>
+    <div className={`${styles['period-filter'] || 'period-filter'} period-filter ${styles['period-filter__container'] || 'period-filter__container'} period-filter__container`}>
+      <div onClick={() => setIsPeriodDropdownOpen(!isPeriodDropdownOpen)} className={`${styles['period-filter__dropdown'] || 'period-filter__dropdown'} period-filter__dropdown`}>
+        <span className={`${styles['nav-arrow-icon'] || 'nav-arrow-icon'} nav-arrow-icon`}>  {selectedPeriodType} <Icon name="expand" className={`${styles['icon-right'] || 'icon-right'} icon-right`} /> </span>
       </div>
-      <ul className={`period-filter__list ${isPeriodDropdownOpen ? "open" : ""}`}>
+      <ul className={`${styles['period-filter__list'] || 'period-filter__list'} period-filter__list ${isPeriodDropdownOpen ? `${styles['open'] || 'open'} open` : ""}`}>
         <li
           key={PeriodTypes.DAY}
-          className={`period-filter__list-item ${clickedPeriod === "DAY" ? "active" : ""
+          className={`${styles['period-filter__list-item'] || 'period-filter__list-item'} period-filter__list-item ${clickedPeriod === "DAY" ? `${styles['active'] || 'active'} active` : ""
             }`}
           onClick={handleDay}
         >
@@ -157,7 +158,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.WEEK}
-          className={`period-filter__list-item ${clickedPeriod === "WEEK" ? "active" : ""
+          className={`${styles['period-filter__list-item'] || 'period-filter__list-item'} period-filter__list-item ${clickedPeriod === "WEEK" ? `${styles['active'] || 'active'} active` : ""
             }`}
           onClick={handleWeek}
         >
@@ -165,7 +166,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.MONTH}
-          className={`period-filter__list-item ${clickedPeriod === "MONTH" ? "active" : ""
+          className={`${styles['period-filter__list-item'] || 'period-filter__list-item'} period-filter__list-item ${clickedPeriod === "MONTH" ? `${styles['active'] || 'active'} active` : ""
             }`}
           onClick={handleMonth}
         >
@@ -173,7 +174,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.QUARTER}
-          className={`period-filter__list-item ${clickedPeriod === "QUARTER" ? "active" : ""
+          className={`${styles['period-filter__list-item'] || 'period-filter__list-item'} period-filter__list-item ${clickedPeriod === "QUARTER" ? `${styles['active'] || 'active'} active` : ""
             }`}
           onClick={handleQuarter}
         >
@@ -181,7 +182,7 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.YEAR}
-          className={`period-filter__list-item ${clickedPeriod === "YEAR" ? "active" : ""
+          className={`${styles['period-filter__list-item'] || 'period-filter__list-item'} period-filter__list-item ${clickedPeriod === "YEAR" ? `${styles['active'] || 'active'} active` : ""
             }`}
           onClick={handleYear}
         >
@@ -189,14 +190,14 @@ const PeriodFilter: React.FC<PeriodFilterProps> = ({
         </li>
         <li
           key={PeriodTypes.CUSTOM}
-          className={`period-filter__list-item ${clickedPeriod === "CUSTOM" ? "active" : ""
+          className={`${styles['period-filter__list-item'] || 'period-filter__list-item'} period-filter__list-item ${clickedPeriod === "CUSTOM" ? `${styles['active'] || 'active'} active` : ""
             }`}
           onClick={handleCustom}
         >
           Custom
         </li>
       </ul>
-      <div className="period-filter__datepicker">
+      <div className={`${styles['period-filter__datepicker'] || 'period-filter__datepicker'} period-filter__datepicker`}>
         {showCustom && (
 
           // <Datepicker

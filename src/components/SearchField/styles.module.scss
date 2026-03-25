@@ -5,7 +5,7 @@
   position: relative;
   flex: 1 1 auto;
 
-  .icon-search {
+  :global(.icon-search) {
       position: absolute;
       top: 50%;
       left: 15px;
@@ -14,7 +14,7 @@
       transform: translateY(-50%);
       z-index: 2;
 
-    &.manual-search {
+    &:global(.manual-search) {
       @media (max-width: $upToTablet) {
         display: none;
       }

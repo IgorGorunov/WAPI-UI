@@ -17,7 +17,7 @@ import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import { Table, Tooltip } from "antd";
+import { message, Table, Tooltip } from "antd";
 import DropZone from "@/components/Dropzone";
 import Services from "./Services";
 import { useTabsState } from "@/hooks/useTabsState";
@@ -31,7 +31,7 @@ import {
     StockMovementParamsType
 } from "@/types/stockMovements";
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
-import { cancelStockMovement, sendInboundData, updateInboundData } from "@/services/stockMovements";
+import { cancelStockMovement, fillInboundByStock, sendInboundData, updateInboundData } from "@/services/stockMovements";
 import { SingleOrderProductFormType } from "@/types/orders";
 import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
@@ -95,7 +95,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     const [isLoading, setIsLoading] = useState(false);
     const [isDraft, setIsDraft] = useState(false);
     const [isJustETA, setIsJustETA] = useState(false);
-    const [isFinished, setIsFinished] = useState(docData?.status === 'Finished');
 
     const isOutboundOrStockMovement = docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND || docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT;
 
@@ -138,6 +137,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     const closeErrorModal = useCallback(() => {
         setShowStatusModal(false);
     }, [])
+
+    const [showConfirmModalFillByStock, setShowConfirmModalFillByStock] = useState(false);
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -221,6 +222,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             seller: docData?.seller || '',
             senderZIP: docData?.senderZIP || '',
             receiverZIP: docData?.receiverZIP || '',
+            allCollect: docData?.allCollect || false,
 
             products:
                 docData && docData?.products && docData.products.length
@@ -563,8 +565,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                 title: '',
                 key: 'action',
                 minWidth: 50,
-                render: (text, record, index) => (
-                    <button disabled={isDisabled} className='action-btn' onClick={() => removeProduct(index)}>
+                render: (_text, _record, index) => (
+                    <button disabled={isDisabled} className='action-btn' onClick={() => { removeProduct(index); setValue('allCollect', false) }}>
                         <Icon name='waste-bin' />
                     </button>
                 ),
@@ -573,6 +575,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     }
 
     const removeProducts = () => {
+        if (products.filter(item => item.selected).length > 0) {
+            setValue('allCollect', false);
+        }
         setValue('products', products.filter(item => !item.selected));
         setSelectAllProducts(false);
     }
@@ -680,7 +685,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         {
             newObject: !docData?.uuid,
             docType: docType,
-            canEditATA: !!(docData?.uuid && !docData.canEdit && !isFinished),
+            canEditATA: !!(docData?.uuid && !docData.canEdit && docData?.status !== 'Finished'),
         }
     ), [docData]);
 
@@ -691,7 +696,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             countryOptions: allCountries,
             senderOptions, receiverOptions,
             onSenderChange, onReceiverChange,
-            canEditETA: !!(docData?.uuid && !docData.canEdit && !isFinished),
+            canEditETA: !!(docData?.uuid && !docData.canEdit && docData?.status !== 'Finished'),
             senderHide: !!docData?.senderHide,
             receiverHide: !!docData?.receiverHide,
             sender: sender, receiver: receiver,
@@ -758,8 +763,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
 
             //show success message
             const modalSubTitle = importType === 'fillByStock' ? 'Document filled by stock successfully' : 'Products are successfully imported';
-            setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: modalSubTitle, onClose: () => closeSuccessModal(true) })
-            setShowStatusModal(true);
+            // setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: modalSubTitle, onClose: () => closeSuccessModal(true) })
+            // setShowStatusModal(true);
+            message.success(modalSubTitle);
         } else {
             //there are errors
 
@@ -788,6 +794,71 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     useEffect(() => {
         resetTabTables(tabTitleArray);
     }, [docData]);
+
+
+    const fillByStock = async () => {
+        setImportType('fillByStock');
+        // setShowFillModal(true);
+
+        setIsLoading(true);
+        try {
+            const requestData = {
+                token,
+                alias,
+                warehouse: sender,
+                // quality: data.quality.filter(item => item.enable).map(item=>item.quality),
+            };
+
+            try {
+                sendUserBrowserInfo({ ...getBrowserInfo('FillStockMovementAllStock'), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
+
+            const res = await fillInboundByStock(superUser && ui ? { ...requestData, ui } : requestData);
+
+            if (res && "status" in res && res?.status === 200) {
+                //success
+                /*setImportResponse(res);*/
+
+                console.log('fill by stock response:', res);
+                if (res.data && 'data' in res.data && Array.isArray(res.data.data) && res.data.data.length) {
+                    setValue('allCollect', true);
+                    setImportResponse(res);
+
+                }
+            } else if (res && 'response' in res) {
+                const errResponse = res.response;
+
+                if (errResponse && 'data' in errResponse && 'errorMessage' in errResponse.data) {
+                    const errorMessages = errResponse?.data.errorMessage;
+                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Please, fix errors!`, text: errorMessages, onClose: closeErrorModal })
+                    setShowStatusModal(true);
+                }
+            } else {
+                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", subtitle: `Something went wrong! Please, try again later.`, onClose: closeErrorModal })
+                setShowStatusModal(true);
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleFillByStock = async () => {
+        if (!sender) {
+            message.warning("Please, select sender warehouse first! We will fill the document by the full stock of this warehouse.");
+            return;
+        }
+
+        if (products.length) {
+            //the products are already filled. Confirm and clear already selected products to fill by stock
+            setShowConfirmModalFillByStock(true);
+
+        } else {
+            await fillByStock();
+        }
+    }
 
     const sendJustETA = async (data) => {
         const requestData = {
@@ -1064,9 +1135,24 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                 <div className='grid-row'>
                                     <div
                                         className='stock-movement--table-btns form-table--btns small-paddings width-100'>
-                                        {/*{(isOutboundOrStockMovement) ? <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''} forBtn >*/}
-                                        {/*    <Button type="button" icon="fill-doc" iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled || !sender} onClick={handleFillByStock}>Fill by stock</Button>*/}
-                                        {/*</TutorialHintTooltip> : null}*/}
+                                        {(isOutboundOrStockMovement) ? (
+                                            <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['fillByStock'] || ''} forBtn >
+                                                {<Tooltip title={!sender ? 'Please, select the sender warehouse first!' : ''} >
+                                                    <span><Button
+                                                        type="button"
+                                                        icon="fill-doc"
+                                                        iconOnTheRight
+                                                        size={ButtonSize.SMALL}
+                                                        disabled={isDisabled}
+                                                        onClick={handleFillByStock}
+                                                        classNames={!sender ? 'is-disabled' : ''}
+                                                    >
+                                                        Collect all
+                                                    </Button></span>
+                                                </Tooltip>}
+                                            </TutorialHintTooltip>)
+                                            : null
+                                        }
                                         <TutorialHintTooltip
                                             hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''}
                                             forBtn>
@@ -1192,7 +1278,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                     onClick={() => setIsDraft(true)}>Save as draft</Button>}
                 {!isDisabled && <Button type="submit" disabled={isDisabled} onClick={() => setIsDraft(false)}
                     variant={ButtonVariant.PRIMARY}>Send</Button>}
-                {isDisabled && docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !docData?.canEdit && !isFinished &&
+                {isDisabled && docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !docData?.canEdit && docData?.status !== 'Finished' &&
                     <Button type="submit" onClick={() => setIsJustETA(true)}
                         variant={ButtonVariant.PRIMARY}>Send</Button>}
             </div>
@@ -1209,9 +1295,15 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         {showTicketForm && <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Ticket} subjectType={TICKET_OBJECT_TYPES[docType]} subjectUuid={docData?.uuid} subject={`${STOCK_MOVEMENT_DOC_SUBJECT[docType]} ${docData?.number} ${docData?.date ? formatDateStringToDisplayString(docData.date) : ''}`} onClose={() => { setShowTicketForm(false); refetchDoc(); }} seller={needSeller() ? docData.seller : ''} />}
         {showConfirmModal && <ConfirmModal
             // actionText='Are you sure you want to cancel this document?'
-            actionText='cancel this document?'
+            actionText='Are you sure you want to cancel this document?'
             onOk={handleConfirmCancelDoc}
             onCancel={() => setShowConfirmModal(false)}
+        />}
+        {showConfirmModalFillByStock && <ConfirmModal
+            // actionText='Are you sure you want to cancel this document?'
+            actionText='You already have some products selected in this document. To fill it with all remaining products from the selected sender warehouse we need to remove already selected products. Are you sure you want to continue?'
+            onOk={() => { setValue('products', []); setShowConfirmModalFillByStock(false); fillByStock(); }}
+            onCancel={() => setShowConfirmModalFillByStock(false)}
         />}
         {showHintQuestion && <HintsModal docName="Inbounds" onClose={handleCancelHints} onOk={showHints} />}
     </div>

@@ -1,0 +1,49 @@
+.form-control {
+  :global(.react-international-phone-input-container) {
+    width: 100%;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 30px !important;
+    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03) !important;
+    height: 44px !important;
+  }
+
+  :global(.react-international-phone-country-selector) {
+    border-right: 2px solid var(--border-color);
+  }
+
+  :global(.react-international-phone-country-selector-button) {
+    border: none !important;
+    border-radius: 30px 0 0 30px !important;
+    height: 40px !important;
+    padding: 0 12px 0 16px;
+  }
+
+  :global(.react-international-phone-country-selector-dropdown) {
+    outline: none;
+  }
+
+  :global(.react-international-phone-input) {
+    width: 100%;
+    height: 100% !important;
+    border: none !important;
+    font-size: 11px !important;
+    box-shadow: none;
+    border-radius: 0 30px 30px 0 !important;
+  }
+
+  &.has-error {
+    :global(.react-international-phone-input-container) {
+      border-color: var(--color-error) !important;
+    }
+  }
+
+  &.phone-number {
+    .error {
+      bottom: -10px;
+    }
+  }
+}
+
+.checkbox {
+  padding-top: 24px;
+}
