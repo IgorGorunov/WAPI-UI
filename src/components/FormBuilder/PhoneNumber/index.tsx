@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 const PhoneInput = dynamic(
     () => import('react-international-phone').then(mod => mod.PhoneInput),
     {
-        ssr: false,
+        // ssr: false,
         loading: () => <input type="tel" placeholder="Loading phone input..." disabled />
     }
 );
@@ -42,7 +42,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(
 
         return (
             <TutorialHintTooltip hint={hint} classNames={`${width ? "width-" + width : ""}`}>
-                <div className={`${styles['form-control'] || 'form-control'} phone-number ${classNames ? classNames : ""}  ${isRequired ? "required" : ''} ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''}  ${errorMessage ? 'has-error' : ''}`}>
+                <div className={`${styles['form-control'] || 'form-control'} phone-number ${classNames ? styles[classNames] || classNames : ""}  ${isRequired ? "required" : ''} ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''}  ${errorMessage ? 'has-error' : ''}`}>
                     {label && <label htmlFor={name}>{label}</label>}
                     <PhoneInput
                         name={name}

@@ -7,7 +7,7 @@ import "./styles.scss";
 
 // Dynamically import heavy form component to reduce blocking JavaScript
 const SignUpForm = dynamic(() => import("@/screens/SignUpPage/SignUpForm"), {
-    ssr: false,
+    // ssr: false,
     loading: () => <div style={{ minHeight: '400px' }} />
 });
 
