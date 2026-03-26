@@ -1,4 +1,9 @@
 .form-control {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+  padding-bottom: 8px;
 
   label {
     display: block;
