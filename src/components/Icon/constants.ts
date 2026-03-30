@@ -121,6 +121,7 @@ import ArrowDownSmall from '@/assets/icons/arrow-down-small.svg';
 import ClearFilters from '@/assets/icons/filter-clear.svg';
 import ApplyFilters from '@/assets/icons/filter-apply.svg';
 import BiggestCheck from '@/assets/icons/biggest-check.svg';
+import CalendarNav from '@/assets/icons/calendar-nav.svg';
 
 export const icons = {
     "arrow-left": ArrowLeft,
@@ -246,4 +247,5 @@ export const icons = {
     'clear-filters': ClearFilters,
     'apply-filters': ApplyFilters,
     'biggest-check': BiggestCheck,
+    'calendar-nav': CalendarNav,
 };

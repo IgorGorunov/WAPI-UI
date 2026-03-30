@@ -24,18 +24,6 @@ const getOrders = async (
     }
 ): Promise<ApiResponseType<PagedOrderListType>> => {
     return api.post(`/GetOrdersList`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetPagedOrdersList`,
-    //         data
-    //
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getOrders_Old = async (
@@ -72,18 +60,6 @@ const getOrderData= async (
     }
 ): Promise<ApiResponseType<SingleOrderType>> => {
     return api.post(`/GetOrderData`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetOrderData`,
-    //         data
-    //
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getOrderParameters = async (
@@ -94,17 +70,6 @@ const getOrderParameters = async (
     }
 ): Promise<ApiResponseType<OrderParamsType>> => {
     return api.post(`/GetOrderParameters`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetOrderParameters`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getOrderPickupPoints = async (
@@ -116,34 +81,12 @@ const getOrderPickupPoints = async (
     }
 ): Promise<ApiResponseType<PickupPointsType[]>> => {
     return api.post(`/GetPickupPoints`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetPickupPoints`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const sendOrderData = async (
     data: CreateOrderRequestType
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/CreateUpdateOrder`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/CreateUpdateOrder`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const sendOrderComment = async (
@@ -155,17 +98,6 @@ const sendOrderComment = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/SendCommentToCourierService`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/SendCommentToCourierService`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const cancelOrder = async (
@@ -177,34 +109,12 @@ const cancelOrder = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/CancelOrder`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/CancelOrder`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const sendOrderFiles = async (
     data: BulkCreateRequestType
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/BulkOrdersCreate`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/BulkOrdersCreate`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const sendAddressData = async (
@@ -232,40 +142,12 @@ const sendAddressData = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/UpdateAddressShipmentOrder`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/UpdateAddressShipmentOrder`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 export const getOrderFilters = async (
     data: OrderTempPropsType
-    // data: {
-    //     token: string;
-    //     alias?: string;
-    //     startDate: string;
-    //     endDate: string;
-    //     ui?: string;
-    // }
 ): Promise<ApiResponseType<OrderFilterDataType>> => {
     return api.post(`/GetPagedFilters`, data);
-    // try {
-    //     const response: any = await api.post(
-    //         `/GetPagedFilters`,
-    //         data
-    //     );
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 }
 
 export const getOrdersPage = async (

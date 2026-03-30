@@ -15,4 +15,26 @@ export const OrderHints = {
     // removeSelected: 'Delete a chosen product',
 
     files: 'Any files related to the order (e.g., invoice or return form)',
+
+    //address
+    country: 'Country of the customer',
+    county: 'County / district / municipio / prefecture-level area',
+    county_district: 'County / district / municipio / prefecture-level area',
+    state_region: 'State / region / province / prefecture / territory',
+    city: 'Name of the city',
+    city_subdivision: 'Borough / sector / delegación / ward',
+    locality: 'Smaller neighborhood or local administrative unit',
+    street: 'Street, avenue, block, or road name',
+    street_number: 'House/building number',
+    block_lot: 'Block, lot, land parcel, sub-block',
+    building: 'Building, tower, complex, corporate building, section',
+    unit: 'Apartment, office, suite, room, or floor',
+    landmark: 'Useful in regions with poor addressing systems',
+    details: 'Additional instructions: entrance details, delivery notes, references, company name, etc',
+    coordinates: 'GPS coordinates of the exact delivery point',
+    fullName: 'Full name of the customer',
+    phone: 'Customer\'s phone number',
+    email: 'Customer\'s email address',
+    zipCode: 'Customer\'s zipcode',
+    address: 'Street, building, apartment, etc. Recommended length - maximum 60 characters (depending on courier service)',
 }

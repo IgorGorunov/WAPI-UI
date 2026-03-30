@@ -29,6 +29,7 @@ const FilterOption: React.FC<FilterOptionType> = ({option, extraName='', isCheck
                 checked={isChecked}
                 onChange={()=>onClick(option.value)}
                 isCheckboxHidden={filterType !== FILTER_TYPE.CHECKBOX}
+                classNames={'small-checkbox'}
             />
         </div>
     );

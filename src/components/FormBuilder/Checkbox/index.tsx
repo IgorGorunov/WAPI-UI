@@ -27,7 +27,7 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
 
 
   return (
-    <div className={`${styles.checkbox || 'checkbox'} checkbox ${classNames ? classNames : ""} ${width ? "width-"+width : ""}  ${styles['vertical-center'] ? '' : ''}`}>
+    <div className={`${styles.checkbox || 'checkbox'} checkbox ${classNames ? styles[classNames] || classNames : ""} ${width ? "width-"+width : ""}  ${styles['vertical-center'] ? '' : ''}`}>
       <label htmlFor={`${name}-checkbox`} className={`${styles['checkbox-label'] || 'checkbox-label'} checkbox-label ${isCheckboxHidden ? `${styles['hide-checkbox'] || 'hide-checkbox'} hide-checkbox` : ''}`}>
         <input
             {...otherProps}
