@@ -10,22 +10,23 @@ import { TENANTS } from "@/lib/tenants";
 import Cookie from "js-cookie";
 
 
+// const LoginForm = dynamic(() => import("./LoginForm/LoginForm"));
+// const SignUpBlock = dynamic(() => import("./SignUpForm/SignUpBlock"));
 
 const LoginPage = () => {
     const { logout } = useAuth();
     const { tenant } = useTenant();
     const router = useRouter();
+    const [mounted, setMounted] = useState(false);
 
     const [oneTimeToken, setOneTimeToken] = useState<string>('');
     const [utmQuery, setUtmQuery] = useState<any>({});
 
     useEffect(() => {
+        setMounted(true);
         setOneTimeToken('');
     }, []);
 
-    // Only clear an EXISTING session when landing on the login page.
-    // Do NOT run logout() if there's no session — this prevents it from
-    // clearing cookies that were just set by a successful login+redirect.
     useEffect(() => {
         const hadSession = !!Cookie.get('token') || !!Cookie.get('userStatus');
         if (hadSession) {
@@ -51,14 +52,13 @@ const LoginPage = () => {
     return (
         <Layout hasFooter>
             {/*<SeoHead title="Login" description="Login page" />*/}
-            <div className={`${styles['login-page__container']}${tenant === TENANTS.WAPI ? ` ${styles['has-bg']}` : ''}`}>
+            <div className={`${styles['login-page__container']}${mounted && tenant === TENANTS.WAPI ? ` ${styles['has-bg']}` : ''}`}>
                 <div className={styles['login-page__text-wrapper']}>
                     <h1>SIGN IN</h1>
                     <h2>Welcome back</h2>
                 </div>
-
                 <LoginForm oneTimeToken={oneTimeToken} setOneTimeToken={setOneTimeToken} />
-                {tenant === TENANTS.WAPI ? <SignUpBlock utmQuery={utmQuery} /> : null}
+                {mounted && tenant === TENANTS.WAPI ? <SignUpBlock utmQuery={utmQuery} /> : null}
 
             </div>
         </Layout>

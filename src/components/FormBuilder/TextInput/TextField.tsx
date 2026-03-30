@@ -59,7 +59,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
 
   return (
     <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
-        <div className={`${styles['form-control'] || 'form-control'} ${styles[classNames] || classNames}  ${isRequired ? "required" : ''} ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''}  ${errorMessage ? 'has-error' : ''}`}>
+        <div className={`${styles['form-control'] || 'form-control'} ${styles[classNames] || classNames}  ${isRequired ? styles["required"] : ''} ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''}  ${errorMessage ? styles['has-error']+' has-error' : ''}`}>
             {label && <label htmlFor={name}>{label}</label>}
               <input
                 ref={ref}

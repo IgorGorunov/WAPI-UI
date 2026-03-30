@@ -54,7 +54,7 @@ const Navigation: React.FC<NavigationType> = ({ isMenuOpen, handleClose }) => {
 
     const navigationSteps = [];
     navigationStepsFull.forEach(item => {
-        if (item.submenuName === 'Dashboard' || isNavItemAccessible(item.submenuName)) {
+        if (item.submenuName === 'Dashboard' || item.submenuName === 'WarehouseCalendar' || isNavItemAccessible(item.submenuName)) {
             navigationSteps.push(item);
         }
     })
@@ -89,7 +89,7 @@ const Navigation: React.FC<NavigationType> = ({ isMenuOpen, handleClose }) => {
                         </Link>
                     </div>
                     {navBlocksArray && navBlocksArray.length ? navBlocksArray.map((navBlock, index) => (
-                        (isNavItemAccessible(navBlock.submenuName)) ? (<div key={`${navBlock.submenuTitle}-${index}`}>
+                        (isNavItemAccessible(navBlock.submenuName) || navBlock.submenuName === 'WarehouseCalendar') ? (<div key={`${navBlock.submenuTitle}-${index}`}>
                             {navBlock.submenuLink && !navBlock.navItems.length ?
                                 <SubmenuSingleItem {...navBlock} />
                                 :

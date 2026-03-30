@@ -217,6 +217,7 @@ export type SingleOrderType = {
     warehouseAssemblyPhotos?: AttachedFilesType[];
     customerReturns: OrderCustomerReturnType[];
     seller?: string;
+    addressJSONStructure?: string;
 }
 
 export type OrderProductType = {
@@ -304,6 +305,23 @@ export type SingleOrderProductFormType = {
     key?: string;
 };
 
+export type OrderFullAddressType = {
+    state_region?: string;
+    county_district?: string;
+    street?: string;
+    street_number?: string;
+    building?: string;
+    unit?: string;
+    details?: string;
+    //Mexico (has general fields + these 2)
+    city_subdivision?: string;
+    locality?: string;
+    //Japan (has fields the same as Mexico + these 3)
+    landmark?: string;
+    coordinatesLatitude?: string;
+    coordinatesLongitude?: string;
+}
+
 export type SingleOrderFormType = {
     clientOrderID: string;
     codAmount: number;
@@ -344,6 +362,8 @@ export type SingleOrderFormType = {
     seller?: string;
     draft?: boolean;
     attachedFiles?: AttachedFilesType[];
+    addressJSONStructure?: string;
+    addressFull?: OrderFullAddressType;
 }
 
 //endpoint types

@@ -99,4 +99,12 @@ export const navBlocks = (unreadAmount: number = 0) => ([
         submenuLink: '/faq',
         navItems: [],
     },
+
+    {
+        submenuTitle: `Warehouse calendar`,
+        submenuName: "WarehouseCalendar",
+        submenuIcon: 'calendar-nav',
+        submenuLink: '/warehouse-calendar',
+        navItems: [],
+    },
 ]);

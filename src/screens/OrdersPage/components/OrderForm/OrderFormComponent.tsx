@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
 import {
-    CreateOrderRequestType,
+    CreateOrderRequestType, OrderFullAddressType,
     OrderParamsType,
     OrderProductWithTotalInfoType,
     PickupPointsType,
@@ -272,6 +272,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         wapiTrackingNumber: orderData?.wapiTrackingNumber || '',
         warehouse: orderData?.warehouse || '',
         seller: orderData?.seller && needSeller() ? orderData.seller : '',
+        addressJSONStructure: orderData?.addressJSONStructure || '',
+        addressFull: orderData?.addressJSONStructure ? JSON.parse(orderData?.addressJSONStructure) as OrderFullAddressType: {} as OrderFullAddressType,
+
         products:
             orderData && orderData?.products && orderData.products.length
                 ? orderData.products.map((product, index: number) => (
@@ -930,20 +933,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         setValue('receiverPickUpAddress', '');
     }, [setValue]);
 
-
-    const linkToTrack = orderData && orderData.trackingLink && orderData.trackingLink.at(-1) != '=' ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
-
-    const generalFields = useMemo(() => GeneralFields(!orderData?.uuid, orderTitles), [orderData, orderTitles])
-    const detailsFields = useMemo(() => DetailsFields({ warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange: handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
-    const receiverFields = useMemo(() => ReceiverFields({ countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields }), [curPickupPoints, pickupOptions, countries, preferredWarehouse, selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields])
-    const pickUpPointFields = useMemo(() => PickUpPointFields({ countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: () => { hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled() }, atLeastOneFieldIsFilled, isSelfCollect }), [countries, preferredWarehouse, selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions, isSelfCollect])
-    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
-
-
-    const handleFilesChange = (files) => {
-        setSelectedFiles(files);
-    };
-
     //check receiverCountry + zip (France with zip 98000 - 98099 is Monaco)
     const receiverCountry = watch('receiverCountry');
     const receiverZip = watch('receiverZip');
@@ -964,6 +953,23 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
             clearErrors('receiverCountry');
         }
     }, [receiverZip, receiverCountry]);
+
+    console.log('receiver country', receiverCountry, orderData?.addressJSONStructure ? JSON.parse(orderData?.addressJSONStructure) : 'empty');
+
+    const linkToTrack = orderData && orderData.trackingLink && orderData.trackingLink.at(-1) != '=' ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
+
+    const generalFields = useMemo(() => GeneralFields(!orderData?.uuid, orderTitles), [orderData, orderTitles])
+    const detailsFields = useMemo(() => DetailsFields({ warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange: handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
+    const receiverFields = useMemo(() => ReceiverFields({ countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields, selectedCountry: receiverCountry }), [curPickupPoints, pickupOptions, countries, preferredWarehouse, selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields, receiverCountry]);
+    const pickUpPointFields = useMemo(() => PickUpPointFields({ countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: () => { hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled() }, atLeastOneFieldIsFilled, isSelfCollect }), [countries, preferredWarehouse, selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions, isSelfCollect])
+    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
+
+
+    const handleFilesChange = (files) => {
+        setSelectedFiles(files);
+    };
+
+
 
     //product selection
     const handleProductSelection = () => {
@@ -1176,6 +1182,17 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
             data.receiverPickUpCountry = '';
         }
 
+        if (receiverCountry && receiverCountry === 'MX') {
+            data.addressJSONStructure = JSON.stringify(Object.fromEntries(
+                Object.entries(data.addressFull).filter(
+                    ([_, value]) => value !== null && value !== undefined && value !== ""
+                )));
+        } else {
+            data.addressJSONStructure = '';
+        }
+
+        delete data.addressFull;
+
         try {
             const requestData: CreateOrderRequestType = {
                 token: token,
@@ -1209,7 +1226,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
             }
 
         } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error("Error sending data");
         } finally {
             setIsLoading(false);
         }
@@ -1425,7 +1442,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                         </CardWithHelpIcon>
                     </div> : null}
                     {isTabAllowed('Delivery info', forbiddenTabs) ? <div key='delivery-tab' className='delivery-tab'>
-                        <div className='card order-info--receiver'>
+                        <CardWithHelpIcon classNames='card order-info--receiver'>
                             <h3 className='order-info__block-title'>
                                 <Icon name='receiver' />
                                 Receiver
@@ -1435,7 +1452,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                 // isDisabled={isDisabled}/>
                                 />
                             </div>
-                        </div>
+                        </CardWithHelpIcon>
                         <ToggleSwitch
                             name='isSelfCollect'
                             label="Self-collect form pickup point"
