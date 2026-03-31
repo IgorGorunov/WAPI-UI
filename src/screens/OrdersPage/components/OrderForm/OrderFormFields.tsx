@@ -443,7 +443,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
                 required: "Required field",
             },
             errorMessage: "Required field",
-            width: WidthType.w100,
+            width: WidthType.w50,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             onChange: onChangeFn,
