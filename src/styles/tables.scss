@@ -189,6 +189,10 @@
       animation: fadeInDown 1s forwards;
     }
   }
+
+  .text-break-all span {
+    word-break: break-all;
+  }
 }
 
 //.doc-filters-block {

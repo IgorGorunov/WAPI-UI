@@ -1,7 +1,7 @@
 import React, {memo} from 'react';
 import {FaqPageContentItemType} from "@/types/sanity/fragmentTypes";
 import FaqTableOfContentsItem from "@/screens/FaqPage/components/FaqTableOfContentsItem";
-import '../../styles.scss';
+import styles from '../../styles.module.scss';
 
 type FaqTableOfContentsPropsType = {
     content: FaqPageContentItemType[];
@@ -14,7 +14,7 @@ const FaqTableOfContents: React.FC<FaqTableOfContentsPropsType> = ({content, onC
     return (
         <>
             {content && content.length ?
-                <ul className={`faq-table-of-contents__list ${level > 0 ? 'nested-list' : ''}`}>
+                <ul className={`${styles['faq-table-of-contents__list']} ${level > 0 ? styles['nested-list'] : ''}`}>
                     {content.map((item: FaqPageContentItemType) => (
                         <FaqTableOfContentsItem key={item._id} faqBlock={item} level={level} onClick={onClick}/>
                     ))}

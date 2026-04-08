@@ -48,6 +48,7 @@ import FiltersChosen from "@/components/FiltersChosen";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 import SelectField from "@/components/FormBuilder/Select/SelectField";
+import {ChangeEventType} from "@/types/forms";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -586,6 +587,13 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
         setIsCalculating(false);
     }, [collapsedData]);
 
+    const handleVariantChane = (val: ChangeEventType) => {
+        if (!noData) {
+            setIsCalculating(true);
+        }
+        setCurVariant(val.toString());
+    }
+
     return (
         <Layout hasFooter>
             <SeoHead title={REPORT_TITLES[reportType]} description='Our report page' />
@@ -632,7 +640,12 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
                                 </div>)
                                 : null
                             }
-                            <RadioButton name='reportvariants' options={reportVariants} value={curVariant.toString()} onChange={(val) => { setIsCalculating(true); setCurVariant(val.toString()); }} classNames='pt-0' />
+                            <RadioButton
+                                name='reportvariants'
+                                options={reportVariants}
+                                value={curVariant.toString()}
+                                onChange={(val) => handleVariantChane(val)}
+                                classNames='pt-0' />
                         </div>
                     </div>
                     : null

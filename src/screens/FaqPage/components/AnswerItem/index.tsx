@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import SanityBlockRenderer from "@/components/SanityBlockRenderer";
 import { FaqPageContentItemType } from "@/types/sanity/fragmentTypes";
+import styles from "../../styles.module.scss";
 
 type FaqAnswerItemPropsType = {
     item: FaqPageContentItemType;
@@ -10,20 +11,20 @@ type FaqAnswerItemPropsType = {
 
 const AnswerItem: React.FC<FaqAnswerItemPropsType> = ({ item, setRef, level = 0 }) => {
     return (
-        <section id={item.anchorId} ref={setRef(item.anchorId)} className={`faq-answers__question-wrapper ${'questionGroupText' in item ? 'question-group' : "single-question"}`}>
+        <section id={item.anchorId} ref={setRef(item.anchorId)} className={`${styles['faq-answers__question-wrapper']} ${'questionGroupText' in item ? styles['question-group'] : styles['single-question'] || ''}`}>
             {'questionGroupText' in item && (
-                <h2 className={`faq-answers__list-item is-group content-item-level-${level}`}>
+                <h2 className={`${styles['faq-answers__list-item']} is-group ${styles['content-item-level-'+level] || ''}`}>
                     {item.questionGroupText}
                 </h2>)
             }
             {'question' in item && (
-                <h3 className='faq-answers__question'>
+                <h3 className={styles['faq-answers__question']}>
                     {/*<span className="qa-icon q-icon">Q:</span>*/}
                     {item.question}
                 </h3>)
             }
             {'answer' in item && (
-                <ul className={`faq-answers__answer faq-answers__list`}>
+                <ul className={`${styles['faq-answers__answer']} ${styles['faq-answers__list']}`}>
                     {/*<span className="qa-icon a-icon">A:</span>*/}
                     {item.answer && item.answer.length ?
                         item.answer.map((item, index) => <div
@@ -35,7 +36,7 @@ const AnswerItem: React.FC<FaqAnswerItemPropsType> = ({ item, setRef, level = 0 
                     }
                 </ul>)}
             {'questions' in item && (
-                <div className={`faq-answers__subquestions`}>
+                <div className={styles['faq-answers__subquestions']}>
                     {item.questions.map((subItem) => (
                         <AnswerItem key={subItem._id} item={subItem} setRef={setRef} level={level + 1} />
                     ))}

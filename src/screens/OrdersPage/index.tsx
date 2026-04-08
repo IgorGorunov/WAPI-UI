@@ -28,8 +28,8 @@ import { OrdersFilters } from "./types";
 
 const OrdersPage = () => {
     const Router = useRouter();
-    const { tenantData: { alias, orderTitles } } = useTenant();
-    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
+    const { tenantData: { alias } } = useTenant();
+    const { token,  ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
 
     // universal state management via url
     const { state, updatePeriod, updateFilters, updateSearch, updatePage, updatePageSize, updateSort, clearAllFilters } = usePagedListState<OrdersFilters>(
@@ -43,7 +43,7 @@ const OrdersPage = () => {
     );
 
     // fetch paginated orders
-    const { data: orders, count: totalOrders, isLoading: isLoadingOrders } = usePagedData<OrderType>(
+    const { data: orders, count: totalOrders, isLoading: isLoadingOrders, refetch: refetchOrders } = usePagedData<OrderType>(
         '/GetPagedOrdersList',
         state,
         { token, alias, ui, enabled: !!token }
@@ -238,9 +238,7 @@ const OrdersPage = () => {
 
     // Refresh orders after create/update
     const handleRefresh = () => {
-        // The usePagedData hook will automatically refetch when we force a re-render
-        // We can trigger this by updating the page to itself
-        updatePage(state.page);
+        refetchOrders();
     };
 
     return (

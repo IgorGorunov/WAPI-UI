@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Layout from "@/components/Layout/Layout";
 import styles from "./styles.module.scss";
 import {useRouter} from "next/router";
@@ -11,8 +11,31 @@ const GetStartedPage: React.FC = () => {
 
     const router = useRouter();
 
+    const [mounted, setMounted] = useState(false);
+    const [utmQuery, setUtmQuery] = useState<any>({});
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    //getting uuid from query
+    useEffect(() => {
+
+        const query = router.query;
+        const utmQuery = {};
+        const keys = Object.keys(query).filter(key => key !== 'oneTimeToken');
+        keys.map(key => {
+            utmQuery[key.replace('amp;', '')] = query[key];
+        })
+
+        setUtmQuery(utmQuery);
+    }, [router.query]);
+
     const handleSignUp = async() => {
-        await router.push(Routes.SignUp);
+        await router.push({
+            pathname: Routes.SignUp,
+            query: utmQuery,
+        });
     }
 
 

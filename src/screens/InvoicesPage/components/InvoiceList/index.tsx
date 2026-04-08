@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
 import { ColumnType } from "antd/es/table";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import "@/styles/tables.scss";
 import { InvoiceType } from "@/types/invoices";
 import PageSizeSelector from '@/components/LabelSelect';
@@ -591,13 +591,13 @@ const InvoiceList: React.FC<InvoiceListType> = ({ invoices, currentRange, setCur
         {
             title: <TitleColumn title="" minWidth="80px" maxWidth="130px" contentPosition="start" />,
             render: (text: string, record: InvoiceType) => (
-                <div className='services-cell-style__wrapper'>
+                <div className={styles['services-cell-style__wrapper']}>
                     <TableCell
                         minWidth="35px"
                         maxWidth="60px"
                         contentPosition="center"
                         childrenBefore={
-                            <span className="services-cell-style" onClick={() => handleDownloadInvoice(record.uuid)}>
+                            <span className={styles['services-cell-style']} onClick={() => handleDownloadInvoice(record.uuid)}>
                                 <Icon name="download-file" />
                             </span>}>
                     </TableCell>
@@ -606,7 +606,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({ invoices, currentRange, setCur
                         maxWidth="60px"
                         contentPosition="center"
                         childrenBefore={
-                            <span className="services-cell-style" onClick={() => handleDownloadInvoice(record.uuid, 'preview')}>
+                            <span className={styles['services-cell-style']} onClick={() => handleDownloadInvoice(record.uuid, 'preview')}>
                                 <Icon name="preview" />
                             </span>}>
                     </TableCell>
@@ -629,7 +629,7 @@ const InvoiceList: React.FC<InvoiceListType> = ({ invoices, currentRange, setCur
 
     ], [handleHeaderCellClick, sortColumn, sortDirection]);
     return (
-        <div className='table invoices-list'>
+        <div className={`table ${styles['invoices-list']}`}>
             {isLoading && <Loader />}
 
             <SearchContainer>

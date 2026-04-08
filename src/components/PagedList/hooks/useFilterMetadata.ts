@@ -19,8 +19,8 @@ export function useFilterMetadata<
 >(
     endpoint: string,
     state: {
-        startDate: string;
-        endDate: string;
+        startDate?: string;
+        endDate?: string;
     },
     options: UseFilterMetadataOptions
 ) {
@@ -42,11 +42,11 @@ export function useFilterMetadata<
             try {
                 const requestData: Record<string, string | number | boolean> = {
                     token,
-                    // tempToken: "qwert123456BVCXZ",
-                    startDate: state.startDate,
-                    endDate: state.endDate,
                     ui: ui || '',
                 };
+
+                if (state.startDate) requestData.startDate = state.startDate;
+                if (state.endDate) requestData.endDate = state.endDate;
 
                 if (alias) requestData.alias = alias;
                 if (ui) requestData.ui = ui;

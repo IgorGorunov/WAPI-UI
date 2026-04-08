@@ -1,6 +1,6 @@
-import type {OptionType} from "@/types/forms";
-import type {IconType} from "@/components/Icon";
-import type {FILTER_TYPE} from "@/types/utility";
+import type { OptionType } from "@/types/forms";
+import type { IconType } from "@/components/Icon";
+import type { FILTER_TYPE } from "@/types/utility";
 
 export type FilterComponentType = {
     filterTitle: string;
@@ -9,11 +9,11 @@ export type FilterComponentType = {
     filterDescriptions?: string;
     filterOptions: OptionType[];
     filterState: string[];
-    setFilterState: (val: string[])=>void;
+    setFilterState: (val: string[]) => void;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
-    onClose: ()=>void;
-    onClick: ()=>void;
+    onClose: () => void;
+    onClick: () => void;
     icon?: IconType;
     isCountry?: boolean;
 }

@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import Layout from "@/components/Layout/Layout";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Header from "@/components/Header";
 import {FaqPageType} from "@/types/sanity/pagesTypes";
 import FaqTableOfContents from "@/screens/FaqPage/components/FaqTableOfContents";
@@ -154,18 +154,18 @@ const FaqPage:React.FC<FaqPageType> = (props) => {
     return (
         <Layout hasHeader hasFooter >
             <SeoHead title='FAQ' description='Our FAQ page' />
-            <div className="faq-page page-container">
+            <div className={`${styles['faq-page']} page-container`}>
                 {/*{isLoading && <Loader />}*/}
                 <Header pageTitle='FAQ' toRight  />
-                <div className="faq-page__wrapper">
+                <div className={styles['faq-page__wrapper']}>
                     {/*{heading ? <h2 className='faq-page__header'>{heading}</h2> : null}*/}
-                    <div className="faq-page__container" ref={layoutRef}>
-                        <div className={`faq-table-of-contents`} >
-                            <div className = {`faq-table-of-contents__wrapper` } ref={sidebarRef} style={{...sidebarStyle, maxHeight: (visiblePixels-10)+'px'}} >
+                    <div className={styles['faq-page__container']} ref={layoutRef}>
+                        <div className={styles['faq-table-of-contents']} >
+                            <div className={styles['faq-table-of-contents__wrapper']} ref={sidebarRef} style={{...sidebarStyle, maxHeight: (visiblePixels-10)+'px'}} >
                                 <FaqTableOfContents content={content} onClick={handleClickToScrollTo}/>
                             </div>
                         </div>
-                        <div className={`faq-answers`}>
+                        <div className={styles['faq-answers']}>
                             <AnswersBlock content={content} />
                         </div>
                     </div>

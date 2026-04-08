@@ -16,8 +16,8 @@ type UrlValue = UrlQueryValue | string[];
 export type PagedListUrlState = {
     page: number;
     limit: number;
-    startDate: string;
-    endDate: string;
+    startDate?: string;
+    endDate?: string;
     search?: string;
     fullTextSearch?: boolean;
     sortBy?: string;
@@ -31,6 +31,7 @@ type UsePagedListStateOptions = {
     defaultDateRange?: DateRangeType;
     defaultSortBy?: string;
     defaultSortOrder?: 'asc' | 'desc';
+    disableDateRange?: boolean;
 }
 
 /**
@@ -43,19 +44,19 @@ export function usePagedListState<TFilters extends Record<string, UrlValue> = Re
     options: UsePagedListStateOptions = {}
 ) {
     const router = useRouter();
-    const { defaultPageSize = 10, defaultDateRange, defaultSortBy, defaultSortOrder } = options;
+    const { defaultPageSize = 10, defaultDateRange, defaultSortBy, defaultSortOrder, disableDateRange = false } = options;
 
     // Parse all state from URL parameters
     const state = useMemo(() => {
         const query = router.query;
 
-        // Get default dates if provided
-        const defaultStart = defaultDateRange
+        // Get default dates if provided and not disabled
+        const defaultStart = !disableDateRange && defaultDateRange
             ? formatDateToString(defaultDateRange.startDate)
-            : formatDateToString(new Date());
-        const defaultEnd = defaultDateRange
+            : !disableDateRange ? formatDateToString(new Date()) : undefined;
+        const defaultEnd = !disableDateRange && defaultDateRange
             ? formatDateToString(defaultDateRange.endDate)
-            : formatDateToString(new Date());
+            : !disableDateRange ? formatDateToString(new Date()) : undefined;
 
         // Parse filters from URL (excluding reserved keys)
         const reservedKeys = ['page', 'limit', 'startDate', 'endDate', 'search', 'fullTextSearch', 'sortBy', 'sortOrder'];
@@ -67,18 +68,23 @@ export function usePagedListState<TFilters extends Record<string, UrlValue> = Re
             }
         });
 
-        return {
+        const resultState: PagedListUrlState = {
             page: Number(query.page) || 1,
             limit: Number(query.limit) || defaultPageSize,
-            startDate: (query.startDate as string) || defaultStart,
-            endDate: (query.endDate as string) || defaultEnd,
             search: (query.search as string) || '',
             fullTextSearch: query.fullTextSearch === 'true',
             sortBy: (query.sortBy as string) || defaultSortBy,
             sortOrder: ((query.sortOrder as 'asc' | 'desc') || defaultSortOrder) ?? undefined,
             filters,
         };
-    }, [router.query, defaultPageSize, defaultDateRange, defaultSortBy, defaultSortOrder]);
+
+        if (!disableDateRange) {
+            resultState.startDate = (query.startDate as string) || defaultStart;
+            resultState.endDate = (query.endDate as string) || defaultEnd;
+        }
+
+        return resultState as any; // typed implicitly above but generic filters makes it tricky
+    }, [router.query, defaultPageSize, defaultDateRange, defaultSortBy, defaultSortOrder, disableDateRange]);
 
     // Update URL with new state (shallow routing)
     const updateState = useCallback((updates: Record<string, UrlQueryValue>) => {
@@ -171,9 +177,12 @@ export function usePagedListState<TFilters extends Record<string, UrlValue> = Re
         const clearedQuery: Record<string, string | number> = {
             page: 1,
             limit: state.limit,
-            startDate: state.startDate,
-            endDate: state.endDate,
         };
+
+        if (!disableDateRange && state.startDate && state.endDate) {
+            clearedQuery.startDate = state.startDate;
+            clearedQuery.endDate = state.endDate;
+        }
 
         router.push(
             {
@@ -183,7 +192,7 @@ export function usePagedListState<TFilters extends Record<string, UrlValue> = Re
             undefined,
             { shallow: true }
         );
-    }, [router, state.limit, state.startDate, state.endDate]);
+    }, [router, state.limit, state.startDate, state.endDate, disableDateRange]);
 
     // Helper: Add a value to a specific filter (handling comma-separated arrays)
     const addFilterValue = useCallback((key: keyof TFilters, value: string) => {

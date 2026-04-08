@@ -5,7 +5,7 @@ import { getCodReports, getCODIndicators } from "@/services/codReports";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import CodReportsList from "./components/CodReportsList";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
 import { CODIndicatorsType, CODIndicatorType, CodReportType } from "@/types/codReports";
 import { exportFileXLS } from "@/utils/files";
@@ -214,7 +214,7 @@ const CodReportsPage = () => {
     return (
         <Layout hasHeader hasFooter>
             <SeoHead title='COD reports' description='Our COD reports page' />
-            <div className="cod-reports__container">
+            <div className={styles['cod-reports__container']}>
                 {isLoading && <Loader />}
                 <Header pageTitle='COD reports' toRight needTutorialBtn >
                     <Button classNames='export-file' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
@@ -236,19 +236,19 @@ const CodReportsPage = () => {
                     : null
                 }
                 {CODIndicatorsBySeller ? (
-                    <div className="grid-row indicator-info-block has-cards-block">
+                    <div className={`grid-row ${styles['indicator-info-block']} has-cards-block`}>
                         {CODIndicatorsBySeller.yearAmount ? (
-                            <div className='width-33 grid-col-33'>
+                            <div className={`width-33 ${styles['grid-col-33']}`}>
                                 <CODIndicatorsCard title={"Year to date"} type="amount" indicatorsArray={CODIndicatorsBySeller.yearAmount} classNames='year' />
                             </div>
                         ) : null}
                         {CODIndicatorsBySeller.monthAmount ? (
-                            <div className='width-33  grid-col-33'>
+                            <div className={`width-33 ${styles['grid-col-33']}`}>
                                 <CODIndicatorsCard title={"Month to date"} type="amount" indicatorsArray={CODIndicatorsBySeller.monthAmount} classNames='month' />
                             </div>
                         ) : null}
                         {CODIndicatorsBySeller.currentAmount ? (
-                            <div className='width-33 grid-col-33'>
+                            <div className={`width-33 ${styles['grid-col-33']}`}>
                                 <CODIndicatorsCard title={"Current period"} type="amount" indicatorsArray={CODIndicatorsBySeller.currentAmount} classNames='current' />
                             </div>
                         ) : null}

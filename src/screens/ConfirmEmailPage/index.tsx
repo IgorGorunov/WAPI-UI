@@ -1,9 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import Layout from "@/components/Layout/Layout";
-import "./styles.scss";
-import Head from "next/head";
+import styles from "./styles.module.scss";
 import {useRouter} from "next/router";
-import {ApiResponseType} from "@/types/api";
 import {confirmEmail} from "@/services/signUp";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import Loader from "@/components/Loader";
@@ -86,23 +84,23 @@ const ConfirmEmailPage = () => {
         <Layout hasFooter>
             <SeoHead title='Confirm email' description='Our Confirm email page' />
 
-            <div className="email-confirm-page">
+            <div className={styles['email-confirm-page']}>
                 {isLoading && <Loader />}
                 {isLoaded ?
-                    <div className='email-confirm-page__success'>
-                        <p className='email-confirm-page__success-title'>Almost there! Your email confirmation is complete!</p>
-                        <p className='email-confirm-page__success-text-title'>Next steps:</p>
-                        <div className='email-confirm-page__success-text-wrapper'>
-                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>Step 1:</span> You'll soon receive an email with your login details.</p>
-                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>Step 2:</span> Please sign in using these credentials.</p>
-                            <p className='email-confirm-page__success-text'><span className='confirm-step text-bold'>Step 3:</span> Ready to explore? Let's go!</p>
+                    <div className={styles['email-confirm-page__success']}>
+                        <p className={styles['email-confirm-page__success-title']}>Almost there! Your email confirmation is complete!</p>
+                        <p className={styles['email-confirm-page__success-text-title']}>Next steps:</p>
+                        <div className={styles['email-confirm-page__success-text-wrapper']}>
+                            <p className={styles['email-confirm-page__success-text']}><span className={`${styles['confirm-step']} text-bold`}>Step 1:</span> You'll soon receive an email with your login details.</p>
+                            <p className={styles['email-confirm-page__success-text']}><span className={`${styles['confirm-step']} text-bold`}>Step 2:</span> Please sign in using these credentials.</p>
+                            <p className={styles['email-confirm-page__success-text']}><span className={`${styles['confirm-step']} text-bold`}>Step 3:</span> Ready to explore? Let's go!</p>
                         </div>
-                        <div className='email-confirm-page__success-btns'>Proceed to <Link
+                        <div className={styles['email-confirm-page__success-btns']}>Proceed to <Link
                             href={Routes.Login}>Login</Link></div>
                     </div>
                     : hasError ?
-                        <div className='email-confirm-page__success'>
-                            <div className='email-confirm-page__success-btns'>
+                        <div className={styles['email-confirm-page__success']}>
+                            <div className={styles['email-confirm-page__success-btns']}>
                                 Proceed to <Link href={Routes.Login}>Login</Link>
                             </div>
                         </div>

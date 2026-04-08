@@ -3,7 +3,7 @@ import React from "react";
 import Layout from "@/components/Layout/Layout";
 import useTenant from "@/context/tenantContext";
 import {TENANTS} from "@/lib/tenants";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import SignUpForm from "@/screens/SignUpPage/SignUpForm";
 
 // Dynamically import heavy form component to reduce blocking JavaScript
@@ -18,8 +18,8 @@ const SignUpPage = () => {
     return (
         <Layout hasFooter>
             {/*<SeoHead title='Sign up' description='Our sign up page' />*/}
-            <div className={`sign-up-page__container${tenant === TENANTS.WAPI ? ' has-bg' : ''}`}>
-                <div className="sign-up-page__text-wrapper">
+            <div className={`${styles['sign-up-page__container']} ${tenant === TENANTS.WAPI ? styles['has-bg'] : ''}`}>
+                <div className={styles['sign-up-page__text-wrapper']}>
                     <h1>SIGN UP</h1>
                     <h2>Account details</h2>
                 </div>

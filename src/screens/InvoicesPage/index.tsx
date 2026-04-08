@@ -5,7 +5,7 @@ import { getInvoices, getInvoicesDebts } from "@/services/invoices";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import InvoiceList from "./components/InvoiceList";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
 import { BalanceInfoType, InvoiceBalanceType, InvoiceType } from "@/types/invoices";
 import { exportFileXLS } from "@/utils/files";
@@ -215,7 +215,7 @@ const InvoicesPage = () => {
     return (
         <Layout hasHeader hasFooter>
             <SeoHead title='Invoices' description='Our Invoices page' />
-            <div className="invoices__container">
+            <div className={styles['invoices__container']}>
                 {isLoading && <Loader />}
                 <Header pageTitle='Invoices' toRight needTutorialBtn >
                     <Button classNames='export-invoices' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
@@ -237,19 +237,19 @@ const InvoicesPage = () => {
                     : null
                 }
                 {invoiceBalance ? (
-                    <div className="grid-row balance-info-block has-cards-block">
+                    <div className={`grid-row ${styles['balance-info-block']} has-cards-block`}>
                         {invoiceBalanceBySeller.debt ? (
-                            <div className='width-33 grid-col-33'>
+                            <div className={`width-33 ${styles['grid-col-33']}`}>
                                 <BalanceInfoCard title={"Total debt"} type="debt" balanceArray={invoiceBalanceBySeller.debt} />
                             </div>
                         ) : null}
                         {invoiceBalanceBySeller.overdue ? (
-                            <div className='width-33  grid-col-33'>
+                            <div className={`width-33 ${styles['grid-col-33']}`}>
                                 <BalanceInfoCard title={"Overdue"} type="overdue" balanceArray={invoiceBalanceBySeller.overdue} />
                             </div>
                         ) : null}
                         {invoiceBalanceBySeller.overdueLimit ? (
-                            <div className='width-33 grid-col-33'>
+                            <div className={`width-33 ${styles['grid-col-33']}`}>
                                 <BalanceInfoCard title={"Overdue limit"} type="limit" balanceArray={invoiceBalanceBySeller.overdueLimit} />
                             </div>
                         ) : null}

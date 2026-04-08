@@ -49,12 +49,12 @@ const RadioSwitch = forwardRef<HTMLDivElement, FieldPropsType>(({
                 {label ? <label className={styles['radio-switch-label'] || 'radio-switch-label'}>{label}</label> : null}
                 {options && options.length && <div className={styles['radio-switch'] || 'radio-switch'}>
                     {options && options.length && options.map((item, index) => (
-                        <a href="#" key={`${name}_${index}`} tabIndex={disabled ? -1 : 0} className={`${styles['radio-switch__option'] || 'radio-switch__option'} ${curValue===item.value ? styles['is-checked'] || 'is-checked' : ''}`}
+                        <button key={`${name}_${index}`} tabIndex={disabled ? -1 : 0} className={`${styles['radio-switch__option'] || 'radio-switch__option'} ${curValue===item.value ? styles['is-checked'] || 'is-checked' : ''}`}
                                 onClick={()=>handleChange(item.value)}
                                 onKeyDown={(e) => { if (e.key !== 'Tab') { handleChange(item.value); e.preventDefault();} }}
                         >
                             <span>{item.label}</span>{isCountry && getCountry(options, item.value as string) ? <span className={`fi fi-${getCountry(options, item.value as string).toLowerCase()} flag-icon`}></span> : null}
-                        </a>
+                        </button>
                     ))}
                 </div>}
                 {errorMessage && <p className="error">{errorMessage}</p>}
