@@ -1,4 +1,4 @@
-import React, {useRef, useMemo, useEffect, useState, useCallback, useLayoutEffect} from 'react';
+import React, { useRef, useMemo, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import {
     format,
     isWeekend,
@@ -138,13 +138,13 @@ const WarehouseCalendar = ({ warehouses }: { warehouses: WarehouseCalendarType[]
         <div className={styles.wrapper}>
             <div className={styles.navHeader}>
                 <div className={styles.monthNav}>
-                    <button onClick={() => shiftMonth('prev')} className={`${styles.navBtn} ${styles.navBtnLeft}`}><Icon name="keyboard-arrow-right"/></button>
+                    <button onClick={() => shiftMonth('prev')} className={`${styles.navBtn} ${styles.navBtnLeft}`}><Icon name="keyboard-arrow-right" /></button>
 
                     <span key={currentLabel} className={styles.currentMonth}>
                         {currentLabel}
                     </span>
 
-                    <button onClick={() => shiftMonth('next')} className={`${styles.navBtn}`}><Icon name="keyboard-arrow-right"/></button>
+                    <button onClick={() => shiftMonth('next')} className={`${styles.navBtn}`}><Icon name="keyboard-arrow-right" /></button>
                 </div>
                 <button
                     className={styles.todayBtn}
@@ -186,7 +186,7 @@ const DayColumn = React.memo(({ day, warehouses, today }: { day: Date, warehouse
     const isToday = isSameDay(day, today);
     return (
         <div className={`${styles.column} ${isToday ? styles['isToday'] : ''}`} id={isToday ? 'is-today' : undefined}>
-            <div className={`${styles.dateHeader} ${isToday ? styles.isTodayActive : ''}`}>
+            <div className={`${styles.dateHeader} ${isToday ? styles.isToday : ''}`}>
                 <span className={styles.dayLabel}>{format(day, 'EEE')}</span>
                 <span className={styles.dateLabel}>{format(day, 'dd.MM')}</span>
             </div>
@@ -195,7 +195,7 @@ const DayColumn = React.memo(({ day, warehouses, today }: { day: Date, warehouse
                 return (
                     <div
                         key={wh.id}
-                        className={`${styles.cell} ${isToday ? styles.isTodayDay : ''} ${isWeekend(day) ? styles.isWeekend : ''} ${isClosed ? styles.isClosed : ''}`}
+                        className={`${styles.cell} ${isToday ? styles.isToday : ''} ${isWeekend(day) ? styles.isWeekend : ''} ${isClosed ? styles.isClosed : ''}`}
                     >
                         {isClosed ? 'Closed' : ''}
                     </div>

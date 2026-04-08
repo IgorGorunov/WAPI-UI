@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
 import { ColumnType } from "antd/es/table";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import "@/styles/tables.scss";
 import { CodReportType } from "@/types/codReports";
 import PageSizeSelector from '@/components/LabelSelect';
@@ -369,7 +369,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                     maxWidth="800px"
                     contentPosition="end"
                     childrenBefore={
-                        <span className="lines-cell-style">
+                        <span className={styles['lines-cell-style']}>
                             <Icon name="download-file" />
                         </span>}>
                 </TableCell>

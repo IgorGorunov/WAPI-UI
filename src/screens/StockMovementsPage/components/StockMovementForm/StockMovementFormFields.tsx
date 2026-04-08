@@ -156,7 +156,7 @@ export const DetailsFields = (
             fieldType: isInbound || isLogisticService || !isEditMode ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
             type: "text",
             name: 'sender',
-            label: 'Sender',
+            label: `Sender (${isInbound || isLogisticService ? 'address' : 'warehouse'})`,
             placeholder: "",
             disabled: senderHide || isSenderDisabled,
             rules: {
@@ -207,7 +207,7 @@ export const DetailsFields = (
             fieldType: isOutbound || isLogisticService || !isEditMode ? FormFieldTypes.TEXT : FormFieldTypes.SELECT,
             type: "text",
             name: 'receiver',
-            label: 'Receiver',
+            label: `Receiver (${isOutbound || isLogisticService ? 'address' : 'warehouse'})`,
             placeholder: "",
             rules: {
                 required: "Required field",

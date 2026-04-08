@@ -5,7 +5,7 @@ import type { FormBuilderType } from "@/types/forms";
 import { Routes } from "@/types/routes";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button from "@/components/Button/Button";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import { signUpFormFields } from "./SingUpFormFields";
 import Link from "next/link";
 import "react-phone-number-input/style.css";
@@ -70,6 +70,7 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
             setIsLoading(true);
             setError(null);
             const res = await signUp(lead);
+            console.log("utm lead", lead.utm);
 
             if (res?.status === 200) {
                 //success modal
@@ -103,7 +104,7 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
     const checkbox = watch('personalData');
 
     return (
-        <div className={`card sign-up-form`}>
+        <div className={`card ${styles['sign-up-form']}`}>
             <form onSubmit={handleSubmit(handleFormSubmit)}>
                 {signUpFormFields.map((curField: FormBuilderType) => (
                     <div key={curField.name} className='grid-row'>
@@ -128,8 +129,8 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
 
                 ))}
 
-                {error && <p className="sign-up-error">{error}</p>}
-                <div className="sign-up-submit-block">
+                {error && <p className={styles['sign-up-error']}>{error}</p>}
+                <div className={styles['sign-up-submit-block']}>
 
                     <Button
                         type="submit"
@@ -142,8 +143,8 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
                 </div>
 
             </form>
-            <div className={`sign-up--login`}>
-                Already have an account? <Link href={Routes.Login} className={`sign-up--login-link`}>Login</Link>
+            <div className={styles['sign-up--login']}>
+                Already have an account? <Link href={Routes.Login} className={styles['sign-up--login-link']}>Login</Link>
             </div>
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </div>

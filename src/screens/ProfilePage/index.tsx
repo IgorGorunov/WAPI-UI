@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Layout from "@/components/Layout/Layout";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Loader from "@/components/Loader";
 import Header from "@/components/Header";
 import Tabs from "@/components/Tabs";
@@ -108,10 +108,10 @@ const ProfilePage = () => {
     return (
         <Layout hasFooter>
             <SeoHead title='Profile' description='Our profile page' />
-            <div className="page-component profile-page">
+            <div className={`page-component ${styles['profile-page']}`}>
                 {isLoading && <Loader />}
                 <Header pageTitle='Profile' toRight />
-                <div className='card profile-page__container'>
+                <div className={`card ${styles['profile-page__container']}`}>
                     <Tabs id='profile-tabs' tabTitles={tabTitles} withHorizontalDivider>
                         <div key='profile-info-tab' className='profile-page-tab'>
                             <ProfileInfo userInfo={profileInfo} />

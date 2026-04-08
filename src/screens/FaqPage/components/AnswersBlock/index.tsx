@@ -1,6 +1,6 @@
 import React, {memo,  useRef} from 'react';
 import {FaqPageContentItemType} from "@/types/sanity/fragmentTypes";
-import '../../styles.scss';
+import styles from '../../styles.module.scss';
 import AnswerItem from "@/screens/FaqPage/components/AnswerItem";
 
 
@@ -17,7 +17,7 @@ const AnswersBlock: React.FC<FaqAnswersBlockPropsType> = ({ content, level=0 }) 
     };
 
     return (
-        <div className={`faq-answers__wrapper`}>
+        <div className={styles['faq-answers__wrapper']}>
             {content.map((item) => (
                 <AnswerItem key={item._id} item={item} setRef={setRef} level={level}/>
             ))}

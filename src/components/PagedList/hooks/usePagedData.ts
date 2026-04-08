@@ -108,6 +108,9 @@ export function usePagedData<TData = object>(
     const [count, setCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
+    const [refetchCount, setRefetchCount] = useState(0);
+
+    const refetch = () => setRefetchCount(c => c + 1);
 
     useEffect(() => {
         if (!enabled || !token) {
@@ -120,7 +123,7 @@ export function usePagedData<TData = object>(
 
             try {
                 // Parse filters from state (excluding pagination and date fields)
-                const { page, limit, startDate, endDate, search, fullTextSearch, sortBy, sortOrder, filters } = state;
+                const { page, limit, search, fullTextSearch, sortBy, sortOrder, filters } = state;
 
                 // Build request payload
                 const requestData: RequestPayload = {
@@ -199,7 +202,8 @@ export function usePagedData<TData = object>(
         token,
         alias,
         ui,
-        enabled
+        enabled,
+        refetchCount,
     ]);
 
     return {
@@ -207,5 +211,7 @@ export function usePagedData<TData = object>(
         count,
         isLoading,
         error,
+        refetch,
     };
 }
+

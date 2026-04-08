@@ -60,12 +60,12 @@ const RadioButton = forwardRef<HTMLDivElement, FieldPropsType>(({
                             <span className={styles['radio-button__option-decor'] || 'radio-button__option-decor'}/> <span>{item.label}{isCountry && getCountry(options, item.value as string) ? <span className={`fi fi-${getCountry(options, item.value as string).toLowerCase()} flag-icon`}></span> : null}</span>
                         </div>
 
-                        : <a href="#" key={`${name}_${index}`} tabIndex={disabled || item.isDisabled ? -1 : 0} className={`${styles['radio-button__option'] || 'radio-button__option'} ${curValue===item.value ? styles['is-checked'] || 'is-checked' : ''} ${item.isDisabled ? 'id-disabled' : ''}`}
+                        : <button key={`${name}_${index}`} tabIndex={disabled || item.isDisabled ? -1 : 0} className={`${styles['radio-button__option'] || 'radio-button__option'} ${curValue===item.value ? styles['is-checked'] || 'is-checked' : ''} ${item.isDisabled ? 'id-disabled' : ''}`}
                                onClick={()=>handleChange(item.value)}
                                onKeyDown={(e) => { if (e.key !== 'Tab') { if (!item.isDisabled) {handleChange(item.value);} e.preventDefault();} }}
                             >
                             <span className={styles['radio-button__option-decor'] || 'radio-button__option-decor'}/> <span>{item.label}{isCountry && getCountry(options, item.value as string) ? <span className={`fi fi-${getCountry(options, item.value as string).toLowerCase()} flag-icon`}></span> : null}</span>
-                        </a>
+                        </button>
                 )) : null}
             </div>}
             {errorMessage && <p className="error">{errorMessage}</p>}

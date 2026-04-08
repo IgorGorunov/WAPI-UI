@@ -27,13 +27,17 @@ const HeaderNotifications: React.FC = () => {
     const checkNotifications = async () => {
         if (token) {
             const requestData = { token, alias };
-            const res = await checkNewNotifications(superUser && ui ? {
-                ...requestData,
-                ui
-            } : requestData);
+            try {
+                const res = await checkNewNotifications(superUser && ui ? {
+                    ...requestData,
+                    ui
+                } : requestData);
 
-            if (res?.data?.newNotifications > 0 || notifications === null) {
-                fetchNotificationsData();
+                if (res?.data?.newNotifications > 0 || notifications === null) {
+                    fetchNotificationsData();
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         }
     };

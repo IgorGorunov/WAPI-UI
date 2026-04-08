@@ -45,8 +45,14 @@
   border-bottom: 1px solid #f9fafb;
 }
 
-.warehousName { font-weight: bold; }
-.warehousInfo { font-size: 10px; margin-top: 6px; }
+.warehousName {
+  font-weight: bold;
+}
+
+.warehousInfo {
+  font-size: 10px;
+  margin-top: 6px;
+}
 
 .timeline {
   flex: 1;
@@ -55,10 +61,15 @@
   scrollbar-width: thin;
   position: relative; // Merged from 2nd definition
 
-  &:active { cursor: grabbing; }
+  &:active {
+    cursor: grabbing;
+  }
 
   // Custom scrollbar
-  &::-webkit-scrollbar { height: 6px; }
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
   &::-webkit-scrollbar-thumb {
     background: #e2e8f0;
     border-radius: 10px;
@@ -68,9 +79,11 @@
   &::after {
     content: '';
     position: absolute;
-    top: 0; right: 0; bottom: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     width: 40px;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.8));
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8));
     pointer-events: none;
     z-index: 5;
   }
@@ -89,11 +102,47 @@
 
   &.isFirstOfMonth {
     border-left: 2px solid #e2e8f0;
+
     .dateHeader {
       font-weight: 700;
       color: #1e293b;
     }
   }
+
+  // &.isToday {
+  //   background: #eff6ff;
+  //   position: relative;
+
+  //   &::after {
+  //     content: '';
+  //     position: absolute;
+  //     bottom: 0;
+  //     width: 100%;
+  //     height: 3px;
+  //     background: #3b82f6;
+  //   }
+
+  //   // Combined the "TODAY" badge logic here instead of a separate global class
+  //   &::before {
+  //     content: 'TODAY';
+  //     position: absolute;
+  //     top: 2px;
+  //     left: 50%;
+  //     transform: translateX(-50%);
+  //     font-size: 9px;
+  //     background: #3b82f6;
+  //     color: white;
+  //     padding: 2px 5px;
+  //     border-radius: 4px;
+  //     letter-spacing: 0.5px;
+  //   }
+
+  //   .dateLabel {
+  //     color: #3b82f6;
+  //     font-weight: bold;
+  //   }
+
+  // }
 }
 
 .dateHeader {
@@ -137,7 +186,42 @@
       color: #3b82f6;
       font-weight: bold;
     }
+
   }
+
+  // &.isToday {
+  //   background: #eff6ff;
+  //   position: relative;
+
+  //   &::after {
+  //     content: '';
+  //     position: absolute;
+  //     bottom: 0;
+  //     width: 100%;
+  //     height: 3px;
+  //     background: #3b82f6;
+  //   }
+
+  //   // Combined the "TODAY" badge logic here instead of a separate global class
+  //   &::before {
+  //     content: 'TODAY';
+  //     position: absolute;
+  //     top: 2px;
+  //     left: 50%;
+  //     transform: translateX(-50%);
+  //     font-size: 9px;
+  //     background: #3b82f6;
+  //     color: white;
+  //     padding: 2px 5px;
+  //     border-radius: 4px;
+  //     letter-spacing: 0.5px;
+  //   }
+
+  //   .dateLabel {
+  //     color: #3b82f6;
+  //     font-weight: bold;
+  //   }
+  // }
 }
 
 .dayLabel {
@@ -160,13 +244,22 @@
   font-size: 12px;
   font-weight: bold;
 
-  &.isWeekend { background-color: #f9fafb; }
+  &.isToday {
+    background-color: #eff6ff;
+
+  }
+
+  &.isWeekend {
+    background-color: #f9fafb;
+  }
 
   &.isClosed {
     background: repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 8px, #e5e7eb 8px, #e5e7eb 16px);
     border-top: 1px solid #e5e7eb;
     border-bottom: 1px solid #e5e7eb;
   }
+
+
 }
 
 // Navigation & Wrapper
@@ -225,9 +318,13 @@
     border-color: var(--color-blue);
   }
 
-  &:active { transform: scale(0.9); }
+  &:active {
+    transform: scale(0.9);
+  }
 
-  &.navBtnLeft svg { transform: rotate(180deg); }
+  &.navBtnLeft svg {
+    transform: rotate(180deg);
+  }
 }
 
 .todayBtn {
@@ -243,15 +340,27 @@
   position: absolute;
   right: 6px;
 
-  &:hover { background: #dbeafe; }
+  &:hover {
+    background: #dbeafe;
+  }
 
   .btnLabelDesktopOnly {
     transition: font-size 0.3s ease-in-out;
-    @media (max-width: $mobile) { font-size: 0; }
+
+    @media (max-width: $mobile) {
+      font-size: 0;
+    }
   }
 }
 
 @keyframes slideFadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

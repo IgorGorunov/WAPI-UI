@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "@/components/Layout/Layout";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Header from "@/components/Header";
 import SanityBlockRenderer from "@/components/SanityBlockRenderer";
 import {DocumentationPageContentType} from "@/types/sanity/pagesTypes";
@@ -16,9 +16,9 @@ const DocumentationPage:React.FC<DocumentationPagePropsType> = (props) => {
 
     return (
         <Layout hasHeader hasFooter>
-            <div className="page-container documentation-page">
+            <div className={`page-container ${styles['documentation-page']}`}>
                 <Header pageTitle='Documentation' toRight />
-                <div className="documentation-page__container">
+                <div className={styles['documentation-page__container']}>
                     <h2>{heading}</h2>
                     {content && content.length ?
                         content.map(item => <div key={item._id} className='sanity-component-wrapper'>

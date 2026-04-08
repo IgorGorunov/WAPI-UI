@@ -599,6 +599,12 @@ input[type="date"]::before {
   padding-top: 0 !important;
 }
 
+//styles for messages for success, warning or errors
+.ant-message-custom-content {
+  color: var(--color-gray-blue) !important;
+  font-weight: bold !important;
+}
+
 //animations
 @keyframes fadeIn {
   0% {

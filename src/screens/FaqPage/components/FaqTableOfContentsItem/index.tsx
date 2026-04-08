@@ -1,7 +1,7 @@
 import {FaqPageContentItemType} from "@/types/sanity/fragmentTypes";
 import React, {memo} from "react";
 import FaqTableOfContents from "@/screens/FaqPage/components/FaqTableOfContents";
-import '../../styles.scss';
+import styles from '../../styles.module.scss';
 
 type FaqTableOfContentsItemPropsType = {
     faqBlock: FaqPageContentItemType;
@@ -13,7 +13,7 @@ const FaqTableOfContentsItem: React.FC<FaqTableOfContentsItemPropsType> = ({faqB
 
     return (
         <>
-            <a className={`faq-table-of-contents__list-item ${faqBlock._type} ${faqBlock._type == 'faqQuestionGroup' ? 'content-item-level-'+level : ''}`} onClick={()=>onClick(faqBlock.anchorId)}>
+            <a className={`${styles['faq-table-of-contents__list-item']} ${styles[faqBlock._type] || ''} ${faqBlock._type == 'faqQuestionGroup' ? (styles['content-item-level-'+level] || '') : ''}`} onClick={()=>onClick(faqBlock.anchorId)}>
                 {'question' in faqBlock ? faqBlock.question : 'questionGroupText' in faqBlock ? faqBlock.questionGroupText : '--'}
 
             </a>

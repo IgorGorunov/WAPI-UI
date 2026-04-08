@@ -28,7 +28,7 @@ const TableCell: React.FC<TableCellProps> = ({ value, minWidth, maxWidth, conten
     };
 
     const textSpanStyle: React.CSSProperties = {
-        color: textColor, // применение цвета текста
+        color: textColor,
     };
 
     return (

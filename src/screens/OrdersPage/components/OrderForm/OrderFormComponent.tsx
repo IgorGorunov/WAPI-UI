@@ -27,7 +27,7 @@ import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {Table} from "antd";
+import {message, Table} from "antd";
 import DropZone from "@/components/Dropzone";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Services from "./Services";
@@ -110,6 +110,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const [selectedCourierService, setSelectedCourierService] = useState<string | null>(null);
 
     const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
+
+    //message for success, warnings or some errors
+    // const [messageApi, contextHolder] = message.useMessage();
 
     const fetchPickupPoints = useCallback(async (courierService: string) => {
         try {
@@ -308,7 +311,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     //const selectedWarehouse = watch('warehouse');
 
     useEffect(() => {
-        // console.log('products: ', products);
+        console.log('products: ', products);
     }, [products]);
 
     //tickets
@@ -828,7 +831,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         clearPickUpPoint();
     }
 
-    const handleWarehouseChange = (selectedOption: string) => {
+    const handleWarehouseChange = (selectedOption: string, notClearProducts=false) => {
+        console.log('handleWarehouseChange: ', selectedOption);
         //setSelectedWarehouse(selectedOption);
         //let user know that pickUp point info is cleared
         informUserAboutPickUpPointClearing('PickUp point is cleared! Please, choose courier service and fill PickUp point info (if needed)')
@@ -836,6 +840,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         setSelectedCourierService('');
         setValue('preferredCourierService', '');
         setCurPickupPoints([]);
+
+        //clean selected products
+        const currentProducts = getValues('products');
+        if (currentProducts && currentProducts.length && !notClearProducts) {
+            message.warning(`As warehouse is ${selectedOption ? 'changed' : 'cleared'}, selected products are removed.${selectedOption ? ' Please, select products again.' : ''}`, 200);
+            setValue('products', []);
+        }
     }
 
     //notifications
@@ -975,6 +986,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const handleProductSelection = () => {
         setShowProductSelectionModal(true);
     }
+
     const handleAddSelection = (selectedProducts: SelectedProductType[]) => {
         setShowProductSelectionModal(false);
 
@@ -1024,6 +1036,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
 
         });
         updateTotalProducts();
+
+        //set selected warehouse, if needed
+        if (selectedProducts.length && !preferredWarehouse) {
+            setValue('preferredWarehouse', selectedProducts[0].warehouse);
+
+            handleWarehouseChange(selectedProducts[0].warehouse, true);
+        }
     }
 
     const tabTitleArray = TabTitles(!!orderData?.uuid, !!(orderData?.claims && orderData.claims.length), !!(orderData?.customerReturns && orderData.customerReturns.length), !!(orderData?.tickets && orderData.tickets.length), forbiddenTabs);
@@ -1733,8 +1752,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                 <SendComment orderData={orderData} countryOptions={countries} closeSendCommentModal={() => setShowSendCommentModal(false)} onSuccess={() => setCommentHasBeenSent(true)} />
             </Modal>}
             {showProductSelectionModal && <Modal title={`Product selection`} onClose={() => setShowProductSelectionModal(false)} noHeaderDecor >
-                {/*<ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection}/>*/}
-                <ProductSelection alreadyAdded={products as SelectedProductType[]} handleAddSelection={handleAddSelection} selectedDocWarehouse={preferredWarehouse} needOnlyOneWarehouse={false} seller={selectedSeller} />
+                <ProductSelection
+                    alreadyAdded={products as SelectedProductType[]}
+                    handleAddSelection={handleAddSelection}
+                    selectedDocWarehouse={preferredWarehouse}
+                    needOnlyOneWarehouse={true}
+                    seller={selectedSeller}
+                />
 
             </Modal>}
 
