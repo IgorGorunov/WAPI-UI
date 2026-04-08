@@ -52,7 +52,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(
                         onChange={handleChange}
                         disabled={disabled}
                     />
-                    {errorMessage && <p className={styles.error || 'error'}>{errorMessage}</p>}
+                    {errorMessage && <p className={`${styles.error || 'error'} error`}>{errorMessage}</p>}
                 </div>
             </TutorialHintTooltip>
         );

@@ -39,7 +39,15 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
         const keys = Object.keys(query).filter(key => key !== 'oneTimeToken');
         keys.map(key => {
             utmQuery[key.replace('amp;', '')] = query[key];
-        })
+        });
+
+        if (utmQuery['ref'] == 'direct') {
+            const landingPage = utmQuery['landing_page'] || '';
+            delete utmQuery['ref'];
+            delete utmQuery['landing_page'];
+            utmQuery['utm_source'] = `wapi.com/${landingPage.split('/')[1] || ''}`;
+
+        }
 
         setUtmQuery(utmQuery);
     }, [router.query]);
