@@ -191,13 +191,15 @@ const DayColumn = React.memo(({ day, warehouses, today }: { day: Date, warehouse
                 <span className={styles.dateLabel}>{format(day, 'dd.MM')}</span>
             </div>
             {warehouses.map(wh => {
-                const isClosed = wh.days.some(d => isSameDay(parseISO(d), day));
+                const isClosed = wh.days.some(d => isSameDay(parseISO(d.date), day));
+                const closedDay = wh.days.filter(d => isSameDay(parseISO(d.date), day));
+                const closedText = closedDay.length && closedDay[0].dayKind ? ` (${closedDay[0].dayKind}` : ''
                 return (
                     <div
                         key={wh.id}
                         className={`${styles.cell} ${isToday ? styles.isToday : ''} ${isWeekend(day) ? styles.isWeekend : ''} ${isClosed ? styles.isClosed : ''}`}
                     >
-                        {isClosed ? 'Closed' : ''}
+                        {isClosed ? 'Closed'+closedText : ''}
                     </div>
                 );
             })}
