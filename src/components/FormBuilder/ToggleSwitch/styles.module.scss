@@ -15,6 +15,10 @@
     display: none;
   }
 
+  &.mb-small {
+    margin-bottom: 8px;
+  }
+
   &-label {
     position: relative;
     display: block;
