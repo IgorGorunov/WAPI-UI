@@ -78,7 +78,7 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
             setIsLoading(true);
             setError(null);
             const res = await signUp(lead);
-            console.log("utm lead", lead.utm);
+            // console.log("utm lead", lead.utm);
 
             if (res?.status === 200) {
                 //success modal

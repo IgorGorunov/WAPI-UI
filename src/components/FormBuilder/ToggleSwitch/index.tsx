@@ -23,10 +23,10 @@ const ToggleSwitch =  forwardRef<HTMLInputElement, FieldPropsType>(({
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`} position='left'>
             <div
-                className={`${styles['toggle-switch'] || 'toggle-switch'} toggle-switch ${classNames ? classNames : ""} ${hideTextOnMobile ? `${styles['hide-text-on-mobile'] || 'hide-text-on-mobile'} hide-text-on-mobile` : ''}`}>
+                className={`${styles['toggle-switch'] || 'toggle-switch'} ${classNames ? classNames.split(' ').map(item=> styles[item]).join(' ') : ""} ${hideTextOnMobile ? `${styles['hide-text-on-mobile'] || 'hide-text-on-mobile'} hide-text-on-mobile` : ''}`}>
                 <input
                     {...otherProps}
-                    className={`${styles['toggle-switch-checkbox'] || 'toggle-switch-checkbox'} toggle-switch-checkbox`}
+                    className={`${styles['toggle-switch-checkbox']}`}
                     type='checkbox'
                     name={name}
                     id={`${name}-toggle`}
