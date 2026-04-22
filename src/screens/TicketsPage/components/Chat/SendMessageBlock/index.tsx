@@ -3,13 +3,11 @@ import "./styles.scss";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import { sendTicketMessage } from "@/services/tickets";
-import { ApiResponseType } from "@/types/api";
 import Loader from "@/components/Loader";
 import Icon from "@/components/Icon";
 import ModalPreview from "@/components/ModalPreview";
 import { arrayBufferToBase64, readFileAsArrayBuffer } from "@/utils/files";
 import { CHAT_FILE_TYPES } from "@/types/tickets";
-//import EmojiPicker from './EmojiPicker';
 import ModalStatus from "@/components/ModalStatus";
 import { STATUS_MODAL_TYPES } from "@/types/utility";
 import { sendUserBrowserInfo } from "@/services/userInfo";
@@ -169,8 +167,10 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({ objectUuid, onSendMe
     // }
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-        e.preventDefault();
-        if (!canEdit) return;
+        if (!canEdit) {
+            e.preventDefault();
+            return;
+        }
 
         const items = e.clipboardData?.items;
         if (!items) return;
@@ -184,7 +184,10 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({ objectUuid, onSendMe
             }
         }
 
-        processFiles(files);
+        if (files.length > 0) {
+            e.preventDefault();
+            processFiles(files);
+        }
     };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
