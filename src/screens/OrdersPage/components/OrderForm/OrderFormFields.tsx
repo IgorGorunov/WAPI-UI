@@ -535,6 +535,7 @@ export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed, onCh
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             onChange: onChangeFn,
+            hint: OrderHints['pickupName'] || '',
         },
         {
             fieldType: FormFieldTypes.TEXT,
@@ -549,6 +550,7 @@ export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed, onCh
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             onChange: onChangeFn,
+            hint: OrderHints['pickupAddress'] || '',
         },
 
     ];

@@ -37,4 +37,9 @@ export const OrderHints = {
     email: 'Customer\'s email address',
     zipCode: 'Customer\'s zipcode',
     address: 'Street, building, apartment, etc. Recommended length - maximum 60 characters (depending on courier service)',
+
+    //pickup points
+    pickupID: 'Unique identification of the pick-up point',
+    pickupName: 'Name or location name of the pick-up point',
+    pickupAddress: 'Pick up point address',
 }

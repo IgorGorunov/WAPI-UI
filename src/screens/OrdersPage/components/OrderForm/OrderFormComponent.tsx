@@ -310,10 +310,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const preferredWarehouse = watch('preferredWarehouse');
     //const selectedWarehouse = watch('warehouse');
 
-    useEffect(() => {
-        console.log('products: ', products);
-    }, [products]);
-
     //tickets
     const [showTicketForm, setShowTicketForm] = useState(false);
 
@@ -924,6 +920,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     }, [orderData, isAddressAllowed, setAddressWasChanged, getChangedAddressFields, getValues]);
 
     const [atLeastOneFieldIsFilled, setAtLeastOneFieldIsFilled] = useState(false);
+
     const hasAtLeastOnePickUpPointFieldIsFilled = useCallback(() => {
         const data = getValues() as SingleOrderFormType;
 
@@ -934,7 +931,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
             }
         });
         setAtLeastOneFieldIsFilled(isFilled);
-
     }, [setAtLeastOneFieldIsFilled, getValues]);
 
     const clearPickUpPointFields = useCallback(()=>{
@@ -965,18 +961,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         }
     }, [receiverZip, receiverCountry]);
 
-    console.log('receiver country', receiverCountry, orderData?.addressJSONStructure ? JSON.parse(orderData?.addressJSONStructure) : 'empty');
-
     const linkToTrack = orderData && orderData.trackingLink && orderData.trackingLink.at(-1) != '=' ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
-
-    useEffect(() => {
-        console.log('warehouse: ', preferredWarehouse)
-    }, [preferredWarehouse]);
 
     const generalFields = useMemo(() => GeneralFields(!orderData?.uuid, orderTitles), [orderData, orderTitles])
     const detailsFields = useMemo(() => DetailsFields({ warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange: handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
     const receiverFields = useMemo(() => ReceiverFields({ countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields, selectedCountry: receiverCountry, selectedWarehouse: preferredWarehouse }), [curPickupPoints, pickupOptions, countries, preferredWarehouse, selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields, receiverCountry, preferredWarehouse]);
-    const pickUpPointFields = useMemo(() => PickUpPointFields({ countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: () => { hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled() }, atLeastOneFieldIsFilled, isSelfCollect }), [countries, preferredWarehouse, selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions, isSelfCollect])
+    //TODO: remove atLeastOneFieldIsFilled later. We do not need any more, logic has changed
+    const pickUpPointFields = useMemo(() => PickUpPointFields({ countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: () => { hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled() }, atLeastOneFieldIsFilled: isSelfCollect, isSelfCollect }), [countries, preferredWarehouse, selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions, isSelfCollect])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
 
@@ -1487,7 +1478,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                 setIsSelfCollect(typeof val === 'object' && 'target' in val && 'checked' in val.target ? val.target.checked : false);
                             }}
                         />
-                        {isSelfCollect ? <div className={`card ${styles['order-info--pick-up-point']}`}>
+                        {isSelfCollect ? <CardWithHelpIcon classNames={`card ${styles['order-info--pick-up-point']}`}>
                             <h3 className={styles['order-info__block-title']}>
                                 <Icon name='general' />
                                 Pick up point
@@ -1499,12 +1490,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                     control={control}
                                     render={(
                                         {
-                                            field: { ...props },
+                                            field: { ref, ...fieldProps },
                                             fieldState: { error }
                                         }) => (
                                         <FieldBuilder
                                             // disabled={!!isDisabled}
-                                            {...props}
+                                            {...fieldProps}
+                                            ref={ref}
                                             name='receiverPickUpID'
                                             label='ID'
                                             fieldType={curPickupPoints && curPickupPoints.length && createdPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
@@ -1518,18 +1510,21 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                                     clearPickUpPointFields();
                                                 }
                                                 setSelectedPickupPoint(selectedOption as string);
-                                                props.onChange(selectedOption);
+                                                fieldProps.onChange(selectedOption);
                                                 hasChangedAddressFields();
                                                 hasAtLeastOnePickUpPointFieldIsFilled();
                                             }}
+                                            isRequired={isSelfCollect}
                                             width={WidthType.w25}
+                                            hint={OrderHints['pickupID'] || ''}
                                         />
                                     )}
                                     rules={{ required: atLeastOneFieldIsFilled ? "Required field" : false }}
+
                                 />
                                 <FormFieldsBlock control={control} fieldsArray={pickUpPointFields} errors={errors} />
                             </div>
-                        </div> : null}
+                        </CardWithHelpIcon> : null}
                     </div> : null}
                     {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className='product-tab'>
                         <CardWithHelpIcon classNames={`card min-height-600 ${styles['order-info--products']}`}>
