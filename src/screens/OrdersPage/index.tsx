@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import { useRouter } from "next/router";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import OrderList from "./components/OrderList";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
-import { formatDateTimeToStringWithDotWithoutSeconds, getLastFewDays } from "@/utils/date";
-import { OrderType, OrderFilterDataType } from "@/types/orders";
+import { getLastFewDays } from "@/utils/date";
+import { OrderType, OrderFilterDataType, OrdersFilters } from "@/types/orders";
 import Modal from "@/components/Modal";
 import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
@@ -24,12 +24,15 @@ import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 import { usePagedListState, usePagedData, useFilterMetadata, processFiltersForApi, FilterValue } from "@/components/PagedList";
-import { OrdersFilters } from "./types";
+import {getOrdersExcel} from "@/services/orders";
+import {base64ToBlob} from "@/utils/files";
+import {toast} from "react-toastify";
+// import { OrdersFilters } from "./types";
 
 const OrdersPage = () => {
     const Router = useRouter();
     const { tenantData: { alias } } = useTenant();
-    const { token,  ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
+    const { token, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
 
     // universal state management via url
     const { state, updatePeriod, updateFilters, updateSearch, updatePage, updatePageSize, updateSort, clearAllFilters } = usePagedListState<OrdersFilters>(
@@ -49,9 +52,7 @@ const OrdersPage = () => {
         { token, alias, ui, enabled: !!token }
     );
 
-    console.log('121212', orders.length, totalOrders)
-
-    // fetch filter metadata
+    //fetch filter metadata
     const { metadata: filterMetadata, isLoading: isLoadingFilters } = useFilterMetadata<OrderFilterDataType>(
         '/GetPagedFilters',
         { startDate: state.startDate, endDate: state.endDate },
@@ -60,13 +61,13 @@ const OrdersPage = () => {
 
     const isLoading = isLoadingOrders || isLoadingFilters;
 
-    // track forbidden tabs
+    //track forbidden tabs
     const [forbiddenTabs, setForbiddenTabs] = useState<string[]>([]);
     useEffect(() => {
         setForbiddenTabs(getForbiddenTabs(AccessObjectTypes["Orders/Fullfillment"]));
     }, []);
 
-    // handle direct order uid navigation (from emails, etc.)
+    //handle direct order uid navigation (from emails, etc.)
     useEffect(() => {
         const { uuid } = Router.query;
         if (uuid) {
@@ -90,7 +91,20 @@ const OrdersPage = () => {
         setSteps(orders?.length ? tourGuideStepsOrders : tourGuideStepsOrdersNoDocs);
     }, [orders]);
 
-    // import modal
+    //preserve scroll position across refetches
+    const savedScrollY = useRef<number | null>(null);
+    useEffect(() => {
+        if (savedScrollY.current !== null) {
+            const y = savedScrollY.current;
+            savedScrollY.current = null;
+            // Use rAF to wait for the DOM to repaint after new data renders
+            requestAnimationFrame(() => {
+                window.scrollTo({ top: y, behavior: 'instant' as ScrollBehavior });
+            });
+        }
+    }, [orders]);
+
+    //import modal
     const [showImportModal, setShowImportModal] = useState(false);
     const onImportModalClose = () => setShowImportModal(false);
 
@@ -100,12 +114,12 @@ const OrdersPage = () => {
     const [isOrderNew, setIsOrderNew] = useState(true);
     const onOrderModalClose = () => setShowOrderModal(false);
 
-    // status modal
+    //status modal
     const [showStatusModal, setShowStatusModal] = useState(false);
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) });
     const closeErrorModal = useCallback(() => setShowStatusModal(false), []);
 
-    // edit order handler
+    //edit order handler
     const handleEditOrder = (uuid: string) => {
         console.log('click ', uuid, orderUuid, showOrderModal);
         setIsOrderNew(false);
@@ -133,7 +147,7 @@ const OrdersPage = () => {
         console.log('showOrderModal ', showOrderModal, 'orderUuid ', orderUuid);
     }, [showOrderModal, orderUuid]);
 
-    // Add order handler
+    //add order handler
     const handleAddOrder = () => {
         setIsOrderNew(true);
         setOrderUuid(null);
@@ -148,7 +162,7 @@ const OrdersPage = () => {
         setShowOrderModal(true);
     };
 
-    // Import handler
+    //import handler
     const handleImportXLS = () => {
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], AccessActions.BulkCreate)) {
             try {
@@ -159,7 +173,7 @@ const OrdersPage = () => {
         setShowImportModal(true);
     };
 
-    // Export handler
+    //export handler
     const handleExportXLS = async () => {
         try {
             sendUserBrowserInfo({
@@ -173,7 +187,6 @@ const OrdersPage = () => {
         }
 
         const exportPromise = async () => {
-            const { getOrdersExcel } = await import('@/services/orders');
             const res = await getOrdersExcel({
                 token,
                 alias,
@@ -188,23 +201,21 @@ const OrdersPage = () => {
             });
 
             if (res && res.data) {
-                const { base64ToBlob } = await import('@/utils/files');
                 const attachedFile = res.data;
                 const blob = base64ToBlob(attachedFile.data, attachedFile.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
 
-                // Ensure extension exists and append unique timestamp to bypass OS "Save As/Overwrite" dialogs
+                //ensure extension exists and append unique timestamp to bypass OS "Save As/Overwrite" dialogs
                 let downloadName = attachedFile.name || "Orders.xlsx";
 
-                const dateStr = formatDateTimeToStringWithDotWithoutSeconds(new Date().toISOString()).replace(/[.:\s]/g, '-');
                 const parts = downloadName.split('.');
                 const ext = parts.length > 1 ? parts.pop() || 'xlsx' : 'xlsx';
                 const baseName = parts.length > 0 ? parts.join('.') : downloadName;
 
                 const finalExt = ext.toLowerCase().startsWith('xls') ? ext : 'xlsx';
-                a.download = `${baseName}_${dateStr}.${finalExt}`;
+                a.download = `${baseName}.${finalExt}`;
 
                 document.body.appendChild(a);
                 a.click();
@@ -216,7 +227,6 @@ const OrdersPage = () => {
         };
 
         try {
-            const { toast } = await import('@/components/Toast');
             toast.promise(
                 exportPromise(),
                 {
@@ -238,13 +248,14 @@ const OrdersPage = () => {
 
     // Refresh orders after create/update
     const handleRefresh = () => {
+        savedScrollY.current = window.scrollY;
         refetchOrders();
     };
 
     return (
         <Layout hasHeader hasFooter>
             <SeoHead title='Orders (fulfillments)' description='Our orders page' />
-            <div className="page-component orders-page__container">
+            <div className={`page-component ${styles['orders-page__container']}`}>
                 {isLoading && (<Loader />)}
 
                 <Header pageTitle='Fulfillment' toRight needTutorialBtn>

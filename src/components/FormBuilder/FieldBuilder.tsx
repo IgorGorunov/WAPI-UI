@@ -2,8 +2,8 @@ import React, {forwardRef} from "react";
 
 import {FormBuilderType, FormFieldTypes} from "@/types/forms";
 
-import TextField from "./TextInput/TextField";
-import SelectField from "./Select/SelectField";
+import TextInput from "./TextInput/TextField";
+import Select from "./Select/SelectField";
 import SingleDateInput from "./SingleDateInput";
 import Checkbox from "./Checkbox";
 import RadioSwitch from "./RadioSwitch";
@@ -14,11 +14,11 @@ import RadioButton from "./RadioButton";
 import PhoneNumber from "./PhoneNumber";
 
 const formComponentsMap = {
-  [FormFieldTypes.TEXT]: TextField,
-  [FormFieldTypes.NUMBER]: TextField,
+  [FormFieldTypes.TEXT]: TextInput,
+  [FormFieldTypes.NUMBER]: TextInput,
   [FormFieldTypes.DATE]: SingleDateInput,
   [FormFieldTypes.DATE_TIME]: SingleDateInput,
-  [FormFieldTypes.SELECT]: SelectField,
+  [FormFieldTypes.SELECT]: Select,
   [FormFieldTypes.CHECKBOX]: Checkbox,
   [FormFieldTypes.RADIO]: RadioSwitch,
   [FormFieldTypes.OTHER]: Other,

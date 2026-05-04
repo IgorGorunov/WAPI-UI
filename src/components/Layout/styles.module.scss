@@ -1,15 +1,9 @@
-@import '@/constants/devices.scss';
-
 .main {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-
-  //@media(max-width: 1200px) {
-  //  align-items: flex-start;
-  //}
 
   &-content {
     position: relative;
@@ -21,11 +15,11 @@
     align-items: center;
     padding: 24px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       padding: 16px;
     }
 
-    @media (min-width: $laptop) {
+    @include laptopAndUp {
       width: 1440px;
 
       &.is-wide {

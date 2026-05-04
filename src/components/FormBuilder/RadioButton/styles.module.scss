@@ -1,7 +1,6 @@
 .radio-button {
   &__wrapper {
     display: flex;
-    //align-items: center;
   }
 
   &-label {
@@ -62,7 +61,6 @@
     }
 
     &.is-checked {
-      //color: white;
       border-color: var(--color-blue);
 
 

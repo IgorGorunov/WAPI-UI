@@ -1,8 +1,6 @@
-@import "@/constants/devices.scss";
-
 .product-selection {
 
-  @media (min-width: $desktop) {
+  @include desktopAndUp {
     width: 1320px;
   }
 
@@ -11,7 +9,7 @@
     margin: 0px -12px 0;
     padding: 0 12px;
 
-    @media (min-width: $laptop) {
+    @include laptopAndUp {
       max-height: calc(100vh - 80px);
       margin: -80px -24px 0;
       padding: 0 24px;
@@ -28,9 +26,8 @@
     margin-top: 16px;
     margin-bottom: 16px;
 
-    @media (min-width: $laptop) {
+    @include laptopAndUp {
       padding: 0 40px 0 135px;
-      //margin-top: -67px;
       margin-bottom: 16px;
     }
   }
@@ -48,13 +45,7 @@
     }
   }
 
-  //&__selected {
-  //  height: 250px;
-  //  overflow: auto;
-  //}
-
   &__table-title {
-    //color: var(--color-gray-blue);
     font-size: 12px;
     margin-bottom: 8px;
     margin-left: 3px;

@@ -1,11 +1,8 @@
 .document-notification-message {
   position: relative;
-  //display: flex;
-  //width: 100%;
   margin-bottom: 6px;
   padding: 3px 0 3px 36px;
   border-radius: 5px;
-  //display: inline-block;
 
   &__message {
     display: flex;
@@ -64,14 +61,12 @@
   &.notification {
     &-Info {
       color: var(--color-blue);
-      //border: 1px solid var(--color-blue);
     }
 
     &-Error,
     &-Important,
     &-Urgent {
       color: var(--color-error);
-      //border: 1px solid var(--color-error);
 
       svg {
         width: 13px;
@@ -91,6 +86,7 @@
 
     svg {
       width: auto !important;
+
       path {
         fill: var(--color-gray-blue) !important;
       }

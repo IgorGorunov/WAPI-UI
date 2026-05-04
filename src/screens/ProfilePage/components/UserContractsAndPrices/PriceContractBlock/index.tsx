@@ -1,6 +1,6 @@
 import React from "react";
 
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {UserContractType, UserPriceType} from "@/types/profile";
 import SinglePriceFile from "@/screens/ProfilePage/components/UserContractsAndPrices/SinglePriceFile";
 
@@ -17,13 +17,13 @@ type ContractPriceBlockPropsType = {
 const PriceContractBlock: React.FC<ContractPriceBlockPropsType> = ({list, type}) => {
 
     return (
-        <div className={`contracts-and-prices__block ${type.toLowerCase()}`}>
-            <ul className="contracts-and-prices__block-list">
+        <div className={`${styles['contracts-and-prices__block']} ${type.toLowerCase()}`}>
+            <ul className={styles["contracts-and-prices__block-list"]}>
                 {list && list.length ? list.map((file, index) => (
                     <li
                         key={file.name + "_" + index}
-                        className={`contracts-and-prices__block-list-item ${
-                            index % 2 === 1 ? "highlight" : " "
+                        className={`${styles['contracts-and-prices__block-list-item']} ${
+                            index % 2 === 1 ? styles["highlight"] : " "
                         }`}
                     >
                        <SinglePriceFile file={file} type={type}/>

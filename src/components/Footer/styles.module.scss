@@ -1,12 +1,9 @@
-@import '@/constants/devices.scss';
-
 .footer {
   width: 100%;
   min-height: 170px;
   margin-top: auto;
 
   background-color: var(--color-dark-blue);
-  //color: var(--color-gray-blue);
   color: var(--color-footer-font);
 
   &-wrapper {
@@ -17,7 +14,7 @@
     justify-content: space-between;
     gap: 20px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       display: block;
       padding: 20px 16px 30px;
       text-align: center;
@@ -30,7 +27,8 @@
 
   &-right {
     min-width: 14.5%;
-    @media (max-width: $mobile) {
+
+    @include mobile {
       width: 100%;
     }
   }
@@ -42,14 +40,13 @@
     font-weight: 700;
     line-height: 25px;
 
-    @media (min-width: $mobile) {
+    @include mobileAndUp {
       line-height: 40px;
     }
 
     .is-footer-link {
       display: block;
       color: var(--color-footer-font) !important;
-      //text-decoration: none;
       transform: scale(1);
       transform-origin: left;
       transition: 0.3s ease;

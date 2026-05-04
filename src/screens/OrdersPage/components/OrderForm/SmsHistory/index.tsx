@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import {OrderSmsHistoryType} from "@/types/orders";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
 
@@ -15,25 +15,23 @@ const SmsHistory: React.FC<PropsType> = ({ smsHistory }) => {
     }, []);
 
     return (
-        <div className="order-sms-history">
-            <div className="order-sms-history__header">
-                <div className='date-column'>Period</div>
-                {/*<div className='column status-column'>Status</div>*/}
-                <div className='column recipient-column'>Recipient</div>
-                <div className='column text-column'>Sms text</div>
+        <div className={styles["order-sms-history"]}>
+            <div className={styles["order-sms-history__header"]}>
+                <div className={styles['date-column']}>Period</div>
+                {/*<div className={`${styles['column']} ${styles['status-column']}`}>Status</div>*/}
+                <div className={`${styles['column']} ${styles['recipient-column']}`}>Recipient</div>
+                <div className={`${styles['column']} ${styles['text-column']}`}>Sms text</div>
 
             </div>
-            <ul className="order-sms-history__list">
+            <ul className={styles["order-sms-history__list"]}>
                 {smsHistory &&
                     smsHistory.map((sms: OrderSmsHistoryType, index: number) => (
                         <li
                             key={sms.smsPeriod + "_" + index}
-                            className={`order-sms-history__list-item ${
-                                index % 2 === 1 ? "highlight" : " "
-                            }`}
+                            className={`${styles['order-sms-history__list-item']} ${index % 2 === 1 ? styles['highlight'] : ''}`}
                         >
-                            <div className='date-column'>{formatDateTimeToStringWithDot(sms.smsPeriod)}</div>
-                            {/*<div className='column status-column'>*/}
+                            <div className={styles['date-column']}>{formatDateTimeToStringWithDot(sms.smsPeriod)}</div>
+                            {/*<div className={`${styles['column']} ${styles['status-column']}`}>*/}
                             {/*    <span style={{*/}
                             {/*        borderBottom: `2px solid ${getUnderlineColor(sms.smsStatus)}`,*/}
                             {/*        display: 'inline-block',*/}
@@ -41,8 +39,8 @@ const SmsHistory: React.FC<PropsType> = ({ smsHistory }) => {
                             {/*        {sms.smsStatus}*/}
                             {/*    </span>*/}
                             {/*</div>*/}
-                            <div className='column recipient-column'>{sms.smsRecipient}</div>
-                            <div className='column text-column'>{sms.smsText}</div>
+                            <div className={`${styles['column']} ${styles['recipient-column']}`}>{sms.smsRecipient}</div>
+                            <div className={`${styles['column']} ${styles['text-column']}`}>{sms.smsText}</div>
                         </li>
                     ))}
             </ul>

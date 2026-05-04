@@ -6,7 +6,7 @@ import useTenant from '@/context/tenantContext';
 import styles from '../styles.module.scss';
 import { Controller, useForm } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
-import TextField from '@/components/FormBuilder/TextInput/TextField';
+import TextInput from '@/components/FormBuilder/TextInput/TextField';
 import Button from '@/components/Button/Button';
 import { passwordRecoveryReset } from '@/services/passwordRecovery';
 import { Routes } from '@/types/routes';
@@ -120,7 +120,7 @@ const CreatePasswordPage = () => {
                                         },
                                     }}
                                     render={({ field: { ...props }, fieldState: { error: fieldError } }) => (
-                                        <TextField
+                                        <TextInput
                                             {...props}
                                             type="password"
                                             name="newPassword"
@@ -145,7 +145,7 @@ const CreatePasswordPage = () => {
                                             value === newPassword || 'Passwords do not match.',
                                     }}
                                     render={({ field: { ...props }, fieldState: { error: fieldError } }) => (
-                                        <TextField
+                                        <TextInput
                                             {...props}
                                             type="password"
                                             name="confirmPassword"

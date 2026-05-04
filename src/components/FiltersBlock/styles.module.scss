@@ -24,11 +24,9 @@
     :global(.icon-package-return) {
       transform: scale(.85);
     }
-
   }
 
   &__options {
-
     &-list {
       display: flex;
       flex-direction: column;

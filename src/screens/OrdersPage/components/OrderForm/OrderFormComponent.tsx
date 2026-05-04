@@ -9,7 +9,7 @@ import {
     SingleOrderType
 } from "@/types/orders";
 import {AttachedFilesType, STATUS_MODAL_TYPES, WarehouseType} from "@/types/utility";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import {AccessActions, AccessObjectTypes} from "@/types/auth";
@@ -969,9 +969,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
 
     const linkToTrack = orderData && orderData.trackingLink && orderData.trackingLink.at(-1) != '=' ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
+    useEffect(() => {
+        console.log('warehouse: ', preferredWarehouse)
+    }, [preferredWarehouse]);
+
     const generalFields = useMemo(() => GeneralFields(!orderData?.uuid, orderTitles), [orderData, orderTitles])
     const detailsFields = useMemo(() => DetailsFields({ warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange: handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
-    const receiverFields = useMemo(() => ReceiverFields({ countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields, selectedCountry: receiverCountry }), [curPickupPoints, pickupOptions, countries, preferredWarehouse, selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields, receiverCountry]);
+    const receiverFields = useMemo(() => ReceiverFields({ countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields, selectedCountry: receiverCountry, selectedWarehouse: preferredWarehouse }), [curPickupPoints, pickupOptions, countries, preferredWarehouse, selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields, receiverCountry, preferredWarehouse]);
     const pickUpPointFields = useMemo(() => PickUpPointFields({ countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: () => { hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled() }, atLeastOneFieldIsFilled, isSelfCollect }), [countries, preferredWarehouse, selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions, isSelfCollect])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);
 
@@ -1201,7 +1205,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
             data.receiverPickUpCountry = '';
         }
 
-        if (receiverCountry && receiverCountry === 'MX') {
+        // if (receiverCountry && receiverCountry === 'MX') {
+        if (receiverCountry) {
             data.addressJSONStructure = JSON.stringify(Object.fromEntries(
                 Object.entries(data.addressFull).filter(
                     ([_, value]) => value !== null && value !== undefined && value !== ""
@@ -1222,6 +1227,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
             if (data.seller) {
                 requestData.seller = data.seller;
             }
+
+            console.log('requestData: ', requestData);
 
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('CreateUpdateOrder'), body: superUser && ui ? { ...requestData, ui } : requestData })
@@ -1376,7 +1383,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
 
     const [showWarehousePhotos, setShowWarehousePhotos] = useState(false);
 
-    return <div className='order-info'>
+    return <div className={styles['order-info']}>
         {(isLoading || !orderParameters) && <Loader />}
         <ToastContainer />
         {orderParameters && (orderUuid && orderData || !orderUuid) ? <>
@@ -1385,12 +1392,12 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                 <Tabs id='order-tabs' tabTitles={tabTitles} classNames='inside-modal'
                     notifications={orderNotifications}
                     extraInfo={(orderData?.logisticComment || orderData?.warehouseAdditionalInfo) && isTabAllowed('Logistic comment', forbiddenTabs) ?
-                        <div className='order-info--comments-wrapper'>
-                            {orderData?.logisticComment ? <div className='order-info--logistic-comment-wrapper'>
-                                <p className='order-info--logistic-comment-text'>{orderData?.logisticComment}</p>
+                        <div className={styles['order-info--comments-wrapper']}>
+                            {orderData?.logisticComment ? <div className={styles['order-info--logistic-comment-wrapper']}>
+                                <p className={styles['order-info--logistic-comment-text']}>{orderData?.logisticComment}</p>
                             </div> : null}
-                            {orderData?.warehouseAdditionalInfo ? <div className='order-info--address-comment-wrapper'>
-                                <p className='order-info--address-comment-text'>{orderData?.warehouseAdditionalInfo}</p>
+                            {orderData?.warehouseAdditionalInfo ? <div className={styles['order-info--address-comment-wrapper']}>
+                                <p className={styles['order-info--address-comment-text']}>{orderData?.warehouseAdditionalInfo}</p>
                             </div> : null}
                         </div> : null}>
                     {isTabAllowed('General', forbiddenTabs) ? <div key='general-tab' className='general-tab'>
@@ -1431,8 +1438,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                 </div>
                             </div>
                         ) : null}
-                        <CardWithHelpIcon classNames='card order-info--general'>
-                            <h3 className='order-info__block-title'>
+                        <CardWithHelpIcon classNames={`card ${styles['order-info--general']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='general' />
                                 General
                             </h3>
@@ -1442,15 +1449,15 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                             </div>
                             {orderData?.warehouseAssemblyPhotos && orderData?.warehouseAssemblyPhotos.length > 0 ? (
                                 <>
-                                    <div className={`order-info--warehouse-photos`} onClick={() => setShowWarehousePhotos(true)}>
+                                    <div className={styles['order-info--warehouse-photos']} onClick={() => setShowWarehousePhotos(true)}>
                                         <Icon name={'webcam'} />
                                         <span>Photos from warehouse</span>
                                     </div>
                                 </>
                             ) : null}
                         </CardWithHelpIcon>
-                        <CardWithHelpIcon classNames='card order-info--details'>
-                            <h3 className='order-info__block-title'>
+                        <CardWithHelpIcon classNames={`card ${styles['order-info--details']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='additional' />
                                 Details
                             </h3>
@@ -1461,8 +1468,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                         </CardWithHelpIcon>
                     </div> : null}
                     {isTabAllowed('Delivery info', forbiddenTabs) ? <div key='delivery-tab' className='delivery-tab'>
-                        <CardWithHelpIcon classNames='card order-info--receiver'>
-                            <h3 className='order-info__block-title'>
+                        <CardWithHelpIcon classNames={`card ${styles['order-info--receiver']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='receiver' />
                                 Receiver
                             </h3>
@@ -1480,8 +1487,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                 setIsSelfCollect(typeof val === 'object' && 'target' in val && 'checked' in val.target ? val.target.checked : false);
                             }}
                         />
-                        {isSelfCollect ? <div className='card order-info--pick-up-point'>
-                            <h3 className='order-info__block-title'>
+                        {isSelfCollect ? <div className={`card ${styles['order-info--pick-up-point']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='general' />
                                 Pick up point
                             </h3>
@@ -1525,13 +1532,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                         </div> : null}
                     </div> : null}
                     {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className='product-tab'>
-                        <CardWithHelpIcon classNames="card min-height-600 order-info--products">
-                            <h3 className='order-info__block-title '>
+                        <CardWithHelpIcon classNames={`card min-height-600 ${styles['order-info--products']}`}>
+                            <h3 className={`${styles['order-info__block-title']}`}>
                                 <Icon name='goods' />
                                 Products
                             </h3>
                             <div className='grid-row mb-md'>
-                                <div className='order-info--cod-currency width-33 grid-row'>
+                                <div className={`${styles['order-info--cod-currency']} width-33 grid-row`}>
                                     <Controller
                                         name="codCurrency"
                                         control={control}
@@ -1580,7 +1587,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                         rules={{ required: 'Field is required' }}
                                     />
                                 </div>
-                                <div className='order-info--order-btns width-67'>
+                                <div className={`${styles['order-info--order-btns']} width-67`}>
                                     <div className='grid-row'>
                                         <div
                                             className='order-info--table-btns form-table--btns small-paddings width-100'>
@@ -1625,7 +1632,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                     </div>
                                 </div>
                             </div>
-                            <div className='order-info--table table-form-fields form-table'>
+                            <div className={`${styles['order-info--table']} table-form-fields form-table`}>
                                 <div className={`products-wrapper${errors?.products ? ' empty-table-error' : ''}`}>
                                     <Table
                                         columns={getProductColumns(control)}
@@ -1640,8 +1647,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                         </CardWithHelpIcon>
                     </div> : null}
                     {orderData?.uuid && isTabAllowed('Services', forbiddenTabs) && <div key='services-tab' className='services-tab'>
-                        <div className="card min-height-600 order-info--history">
-                            <h3 className='order-info__block-title'>
+                        <div className={`card min-height-600 ${styles['order-info--history']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='bundle' />
                                 Services
                             </h3>
@@ -1649,9 +1656,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                         </div>
                     </div>}
                     {orderData?.uuid && isTabAllowed('Status history', forbiddenTabs) && <div key='status-history-tab' className='status-history-tab'>
-                        <div className="min-height-600 order-info--history">
+                        <div className={`min-height-600 ${styles['order-info--history']}`}>
                             <div className='card'>
-                                <h3 className='order-info__block-title'>
+                                <h3 className={styles['order-info__block-title']}>
                                     <Icon name='history' />
                                     Status history
                                 </h3>
@@ -1660,8 +1667,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                         </div>
                     </div>}
                     {orderData?.uuid && isTabAllowed('SMS history', forbiddenTabs) && <div key='sms-history-tab' className='sms-history-tab'>
-                        <div className="card min-height-600 order-info--sms-history">
-                            <h3 className='order-info__block-title'>
+                        <div className={`card min-height-600 ${styles['order-info--sms-history']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='message' />
                                 SMS history
                             </h3>
@@ -1669,8 +1676,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                         </div>
                     </div>}
                     {orderData?.uuid && orderData?.claims.length && isTabAllowed('Claims', forbiddenTabs) ? <div key='claims-tab' className='claims-tab'>
-                        <div className="card min-height-600 order-info--claims">
-                            <h3 className='order-info__block-title'>
+                        <div className={`card min-height-600 ${styles['order-info--claims']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='complaint' />
                                 Claims
                             </h3>
@@ -1679,8 +1686,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                     </div> : null}
                     {/*customer returns*/}
                     {orderData?.uuid && orderData?.customerReturns.length && isTabAllowed('Customer returns', forbiddenTabs) ? <div key='customer-returns-tab' className='customer-returns-tab'>
-                        <div className="card min-height-600 order-info--customer-returns">
-                            <h3 className='order-info__block-title'>
+                        <div className={`card min-height-600 ${styles['order-info--customer-returns']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='package-return' />
                                 Customer returns
                             </h3>
@@ -1689,8 +1696,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                     </div> : null}
                     {/*-----*/}
                     {orderData?.uuid && orderData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ? <div key='tickets-tab' className='tickets-tab'>
-                        <div className="card min-height-600 order-info--tickets">
-                            <h3 className='order-info__block-title'>
+                        <div className={`card min-height-600 ${styles['order-info--tickets']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='ticket' />
                                 Tickets
                             </h3>
@@ -1698,8 +1705,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                         </div>
                     </div> : null}
                     {orderData?.uuid && isTabAllowed('Notes', forbiddenTabs) ? <div key='notes-tab' className='notes-tab'>
-                        <div className="card min-height-600 order-info--files">
-                            <h3 className='order-info__block-title'>
+                        <div className={`card min-height-600 ${styles['order-info--files']}`}>
+                            <h3 className={styles['order-info__block-title']}>
                                 <Icon name='edit' />
                                 Notes
                             </h3>
@@ -1709,9 +1716,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                         </div>
                     </div> : null}
                     {isTabAllowed('Files', forbiddenTabs) ? <div key='files-tab' className='files-tab'>
-                        <CardWithHelpIcon classNames="card min-height-600 order-info--files">
+                        <CardWithHelpIcon classNames={`card min-height-600 ${styles['order-info--files']}`}>
                             <TutorialHintTooltip hint={OrderHints['files'] || ''} position='left' classNames='mb-md'>
-                                <h3 className='order-info__block-title  title-small' >
+                                <h3 className={`${styles['order-info__block-title']} title-small`} >
                                     <Icon name='files' />
                                     Files
                                 </h3>
@@ -1728,7 +1735,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                     </div> : null}
                 </Tabs>
 
-                <div className='form-submit-btn'>
+                <div className={'form-submit-btn'}>
                     {orderData && orderData.uuid && isTabAllowed('Tickets', forbiddenTabs) ?
                         <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight
                             onClick={handleCreateTicket}>Create ticket</Button> : null}

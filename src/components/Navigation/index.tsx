@@ -62,7 +62,6 @@ const Navigation: React.FC<NavigationType> = ({ isMenuOpen, handleClose }) => {
     useEffect(() => {
         if (isMenuOpen && !isNavigationWatched()) {
             setTimeout(() => setRunNavigationTour(true), 1000);
-
         }
     }, [isMenuOpen]);
 

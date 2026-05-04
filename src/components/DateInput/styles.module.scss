@@ -1,12 +1,13 @@
-@import '@/constants/devices.scss';
 .date-input {
 
   &-field {
     position: relative;
-    @media (max-width: $upToTablet) {
+
+    @include upToTablet {
       width: 100%;
     }
-    @media (min-width: $tablet) {
+
+    @include tabletAndUp {
       flex: 1 0 150px;
     }
 
@@ -29,12 +30,11 @@
     cursor: pointer;
     justify-content: center;
     transition: .3s ease;
-    //@media (max-width: $mobile) {
-    //  width: 100%;
-    //}
-    @media (max-width: $upToTablet) {
+
+    @include upToTablet {
       width: 100%;
     }
+
     &:hover {
       border-color: var(--color-blue) !important;
     }

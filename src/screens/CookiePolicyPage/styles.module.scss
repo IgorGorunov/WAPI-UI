@@ -1,5 +1,3 @@
-@import '@/constants/devices.scss';
-
 .cookie-policy-page {
   &__container {
     position: relative;
@@ -10,7 +8,7 @@
   &__text-wrapper {
     padding: 24px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       padding: 0;
     }
 
@@ -23,19 +21,10 @@
       font-weight: bold;
     }
 
-    //.is-link {
-    //  color: var(--color-blue);
-    //  text-decoration: underline;
-    //
-    //  &:hover {
-    //    text-decoration: none;
-    //  }
-    //}
-
     .simple-list {
       margin-inline-start: 36px;
 
-      @media (max-width: $mobile) {
+      @include mobile {
         margin-inline-start: 20px;
       }
     }

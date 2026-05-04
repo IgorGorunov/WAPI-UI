@@ -1,19 +1,16 @@
-@import '@/constants/devices.scss';
-
 .modal-wrapper {
   position: fixed;
   top: 12px;
   max-width: 100%;
 
-  @media (max-width: $upToLaptop) {
+  @include upToLaptop {
     width: 100%;
   }
 
   :global(.document-modal) & {
-    //  width: calc(100% - 32px);
     width: calc(1440px - 50px);
 
-    @media (max-width: $upToDesktop) {
+    @include upToDesktop {
       max-width: 100%;
       width: calc(100% - 32px);
     }
@@ -24,12 +21,11 @@
     top: 50%;
     transform: translateY(-50%);
 
-    @media (max-width: $mobile) {
+    @include mobile {
       max-width: 100%;
       width: calc(100% - 32px);
     }
   }
-
 }
 
 .modal {
@@ -43,11 +39,11 @@
   border: 2px solid var(--border-color);
   box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.7);
 
-  @media (max-width: $upToLaptop) {
+  @include upToLaptop {
     padding: 16px;
   }
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     max-height: none;
   }
 
@@ -97,7 +93,7 @@
   margin: 0 -30px;
   border-bottom: 2px solid var(--border-color);
 
-  @media (max-width: $upToLaptop) {
+  @include upToLaptop {
     padding: 0 16px 16px;
     margin: 0 -16px;
   }
@@ -120,7 +116,7 @@
     gap: 8px;
     z-index: 2;
 
-    @media (max-width: $upToLaptop) {
+    @include upToLaptop {
       right: 16px;
     }
   }

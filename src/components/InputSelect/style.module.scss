@@ -1,14 +1,11 @@
-@import '@/constants/devices.scss';
-
 .input-select {
-
   &-container {
     min-width: 150px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       width: 100%;
     }
-   @media (min-width: $tablet) {
+    @include tabletAndUp {
       flex: 1 0 150px;
     }
   }
@@ -39,14 +36,17 @@
     background-color: transparent !important;
     color: var(--color-gray-blue) !important;
   }
+
   &__option--is-selected:hover {
     background-color: transparent !important;
   }
+
   &__option--is-focused {
     background-color: var(--color-blue-15) !important;
     color: var(--color-blue) !important;
     cursor: pointer !important;
   }
+
   &__option--is-focused :hover {
 
   }
@@ -75,6 +75,7 @@
     height: 50px !important;
 
     &:hover {
+
     }
 
     &:focus {
@@ -89,10 +90,12 @@
 
 .filter-select {
   text-align: center;
+
   .input-select {
     &__dropdown-indicator svg {
       margin-right: 3px;
     }
+
     &__single-value {
       padding-left: 5px;
       padding-right: 0;

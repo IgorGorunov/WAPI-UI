@@ -1,4 +1,4 @@
-@import '@/constants/devices.scss';
+@import '@/styles/devices.scss';
 
 .table {
   width: 100%;
@@ -50,13 +50,11 @@
     .ant-pagination-prev,
     .ant-pagination-next {
       height: 40px !important;
+
       .ant-pagination-item-link {
         border-radius: 5px;
         background: var(--color-blue);
         width: 106px !important;
-        @media (max-width: $mobile) {
-          width: 40px !important;
-        }
         height: 40px !important;
         padding: 0;
         justify-content: center;
@@ -66,6 +64,11 @@
         background-color: var(--color-blue) !important;
         box-shadow: 0 2px 5px 0 var(--color-blue) !important;
         transition: all .3s ease-in;
+
+        @include mobile {
+          width: 40px !important;
+        }
+
         &:hover {
           background-color: var(--color-blue-15) !important;
           box-shadow: 0 2px 5px 0 var(--color-blue-15) !important;
@@ -94,59 +97,59 @@
         }
       }
     }
-  }
 
-  .custom-pagination .ant-pagination-prev .ant-pagination-item-link::before {
-    content: "← Previous";
-    @media (max-width: $mobile) {
-      content: "←";
-    }
-    display: inline-block;
-    color: #FFF;
-    font-feature-settings: 'clig' off, 'liga' off;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 900;
-    line-height: 20px;
-    padding-right: 10px;
-  }
 
-  .custom-pagination .ant-pagination-next .ant-pagination-item-link::before {
-    content: "Next →";
-    @media (max-width: $mobile) {
-      content: "→";
+    .ant-pagination-prev .ant-pagination-item-link::before {
+      content: "← Previous";
+      display: inline-block;
+      color: #FFF;
+      font-feature-settings: 'clig' off, 'liga' off;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 900;
+      line-height: 20px;
+      padding-right: 10px;
+
+      @include mobile {
+        content: "←";
+      }
     }
-    display: inline-block;
-    color: #FFF;
-    font-feature-settings: 'clig' off, 'liga' off;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 900;
-    line-height: 20px;
-    padding-left: 10px;
+
+    .ant-pagination-next .ant-pagination-item-link::before {
+      content: "Next →";
+      display: inline-block;
+      color: #FFF;
+      font-feature-settings: 'clig' off, 'liga' off;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 900;
+      line-height: 20px;
+      padding-left: 10px;
+
+      @include mobile {
+        content: "→";
+      }
+    }
   }
 
   .table__container {
     margin-top: 5px;
     overflow: hidden;
 
-    .ant-table {
-
-    }
-
     .ant-table-thead > tr > th {
       background-color: white !important;
       color: var(--color-gray-blue) !important;
       font-size: 12px !important;
-      @media (max-width: $mobile) {
-        font-size: 11px !important;
-      }
       font-style: normal !important;
       font-weight: 700 !important;
       border-bottom: 2px solid var(--color-light-gray) !important;
       text-align: start !important;
       padding: 10px 6px 10px 6px !important;
       height: 60px !important;
+
+      @include mobile {
+        font-size: 11px !important;
+      }
 
       .table-header-title {
         line-height: 1.1;
@@ -157,27 +160,20 @@
       display: none;
     }
 
-    .ant-table-thead > tr > th:hover {
-
-    }
-
     .ant-table-cell {
       background-color: white !important;
       color: var(--color-gray-blue) !important;
       font-size: 12px !important;
-      @media (max-width: $mobile) {
-        font-size: 10px !important;
-      }
       font-style: normal !important;
       font-weight: 700 !important;
       text-align: start !important;
       line-height: 1.3;
       padding: 10px 6px 10px 6px !important;
       height: 60px !important;
-    }
 
-    .ant-table-row:hover {
-
+      @include mobile {
+        font-size: 10px !important;
+      }
     }
 
     .ant-pagination-simple {
@@ -195,74 +191,6 @@
   }
 }
 
-//.doc-filters-block {
-//  position: relative;
-//  //max-height: 0;
-//  //
-//  //transition: max-height 0.3s ease-in;
-//  overflow: hidden;
-//  z-index: 1002;
-//
-//  &__overlay.is-visible-overlay {
-//    position: fixed;
-//    top: 0;
-//    right: 0;
-//    bottom: 0;
-//    left: 0;
-//    background-color: rgba(0,0,0,0.2);
-//    z-index: 1001;
-//    animation: fade 0.3s ease;
-//  }
-//
-//  &__wrapper {
-//    border-radius: 15px;
-//    overflow: hidden;
-//    padding: 10px 0;
-//    background-color: white;
-//  }
-//
-//  //&.is-visible {
-//  //  max-height: 1000px;
-//  //}
-//
-//  .filters-close {
-//    position: absolute;
-//    top: 5px;
-//    right: 5px;
-//    display: none;
-//    cursor: pointer;
-//  }
-//
-//  &.is-fixed {
-//    position: fixed;
-//    top: 0;
-//    left: 0;
-//    width: 350px;
-//    height: 100%;
-//    background: #EDEFF2;
-//    transform: translateX(-100%);
-//    transition: transform 0.5s ease;
-//    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-//    padding: 40px 10px;
-//    z-index: 1000;
-//    //overflow-y: scroll;
-//    @media (max-width: $mobile) {
-//      width: 100%;
-//    }
-//
-//    &.is-visible {
-//      transform: translateX(0);
-//
-//      .filters-close {
-//        display: block;
-//      }
-//
-//    }
-//
-//
-//  }
-//}
-
 .filter-and-pagination-container {
   display: flex;
   gap: 16px;
@@ -274,11 +202,6 @@
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-    }
-
-    &-item {
-      //display: flex;
-
     }
   }
 
@@ -301,10 +224,6 @@
     gap: 30px;
     list-style: none;
 
-    //@media (max-width: $mobile) {
-    //  display: none;
-    //}
-
     &-item {
       display: flex;
       align-items: center;
@@ -325,24 +244,6 @@
   }
 }
 
-
-
-.fade-in-down {
-  transform: translateY(0);
-  animation: fadeInDown 1s forwards;
-}
-
-@keyframes fadeInDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .products-cell-style {
   display: flex;
   height: 30px;
@@ -360,7 +261,6 @@
 
 
 .ant-table-body {
-
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -391,6 +291,22 @@
 
   table {
     table-layout: auto !important;
+  }
+}
+
+.fade-in-down {
+  transform: translateY(0);
+  animation: fadeInDown 1s forwards;
+}
+
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

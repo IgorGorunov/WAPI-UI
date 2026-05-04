@@ -82,6 +82,8 @@ export type FieldPropsType<T extends FieldValues = FieldValues> = {
   onPaste?: (event: ClipboardEvent<HTMLTextAreaElement> | ClipboardEvent<HTMLInputElement> | ChangeEvent | ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> | string | OptionType) => void
   onDrop?: (event: DragEvent<HTMLDivElement> | DragEvent<HTMLTextAreaElement>) => void;
   onDragOver?: (event: DragEvent<HTMLDivElement> | DragEvent<HTMLTextAreaElement>) => void;
+  onKeyDownFn?: () => void;
+
   inputValue?: string
   registerInput?: UseFormRegisterReturn
   // rules?: RegisterOptions

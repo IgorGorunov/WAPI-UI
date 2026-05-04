@@ -23,6 +23,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
       noCounters = true,
       onlyAllowedSymbols = false,
       onlyWholeNumbers = false,
+    onKeyDownFn,
       ...otherProps
 }, ref) => {
 
@@ -52,10 +53,14 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
 
   const curVal = (type === 'number') ? value as number : type=== 'date' ? (getDate(value as string)) : value as string;
 
-  const onLeyDownFn = (e) => {
-      e.key === 'Enter' && e.preventDefault();
-      onlyWholeNumbers && (e.key === '.' || e.key === ',') && e.preventDefault();
-  }
+    const onKeyDown = (e) => {
+        if (e.key === 'Enter') e.preventDefault();
+        onlyWholeNumbers && (e.key === '.' || e.key === ',') && e.preventDefault();
+        if (onKeyDownFn && e.key === "Enter") onKeyDownFn();
+    }
+  //     e.key === 'Enter' && e.preventDefault();
+  //     onlyWholeNumbers && (e.key === '.' || e.key === ',') && e.preventDefault();
+  // }
 
   return (
     <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
@@ -69,7 +74,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
                 onChange={handleChange}
                 value={curVal || ""}
                 disabled={disabled}
-                onKeyDown={onLeyDownFn}
+                onKeyDown={onKeyDown}
                 {...otherProps}
                 autoComplete="new-user-email"
                 aria-autocomplete='none'

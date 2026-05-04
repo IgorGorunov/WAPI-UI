@@ -16,7 +16,7 @@ import { sendUserBrowserInfo } from "@/services/userInfo";
 import { getImportTemplate } from "@/sanity/sanity-utils";
 import { toast, ToastContainer } from "@/components/Toast";
 import useTenant from "@/context/tenantContext";
-import SelectField from "@/components/FormBuilder/Select/SelectField";
+import Select from "@/components/FormBuilder/Select/SelectField";
 
 const getFileData = (importType: ImportFilesType) => {
     switch (importType) {
@@ -195,7 +195,7 @@ const ImportFilesBlock: React.FC<ImportFilesBlockType> = ({ file, importFilesTyp
             </p>
             {needSeller() && (
                 <div className={`${styles['order-list__seller-import-block'] || 'order-list__seller-import-block'} order-list__seller-import-block`}>
-                    <SelectField
+                    <Select
                         key='seller-filter'
                         name='selectedSeller'
                         label='Seller: '

@@ -1,9 +1,7 @@
-@import "@/constants/devices.scss";
-
 .order-sms-history {
   margin: 24px -28px 0 -28px;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     margin-left: -16px;
     margin-right: -16px;
   }
@@ -23,7 +21,7 @@
     max-height: calc(100vh - 437px);
     overflow: hidden scroll;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       max-height: calc(100vh - 390px);
     }
 
@@ -39,7 +37,7 @@
   .column {
     padding: 10px 12px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       padding: 10px 6px;
     }
   }
@@ -49,15 +47,16 @@
     padding: 10px 12px 10px 0;
     margin-left: 20px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       padding: 10px 6px;
       flex: 0 0 70px;
     }
   }
+
   .status-column {
     flex: 0 90px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       flex: 0 1 90px;
     }
   }
@@ -65,11 +64,11 @@
   .recipient-column {
     flex: 0 0 140px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       flex: 0 0 120px;
     }
 
-    @media (max-width: $mobile) {
+    @include mobile {
       display: none;
     }
   }
@@ -77,7 +76,7 @@
   .text-column {
     flex: 1 0 300px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       flex: 1 1 200px;
     }
   }

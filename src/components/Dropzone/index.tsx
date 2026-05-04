@@ -220,7 +220,7 @@ const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = 
     }, [files, onFilesChange]);
 
     return (
-        <div className={`${styles['dropzone-wrapper'] || 'dropzone-wrapper'} dropzone-wrapper${listType ? ` ${styles['is-list'] || 'is-list'} is-list` : ''}`}>
+        <div className={`${styles['dropzone-wrapper']} dropzone-wrapper ${listType ? ` ${styles['is-list'] || 'is-list'} is-list` : ''}`}>
             <ToastContainer />
             <div
                 onClick={openFileDialog}

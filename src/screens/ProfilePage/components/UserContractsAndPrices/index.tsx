@@ -1,6 +1,6 @@
 import React from 'react';
 import {UserContractType, UserPriceType} from "@/types/profile";
-import './styles.scss';
+import styles from './styles.module.scss';
 import PriceContractBlock, {
     ContractPriceBlockType
 } from "@/screens/ProfilePage/components/UserContractsAndPrices/PriceContractBlock";
@@ -16,10 +16,10 @@ const UserContractsAndPrices: React.FC<UserPricesPropsType> = ({prices, contract
     }
 
     return (
-        <div className='contracts-and-prices'>
-            <p className='title-h4'>Contracts</p>
+        <div className={styles['contracts-and-prices']}>
+            <p className={`title-h4 ${styles['title-h4']}`}>Contracts</p>
             <PriceContractBlock list={contracts} type={ContractPriceBlockType.CONTRACT}/>
-            <p className='title-h4 mt-m'>Prices</p>
+            <p className={`title-h4 ${styles['title-h4']} ${styles['mt-m']}`}>Prices</p>
             <PriceContractBlock list={prices} type={ContractPriceBlockType.PRICE}/>
         </div>
     )

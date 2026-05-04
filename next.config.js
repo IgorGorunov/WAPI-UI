@@ -59,6 +59,11 @@ const nextConfig = {
     ],
   },
 
+  sassOptions: {
+    //injects the file into EVERY .module.scss automatically
+    prependData: `@use "@/styles/devices.scss" as *;`,
+  },
+
   async rewrites() {
     return [
       {
@@ -69,6 +74,10 @@ const nextConfig = {
   },
 
   async headers() {
+    if (process.env.NODE_ENV !== 'production') {
+      return [];
+    }
+
     return [
       {
         source: '/:path*',

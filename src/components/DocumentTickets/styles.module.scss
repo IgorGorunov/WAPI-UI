@@ -1,9 +1,7 @@
-@import "@/constants/devices.scss";
-
 .doc-tickets {
   margin: 24px -28px 0 -28px;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     margin-left: -16px;
     margin-right: -16px;
   }

@@ -6,7 +6,7 @@ import { DateRangeType } from '@/types/dashboard';
 /** Primitive values that can be written to the URL query string */
 type UrlQueryValue = string | number | boolean | undefined;
 
-/** Broader pre-serialisation value (arrays are joined before hitting the URL) */
+/** Broader pre-serialisation value (arrays are stored as repeated query params, not joined strings) */
 type UrlValue = UrlQueryValue | string[];
 
 /**
@@ -22,7 +22,7 @@ export type PagedListUrlState = {
     fullTextSearch?: boolean;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
-    /** Raw filter values parsed from URL string keys (comma-separated strings) */
+    /** Filter values parsed from URL — multi-value params come back as string[] from Next.js router */
     filters: Record<string, UrlValue>;
 }
 
@@ -64,7 +64,8 @@ export function usePagedListState<TFilters extends Record<string, UrlValue> = Re
 
         Object.keys(query).forEach(key => {
             if (!reservedKeys.includes(key) && query[key]) {
-                (filters as Record<string, UrlValue>)[key] = query[key] as string;
+                // router.query returns string | string[] — pass through as-is
+                (filters as Record<string, UrlValue>)[key] = query[key] as string | string[];
             }
         });
 
@@ -87,13 +88,19 @@ export function usePagedListState<TFilters extends Record<string, UrlValue> = Re
     }, [router.query, defaultPageSize, defaultDateRange, defaultSortBy, defaultSortOrder, disableDateRange]);
 
     // Update URL with new state (shallow routing)
-    const updateState = useCallback((updates: Record<string, UrlQueryValue>) => {
+    const updateState = useCallback((updates: Record<string, UrlQueryValue | string[]>) => {
         const newQuery = { ...router.query };
 
         // Apply updates
         Object.entries(updates).forEach(([key, value]) => {
             if (value === undefined || value === '' || value === null) {
                 delete newQuery[key];
+            } else if (Array.isArray(value)) {
+                if (value.length > 0) {
+                    newQuery[key] = value; // Next.js router encodes as ?key=a&key=b
+                } else {
+                    delete newQuery[key];
+                }
             } else {
                 newQuery[key] = String(value);
             }
@@ -120,12 +127,12 @@ export function usePagedListState<TFilters extends Record<string, UrlValue> = Re
 
     // Helper: Update filters (always reset to page 1)
     const updateFilters = useCallback((newFilters: Partial<TFilters>) => {
-        const updates: Record<string, UrlQueryValue> = { page: 1 };
+        const updates: Record<string, UrlQueryValue | string[]> = { page: 1 };
 
         Object.entries(newFilters).forEach(([key, value]) => {
             if (Array.isArray(value)) {
-                // Convert arrays to comma-separated strings for URL
-                updates[key] = value.length > 0 ? value.join(',') : undefined;
+                // Pass arrays directly — router serialises as repeated params: ?key=a&key=b
+                updates[key] = value.length > 0 ? value : undefined;
             } else {
                 updates[key] = value as UrlQueryValue;
             }
@@ -202,7 +209,7 @@ export function usePagedListState<TFilters extends Record<string, UrlValue> = Re
         if (Array.isArray(currentVal)) {
             newValues = [...currentVal];
         } else if (typeof currentVal === 'string' && currentVal) {
-            newValues = currentVal.split(',');
+            newValues = [currentVal]; // single-value param: already a plain string
         }
 
         if (!newValues.includes(value)) {
@@ -219,7 +226,7 @@ export function usePagedListState<TFilters extends Record<string, UrlValue> = Re
         if (Array.isArray(currentVal)) {
             newValues = [...currentVal];
         } else if (typeof currentVal === 'string' && currentVal) {
-            newValues = currentVal.split(',');
+            newValues = [currentVal]; // single-value param: already a plain string
         }
 
         if (newValues.includes(value)) {
