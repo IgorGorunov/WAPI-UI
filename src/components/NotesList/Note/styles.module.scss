@@ -1,9 +1,7 @@
-@import '@/constants/devices.scss';
-
 .create-note {
   min-width: 300px;
 
-  @media (min-width: $tablet) {
+  @include tabletAndUp {
     min-width: 500px;
   }
 

@@ -1,11 +1,10 @@
-@import '@/constants/devices.scss';
-
 .login {
   &__bg-logo {
     display: none;
     justify-content: center;
     align-items: center;
-    @media (min-width: $tablet) {
+
+    @include tabletAndUp {
       display: block;
       position: absolute;
     }

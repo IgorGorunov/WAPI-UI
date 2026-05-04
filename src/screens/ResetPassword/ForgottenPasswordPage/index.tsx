@@ -5,7 +5,7 @@ import useTenant from "@/context/tenantContext";
 import styles from "../styles.module.scss";
 import { Controller, useForm } from "react-hook-form";
 import type { FieldValues } from "react-hook-form";
-import TextField from "@/components/FormBuilder/TextInput/TextField";
+import TextInput from "@/components/FormBuilder/TextInput/TextField";
 import Button from "@/components/Button/Button";
 import { passwordRecoveryRequest } from "@/services/passwordRecovery";
 import { useRouter } from "next/router";
@@ -115,7 +115,7 @@ const ForgottenPasswordPage = () => {
                                             },
                                         }}
                                         render={({ field: { ...props }, fieldState: { error: fieldError } }) => (
-                                            <TextField
+                                            <TextInput
                                                 {...props}
                                                 type="text"
                                                 name="email"

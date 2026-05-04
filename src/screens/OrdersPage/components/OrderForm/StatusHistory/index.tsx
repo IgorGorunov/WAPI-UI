@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import {OrderHistoryType} from "@/types/orders";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import {Countries} from "@/types/countries";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
@@ -47,7 +47,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
 
                 return (
                     <>
-                        {displayedMessage.map(line => <span className='new-line'>{line}</span>)}
+                        {displayedMessage.map(line => <span className={styles['new-line']}>{line}</span>)}
                     </>
                 )
 
@@ -66,37 +66,35 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
     }, []);
 
     return (
-        <div className="order-status-history">
-            <p className={`order-status-history__info-text`}>
+        <div className={styles["order-status-history"]}>
+            <p className={styles['order-status-history__info-text']}>
                 {/*<span><Icon name='info' /></span>*/}
                 Time in status history - in time zone UTC 0
             </p>
-            <div className="order-status-history__header">
-                <div className='date-column'>
-                    <span className={`date-column--header`}>Period <span className={`date-column--offset`}>offset</span></span>
+            <div className={styles["order-status-history__header"]}>
+                <div className={styles['date-column']}>
+                    <span className={styles['date-column--header']}>Period <span className={styles['date-column--offset']}>offset</span></span>
                     <span>Status</span>
                 </div>
-                {/*<div className='column status--column'>Status</div>*/}
-                <div className='column tracking-number--column'>Tracking #</div>
-                <div className='column trouble-status--column'>Trouble status</div>
-                <div className='column event-column'>Event</div>
-                <div className='column location-column'>Location</div>
-                <div className='column comment--column'>Additional information</div>
+                {/*<div className={`${styles['column']} ${styles['status--column']}`}>Status</div>*/}
+                <div className={`${styles['column']} ${styles['tracking-number--column']}`}>Tracking #</div>
+                <div className={`${styles['column']} ${styles['trouble-status--column']}`}>Trouble status</div>
+                <div className={`${styles['column']} ${styles['event-column']}`}>Event</div>
+                <div className={`${styles['column']} ${styles['location-column']}`}>Location</div>
+                <div className={`${styles['column']} ${styles['comment--column']}`}>Additional information</div>
 
             </div>
-            <ul className="order-status-history__list">
+            <ul className={styles["order-status-history__list"]}>
                 {statusHistory &&
                     statusHistory.map((status: OrderHistoryType, index: number) => (
                         <li
                             key={status.status + "_" + index}
-                            className={`order-status-history__list-item ${
-                                index % 2 === 1 ? "highlight" : " "
-                            }`}
+                            className={`${styles['order-status-history__list-item']} ${index % 2 === 1 ? styles['highlight'] : ''}`}
                         >
-                            <div className='date-column'>
-                                <span className={`date-column--date-time`}>
+                            <div className={styles['date-column']}>
+                                <span className={styles['date-column--date-time']}>
                                     {formatDateTimeToStringWithDot(status.period)}
-                                    <span className={`date-column--offset`}>{status.offset}</span>
+                                    <span className={styles['date-column--offset']}>{status.offset}</span>
                                 </span>
                                 <span style={{
                                     borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,
@@ -104,7 +102,7 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                 }}>{status.status}
                                 </span>
                             </div>
-                            {/*<div className='column status--column'>*/}
+                            {/*<div className={`${styles['column']} ${styles['status--column']}`}>*/}
                             {/*    <span style={{*/}
                             {/*        borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,*/}
                             {/*        display: 'inline-block',*/}
@@ -112,11 +110,11 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                             {/*        {status.status}*/}
                             {/*    </span>*/}
                             {/*</div>*/}
-                            <div className='column tracking-number--column tp'>{status.trackingNumber}</div>
-                            <div className='column trouble-status--column  tp'>{status.troubleStatus}</div>
-                            <div className='column event-column  tp'>{status?.event || ''}</div>
-                            <div className='column location-column  tp'>{status?.location || ''}</div>
-                            <div className='column comment--column'>{formatCommentMessage(status.additionalInfo)}</div>
+                            <div className={`${styles['column']} ${styles['tracking-number--column']} ${styles['tp']}`}>{status.trackingNumber}</div>
+                            <div className={`${styles['column']} ${styles['trouble-status--column']} ${styles['tp']}`}>{status.troubleStatus}</div>
+                            <div className={`${styles['column']} ${styles['event-column']} ${styles['tp']}`}>{status?.event || ''}</div>
+                            <div className={`${styles['column']} ${styles['location-column']} ${styles['tp']}`}>{status?.location || ''}</div>
+                            <div className={`${styles['column']} ${styles['comment--column']}`}>{formatCommentMessage(status.additionalInfo)}</div>
                         </li>
                     ))}
             </ul>

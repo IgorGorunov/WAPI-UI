@@ -31,10 +31,10 @@ import SimplePopup, { PopupItem } from "@/components/SimplePopup";
 import FiltersChosen from "@/components/FiltersChosen";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import useAuth from "@/context/authContext";
-import SelectField from "@/components/FormBuilder/Select/SelectField";
 import { FilterComponentType } from "@/types/filters";
 import { Countries } from "@/types/countries";
 import { PageOptions } from "@/constants/pagination";
+import Select from "@/components/FormBuilder/Select/SelectField";
 
 type OrderListType = {
     orders: OrderType[];
@@ -402,15 +402,14 @@ const OrderList: React.FC<OrderListType> = ({
 
     const selectedFiltersString = JSON.stringify(selectedFilters);
     useEffect(() => {
-        if (isFiltersVisible) return; // Panel is open, don't reset user's draft
-
+        if (isFiltersVisible) return;
         const newDraft: Record<string, string[]> = {};
         if (selectedFilters) {
             Object.entries(selectedFilters).forEach(([key, val]) => {
                 if (Array.isArray(val)) {
                     newDraft[key] = val;
                 } else if (typeof val === 'string') {
-                    newDraft[key] = val.split(',');
+                    newDraft[key] = [val];
                 }
             });
         }
@@ -494,7 +493,7 @@ const OrderList: React.FC<OrderListType> = ({
     // ACTIVE FILTERS (For the Chips Display) - Uses properties from URL (Applied state)
     const activeOrderFilters = useMemo(() => baseFilterConfigs.map(config => {
         let val = selectedFilters?.[config.key];
-        const state = typeof val === 'string' ? val.split(',') : (Array.isArray(val) ? val : []);
+        const state = typeof val === 'string' ? [val] : (Array.isArray(val) ? val : []);
 
         return {
             filterTitle: config.title,
@@ -858,7 +857,7 @@ const OrderList: React.FC<OrderListType> = ({
             ),
             dataIndex: 'notifications',
             key: 'notifications',
-            sorter: true,
+            sorter: false,
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
             }),
@@ -1217,7 +1216,7 @@ const OrderList: React.FC<OrderListType> = ({
 
             {needSeller() ?
                 <div className='seller-filter-block'>
-                    <SelectField
+                    <Select
                         key='seller-filter'
                         name='selectedSeller'
                         label='Seller: '
@@ -1250,7 +1249,7 @@ const OrderList: React.FC<OrderListType> = ({
                     dataSource={filteredOrders.map(item => ({ ...item, key: item.uuid })) as OrderType[]}
                     columns={columns}
                     pagination={false}
-                    scroll={{ y: 700 }}
+                    // scroll={{ y: 700 }}
                     showSorterTooltip={false}
                 // onChange={handleTableChange}
                 />
@@ -1270,7 +1269,13 @@ const OrderList: React.FC<OrderListType> = ({
                     showSizeChanger={false}
                 />
             </div>
-            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={clearAllFilters} onApplyFilters={applyFilters} hasUnappliedChanges={hasUnappliedChanges}>
+            <FiltersContainer
+                isFiltersVisible={isFiltersVisible}
+                setIsFiltersVisible={setIsFiltersVisible}
+                onClearFilters={clearAllFilters}
+                onApplyFilters={applyFilters}
+                hasUnappliedChanges={hasUnappliedChanges}
+            >
                 <FiltersListWithOptions filters={orderFilters.filter(item => item !== null)} />
             </FiltersContainer>
         </div>

@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 
 import ReportsBlock from "@/screens/ReportsListPage/ReportComponents/ReportsBlock";
 import {reportBlocks} from "@/screens/ReportsListPage/reports.constants";
@@ -37,7 +37,7 @@ const ReportsListPage:React.FC = () => {
 
                 </Header>
 
-                <div className='reports-list'>
+                <div className={styles['reports-list']}>
                     {reportBlocks.map((item, index) =>
                         isReportSectionAccessible(item) ? <div key={`${item.blockTitle}__${index}`} className='report-list__item'>
                             <ReportsBlock {...item} />

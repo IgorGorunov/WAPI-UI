@@ -1,16 +1,5 @@
-@import '@/constants/devices.scss';
-
 .order-info {
-
-  //@media (min-width: $tablet) {
-  //  width: calc(100vw - 100px);
-  //}
-
-  //@media (min-width: $desktop) {
-  //  width: 1090px;
-  //}
-
-  .card {
+  :global(.card) {
     padding: 28px;
     margin-bottom: 16px;
 
@@ -49,7 +38,7 @@
     gap: 6px;
     margin-bottom: 6px;
 
-    @media (min-width: $laptop) {
+    @include laptopAndUp {
       margin-top: -16px;
       margin-bottom: 16px;
     }
@@ -101,17 +90,7 @@
     }
   }
 
-  //&--address-comment {
-  //  &-wrapper {
-  //    border: 1px solid var(--color-dark-red2);
-  //  }
-  //
-  //  &-text {
-  //    color: var(--color-dark-red2);
-  //  }
-  //}
-
-  @media (max-width: $mobile) {
+  @include mobile {
     .general-tab,
     .delivery-tab {
       .width-25 {
@@ -127,7 +106,7 @@
     }
   }
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     .general-tab {
       .width-33 {
         flex: 1 1 67%;
@@ -147,7 +126,7 @@
     align-items: flex-end;
     margin-bottom: 8px;
 
-    @media (max-width: $tablet) {
+    @include upToTablet {
       flex: 1 1 50%;
     }
   }
@@ -156,14 +135,11 @@
   &--history {
     display: flex;
     flex-direction: column;
-
-    &.card {
-      padding-bottom: 0;
-    }
+    padding-bottom: 0 !important;
   }
 
   &--cod-currency {
-    @media (max-width: $tablet) {
+    @include upToTablet {
       flex: 1 0 100%;
       margin: 0;
       padding: 0;

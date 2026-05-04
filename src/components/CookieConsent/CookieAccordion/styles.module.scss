@@ -2,19 +2,11 @@
   width: 100%;
   position: relative;
   padding-top: 6px;
-  //overflow: hidden;
-  //transition: .3s ease;
-
-  //&.is-active {
-  //  overflow: initial;
-  //}
 
   &__title {
     position: relative;
     display: flex;
     flex-direction: column;
-    //align-items: center;
-    //justify-content: space-between;
     width: 100%;
     padding: 8px 16px 8px 28px;
     background-color: transparent;
@@ -49,7 +41,6 @@
         &.checked {
           background-color: var(--color-blue);
         }
-
       }
 
       .title-icon {
@@ -58,10 +49,6 @@
         margin-right: 6px;
       }
     }
-
-
-
-
 
     &-icon {
       position: absolute;

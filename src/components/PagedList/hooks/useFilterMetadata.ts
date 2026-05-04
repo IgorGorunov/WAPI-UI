@@ -8,6 +8,8 @@ type UseFilterMetadataOptions = {
     alias?: string;
     ui?: string;
     enabled?: boolean;
+    /** Extra fields merged into the request payload (e.g. { documentType: 'Inbound' }) */
+    extraParams?: Record<string, string | number | boolean>;
 }
 
 /**
@@ -24,7 +26,7 @@ export function useFilterMetadata<
     },
     options: UseFilterMetadataOptions
 ) {
-    const { token, alias, ui, enabled = true } = options;
+    const { token, alias, ui, enabled = true, extraParams } = options;
 
     const [metadata, setMetadata] = useState<TMetadata | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +53,11 @@ export function useFilterMetadata<
                 if (alias) requestData.alias = alias;
                 if (ui) requestData.ui = ui;
 
+                // Merge any caller-supplied extra params (e.g. documentType)
+                if (extraParams) {
+                    Object.assign(requestData, extraParams);
+                }
+
                 const response: ApiResponseType<TMetadata> = await api.post(endpoint, requestData);
 
                 if (response && 'data' in response) {
@@ -69,7 +76,7 @@ export function useFilterMetadata<
         };
 
         fetchMetadata();
-    }, [endpoint, state.startDate, state.endDate, token, alias, ui, enabled]);
+    }, [endpoint, state.startDate, state.endDate, token, alias, ui, enabled, JSON.stringify(extraParams)]);
 
     return {
         metadata,

@@ -8,8 +8,6 @@
     right: -1px;
     width: 34px;
     height: 34px;
-    //border-radius: 50%;
-    //border: 2px solid var(--color-light-blue-gray);
     z-index: 2;
   }
 
@@ -46,7 +44,6 @@
       }
 
     }
-
 
     input[type="date"]::-webkit-inner-spin-button,
     input[type="date"]::-webkit-calendar-picker-indicator {

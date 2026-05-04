@@ -1,9 +1,7 @@
-@import "@/constants/devices.scss";
-
 .order-status-history {
   margin: 16px -28px 0 -28px;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     margin-left: -16px;
     margin-right: -16px;
   }
@@ -45,7 +43,7 @@
     max-height: calc(100vh - 470px);
     overflow: hidden scroll;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       max-height: calc(100vh - 420px);
     }
 
@@ -61,7 +59,7 @@
   .column {
     padding: 10px 12px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       padding: 10px 6px;
     }
 
@@ -82,7 +80,7 @@
     padding: 10px 12px 10px 0;
     margin-left: 20px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       padding: 10px 6px;
       flex: 0 0 70px;
     }
@@ -108,7 +106,7 @@
   .status--column {
     flex: 0 0 100px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       flex: 1 1 100px;
     }
   }
@@ -120,7 +118,7 @@
     //  flex: 1 0 120px;
     //}
 
-    @media (max-width: $mobile) {
+    @include mobile {
       display: none;
     }
   }
@@ -128,48 +126,33 @@
     flex: 0 0 130px;
     word-break: break-word;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       display: none;
     }
-
-    //@media (max-width: $upToTablet) {
-    //  flex: 1 1 120px;
-    //}
   }
+
   .location-column {
     flex: 0 0 120px;
     word-break: break-word;
 
-    @media (max-width: $upToLaptop) {
+    @include upToLaptop {
       display: none;
     }
-
-    //@media (max-width: $upToLaptop) {
-    //  flex: 1 1 150px;
-    //}
   }
 
   .event-column {
     flex: 0 0 130px;
     word-break: break-word;
 
-    @media (max-width: $upToLaptop) {
+    @include upToLaptop {
       display: none;
     }
-
-    //@media (max-width: $upToLaptop) {
-    //  flex: 1 1 130px;
-    //}
   }
 
 
   .comment--column {
     flex: 1 1 280px;
     word-break: break-word;
-
-    //@media (max-width: $upToTablet) {
-    //  flex: 0 1 280px;
-    //}
   }
 
   .highlight {

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
 import { Controller, useForm } from "react-hook-form";
 import type { FieldValues } from "react-hook-form";
@@ -132,9 +132,9 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({ onClose }) => {
     };
 
     return (
-        <div className={`change-password`}>
+        <div className={styles[`change-password`]}>
             {isLoading && <Loader />}
-            <form className='change-password-form' onSubmit={handleSubmit(handleFormSubmit)}>
+            <form className={styles['change-password-form']} onSubmit={handleSubmit(handleFormSubmit)}>
                 {changePasswordFormFields.map((curField) => (
 
                     <div key={curField.name} className='grid-row'>
@@ -158,7 +158,7 @@ const ChangePassword: React.FC<ChangePasswordPropsType> = ({ onClose }) => {
                     </div>
 
                 ))}
-                <div className="change-password-submit-block">
+                <div className={styles["change-password-submit-block"]}>
                     <Button
                         type="submit"
                         disabled={isLoading}

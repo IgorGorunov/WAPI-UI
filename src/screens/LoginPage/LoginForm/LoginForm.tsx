@@ -5,8 +5,7 @@ import { authenticate, authenticateWithOneTimeToken } from "@/services/auth";
 import { useRouter } from "next/router";
 import { Routes } from "@/types/routes";
 import useAuth from "@/context/authContext";
-// Direct import of TextField to avoid loading unnecessary form components
-import TextField from "@/components/FormBuilder/TextInput/TextField";
+import TextInput from "@/components/FormBuilder/TextInput/TextField";
 import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
 import { UserStatusType } from "@/types/leads";
@@ -202,18 +201,20 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken
     }
   };
 
+  const loginFields = formFields(handleSubmit(handleFormSubmit));
+
   return (
     <div className={`card ${styles['login-form']}`}>
       {isLoading && <Loader />}
       <form onSubmit={handleSubmit(handleFormSubmit)}>
-        {formFields.map((curField: FormBuilderType) => (
+        {loginFields.map((curField: FormBuilderType) => (
 
           <div key={curField.name} className='grid-row'>
             <Controller
               name={curField.name}
               control={control}
               render={({ field: { ...props }, fieldState: { error } }) => (
-                <TextField
+                <TextInput
                   {...props}
                   type={curField.type}
                   name={curField.name}
@@ -223,6 +224,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken
                   isRequired={!!curField.rules?.required || false}
                   width={curField.width}
                   classNames={curField.classNames}
+                  onKeyDownFn={curField.onKeyDownFn}
                 />)}
               rules={curField.rules}
             />

@@ -1,6 +1,6 @@
 import React from "react";
 import {ClaimType} from "@/types/orders";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Accordion from "@/components/Accordion";
 import Claim from "./ClaimItem";
 import {formatDateStringToDisplayString} from "@/utils/date";
@@ -12,8 +12,8 @@ type PropsType = {
 const Claims: React.FC<PropsType> = ({ claims }) => {
 
     return (
-        <div className="order-claims">
-            {claims.map(item => (<div key={item.number+item.status} className='claim'> <Accordion title={`Claim #${item.number} from ${formatDateStringToDisplayString(item.date)}. Status: ${item.status}`}><Claim claim={item} /></Accordion></div>))}
+        <div className={styles["order-claims"]}>
+            {claims.map(item => (<div key={item.number+item.status} className={styles['claim']}> <Accordion title={`Claim #${item.number} from ${formatDateStringToDisplayString(item.date)}. Status: ${item.status}`}><Claim claim={item} /></Accordion></div>))}
         </div>
     );
 };

@@ -1,6 +1,26 @@
 import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
 import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
 import {OrdersTenantDataType} from "@/lib/tenants";
+import {getOrderFieldLabel, isFieldRequired} from "@/screens/OrdersPage/components/OrderForm/formFieldUtils";
+
+import { isValidPhoneNumber } from 'libphonenumber-js';
+
+export function validatePhone(value: string) {
+    const trimmed = value.trim();
+    if (!trimmed) {
+        return 'Phone number is required';
+    }
+
+    if (!trimmed.startsWith('+')) {
+        return 'Enter phone number with country code, starting with +';
+    }
+
+    if (!isValidPhoneNumber(trimmed)) {
+        return 'Enter a valid phone number';
+    }
+
+    return true;
+}
 
 export const GeneralFields = (newObject: boolean, orderTitles: OrdersTenantDataType) => [
     {
@@ -197,7 +217,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
     } : null,
 ];
 
-export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllowed=false, onChangeFn, selectedCountry}: { countries: OptionType[]; prefix?:string; isDisabled: boolean; isAddressAllowed: boolean; onChangeFn: ()=>void, selectedCountry: string}) => {
+export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllowed=false, onChangeFn, selectedCountry, selectedWarehouse}: { countries: OptionType[]; prefix?:string; isDisabled: boolean; isAddressAllowed: boolean; onChangeFn: ()=>void, selectedCountry: string, selectedWarehouse: string}) => {
     return [
         {
             fieldType: FormFieldTypes.SELECT,
@@ -219,8 +239,11 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.state_region`,
-            label: 'State/region (Estado)',
+            label: getOrderFieldLabel(selectedCountry, 'state_region'),
             placeholder: "",
+            rules: {
+                required: isFieldRequired(selectedCountry, selectedWarehouse, 'state_region') ? "Required field" : false,
+            },
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
@@ -258,10 +281,10 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.county_district`,
-            label: 'District (Municipio)',
+            label: getOrderFieldLabel(selectedCountry, 'county_district'),
             placeholder: "",
             rules: {
-                required: "Required field",
+                required: isFieldRequired(selectedCountry, selectedWarehouse, 'county_district') ? "Required field" : false,
             },
             width: WidthType.w25,
             classNames: "",
@@ -272,10 +295,10 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.city_subdivision`,
-            label: 'City subdivision (Colonia)',
+            label: getOrderFieldLabel(selectedCountry, 'city_subdivision'),
             placeholder: "",
             rules: {
-                required: "Required field",
+                required: isFieldRequired(selectedCountry, selectedWarehouse, 'city_subdivision') ? "Required field" : false,
             },
             width: WidthType.w25,
             classNames: "",
@@ -283,55 +306,58 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             hint: OrderHints['city_subdivision'] || '',
         } : null,
         // selectedCountry && ['MX'].includes(selectedCountry) ? {
-        //     fieldType: FormFieldTypes.TEXT,
-        //     type: "text",
-        //     name: `addressFull.locality`,
-        //     label: 'Locality (Localidad)',
-        //     placeholder: "",
-        //     width: WidthType.w25,
-        //     classNames: "",
-        //     disabled: isDisabled && !isAddressAllowed,
-        //     hint: OrderHints['locality'] || '',
-        // } : null,
-        selectedCountry && ['MX'].includes(selectedCountry) ? {
+        {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.street`,
-            label: 'Street (Calle)',
+            label: getOrderFieldLabel(selectedCountry, 'street'),
             placeholder: "",
+            rules: {
+                required: isFieldRequired(selectedCountry, selectedWarehouse, 'street') ? "Required field" : false,
+            },
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             hint: OrderHints['street'] || '',
-        } : null,
+        },
         selectedCountry && ['MX'].includes(selectedCountry) ? {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.street_number`,
-            label: 'Street number (Numero exterior)',
+            label: getOrderFieldLabel(selectedCountry, 'street_number'),
             placeholder: "",
+            rules: {
+                required: isFieldRequired(selectedCountry, selectedWarehouse, 'street_number') ? "Required field" : false,
+            },
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             hint: OrderHints['street_number'] || '',
         } : null,
-        selectedCountry && ['MX'].includes(selectedCountry) ? {
+        // selectedCountry && ['MX'].includes(selectedCountry) ? {
+        {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.building`,
-            label: 'Building (Edificio)',
+            label: getOrderFieldLabel(selectedCountry, 'building'),
             placeholder: "",
+            rules: {
+                required: isFieldRequired(selectedCountry, selectedWarehouse, 'building') ? "Required field" : false,
+            },
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             hint: OrderHints['building'] || '',
-        } : null,
+        },
         selectedCountry && ['MX'].includes(selectedCountry) ? {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.unit`,
-            label: 'Unit (Departamento)',
+            label: getOrderFieldLabel(selectedCountry, 'unit'),
             placeholder: "",
+            rules: {
+                required: isFieldRequired(selectedCountry, selectedWarehouse, 'unit') ? "Required field" : false,
+            },
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
@@ -341,8 +367,11 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.details`,
-            label: 'Details (Referencias)',
+            label: getOrderFieldLabel(selectedCountry, 'details'),
             placeholder: "",
+            rules: {
+                required: isFieldRequired(selectedCountry, selectedWarehouse, 'details') ? "Required field" : false,
+            },
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
@@ -364,22 +393,22 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             onChange: onChangeFn,
             hint: OrderHints['zipCode'] || '',
         },
-        selectedCountry && ['MX'].includes(selectedCountry) ? null : {
-            fieldType: FormFieldTypes.TEXT,
-            type: "text",
-            name: `${prefix}receiverAddress`,
-            label: 'Address',
-            placeholder: "",
-            rules: {
-                required: "Required field",
-            },
-            errorMessage: "Required field",
-            width: WidthType.w25,
-            classNames: "",
-            disabled: isDisabled && !isAddressAllowed,
-            onChange: onChangeFn,
-            hint: OrderHints['address'] || '',
-        },
+        // selectedCountry && ['MX'].includes(selectedCountry) ? null : {
+        //     fieldType: FormFieldTypes.TEXT,
+        //     type: "text",
+        //     name: `${prefix}receiverAddress`,
+        //     label: 'Address',
+        //     placeholder: "",
+        //     rules: {
+        //         required: "Required field",
+        //     },
+        //     errorMessage: "Required field",
+        //     width: WidthType.w25,
+        //     classNames: "",
+        //     disabled: isDisabled && !isAddressAllowed,
+        //     onChange: onChangeFn,
+        //     hint: OrderHints['address'] || '',
+        // },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
@@ -388,8 +417,11 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             placeholder: "",
             rules: {
                 required: "Required field",
+                validate: {
+                    matchPattern: (v) => validatePhone(v),
+                },
             },
-            errorMessage: "Required field123",
+            errorMessage: "Required field",
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
@@ -433,22 +465,23 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             onChange: onChangeFn,
             hint: OrderHints['fullName'] || '',
         },
-        selectedCountry && ['MX'].includes(selectedCountry) ?  {
+        // selectedCountry && ['MX'].includes(selectedCountry) ?  {
+        {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `${prefix}receiverAddress`,
-            label: 'Address',
+            label: getOrderFieldLabel(selectedCountry, 'receiverAddress'),
             placeholder: "",
             rules: {
                 required: "Required field",
             },
             errorMessage: "Required field",
-            width: WidthType.w50,
+            width: selectedCountry && ['MX'].includes(selectedCountry) ? WidthType.w50 : WidthType.w75,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             onChange: onChangeFn,
             hint: OrderHints['address'] || '',
-        } : null,
+        },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",

@@ -1,14 +1,4 @@
-@import "@/constants/devices.scss";
-
 .cookie-consent {
-  //position: fixed;
-  //bottom: 0;
-  //right: 0;
-  //left: 0;
-  //padding: 8px;
-  //background-color: var(--color-light-blue-gray);
-  //z-index: 100;
-
   &-container {
     display: flex;
     justify-content: center;
@@ -33,7 +23,7 @@
     font-weight: bold;
     padding: 12px 28px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       display: block;
     }
   }
@@ -41,10 +31,6 @@
   :global(.icon-cookie) {
     flex: 0 0 140px;
     fill: var(--color-gray-blue);
-
-    //@media (max-width: $upToTablet) {
-    //  display: none;
-    //}
   }
 
   &__text {
@@ -63,7 +49,7 @@
       margin-top: 32px;
       padding-right: 140px;
 
-      @media (max-width: $upToTablet) {
+      @include upToTablet {
         flex-direction: column;
         gap: 12px;
         padding-right: 0;
@@ -79,11 +65,6 @@
   :global(.is-link) {
     margin-left: 4px;
     color: var(--color-links);
-    //text-decoration: underline;
-    //
-    //&:hover {
-    //  text-decoration: none;
-    //}
   }
 
   & &__consent-btn {
@@ -146,12 +127,11 @@
   }
 
   &-settings {
-
     margin-right: -16px;
     margin-left: -16px;
     padding-top: 16px;
 
-    @media (min-width: $laptop) {
+    @include laptopAndUp {
       max-width: 850px;
     }
 
@@ -170,7 +150,7 @@
       max-height: calc(100vh - 180px);
       overflow-y: auto;
 
-      @media (min-width: $laptop) {
+      @include laptopAndUp {
         max-height: calc(100vh - 220px);
       }
 
@@ -186,6 +166,4 @@
       padding-top: 12px;
     }
   }
-
-
 }

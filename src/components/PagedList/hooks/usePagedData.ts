@@ -30,6 +30,8 @@ type UsePagedDataOptions = {
     alias?: string;
     ui?: string;
     enabled?: boolean; // If false, don't fetch
+    /** Extra fields merged into the request payload (e.g. { documentType: 'Inbound' }) */
+    extraParams?: Record<string, string | number | boolean>;
 }
 
 type PagedResponse<T> = {
@@ -55,10 +57,11 @@ export const processFiltersForApi = (filters?: Record<string, FilterValue>) => {
             processedFilters[key] = [true];
         } else if (value === 'false') {
             processedFilters[key] = [false];
+        } else if (Array.isArray(value)) {
+            processedFilters[key] = value.map(v => String(v));
         } else if (typeof value === 'string') {
-            // Convert comma-separated strings to array, and wrap single values in array
-            // This ensures backend receives ["id1", "id2"] or ["id1"] instead of strings
-            processedFilters[key] = value.includes(',') ? value.split(',') : [value];
+            // Next.js returns a single string for ?param=value, we need to send it to the backend as an array containing that single string
+            processedFilters[key] = [value];
         } else {
             processedFilters[key] = value as FilterValue;
         }
@@ -74,7 +77,7 @@ export const processFiltersForApi = (filters?: Record<string, FilterValue>) => {
         if (Array.isArray(val)) {
             valuesArray = val.map(v => String(v));
         } else if (typeof val === 'string') {
-            valuesArray = val.split(',');
+            valuesArray = [val];
         } else {
             valuesArray = [String(val)];
         }
@@ -102,7 +105,7 @@ export function usePagedData<TData = object>(
     state: PagedListUrlState,
     options: UsePagedDataOptions
 ) {
-    const { token, alias, ui, enabled = true } = options;
+    const { token, alias, ui, enabled = true, extraParams } = options;
 
     const [data, setData] = useState<TData[]>([]);
     const [count, setCount] = useState(0);
@@ -147,6 +150,11 @@ export function usePagedData<TData = object>(
                         column: sortBy,
                         sortOrder: (sortOrder || 'desc').toUpperCase(),
                     };
+                }
+
+                // Merge any caller-supplied extra params (e.g. documentType)
+                if (extraParams) {
+                    Object.assign(requestData, extraParams);
                 }
 
                 // Add filters (convert string "true"/"false" to actual booleans for API)
@@ -199,6 +207,7 @@ export function usePagedData<TData = object>(
         state.sortBy,
         state.sortOrder,
         JSON.stringify(state.filters), // Serialize object to stable string
+        JSON.stringify(extraParams),    // Refetch if extraParams change (e.g. docType nav)
         token,
         alias,
         ui,

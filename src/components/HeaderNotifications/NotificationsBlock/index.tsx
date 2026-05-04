@@ -19,8 +19,8 @@ import { FormFieldTypes, OptionType } from "@/types/forms";
 import SingleDocument from "@/components/SingleDocument";
 import useAuth from "@/context/authContext";
 import { getSellerName } from "@/utils/seller";
-import SelectField from "@/components/FormBuilder/Select/SelectField";
 import styles from "./styles.module.scss";
+import Select from "@/components/FormBuilder/Select/SelectField";
 
 const formatMessage = (messageText: string, messageLength = 50) => {
     if (messageText.length > messageLength) {
@@ -218,7 +218,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({ notificatio
 
                         {needSeller() && (
                             <div className="seller-filter-block">
-                                <SelectField
+                                <Select
                                     key='seller-filter'
                                     name='selectedSeller'
                                     label='Seller: '

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Icon from "@/components/Icon";
 import {getUserContractFile, getUserPriceFile} from "@/services/profile";
 import {base64ToBlob} from "@/utils/files";
@@ -10,6 +10,7 @@ import useAuth from "@/context/authContext";
 import {ContractPriceBlockType} from "@/screens/ProfilePage/components/UserContractsAndPrices/PriceContractBlock";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
+import Loader from "@/components/Loader";
 
 type FilePropsType = {
     file: UserContractType | UserPriceType;
@@ -20,6 +21,7 @@ const SingleFile: React.FC<FilePropsType> = ({file, type}) => {
     const { tenantData: { alias }} = useTenant();
     const {token, ui, superUser, getBrowserInfo} = useAuth();
     const [fileData, setFileData] = useState<any|null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const getFile = async(uuid: string, type: ContractPriceBlockType) => {
         const requestData = superUser ? {uuid, token, alias, ui} : {uuid, token, alias };
@@ -67,43 +69,55 @@ const SingleFile: React.FC<FilePropsType> = ({file, type}) => {
     }
 
     const handleDownload = async() => {
-        if (fileData) {
-            fileDownLoad(fileData);
-        } else {
-            const res = await getFile(file?.uuid, type);
-            if (res.status === 200 && res.data.length) {
-                const fileInfo = res.data[0];
-                setFileData(fileInfo);
-                fileDownLoad(fileInfo);
+        try {
+            setLoading(true);
+            if (fileData) {
+                fileDownLoad(fileData);
+            } else {
+                const res = await getFile(file?.uuid, type);
+                if (res.status === 200 && res.data.length) {
+                    const fileInfo = res.data[0];
+                    setFileData(fileInfo);
+                    fileDownLoad(fileInfo);
+                }
             }
+        } finally {
+            setLoading(false);
         }
     }
 
     const handlePreview = async() => {
-        if (fileData) {
-            fileOpen(fileData);
-        } else {
-            const res = await getFile(file?.uuid, type);
-            if (res.status === 200 && res.data.length) {
-                const fileInfo = res.data[0];
-                setFileData(fileInfo);
-                fileOpen(fileInfo);
+        try {
+            setLoading(true);
+
+            if (fileData) {
+                fileOpen(fileData);
+            } else {
+                const res = await getFile(file?.uuid, type);
+                if (res.status === 200 && res.data.length) {
+                    const fileInfo = res.data[0];
+                    setFileData(fileInfo);
+                    fileOpen(fileInfo);
+                }
             }
+        } finally {
+            setLoading(false);
         }
     }
 
     //const curDate =
 
     return (
-        <div className={`contract-price-file ${file.endDate}`}>
-            <div className='contract-price-file__left-block'>
-                <button className='contract-price-file__action-btn' onClick={handleDownload}><Icon name='download-file'/></button>
-                <button className='contract-price-file__action-btn' onClick={handlePreview}><Icon name='preview'/></button>
-                <p className='contract-price-file__name'>{file.name}</p>
+        <div className={`${styles['contract-price-file']} ${file.endDate}`}>
+            {loading ? <Loader/> : null}
+            <div className={styles['contract-price-file__left-block']}>
+                <button className={styles['contract-price-file__action-btn']} onClick={handleDownload}><Icon name='download-file'/></button>
+                <button className={styles['contract-price-file__action-btn']} onClick={handlePreview}><Icon name='preview'/></button>
+                <p className={styles['contract-price-file__name']}>{file.name}</p>
             </div>
-            <div className='contract-price-file__right-block'>
-                <p className='contract-price-file__date'>{file.startDate ? formatDateStringToDisplayString(file.startDate) : ''}</p>
-                <p className='contract-price-file__date'>{file.endDate ? formatDateStringToDisplayString(file.endDate) : ''}</p>
+            <div className={styles['contract-price-file__right-block']}>
+                <p className={styles['contract-price-file__date']}>{file.startDate ? formatDateStringToDisplayString(file.startDate) : ''}</p>
+                <p className={styles['contract-price-file__date']}>{file.endDate ? formatDateStringToDisplayString(file.endDate) : ''}</p>
             </div>
         </div>
 

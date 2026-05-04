@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {HierarchyNodeType} from "@/screens/ProfilePage/components/ApiProtocols";
 import Icon from "@/components/Icon";
 import {getApiProtocol} from "@/services/profile";
@@ -8,6 +8,7 @@ import {base64ToBlob} from "@/utils/files";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import useAuth from "@/context/authContext";
 import useTenant from "@/context/tenantContext";
+import Loader from "@/components/Loader";
 
 type FilePropsType = {
     file: HierarchyNodeType;
@@ -18,6 +19,7 @@ const SingleFile: React.FC<FilePropsType> = ({file}) => {
     const { getBrowserInfo } = useAuth();
 
     const [fileData, setFileData] = useState<any|null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const fileDownLoad = (file) => {
         const blob = base64ToBlob(file.data, file.type);
@@ -55,44 +57,61 @@ const SingleFile: React.FC<FilePropsType> = ({file}) => {
     }
 
     const handleDownload = async() => {
-        if (fileData) {
-            fileDownLoad(fileData);
-        } else {
-            try {
-                sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocolFile'), body: {uuid: file?.uuid}})
-            } catch {}
+        try {
+            setLoading(true);
 
-            const res = await getApiProtocol({uuid: file?.uuid, alias});
-            if (res.status === 200 && res.data.length) {
-                const fileInfo = res.data[0];
-                setFileData(fileInfo);
-                fileDownLoad(fileInfo);
+            if (fileData) {
+                fileDownLoad(fileData);
+            } else {
+                try {
+                    sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocolFile'), body: {uuid: file?.uuid}})
+                } catch {
+                    //
+                }
+
+                const res = await getApiProtocol({uuid: file?.uuid, alias});
+                if (res.status === 200 && res.data.length) {
+                    const fileInfo = res.data[0];
+                    setFileData(fileInfo);
+                    fileDownLoad(fileInfo);
+                }
             }
+        } finally {
+            setLoading(false);
         }
     }
 
     const handlePreview = async() => {
-        if (fileData) {
-            fileOpen(fileData);
-        } else {
-            try {
-                sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocolFile'), body: {uuid: file?.uuid}})
-            } catch {}
+        try {
+            setLoading(true);
 
-            const res = await getApiProtocol({uuid: file?.uuid, alias});
-            if (res.status === 200 && res.data.length) {
-                const fileInfo = res.data[0];
-                setFileData(fileInfo);
-                fileOpen(fileInfo);
+            if (fileData) {
+                fileOpen(fileData);
+            } else {
+                try {
+                    sendUserBrowserInfo({...getBrowserInfo('GetDeliveryProtocolFile'), body: {uuid: file?.uuid}})
+                } catch {
+                    //
+                }
+
+                const res = await getApiProtocol({uuid: file?.uuid, alias});
+                if (res.status === 200 && res.data.length) {
+                    const fileInfo = res.data[0];
+                    setFileData(fileInfo);
+                    fileOpen(fileInfo);
+                }
             }
+        } finally {
+            setLoading(false);
         }
     }
 
     return (
-        <div className='protocol-file'>
-            <button className='protocol-file__action-btn' onClick={handleDownload}><Icon name='download-file'/></button>
-            <button className='protocol-file__action-btn' onClick={handlePreview}><Icon name='preview'/></button>
-            <p className='protocol-file__name'>{file.name}</p>
+        <div className={styles['protocol-file']}>
+            {loading ? <Loader /> : null}
+            <button className={styles['protocol-file__action-btn']} onClick={handleDownload}><Icon name='download-file'/></button>
+            <button className={styles['protocol-file__action-btn']} onClick={handlePreview}><Icon name='preview'/></button>
+            <p className={styles['protocol-file__name']}>{file.name}</p>
         </div>
 
     );

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Icon from "@/components/Icon";
-import './styles.scss';
+import styles from './styles.module.scss';
 import { getHeaderNameById, getVariantColumnsByReportType, transformReportType } from '../utils';
 
 import {
@@ -425,19 +425,19 @@ const ReportTable: React.FC<ReportTablePropsType> = ({ curPeriod, reportType, re
     }, [table.getRowModel().rows, isRowVisible]);
 
     return (
-        <div className='report'>
-            <div className="card report-container">
+        <div className={styles['report']}>
+            <div className={`card ${styles['report-container']}`}>
                 <div className="h-2" />
-                <div className='interactive-block'>
+                <div className={styles['interactive-block']}>
                     <Button onClick={handleDownload} icon='download-file' iconOnTheRight variant={ButtonVariant.SECONDARY}>Export to Excel</Button>
                     {reportGrouping.length ? <Button iconOnTheRight onClick={() => { table.toggleAllRowsExpanded(!groupsAreOpen); setGroupsAreOpen(prev => !prev); }} icon={groupsAreOpen ? 'minus' : 'plus'} variant={ButtonVariant.SECONDARY} >{groupsAreOpen ? 'Collapse all' : 'Expand all'}</Button> : null}
-                    {reportType === REPORT_TYPES.SALE_DYNAMIC ? <div className='sales-dynamic-legend'>
+                    {reportType === REPORT_TYPES.SALE_DYNAMIC ? <div className={styles['sales-dynamic-legend']}>
                         <div><Icon name='arrow-up-green' /> Your sales have increased by more than 25 percent</div>
                         <div><Icon name='arrow-down-red' /> Your sales have decreased by more than 25 percent</div>
                     </div> : null}
                 </div>
 
-                <div className={`t-container ${reportType} ${reportType === REPORT_TYPES.SALE_DYNAMIC ? 'is-sticky' : ''}`}>
+                <div className={`${styles['t-container']} ${reportType} ${reportType === REPORT_TYPES.SALE_DYNAMIC ? styles['is-sticky'] : ''}`}>
                     <table {...{
                         style: {
                             width: table.getCenterTotalSize()
@@ -467,16 +467,16 @@ const ReportTable: React.FC<ReportTablePropsType> = ({ curPeriod, reportType, re
                                                             header.getContext()
                                                         )}
                                                         {{
-                                                            asc: <span className='sort-icon'><Icon name='sort-asc' /></span>,
-                                                            desc: <span className='sort-icon'><Icon name='sort-desc' /></span>,
+                                                            asc: <span className={styles['sort-icon']}><Icon name='sort-asc' /></span>,
+                                                            desc: <span className={styles['sort-icon']}><Icon name='sort-desc' /></span>,
                                                         }[header.column.getIsSorted() as string] ?? null}
                                                     </div>
                                                 )}
-                                                <div
+                                                    <div
                                                     {...{
                                                         onMouseDown: header.getResizeHandler(),
                                                         onTouchStart: header.getResizeHandler(),
-                                                        className: `resizer ${header.column.getIsResizing() ? "isResizing" : ""
+                                                        className: `${styles['resizer']} ${header.column.getIsResizing() ? styles["isResizing"] : ""
                                                             }`,
                                                         style: {
                                                             transform:
@@ -507,7 +507,7 @@ const ReportTable: React.FC<ReportTablePropsType> = ({ curPeriod, reportType, re
                                                 rowRefs.current.delete(row.id);
                                             }
                                         }}
-                                        className={`${row.subRows.length ? 'is-group' : 'is-leaf'} ${row.getIsGrouped ? 'is-grouped' : 'not-grouped'} ${row.getIsExpanded() ? 'is-expanded' : 'not-expanded'} depth-${groupedCols - row.depth}`}
+                                        className={`${row.subRows.length ? styles['is-group'] : styles['is-leaf']} ${row.getIsGrouped ? 'is-grouped' : 'not-grouped'} ${row.getIsExpanded() ? 'is-expanded' : 'not-expanded'} ${styles[`depth-${groupedCols - row.depth}`] || ''}`}
                                         style={{
                                             display: row.depth > 0 && !shouldBeVisible ? 'none' : '',
                                         }}
@@ -517,7 +517,7 @@ const ReportTable: React.FC<ReportTablePropsType> = ({ curPeriod, reportType, re
                                             return (
                                                 <td
                                                     key={cell.id} colSpan={Number(`${(cell.getIsGrouped() ? dimensionsCount : index <= groupedCols && !cell.getIsAggregated() ? groupedCols + 1 : 1)}`)}
-                                                    className={`${cell.id} col-${index} ${index < dimensionsCount ? 'is-dimension' : 'is-resource'} ${cell.getIsGrouped() ? 'is-grouped' : ''} ${cell.getIsAggregated() ? 'is-aggravated' : ''} ${cell.getIsPlaceholder() ? 'is-placeholder' : ''} ${row.depth}`}
+                                                    className={`${cell.id} col-${index} ${index < dimensionsCount ? styles['is-dimension'] : styles['is-resource']} ${cell.getIsGrouped() ? 'is-grouped' : ''} ${cell.getIsAggregated() ? styles['is-aggravated'] : ''} ${cell.getIsPlaceholder() ? styles['is-placeholder'] : ''} ${row.depth}`}
                                                     {...{
                                                         style: {
                                                             // paddingLeft: index<=groupedCols && !cell.getIsAggregated() ? row.subRows.length ? `${row.depth * 16 +10}px` : `${row.depth * 16 + 30}px` : '10px',
@@ -538,10 +538,10 @@ const ReportTable: React.FC<ReportTablePropsType> = ({ curPeriod, reportType, re
                                                     {cell.getIsGrouped() ? (
                                                         // If it's a grouped cell, add an expander and row count
                                                         <>
-                                                            <button
+                                                                <button
                                                                 {...{
                                                                     onClick: row.getToggleExpandedHandler(),
-                                                                    className: "btn-expand",
+                                                                    className: styles["btn-expand"],
                                                                     style: {
                                                                         cursor: row.getCanExpand()
                                                                             ? "pointer"
@@ -549,11 +549,11 @@ const ReportTable: React.FC<ReportTablePropsType> = ({ curPeriod, reportType, re
                                                                     },
                                                                 }}
                                                             >
-                                                                <Icon name={`${row.getIsExpanded() ? 'minus' : 'plus'}`} className='show-hide-btn' />
+                                                                <Icon name={`${row.getIsExpanded() ? 'minus' : 'plus'}`} className={styles['show-hide-btn']} />
                                                                 {flexRender(
                                                                     cell.column.columnDef.cell,
                                                                     cell.getContext()
-                                                                )} <span className='grouped-rows-count'>
+                                                                )} <span className={styles['grouped-rows-count']}>
                                                                     ({row.subRows.length})</span>
                                                             </button>
                                                         </>

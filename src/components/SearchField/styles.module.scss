@@ -1,5 +1,3 @@
-@import '@/constants/devices.scss';
-
 .search-field {
   display: flex;
   position: relative;
@@ -15,7 +13,7 @@
       z-index: 2;
 
     &:global(.manual-search) {
-      @media (max-width: $upToTablet) {
+      @include upToTablet {
         display: none;
       }
     }
@@ -45,7 +43,7 @@
     &.manual-search {
       padding-right: 110px;
 
-      @media (max-width: $upToTablet) {
+      @include upToTablet {
         padding-left: 16px !important;
         padding-right: 24px;
       }
@@ -84,8 +82,9 @@
       content: ''
     }
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       font-size: 0;
+
       &:after {
         content: url('../../assets/icons/search.svg');
         display: flex;
@@ -93,7 +92,6 @@
         justify-content: center;
         width: 16px;
         height: 24px;
-        //font-size: 12px;
       }
     }
   }

@@ -1,7 +1,5 @@
-@import '@/constants/devices.scss';
-
 .send-comment {
-  @media (min-width: $desktop) {
+  @include desktopAndUp {
     width: 1320px;
   }
 
@@ -11,7 +9,7 @@
     gap: 22px;
     margin-top: 30px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       gap: 6px;
       flex-wrap: wrap;
     }

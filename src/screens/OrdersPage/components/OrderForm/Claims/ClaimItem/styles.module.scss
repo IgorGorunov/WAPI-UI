@@ -1,15 +1,12 @@
-@import '@/constants/devices.scss';
-
-.order-customer-return-item {
-
+.order-claim-item {
   span {
     font-weight: bold;
   }
 
-  &__products {
-    //margin-top: 24px;
+  &__status-history {
+    margin-top: 24px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       margin-left: -16px;
       margin-right: -16px;
     }
@@ -20,7 +17,6 @@
     }
 
     &__table {
-
       &-header {
         display: flex;
         align-items: center;
@@ -33,6 +29,7 @@
 
       &-list {
         list-style: none;
+
         &-item {
           display: flex;
           font-size: 10px;
@@ -45,7 +42,7 @@
       .column {
         padding: 10px 12px;
 
-        @media (max-width: $mobile) {
+        @include mobile {
           padding: 10px 6px;
         }
 
@@ -54,39 +51,25 @@
         }
       }
 
-      .sku-column {
+      .date-column {
+        flex: 0 0 120px;
+        padding: 10px 12px 10px 0;
+        margin-left: 20px;
+
+        @include mobile {
+          padding: 10px 6px;
+          flex: 0 0 70px;
+        }
+      }
+
+      .status-column {
         flex: 0 0 150px;
-        //padding: 10px 12px 10px 0;
-        //margin-left: 20px;
 
-        @media (max-width: $mobile) {
-          //padding: 10px 6px;
-          flex: 0 1 80px;
-        }
-      }
-      .product-column {
-        flex: 1 1 300px;
-
-        @media (max-width: $upToTablet) {
-          flex: 1 1 200px;
+        @include upToTablet {
+          flex: 1 1 150px;
         }
       }
 
-      .quantity-column {
-        flex: 0 0 80px;
-
-        @media (max-width: $upToTablet) {
-          flex: 0 0 50px;
-        }
-      }
-
-      .quality-column {
-        flex: 0 0 100px;
-
-        @media (max-width: $upToTablet) {
-          flex: 0 0 50px;
-        }
-      }
       .highlight {
         background-color: #FAFBFC;
       }

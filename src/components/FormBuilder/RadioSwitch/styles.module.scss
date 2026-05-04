@@ -6,7 +6,6 @@
   &__wrapper {
     display: block;
     padding-top: 10px;
-    //align-self: flex-end;
   }
 
   &-label {
@@ -16,7 +15,6 @@
   }
 
   &__option {
-    //flex: 1 0 30px;
     margin: 0 1px;
     padding: 12px 18px;
     font-size: 12px;
@@ -65,14 +63,10 @@
         color: var(--color-white);
         box-shadow: 0 2px 5px 0 var(--color-light-blue-gray);
       }
-
-
     }
 
     .flag-icon {
       margin-left: 6px;
     }
   }
-
-
 }

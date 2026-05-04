@@ -1,13 +1,19 @@
-@import "@/constants/devices.scss";
-
 .forecast {
   &__container {
     opacity: 1;
     height: 100%;
     padding: 26px 24px;
 
-    @media (min-width: $tablet) and (max-width: $upToDesktop) {
+    //@media (min-width: $tablet) and (max-width: $upToDesktop) {
+    //  padding: 26px 12px;
+    //}
+
+    @include tabletAndUp {
       padding: 26px 12px;
+    }
+
+    @include desktopAndUp {
+      padding: 26px 24px;
     }
   }
 
@@ -23,8 +29,16 @@
   &__wrapper {
     padding: 0 15px;
 
-    @media (min-width: $tablet) and (max-width: $upToDesktop) {
+    //@media (min-width: $tablet) and (max-width: $upToDesktop) {
+    //  padding: 0 12px;
+    //}
+
+    @include tabletAndUp {
       padding: 0 12px;
+    }
+
+    @include desktopAndUp {
+      padding: 0 15px;
     }
   }
 
@@ -39,12 +53,24 @@
     margin-bottom: 2px;
     min-height: 40px;
 
-    @media (min-width: $tablet) and (max-width: $upToLaptop) {
+    //@media (min-width: $tablet) and (max-width: $upToLaptop) {
+    //  font-size: 32px;
+    //}
+    //
+    //@media (min-width: $laptop) and (max-width: $upToDesktop) {
+    //  font-size: 36px;
+    //}
+
+    @include tabletAndUp {
       font-size: 32px;
     }
 
-    @media (min-width: $laptop) and (max-width: $upToDesktop) {
+    @include laptopAndUp {
       font-size: 36px;
+    }
+
+    @include desktopAndUp {
+      font-size: 40px;
     }
   }
 
@@ -55,19 +81,39 @@
     margin-bottom: 6px;
     white-space: nowrap;
 
-    @media (min-width: $tablet) and (max-width: $upToLaptop) {
+    //@media (min-width: $tablet) and (max-width: $upToLaptop) {
+    //  font-size: 14px;
+    //}
+    //@media (min-width: $laptop) and (max-width: $upToDesktop) {
+    //  font-size: 18px;
+    //}
+
+    @include tabletAndUp {
       font-size: 14px;
     }
-    @media (min-width: $laptop) and (max-width: $upToDesktop) {
+
+    @include laptopAndUp {
       font-size: 18px;
+    }
+
+    @include desktopAndUp {
+      font-size: 20px;
     }
   }
 
   &__small-text {
     font-size: 12px;
 
-    @media (min-width: $tablet) and (max-width: $upToLaptop) {
+    //@media (min-width: $tablet) and (max-width: $upToLaptop) {
+    //  font-size: 10px;
+    //}
+
+    @include tabletAndUp {
       font-size: 10px;
+    }
+
+    @include laptopAndUp {
+      font-size: 12px;
     }
   }
 

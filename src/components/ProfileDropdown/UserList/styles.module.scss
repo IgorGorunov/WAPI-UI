@@ -1,9 +1,7 @@
-@import '@/constants/devices.scss';
-
 .users-list {
   min-width: 630px;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     min-width: 100%;
   }
 

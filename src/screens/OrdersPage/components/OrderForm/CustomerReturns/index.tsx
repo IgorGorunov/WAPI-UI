@@ -1,6 +1,6 @@
 import React from "react";
 import {OrderCustomerReturnType} from "@/types/orders";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import Accordion from "@/components/Accordion";
 import CustomerReturnItem from "@/screens/OrdersPage/components/OrderForm/CustomerReturns/CustomerReturnItem";
@@ -11,9 +11,9 @@ type PropsType = {
 
 const CustomerReturns: React.FC<PropsType> = ({ customerReturns }) => {
     return (
-        <div className="order-customer-returns">
+        <div className={styles["order-customer-returns"]}>
             {customerReturns.map((item, index) => (
-                <div key={`${item.date}_${item.status}_${index}`} className='customer-return'>
+                <div key={`${item.date}_${item.status}_${index}`} className={styles['customer-return']}>
                     <Accordion title={`Customer return #${item.number} from ${formatDateStringToDisplayString(item.date)}. Status: ${item.status}`}>
                         <CustomerReturnItem customerReturn={item} />
                     </Accordion>

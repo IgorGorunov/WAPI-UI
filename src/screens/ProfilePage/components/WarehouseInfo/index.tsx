@@ -1,6 +1,6 @@
 import React from "react";
 
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {WarehouseInfoType} from "@/types/profile";
 import WarehouseBlock from "./WarehouseBlock";
 
@@ -10,14 +10,14 @@ type WarehouseInfoPropsType = {
 }
 const WarehouseInfo: React.FC<WarehouseInfoPropsType> = ({warehouseInfoData}) => {
     return (
-        <div className={`warehouse-info`}>
+        <div className={styles['warehouse-info']}>
             {warehouseInfoData && warehouseInfoData.length ?
-                <ul className={`warehouse-info__list`}>
-                    {warehouseInfoData.map((item, index)=> <li key={item.Code + '_' + index} className='warehouse-info__list-item'>
+                <ul className={styles['warehouse-info__list']}>
+                    {warehouseInfoData.map((item, index)=> <li key={item.Code + '_' + index} className={styles['warehouse-info__list-item']}>
                         <WarehouseBlock warehouseData={item} />
                     </li>)}
                 </ul>
-                : <p className='no-info'>There is no available warehouse info.</p>}
+                : <p className={styles['no-info']}>There is no available warehouse info.</p>}
         </div>
     );
 };

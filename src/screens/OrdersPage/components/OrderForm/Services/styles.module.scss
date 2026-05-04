@@ -1,5 +1,3 @@
-@import "@/constants/devices.scss";
-
 .order-service {
   flex: 1 0 100%;
   display: flex;
@@ -7,7 +5,7 @@
   height: 100%;
   margin: 24px -28px 0 -28px;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     margin-left: -16px;
     margin-right: -16px;
   }
@@ -27,7 +25,7 @@
     max-height: calc(100vh - 480px);
     overflow: hidden scroll;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       max-height: calc(100vh - 430px);
     }
 
@@ -43,7 +41,7 @@
   .column {
     padding: 10px 12px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       padding: 10px 6px;
     }
   }
@@ -53,7 +51,7 @@
     padding: 10px 12px 10px 0;
     margin-left: 20px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       padding: 10px 6px 10px 0;
       flex: 0 0 70px;
     }
@@ -66,7 +64,7 @@
   .quantity-column {
     flex: 0 0 80px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       display: none;
     }
   }
@@ -74,7 +72,7 @@
   .sale-price-column {
     flex: 0 0 80px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       display: none;
     }
   }
@@ -82,7 +80,7 @@
   .currency-column {
     flex: 0 0 80px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       display: none;
     }
   }
@@ -90,11 +88,11 @@
   .amount-column {
     flex: 0 0 80px;
 
-    @media (max-width: $upToLaptop) {
+    @include upToLaptop {
       display: none;
     }
 
-    @media (max-width: $mobile) {
+    @include mobile {
       display: none;
     }
   }
@@ -102,7 +100,7 @@
   .vol-weight-column {
     flex: 0 0 80px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       display: none;
     }
   }
@@ -110,7 +108,7 @@
   .tracking-number-column {
     flex: 0 0 190px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       display: none;
     }
   }
@@ -132,7 +130,7 @@
       gap: 30px;
       list-style: none;
 
-      @media (max-width: $mobile) {
+      @include mobile {
         display: none;
       }
 
@@ -150,8 +148,6 @@
       }
     }
   }
-
-
 
   .highlight {
     background-color: #FAFBFC;

@@ -1,9 +1,7 @@
-@import '@/constants/devices.scss';
-
 .user-notes {
   margin: 24px -28px 0 -28px;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     margin-left: -16px;
     margin-right: -16px;
   }
@@ -14,12 +12,7 @@
     margin-top: -54px;
     padding: 0 24px;
     margin-bottom: 16px;
-
-    //@media (max-width: $upToLaptop) {
-    //  padding: 0 32px;
-    //}
   }
-
 
   &__list {
     list-style: none;
@@ -46,7 +39,7 @@
   .column {
     padding: 10px 12px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       padding: 10px 6px;
     }
 
@@ -60,21 +53,18 @@
     padding: 10px 12px 10px 0;
     margin-left: 20px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       padding: 10px 6px;
       flex: 0 0 70px;
     }
   }
+
   .user-column {
     flex: 0 0 150px;
 
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       flex: 1 1 150px;
     }
-  }
-
-  .comment-column {
-
   }
 
   .highlight {

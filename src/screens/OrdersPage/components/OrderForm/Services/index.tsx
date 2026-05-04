@@ -1,6 +1,6 @@
 import React from "react";
 import {OrderServiceType} from "@/types/orders";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {formatDateStringToDisplayString} from "@/utils/date";
 
 type PropsType = {
@@ -12,44 +12,42 @@ const Services: React.FC<PropsType> = ({ services }) => {
     const totalSum = services && services.length ? services.reduce((acc, cur) => acc+cur.amountEuro, 0) : 0;
 
     return (
-        <div className="order-service">
-            <div className="order-service__header">
-                <div className='date-column'>Date</div>
-                <div className='column service-column'>Service</div>
-                <div className='column quantity-column'>Quantity</div>
-                <div className='column sale-price-column'>Price</div>
-                <div className='column currency-column'>Currency</div>
-                <div className='column amount-column'>Amount</div>
-                <div className='column vol-weight-column'>Vol.weight</div>
-                <div className='column tracking-number-column'>Tracking #</div>
-                <div className='column sum-column'>Σ EUR</div>
+        <div className={styles["order-service"]}>
+            <div className={styles["order-service__header"]}>
+                <div className={styles['date-column']}>Date</div>
+                <div className={`${styles['column']} ${styles['service-column']}`}>Service</div>
+                <div className={`${styles['column']} ${styles['quantity-column']}`}>Quantity</div>
+                <div className={`${styles['column']} ${styles['sale-price-column']}`}>Price</div>
+                <div className={`${styles['column']} ${styles['currency-column']}`}>Currency</div>
+                <div className={`${styles['column']} ${styles['amount-column']}`}>Amount</div>
+                <div className={`${styles['column']} ${styles['vol-weight-column']}`}>Vol.weight</div>
+                <div className={`${styles['column']} ${styles['tracking-number-column']}`}>Tracking #</div>
+                <div className={`${styles['column']} ${styles['sum-column']}`}>Σ EUR</div>
             </div>
-            <ul className="order-service__list">
+            <ul className={styles["order-service__list"]}>
                 {services &&
                     services.map((service: OrderServiceType, index: number) => (
                         <li
                             key={service.service + "_" + index}
-                            className={`order-service__list-item ${
-                                index % 2 === 1 ? "highlight" : " "
-                            }`}
+                            className={`${styles['order-service__list-item']} ${index % 2 === 1 ? styles['highlight'] : ''}`}
                         >
-                            <div className='date-column'>{formatDateStringToDisplayString(service.period)}</div>
-                            <div className='column service-column'>
+                            <div className={styles['date-column']}>{formatDateStringToDisplayString(service.period)}</div>
+                            <div className={`${styles['column']} ${styles['service-column']}`}>
                                 {service.service}
                             </div>
-                            <div className='column quantity-column'>{service.quantity}</div>
-                            <div className='column sale-price-column'>{service.price}</div>
-                            <div className='column currency-column'>{service.currency}</div>
-                            <div className='column amount-column'>{service.amount}</div>
-                            <div className='column vol-weight-column'>{service.weight}</div>
-                            <div className='column tracking-number-column'>{service.trackingNumber}</div>
-                            <div className='column sum-column'>{service.amountEuro}</div>
+                            <div className={`${styles['column']} ${styles['quantity-column']}`}>{service.quantity}</div>
+                            <div className={`${styles['column']} ${styles['sale-price-column']}`}>{service.price}</div>
+                            <div className={`${styles['column']} ${styles['currency-column']}`}>{service.currency}</div>
+                            <div className={`${styles['column']} ${styles['amount-column']}`}>{service.amount}</div>
+                            <div className={`${styles['column']} ${styles['vol-weight-column']}`}>{service.weight}</div>
+                            <div className={`${styles['column']} ${styles['tracking-number-column']}`}>{service.trackingNumber}</div>
+                            <div className={`${styles['column']} ${styles['sum-column']}`}>{service.amountEuro}</div>
                         </li>
                     ))}
             </ul>
-            <div className="order-service-total">
-                <ul className='order-service-total__list'>
-                    <li className='order-service-total__list-item'>Total Σ EUR: <span className='order-service-total__list-item__value'>{Math.round(totalSum*100)/100}</span></li>
+            <div className={styles["order-service-total"]}>
+                <ul className={styles['order-service-total__list']}>
+                    <li className={styles['order-service-total__list-item']}>Total Σ EUR: <span className={styles['order-service-total__list-item__value']}>{Math.round(totalSum*100)/100}</span></li>
                 </ul>
             </div>
         </div>

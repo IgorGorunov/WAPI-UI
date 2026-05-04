@@ -1,6 +1,5 @@
 import React from "react";
 
-import "./styles.scss";
 import {HierarchyNodeType} from "@/screens/ProfilePage/components/ApiProtocols";
 import AccordionFile from "@/components/AccordionFile";
 import SingleFile from "@/screens/ProfilePage/components/ApiProtocols/SingleFile";

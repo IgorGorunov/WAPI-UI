@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo} from "react";
 
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {ApiProtocolType} from "@/types/profile";
 import FileFolder from "@/screens/ProfilePage/components/ApiProtocols/FileFolder";
 
@@ -54,9 +54,9 @@ const ApiProtocols: React.FC<ApiProtocolsPropsType> = ({apiProtocols}) => {
 
 
     return (
-        <div className={`api-protocols`}>
+        <div className={styles['api-protocols']}>
             {apiProtocols && apiProtocols.length && fileHierarchy && fileHierarchy.children && fileHierarchy.children.length ?
-                <ul className='api-protocols__wrapper'>
+                <ul className={styles['api-protocols__wrapper']}>
                     {fileHierarchy.children.map(folder => <li key={folder.name}><FileFolder folder={folder} /></li>)}
                 </ul>
                 : null

@@ -1,11 +1,8 @@
-@import '@/constants/devices.scss';
-
 .profile-page {
-
   &__container {
     padding:  0 24px 24px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       padding: 0 16px 16px;
     }
 

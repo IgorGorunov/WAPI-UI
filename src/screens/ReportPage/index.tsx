@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { Routes } from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import { getReportData, getReportParams } from "@/services/reports";
 import {
     REPORT_TITLES,
@@ -47,8 +47,8 @@ import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
-import SelectField from "@/components/FormBuilder/Select/SelectField";
 import {ChangeEventType} from "@/types/forms";
+import Select from "@/components/FormBuilder/Select/SelectField";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -597,10 +597,10 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
     return (
         <Layout hasFooter>
             <SeoHead title={REPORT_TITLES[reportType]} description='Our report page' />
-            <div className="page-container report-page report-page__container">
+            <div className={`page-container ${styles['report-page']} report-page__container`}>
                 {(isLoading || isCalculating) && (<Loader />)}
                 <Header pageTitle={REPORT_TITLES[reportType]} toRight needTutorialBtn />
-                <button className='bread-crumbs-to-reports' onClick={handleBackToReportsPage}>
+                <button className={styles['bread-crumbs-to-reports']} onClick={handleBackToReportsPage}>
                     <Icon name={"keyboard-arrow-right"} />
                     <span>Reports</span>
                 </button>
@@ -615,8 +615,8 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
                     <Button classNames='generate-report-btn' onClick={handleGenerateReport}>Generate</Button>
                 </SearchContainer>
                 {needSeller() ?
-                    <div className='seller-filter-block seller-filter-block--reports'>
-                        <SelectField
+                    <div className={`seller-filter-block ${styles['seller-filter-block--reports']}`}>
+                        <Select
                             key='seller-filter'
                             name='selectedSeller'
                             label='Seller: '
@@ -631,11 +631,11 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
                     : null
                 }
                 {reportType !== REPORT_TYPES.SALE_DYNAMIC
-                    ? <div className='variant-container'>
-                        <div className='variant-container__wrapper'>
-                            <p className='variant-container__period-type-title'>Variant:</p>
+                    ? <div className={styles['variant-container']}>
+                        <div className={styles['variant-container__wrapper']}>
+                            <p className={styles['variant-container__period-type-title']}>Variant:</p>
                             {reportType === REPORT_TYPES.DELIVERY_RATES || reportType === REPORT_TYPES.REPORT_SALES ? (
-                                <div className='variant-container__period-type-wrapper'>
+                                <div className={styles['variant-container__period-type-wrapper']}>
                                     <RadioSwitch name='periodVariantType' value={periodVariantType} onChange={(val) => setPeriodVariantType(val as string)} options={periodVariantOptions} classNames='pt-0' />
                                 </div>)
                                 : null
@@ -651,7 +651,7 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
                     : null
                 }
                 {/* report variants */}
-                <div className='filter-info-container'>
+                <div className={styles['filter-info-container']}>
                     <div className='current-filter-container'>
                         <FiltersChosen filters={reportFilters} />
                     </div>
@@ -666,15 +666,15 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
                     {/*        <span className='hint-icon'>Hint<Icon name='question' /></span>*/}
                     {/*    </Tooltip>*/}
                     {/*</div> : null}*/}
-                    <div className={`report-results ${isCurrentRangeChanged ? 'need-rerender' : ''}`}>
-                        {isCurrentRangeChanged && !noData && <div className='need-rerender-overlay'><p className='need-rerender-text'>Please, run "Generate"!</p></div>}
+                    <div className={`${styles['report-results']} ${isCurrentRangeChanged ? styles['need-rerender'] : ''}`}>
+                        {isCurrentRangeChanged && !noData && <div className={styles['need-rerender-overlay']}><p className={styles['need-rerender-text']}>Please, run "Generate"!</p></div>}
 
                         {!noData && collapsedData ? <>
-                            <div className='report-hint'>
+                            <div className={styles['report-hint']}>
                                 <Tooltip title={`To see what each column means, hover over its name. 
                                     To sort the report by column, click on the column name. 
                                     To sort by multiple columns, press Shift and click on the column names.`} >
-                                    <span className='hint-icon'>Hint<Icon name='question' /></span>
+                                    <span className={styles['hint-icon']}>Hint<Icon name='question' /></span>
                                 </Tooltip>
                             </div>
                             <ReportTable
@@ -690,7 +690,7 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
                                 resourceColumnNames={resourceColumnNames}
                             />
                         </> :
-                            <div className='report-generate-hint'>
+                            <div className={styles['report-generate-hint']}>
                                 Please select a period, variant and click on the Generate button
                             </div>
                         }

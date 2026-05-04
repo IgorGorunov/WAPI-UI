@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import { Controller, useForm } from "react-hook-form";
@@ -11,7 +11,6 @@ import FormFieldsBlock from "@/components/FormFieldsBlock";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button, { ButtonVariant } from "@/components/Button/Button";
 import { sendOrderComment } from '@/services/orders';
-import { ApiResponseType } from '@/types/api';
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import { DateFields, MainFields, ReceiverFields } from "./CommentFields";
 import { addWorkingDays, formatDateToString } from "@/utils/date";
@@ -145,7 +144,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
 
 
     return (
-        <div className="send-comment">
+        <div className={styles["send-comment"]}>
             {isLoading && <Loader />}
             <form onSubmit={handleSubmit(onSubmitForm)}>
                 <div className='grid-row'>
@@ -181,7 +180,7 @@ const SendComment: React.FC<SendCommentPropsType> = ({ orderData, countryOptions
                 {(curAction === SEND_COMMENT_TYPES.REDELIVERY_SAME_ADDRESS || curAction === SEND_COMMENT_TYPES.REDELIVERY_ANOTHER_ADDRESS) && <div className='grid-row'>
                     <FormFieldsBlock control={control} fieldsArray={dateFields} errors={errors} isDisabled={false} />
                 </div>}
-                <div className='form-submit-btn'>
+                <div className={styles['form-submit-btn']}>
                     <Button type="submit" variant={ButtonVariant.PRIMARY}>Send</Button>
                 </div>
             </form>

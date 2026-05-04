@@ -1,8 +1,6 @@
-@import '@/constants/devices.scss';
-
 .order-customer-returns {
   .accordion-item__title {
-    @media (max-width: $upToTablet) {
+    @include upToTablet {
       padding-left: 0;
       padding-right: 0;
     }

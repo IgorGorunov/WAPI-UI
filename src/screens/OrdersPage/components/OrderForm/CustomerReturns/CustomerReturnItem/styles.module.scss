@@ -1,15 +1,13 @@
-@import '@/constants/devices.scss';
-
-.order-claim-item {
+.order-customer-return-item {
 
   span {
     font-weight: bold;
   }
 
-  &__status-history {
-    margin-top: 24px;
+  &__products {
+    //margin-top: 24px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       margin-left: -16px;
       margin-right: -16px;
     }
@@ -54,21 +52,37 @@
         }
       }
 
-      .date-column {
-        flex: 0 0 120px;
-        padding: 10px 12px 10px 0;
-        margin-left: 20px;
+      .sku-column {
+        flex: 0 0 150px;
+        //padding: 10px 12px 10px 0;
+        //margin-left: 20px;
 
         @media (max-width: $mobile) {
-          padding: 10px 6px;
-          flex: 0 0 70px;
+          //padding: 10px 6px;
+          flex: 0 1 80px;
         }
       }
-      .status-column {
-        flex: 0 0 150px;
+      .product-column {
+        flex: 1 1 300px;
 
         @media (max-width: $upToTablet) {
-          flex: 1 1 150px;
+          flex: 1 1 200px;
+        }
+      }
+
+      .quantity-column {
+        flex: 0 0 80px;
+
+        @media (max-width: $upToTablet) {
+          flex: 0 0 50px;
+        }
+      }
+
+      .quality-column {
+        flex: 0 0 100px;
+
+        @media (max-width: $upToTablet) {
+          flex: 0 0 50px;
         }
       }
       .highlight {

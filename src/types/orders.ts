@@ -437,3 +437,23 @@ export type PagedOrderListType = {
     count: number;
     data: OrderType[];
 }
+
+export type OrdersFilters = {
+    status?: string;
+    warehouse?: string;
+    courierService?: string;
+    troubleStatus?: string;
+    nonTroubleEvents?: string;
+    marketplace?: string;
+    seller?: string;
+    receiverCountry?: string;
+    claims?: string;
+    logisticComment?: string;
+    commentToCourierService?: string;
+    selfCollect?: string;
+    sentSMS?: string;
+    tickets?: string;
+    openTickets?: string;
+    photos?: string;
+    customerReturns?: string;
+}

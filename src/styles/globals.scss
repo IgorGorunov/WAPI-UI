@@ -1,7 +1,17 @@
-@import "@/constants/devices.scss";
+@import "@/styles/devices";
 
 :root {
   overscroll-behavior: none;
+
+  //breakpoints
+  --mobile: '600px';
+  --tablet: '900px';
+  --laptop: '1024px';
+  --desktop: '1440px';
+
+  --upToTablet: '899px';
+  --upToLaptop: '1023px';
+  --upToDesktop: '1439px';
 
   // colors
   --color-blue: #3D6FE0; //#5380F5;
@@ -30,7 +40,7 @@
   --color-dark-red2: #b45959;
   --color-warning: #FFA726; //#FFCC80;
   --color-footer-font: #95A7C6;
-  --color-placeholder: #6B7280; // Changed from #5a6c8f for better contrast (WCAG AA compliant)
+  --color-placeholder: var(--color-light-blue-gray); //#6B7280; // Changed from #5a6c8f for better contrast (WCAG AA compliant)
   --color-links: #2860d4;
 
   --yarl__thumbnails_thumbnail_border_color: #7D8FB3;
@@ -209,7 +219,7 @@ button {
 .min-height-600 {
   min-height: calc(100vh - 290px);
 
-  @media (min-width: $laptop) {
+  @include laptopAndUp {
     min-height: 565px;
   }
 }
@@ -231,7 +241,7 @@ button {
   padding: 0 15px;
   max-width: 83%;
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     flex: 0 0 100%;
     max-width: 100%;
     //margin-bottom: 16px;
@@ -244,7 +254,7 @@ button {
   padding: 0 15px;
   max-width: 75%;
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     flex: 0 0 100%;
     max-width: 100%;
     //margin-bottom: 16px;
@@ -256,7 +266,7 @@ button {
   padding: 0 15px;
   max-width: 66.66%;
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     flex: 0 0 100%;
     max-width: 100%;
     //margin-bottom: 16px;
@@ -268,7 +278,7 @@ button {
   padding: 0 15px;
   max-width: 50%;
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     flex: 0 0 100%;
     max-width: 100%;
     //margin-bottom: 16px;
@@ -280,7 +290,7 @@ button {
   padding: 0 15px;
   max-width: 33.33%;
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     flex: 0 0 100%;
     max-width: 100%;
     // margin-bottom: 16px;
@@ -292,7 +302,7 @@ button {
   padding: 0 15px;
   max-width: 25%;
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     flex: 0 0 50%;
     max-width: 50%;
     //margin-bottom: 16px;
@@ -304,7 +314,7 @@ button {
   padding: 0 15px;
   max-width: 16.66%;
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     flex: 0 0 50%;
     max-width: 50%;
     //margin-bottom: 16px;
@@ -337,18 +347,10 @@ button {
 
 .grid-col-2 {
   flex: 0 0 50%;
-
-  //@media (max-width: 899px) {
-  //  margin-bottom: 28px;
-  //}
 }
 
 .grid-col-3 {
   flex: 0 0 33.33%;
-
-  //@media (max-width: 899px) {
-  //  margin-bottom: 28px;
-  //}
 }
 
 .gap-md {
@@ -363,7 +365,7 @@ button {
 .mb-md {
   margin-bottom: 24px;
 
-  @media (max-width: $upToTablet) {
+  @include upToTablet {
     margin-bottom: 16px;
   }
 }
@@ -427,6 +429,13 @@ input[type="date"]::before {
   &.header-icon {
     width: 20px;
   }
+
+  &.icon-ticket-gray {
+    width: 30px;
+    height: 30px;
+
+  }
+
 }
 
 
@@ -479,11 +488,9 @@ input[type="date"]::before {
 .new-line {
   display: block;
   min-height: 12px;
-  //white-space: break-spaces;
 }
 
 .is-link {
-  //color: var(--color-blue);
   color: var(--color-links);
   text-decoration: underline;
   transition: .3s ease;
@@ -498,17 +505,12 @@ input[type="date"]::before {
   margin-bottom: 16px;
   list-style: disc;
   margin-left: 24px;
-
-
 }
 
 .error-message {
-  //margin-top: 6px;
   padding: 0 5px;
   font-size: 12px;
-  //font-weight: bold;
   color: var(--color-error);
-  //text-align: center;
 }
 
 .has-error-decor {
@@ -529,8 +531,6 @@ input[type="date"]::before {
   &.is-active {
     svg path {
       stroke: var(--color-blue);
-
-      //fill: var(--color-blue);
     }
   }
 }
@@ -545,7 +545,6 @@ input[type="date"]::before {
 .doc-list-popover {
   background-color: var(--color-dark-blue);
   border-radius: 8px;
-  //animation: fadeIn 1s forwards;
 
   .ant-popover-inner {
     padding: 0;
@@ -574,7 +573,7 @@ input[type="date"]::before {
   .seller-filter {
     padding: 0;
 
-    @media (min-width: $laptop) {
+    @include laptopAndUp {
       width: 50%;
       margin-left: 50%;
     }
