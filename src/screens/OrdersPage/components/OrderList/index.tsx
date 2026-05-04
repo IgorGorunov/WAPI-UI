@@ -294,7 +294,6 @@ const OrderList: React.FC<OrderListType> = ({
 
     // Total count comes from /GetPagedFilters endpoint's 'orders' property
     const totalCount = filterMetadata?.orders || totalOrders || orders.length;
-    console.log('orderssss: ', filterMetadata?.orders, totalOrders, orders.length)
 
     const transformedStatuses = useMemo(() =>
         filterMetadata?.statuses ? filterTypeToOptions(filterMetadata.statuses) : [],
