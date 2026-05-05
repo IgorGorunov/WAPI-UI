@@ -10,6 +10,9 @@ export function validatePhone(value: string) {
     if (!trimmed) {
         return 'Phone number is required';
     }
+    if (trimmed == "*") {
+        return true;
+    }
 
     if (!trimmed.startsWith('+')) {
         return 'Enter phone number with country code, starting with +';
