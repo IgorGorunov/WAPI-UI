@@ -29,12 +29,11 @@ export const getOrderFieldLabel = (country: string, field: keyof typeof orderFie
 };
 
 const requiredFields: Record<string, string[]> = {
-    'MX': [],
+    'MX': ['street', 'street_number', 'state_region'],
     'BGWH4': ['street', 'building'],
 
 }
 
 export const isFieldRequired = (country: string, warehouse: string, field: string) => {
-    console.log('chec k: ', country, warehouse, field, (requiredFields[country] || []).includes(field) || (requiredFields[warehouse] || []).includes(field) || false);
     return (requiredFields[country] || []).includes(field) || (requiredFields[warehouse] || []).includes(field) || false;
 };
