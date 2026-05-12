@@ -40,11 +40,11 @@
     }
   }
 
-  &.calendar-to-right {
-    :global(.custom-calendar-wrapper) {
-      right: 0;
-    }
-  }
+  //&:global(.calendar-to-right) {
+  //  :global(.custom-calendar-wrapper) {
+  //    right: 0;
+  //  }
+  //}
 
   :global(.rdrMonthAndYearPickers) {
     font-weight: 600;
@@ -158,3 +158,5 @@
     cursor: move;
   }
 }
+
+
