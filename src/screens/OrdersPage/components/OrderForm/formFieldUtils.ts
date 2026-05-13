@@ -4,7 +4,8 @@ export const orderFieldLabels = {
         county_district: 'District (Municipio)',
         city_subdivision: 'City subdivision (Colonia)',
         street: 'Street (Calle)',
-        street_number: 'Street number (Numero exterior)',
+        street_number: 'House number (Numero exterior)',
+        house_number: 'House number (Numero exterior)',
         building: 'Building (Edificio)',
         unit: 'Unit (Departamento)',
         details: 'Details (Referencias)',
@@ -15,7 +16,8 @@ export const orderFieldLabels = {
         county_district: 'District',
         city_subdivision: 'City subdivision',
         street: 'Street',
-        street_number: 'Street number',
+        street_number: 'House number',
+        house_number: 'House number',
         building: 'Building',
         unit: 'Unit',
         details: 'Details',
@@ -29,7 +31,7 @@ export const getOrderFieldLabel = (country: string, field: keyof typeof orderFie
 };
 
 const requiredFields: Record<string, string[]> = {
-    'MX': ['street', 'street_number', 'state_region'],
+    'MX': ['street', 'house_number', 'state_region'],
     'BGWH4': ['street', 'building'],
 
 }

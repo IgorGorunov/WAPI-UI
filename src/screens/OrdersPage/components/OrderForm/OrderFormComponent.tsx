@@ -88,6 +88,19 @@ const getCorrectNotifications = (record: SingleOrderType, notifications: Notific
     return orderNotifications;
 }
 
+const normalizeFullAddressData = (addressJSONStructure) => {
+    if (addressJSONStructure) {
+        const addressData = JSON.parse(addressJSONStructure) as OrderFullAddressType;
+        return {
+            ...addressData,
+            house_number: (addressData?.house_number ? addressData.house_number : addressData?.street_number) || '',
+            street_number: '',
+        } as OrderFullAddressType;
+    } else {
+        return {} as OrderFullAddressType;
+    }
+}
+
 const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameters, orderUuid, refetchDoc, closeOrderModal, forbiddenTabs }) => {
 
     const { notifications } = useNotifications();
@@ -276,7 +289,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         warehouse: orderData?.warehouse || '',
         seller: orderData?.seller && needSeller() ? orderData.seller : '',
         addressJSONStructure: orderData?.addressJSONStructure || '',
-        addressFull: orderData?.addressJSONStructure ? JSON.parse(orderData?.addressJSONStructure) as OrderFullAddressType: {} as OrderFullAddressType,
+        addressFull: normalizeFullAddressData(orderData?.addressJSONStructure),
 
         products:
             orderData && orderData?.products && orderData.products.length
