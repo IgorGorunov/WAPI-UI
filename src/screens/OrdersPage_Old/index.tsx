@@ -9,7 +9,12 @@ import "./styles.scss";
 import {getOrders_Old} from "@/services/orders";
 import Button from "@/components/Button/Button";
 import { DateRangeType } from "@/types/dashboard";
-import { formatDateTimeToStringWithDotWithoutSeconds, formatDateToString, getLastFewDays } from "@/utils/date";
+import {
+    formatDateStringToDisplayString,
+    formatDateTimeToStringWithDotWithoutSeconds,
+    formatDateToString,
+    getLastFewDays
+} from "@/utils/date";
 import { OrderType } from "@/types/orders";
 // import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
@@ -222,6 +227,7 @@ const OrdersPage = () => {
             'Status': item.status,
             "Status additional info": item.statusAdditionalInfo,
             "Date": formatDateTimeToStringWithDotWithoutSeconds(item.date),
+            'Preferred delivery date': item.preferredDeliveryDate && item.preferredDeliveryDate !== '0001-01-01T00:00:00' ? formatDateStringToDisplayString(item.preferredDeliveryDate || '') : '',
             "COD amount": item.codAmount,
             "COD currency": item.codCurrency,
             "Client order ID": item.clientOrderID,
@@ -241,7 +247,8 @@ const OrdersPage = () => {
             // "Logistic comment": `${item.logisticComment ? (item.logisticComment+(item.warehouseAdditionalInfo ? '; '+item.warehouseAdditionalInfo : '')) : item.warehouseAdditionalInfo ? item.warehouseAdditionalInfo : ''}`,
             "Logistic comment": `${item.logisticComment}`,
             "Tracking link": item.trackingNumber ? item.trackingLink : '',
-            "Has claims": item.claims.length ? "+" : ""
+            "Has claims": item.claims.length ? "+" : "",
+
         }));
 
         if (!isTabAllowed('Logistic comment', forbiddenTabs)) {

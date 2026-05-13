@@ -93,6 +93,7 @@ export type OrderType = {
     }[];
     marketplace: string;
     seller?: SellerType;
+    preferredDeliveryDate?: string;
 }
 
 export type ProductInfoType = {
