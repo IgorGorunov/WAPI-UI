@@ -326,16 +326,16 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
         selectedCountry && ['MX'].includes(selectedCountry) ? {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
-            name: `addressFull.street_number`,
-            label: getOrderFieldLabel(selectedCountry, 'street_number'),
+            name: `addressFull.house_number`,
+            label: getOrderFieldLabel(selectedCountry, 'house_number'),
             placeholder: "",
             rules: {
-                required: isFieldRequired(selectedCountry, selectedWarehouse, 'street_number') ? "Required field" : false,
+                required: isFieldRequired(selectedCountry, selectedWarehouse, 'house_number') ? "Required field" : false,
             },
             width: WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
-            hint: OrderHints['street_number'] || '',
+            hint: OrderHints['house_number'] || '',
         } : null,
         // selectedCountry && ['MX'].includes(selectedCountry) ? {
         {

@@ -14,7 +14,7 @@
       margin-bottom: 4px;
       margin-left: -2px;
       font-size: 10px;
-      padding: 7px 16px;
+      padding: 5px 10px;
       outline: none;
       box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
 
@@ -34,6 +34,18 @@
         color: var(--color-placeholder) !important;
       }
     }
+
+  :global(.no-counters) {
+    &[type="number"]::-webkit-inner-spin-button,
+    &[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type=number] {
+      -moz-appearance: textfield;
+    }
+  }
 
   .error {
       position: absolute;

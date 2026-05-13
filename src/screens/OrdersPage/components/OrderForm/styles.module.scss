@@ -188,7 +188,7 @@
     //}
   }
 
-  .order-tracking-link {
+  :global(.order-tracking-link) {
     a {
       font-size: 12px;
       font-weight: bold;

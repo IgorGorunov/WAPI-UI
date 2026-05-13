@@ -26,6 +26,7 @@ export const OrderHints = {
     locality: 'Smaller neighborhood or local administrative unit',
     street: 'Street, avenue, block, or road name',
     street_number: 'House/building number',
+    house_number: 'House/building number',
     block_lot: 'Block, lot, land parcel, sub-block',
     building: 'Building, tower, complex, corporate building, section',
     unit: 'Apartment, office, suite, room, or floor',

@@ -310,6 +310,7 @@ export type OrderFullAddressType = {
     county_district?: string;
     street?: string;
     street_number?: string;
+    house_number?: string;
     building?: string;
     unit?: string;
     details?: string;
