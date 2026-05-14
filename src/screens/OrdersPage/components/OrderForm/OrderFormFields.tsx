@@ -220,7 +220,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
     } : null,
 ];
 
-export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllowed=false, onChangeFn, selectedCountry, selectedWarehouse}: { countries: OptionType[]; prefix?:string; isDisabled: boolean; isAddressAllowed: boolean; onChangeFn: ()=>void, selectedCountry: string, selectedWarehouse: string}) => {
+export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllowed=false, onChangeFn, selectedCountry, selectedWarehouse, btns}: { countries: OptionType[]; prefix?:string; isDisabled: boolean; isAddressAllowed: boolean; onChangeFn: ()=>void, selectedCountry: string, selectedWarehouse: string, btns?: any[]}) => {
     return [
         {
             fieldType: FormFieldTypes.SELECT,
@@ -477,6 +477,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             placeholder: "",
             rules: {
                 required: "Required field",
+                maxLength: 60,
             },
             errorMessage: "Required field",
             width: selectedCountry && ['MX'].includes(selectedCountry) ? WidthType.w50 : WidthType.w75,
@@ -484,6 +485,8 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             disabled: isDisabled && !isAddressAllowed,
             onChange: onChangeFn,
             hint: OrderHints['address'] || '',
+            btnName: 'Fill',
+            onBtnClick: btns && btns.length && btns[0],
         },
         {
             fieldType: FormFieldTypes.TEXT,

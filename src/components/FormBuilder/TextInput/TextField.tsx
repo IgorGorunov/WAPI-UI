@@ -1,5 +1,5 @@
-import React, {FormEvent, useCallback, forwardRef } from "react";
-import { FieldPropsType } from "@/types/forms";
+import React, {FormEvent, forwardRef, useCallback} from "react";
+import {FieldPropsType} from "@/types/forms";
 import styles from "./styles.module.scss";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 
@@ -24,6 +24,8 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
       onlyAllowedSymbols = false,
       onlyWholeNumbers = false,
     onKeyDownFn,
+    btnName = '',
+    onBtnClick,
       ...otherProps
 }, ref) => {
 
@@ -66,6 +68,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
     <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`}>
         <div className={`${styles['form-control'] || 'form-control'} ${styles[classNames] || classNames}  ${isRequired ? styles["required"] : ''} ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''}  ${errorMessage ? styles['has-error']+' has-error' : ''}`}>
             {label && <label htmlFor={name}>{label}</label>}
+            <div className={styles['input-wrapper']}>
               <input
                 ref={ref}
                 id={name}
@@ -80,6 +83,8 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
                 aria-autocomplete='none'
                 className={noCounters ? 'no-counters' : ''}
               />
+              {btnName && onBtnClick ? <button type={'button'} disabled={disabled} className={styles['form-input-btn']} onClick={onBtnClick}>{btnName}</button> : null}
+            </div>
             {errorMessage && <p className={styles.error || 'error'}>{errorMessage}</p>}
           {/*{errors && name in errors ? (*/}
           {/*  <p className="error er1">*/}

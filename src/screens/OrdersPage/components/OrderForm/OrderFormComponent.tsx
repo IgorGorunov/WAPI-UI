@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     CreateOrderRequestType, OrderFullAddressType,
     OrderParamsType,
@@ -8,55 +8,55 @@ import {
     SingleOrderProductFormType,
     SingleOrderType
 } from "@/types/orders";
-import {AttachedFilesType, STATUS_MODAL_TYPES, WarehouseType} from "@/types/utility";
+import { AttachedFilesType, STATUS_MODAL_TYPES, WarehouseType } from "@/types/utility";
 import styles from "./styles.module.scss";
 import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
-import {AccessActions, AccessObjectTypes} from "@/types/auth";
-import type {Control, FieldValues, SubmitErrorHandler} from "react-hook-form";
-import {Controller, useFieldArray, useForm} from "react-hook-form";
+import { AccessActions, AccessObjectTypes } from "@/types/auth";
+import type { Control, FieldValues, SubmitErrorHandler } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import Tabs from '@/components/Tabs';
-import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
-import {COUNTRIES} from "@/types/countries";
-import {createOptions} from "@/utils/selectOptions";
-import {cancelOrder, getOrderPickupPoints, sendAddressData, sendOrderData} from '@/services/orders';
-import {DetailsFields, GeneralFields, PickUpPointFields, ReceiverFields} from "./OrderFormFields";
-import {TabFields, TabTitles} from "./OrderFormTabs";
-import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import Button, { ButtonSize, ButtonVariant } from "@/components/Button/Button";
+import { COUNTRIES } from "@/types/countries";
+import { createOptions } from "@/utils/selectOptions";
+import { cancelOrder, getOrderPickupPoints, sendAddressData, sendOrderData } from '@/services/orders';
+import { DetailsFields, GeneralFields, PickUpPointFields, ReceiverFields } from "./OrderFormFields";
+import { TabFields, TabTitles } from "./OrderFormTabs";
+import { FormFieldTypes, OptionType, WidthType } from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {message, Table} from "antd";
+import { message, Table } from "antd";
 import DropZone from "@/components/Dropzone";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "./ProductsTotal";
-import {toast, ToastContainer} from '@/components/Toast';
-import {useTabsState} from "@/hooks/useTabsState";
+import { toast, ToastContainer } from '@/components/Toast';
+import { useTabsState } from "@/hooks/useTabsState";
 import Modal from "@/components/Modal";
 import SendComment from "./SendCommentBlock";
 import SmsHistory from "./SmsHistory";
 import Loader from "@/components/Loader";
 import Claims from "@/screens/OrdersPage/components/OrderForm/Claims";
-import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
+import ProductSelection, { SelectedProductType } from "@/components/ProductSelection";
 import useNotifications from "@/context/notificationContext";
-import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
+import { NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType } from "@/types/notifications";
 import SingleDocument from "@/components/SingleDocument";
 import DocumentTickets from "@/components/DocumentTickets";
-import {addCurrentTimeToDate, formatDateStringToDisplayString} from "@/utils/date";
-import {TICKET_OBJECT_TYPES} from "@/types/tickets";
+import { addCurrentTimeToDate, formatDateStringToDisplayString } from "@/utils/date";
+import { TICKET_OBJECT_TYPES } from "@/types/tickets";
 import ConfirmModal from "@/components/ModalConfirm";
 import NotesList from "@/components/NotesList";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-import {OrderHints} from "@/screens/OrdersPage/ordersHints.constants";
-import {CommonHints} from "@/constants/commonHints";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import { OrderHints } from "@/screens/OrdersPage/ordersHints.constants";
+import { CommonHints } from "@/constants/commonHints";
+import { sendUserBrowserInfo } from "@/services/userInfo";
 import ImageSlider from "@/components/ImageSlider";
 import CustomerReturns from "./CustomerReturns";
 import useTenant from "@/context/tenantContext";
-import {isTabAllowed} from "@/utils/tabs";
+import { isTabAllowed } from "@/utils/tabs";
 import ToggleSwitch from "@/components/FormBuilder/ToggleSwitch";
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -311,7 +311,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                 : [],
     }), [orderData]);
 
-    const { control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors, setError } = useForm({
+    const { control, handleSubmit, formState: { errors }, getValues, setValue, watch, clearErrors, setError, trigger } = useForm({
         mode: 'onSubmit',
         defaultValues: defaultFormValues,
     });
@@ -840,7 +840,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         clearPickUpPoint();
     }
 
-    const handleWarehouseChange = (selectedOption: string, notClearProducts=false) => {
+    const handleWarehouseChange = (selectedOption: string, notClearProducts = false) => {
         console.log('handleWarehouseChange: ', selectedOption);
         //setSelectedWarehouse(selectedOption);
         //let user know that pickUp point info is cleared
@@ -946,7 +946,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         setAtLeastOneFieldIsFilled(isFilled);
     }, [setAtLeastOneFieldIsFilled, getValues]);
 
-    const clearPickUpPointFields = useCallback(()=>{
+    const clearPickUpPointFields = useCallback(() => {
         setValue('receiverPickUpCountry', '');
         setValue('receiverPickUpName', '');
         setValue('receiverPickUpCity', '');
@@ -974,11 +974,36 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         }
     }, [receiverZip, receiverCountry]);
 
+    //auto-fill receiverAddress from street + house_number + building + unit
+    const addressFullStreet = watch('addressFull.street');
+    const addressFullHouseNumber = watch('addressFull.house_number');
+    const addressFullBuilding = watch('addressFull.building');
+    const addressFullUnit = watch('addressFull.unit');
+    const receiverAddress = watch('receiverAddress');
+
+    useEffect(() => {
+        if (!orderData || !receiverAddress) {
+            const parts = [addressFullStreet, addressFullHouseNumber, addressFullBuilding, addressFullUnit].filter(Boolean);
+            if (parts.length > 0) {
+                setValue('receiverAddress', parts.join(', '), { shouldValidate: false, shouldDirty: true });
+            }
+        }
+    }, [addressFullStreet, addressFullHouseNumber, addressFullBuilding, addressFullUnit]);
+
+    const fillTheAddress = useCallback(async () => {
+        const fullAddress = getValues('addressFull');
+        const isValid = await trigger(['addressFull.street', 'addressFull.house_number', 'addressFull.building', 'addressFull.unit']);
+        const parts = [fullAddress.street, fullAddress.house_number, fullAddress.building, fullAddress.unit].filter(Boolean);
+        if (isValid && parts.length > 0) {
+            setValue('receiverAddress', parts.join(', '), { shouldValidate: true, shouldDirty: true });
+        }
+    }, [addressFullStreet, addressFullHouseNumber, addressFullBuilding, addressFullUnit]);
+
     const linkToTrack = orderData && orderData.trackingLink && orderData.trackingLink.at(-1) != '=' ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
     const generalFields = useMemo(() => GeneralFields(!orderData?.uuid, orderTitles), [orderData, orderTitles])
     const detailsFields = useMemo(() => DetailsFields({ warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange: handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid }), [preferredWarehouse]);
-    const receiverFields = useMemo(() => ReceiverFields({ countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields, selectedCountry: receiverCountry, selectedWarehouse: preferredWarehouse }), [curPickupPoints, pickupOptions, countries, preferredWarehouse, selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields, receiverCountry, preferredWarehouse]);
+    const receiverFields = useMemo(() => ReceiverFields({ countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields, selectedCountry: receiverCountry, selectedWarehouse: preferredWarehouse, btns: [fillTheAddress] }), [curPickupPoints, pickupOptions, countries, preferredWarehouse, selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields, receiverCountry, preferredWarehouse]);
     //TODO: remove atLeastOneFieldIsFilled later. We do not need any more, logic has changed
     const pickUpPointFields = useMemo(() => PickUpPointFields({ countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: () => { hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled() }, atLeastOneFieldIsFilled: isSelfCollect, isSelfCollect }), [countries, preferredWarehouse, selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions, isSelfCollect])
     const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(orderData?.attachedFiles || []);

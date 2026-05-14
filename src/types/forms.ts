@@ -114,7 +114,9 @@ export type FieldPropsType<T extends FieldValues = FieldValues> = {
   onlyAllowedSymbols?: boolean;
   countryName?: string;
   onlyWholeNumbers?: boolean;
-  fieldType?: FormFieldTypes
+  fieldType?: FormFieldTypes;
+  btnName?: string;
+  onBtnClick?: () => void;
 }
 
 export type FormBuilderType = FieldPropsType & {
