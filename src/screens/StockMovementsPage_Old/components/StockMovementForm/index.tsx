@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import styles from "./styles.module.scss";
+import "./styles.scss";
 import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, UserAccessActionType } from "@/types/auth";
@@ -136,7 +136,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
     return (
         <div>
             {docParameters && (docUuid && docData || !docUuid ? (
-                <div className={`${styles['stock-movement']} is-${docType}`}>
+                <div className={`stock-movement is-${docType}`}>
                     {isLoading && <Loader />}
                     <ToastContainer />
                     {docParameters && (docUuid && docData || !docUuid) ? (

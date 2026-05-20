@@ -5,17 +5,12 @@ import { useRouter } from "next/router";
 import { Routes } from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
-import { DateRangeType } from "@/types/dashboard";
-import { formatDateToString, getLastFewDays } from "@/utils/date";
-import { exportFileXLS } from "@/utils/files";
-import { getInbounds } from "@/services/stockMovements";
 import { STOCK_MOVEMENT_DOC_TYPE, STOCK_MOVEMENT_ROUTES, StockMovementType } from "@/types/stockMovements";
 import Loader from "@/components/Loader";
 import StockMovementList from "@/screens/StockMovementsPage/components/StockMovementList";
 import StockMovementForm from "@/screens/StockMovementsPage/components/StockMovementForm";
-import { ApiResponseType } from "@/types/api";
 import useTourGuide from "@/context/tourGuideContext";
 import { TourGuidePages } from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
@@ -28,18 +23,23 @@ import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
+import { usePagedListState, usePagedData, useFilterMetadata, processFiltersForApi, FilterValue } from "@/components/PagedList";
+import { StockMovementsFilters, StockMovementFilterDataType } from "./types";
+import { getLastFewDays} from "@/utils/date";
+import {toast} from "@/components/Toast";
+import {getStockMovementsExcel} from "@/services/stockMovements";
 
 type StockMovementPageType = {
     docType: STOCK_MOVEMENT_DOC_TYPE;
 }
 
-const getProductsByString = (item: StockMovementType) => {
-    return item.products.map(product => product.product).join('; ')
-}
-
-const getProductsWithQuantity = (item: StockMovementType) => {
-    return item.products.map(product => `${product.product} - ${product.quantity}`).join('; ')
-}
+// const getProductsByString = (item: StockMovementType) => {
+//     return item.products.map(product => product.product).join('; ')
+// }
+//
+// const getProductsWithQuantity = (item: StockMovementType) => {
+//     return item.products.map(product => `${product.product} - ${product.quantity}`).join('; ')
+// }
 
 const docNamesPlural = {
     [STOCK_MOVEMENT_DOC_TYPE.INBOUNDS]: 'Inbounds',
@@ -70,10 +70,9 @@ export const getAccessActionObject = (docType: STOCK_MOVEMENT_DOC_TYPE) => {
 }
 
 const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
-
     const Router = useRouter();
     const { tenantData: { alias } } = useTenant();
-    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
+    const { token, ui, getBrowserInfo, isActionIsAccessible, getForbiddenTabs } = useAuth();
 
     useEffect(() => {
         if (!token) Router.push(Routes.Login);
@@ -89,13 +88,44 @@ const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
 
     }, [Router.query]);
 
-    const today = new Date();
-    const firstDay = getLastFewDays(today, 30);
-    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({ startDate: firstDay, endDate: today })
+    //universal state management via URL
+    const { state, updatePeriod, updateFilters, updateSearch, updatePage, updatePageSize, updateSort, clearAllFilters } = usePagedListState<StockMovementsFilters>(
+        {} as Partial<StockMovementsFilters>,
+        {
+            defaultPageSize: 10,
+            defaultDateRange: { startDate: getLastFewDays(new Date(), 30), endDate: new Date() },
+            defaultSortBy: 'incomingDate',
+            defaultSortOrder: 'desc',
+        }
+    );
 
-    const [stockMovementData, setStockMovementData] = useState<any | null>(null);
-    const [filteredDocs, setFilteredDocs] = useState<StockMovementType[]>(stockMovementData);
-    const [isLoading, setIsLoading] = useState(true);
+    //fetch paginated stock movements — documentType passed as extraParams
+    const { data: stockMovementData, count: totalDocs, isLoading: isLoadingDocs, refetch: refetchDocs } = usePagedData<StockMovementType>(
+        '/GetPagedStockMovementList',
+        state,
+        {
+            token,
+            alias,
+            ui,
+            enabled: !!token && isActionIsAccessible(getAccessActionObject(docType), AccessActions.ListView),
+            extraParams: { documentType: docType },
+        }
+    );
+
+    //fetch filter metadata — documentType is required by this endpoint too
+    const { metadata: filterMetadata, isLoading: isLoadingFilters } = useFilterMetadata<StockMovementFilterDataType>(
+        '/GetPagedFiltersStockMovement',
+        { startDate: state.startDate, endDate: state.endDate },
+        { token, alias, ui, enabled: !!token, extraParams: { documentType: docType } },
+    );
+
+    const isLoading = isLoadingDocs || isLoadingFilters;
+
+    //track forbidden tabs
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[]>([]);
+    useEffect(() => {
+        setForbiddenTabs(getForbiddenTabs(getAccessActionObject(docType)));
+    }, [docType]);
 
     //single document data
     const [showStockMovementModal, setShowStockMovementModal] = useState(false);
@@ -113,38 +143,9 @@ const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
         setShowStatusModal(false);
     }, [])
 
-    const fetchData = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            setStockMovementData([]);
-            const requestData = { token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate), documentType: docType };
-
-            try {
-                sendUserBrowserInfo({ ...getBrowserInfo('GetStockMovementList/' + docType, getAccessActionObject(docType), AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
-            } catch { }
-
-            if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.ListView)) {
-                setStockMovementData([]);
-                return;
-            }
-            const res = await getInbounds(superUser && ui ? { ...requestData, ui } : requestData);
-
-            if (res && "data" in res) {
-                setStockMovementData(res.data.map(item => ({ ...item, key: item.uuid })).sort((a, b) => a.incomingDate > b.incomingDate ? -1 : 1));
-            } else {
-                console.error("API did not return expected data");
-            }
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [token, curPeriod]);
-
-    useEffect(() => {
-        fetchData();
-    }, [token, curPeriod]);
+    const handleRefresh = () => {
+        refetchDocs();
+    };
 
     const handleEditStockMovement = (uuid: string) => {
         setIsDocNew(false);
@@ -181,36 +182,103 @@ const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
         }
     }
 
-    const handleExportXLS = () => {
+    // const handleExportXLS = () => {
+    //     try {
+    //         sendUserBrowserInfo({ ...getBrowserInfo('ExportStockMovementsList/' + docType, getAccessActionObject(docType), AccessActions.ExportList), body: { startDate: state.startDate, endDate: state.endDate } });
+    //     } catch { }
+    //
+    //     if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.ExportList)) {
+    //         return null;
+    //     }
+    //
+    //     const filteredData = stockMovementData.map(item => ({
+    //         Number: item.number,
+    //         "Incoming date": item.incomingDate,
+    //         "Incoming number": item.incomingNumber,
+    //         Status: item.status,
+    //         ETA: item.estimatedTimeArrives,
+    //         Sender: item.sender,
+    //         "Sender Country": item.senderCountry,
+    //         Receiver: item.receiver,
+    //         "receiver Country": item.receiverCountry,
+    //         Products: item.productsByString || getProductsByString(item),
+    //         'Products with quantity': getProductsWithQuantity(item),
+    //         Services: '€ ' + item.servicesAmount,
+    //     }));
+    //     exportFileXLS(filteredData, docNamesPlural[docType]);
+    // }
+
+    const handleExportXLS = async () => {
+            try {
+                sendUserBrowserInfo({ ...getBrowserInfo('ExportStockMovementsList/' + docType, getAccessActionObject(docType), AccessActions.ExportList), body: { startDate: state.startDate, endDate: state.endDate } });
+            } catch { }
+
+            if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.ExportList)) {
+                return;
+            }
+
+        const exportPromise = async () => {
+            const res = await getStockMovementsExcel({
+                token,
+                alias,
+                ui,
+                documentType: docType,
+                startDate: state.startDate,
+                endDate: state.endDate,
+                filter: processFiltersForApi(state.filters as Record<string, FilterValue>) as any,
+                search: state.search,
+                fullTextSearch: state.fullTextSearch,
+                sortBy: state.sortBy,
+                sortOrder: state.sortOrder
+            });
+
+            if (res && res.data) {
+                const { base64ToBlob } = await import('@/utils/files');
+                const attachedFile = res.data;
+                const blob = base64ToBlob(attachedFile.data, attachedFile.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+
+                // Ensure extension exists and append unique timestamp to bypass OS "Save As/Overwrite" dialogs
+                let downloadName = docNamesPlural[docType]+".xlsx";
+
+                const parts = downloadName.split('.');
+                const ext = parts.length > 1 ? parts.pop() || 'xlsx' : 'xlsx';
+                const baseName = parts.length > 0 ? parts.join('.') : downloadName;
+
+                const finalExt = ext.toLowerCase().startsWith('xls') ? ext : 'xlsx';
+                a.download = `${baseName}.${finalExt}`;
+
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } else {
+                throw new Error("Empty response");
+            }
+        };
+
         try {
-            sendUserBrowserInfo({ ...getBrowserInfo('ExportStockMovementsList/' + docType, getAccessActionObject(docType), AccessActions.ExportList), body: { startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) } });
-        } catch { }
-
-        if (!isActionIsAccessible(getAccessActionObject(docType), AccessActions.ExportList)) {
-            return null;
+            toast.promise(
+                exportPromise(),
+                {
+                    pending: 'Downloading Orders...',
+                    success: {
+                        render: 'File downloaded successfully!',
+                        autoClose: 2000 //disappear in 2 seconds
+                    },
+                    error: 'Failed to download file'
+                },
+                {
+                    className: 'download-toast'
+                }
+            );
+        } catch (error) {
+            console.error("Export failed", error);
         }
+    };
 
-        const filteredData = filteredDocs.map(item => ({
-            Number: item.number,
-            "Incoming date": item.incomingDate,
-            "Incoming number": item.incomingNumber,
-            Status: item.status,
-            ETA: item.estimatedTimeArrives,
-            Sender: item.sender,
-            "Sender Country": item.senderCountry,
-            Receiver: item.receiver,
-            "receiver Country": item.receiverCountry,
-            Products: item.productsByString || getProductsByString(item),
-            'Products with quantity': getProductsWithQuantity(item),
-            Services: '€ ' + item.servicesAmount,
-            // packages: item.packages,
-            // palletAmount: item.palletAmount,
-            // volume: item.volume,
-            // weightGross: item.weightGross,
-            // weightNet: item.weightNet,
-        }));
-        exportFileXLS(filteredData, docNamesPlural[docType]);
-    }
 
     //tour guide
     const { runTour, setRunTour, isTutorialWatched } = useTourGuide();
@@ -218,7 +286,7 @@ const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
 
     useEffect(() => {
         if (!isTutorialWatched(TourGuidePages[docType])) {
-            if (!isLoading && stockMovementData) {
+            if (!isLoading && stockMovementData && stockMovementData.length > 0) {
                 setTimeout(() => setRunTour(true), 1000);
             }
         }
@@ -232,7 +300,7 @@ const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
     return (
         <Layout hasHeader hasFooter>
             <SeoHead title={docNamesPlural[docType]} description={`Our ${docNamesPlural[docType]} page`} />
-            <div className="stock-movement-page__container">
+            <div className={styles["stock-movement-page__container"]}>
                 {isLoading && <Loader />}
                 <Header pageTitle={docNamesPlural[docType]} toRight needTutorialBtn >
                     <Button classNames='add-doc' icon="add" iconOnTheRight onClick={handleAddOrder}>Add</Button>
@@ -242,15 +310,32 @@ const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
                 {stockMovementData && <StockMovementList
                     docType={docType}
                     docs={stockMovementData}
-                    currentRange={curPeriod}
-                    setCurrentRange={setCurrentPeriod}
-                    setFilteredDocs={setFilteredDocs}
+                    isLoading={isLoading}
+                    totalDocs={totalDocs}
+                    filterMetadata={filterMetadata}
+                    currentPage={state.page}
+                    pageSize={state.limit}
+                    searchTerm={state.search}
+                    fullTextSearch={state.fullTextSearch}
+                    sortBy={state.sortBy}
+                    sortOrder={state.sortOrder}
+                    selectedFilters={state.filters}
+                    onPageChange={updatePage}
+                    onPageSizeChange={updatePageSize}
+                    onSearchChange={updateSearch}
+                    onSortChange={updateSort}
+                    onFiltersChange={updateFilters}
+                    onClearFilters={clearAllFilters}
                     handleEditDoc={handleEditStockMovement}
-                    forbiddenTabs={getForbiddenTabs(getAccessActionObject(docType))}
+                    handleRefresh={handleRefresh}
+                    forbiddenTabs={forbiddenTabs}
+                    startDate={state.startDate}
+                    endDate={state.endDate}
+                    onPeriodChange={updatePeriod}
                 />}
             </div>
             {showStockMovementModal && (isDocNew && !docUuid || !isDocNew && docUuid) &&
-                <StockMovementForm docType={docType} docUuid={docUuid} closeDocModal={onShowStockMovementModalClose} closeModalOnSuccess={() => { setShowStockMovementModal(false); fetchData(); }} />
+                <StockMovementForm docType={docType} docUuid={docUuid} closeDocModal={onShowStockMovementModalClose} closeModalOnSuccess={() => { setShowStockMovementModal(false); handleRefresh(); }} />
             }
             {stockMovementData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages[docType]} /> : null}
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}

@@ -413,7 +413,8 @@ input[type="date"]::before {
   &-warehouse,
   &-book,
   &-trouble,
-  &-lightning-bolt {
+  &-lightning-bolt,
+  &-pallet-freight {
     flex: 0 0 auto;
     width: 24px;
   }

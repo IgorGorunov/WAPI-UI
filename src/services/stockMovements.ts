@@ -8,6 +8,7 @@ import {
 import type {AttachedFilesType} from "@/types/utility";
 import {api} from "@/services/api";
 import type {ApiResponseType} from "@/types/api";
+import {OrderFiltersSelectedType} from "@/types/orders";
 
 
 const getInbounds = async (
@@ -26,23 +27,8 @@ const getInbounds = async (
     const docEndpoint = 'GetStockMovementList';
 
     return api.post(`/${docEndpoint}`, data);
-
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/${docEndpoint}`,
-    //         data
-    //
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 const getInboundData = async (
-    //token: string,
-    //type: STOCK_MOVEMENT_DOC_TYPE,
     data: {
         uuid: string;
         alias: string;
@@ -53,17 +39,6 @@ const getInboundData = async (
 ): Promise<ApiResponseType<SingleStockMovementType>> => {
     const docEndpoint = 'GetStockMovementData';
     return api.post(`/${docEndpoint}`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/${docEndpoint}`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getInboundParameters = async (
@@ -77,22 +52,7 @@ const getInboundParameters = async (
 ): Promise<ApiResponseType<StockMovementParamsType>> => {
     const docEndpoint = 'GetStockMovementParameters';
     return api.post(`/${docEndpoint}`, data);
-    // try {
-    //     const docEndpoint = 'GetStockMovementParameters';
-    //
-    //     const response: unknown = await api.post(
-    //         `/${docEndpoint}`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
-
-
 
 
 const sendInboundData = async (
@@ -105,17 +65,6 @@ const sendInboundData = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/CreateStockMovement`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/CreateStockMovement`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const updateInboundData = async (
@@ -132,17 +81,6 @@ const updateInboundData = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/UpdateStockMovement`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/UpdateStockMovement`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const sendInboundFiles = async (
@@ -154,17 +92,6 @@ const sendInboundFiles = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/FillStockMovementFromFile`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/FillStockMovementFromFile`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 export const fillInboundByStock = async (
@@ -177,17 +104,6 @@ export const fillInboundByStock = async (
     }
 ): Promise<ApiResponseType<SingleStockMovementProductType[]>> => {
     return api.post(`/FillStockMovementAllStock`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/FillStockMovementAllStock`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 export const cancelStockMovement = async (
@@ -199,17 +115,24 @@ export const cancelStockMovement = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/CancelStockMovement`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/CancelStockMovement`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
+
+export const getStockMovementsExcel = async (
+    data: {
+        token: string;
+        alias?: string;
+        documentType: STOCK_MOVEMENT_DOC_TYPE;
+        startDate: string;
+        endDate: string;
+        ui?: string;
+        filter?: Partial<OrderFiltersSelectedType>;
+        search?: string;
+        fullTextSearch?: boolean;
+        sortBy?: string;
+        sortOrder?: string;
+    }
+): Promise<ApiResponseType<AttachedFilesType>> => {
+    return api.post(`/GetPagedStockMovementListFile`, data);
+}
 
 export { getInbounds, getInboundData, getInboundParameters, sendInboundData, updateInboundData, sendInboundFiles};

@@ -85,7 +85,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
               />
               {btnName && onBtnClick ? <button type={'button'} disabled={disabled} className={styles['form-input-btn']} onClick={onBtnClick}>{btnName}</button> : null}
             </div>
-            {errorMessage && <p className={styles.error || 'error'}>{errorMessage}</p>}
+            {errorMessage && <p className={`${styles.error} error`}>{errorMessage}</p>}
           {/*{errors && name in errors ? (*/}
           {/*  <p className="error er1">*/}
           {/*    {(errors && errors[name]?.message) || errorMessage}*/}
