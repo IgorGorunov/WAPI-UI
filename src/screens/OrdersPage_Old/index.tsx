@@ -248,6 +248,7 @@ const OrdersPage = () => {
             "Logistic comment": `${item.logisticComment}`,
             "Tracking link": item.trackingNumber ? item.trackingLink : '',
             "Has claims": item.claims.length ? "+" : "",
+            "Comment to courier service": item.commentToCourierService && item.commentToCourierService.length ? `${formatDateTimeToStringWithDotWithoutSeconds(item.commentToCourierService[0].period)} ${JSON.parse(item.commentToCourierService[0].additionalInfo)?.comment}` : '',
 
         }));
 
