@@ -81,6 +81,15 @@ export type StockMovementServiceType = {
     service: string;
 }
 
+export type StockMovementShippingUnitsType = {
+    unitName: string;
+    unitWidth: number;
+    unitLength: number;
+    unitHeight: number;
+    unitQuantity: number;
+    unitWeight: number;
+}
+
 export type SingleStockMovementType = {
     date: string;
     number: string;
@@ -125,6 +134,7 @@ export type SingleStockMovementType = {
     senderZIP?: string;
     receiverZIP?: string;
     allCollect?: boolean;
+    shippingUnits?: StockMovementShippingUnitsType[];
 }
 
 export type StockMovementParamsProductType = {
@@ -147,7 +157,8 @@ export type StockMovementParamsType = {
     sender: StockMovementWarehouseType[] | null;
     receiver: StockMovementWarehouseType[] | null;
     quality: string[];
-    actionAccessSettings: UserAccessActionType[]
+    actionAccessSettings: UserAccessActionType[];
+    shipingUnits?: Partial<StockMovementShippingUnitsType>[];
 }
 
 //send form types
@@ -193,4 +204,5 @@ export type SingleStockMovementFormType = {
     attachedFiles?: AttachedFilesType[];
     senderZIP?: string;
     receiverZIP?: string;
+    shippingUnits?: StockMovementShippingUnitsType[];
 }

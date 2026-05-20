@@ -162,7 +162,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
                             }}
                         />
 
-                        {errorMessage && <p className={styles.error || "error"}>{errorMessage}</p>}
+                        {errorMessage && <p className={`${styles.error} error`}>{errorMessage}</p>}
                     </div>
                 </div>
             </TutorialHintTooltip>

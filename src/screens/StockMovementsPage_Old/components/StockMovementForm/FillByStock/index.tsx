@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState} from "react";
-import styles from "./styles.module.scss";
+import "./styles.scss";
 import useAuth from "@/context/authContext";
 import {Controller, useForm} from "react-hook-form";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
@@ -101,7 +101,7 @@ const FillByStock: React.FC<PropsType> = ({ qualityList, onClose, setResponseDat
     }
 
     return (
-        <div className={styles[`fill-by-stock`]}>
+        <div className={`fill-by-stock`}>
             {(isLoading) && <Loader />}
             <ToastContainer />
             {qualityList ?

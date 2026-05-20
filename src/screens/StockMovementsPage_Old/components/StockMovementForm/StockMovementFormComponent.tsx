@@ -1,28 +1,28 @@
-import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
-import styles from "./styles.module.scss";
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import "./styles.scss";
 import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
-import {AccessActions} from "@/types/auth";
+import { AccessActions } from "@/types/auth";
 import useHintsTracking from "@/context/hintsContext";
-import type {Control} from "react-hook-form";
-import {Controller, useFieldArray, useForm} from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import type { Control } from "react-hook-form";
 import Tabs from '@/components/Tabs';
-import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
-import {COUNTRIES} from "@/types/countries";
-import {createOptions} from "@/utils/selectOptions";
-import {CargoFields, DetailsFields, GeneralFields} from "./StockMovementFormFields";
-import {TabFields, TabTitles} from "./StockMovementFormTabs";
-import {FormFieldTypes, OptionType, WidthType} from "@/types/forms";
+import Button, { ButtonSize, ButtonVariant } from "@/components/Button/Button";
+import { COUNTRIES } from "@/types/countries";
+import { createOptions } from "@/utils/selectOptions";
+import { CargoFields, DetailsFields, GeneralFields } from "./StockMovementFormFields";
+import { TabFields, TabTitles } from "./StockMovementFormTabs";
+import { FormFieldTypes, OptionType, WidthType } from "@/types/forms";
 import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import {message, Table, Tooltip} from "antd";
+import { message, Table, Tooltip } from "antd";
 import DropZone from "@/components/Dropzone";
 import Services from "./Services";
-import {useTabsState} from "@/hooks/useTabsState";
+import { useTabsState } from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
-import {toast, ToastContainer} from '@/components/Toast';
+import { toast, ToastContainer } from '@/components/Toast';
 import {
     SingleStockMovementFormType,
     SingleStockMovementType,
@@ -30,31 +30,31 @@ import {
     STOCK_MOVEMENT_DOC_TYPE,
     StockMovementParamsType
 } from "@/types/stockMovements";
-import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
-import {cancelStockMovement, fillInboundByStock, sendInboundData, updateInboundData} from "@/services/stockMovements";
-import {SingleOrderProductFormType} from "@/types/orders";
+import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import { cancelStockMovement, fillInboundByStock, sendInboundData, updateInboundData } from "@/services/stockMovements";
+import { SingleOrderProductFormType } from "@/types/orders";
 import Modal from "@/components/Modal";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
-import {ImportFilesType} from "@/types/importFiles";
+import { ImportFilesType } from "@/types/importFiles";
 import ProductsTotal from "@/screens/StockMovementsPage/components/StockMovementForm/ProductsTotal";
-import {AttachedFilesType, STATUS_MODAL_TYPES} from "@/types/utility";
-import ProductSelection, {SelectedProductType} from "@/components/ProductSelection";
+import { AttachedFilesType, STATUS_MODAL_TYPES } from "@/types/utility";
+import ProductSelection, { SelectedProductType } from "@/components/ProductSelection";
 import DocumentTickets from "@/components/DocumentTickets";
 import SingleDocument from "@/components/SingleDocument";
-import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
-import {TICKET_OBJECT_TYPES} from "@/types/tickets";
-import {formatDateStringToDisplayString} from "@/utils/date";
+import { NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType } from "@/types/notifications";
+import { TICKET_OBJECT_TYPES } from "@/types/tickets";
+import { formatDateStringToDisplayString } from "@/utils/date";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
-import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
+import { StockMovementsHints } from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-import {docNamesSingle, getAccessActionObject} from "@/screens/StockMovementsPage";
-import {CommonHints} from "@/constants/commonHints";
+import { docNamesSingle, getAccessActionObject } from "@/screens/StockMovementsPage";
+import { CommonHints } from "@/constants/commonHints";
 import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
-import {sendUserBrowserInfo} from "@/services/userInfo";
+import { sendUserBrowserInfo } from "@/services/userInfo";
 import HintsModal from "@/screens/StockMovementsPage/components/StockMovementForm/HintsModal";
 import useTenant from "@/context/tenantContext";
-import {isTabAllowed} from "@/utils/tabs";
+import { isTabAllowed } from "@/utils/tabs";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -237,21 +237,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                             quality: product.quality || '',
                         }))
                     : [],
-
-            shippingUnits:
-                docData && docData?.shippingUnits && docData.shippingUnits.length
-                    ? docData.shippingUnits.map((unit, index: number) => (
-                        {
-                            key: `shipping-unit_${unit.unitName}_${Date.now().toString()}_${index}` || `product-${Date.now().toString()}_${index}`,
-                            selected: false,
-                            unitName: unit.unitName || '',
-                            unitHeight: unit.unitHeight || '',
-                            unitLength: unit.unitLength || '',
-                            unitWidth: unit.unitWidth || '',
-                            unitWeight: unit.unitWeight || '',
-                            unitQuantity: unit.unitQuantity || '',
-                        }))
-                    : [],
         }
     });
 
@@ -259,10 +244,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     const { append: appendProduct, remove: removeProduct } = useFieldArray({ control, name: 'products' });
     const products = watch('products');
     //const currencyOptions = useMemo(()=>{return docParameters && docParameters?.currencies.length ? createOptions(docParameters?.currencies) : []},[]);
-
-    //shipping units
-    const { append: appendShippingUnit, remove: removeShippingUnit } = useFieldArray({ control, name: 'shippingUnits' });
-    const shippingUnits = watch('shippingUnits');
 
     const sender = watch('sender');
     const receiver = watch('receiver');
@@ -333,11 +314,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         //console.log('selected val:', selectedValue, productOptions.filter(item=>item.value===selectedValue))
 
     }
-
-    const shippingUnitsOptions = useMemo(() => {
-        let shippingUnits = docParameters && docParameters.shipingUnits ? docParameters.shipingUnits : [];
-        return shippingUnits.map((item) => ({ label: `${item.unitName}`, value: item.unitName }));
-    }, [docParameters]);
 
     //deliveryMethodOptions
     //const deliveryMethodOptions = useMemo(()=>docParameters?.deliveryMethod.map(item => ({label: item, value: item})),[docParameters]);
@@ -494,7 +470,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                 key: 'quantity',
                 minWidth: 50,
                 className: `${isQuantityActualHidden ? 'hidden-column' : ''}`,
-                render: (_text, record, index) => (
+                render: (text, record, index) => (
                     <Controller
                         name={`products.${index}.quantity`}
                         control={control}
@@ -561,7 +537,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                 key: 'quality',
                 minWidth: 150,
                 responsive: ['md'] as ResponsiveBreakpoint[],
-                render: (_text, _record, index) => (
+                render: (text, record, index) => (
                     <Controller
                         name={`products.${index}.quality`}
                         control={control}
@@ -589,7 +565,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                 title: '',
                 key: 'action',
                 minWidth: 50,
-                maxWidth: 50,
                 render: (_text, _record, index) => (
                     <button disabled={isDisabled} className='action-btn' onClick={() => { removeProduct(index); setValue('allCollect', false) }}>
                         <Icon name='waste-bin' />
@@ -677,269 +652,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             }
             onSenderChange(selectedProducts[0].warehouse);
         }
-    }
-
-    //shipping units
-    const [selectAllShippingUnits, setSelectAllShippingUnits] = useState(false);
-    const removeShippingUnits = () => {
-        setValue('shippingUnits', shippingUnits.filter(item => !item.selected));
-        setSelectAllShippingUnits(false);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const getShippingUnitsColumns = (control: Control<any>) => {
-        return [
-            {
-                title: (
-                    <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
-                        <FieldBuilder
-                            name={'selectedAllShippingUnits'}
-                            fieldType={FormFieldTypes.CHECKBOX}
-                            checked={selectAllShippingUnits}
-                            disabled={isDisabled}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setSelectAllShippingUnits(e.target.checked);
-                                // Update the values of all checkboxes in the form when "Select All" is clicked
-                                const values = getValues();
-                                const fields = values.shippingUnits;
-                                fields &&
-                                fields.forEach((field, index) => {
-                                    setValue(`shippingUnits.${index}.selected`, e.target.checked);
-                                });
-                            }}
-                        />
-                    </div>
-                ),
-                dataIndex: 'selected',
-                width: '40px',
-                key: 'selected',
-                render: (_text, _record, index) => (
-                    <Controller
-                        name={`shippingUnits.${index}.selected`}
-                        control={control}
-                        render={({ field }) => (
-                            <div style={{ width: '40px', justifyContent: 'center', alignItems: 'center' }}>
-                                <FieldBuilder
-                                    name={`shippingUnits.${index}.selected`}
-                                    fieldType={FormFieldTypes.CHECKBOX}
-                                    {...field}
-                                    disabled={isDisabled || isOutboundOrStockMovement}
-                                />
-                            </div>
-                        )}
-                    />
-                ),
-            },
-            {
-                // title: 'Product*',
-                title: <Tooltip title="Select shipping unit" >
-                    <span>Shipping unit*</span>
-                </Tooltip>,
-                dataIndex: 'unitName',
-                width: '100%',
-                key: 'unitName',
-                render: (_text, record, index) => (
-                    <Controller
-                        name={`shippingUnits.${index}.unitName`}
-                        control={control}
-                        defaultValue={record.unitName}
-                        render={({ field, fieldState: { error } }) => (
-                            <div style={{ minWidth: '150px' }}>
-                                <FieldBuilder
-                                    name={`shippingUnits.${index}.unitName`}
-                                    fieldType={FormFieldTypes.SELECT}
-                                    {...field}
-                                    options={shippingUnitsOptions}
-                                    disabled={isDisabled || isOutboundOrStockMovement}
-                                    errorMessage={error?.message}
-                                    errors={errors}
-                                    isRequired={!isOutboundOrStockMovement}
-                                />
-                            </div>
-                        )}
-                        rules={{ required: 'filed is required' }}
-                    />
-                ),
-            },
-            {
-                title: <Tooltip title="Quantity of the unit in pcs" >
-                    <span>Quantity*</span>
-                </Tooltip>,
-                dataIndex: 'unitQuantity',
-                key: 'unitQuantity',
-                minWidth: 70,
-                render: (_text, _record, index) => (
-                    <Controller
-                        name={`shippingUnits.${index}.unitQuantity`}
-                        control={control}
-                        render={({ field, fieldState: { error } }) => (
-                            <div style={{ maxWidth: '150px' }}>
-                                <FieldBuilder
-                                    name={`shippingUnits.${index}.unitQuantity`}
-                                    fieldType={FormFieldTypes.NUMBER}
-                                    type={'number'}
-                                    {...field}
-                                    disabled={isDisabled || isOutboundOrStockMovement}
-                                    errorMessage={error?.message}
-                                    errors={errors}
-                                    isRequired={!isOutboundOrStockMovement}
-                                    onChange={(newValue: string) => {
-                                        field.onChange(newValue);
-                                        // updateTotalProducts();
-                                        // setQuantityActual(record, index);
-                                    }}
-                                    onlyWholeNumbers={true}
-                                    // classNames={!isQuantityActualHidden && record.quantity !== record.quantityPlan ? 'highlight-error' : ''}
-                                />
-                            </div>
-                        )}
-                        rules={{
-                            required: 'filed is required',
-                            pattern: {
-                                value: /^\d+$/, // Allows only digits (0-9)
-                                message: "Only whole numbers are allowed",
-                            },
-                        }}
-                    />
-                ),
-            },
-            {
-                title: 'Length, cm*',
-                dataIndex: 'unitLength',
-                key: 'unitLength',
-                minWidth: 90,
-                render: (_text, _record, index) => (
-                    <Controller
-                        name={`shippingUnits.${index}.unitLength`}
-                        control={control}
-                        render={({ field, fieldState: { error } }) => (
-                            <div style={{ maxWidth: '150px' }}>
-                                <FieldBuilder
-                                    name={`shippingUnits.${index}.unitLength`}
-                                    fieldType={FormFieldTypes.NUMBER}
-                                    {...field}
-                                    disabled={isDisabled || isOutboundOrStockMovement}
-                                    errorMessage={error?.message}
-                                    errors={errors}
-                                    isRequired={!isOutboundOrStockMovement}
-                                    onChange={(newValue: string) => {
-                                        field.onChange(newValue);
-                                        // updateTotalProducts();
-                                        // calcProductTotal(record, index);
-                                    }}
-                                />
-                            </div>
-                        )}
-                        rules={{ required: 'filed is required' }}
-                    />
-                ),
-            },
-            {
-                title: 'Width, cm*',
-                dataIndex: 'unitWidth',
-                key: 'unitWidth',
-                minWidth: 90,
-                render: (_text, _record, index) => (
-                    <Controller
-                        name={`shippingUnits.${index}.unitWidth`}
-                        control={control}
-                        render={({ field, fieldState: { error } }) => (
-                            <div style={{ maxWidth: '150px' }}>
-                                <FieldBuilder
-                                    name={`shippingUnits.${index}.unitWidth`}
-                                    fieldType={FormFieldTypes.NUMBER}
-                                    {...field}
-                                    disabled={isDisabled}
-                                    errorMessage={error?.message}
-                                    errors={errors}
-                                    isRequired={true}
-                                    onChange={(newValue: string) => {
-                                        field.onChange(newValue);
-                                        // updateTotalProducts();
-                                        // calcProductTotal(record, index);
-                                    }}
-                                />
-                            </div>
-                        )}
-                        rules={{ required: 'filed is required' }}
-                    />
-                ),
-            },
-            {
-                title: 'Height, cm*',
-                dataIndex: 'unitHeight',
-                key: 'unitLength',
-                minWidth: 90,
-                render: (_text, _record, index) => (
-                    <Controller
-                        name={`shippingUnits.${index}.unitHeight`}
-                        control={control}
-                        render={({ field, fieldState: { error } }) => (
-                            <div style={{ maxWidth: '150px' }}>
-                                <FieldBuilder
-                                    name={`shippingUnits.${index}.unitHeight`}
-                                    fieldType={FormFieldTypes.NUMBER}
-                                    {...field}
-                                    disabled={isDisabled}
-                                    errorMessage={error?.message}
-                                    errors={errors}
-                                    isRequired={true}
-                                    onChange={(newValue: string) => {
-                                        field.onChange(newValue);
-                                        // updateTotalProducts();
-                                        // calcProductTotal(record, index);
-                                    }}
-                                />
-                            </div>
-                        )}
-                        rules={{ required: 'filed is required' }}
-                    />
-                ),
-            },
-            {
-                title: 'Weight (1 unit), kg*',
-                dataIndex: 'unitWeight',
-                key: 'unitWeight',
-                minWidth: 90,
-                render: (_text, _record, index) => (
-                    <Controller
-                        name={`shippingUnits.${index}.unitWeight`}
-                        control={control}
-                        render={({ field, fieldState: { error } }) => (
-                            <div style={{ maxWidth: '150px' }}>
-                                <FieldBuilder
-                                    name={`shippingUnits.${index}.unitWeight`}
-                                    fieldType={FormFieldTypes.NUMBER}
-                                    {...field}
-                                    disabled={isDisabled}
-                                    errorMessage={error?.message}
-                                    errors={errors}
-                                    isRequired={true}
-                                    onChange={(newValue: string) => {
-                                        field.onChange(newValue);
-                                        // updateTotalProducts();
-                                        // calcProductTotal(record, index);
-                                    }}
-                                />
-                            </div>
-                        )}
-                        rules={{ required: 'filed is required' }}
-                    />
-                ),
-            },
-
-            {
-                title: '',
-                key: 'action',
-                minWidth: 50,
-                maxWidth: 50,
-                render: (_text, _record, index) => (
-                    <button disabled={isDisabled} className='action-btn' onClick={() => { removeShippingUnit(index); }}>
-                        <Icon name='waste-bin' />
-                    </button>
-                ),
-            },
-        ];
     }
 
     const [isSenderDisabled, setIsSenderDisabled] = useState<boolean>(isOutboundOrStockMovement && !!(docData && docData?.products && docData.products.length && sender));
@@ -1332,7 +1044,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         }
     }
 
-    return <div className={`${styles['stock-movement']} is-${docType}`}>
+    return <div className={`stock-movement is-${docType}`}>
         {isLoading && <Loader />}
         <ToastContainer />
         <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
@@ -1379,7 +1091,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                         </div>
                     ) : null}
                     <CardWithHelpIcon classNames='card stock-movement--general' showHintsByDefault={showAllHints}>
-                        <h3 className={styles['stock-movement__block-title']}>
+                        <h3 className='stock-movement__block-title'>
                             <Icon name='general' />
                             General
                         </h3>
@@ -1389,7 +1101,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                         </div>
                     </CardWithHelpIcon>
                     <CardWithHelpIcon classNames='card stock-movement--details' showHintsByDefault={showAllHints}>
-                        <h3 className={styles['stock-movement__block-title']}>
+                        <h3 className='stock-movement__block-title'>
                             <Icon name='additional' />
                             Details
                         </h3>
@@ -1401,70 +1113,20 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                 </div> : null}
                 {isTabAllowed('Cargo info', forbiddenTabs) ? <div key='cargo-tab' className='cargo-tab'>
                     <CardWithHelpIcon classNames='card stock-movement--cargo' showHintsByDefault={showAllHints}>
-                        <h3 className={styles['stock-movement__block-title']}>
+                        <h3 className='stock-movement__block-title'>
                             <Icon name='shipping' />
                             Cargo info
                         </h3>
-                        <div className={`${styles['stock-movement--cargo-inner-wrapper']}`}>
-                            <div className='ttt'>
-                                <div className='grid-row '>
-                                    <FormFieldsBlock control={control} fieldsArray={cargoFields} errors={errors}
-                                                     isDisabled={isDisabled} />
-                                </div>
-                            </div>
+                        <div className='grid-row'>
+                            <FormFieldsBlock control={control} fieldsArray={cargoFields} errors={errors}
+                                isDisabled={isDisabled} />
                         </div>
                     </CardWithHelpIcon>
-                    {(!docData || !docData.shippingUnits || docData.shippingUnits && !docData.shippingUnits.length) && isOutboundOrStockMovement ? null : <CardWithHelpIcon classNames='card stock-movement--shipping' showHintsByDefault={showAllHints}>
-                        <h3 className={styles['stock-movement__block-title']}>
-                            <Icon name='pallet-freight' />
-                            Shipping units
-                        </h3>
-                        <div className={`${styles['stock-movement--cargo-inner-wrapper']}`}>
-                            <div className=''>
-                                <div className={`grid-row  ${styles['stock-movement__shipping-units']} ${docType == STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT || docType === STOCK_MOVEMENT_DOC_TYPE.OUTBOUND ? styles['no-edit'] : styles['can-edit']}`}>
-                                    <div className={`${styles['shipping-units-btns']} form-table--btns small-paddings width-100`}>
-                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn>
-                                            <Button type="button" icon='add-table-row' iconOnTheRight
-                                                    size={ButtonSize.SMALL} disabled={isDisabled || isOutboundOrStockMovement}
-                                                    variant={ButtonVariant.SECONDARY} onClick={() => appendShippingUnit({
-                                                key: `shipping-unit-${Date.now().toString()}`,
-                                                selected: false,
-                                                unitName: '',
-                                                unitQuantity: '',
-                                                unitLength: '',
-                                                unitWidth: '',
-                                                unitHeight: '',
-                                                unitWeight: '',
-                                            })}>
-                                                Add
-                                            </Button>
-                                        </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn>
-                                            <Button type="button" icon='remove-table-row' iconOnTheRight
-                                                    size={ButtonSize.SMALL} disabled={isDisabled || isOutboundOrStockMovement}
-                                                    variant={ButtonVariant.SECONDARY} onClick={removeShippingUnits}>
-                                                Remove selected
-                                            </Button>
-                                        </TutorialHintTooltip>
-                                    </div>
-                                    <div className={`${styles['shipping-units--table']} table-form-fields form-table`}>
-                                        <Table
-                                            columns={getShippingUnitsColumns(control)}
-                                            dataSource={getValues('shippingUnits')?.map((field, index) => ({ key: field.unitName + '-' + index, ...field })) || []}
-                                            pagination={false}
-                                            rowKey="key"
-                                        />
-                                        {errors.shippingUnits && <p className={'error-message'}>{errors.shippingUnits?.message}</p>}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </CardWithHelpIcon> }
                 </div> : null}
 
                 {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className='product-tab'>
-                    <CardWithHelpIcon classNames={`card min-height-600 ${styles['stock-movement--products']}`} showHintsByDefault={showAllHints}>
-                        <h3 className={styles['stock-movement__block-title']}>
+                    <CardWithHelpIcon classNames="card min-height-600 stock-movement--products" showHintsByDefault={showAllHints}>
+                        <h3 className='stock-movement__block-title '>
                             <Icon name='goods' />
                             Products
                         </h3>
@@ -1504,7 +1166,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                             <Button type="button" icon='selection' iconOnTheRight
                                                 size={ButtonSize.SMALL} disabled={isDisabled}
                                                 variant={ButtonVariant.SECONDARY}
-                                                onClick={() => handleProductSelection()} classNames={styles['selection-btn']}>
+                                                onClick={() => handleProductSelection()} classNames='selection-btn'>
                                                 Add from List
                                             </Button>
                                         </TutorialHintTooltip>
@@ -1534,7 +1196,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                 </div>
                             </div>
                         </div>
-                        <div className={`${styles['stock-movement--table']} table-form-fields form-table`}>
+                        <div className='stock-movement--table table-form-fields form-table'>
                             <Table
                                 columns={getProductColumns(control)}
                                 dataSource={getValues('products')?.map((field, index) => ({ key: field.product + '-' + index, ...field })) || []}
@@ -1545,7 +1207,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                             {errors.products && <p className={'error-message'}>{errors.products.message}</p>}
 
                         </div>
-                        <div className={`grid-row ${styles['stock-movement--products-total']}`}>
+                        <div className='grid-row stock-movement--products-total'>
                             {/*<FormFieldsBlock control={control} fieldsArray={productsTotalFields} errors={errors} isDisabled={isDisabled}/>*/}
                             <ProductsTotal weightGross={docData?.weightTotalGross || 0}
                                 weightNet={docData?.weightTotalNet || 0} volume={docData?.volume || 0}
@@ -1555,8 +1217,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                     </CardWithHelpIcon>
                 </div> : null}
                 {docData?.uuid && isTabAllowed('Services', forbiddenTabs) && <div key='services-tab' className='services-tab'>
-                    <div className={`card min-height-600 ${styles['stock-movement--history']}`}>
-                        <h3 className={styles['stock-movement__block-title']}>
+                    <div className="card min-height-600 stock-movement--history">
+                        <h3 className='stock-movement__block-title'>
                             <Icon name='bundle' />
                             Services
                         </h3>
@@ -1564,8 +1226,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                     </div>
                 </div>}
                 {docData?.uuid && isTabAllowed('Status history', forbiddenTabs) && <div key='status-history-tab' className='status-history-tab'>
-                    <div className={`card min-height-600 ${styles['stock-movement--history']}`}>
-                        <h3 className={styles['stock-movement__block-title']}>
+                    <div className="card min-height-600 stock-movement--history">
+                        <h3 className='stock-movement__block-title'>
                             <Icon name='history' />
                             Status history
                         </h3>
@@ -1574,8 +1236,8 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                 </div>}
                 {docData?.uuid && docData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ? <div key='tickets-tab' className='tickets-tab'>
                     <div className="card min-height-600 stock-movement--tickets">
-                        <h3 className={styles['stock-movement__block-title']}>
-                            <Icon name='ticket-gray' />
+                        <h3 className='stock-movement__block-title'>
+                            <Icon name='ticket' />
                             Tickets
                         </h3>
                         <DocumentTickets tickets={docData.tickets} />
@@ -1585,12 +1247,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                     <CardWithHelpIcon classNames="card min-height-600 stock-movement--files" showHintsByDefault={showAllHints}>
                         {/*<div className="card min-height-600 stock-movement--products">*/}
                         <TutorialHintTooltip hint={StockMovementsHints('')['files'] || ''} position='left'>
-                            <h3 className={`${styles['stock-movement__block-title']} ${styles['title-small']}`}>
+                            <h3 className='stock-movement__block-title title-small'>
                                 <Icon name='files' />
                                 Files
                             </h3>
                         </TutorialHintTooltip>
-                        <div className={styles['dropzoneBlock']}>
+                        <div className='dropzoneBlock'>
                             <DropZone readOnly={!!isDisabled} files={selectedFiles}
                                 docUuid={docData?.canEdit ? '' : docData?.uuid}
                                 onFilesChange={handleFilesChange}

@@ -1,6 +1,6 @@
 import React from "react";
 import {StockMovementServiceType} from "@/types/stockMovements";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {formatDateStringToDisplayString} from "@/utils/date";
 
 type PropsType = {
@@ -12,40 +12,40 @@ const Services: React.FC<PropsType> = ({ services }) => {
     const totalSum = services && services.length ? services.reduce((acc, cur) => acc+cur.amountEuro, 0) : 0;
 
     return (
-        <div className="stock-movement-service">
-            <div className="stock-movement-service__header">
-                <div className='date-column'>Date</div>
-                <div className='column service-column'>Service</div>
-                <div className='column quantity-column'>Quantity</div>
-                <div className='column price-column'>Price</div>
-                <div className='column currency-column'>Currency</div>
-                <div className='column amount-column'>Amount</div>
-                <div className='column amount-euro-column'>Amount (EUR)</div>
+        <div className={styles["stock-movement-service"]}>
+            <div className={styles["stock-movement-service__header"]}>
+                <div className={styles['date-column']}>Date</div>
+                <div className={`${styles['column']} ${styles['service-column']}`}>Service</div>
+                <div className={`${styles['column']} ${styles['quantity-column']}`}>Quantity</div>
+                <div className={`${styles['column']} ${styles['price-column']}`}>Price</div>
+                <div className={`${styles['column']} ${styles['currency-column']}`}>Currency</div>
+                <div className={`${styles['column']} ${styles['amount-column']}`}>Amount</div>
+                <div className={`${styles['column']} ${styles['amount-euro-column']}`}>Amount (EUR)</div>
             </div>
-            <ul className="stock-movement-service-history__list">
+            <ul className={styles["stock-movement-service-history__list"]}>
                 {services &&
                     services.map((service: StockMovementServiceType, index: number) => (
                         <li
                             key={service.service + "_" + index}
-                            className={`stock-movement-service__list-item ${
-                                index % 2 === 1 ? "highlight" : " "
+                            className={`${styles["stock-movement-service__list-item"]} ${
+                                index % 2 === 1 ? styles["highlight"] : " "
                             }`}
                         >
-                            <div className='date-column'>{formatDateStringToDisplayString(service.period)}</div>
-                            <div className='column service-column'>
+                            <div className={styles['date-column']}>{formatDateStringToDisplayString(service.period)}</div>
+                            <div className={`${styles['column']} ${styles['service-column']}`}>
                                 {service.service}
                             </div>
-                            <div className='column quantity-column'>{service.quantity}</div>
-                            <div className='column price-column'>{service.price}</div>
-                            <div className='column currency-column'>{service.currency}</div>
-                            <div className='column amount-column'>{service.amount}</div>
-                            <div className='column amount-euro-column'>{service.amountEuro}</div>
+                            <div className={`${styles['column']} ${styles['quantity-column']}`}>{service.quantity}</div>
+                            <div className={`${styles['column']} ${styles['price-column']}`}>{service.price}</div>
+                            <div className={`${styles['column']} ${styles['currency-column']}`}>{service.currency}</div>
+                            <div className={`${styles['column']} ${styles['amount-column']}`}>{service.amount}</div>
+                            <div className={`${styles['column']} ${styles['amount-euro-column']}`}>{service.amountEuro}</div>
                         </li>
                     ))}
             </ul>
-            <div className="stock-movement-service-total">
-                <ul className='stock-movement-service-total__list'>
-                    <li className='stock-movement-service-total__list-item'>Total Σ EUR: <span className='stock-movement-service-total__list-item__value'>{totalSum}</span></li>
+            <div className={styles["stock-movement-service-total"]}>
+                <ul className={styles['stock-movement-service-total__list']}>
+                    <li className={styles['stock-movement-service-total__list-item']}>Total Σ EUR: <span className={styles['stock-movement-service-total__list-item__value']}>{totalSum}</span></li>
                 </ul>
             </div>
         </div>

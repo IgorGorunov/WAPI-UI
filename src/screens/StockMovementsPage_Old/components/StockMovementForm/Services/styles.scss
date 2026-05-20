@@ -1,0 +1,140 @@
+@import "@/constants/devices.scss";
+
+.stock-movement-service {
+  flex: 1 0 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 24px -28px 0 -28px;
+
+  @media (max-width: $mobile) {
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--color-gray-blue);
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  &__list {
+    list-style: none;
+    &-item {
+      display: flex;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--color-gray-blue);
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  .column {
+    padding: 10px 12px;
+
+    @media (max-width: $upToTablet) {
+      padding: 10px 6px;
+    }
+  }
+
+  .date-column {
+    flex: 0 0 110px;
+    padding: 10px 12px 10px 0;
+    margin-left: 20px;
+
+    @media (max-width: $upToTablet) {
+      padding: 10px 6px 10px 0;
+      flex: 0 0 70px;
+    }
+  }
+
+  .service-column {
+    flex: 1 1 140px;
+  }
+
+  .quantity-column {
+    flex: 0 0 80px;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
+  }
+
+  .price-column {
+    flex: 0 0 80px;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
+  }
+
+  .currency-column {
+    flex: 0 0 80px;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
+  }
+
+  .amount-column {
+    flex: 0 0 80px;
+
+    @media (max-width: $upToLaptop) {
+      display: none;
+    }
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
+  }
+
+  .amount-euro-column {
+    flex: 0 0 80px;
+
+    @media (max-width: $upToTablet) {
+      display: none;
+    }
+  }
+
+  &-total {
+    margin-top: auto;
+    padding: 20px 15px;
+    border-radius: 0 0 15px 15px;
+    background-color: var(--color-light-gray);
+
+    &__list {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 30px;
+      list-style: none;
+
+      @media (max-width: $mobile) {
+        display: none;
+      }
+
+      &-item {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--color-gray-blue);
+
+        &__value {
+          display: inline-block;
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+
+
+
+  .highlight {
+    background-color: #FAFBFC;
+  }
+}

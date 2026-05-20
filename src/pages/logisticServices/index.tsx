@@ -1,5 +1,5 @@
 import React from "react";
-import StockMovementsPage from "@/screens/StockMovementsPage";
+import StockMovementsPage from "@/screens/StockMovementsPage_Old";
 import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 import AuthChecker from "@/components/AuthChecker";
 

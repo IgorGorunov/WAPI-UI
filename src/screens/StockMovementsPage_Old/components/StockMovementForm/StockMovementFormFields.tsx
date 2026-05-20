@@ -3,7 +3,6 @@ import {STOCK_MOVEMENT_DOC_TYPE} from "@/types/stockMovements";
 import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
 import {docNamesSingle} from "@/screens/StockMovementsPage";
 import {DELIVERY_METHODS} from "./StockMovementFormComponent";
-import styles from './styles.module.scss'
 
 export const GeneralFields = (
     {
@@ -366,7 +365,7 @@ export const CargoFields = (
             otherComponent: <p>If you have any wishes about the way of packing, please specify in the Comment field (in General tab)!</p>,
             width: WidthType.w100,
             isDisplayed: (isStockMovementOrOutbound) && (newObject || canEdit),
-            classNames: styles['delivery-type-hint']
+            classNames: 'delivery-type-hint'
         },
         {
             name: 'grid-13',
@@ -446,7 +445,7 @@ export const CargoFields = (
                     isDisplayed: isContainer,
                     otherComponent: <p>Please remember to book your delivery day and time slot at least 5 business days in advance. During the high season (September to December), we recommend booking as early as possible to ensure your delivery is accepted by the warehouse.</p>,
                     width: WidthType.w100,
-                    classNames: styles['delivery-type-hint']
+                    classNames: 'delivery-type-hint'
                 }
             ],
 
@@ -588,7 +587,7 @@ export const CargoFields = (
                     otherComponent: <p>If you dont have info about volume and weight, it will be approximately calculated based on the products specified in the document. </p>,
                     width: WidthType.w100,
                     isDisplayed: isInboundOrLogisticService,
-                    classNames: styles['cargo-volume-hint']
+                    classNames: 'cargo-volume-hint'
                 }
             ],
         },
