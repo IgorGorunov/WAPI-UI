@@ -49,7 +49,7 @@ const RadioSwitch = forwardRef<HTMLDivElement, FieldPropsType>(({
                 {label ? <label className={styles['radio-switch-label'] || 'radio-switch-label'}>{label}</label> : null}
                 {options && options.length && <div className={styles['radio-switch'] || 'radio-switch'}>
                     {options && options.length && options.map((item, index) => (
-                        <button key={`${name}_${index}`} tabIndex={disabled ? -1 : 0} className={`${styles['radio-switch__option'] || 'radio-switch__option'} ${curValue===item.value ? styles['is-checked'] || 'is-checked' : ''}`}
+                        <button type={'button'} key={`${name}_${index}`} tabIndex={disabled ? -1 : 0} className={`${styles['radio-switch__option'] || 'radio-switch__option'} ${curValue===item.value ? styles['is-checked'] || 'is-checked' : ''}`}
                                 onClick={()=>handleChange(item.value)}
                                 onKeyDown={(e) => { if (e.key !== 'Tab') { handleChange(item.value); e.preventDefault();} }}
                         >
