@@ -334,6 +334,9 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
 
     }
 
+    const deliveryType = watch('deliveryType');
+    const isWapiCarrier = useMemo(() => deliveryType != 'Customer Carrier', [deliveryType]);
+
     const shippingUnitsOptions = useMemo(() => {
         let shippingUnits = docParameters && docParameters.shipingUnits ? docParameters.shipingUnits : [];
         return shippingUnits.map((item) => ({ label: `${item.unitName}`, value: item.unitName }));
@@ -1107,7 +1110,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                 //success
                 /*setImportResponse(res);*/
 
-                console.log('fill by stock response:', res);
                 if (res.data && 'data' in res.data && Array.isArray(res.data.data) && res.data.data.length) {
                     setValue('allCollect', true);
                     setImportResponse(res);
@@ -1215,6 +1217,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             data.palletsAmount = 0;
         }
 
+        if (data.shippingUnits.length === 0 && !isDraft && !isOutboundOrStockMovement && isWapiCarrier) {
+            setError("shippingUnits", { type: "manual", message: "Shipping units are required!" });
+            updateTabTitles(['Cargo info']);
+            return;
+        }
+
         try {
             const res = isJustETA ? await sendJustETA(data) : await sendDocument(data);
 
@@ -1302,6 +1310,17 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                 });
 
                 fieldNames.push('products');
+            }
+
+            if (!shippingUnits.length && !isOutboundOrStockMovement && isWapiCarrier) {
+
+                setError("shippingUnits", { type: "manual", message: "Shipping units are required!" });
+                toast.warn(`Shipping units are required!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+
+                fieldNames.push('Cargo info');
             }
 
             updateTabTitles(fieldNames);
@@ -1453,6 +1472,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                             dataSource={getValues('shippingUnits')?.map((field, index) => ({ key: field.unitName + '-' + index, ...field })) || []}
                                             pagination={false}
                                             rowKey="key"
+                                            className={errors.shippingUnits ? 'has-error-decor' : ''}
                                         />
                                         {errors.shippingUnits && <p className={'error-message'}>{errors.shippingUnits?.message}</p>}
                                     </div>

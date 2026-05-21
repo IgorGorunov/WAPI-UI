@@ -323,7 +323,8 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             disabled: isDisabled && !isAddressAllowed,
             hint: OrderHints['street'] || '',
         },
-        selectedCountry && ['MX'].includes(selectedCountry) ? {
+        // selectedCountry && ['MX'].includes(selectedCountry) ? {
+        {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.house_number`,
@@ -336,7 +337,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             hint: OrderHints['house_number'] || '',
-        } : null,
+        },
         // selectedCountry && ['MX'].includes(selectedCountry) ? {
         {
             fieldType: FormFieldTypes.TEXT,
@@ -352,7 +353,8 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             disabled: isDisabled && !isAddressAllowed,
             hint: OrderHints['building'] || '',
         },
-        selectedCountry && ['MX'].includes(selectedCountry) ? {
+        // selectedCountry && ['MX'].includes(selectedCountry) ?
+        {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
             name: `addressFull.unit`,
@@ -365,7 +367,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             hint: OrderHints['unit'] || '',
-        } : null,
+        },
         selectedCountry && ['MX'].includes(selectedCountry) ? {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
@@ -480,7 +482,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
                 maxLength: 60,
             },
             errorMessage: "Required field",
-            width: selectedCountry && ['MX'].includes(selectedCountry) ? WidthType.w50 : WidthType.w75,
+            width: selectedCountry && ['MX'].includes(selectedCountry) ? WidthType.w50 : WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             onChange: onChangeFn,
