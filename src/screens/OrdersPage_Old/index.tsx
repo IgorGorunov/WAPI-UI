@@ -249,7 +249,7 @@ const OrdersPage = () => {
             "Tracking link": item.trackingNumber ? item.trackingLink : '',
             "Has claims": item.claims.length ? "+" : "",
             "Comment to courier service": item.commentToCourierService && item.commentToCourierService.length ? `${formatDateTimeToStringWithDotWithoutSeconds(item.commentToCourierService[0].period)}  Action: ${JSON.parse(item.commentToCourierService[0].additionalInfo)?.action}  Comment: ${JSON.parse(item.commentToCourierService[0].additionalInfo)?.comment}` : '',
-
+            "Pickup point": item.receiverPickUpAddress,
         }));
 
         if (!isTabAllowed('Logistic comment', forbiddenTabs)) {
