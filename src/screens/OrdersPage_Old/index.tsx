@@ -222,7 +222,20 @@ const OrdersPage = () => {
             return null;
         }
 
-        const filteredData = filteredOrders.map(item => ({
+        const filteredData = filteredOrders.map(item => {
+            let comment = '';
+            if (item.commentToCourierService && item.commentToCourierService.length) {
+                comment = `${formatDateTimeToStringWithDotWithoutSeconds(item.commentToCourierService[0].period)}`;
+
+                try {
+                    const additionalInfo = JSON.parse(item.commentToCourierService[0].additionalInfo || '{}');
+                    comment= comment +' '+ `${formatDateTimeToStringWithDotWithoutSeconds(item.commentToCourierService[0].period)}  Action: ${additionalInfo?.action || ''}  Comment: ${additionalInfo?.comment || ''}`;
+                } catch (err) {
+                    console.log('err', err);
+                    comment= comment + 'Comment: --cannot parse comment--'
+                }
+            }
+            return {
             [orderTitles.trackingNumberTitle]: item.wapiTrackingNumber,
             'Status': item.status,
             "Status additional info": item.statusAdditionalInfo,
@@ -248,9 +261,9 @@ const OrdersPage = () => {
             "Logistic comment": `${item.logisticComment}`,
             "Tracking link": item.trackingNumber ? item.trackingLink : '',
             "Has claims": item.claims.length ? "+" : "",
-            "Comment to courier service": item.commentToCourierService && item.commentToCourierService.length ? `${formatDateTimeToStringWithDotWithoutSeconds(item.commentToCourierService[0].period)}  Action: ${JSON.parse(item.commentToCourierService[0].additionalInfo)?.action}  Comment: ${JSON.parse(item.commentToCourierService[0].additionalInfo)?.comment}` : '',
+            "Comment to courier service": comment,
             "Pickup point": item.receiverPickUpAddress,
-        }));
+        }});
 
         if (!isTabAllowed('Logistic comment', forbiddenTabs)) {
             filteredData.forEach(row => delete row["Logistic comment"]);
