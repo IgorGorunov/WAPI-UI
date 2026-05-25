@@ -32,7 +32,7 @@ export const getOrderFieldLabel = (country: string, field: keyof typeof orderFie
 
 const requiredFields: Record<string, string[]> = {
     'MX': ['street', 'house_number', 'state_region'],
-    'BGWH4': ['street', 'building'],
+    'BGWH4': ['street', 'house_number'],
 
 }
 

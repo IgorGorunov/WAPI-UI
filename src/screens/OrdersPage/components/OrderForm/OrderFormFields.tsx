@@ -316,7 +316,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             label: getOrderFieldLabel(selectedCountry, 'street'),
             placeholder: "",
             rules: {
-                required: isFieldRequired(selectedCountry, selectedWarehouse, 'street') ? "Required field" : false,
+                required: "Required field", //isFieldRequired(selectedCountry, selectedWarehouse, 'street') ? "Required field" : false,
             },
             width: WidthType.w25,
             classNames: "",
@@ -331,7 +331,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             label: getOrderFieldLabel(selectedCountry, 'house_number'),
             placeholder: "",
             rules: {
-                required: isFieldRequired(selectedCountry, selectedWarehouse, 'house_number') ? "Required field" : false,
+                required: "Required field", //isFieldRequired(selectedCountry, selectedWarehouse, 'house_number') ? "Required field" : false,
             },
             width: WidthType.w25,
             classNames: "",
@@ -368,20 +368,20 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             disabled: isDisabled && !isAddressAllowed,
             hint: OrderHints['unit'] || '',
         },
-        selectedCountry && ['MX'].includes(selectedCountry) ? {
-            fieldType: FormFieldTypes.TEXT,
-            type: "text",
-            name: `addressFull.details`,
-            label: getOrderFieldLabel(selectedCountry, 'details'),
-            placeholder: "",
-            rules: {
-                required: isFieldRequired(selectedCountry, selectedWarehouse, 'details') ? "Required field" : false,
-            },
-            width: WidthType.w25,
-            classNames: "",
-            disabled: isDisabled && !isAddressAllowed,
-            hint: OrderHints['details'] || '',
-        } : null,
+        // selectedCountry && ['MX'].includes(selectedCountry) ? {
+        //     fieldType: FormFieldTypes.TEXT,
+        //     type: "text",
+        //     name: `addressFull.details`,
+        //     label: getOrderFieldLabel(selectedCountry, 'details'),
+        //     placeholder: "",
+        //     rules: {
+        //         required: isFieldRequired(selectedCountry, selectedWarehouse, 'details') ? "Required field" : false,
+        //     },
+        //     width: WidthType.w25,
+        //     classNames: "",
+        //     disabled: isDisabled && !isAddressAllowed,
+        //     hint: OrderHints['details'] || '',
+        // } : null,
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
@@ -482,7 +482,7 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
                 maxLength: 60,
             },
             errorMessage: "Required field",
-            width: selectedCountry && ['MX'].includes(selectedCountry) ? WidthType.w50 : WidthType.w25,
+            width: selectedCountry && ['MX'].includes(selectedCountry) ? WidthType.w75 : WidthType.w25,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             onChange: onChangeFn,
@@ -496,11 +496,15 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
             name: `${prefix}receiverComment`,
             label: 'Shipment label comment',
             placeholder: "",
-            maxLength: 50,
+            // maxLength: 50,
+            rules: {
+                maxLength: 100,
+            },
             width: WidthType.w100,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             onChange: onChangeFn,
+            hint: OrderHints['comment'] || '',
         },
     ];
 }
