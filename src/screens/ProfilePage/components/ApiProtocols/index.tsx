@@ -25,22 +25,27 @@ const ApiProtocols: React.FC<ApiProtocolsPropsType> = ({apiProtocols}) => {
             const pathParts = [...filePath.path.split('/'), filePath.name];
 
             let currentNode = rootNode;
+            let currentPath = ''; // full path accumulated segment by segment
+
             for (let i = 0; i < pathParts.length; i++) {
                 const part = pathParts[i];
+                const fullKey = currentPath + '/' + part;
 
-                // Check if the folder already exists in the map
-                if (fileMap.has(currentNode.name + '/' + part)) {
-                    currentNode = fileMap.get(currentNode.name + '/' + part)!;
+                if (i === pathParts.length - 1) {
+                    //is leaf
+                    currentNode.children.push({ name: part, isFolder: false, uuid: filePath.uuid });
+                } else if (fileMap.has(fullKey)) {
+                    //folder already created under this exact path
+                    currentNode = fileMap.get(fullKey)!;
                 } else {
-                    if (i === pathParts.length - 1) {
-                        currentNode.children.push({ name: part, isFolder: false, uuid: filePath.uuid });
-                    } else {
-                        const newFolder = {name: part, isFolder: true, children: []};
-                        currentNode.children.push(newFolder);
-                        fileMap.set(currentNode.name + '/' + part, newFolder); // Add to map for efficient lookup
-                        currentNode = newFolder;
-                    }
+                    //new folder under this path
+                    const newFolder = { name: part, isFolder: true, children: [] };
+                    currentNode.children.push(newFolder);
+                    fileMap.set(fullKey, newFolder);
+                    currentNode = newFolder;
                 }
+
+                currentPath = fullKey;
             }
         }
 
@@ -50,7 +55,8 @@ const ApiProtocols: React.FC<ApiProtocolsPropsType> = ({apiProtocols}) => {
     const fileHierarchy = useMemo(()=>getHierarchicalFileStructure(apiProtocols || []), [apiProtocols]);
 
 
-    //console.log('hierarchy: ', getHierarchicalFileStructure(apiProtocols ? apiProtocols : []))
+
+    console.log('hierarchy: ', getHierarchicalFileStructure(apiProtocols ? apiProtocols : []))
 
 
     return (
