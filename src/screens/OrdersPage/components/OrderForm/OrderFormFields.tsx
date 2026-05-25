@@ -102,7 +102,7 @@ export const GeneralFields = (newObject: boolean, orderTitles: OrdersTenantDataT
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange, handleCourierServiceChange, linkToTrack, newObject, isDraft}: { warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void, handleCourierServiceChange: (a: string)=>void, linkToTrack:any, newObject: boolean, isDraft: boolean}) => [
+export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange, handleCourierServiceChange, linkToTrack, newObject, isCSEditable}: { warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void, handleCourierServiceChange: (a: string)=>void, linkToTrack:any, newObject: boolean, isCSEditable: boolean}) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -136,7 +136,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         classNames: "",
         onChange: handleCourierServiceChange,
         hint: OrderHints['preferredCourierService'] || '',
-        disabled: !(newObject || isDraft),
+        disabled: !(newObject || isCSEditable),
     },
     {
         fieldType: FormFieldTypes.TOGGLE,
@@ -147,7 +147,7 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         width: WidthType.w17,
         classNames: "",
         hint: OrderHints['preferredCourierServiceMandatory'] || '',
-        disabled: !(newObject || isDraft),
+        disabled: !(newObject || isCSEditable),
     },
     // {
     //     fieldType: FormFieldTypes.TEXT,
