@@ -90,6 +90,14 @@ export type StockMovementShippingUnitsType = {
     unitWeight: number;
 }
 
+export type StockMovementDeliveryCostApprovalType = {
+    Comment: string;
+    CustomerPrice: number;
+    ETA: string;
+    ETD: string;
+    Status: string;
+}
+
 export type SingleStockMovementType = {
     date: string;
     number: string;
@@ -135,6 +143,7 @@ export type SingleStockMovementType = {
     receiverZIP?: string;
     allCollect?: boolean;
     shippingUnits?: StockMovementShippingUnitsType[];
+    PrecalculatedDeliveryCost?: StockMovementDeliveryCostApprovalType[];
 }
 
 export type StockMovementParamsProductType = {

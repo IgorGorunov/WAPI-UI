@@ -123,6 +123,8 @@ import ApplyFilters from '@/assets/icons/filter-apply.svg';
 import BiggestCheck from '@/assets/icons/biggest-check.svg';
 import CalendarNav from '@/assets/icons/calendar-nav.svg';
 import Pallet from '@/assets/icons/pallet-freight.svg';
+import AntiFraud from '@/assets/icons/fraud-protect.svg';
+import Approval from '@/assets/icons/approval.svg';
 
 export const icons = {
     "arrow-left": ArrowLeft,
@@ -250,4 +252,6 @@ export const icons = {
     'biggest-check': BiggestCheck,
     'calendar-nav': CalendarNav,
     'pallet-freight': Pallet,
+    'anti-fraud': AntiFraud,
+    'approval': Approval,
 };

@@ -135,4 +135,20 @@ export const getStockMovementsExcel = async (
     return api.post(`/GetPagedStockMovementListFile`, data);
 }
 
+export const ProcessApproval = async (
+    data: {
+        token: string;
+        alias?: string;
+        ui?: string;
+        uuid: string;
+        status: string;
+        rejectionReason?: string;
+        comment?: string;
+        requestedPrice: number;
+        requestedDeliveryDays?: string;
+    }
+): Promise<ApiResponseType<AttachedFilesType>> => {
+    return api.post(`/ProcessStockMovementCostApproval`, data);
+}
+
 export { getInbounds, getInboundData, getInboundParameters, sendInboundData, updateInboundData, sendInboundFiles};

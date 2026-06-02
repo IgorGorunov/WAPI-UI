@@ -76,6 +76,11 @@
     &-right {
       margin-right: -5px;
     }
+
+    :global(.icon) {
+      width: 24px;
+      height: 24px;
+    }
   }
 
   &.full-width {

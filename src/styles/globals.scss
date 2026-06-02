@@ -414,7 +414,8 @@ input[type="date"]::before {
   &-book,
   &-trouble,
   &-lightning-bolt,
-  &-pallet-freight {
+  &-pallet-freight,
+  &-preview {
     flex: 0 0 auto;
     width: 24px;
   }
