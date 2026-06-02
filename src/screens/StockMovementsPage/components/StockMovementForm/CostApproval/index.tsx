@@ -40,25 +40,29 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
     }, [refetchDoc]);
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: closeErrorModal })
 
+    const history = costApproval.filter(item => item.Status !== "Awaiting cost approval");
+
+    const needApproval = costApproval.filter(item => item.Status === "Awaiting cost approval");
+
     //reject modal
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectReason, setRejectReason] = useState<string>("Need a cheaper rate");
     const [rejectComment, setRejectComment] = useState<string>("");
     const [rejectPrice, setRejectPrice] = useState<string>("");
-    const [rejectETD, setRejectETD] = useState<string>("");
+    const [rejectETD, setRejectETD] = useState<string>(needApproval.length ? needApproval[0].ETD : "");
     const [rejectError, setRejectError] = useState<string>("");
+    const [rejectFormErrors, setRejectFormErrors] = useState<{[key: string]: string}>({});
 
     const closeRejectModal = useCallback(() => {
         setShowRejectModal(false);
         setRejectReason("Need a cheaper rate");
         setRejectComment("");
         setRejectPrice("");
-        setRejectETD("");
+        setRejectETD(needApproval.length ? needApproval[0].ETD : "");
         setRejectError("");
+        setRejectFormErrors({});
     }, []);
-    const history = costApproval.filter(item => item.Status !== "Awaiting cost approval");
 
-    const needApproval = costApproval.filter(item => item.Status === "Awaiting cost approval");
 
     const handleApprove = async(item: StockMovementDeliveryCostApprovalType) => {
         console.log('approve');
@@ -210,19 +214,21 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}
             {showRejectModal &&
                 <Modal title={`Reason for rejection`} onClose={ closeRejectModal } >
+                    <>
                     <div className={`card ${styles['reject-modal-wrapper']}`}>
                         <FieldBuilder
                             name="rejectReason"
                             fieldType={FormFieldTypes.SELECT}
-                            label="Reason *"
+                            label="Reason for rejection"
                             value={rejectReason}
-                            onChange={(val: string) => setRejectReason(val)}
+                            onChange={(val: string) => { setRejectReason(val); setRejectFormErrors(prev => ({...prev, rejectReason: ''})) }}
                             options={[
                                 { label: "Need a cheaper rate", value: "Need a cheaper rate" },
                                 { label: "Need faster delivery", value: "Need faster delivery" },
                                 { label: "Other", value: "Other" }
                             ]}
                             isRequired={true}
+                            errorMessage={rejectFormErrors['rejectReason']}
                         />
 
                         <FieldBuilder
@@ -230,14 +236,15 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
                             fieldType={FormFieldTypes.TEXT_AREA}
                             label={`Comment ${rejectReason === 'Other' ? '*' : ''}`}
                             value={rejectComment}
-                            onChange={(val: string) => setRejectComment(val)}
+                            onChange={(val: string) => { setRejectComment(val); setRejectFormErrors(prev => ({...prev, rejectComment: ''})) }}
                             isRequired={rejectReason === 'Other'}
+                            errorMessage={rejectFormErrors['rejectComment']}
                         />
 
                         <FieldBuilder
                             name="rejectPrice"
                             fieldType={FormFieldTypes.NUMBER}
-                            label="Desired price"
+                            label="Desired price (euro)"
                             value={rejectPrice}
                             onChange={(val: string) => setRejectPrice(val)}
                         />
@@ -247,18 +254,31 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
                             fieldType={FormFieldTypes.DATE}
                             label="Desired delivery date"
                             value={rejectETD}
+                            // isRequired={true}
                             onChange={(val: string) => setRejectETD(val)}
                         />
 
                         {rejectError && <p className="error" style={{color: 'var(--color-red, red)', marginTop: '10px'}}>{rejectError}</p>}
 
+
+                    </div>
                         <div className={styles['reject-modal-actions']}>
                             <Button type="button" variant={ButtonVariant.PRIMARY} onClick={() => {
+                                const newErrors: {[key: string]: string} = {};
+                                if (!rejectReason) {
+                                    newErrors['rejectReason'] = 'Reason is required';
+                                }
                                 if (rejectReason === 'Other' && !rejectComment.trim()) {
-                                    setRejectError("Comment is required for 'Other' reason");
+                                    newErrors['rejectComment'] = 'Comment is required for Other reason';
+                                }
+
+                                if (Object.keys(newErrors).length > 0) {
+                                    setRejectFormErrors(newErrors);
                                     return;
                                 }
+
                                 setRejectError("");
+                                setRejectFormErrors({});
                                 handleReject({
                                     rejectionReason: rejectReason,
                                     comment: rejectComment,
@@ -268,7 +288,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
                                 closeRejectModal();
                             }}>Submit</Button>
                         </div>
-                    </div>
+                    </>
                 </Modal>
             }
 
