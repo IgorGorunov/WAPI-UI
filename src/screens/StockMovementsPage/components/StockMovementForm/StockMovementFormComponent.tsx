@@ -55,6 +55,7 @@ import {sendUserBrowserInfo} from "@/services/userInfo";
 import HintsModal from "@/screens/StockMovementsPage/components/StockMovementForm/HintsModal";
 import useTenant from "@/context/tenantContext";
 import {isTabAllowed} from "@/utils/tabs";
+import CostApproval from "@/screens/StockMovementsPage/components/StockMovementForm/CostApproval";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -186,7 +187,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     }
 
     //tab titles
-    const tabTitleArray = TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length), forbiddenTabs);
+    const tabTitleArray = TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length), !!(docData?.PrecalculatedDeliveryCost && docData.PrecalculatedDeliveryCost.length), forbiddenTabs);
     const { tabTitles, updateTabTitles, clearTabTitles, resetTabTables } = useTabsState(tabTitleArray, TabFields);
 
 
@@ -1592,6 +1593,25 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                         <StatusHistory statusHistory={docData?.statusHistory} />
                     </div>
                 </div>}
+                {
+                    docData?.uuid && docData?.PrecalculatedDeliveryCost && docData?.PrecalculatedDeliveryCost.length > 0 && isTabAllowed('Delivery cost approval', forbiddenTabs) ? (
+                        <div key='delivery-cost-approval-tab' className='delivery-cost-approval-tab'>
+                            <div className={`card min-height-600 ${styles['stock-movement--cost-approval']}`}>
+                                <h3 className={styles['stock-movement__block-title']}>
+                                    <Icon name='approval' />
+                                    Delivery cost approval
+                                </h3>
+                                <CostApproval
+                                    costApproval={docData?.PrecalculatedDeliveryCost}
+                                    docName={`${docType} ${docData?.number} from ${formatDateStringToDisplayString(docData.date)}`}
+                                    uuid={docData?.uuid}
+                                    docType={docType}
+                                    refetchDoc={refetchDoc}
+                                />
+                            </div>
+                        </div>
+                    ) : null
+                }
                 {docData?.uuid && docData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ? <div key='tickets-tab' className='tickets-tab'>
                     <div className="card min-height-600 stock-movement--tickets">
                         <h3 className={styles['stock-movement__block-title']}>
@@ -1638,7 +1658,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                     variant={ButtonVariant.PRIMARY}>Send</Button>}
                 {isDisabled && docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !docData?.canEdit && docData?.status !== 'Finished' &&
                     <Button type="submit" onClick={() => setIsJustETA(true)}
-                        variant={ButtonVariant.PRIMARY}>Send</Button>}
+                        variant={ButtonVariant.PRIMARY}>Send new ETA</Button>}
             </div>
         </form>
         {showStatusModal && <ModalStatus {...modalStatusInfo} />}

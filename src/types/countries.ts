@@ -1,6 +1,7 @@
 export enum Countries {
+  AB = 'Abkhazia',
   AF = "Afghanistan",
-  AX = "AlandIslands",
+  AX = "Aland Islands",
   AL = "Albania",
   DZ = "Algeria",
   AS = "American Samoa",
@@ -24,6 +25,7 @@ export enum Countries {
   BZ = "Belize",
   BJ = "Benin",
   BM = "Bermuda",
+  BQ = "Bonaire, Sint Eustatius and Saba",
   BT = "Bhutan",
   BO = "Bolivia",
   BA = "Bosnia and Herzegovina",
@@ -179,6 +181,7 @@ export enum Countries {
   QA = "Qatar",
   RE = "Reunion",
   MKD = "Republic of North Macedonia",
+  MK = "Republic of North Macedonia",
   RO = "Romania",
   RU = "Russian Federation",
   RW = "Rwanda",
@@ -207,6 +210,7 @@ export enum Countries {
   ES = "Spain",
   LK = "Sri Lanka",
   SD = "Sudan",
+  OS = 'South Ossetia',
   SS = "South Sudan",
   SR = "Suriname",
   SJ = "Svalbard And Jan Mayen",
@@ -251,7 +255,7 @@ export enum Countries {
 
 export enum CountryCodes {
   "Afghanistan" = "af",
-  "AlandIslands" = "ax",
+  "Aland Islands" = "ax",
   "Albania" = "al",
   "Algeria" = "dz",
   "American Samoa" = "as",
@@ -429,7 +433,7 @@ export enum CountryCodes {
   "Puerto Rico" = "pr",
   "Qatar" = "qa",
   "Reunion" = "re",
-  "Republic of North Macedonia" = "mkd",
+  "Republic of North Macedonia" = "mk",
   "Romania" = "ro",
   "Russian Federation" = "ru",
   "Rwanda" = "rw",
@@ -502,7 +506,7 @@ export enum CountryCodes {
 
 export const COUNTRIES = [
   {label: "Afghanistan", value: "af"},
-  {label: "AlandIslands", value: "ax"},
+  {label: "Aland Islands", value: "ax"},
   {label: "Albania", value: "al"},
   {label: "Algeria", value: "dz"},
   {label: "American Samoa", value: "as"},
@@ -680,7 +684,7 @@ export const COUNTRIES = [
   {label: "Puerto Rico", value: "pr"},
   {label: "Qatar", value: "qa"},
   {label: "Reunion", value: "re"},
-  {label: "Republic of North Macedonia", value: "mkd"},
+  {label: "Republic of North Macedonia", value: "mk"},
   {label: "Romania", value: "ro"},
   {label: "Russian Federation", value: "ru"},
   {label: "Rwanda", value: "rw"},
