@@ -46,7 +46,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
     }, [refetchDoc]);
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: closeErrorModal })
 
-    const history = costApproval.filter(item => item.Status !== "Awaiting cost approval");
+    const history = canEdit ? costApproval.filter(item => item.Status !== "Awaiting cost approval") : costApproval;
 
     const needApproval = costApproval.filter(item => item.Status === "Awaiting cost approval");
 
@@ -71,11 +71,9 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
 
 
     const handleApprove = async(item: StockMovementDeliveryCostApprovalType) => {
-        console.log('approve');
         try {
             sendUserBrowserInfo({ ...getBrowserInfo('DeliveryCost', getAccessActionObject(docType), AccessActions.EditObject), body: { uuid: uuid || '' } });
         } catch { }
-
 
         try {
             const requestData = {
@@ -109,8 +107,6 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
     }
 
     const handleReject = async(data) => {
-        console.log('reject');
-
         try {
             sendUserBrowserInfo({ ...getBrowserInfo('DeliveryCost', getAccessActionObject(docType), AccessActions.EditObject), body: { uuid: uuid || '' } });
         } catch { }
