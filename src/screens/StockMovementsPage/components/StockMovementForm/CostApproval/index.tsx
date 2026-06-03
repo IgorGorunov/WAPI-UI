@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {STOCK_MOVEMENT_DOC_TYPE, StockMovementDeliveryCostApprovalType} from "@/types/stockMovements";
 import styles from "./styles.module.scss";
 import {formatDateStringToDisplayString} from "@/utils/date";
@@ -24,8 +24,14 @@ type PropsType = {
 };
 
 const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docType, refetchDoc }) => {
-    const { token, superUser, ui, getBrowserInfo } = useAuth();
-    const { tenantData: { alias, orderTitles } } = useTenant();
+    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { tenantData: { alias } } = useTenant();
+
+    const [canEdit, setCanEdit] = useState(false);
+
+    useEffect(() => {
+        setCanEdit(isActionIsAccessible(`${getAccessActionObject(docType)}/DeliveryCost`, AccessActions.Edit));
+    }, []);
 
     //status modal
     const [showStatusModal, setShowStatusModal] = useState(false);
@@ -67,7 +73,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
     const handleApprove = async(item: StockMovementDeliveryCostApprovalType) => {
         console.log('approve');
         try {
-            sendUserBrowserInfo({ ...getBrowserInfo('ApproveDeliveryCost', getAccessActionObject(docType), AccessActions.EditObject), body: { uuid: uuid || '' } });
+            sendUserBrowserInfo({ ...getBrowserInfo('DeliveryCost', getAccessActionObject(docType), AccessActions.EditObject), body: { uuid: uuid || '' } });
         } catch { }
 
 
@@ -106,7 +112,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
         console.log('reject');
 
         try {
-            sendUserBrowserInfo({ ...getBrowserInfo('ApproveDeliveryCost', getAccessActionObject(docType), AccessActions.EditObject), body: { uuid: uuid || '' } });
+            sendUserBrowserInfo({ ...getBrowserInfo('DeliveryCost', getAccessActionObject(docType), AccessActions.EditObject), body: { uuid: uuid || '' } });
         } catch { }
 
 
@@ -146,7 +152,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
     return (
         <div className={styles["stock-movement-cost-approval"]}>
             {
-                needApproval.length ? (
+                canEdit && needApproval.length ? (
                     <div className={styles["stock-movement-cost-approval__approval-block-wrapper"]}>
                         {needApproval.map((item: StockMovementDeliveryCostApprovalType, index: number) => (
                             <div className={styles["stock-movement-cost-approval__approval-block"]}>

@@ -53,6 +53,8 @@ export enum AccessObjectTypes {
     "StockManagment/LogisticServices" = "StockManagment/LogisticServices",
     "StockManagment/Outbounds" = "StockManagment/Outbounds",
     "StockManagment/StockMovements" = "StockManagment/StockMovements",
+    "StockManagment/Inbounds/DeliveryCost" = "StockManagment/Inbounds/DeliveryCost",
+    "StockManagment/LogisticServices/DeliveryCost" = "StockManagment/LogisticServices/DeliveryCost",
     "Tickets" = "Tickets",
     "Profile/Prices" = "Profile/Prices",
     "Profile/Contracts" = "Profile/Contracts",
@@ -60,6 +62,9 @@ export enum AccessObjectTypes {
     "Profile/WarehouseInfo" = "Profile/WarehouseInfo",
     "Profile/ChangePassword" = "Profile/ChangePassword",
     "FAQ" = 'FAQ',
+    "AntiFraud" = "AntiFraud",
+    "AntiFraud/Settings" = "AntiFraud/Settings",
+    "AntiFraud/Results" = "AntiFraud/Results",
 }
 
 export enum AccessActions {
@@ -74,4 +79,5 @@ export enum AccessActions {
     "DownloadReport" = "DownloadReport",
     "View" = "View",
     "DownloadPrintForm" = "DownloadPrintForm",
+    "Edit" = "Edit",
 }
