@@ -13,7 +13,8 @@ export const TabTitles = (objectExists: boolean, hasTickets=false, hasCostApprov
             if (isTabAllowed(tabName, forbiddenTabs)) tabsArr.push(tabName);
         })
     }
-    if (hasCostApproval && isTabAllowed('Delivery cost approval', forbiddenTabs)) {
+
+    if (hasCostApproval && isTabAllowed('DeliveryCost', forbiddenTabs)) {
         tabsArr.push('Delivery cost approval');
     }
 

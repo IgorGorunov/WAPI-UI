@@ -122,7 +122,7 @@ const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
     const isLoading = isLoadingDocs || isLoadingFilters;
 
     //track forbidden tabs
-    const [forbiddenTabs, setForbiddenTabs] = useState<string[]>([]);
+    const [forbiddenTabs, setForbiddenTabs] = useState<string[]>(getForbiddenTabs(getAccessActionObject(docType)) || []);
     useEffect(() => {
         setForbiddenTabs(getForbiddenTabs(getAccessActionObject(docType)));
     }, [docType]);
@@ -335,7 +335,12 @@ const StockMovementsPage: React.FC<StockMovementPageType> = ({ docType }) => {
                 />}
             </div>
             {showStockMovementModal && (isDocNew && !docUuid || !isDocNew && docUuid) &&
-                <StockMovementForm docType={docType} docUuid={docUuid} closeDocModal={onShowStockMovementModalClose} closeModalOnSuccess={() => { setShowStockMovementModal(false); handleRefresh(); }} />
+                <StockMovementForm
+                    docType={docType}
+                    docUuid={docUuid}
+                    closeDocModal={onShowStockMovementModalClose}
+                    closeModalOnSuccess={() => { setShowStockMovementModal(false); handleRefresh(); }}
+                />
             }
             {stockMovementData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages[docType]} /> : null}
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}

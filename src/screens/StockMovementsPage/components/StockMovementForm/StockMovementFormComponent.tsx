@@ -1594,7 +1594,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                     </div>
                 </div>}
                 {
-                    docData?.uuid && docData?.PrecalculatedDeliveryCost && docData?.PrecalculatedDeliveryCost.length > 0 && isTabAllowed('Delivery cost approval', forbiddenTabs) ? (
+                    docData?.uuid && docData?.PrecalculatedDeliveryCost && docData?.PrecalculatedDeliveryCost.length > 0 && isTabAllowed('DeliveryCost', forbiddenTabs) ? (
                         <div key='delivery-cost-approval-tab' className='delivery-cost-approval-tab'>
                             <div className={`card min-height-600 ${styles['stock-movement--cost-approval']}`}>
                                 <h3 className={styles['stock-movement__block-title']}>
