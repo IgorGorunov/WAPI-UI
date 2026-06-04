@@ -125,6 +125,7 @@ import CalendarNav from '@/assets/icons/calendar-nav.svg';
 import Pallet from '@/assets/icons/pallet-freight.svg';
 import AntiFraud from '@/assets/icons/fraud-protect.svg';
 import Approval from '@/assets/icons/approval.svg';
+import Phone from '@/assets/icons/phone.svg';
 
 export const icons = {
     "arrow-left": ArrowLeft,
@@ -254,4 +255,5 @@ export const icons = {
     'pallet-freight': Pallet,
     'anti-fraud': AntiFraud,
     'approval': Approval,
+    'phone': Phone,
 };

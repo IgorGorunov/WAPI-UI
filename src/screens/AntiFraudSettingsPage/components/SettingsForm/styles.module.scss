@@ -1,0 +1,138 @@
+@import '@/styles/devices';
+
+.anti-fraud {
+  padding: 12px 24px 24px;
+  margin-top: 16px;
+  color: var(--color-gray);
+
+  @include mobile {
+    padding: 16px;
+  }
+
+
+  &__wrapper {
+    margin: 0 -24px;
+    max-height: calc(100vh - 280px);
+    overflow: hidden scroll;
+
+    &-inner {
+      padding: 0 24px;
+      //display: flex;
+      //flex-direction: column;
+      //gap: 28px;
+    }
+  }
+
+  &__countries {
+    //margin: 0;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  &__table-section {
+    display: flex;
+    //flex-direction: column;
+    gap: 38px;
+    margin-top: 8px;
+    //padding: 0 24px;
+
+    @include upToTablet {
+      flex-direction: column;
+    }
+
+    :global(.form-table) {
+      margin-right: 0;
+      margin-left: 0;
+    }
+
+    &--gradation {
+      flex: 0 1 750px;
+
+      @include upToTablet {
+        flex: 0 1 100%;
+      }
+    }
+
+    &--phoneNumber {
+      flex-grow: 1;
+    }
+  }
+
+  &__table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 10px;
+    min-height: 70px;
+
+    &-title {
+      display: flex;
+      flex-direction: column;
+      //align-items: center;
+      //justify-content: center;
+    }
+
+    :global(.btn) {
+      white-space: nowrap;
+      min-width: 100px;
+    }
+  }
+
+  &__table-hint {
+    font-size: 11px;
+    color: var(--color-light-blue-gray);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .table-scroll-wrap {
+    max-height: 300px;
+    overflow: hidden scroll;
+    margin-right: -20px;
+
+    &--inner {
+      padding-right: 20px;
+    }
+  }
+
+  &__table-wrap {
+
+    :global(.ant-table-wrapper) {
+      border-radius: 10px;
+    }
+  }
+
+  &__zone-cell {
+    border-left-width: 4px;
+    border-left-style: solid;
+    padding-left: 4px;
+    min-width: 110px;
+    transition: border-color 0.2s ease;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-gray2);
+    margin-top: 8px;
+  }
+  &__drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    font-size: 16px;
+    color: var(--color-light-blue-gray);
+    cursor: grab;
+    user-select: none;
+    line-height: 1;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}

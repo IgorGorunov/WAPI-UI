@@ -1,0 +1,118 @@
+.results-table-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: -16px;
+}
+
+.results-table {
+    position: relative;
+    transition: opacity 0.2s ease;
+    margin-top: -12px !important;
+
+    &--loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+}
+
+.results-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover td {
+        background-color: var(--color-lightest-gray, #f5f7fa) !important;
+    }
+}
+
+.cell-text {
+    font-size: 13px;
+    color: var(--color-main-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+    display: block;
+
+    :global(svg) {
+        width: 24px;
+        height: auto;
+        margin-top: 2px;
+    }
+
+    :global(svg.icon-phone) {
+        fill: #8a2be2;//#D8B438;//#6366F1;
+    }
+
+    :global(.icon-orders) {
+        transform: scale(1.2);
+    }
+
+    &--phone {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 2px solid;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    line-height: 1.6;
+}
+
+.score-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+}
+
+.score-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--color-border, #e0e6ed);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 60px;
+}
+
+.score-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.score-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-main-dark);
+    min-width: 36px;
+    text-align: right;
+}
+
+.pagination-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+
+.table-date-time-container {
+    display: flex;
+    flex-direction: column;
+
+    .table-time {
+        font-size: 10px;
+    }
+
+}

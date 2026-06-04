@@ -1,0 +1,38 @@
+.settings-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+
+  .use-checkbox {
+    //text-align: center;
+
+    svg {
+      width: 24px;
+
+      path {
+        fill: var(--color-gray-blue);
+      }
+    }
+  }
+}
+
+.settings-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.settings-row {
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: var(--table-hover) !important;
+  }
+}
+
+.pagination-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}

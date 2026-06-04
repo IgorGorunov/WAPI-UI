@@ -3,7 +3,7 @@ import {
     AmazonPrepOrderParamsType,
     SingleAmazonPrepOrderType,
 } from "@/types/amazonPrep";
-import styles from "./styles.module.scss";
+import "./styles.scss";
 import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes, UserAccessActionType } from "@/types/auth";
@@ -131,7 +131,7 @@ const AmazonPrepForm: React.FC<AmazonPrepFormType> = ({ docUuid, onCloseModal, o
         }
     }
 
-    return <div className={styles['amazon-prep-info']}>
+    return <div className='amazon-prep-info'>
         {(isLoading || !amazonPrepOrderParameters) && <Loader />}
         <ToastContainer />
         {amazonPrepOrderParameters && (docUuid && amazonPrepOrderData || !docUuid) && forbiddenTabs !== null ?

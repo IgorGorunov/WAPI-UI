@@ -6,7 +6,7 @@ import {
     SingleAmazonPrepOrderType,
     WarehouseType,
 } from "@/types/amazonPrep";
-import styles from "./styles.module.scss";
+import "./styles.scss";
 import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
@@ -651,7 +651,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
         }
     }
 
-    return <div className={styles['amazon-prep-info']}>
+    return <div className='amazon-prep-info'>
         {(isLoading || !amazonPrepOrderParameters) && <Loader />}
         <ToastContainer />
         {amazonPrepOrderParameters ? <><form onSubmit={handleSubmit(onSubmitForm, onError)}>
@@ -696,7 +696,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                             </div>
                         ) : null}
                         <CardWithHelpIcon classNames='card amazon-prep-info--general'>
-                            <h3 className={styles['amazon-prep-info__block-title']}>
+                            <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='general' />
                                 General
                             </h3>
@@ -708,7 +708,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                 </div> : null}
                 {isTabAllowed('Delivery info', forbiddenTabs) ? <div key='delivery-tab' className='delivery-tab'>
                     <CardWithHelpIcon classNames='card amazon-prep-info--details'>
-                        <h3 className={styles['amazon-prep-info__block-title']}>
+                        <h3 className='amazon-prep-info__block-title'>
                             <Icon name='additional' />
                             Details
                         </h3>
@@ -717,7 +717,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                         </div>
                     </CardWithHelpIcon>
                     <CardWithHelpIcon classNames='card amazon-prep-info--receiver'>
-                        <h3 className={styles['amazon-prep-info__block-title']}>
+                        <h3 className='amazon-prep-info__block-title'>
                             <Icon name='receiver' />
                             Receiver
                         </h3>
@@ -726,20 +726,20 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                         </div>
                     </CardWithHelpIcon>
                 </div> : null}
-                {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className={styles['product-tab']}>
-                    <CardWithHelpIcon classNames={`card min-height-600 ${styles['amazon-prep-info--products']}`}>
+                {isTabAllowed('Products', forbiddenTabs) ? <div key='product-tab' className='product-tab'>
+                    <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--products">
                         {/*<TutorialHintTooltip hint={AmazonPrepHints['products'] || ''} position='left' >*/}
-                        <h3 className={styles['amazon-prep-info__block-title']}>
+                        <h3 className='amazon-prep-info__block-title'>
                             <Icon name='goods' />
                             Products
                         </h3>
                         {/*</TutorialHintTooltip>*/}
 
                         <div className='grid-row '>
-                            <div className={`${styles['amazon-prep-info--order-btns']} width-100`}>
+                            <div className='amazon-prep-info--order-btns  width-100'>
                                 {/*<div className='grid-row'>*/}
-                                <div className={`${styles['amazon-prep-info--btns']} ${styles['small-paddings']} width-100`}>
-                                    <div className={styles['amazon-prep-info--btns__radio']}>
+                                <div className='amazon-prep-info--btns small-paddings width-100'>
+                                    <div className='amazon-prep-info--btns__radio'>
                                         <Controller
                                             key='boxesType'
                                             name='boxesType'
@@ -764,9 +764,9 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                                             )}
                                         />
                                     </div>
-                                    <div className={styles['amazon-prep-info--btns__table-btns']}>
+                                    <div className='amazon-prep-info--btns__table-btns'>
                                         <TutorialHintTooltip hint={AmazonPrepHints['selection'] || ''} forBtn >
-                                            <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames={styles['selection-btn']} >
+                                            <Button type="button" icon='selection' iconOnTheRight size={ButtonSize.SMALL} disabled={isDisabled} variant={ButtonVariant.SECONDARY} onClick={() => handleProductSelection()} classNames='selection-btn' >
                                                 Add from List
                                             </Button>
                                         </TutorialHintTooltip>
@@ -785,7 +785,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                                 {/*</div>*/}
                             </div>
                         </div>
-                        <div className={`${styles['amazon-prep-info--table']} table-form-fields form-table`}>
+                        <div className='amazon-prep-info--table table-form-fields form-table'>
                             <Table
                                 columns={getProductColumns(control)}
                                 dataSource={getValues('products')?.map((field, index) => ({ key: field.product + '-' + index, ...field })) || []}
@@ -799,7 +799,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                 {amazonPrepOrderData?.uuid && isTabAllowed('Pallets', forbiddenTabs) &&
                     <div key='pallets-tab' className='pallets-tab'>
                         <div className="card min-height-600 amazon-prep-info--pallets">
-                            <h3 className={styles['amazon-prep-info__block-title']}>
+                            <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='bundle' />
                                 Pallets
                             </h3>
@@ -809,8 +809,8 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                 }
                 {amazonPrepOrderData?.uuid && isTabAllowed('Services', forbiddenTabs) &&
                     <div key='services-tab' className='services-tab'>
-                        <div className={`card min-height-600 ${styles['amazon-prep-info--services']}`}>
-                            <h3 className={styles['amazon-prep-info__block-title']}>
+                        <div className="card min-height-600 amazon-prep-info--services">
+                            <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='bundle' />
                                 Services
                             </h3>
@@ -820,16 +820,16 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                 }
                 {amazonPrepOrderData?.uuid && isTabAllowed('Status history', forbiddenTabs) &&
                     <div key='status-history-tab' className='status-history-tab'>
-                        <div className={`card ${styles['amazon-prep-info--history']}`}>
-                            <h3 className={styles['amazon-prep-info__block-title']}>
+                        <div className="card amazon-prep-info--history">
+                            <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='history' />
                                 Status history
                             </h3>
                             <StatusHistory statusHistory={amazonPrepOrderData?.statusHistory} />
                         </div>
 
-                        {amazonPrepOrderData?.warehouseStatusHistory && amazonPrepOrderData?.warehouseStatusHistory.length ? <div className={`card ${styles['amazon-prep-info--history']}`}>
-                            <h3 className={styles['amazon-prep-info__block-title']}>
+                        {amazonPrepOrderData?.warehouseStatusHistory && amazonPrepOrderData?.warehouseStatusHistory.length ? <div className="card amazon-prep-info--history">
+                            <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='warehouse' />
                                 Warehouse status history
                             </h3>
@@ -840,7 +840,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                 {amazonPrepOrderData?.uuid && amazonPrepOrderData.tickets.length && isTabAllowed('Tickets', forbiddenTabs) ?
                     <div key='tickets-tab' className='tickets-tab'>
                         <div className="card min-height-600 amazon-prep-info--tickets">
-                            <h3 className={styles['amazon-prep-info__block-title']}>
+                            <h3 className='amazon-prep-info__block-title'>
                                 <Icon name='ticket' />
                                 Tickets
                             </h3>
@@ -850,7 +850,7 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                 {isTabAllowed('Files', forbiddenTabs) ? <div key='files-tab' className='files-tab'>
                     <CardWithHelpIcon classNames="card min-height-600 amazon-prep-info--files">
                         <TutorialHintTooltip hint={AmazonPrepHints['files'] || ''} position='left' >
-                            <h3 className={`${styles['amazon-prep-info__block-title']} ${styles['title-small']}`}>
+                            <h3 className='amazon-prep-info__block-title title-small'>
                                 <Icon name='files' />
                                 Files
                             </h3>

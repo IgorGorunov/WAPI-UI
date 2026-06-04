@@ -1,0 +1,23 @@
+.anti-fraud-results-page {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 12px 0 4px;
+}
+
+.toolbar__period {
+    flex-shrink: 0;
+}
+
+.toolbar__search {
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+}
