@@ -424,7 +424,9 @@ input[type="date"]::before {
     width: 26px;
   }
 
-  &-minus {
+  &-minus,
+  &-close,
+  &-orders {
     width: 30px;
   }
 

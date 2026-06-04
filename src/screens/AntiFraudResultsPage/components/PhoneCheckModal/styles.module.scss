@@ -1,0 +1,20 @@
+.phone-check-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 16px;
+    min-width: min(calc(100vw - 34px), 350px);
+
+    .error-message {
+        color: var(--status-red);
+        font-size: 14px;
+        margin-top: -8px;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 8px;
+    }
+}

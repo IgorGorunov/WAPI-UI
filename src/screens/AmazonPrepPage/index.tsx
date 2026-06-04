@@ -5,15 +5,12 @@ import { useRouter } from "next/router";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import AmazonPrepList from "./components/AmazonPrepList";
-import "./styles.scss";
-import { getAmazonPrep } from "@/services/amazonePrep";
+import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
 import { DateRangeType } from "@/types/dashboard";
-import { formatDateToString, getLastFewDays } from "@/utils/date";
+import { getLastFewDays, formatDateTimeToStringWithDotWithoutSeconds } from "@/utils/date";
 import { AmazonPrepOrderType } from "@/types/amazonPrep";
-import { exportFileXLS } from "@/utils/files";
 import AmazonPrepForm from "./components/AmazonPrepForm";
-import { ApiResponseType } from "@/types/api";
 import Loader from "@/components/Loader";
 import useTourGuide from "@/context/tourGuideContext";
 import { TourGuidePages } from "@/types/tourGuide";
@@ -24,19 +21,49 @@ import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import { STATUS_MODAL_TYPES } from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
+import { AmazonPrepFilters, AmazonPrepFilterDataType } from "./types";
+import { usePagedListState, usePagedData, useFilterMetadata, processFiltersForApi, FilterValue } from "@/components/PagedList";
 
 const AmazonPrepPage = () => {
-    const { tenantData: { alias, orderTitles } } = useTenant();
-    const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
+    const { tenantData: { alias } } = useTenant();
+    const { token, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
     const today = new Date();
     const firstDay = getLastFewDays(today, 30);
     const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({ startDate: firstDay, endDate: today })
     const Router = useRouter();
 
-    const [amazonPrepOrdersData, setAmazonPrepOrdersData,] = useState<any | null>(null);
-    const [filteredAmazonPrepOrders, setFilteredAmazonPrepOrders] = useState<AmazonPrepOrderType[]>(amazonPrepOrdersData);
-    const [isLoading, setIsLoading] = useState(true);
+    const { state, updateFilters, updateSearch, updatePage, updatePageSize, updateSort, clearAllFilters, updatePeriod } = usePagedListState<AmazonPrepFilters>(
+        {} as Partial<AmazonPrepFilters>,
+        // 'amazonPrepFilters',
+        // { page: 1, limit: 10 }
+        {
+            defaultPageSize: 10,
+            defaultDateRange: { startDate: getLastFewDays(new Date(), 30), endDate: new Date() },
+            defaultSortBy: 'date',
+            defaultSortOrder: 'desc',
+        }
+    );
+
+    const { data: amazonPrepOrdersData, count: totalOrders, isLoading: isLoadingOrders, refetch: forceUpdateList } = usePagedData<AmazonPrepOrderType>(
+        '/GetPagedAmazonPrepsList',
+        state,
+        // AccessObjectTypes["Orders/AmazonPrep"],
+        // AccessActions.ListView
+        { token, alias, ui, enabled: !!token }
+    );
+
+    // Filter metadata
+    const { metadata: filterMetadata, isLoading: isLoadingFilters } = useFilterMetadata<AmazonPrepFilterDataType>(
+        '/GetPagedFiltersAmazonPrepsList',
+        // state,
+        // AccessObjectTypes["Orders/AmazonPrep"],
+        // AccessActions.ListView
+        { startDate: state.startDate, endDate: state.endDate },
+        { token, alias, ui, enabled: !!token }
+    );
+
+    const isLoading = isLoadingOrders || isLoadingFilters;
 
     //tour guide
     const { runTour, setRunTour, isTutorialWatched } = useTourGuide();
@@ -71,40 +98,10 @@ const AmazonPrepPage = () => {
     }, [])
 
 
-    const fetchData = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            setAmazonPrepOrdersData([]);
-            const requestData = { token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) }
-
-            try {
-                sendUserBrowserInfo({ ...getBrowserInfo('GetAmazonPrepsList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
-            } catch { }
-
-            if (isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ListView)) {
-                const res = await getAmazonPrep(superUser && ui ? { ...requestData, ui } : requestData);
-
-                if (res && "data" in res) {
-                    setAmazonPrepOrdersData(res.data.sort((a, b) => a.date > b.date ? -1 : 1));
-                } else {
-                    console.error("API did not return expected data");
-                }
-            } else {
-                setAmazonPrepOrdersData([]);
-            }
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
-        }
-
-    }, [token, curPeriod]);
-
-    useEffect(() => {
-        fetchData();
-    }, [token, curPeriod]);
+    // const fetchData = useCallback(() => {
+    //     forceUpdateList();
+    //     forceUpdateMetadata();
+    // }, [forceUpdateList, forceUpdateMetadata]);
 
     const handleEditAmazonPrepOrder = async (uuid: string) => {
         setIsAmazonPrepNew(false);
@@ -117,19 +114,8 @@ const AmazonPrepPage = () => {
             setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal })
             setShowStatusModal(true);
         } else {
-            setAmazonPrepOrdersData(prevState => {
-                if (prevState && prevState.length) {
-                    const el = prevState.filter(item => item.uuid === uuid);
-                    if (el.length) {
-                        return [...prevState.filter(item => item.uuid !== uuid), { ...el[0], notifications: false }].sort((a, b) => a.wapiTrackingNumber < b.wapiTrackingNumber ? 1 : -1)
-                    }
-                }
-                return [...prevState];
-            });
-
             setShowAmazonPrepOrderModal(true);
         }
-
     }
 
     useEffect(() => {
@@ -154,40 +140,123 @@ const AmazonPrepPage = () => {
         }
     }
 
-    const handleExportXLS = () => {
+    const handleExportXLS = async () => {
         try {
-            sendUserBrowserInfo({ ...getBrowserInfo('ExportAmazonPrepList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ExportList), body: { startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) } });
+            sendUserBrowserInfo({ ...getBrowserInfo('ExportAmazonPrepList', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ExportList), body: { startDate: state.startDate, endDate: state.endDate } });
         } catch { }
 
         if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.ExportList)) {
-            return null;
+            return;
         }
-        const filteredData = filteredAmazonPrepOrders.map(item => ({
-            [orderTitles.trackingNumberTitle]: item.wapiTrackingNumber,
-            Status: item.status,
-            Date: item.date,
-            "Client order ID": item.clientOrderID,
-            Warehouse: item.warehouse,
-            "Courier service": item.courierService,
-            "Tracking number": item.trackingNumber,
-            "Receiver Country": item.receiverCountry,
-        }));
-        exportFileXLS(filteredData, "Orders");
+
+        const exportPromise = async () => {
+            const { getAmazonPrepsExcel } = await import('@/services/amazonePrep');
+            const res = await getAmazonPrepsExcel({
+                token,
+                alias,
+                ui,
+                startDate: state.startDate,
+                endDate: state.endDate,
+                filter: processFiltersForApi(state.filters as Record<string, FilterValue>) as any,
+                search: state.search,
+                fullTextSearch: state.fullTextSearch,
+                sortBy: state.sortBy,
+                sortOrder: state.sortOrder
+            });
+
+            if (res && res.data) {
+                const { base64ToBlob } = await import('@/utils/files');
+                const attachedFile = res.data;
+                const blob = base64ToBlob(attachedFile.data as string, attachedFile.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+
+                let downloadName = attachedFile.name || "AmazonPrepOrders.xlsx";
+
+                const dateStr = formatDateTimeToStringWithDotWithoutSeconds(new Date().toISOString()).replace(/[.:\s]/g, '-');
+                const parts = downloadName.split('.');
+                const ext = parts.length > 1 ? parts.pop() || 'xlsx' : 'xlsx';
+                const baseName = parts.length > 0 ? parts.join('.') : downloadName;
+
+                const finalExt = ext.toLowerCase().startsWith('xls') ? ext : 'xlsx';
+                a.download = `${baseName}_${dateStr}.${finalExt}`;
+
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } else {
+                throw new Error("Empty response");
+            }
+        };
+
+        try {
+            const { toast } = await import('@/components/Toast');
+            toast.promise(
+                exportPromise(),
+                {
+                    pending: 'Downloading Amazon preps...',
+                    success: {
+                        render: 'File downloaded successfully!',
+                        autoClose: 2000
+                    },
+                    error: 'Failed to download file'
+                },
+                {
+                    className: 'download-toast'
+                }
+            );
+        } catch (error) {
+            console.error("Export failed", error);
+        }
     }
 
     return (
         <Layout hasHeader hasFooter>
             <SeoHead title='Amazon prep' description='Our Amazon prep page' />
-            <div className="amazon-prep-page__container">
+            <div className={styles["amazon-prep-page__container"]}>
                 {isLoading && <Loader />}
                 <Header pageTitle='Amazon prep' toRight needTutorialBtn >
                     <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddAmazonPrepOrder}>Add order</Button>
                     <Button classNames='export-orders' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
-                {amazonPrepOrdersData && <AmazonPrepList amazonPrepOrders={amazonPrepOrdersData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredAmazonPrepOrders={setFilteredAmazonPrepOrders} handleEditAmazonPrepOrder={handleEditAmazonPrepOrder} />}
+                {amazonPrepOrdersData && <AmazonPrepList 
+                    amazonPrepOrders={amazonPrepOrdersData} 
+                    handleEditAmazonPrepOrder={handleEditAmazonPrepOrder} 
+                    isLoading={isLoadingOrders}
+                    totalOrders={totalOrders}
+                    filterMetadata={filterMetadata}
+                    currentPage={state.page}
+                    pageSize={state.limit}
+                    searchTerm={state.search}
+                    fullTextSearch={state.fullTextSearch}
+                    sortBy={state.sortBy}
+                    sortOrder={state.sortOrder}
+                    selectedFilters={{
+                        status: state.filters.status,
+                        warehouse: state.filters.warehouse,
+                        receiverCountry: state.filters.receiverCountry,
+                        seller: state.filters.seller
+                    }}
+                    onPageChange={updatePage}
+                    onPageSizeChange={updatePageSize}
+                    onSearchChange={updateSearch}
+                    onSortChange={updateSort}
+                    onFiltersChange={updateFilters}
+                    onClearFilters={clearAllFilters}
+                    startDate={state.startDate}
+                    endDate={state.endDate}
+                    onPeriodChange={updatePeriod}
+                    handleRefresh={forceUpdateList}
+                />}
             </div>
             {showAmazonPrepOrderModal && (amazonPrepUuid || isAmazonPrepNew) &&
-                <AmazonPrepForm docUuid={amazonPrepUuid} onCloseModal={onAmazonPrepOrderModalClose} onCloseModalWithSuccess={() => { setShowAmazonPrepOrderModal(false); fetchData(); }} />
+                <AmazonPrepForm
+                    docUuid={amazonPrepUuid}
+                    onCloseModal={onAmazonPrepOrderModalClose}
+                    onCloseModalWithSuccess={() => { setShowAmazonPrepOrderModal(false); forceUpdateList(); }}
+                />
             }
             {amazonPrepOrdersData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.AmazonPreps} /> : null}
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}

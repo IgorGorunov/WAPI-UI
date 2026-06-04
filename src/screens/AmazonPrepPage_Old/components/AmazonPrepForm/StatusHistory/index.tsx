@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import {AmazonPrepOrderHistoryType} from "@/types/amazonPrep";
-import styles from "./styles.module.scss";
+import "./styles.scss";
 import {StatusColors} from "@/screens/DashboardPage/components/OrderStatuses";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
 
@@ -15,24 +15,24 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
     }, []);
 
     return (
-        <div className={styles["amazon-status-history"]}>
-            <div className={styles["amazon-status-history__header"]}>
-                <div className={styles['date-column']}>Period</div>
-                <div className={`${styles['column']} ${styles['status-column']}`}>Status</div>
-                <div className={`${styles['column']} ${styles['tracking-number-column']}`}>Tracking #</div>
-                <div className={`${styles['column']} ${styles['comment-column']}`}>Additional information</div>
+        <div className="amazon-status-history">
+            <div className="amazon-status-history__header">
+                <div className='date-column'>Period</div>
+                <div className='column status-column'>Status</div>
+                <div className='column tracking-number-column'>Tracking #</div>
+                <div className='column comment-column'>Additional information</div>
             </div>
-            <ul className={styles["amazon-status-history__list"]}>
+            <ul className="amazon-status-history__list">
                 {statusHistory &&
                     statusHistory.map((status: AmazonPrepOrderHistoryType, index: number) => (
                         <li
                             key={status.status + "_" + index}
-                            className={`${styles["amazon-status-history__list-item"]} ${
-                                index % 2 === 1 ? styles["highlight"] : " "
+                            className={`amazon-status-history__list-item ${
+                                index % 2 === 1 ? "highlight" : " "
                             }`}
                         >
-                            <div className={styles['date-column']}>{formatDateTimeToStringWithDot(status.period)}</div>
-                            <div className={`${styles['column']} ${styles['status-column']}`}>
+                            <div className='date-column'>{formatDateTimeToStringWithDot(status.period)}</div>
+                            <div className='column status-column'>
                                 <span style={{
                                     borderBottom: `2px solid ${getUnderlineColor(status.statusGroup)}`,
                                     display: 'inline-block',
@@ -40,8 +40,8 @@ const StatusHistory: React.FC<PropsType> = ({ statusHistory }) => {
                                     {status.status}
                                 </span>
                             </div>
-                            <div className={`${styles['column']} ${styles['tracking-number-column']}`}>{status.trackingNumber}</div>
-                            <div className={`${styles['column']} ${styles['comment-column']}`}>{status.additionalInfo}</div>
+                            <div className='column tracking-number-column'>{status.trackingNumber}</div>
+                            <div className='column comment-column'>{status.additionalInfo}</div>
                         </li>
                     ))}
             </ul>

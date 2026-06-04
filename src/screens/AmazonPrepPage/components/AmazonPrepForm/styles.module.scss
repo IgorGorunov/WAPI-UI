@@ -1,0 +1,242 @@
+
+.amazon-prep-info {
+  @include desktopAndUp {
+    width: 1320px;
+  }
+
+  :global(.card) {
+    padding: 28px;
+    margin-bottom: 16px;
+
+    @include upToTablet {
+      padding: 16px;
+    }
+  }
+
+  &__block-title {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 25px;
+    color: var(--color-gray-blue);
+    margin-bottom: 16px;
+
+    &.title-small {
+      margin-bottom: 0;
+    }
+
+    svg {
+      margin-right: 16px;
+    }
+  }
+
+  @include mobile {
+    .general-tab,
+    .delivery-tab {
+      .width-25 {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+
+    .general-tab {
+      .width-17 {
+        padding-left: 0;
+      }
+    }
+  }
+
+  @include upToTablet {
+    .general-tab {
+      .width-33 {
+        flex: 1 1 67%;
+        max-width: 67%;
+      }
+
+      .width-17 {
+        flex: 1 1 33%;
+        max-width: 33%;
+      }
+    }
+
+    .delivery-tab {
+      .flex-auto {
+        flex: 1 1 100%;
+        max-width: none;
+      }
+    }
+  }
+
+  &--order-btns {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-bottom: 8px;
+
+    @include upToTablet {
+      flex: 1 1 50%;
+    }
+  }
+
+  &--btns {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+
+    &__radio {
+      display: flex;
+      margin: 0 -15px;
+    }
+
+    &__table-btns {
+      display: flex;
+      margin-left: auto;
+      gap: 15px;
+
+      @include upToTablet {
+        gap: 12px;
+        width: auto;
+        flex: 0 0 auto;
+        margin-left: auto;
+
+        .btn {
+          font-size: 0;
+          padding: 5px 9px 5px 5px;
+          gap: 0;
+        }
+      }
+    }
+  }
+
+  &--products,
+  &--history,
+  &--services {
+    display: flex;
+    flex-direction: column;
+
+    //&.card {
+      padding-bottom: 0 !important;
+    //}
+  }
+
+  &--table {
+    flex: 1 0 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0 -28px;
+
+    @include mobile {
+      margin: 0 -16px;
+    }
+
+    &-btns {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding-bottom: 8px;
+      gap: 30px;
+
+      @include upToTablet {
+        gap: 12px;
+        width: auto;
+        flex: 0 0 auto;
+        margin-left: auto;
+
+        .btn {
+          font-size: 0;
+          padding: 5px 9px 5px 5px;
+          gap: 0;
+        }
+      }
+
+      &.small-paddings {
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  .amazon-tracking-link {
+    a {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--color-blue);
+      text-decoration: underline;
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .product-tab {
+    :global(.ant-table-wrapper) {
+      max-height: calc(100vh - 464px);
+      min-height: 350px;
+      overflow: hidden scroll;
+
+      &::-webkit-scrollbar {
+        width: 10px;
+        margin-right: 50px;
+      }
+
+      &::-webkit-scrollbar-track {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--color-light-blue-gray);
+        border-radius: 5px;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background: var(--color-gray-blue);
+      }
+    }
+
+    .selection-btn {
+      svg path {
+        fill: var(--color-blue);
+      }
+    }
+
+
+  }
+
+  //.ant-table {
+  //  &-thead {
+  //    .ant-table-cell {
+  //      min-width: 100px;
+  //      padding: 20px 10px !important;
+  //      font-size: 12px;
+  //      font-weight: bold;
+  //      color: var(--color-gray-blue) !important;
+  //      background-color: var(--color-white) !important;
+  //
+  //      &::before {
+  //        content: none !important;
+  //      }
+  //    }
+  //  }
+  //
+  //  &-cell {
+  //    padding: 8px !important;
+  //  }
+  //}
+
+  //.form-submit-btn {
+  //  display: flex;
+  //  justify-content: flex-end;
+  //  gap: 22px;
+  //  margin-top: 30px;
+  //
+  //  @media (max-width: $mobile) {
+  //    gap: 6px;
+  //    flex-wrap: wrap;
+  //  }
+  //}
+}

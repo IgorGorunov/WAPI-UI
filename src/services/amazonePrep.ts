@@ -99,17 +99,12 @@ const sendAmazonPrepFiles = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/BulkOrdersCreate`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/BulkOrdersCreate`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
-export { getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters, sendAmazonPrepData, sendAmazonPrepFiles};
+const getAmazonPrepsExcel = async (
+    data: any
+): Promise<ApiResponseType<{ data: string; name?: string; type?: string }>> => {
+    return api.post(`/GetAmazonPrepsListExcel`, data);
+};
+
+export { getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters, sendAmazonPrepData, sendAmazonPrepFiles, getAmazonPrepsExcel};

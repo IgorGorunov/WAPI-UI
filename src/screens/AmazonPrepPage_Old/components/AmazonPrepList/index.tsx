@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { Pagination, Popover, Table, TableColumnProps, Tooltip } from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
-import styles from "./styles.module.scss";
+import "./styles.scss";
 import "@/styles/tables.scss";
 import Icon from "@/components/Icon";
 import { ColumnType } from "antd/es/table";
@@ -18,42 +18,22 @@ import { FormFieldTypes } from "@/types/forms";
 import { Countries } from "@/types/countries";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import {formatDateStringToDisplayString} from "@/utils/date";
+import { formatDateStringToDisplayString } from "@/utils/date";
 import { useIsTouchDevice } from "@/hooks/useTouchDevice";
 import SimplePopup from "@/components/SimplePopup";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
+import Select from "@/components/FormBuilder/Select/SelectField";
 import { FilterComponentType } from "@/types/filters";
 
 
-import { AmazonPrepFilterDataType } from "../../types";
-import Select from "@/components/FormBuilder/Select/SelectField";
-
 type AmazonPrepListType = {
     amazonPrepOrders: AmazonPrepOrderType[];
-    isLoading?: boolean;
-    totalOrders?: number;
-    filterMetadata?: AmazonPrepFilterDataType | null;
-    currentPage?: number;
-    pageSize?: number;
-    searchTerm?: string;
-    fullTextSearch?: boolean;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    selectedFilters?: Record<string, any>;
-    startDate?: string;
-    endDate?: string;
-    onPageChange?: (page: number) => void;
-    onPageSizeChange?: (size: number) => void;
-    onSearchChange?: (search: string, fullTextSearch: boolean) => void;
-    onSortChange?: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
-    onFiltersChange?: (filters: Record<string, any>) => void;
-    onClearFilters?: () => void;
-    // onPeriodChange?: (start: string, end: string) => void;
-    onPeriodChange?: (startDate: Date, endDate: Date) => void;
+    currentRange: DateRangeType;
+    setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
+    setFilteredAmazonPrepOrders: React.Dispatch<React.SetStateAction<AmazonPrepOrderType[]>>;
     handleEditAmazonPrepOrder(uuid: string): void;
-    handleRefresh?: () => void;
 }
 
 const pageOptions = [
@@ -65,51 +45,14 @@ const pageOptions = [
     { value: '1000000', label: 'All' },
 ];
 
-const AmazonPrepList: React.FC<AmazonPrepListType> = ({ 
-    amazonPrepOrders, 
-    isLoading,
-    totalOrders,
-    filterMetadata,
-    currentPage = 1,
-    pageSize: propPageSize = 10,
-    searchTerm: propSearchTerm = '',
-    fullTextSearch: propFullTextSearch = false,
-    sortBy,
-    sortOrder,
-    selectedFilters,
-    startDate,
-    endDate,
-    onPageChange,
-    onPageSizeChange,
-    onSearchChange,
-    onSortChange,
-    onFiltersChange,
-    onClearFilters,
-    onPeriodChange,
-    handleEditAmazonPrepOrder,
-    handleRefresh
-}) => {
+const AmazonPrepList: React.FC<AmazonPrepListType> = ({ amazonPrepOrders, currentRange, setCurrentRange, setFilteredAmazonPrepOrders, handleEditAmazonPrepOrder }) => {
     const isTouchDevice = useIsTouchDevice();
     const { needSeller, sellersList } = useAuth();
 
-    const [current, setCurrent] = React.useState(currentPage);
-    const [pageSize, setPageSize] = React.useState(propPageSize);
+    const [current, setCurrent] = React.useState(1);
+    const [pageSize, setPageSize] = React.useState(10);
     const [animating, setAnimating] = useState(false);
-    const [searchTerm, setSearchTerm] = useState(propSearchTerm);
-    const [fullTextSearch, setFullTextSearch] = useState(propFullTextSearch);
-
-    React.useEffect(() => { setCurrent(currentPage); }, [currentPage]);
-    React.useEffect(() => { setPageSize(propPageSize); }, [propPageSize]);
-    React.useEffect(() => { setSearchTerm(propSearchTerm); }, [propSearchTerm]);
-    React.useEffect(() => { setFullTextSearch(propFullTextSearch); }, [propFullTextSearch]);
-
-    useEffect(() => {
-        if (!isLoading) {
-            setAnimating(true);
-            const id = setTimeout(() => setAnimating(false), 50);
-            return () => clearTimeout(id);
-        }
-    }, [amazonPrepOrders, isLoading]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const getProductItems = useCallback((hoveredOrder) => {
         return hoveredOrder ? hoveredOrder.products.map(orderItem => ({
@@ -119,9 +62,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
         })) : [];
     }, []);
 
+    const [fullTextSearch, setFullTextSearch] = useState(true);
     const handleFullTextSearchChange = () => {
-        if (onSearchChange) {
-            onSearchChange(searchTerm, !fullTextSearch);
+        setFullTextSearch(prevState => !prevState)
+        if (searchTerm) {
+            setCurrent(1);
         }
     }
     const fullTextSearchField = {
@@ -134,75 +79,15 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
         hideTextOnMobile: true,
     }
 
-    // ===== Draft Filters Pattern =====
-    const [draftFilters, setDraftFilters] = useState<Record<string, string[]>>({});
-    const updateDraftFilter = useCallback((key: string, valuesOrUpdater: string[] | ((prev: string[]) => string[])) => {
-        setDraftFilters(prev => {
-            console.log('update filter state: ', key, valuesOrUpdater)
-            const currentValues = prev[key] || [];
-            const newValues = typeof valuesOrUpdater === 'function' ? valuesOrUpdater(currentValues) : valuesOrUpdater;
-            return { ...prev, [key]: newValues };
-        });
-    }, []);
-
-    const [openFilters, setOpenFilters] = useState<Record<string, boolean>>({});
-    const setFilterOpen = useCallback((key: string, isOpen: boolean) => {
-        setOpenFilters(prev => ({ ...prev, [key]: isOpen }));
-    }, []);
-
-    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
-
-    const selectedFiltersString = JSON.stringify(selectedFilters);
-
-    useEffect(() => {
-        if (isFiltersVisible) return;
-        const newDraft: Record<string, string[]> = {};
-        if (selectedFilters) {
-            Object.entries(selectedFilters).forEach(([key, val]) => {
-                if (key === 'seller') return;
-                if (Array.isArray(val)) {
-                    newDraft[key] = val;
-                } else if (typeof val === 'string') {
-                    newDraft[key] = [val];
-                }
-            });
-        }
-        setDraftFilters(newDraft);
-    }, [selectedFiltersString, isFiltersVisible]);
-
-    const applyFilters = useCallback(() => {
-        const fullUpdate: Record<string, string[]> = {};
-        Object.keys(draftFilters).forEach(key => {
-            fullUpdate[key] = draftFilters[key]?.length ? draftFilters[key] : [];
-        });
-        if (onFiltersChange) onFiltersChange(fullUpdate);
-        setCurrent(1);
-    }, [draftFilters, onFiltersChange]);
-
-    const hasUnappliedChanges = useMemo(() => {
-        const applied = selectedFilters || {};
-        const draftKeys = Object.keys(draftFilters).filter(k => draftFilters[k]?.length > 0);
-        const appliedKeys = Object.keys(applied).filter(k => k !== 'seller' && Array.isArray(applied[k]) && (applied[k] as string[]).length > 0);
-
-        if (draftKeys.length !== appliedKeys.length) return true;
-        return draftKeys.some(key => {
-            const draftVal = draftFilters[key] || [];
-            const appliedVal = Array.isArray(applied[key]) ? (applied[key] as string[]) : [];
-            return draftVal.length !== appliedVal.length || draftVal.some((v, i) => v !== appliedVal[i]);
-        });
-    }, [draftFilters, selectedFilters]);
-
     //sellers filter
-    const selectedSeller = selectedFilters?.seller || 'All sellers';
-    const setSelectedSeller = useCallback((val: string) => {
-        if (onFiltersChange) {
-            onFiltersChange({ seller: val === 'All sellers' ? undefined : val });
-        }
-    }, [onFiltersChange]);
+    const [selectedSeller, setSelectedSeller] = useState<string | null>('All sellers');
+    const calcSellersAmount = useCallback((seller: string) => {
+        return amazonPrepOrders.filter(order => order.seller.toLowerCase() === seller.toLowerCase()).length || 0;
+    }, [amazonPrepOrders]);
 
     const sellersOptions = useMemo(() => {
-        return [{ label: 'All sellers', value: 'All sellers' }, ...sellersList];
-    }, [sellersList]);
+        return [{ label: 'All sellers', value: 'All sellers', amount: amazonPrepOrders.length }, ...sellersList.map(item => ({ ...item, amount: calcSellersAmount(item.value) }))];
+    }, [sellersList, calcSellersAmount]);
 
     const getSellerName = useCallback((sellerUid: string) => {
         const t = sellersList.find(item => item.value === sellerUid);
@@ -210,43 +95,95 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
     }, [sellersList]);
 
     //other filters
-    const filterTypeToOptions = (items?: any[]) => {
-        if (!items) return [];
-        return items.map(item => ({
-            value: item.id || item.name,
-            label: item.name || '-Empty-',
-            amount: item.count,
-        })).sort((a, b) => a.label.localeCompare(b.label));
-    };
+    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
+    const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
+    const [isOpenFilterReceiverCountry, setIsOpenFilterReceiverCountry] = useState(false);
 
-    const transformedStatuses = useMemo(() =>
-        filterMetadata?.statuses ? filterMetadata.statuses.map(status => ({
-            value: status.id || status.name,
-            label: status.name || '-Empty-',
-            amount: status.count,
-            color: StatusColors[status.name] || 'white',
-        })).sort((a, b) => a.label.localeCompare(b.label)) : [],
-        [filterMetadata?.statuses]
-    );
+    const calcOrderAmount = useCallback((property: string, value: string) => {
+        return amazonPrepOrders.filter(order => order[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller === 'All sellers' || order.seller == selectedSeller)).length || 0;
+    }, [amazonPrepOrders, selectedSeller]);
 
-    const transformedWarehouses = useMemo(() =>
-        filterMetadata?.warehouses ? filterTypeToOptions(filterMetadata.warehouses) : [],
-        [filterMetadata?.warehouses]
-    );
+    const [filterStatus, setFilterStatus] = useState<string[]>([]);
+    const handleFilterStatusChange = (newStatuses: string[]) => {
+        setFilterStatus(newStatuses);
+        setCurrent(1);
+    }
+    // const allStatuses = orders.map(order => order.status);
+    const uniqueStatuses = useMemo(() => {
+        const statuses = amazonPrepOrders.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(order => order.status);
+        return Array.from(new Set(statuses)).filter(status => status).sort();
+    }, [amazonPrepOrders, selectedSeller]);
+    uniqueStatuses.sort();
+    const transformedStatuses = useMemo(() => ([
+        ...uniqueStatuses.map(status => ({
+            value: status,
+            label: status,
+            amount: calcOrderAmount('status', status),
+        }))
+    ]), [uniqueStatuses]);
 
-    const transformedReceiverCountries = useMemo(() =>
-        filterMetadata?.receiverCountry ? filterMetadata.receiverCountry.map(item => ({
-            value: item.id || item.name,
-            label: Countries[item.name] as string || item.name || '-Empty-',
-            country: item.name,
-            amount: item.count,
-        })).sort((a, b) => a.label.localeCompare(b.label)) : [],
-        [filterMetadata?.receiverCountry]
-    );
+    // useEffect(() => {
+    //     setFilterStatus(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueStatuses.includes(selectedValue))];
+    //     })
+    // }, [uniqueStatuses]);
+
+    const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
+    const handleFilterWarehouseChange = (newValue: string[]) => {
+        setFilterWarehouse(newValue);
+        setCurrent(1);
+    }
+    // const allWarehouses = orders.map(order => order.warehouse);
+    const uniqueWarehouses = useMemo(() => {
+        const warehouses = amazonPrepOrders.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(order => order.warehouse);
+        return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
+    }, [amazonPrepOrders, selectedSeller]);
+    uniqueWarehouses.sort();
+    const transformedWarehouses = useMemo(() => ([
+        ...uniqueWarehouses.map(warehouse => ({
+            value: warehouse,
+            label: warehouse,
+            amount: calcOrderAmount('warehouse', warehouse),
+        }))
+    ]), [uniqueWarehouses]);
+
+    // useEffect(() => {
+    //     setFilterWarehouse(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueWarehouses.includes(selectedValue))];
+    //     })
+    // }, [uniqueWarehouses]);
+
+    const [filterReceiverCountry, setFilterReceiverCountry] = useState<string[]>([]);
+    const handleFilterReceiverCountryChange = (newValue: string[]) => {
+        setFilterReceiverCountry(newValue);
+        setCurrent(1);
+    }
+    // const allReceiverCountries = orders.map(order => order.receiverCountry);
+    const uniqueReceiverCountries = useMemo(() => {
+        const receiverCountries = amazonPrepOrders.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(order => order.receiverCountry);
+        return Array.from(new Set(receiverCountries)).filter(country => country).sort();
+    }, [amazonPrepOrders, selectedSeller]);
+    uniqueReceiverCountries.sort();
+    const transformedReceiverCountries = useMemo(() => ([
+        ...uniqueReceiverCountries.map(country => ({
+            value: country,
+            label: Countries[country] as string || country,
+            amount: calcOrderAmount('receiverCountry', country),
+        }))
+    ]), [uniqueReceiverCountries]);
+
+
 
     const handleClearAllFilters = () => {
-        setDraftFilters({});
+        setFilterStatus([]);
+        setFilterWarehouse([]);
+        setFilterReceiverCountry([]);
+
+        setCurrent(1);
+        //close filter modal
+        //setIsFiltersVisible(false);
     }
+
 
     const orderFilters = [
         {
@@ -254,141 +191,133 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
             icon: 'status',
             filterDescriptions: '',
             filterOptions: transformedStatuses,
-            filterState: draftFilters['status'] || [],
-            setFilterState: (val: string[]) => updateDraftFilter('status', val),
-            isOpen: !!openFilters['status'],
-            setIsOpen: (v: boolean) => setFilterOpen('status', v),
-            onClose: () => updateDraftFilter('status', []),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen('status', true); },
+            filterState: filterStatus,
+            setFilterState: handleFilterStatusChange,
+            isOpen: isOpenFilterStatus,
+            setIsOpen: setIsOpenFilterStatus,
+            onClose: () => handleFilterStatusChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterStatus(true) },
         },
         {
             filterTitle: 'Warehouse',
             icon: 'warehouse',
             filterDescriptions: '',
             filterOptions: transformedWarehouses,
-            filterState: draftFilters['warehouse'] || [],
-            setFilterState: (val: string[]) => updateDraftFilter('warehouse', val),
-            isOpen: !!openFilters['warehouse'],
-            setIsOpen: (v: boolean) => setFilterOpen('warehouse', v),
-            onClose: () => updateDraftFilter('warehouse', []),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen('warehouse', true); },
+            filterState: filterWarehouse,
+            setFilterState: handleFilterWarehouseChange,
+            isOpen: isOpenFilterWarehouse,
+            setIsOpen: setIsOpenFilterWarehouse,
+            onClose: () => handleFilterWarehouseChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterWarehouse(true) },
         },
         {
             filterTitle: 'Receiver country',
-            icon: 'country-in',
+            icon: 'country-in',//'planet-in',
             isCountry: true,
             filterDescriptions: '',
             filterOptions: transformedReceiverCountries,
-            filterState: draftFilters['receiverCountry'] || [],
-            setFilterState: (val: string[]) => updateDraftFilter('receiverCountry', val),
-            isOpen: !!openFilters['receiverCountry'],
-            setIsOpen: (v: boolean) => setFilterOpen('receiverCountry', v),
-            onClose: () => updateDraftFilter('receiverCountry', []),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen('receiverCountry', true); },
+            filterState: filterReceiverCountry,
+            setFilterState: handleFilterReceiverCountryChange,
+            isOpen: isOpenFilterReceiverCountry,
+            setIsOpen: setIsOpenFilterReceiverCountry,
+            onClose: () => handleFilterReceiverCountryChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterReceiverCountry(true) },
         },
     ] as FilterComponentType[];
-
-    const activeFilters = useMemo(() => {
-        console.log('changed')
-        const currentFlags = [
-            {
-                key: 'status',
-                filterTitle: 'Status',
-                icon: 'status' as any,
-                options: transformedStatuses
-            },
-            {
-                key: 'warehouse',
-                filterTitle: 'Warehouse',
-                icon: 'warehouse' as any,
-                options: transformedWarehouses
-            },
-            {
-                key: 'receiverCountry',
-                filterTitle: 'Receiver country',
-                icon: 'country-location' as any,
-                isCountry: true,
-                options: transformedReceiverCountries
-            }
-        ];
-
-        console.log('currentFlags', currentFlags, selectedFilters, currentFlags.map(f => ({
-            filterTitle: f.filterTitle,
-            icon: f.icon,
-            isCountry: f.isCountry,
-            filterDescriptions: '',
-            filterOptions: f.options,
-            filterState: selectedFilters?.[f.key] ? (typeof selectedFilters[f.key] === 'string' ? [selectedFilters[f.key]] : selectedFilters[f.key]) : [],
-            setFilterState: () => {},
-            isOpen: false,
-            setIsOpen: () => {},
-            onClose: () => onFiltersChange?.({ [f.key]: [] }),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen(f.key, true); },
-        })))
-        return currentFlags.map(f => ({
-            filterTitle: f.filterTitle,
-            icon: f.icon,
-            isCountry: f.isCountry,
-            filterDescriptions: '',
-            filterOptions: f.options,
-            filterState: selectedFilters?.[f.key] ? (typeof selectedFilters[f.key] === 'string' ? [selectedFilters[f.key]] : selectedFilters[f.key]) : [],
-            setFilterState: () => {},
-            isOpen: false,
-            setIsOpen: () => {},
-            onClose: () => onFiltersChange?.({ [f.key]: [] }),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen(f.key, true); },
-        }));
-    }, [selectedFilters, transformedWarehouses, transformedStatuses, transformedReceiverCountries, onFiltersChange, setFilterOpen]);
 
     const getUnderlineColor = useCallback((statusText: string) => {
         return StatusColors[statusText] || 'black';
     }, []);
 
     const handleChangePage = (page: number) => {
-        if (onPageChange) onPageChange(page);
+        setAnimating(true);
+        setTimeout(() => {
+            setCurrent(page);
+            setAnimating(false);
+        }, 500);
     };
 
     const handleChangePageSize = (size: number) => {
-        if (onPageSizeChange) onPageSizeChange(size);
+        setPageSize(size);
+        setCurrent(1);
     };
 
     const handleFilterChange = (newSearchTerm: string) => {
-        if (onSearchChange) onSearchChange(newSearchTerm, fullTextSearch);
+        setSearchTerm(newSearchTerm);
+        setCurrent(1)
     };
 
+    const [sortColumn, setSortColumn] = useState<keyof AmazonPrepOrderType | null>('date');
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('descend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof AmazonPrepOrderType) => {
-        if (onSortChange) {
-            const newOrder = sortBy === columnDataIndex && sortOrder === 'asc' ? 'desc' : 'asc';
-            onSortChange(columnDataIndex, newOrder);
-        }
-    }, [sortBy, sortOrder, onSortChange]);
+        setSortDirection(currentDirection =>
+            sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
+        );
+        setSortColumn(columnDataIndex);
+    }, [sortColumn]);
+
+
+    const filteredOrders = useMemo(() => {
+        //setCurrent(1);
+
+        return amazonPrepOrders.filter(order => {
+            const matchesSearch = !searchTerm.trim() || Object.keys(order).some(key => {
+                const value = order[key];
+                if (key !== 'uuid') {
+                    const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
+                    const searchTermsArray = searchTerm.trim().toLowerCase().split(' ');
+
+                    if (fullTextSearch) {
+                        return searchTermsArray.every(word => stringValue.includes(word));
+                    } else {
+                        return searchTermsArray.some(word => stringValue.includes(word));
+                    }
+                }
+            });
+            const matchesStatus = !filterStatus.length ||
+                (filterStatus.includes(order.status));
+            const matchesWarehouse = !filterWarehouse.length ||
+                filterWarehouse.map(item => item.toLowerCase()).includes(order.warehouse.toLowerCase());
+            const matchesReceiverCountry = !filterReceiverCountry.length ||
+                filterReceiverCountry.map(item => item.toLowerCase()).includes(order.receiverCountry.toLowerCase());
+
+            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || order.seller.toLowerCase() === selectedSeller.toLowerCase();
+
+            return matchesSearch && matchesStatus && matchesWarehouse && matchesReceiverCountry && matchesSeller;
+        }).sort((a, b) => {
+            if (!sortColumn) return 0;
+            if (sortDirection === 'ascend') {
+                return a[sortColumn] > b[sortColumn] ? 1 : -1;
+            } else {
+                return a[sortColumn] < b[sortColumn] ? 1 : -1;
+            }
+        });
+    }, [amazonPrepOrders, searchTerm, fullTextSearch, filterStatus, filterWarehouse, filterReceiverCountry, sortColumn, sortDirection, selectedSeller]);
+
+    //const [showDatepicker, setShowDatepicker] = useState(false);
 
     const handleDateRangeSave = (newRange: DateRangeType) => {
-        if (onPeriodChange) {
-            onPeriodChange(
-                newRange.startDate,
-                newRange.endDate
-            );
-        }
+        setCurrentRange(newRange);
+        //setShowDatepicker(false);
     };
+
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
     const toggleFilters = () => {
         setIsFiltersVisible(!isFiltersVisible);
     };
 
-    const currentRange = useMemo(() => {
-        return {
-            startDate: startDate ? new Date(startDate) : new Date(),
-            endDate: endDate ? new Date(endDate) : new Date()
-        };
-    }, [startDate, endDate]);
+    useEffect(() => {
+        setFilteredAmazonPrepOrders(filteredOrders);
+
+    }, [filteredOrders]);
 
     const curWidth = useMemo(() => {
-        const displayedData = amazonPrepOrders;
+        const displayedData = filteredOrders.slice((current - 1) * pageSize, current * pageSize);
         const maxAmount = displayedData.reduce((acc, item) => Math.max(acc, item.productLines), 0).toString().length;
         const width = 47 + maxAmount * 9;
         return width.toString() + 'px';
-    }, [current, pageSize, amazonPrepOrders]);
+    }, [current, pageSize, filteredOrders]);
 
     const SellerColumns: TableColumnProps<AmazonPrepOrderType>[] = [];
     if (needSeller()) {
@@ -402,8 +331,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortBy === 'seller' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'seller' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -499,8 +428,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="Current condition or state of an order">
                         <>
                             <span>Status</span>
-                            {sortBy === 'status' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'status' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'status' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'status' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -539,8 +468,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="When an order was created">
                         <>
                             <span>Date</span>
-                            {sortBy === 'date' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'date' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'date' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'date' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -563,8 +492,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="Order identifier within the WAPI system">
                         <>
                             <span>WH number</span>
-                            {sortBy === 'wapiTrackingNumber' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'wapiTrackingNumber' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'wapiTrackingNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'wapiTrackingNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -592,8 +521,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="Amazon Shipment Notification Number">
                         <>
                             <span>ASN</span>
-                            {sortBy === 'asnNumber' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'asnNumber' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'asnNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'asnNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -622,8 +551,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="Unique code for order identification in the seller's system">
                         <>
                             <span>Order ID</span>
-                            {sortBy === 'clientOrderID' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'clientOrderID' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'clientOrderID' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'clientOrderID' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -648,8 +577,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="Code of warehouse">
                         <>
                             <span>Warehouse</span>
-                            {sortBy === 'warehouse' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'warehouse' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'warehouse' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'warehouse' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -673,8 +602,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="Service responsible for transporting and delivering packages">
                         <>
                             <span>Courier</span>
-                            {sortBy === 'courierService' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'courierService' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'courierService' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'courierService' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -698,8 +627,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="Type of Amazon Prep Order: LTL or SPD">
                         <>
                             <span>Method</span>
-                            {sortBy === 'deliveryMethod' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'deliveryMethod' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'deliveryMethod' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'deliveryMethod' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
@@ -723,8 +652,8 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     <Tooltip title="Products" >
                         <>
                             <span><Icon name={"shopping-cart"} /></span>
-                            {sortBy === 'productLines' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortBy === 'productLines' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn === 'productLines' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'productLines' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -743,7 +672,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                             placement="left"
                             overlayClassName="doc-list-popover"
                         >
-                            <span style={{ width: curWidth }} className={"products-cell-style"}>{text} <Icon name="info" /></span>
+                            <span style={{ width: curWidth }} className="products-cell-style">{text} <Icon name="info" /></span>
                         </Popover>
                     }
                 />
@@ -763,12 +692,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
-                    <SearchField
-                        searchTerm={searchTerm}
-                        handleSearch={handleFilterChange}
-                        handleClear={() => { setSearchTerm(""); handleFilterChange(""); }}
-                        manualSearch={true}
-                    />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
@@ -792,7 +716,7 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <FiltersChosen filters={activeFilters} />
+                    <FiltersChosen filters={orderFilters} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -804,17 +728,17 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 </div>
             </div>
 
-            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${amazonPrepOrders?.length ? '' : 'is-empty'}`}>
+            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
                 <Table
-                    dataSource={amazonPrepOrders.map(item => ({ ...item, key: item.uuid }))}
+                    dataSource={filteredOrders.map(item => ({ ...item, key: item.uuid })).slice((current - 1) * pageSize, current * pageSize)}
                     columns={columns}
                     pagination={false}
-                    // scroll={{ y: 700 }}
+                    scroll={{ y: 700 }}
                     showSorterTooltip={false}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total amazon preps:<span className='order-products-total__list-item__value'>{totalOrders || 0}</span></li>
+                        <li className='order-products-total__list-item'>Total amazon preps:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -823,20 +747,14 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                     current={current}
                     pageSize={pageSize}
                     onChange={handleChangePage}
-                    total={totalOrders || 0}
+                    total={filteredOrders.length}
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
             </div>
 
-            <FiltersContainer 
-                isFiltersVisible={isFiltersVisible} 
-                setIsFiltersVisible={setIsFiltersVisible} 
-                onClearFilters={handleClearAllFilters}
-                onApplyFilters={applyFilters}
-                hasUnappliedChanges={hasUnappliedChanges}
-            >
-                <FiltersListWithOptions filters={orderFilters.filter(item => item !== null)} />
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
+                <FiltersListWithOptions filters={orderFilters} />
             </FiltersContainer>
 
         </div>

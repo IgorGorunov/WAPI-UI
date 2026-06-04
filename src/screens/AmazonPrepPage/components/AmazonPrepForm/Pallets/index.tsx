@@ -1,6 +1,6 @@
 import React from "react";
 import {PalletType} from "@/types/amazonPrep";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 
 type PropsType = {
     pallets?: PalletType[];
@@ -9,32 +9,32 @@ type PropsType = {
 const Pallets: React.FC<PropsType> = ({ pallets }) => {
     
     return (
-        <div className="amazon-prep-pallets">
-            <div className="amazon-prep-pallets__header">
-                <div className='column name-column'>Name</div>
-                <div className='column width-column'>Width</div>
-                <div className='column length-column'>Length</div>
-                <div className='column height-column'>Height</div>
-                <div className='column weight-column'>Weight</div>
-                <div className='column volume-column'>Volume</div>
-                <div className='column tracking-number-column'>Tracking number</div>
+        <div className={styles["amazon-prep-pallets"]}>
+            <div className={styles["amazon-prep-pallets__header"]}>
+                <div className={`${styles['column']} ${styles['name-column']}`}>Name</div>
+                <div className={`${styles['column']} ${styles['width-column']}`}>Width</div>
+                <div className={`${styles['column']} ${styles['length-column']}`}>Length</div>
+                <div className={`${styles['column']} ${styles['height-column']}`}>Height</div>
+                <div className={`${styles['column']} ${styles['weight-column']}`}>Weight</div>
+                <div className={`${styles['column']} ${styles['volume-column']}`}>Volume</div>
+                <div className={`${styles['column']} ${styles['tracking-number-column']}`}>Tracking number</div>
             </div>
-            <ul className="order-service-history__list">
+            <ul className={styles["order-service-history__list"]}>
                 {pallets &&
                     pallets.map((pallet: PalletType, index: number) => (
                         <li
                             key={pallet.palletName + "_" + index}
-                            className={`order-service__list-item ${
-                                index % 2 === 1 ? "highlight" : " "
+                            className={`${styles["order-service__list-item"]} ${
+                                index % 2 === 1 ? styles["highlight"] : " "
                             }`}
                         >
-                            <div className='name-column'>{pallet.palletName}</div>
-                            <div className='column width-column'>{pallet.palletWidth}</div>
-                            <div className='column length-column'>{pallet.palletLength}</div>
-                            <div className='column height-column'>{pallet.palletHeight}</div>
-                            <div className='column weight-column'>{pallet.palletWeight}</div>
-                            <div className='column volume-column'>{pallet.palletVolume}</div>
-                            <div className='column tracking-number-column'>{pallet.palletTrackingNumber}</div>
+                            <div className={styles['name-column']}>{pallet.palletName}</div>
+                            <div className={`${styles['column']} ${styles['width-column']}`}>{pallet.palletWidth}</div>
+                            <div className={`${styles['column']} ${styles['length-column']}`}>{pallet.palletLength}</div>
+                            <div className={`${styles['column']} ${styles['height-column']}`}>{pallet.palletHeight}</div>
+                            <div className={`${styles['column']} ${styles['weight-column']}`}>{pallet.palletWeight}</div>
+                            <div className={`${styles['column']} ${styles['volume-column']}`}>{pallet.palletVolume}</div>
+                            <div className={`${styles['column']} ${styles['tracking-number-column']}`}>{pallet.palletTrackingNumber}</div>
                         </li>
                     ))}
             </ul>
