@@ -107,4 +107,22 @@ export const navBlocks = (unreadAmount: number = 0) => ([
         submenuLink: '/warehouse-calendar',
         navItems: [],
     },
+
+    {
+        submenuTitle: 'WAPI Checker',
+        submenuName: "AntiFraud",
+        submenuIcon: 'anti-fraud',
+        navItems: [
+            {
+                title: 'Settings',
+                name: "AntiFraud/Settings",
+                link: '/wapi-checker/settings',
+            },
+            {
+                title: 'Results',
+                name: "AntiFraud/Results",
+                link: '/wapi-checker/results',
+            },
+        ]
+    },
 ]);
