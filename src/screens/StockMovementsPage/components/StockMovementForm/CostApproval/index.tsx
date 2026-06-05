@@ -14,6 +14,7 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import Modal from "@/components/Modal";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
+import Icon from "@/components/Icon";
 
 type PropsType = {
     docName: string;
@@ -147,6 +148,12 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
 
     return (
         <div className={styles["stock-movement-cost-approval"]}>
+            <div className={styles['stock-movement-cost-approval__notice']}>
+                <Icon name="info" className={styles['stock-movement-cost-approval__notice-icon']} />
+                <p className={styles['stock-movement-cost-approval__notice-text']}>
+                    The rate, ETD and ETA are valid subject to confirmation by 12:00 on the current day. In case of confirmation after 12:00, the cargo pickup date and delivery date shall be postponed by one calendar day.
+                </p>
+            </div>
             {
                 canEdit && needApproval.length ? (
                     <div className={styles["stock-movement-cost-approval__approval-block-wrapper"]}>
