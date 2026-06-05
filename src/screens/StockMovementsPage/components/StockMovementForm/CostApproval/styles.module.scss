@@ -11,6 +11,24 @@
     margin-right: -16px;
   }
 
+  &__notice {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 0 24px;
+
+    &-text {
+      font-weight: bold;
+    }
+
+    &-icon {
+      path {
+        fill: var(--color-blue);
+      }
+    }
+
+  }
+
   &__approval-block {
     border: 2px solid var(--color-blue);
     border-radius: 15px;
