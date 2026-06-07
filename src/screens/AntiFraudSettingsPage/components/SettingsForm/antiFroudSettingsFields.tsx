@@ -6,15 +6,15 @@ export const GeneralFields = ({subscriptionOptions, codTypeOptions}:{subscriptio
         // type: "text",
         name: 'use',
         label: "Enable WAPI Checker",
-        width: WidthType.w50,
+        width: WidthType.w17,
     },
     {
         fieldType: FormFieldTypes.TOGGLE,
         // type: "text",
         name: 'demoMode',
         label: "Demo mode",
-        disabled: true,
-        width: WidthType.w25,
+        disabled: false,
+        width: WidthType.w17,
     },
     {
         fieldType: FormFieldTypes.NUMBER,
@@ -22,7 +22,18 @@ export const GeneralFields = ({subscriptionOptions, codTypeOptions}:{subscriptio
         name: 'demoOrderCount',
         label: "Number of demo orders",
         disabled: true,
-        width: WidthType.w25,
+        width: WidthType.w17,
+    },
+    {
+        fieldType: FormFieldTypes.SELECT,
+        // type: "text",
+        name: 'checkingType',
+        options: [{value: 'AllOrders', label: "Check all orders by default"}, {value: 'RequestedOnly', label: "Check only if it is requested"}],
+        label: "Check orders by default",
+        width: WidthType.w50,
+        rules: {
+            required: "Field is required!",
+        }
     },
     {
         fieldType: FormFieldTypes.TEXT,

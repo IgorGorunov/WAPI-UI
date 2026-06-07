@@ -40,6 +40,7 @@ export type AntiFraudSettingsFormType = {
     uuid: string;
     code: string;
     use: boolean;
+    checkingType: string;
     demoMode: boolean;
     demoOrderCount: number;
     description: string;

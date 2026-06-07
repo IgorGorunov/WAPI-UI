@@ -1,34 +1,31 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header";
-import Button from "@/components/Button/Button";
+import Button, {ButtonVariant} from "@/components/Button/Button";
 import SearchField from "@/components/SearchField";
 import SeoHead from "@/components/SeoHead";
 import DateInput from "@/components/DateInput";
 import useAuth from "@/context/authContext";
 import useTenant from "@/context/tenantContext";
-import { DateRangeType } from "@/types/dashboard";
-import {
-    getLastFewDays,
-    formatDateToString,
-} from "@/utils/date";
-import { getAntiFraudResultList, getAntiFraudResultDetails } from "@/services/antiFraud";
-import {
-    AntiFraudResultType,
-    AntiFraudResultObject,
-    AntiFraudResultDetailsCache,
-} from "./types";
+import {DateRangeType} from "@/types/dashboard";
+import {formatDateToString, getLastFewDays,} from "@/utils/date";
+import {getAntiFraudResultDetails, getAntiFraudResultList} from "@/services/antiFraud";
+import {AntiFraudResultDetailsCache, AntiFraudResultObject, AntiFraudResultType,} from "./types";
 import ResultsTable from "./components/ResultsTable";
 import ResultDetailsModal from "./components/ResultDetailsModal";
 import PhoneCheckModal from "./components/PhoneCheckModal";
 import styles from "./styles.module.scss";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import { FormFieldTypes } from "@/types/forms";
+import {FormFieldTypes} from "@/types/forms";
 import SearchContainer from "@/components/SearchContainer";
+import FiltersContainer from "@/components/FiltersContainer";
+import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import {AccessActions, AccessObjectTypes} from "@/types/auth";
-import {STATUS_MODAL_TYPES} from "@/types/utility";
+import {FILTER_TYPE, STATUS_MODAL_TYPES} from "@/types/utility";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {FilterComponentType} from "@/types/filters";
+import {ZONE_COLORS} from "@/screens/AntiFraudSettingsPage/types";
 
 const AntiFraudResultsPage = () => {
     const { tenantData: { alias } } = useTenant();
@@ -71,6 +68,101 @@ const AntiFraudResultsPage = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(20);
+
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+    const [isOpenFilterZone, setIsOpenFilterZone] = useState(false);
+    const [filterZone, setFilterZone] = useState<string[]>([]);
+    
+    const [isOpenFilterSuccessPercent, setIsOpenFilterSuccessPercent] = useState(false);
+    const [filterSuccessPercent, setFilterSuccessPercent] = useState<string[]>([]);
+
+    const [appliedFilterZone, setAppliedFilterZone] = useState<string[]>([]);
+    const [appliedFilterSuccessPercent, setAppliedFilterSuccessPercent] = useState<string[]>([]);
+
+    const calcFilterAmount = useCallback((property: keyof AntiFraudResultType, value: string) => {
+        return allResults.filter(row => row[property] === value).length || 0;
+    }, [allResults]);
+
+    const transformedZones = useMemo(() => {
+        const uniqueZones = Array.from(new Set(allResults.map(r => r.zone)));
+        return uniqueZones.map(zone => ({
+            value: zone,
+            label: zone,
+            color: ZONE_COLORS[zone as keyof typeof ZONE_COLORS] || "#7D8FB3",
+            amount: calcFilterAmount('zone', zone)
+        }));
+    }, [allResults, calcFilterAmount]);
+
+    const handleFilterZoneChange = (newZones: string[]) => {
+        setFilterZone(newZones);
+    };
+
+    const handleFilterSuccessPercentChange = (newRange: string[]) => {
+        setFilterSuccessPercent(newRange);
+    };
+
+    const applyFilters = () => {
+        setAppliedFilterZone(filterZone);
+        setAppliedFilterSuccessPercent(filterSuccessPercent);
+        setCurrentPage(1);
+    };
+
+    const handleClearAllFilters = () => {
+        setFilterZone([]);
+        setFilterSuccessPercent([]);
+        setAppliedFilterZone([]);
+        setAppliedFilterSuccessPercent([]);
+        setCurrentPage(1);
+    };
+
+    const hasUnappliedChanges = useMemo(() => {
+        if (filterZone.length !== appliedFilterZone.length) return true;
+        if (filterZone.some(z => !appliedFilterZone.includes(z))) return true;
+
+        if (filterSuccessPercent.length !== appliedFilterSuccessPercent.length) return true;
+        if (filterSuccessPercent.some((v, i) => v !== appliedFilterSuccessPercent[i])) return true;
+
+        return false;
+    }, [filterZone, appliedFilterZone, filterSuccessPercent, appliedFilterSuccessPercent]);
+
+    const antiFraudFilters: FilterComponentType[] = [
+        {
+            filterTitle: 'Zone',
+            icon: 'issue',
+            filterDescriptions: '',
+            filterOptions: transformedZones,
+            filterState: filterZone,
+            filterType: FILTER_TYPE.COLORED_TEXT,
+            setFilterState: handleFilterZoneChange,
+            isOpen: isOpenFilterZone,
+            setIsOpen: setIsOpenFilterZone,
+            onClose: () => handleFilterZoneChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterZone(true); },
+            isFiltersVisible: isFiltersVisible,
+        },
+        {
+            filterTitle: 'Successful %',
+            icon: 'status',
+            filterType: FILTER_TYPE.SLIDER,
+            filterDescriptions: '',
+            filterOptions: [{ value: '0', label: '0' }, { value: '100', label: '100' }],
+            filterState: filterSuccessPercent,
+            setFilterState: handleFilterSuccessPercentChange,
+            isOpen: isOpenFilterSuccessPercent,
+            setIsOpen: setIsOpenFilterSuccessPercent,
+            onClose: () => handleFilterSuccessPercentChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterSuccessPercent(true); },
+            isFiltersVisible: isFiltersVisible,
+        }
+    ];
+
+    const appliedAntiFraudFilters = antiFraudFilters.map(filter => {
+        if (filter.filterTitle === 'Zone') return { ...filter, filterState: appliedFilterZone, onClose: () => { setFilterZone([]); setAppliedFilterZone([]); setCurrentPage(1); } };
+        if (filter.filterTitle === 'Successful %') return { ...filter, filterState: appliedFilterSuccessPercent, onClose: () => { setFilterSuccessPercent([]); setAppliedFilterSuccessPercent([]); setCurrentPage(1); } };
+        return filter;
+    });
+
+    const isFiltersChosenVisible = appliedFilterZone.length > 0 || appliedFilterSuccessPercent.length > 0;
 
     const [sortColumn, setSortColumn] = useState<keyof AntiFraudResultType>("requestPeriod");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -157,13 +249,23 @@ const AntiFraudResultsPage = () => {
                     return false;
                 });
             })
+            .filter(row => {
+                return !appliedFilterZone.length || appliedFilterZone.includes(row.zone);
+            })
+            .filter(row => {
+                if (!appliedFilterSuccessPercent.length) return true;
+                const percent = row.successfullPercent ?? 0;
+                const min = Number(appliedFilterSuccessPercent[0]);
+                const max = Number(appliedFilterSuccessPercent[1]);
+                return percent >= min && percent <= max;
+            })
             .sort((a, b) => {
                 const av = a[sortColumn];
                 const bv = b[sortColumn];
                 const cmp = av > bv ? 1 : av < bv ? -1 : 0;
                 return sortDirection === "asc" ? cmp : -cmp;
             });
-    }, [allResults, appliedSearch, fullTextSearch, sortColumn, sortDirection]);
+    }, [allResults, appliedSearch, fullTextSearch, sortColumn, sortDirection, appliedFilterZone, appliedFilterSuccessPercent]);
 
     const pagedResults = useMemo<AntiFraudResultType[]>(() => {
         const start = (currentPage - 1) * pageSize;
@@ -304,7 +406,7 @@ const AntiFraudResultsPage = () => {
                 </Header>
 
                 <SearchContainer>
-                    {/*<Button type="button" disabled={false} onClick={() => setIsFiltersVisible(prev => !prev)} variant={ButtonVariant.FILTER} icon={'filter'}></Button>*/}
+                    <Button type="button" disabled={false} onClick={() => setIsFiltersVisible(prev => !prev)} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
 
                     <DateInput
                         currentRange={currentPeriod}
@@ -328,6 +430,7 @@ const AntiFraudResultsPage = () => {
                 </SearchContainer>
 
                 <ResultsTable
+                    filters={appliedAntiFraudFilters}
                     results={pagedResults}
                     isLoading={isLoading}
                     totalCount={filteredResults.length}
@@ -359,6 +462,17 @@ const AntiFraudResultsPage = () => {
                     hasOrder={selectedRow.shipmentOrder !== "None" && !!selectedRow.shipmentOrder}
                 />
             )}
+
+            <FiltersContainer
+                isFiltersVisible={isFiltersVisible}
+                setIsFiltersVisible={setIsFiltersVisible}
+                onClearFilters={handleClearAllFilters}
+                onApplyFilters={applyFilters}
+                hasUnappliedChanges={hasUnappliedChanges}
+            >
+                <FiltersListWithOptions filters={antiFraudFilters} />
+            </FiltersContainer>
+
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}
         </Layout>
     );

@@ -16,8 +16,11 @@ import {
 import styles from "./styles.module.scss";
 import "@/styles/tables.scss";
 import PageSizeSelector from "@/components/LabelSelect";
+import FiltersChosen from "@/components/FiltersChosen";
+import { FilterComponentType } from "@/types/filters";
 
 type ResultsTableProps = {
+    filters?: FilterComponentType[];
     results: AntiFraudResultType[];
     isLoading?: boolean;
     totalCount?: number;
@@ -37,8 +40,9 @@ const ACTION_COLORS: Record<string, string> = {
 };
 
 const ResultsTable: React.FC<ResultsTableProps> = ({
+    filters = [],
     results,
-    isLoading,
+    isLoading = false,
     totalCount,
     currentPage = 1,
     pageSize: propPageSize = 10,
@@ -244,7 +248,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
         <div className={`table ${styles["results-table-wrapper"]} `}>
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    {/*<FiltersChosen filters={activeOrderFilters.filter(item => item !== null) as FilterComponentType[]} />*/}
+                    <FiltersChosen filters={filters} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>

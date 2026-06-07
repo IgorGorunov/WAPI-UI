@@ -290,6 +290,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         seller: orderData?.seller && needSeller() ? orderData.seller : '',
         addressJSONStructure: orderData?.addressJSONStructure || '',
         addressFull: normalizeFullAddressData(orderData?.addressJSONStructure),
+        lastMileService: orderData?.lastMileService || '',
 
         products:
             orderData && orderData?.products && orderData.products.length
@@ -321,6 +322,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const currencyOptions = useMemo(() => { return orderParameters && orderParameters?.currencies.length ? createOptions(orderParameters?.currencies) : [] }, []);
 
     const preferredWarehouse = watch('preferredWarehouse');
+    const preferredCourierService = watch('preferredCourierService');
     //const selectedWarehouse = watch('warehouse');
 
     //tickets
@@ -853,7 +855,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         //clean selected products
         const currentProducts = getValues('products');
         if (currentProducts && currentProducts.length && !notClearProducts) {
-            message.warning(`As warehouse is ${selectedOption ? 'changed' : 'cleared'}, selected products are removed.${selectedOption ? ' Please, select products again.' : ''}`, 200);
+            toast.warning(`As warehouse is ${selectedOption ? 'changed' : 'cleared'}, selected products are removed.${selectedOption ? ' Please, select products again.' : ''}`);
             setValue('products', []);
         }
     }
@@ -1001,9 +1003,35 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
 
     const linkToTrack = orderData && orderData.trackingLink && orderData.trackingLink.at(-1) != '=' ? <a href={orderData?.trackingLink} target='_blank'>{orderData?.trackingLink}</a> : null;
 
+    const getLastMileOptions = () => {
+        console.log('getLastMileOptions: ', orderParameters.lastMileServices, preferredWarehouse, preferredCourierService);
+
+        const lastMileService = getValues('lastMileService');
+
+        if (preferredWarehouse && preferredCourierService) {
+            const lastMileServices = orderParameters?.lastMileServices.filter(item => item.Warehouse == preferredWarehouse && item.CourierService == preferredCourierService);
+
+            if (lastMileService && !lastMileServices.find(item => item.Description == lastMileService)) {
+                setValue('lastMileService', '');
+            }
+            return lastMileServices.map(item => ({label: item.Description, value: item.Description}));
+        }
+
+        setValue('lastMileService', '');
+        return [];
+    }
 
     const generalFields = useMemo(() => GeneralFields(!orderData?.uuid, orderTitles), [orderData, orderTitles])
-    const detailsFields = useMemo(() => DetailsFields({ warehouses, courierServices: getCourierServices(preferredWarehouse), handleWarehouseChange: handleWarehouseChange, handleCourierServiceChange: handleCourierServiceChange, linkToTrack: linkToTrack, newObject: !orderData?.uuid, isCSEditable: ['Draft', 'Out of stock', 'On hold', 'Error', 'Cancelled'].includes(orderData?.status) }), [preferredWarehouse]);
+    const detailsFields = useMemo(() => DetailsFields({
+        warehouses,
+        courierServices: getCourierServices(preferredWarehouse),
+        handleWarehouseChange: handleWarehouseChange,
+        handleCourierServiceChange: handleCourierServiceChange,
+        linkToTrack: linkToTrack,
+        newObject: !orderData?.uuid,
+        isCSEditable: ['Draft', 'Out of stock', 'On hold', 'Error', 'Cancelled'].includes(orderData?.status),
+        lastMileOptions: getLastMileOptions(),
+    }), [preferredWarehouse, preferredCourierService]);
     const receiverFields = useMemo(() => ReceiverFields({ countries, isDisabled, isAddressAllowed: orderData?.receiverCountry ? isAddressAllowed : false, onChangeFn: hasChangedAddressFields, selectedCountry: receiverCountry, selectedWarehouse: preferredWarehouse, btns: [fillTheAddress] }), [curPickupPoints, pickupOptions, countries, preferredWarehouse, selectedCourierService, isAddressAllowed, isDisabled, hasChangedAddressFields, receiverCountry, preferredWarehouse]);
     //TODO: remove atLeastOneFieldIsFilled later. We do not need any more, logic has changed
     const pickUpPointFields = useMemo(() => PickUpPointFields({ countries, isDisabled, isAddressAllowed: (orderData?.receiverPickUpID || orderData?.receiverPickUpName) ? isAddressAllowed : false, onChangeFn: () => { hasChangedAddressFields(); hasAtLeastOnePickUpPointFieldIsFilled() }, atLeastOneFieldIsFilled: isSelfCollect, isSelfCollect }), [countries, preferredWarehouse, selectedCourierService, isDisabled, isAddressAllowed, hasChangedAddressFields, atLeastOneFieldIsFilled, pickupOptions, isSelfCollect])
@@ -1013,8 +1041,6 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const handleFilesChange = (files) => {
         setSelectedFiles(files);
     };
-
-
 
     //product selection
     const handleProductSelection = () => {
@@ -1173,6 +1199,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     }
 
     const onSubmitForm = async (data) => {
+        // console.log('onSubmitForm: ', data);
+        // return;
+
         const curAction = orderData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(AccessObjectTypes["Orders/Fullfillment"], curAction)) {
             try {

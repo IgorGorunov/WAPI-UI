@@ -166,6 +166,15 @@
     }
   }
 
+  .field-description {
+    position: absolute;
+    top: calc(100% - 10px);
+    font-size: 10px;
+    line-height: 1.05;
+    font-weight: 500;
+    padding: 0 6px;
+  }
+
 
   :global {
     .input-select {

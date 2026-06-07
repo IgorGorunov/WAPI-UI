@@ -19,6 +19,7 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
     extraLabel,
     isCheckboxHidden= false,
     circleColor,
+    textColor,
     isCountry = false,
     flagBefore = false,
     countryName='',
@@ -28,7 +29,10 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
 
   return (
     <div className={`${styles.checkbox || 'checkbox'} checkbox ${classNames ? styles[classNames] || classNames : ""} ${width ? "width-"+width : ""}  ${styles['vertical-center'] ? '' : ''}`}>
-      <label htmlFor={`${name}-checkbox`} className={`${styles['checkbox-label'] || 'checkbox-label'} checkbox-label ${isCheckboxHidden ? `${styles['hide-checkbox'] || 'hide-checkbox'} hide-checkbox` : ''}`}>
+      <label
+          htmlFor={`${name}-checkbox`}
+          className={`${styles['checkbox-label'] || 'checkbox-label'} checkbox-label ${isCheckboxHidden ? `${styles['hide-checkbox'] || 'hide-checkbox'} hide-checkbox` : ''}`}
+      >
         <input
             {...otherProps}
           type='checkbox'
@@ -40,10 +44,10 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
           onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}
         />
         {label && (
-            <span className={`${styles['checkbox-label-wrapper'] || 'checkbox-label-wrapper'} checkbox-label-wrapper`}>
+            <span className={`${styles['checkbox-label-wrapper'] || 'checkbox-label-wrapper'} checkbox-label-wrapper`} >
               {circleColor ? <span className='colored-circle' style={{ backgroundColor: circleColor}}></span> : null}
 
-              <span className={`${styles['checkbox-label-text'] || 'checkbox-label-text'} checkbox-label-text`} >
+              <span className={`${styles['checkbox-label-text'] || 'checkbox-label-text'} checkbox-label-text`} style={{ color: textColor || 'inherit' }}>
                 {isCountry && countryName && flagBefore ? <span className={`fi fi-${countryName.toLowerCase()} flag-icon flag-first`}></span> : null}
                 {label}
                 {isCountry && countryName && !flagBefore ? <span className={`fi fi-${countryName.toLowerCase()} flag-icon`}></span> : null}
