@@ -45,7 +45,11 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, titleAmount, titleIcon
 
     const toggleAccordion = (e) => {
         e.preventDefault();
-        setIsActive((prevState) => !prevState);
+        setIsActive((prevState) => {
+            const nextState = !prevState;
+            if (setIsOpen) setIsOpen(nextState);
+            return nextState;
+        });
         setHeight(isActive ? '0px' : `${contentSpace.current.scrollHeight}px`);
     }
 

@@ -2,16 +2,24 @@ import React from "react";
 import styles from "./styles.module.scss";
 import {OptionType} from "@/types/forms";
 import Icon from "@/components/Icon";
+import {FILTER_TYPE} from "@/types/utility";
 
 type CurrentFilterType = {
     filterTitle: string;
     filterOptions: OptionType[];
     filterState: string[];
+    filterType?: FILTER_TYPE;
     onClose: ()=>void;
     onClick: ()=>void;
 }
-const CurrentFilters: React.FC<CurrentFilterType> = ({filterTitle, filterOptions, filterState, onClick, onClose}) => {
-    const valuesAsString = filterOptions && filterOptions.length ? filterState.map(filterVal => filterOptions.filter(item=>item.value===filterVal)).filter(filteredValues => filteredValues.length).map(item => item[0].label).join(', ') : '';
+const CurrentFilters: React.FC<CurrentFilterType> = ({filterTitle, filterOptions, filterState, filterType, onClick, onClose}) => {
+    let valuesAsString = '';
+    
+    if (filterType === FILTER_TYPE.SLIDER && filterState && filterState.length === 2) {
+        valuesAsString = `${filterState[0]}% - ${filterState[1]}%`;
+    } else {
+        valuesAsString = filterOptions && filterOptions.length ? filterState.map(filterVal => filterOptions.filter(item=>item.value===filterVal)).filter(filteredValues => filteredValues.length).map(item => item[0].label).join(', ') : '';
+    }
 
     return (
         <>

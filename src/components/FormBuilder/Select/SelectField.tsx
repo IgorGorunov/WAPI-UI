@@ -29,6 +29,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
             isSearchable = true,
             isClearable = true,
             hint = "",
+            fieldDescription = "",
             ...otherProps
         },
         _ref: Ref<HTMLInputElement> // ref is not used by react-select directly
@@ -161,7 +162,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
                                 }),
                             }}
                         />
-
+                        {fieldDescription ? <p className={`${styles['field-description']}`}>{fieldDescription}</p> : null}
                         {errorMessage && <p className={`${styles.error} error`}>{errorMessage}</p>}
                     </div>
                 </div>

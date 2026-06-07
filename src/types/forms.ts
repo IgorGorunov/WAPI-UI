@@ -100,6 +100,7 @@ export type FieldPropsType<T extends FieldValues = FieldValues> = {
   extraLabel?: string;
   isCheckboxHidden?: boolean;
   circleColor?: string;
+  textColor?: string;
   isCountry?: boolean;
   flagBefore?: boolean;
   noCounters?: boolean;
@@ -117,6 +118,7 @@ export type FieldPropsType<T extends FieldValues = FieldValues> = {
   fieldType?: FormFieldTypes;
   btnName?: string;
   onBtnClick?: () => void;
+  fieldDescription?: string;
 }
 
 export type FormBuilderType = FieldPropsType & {

@@ -220,6 +220,7 @@ export type SingleOrderType = {
     customerReturns: OrderCustomerReturnType[];
     seller?: string;
     addressJSONStructure?: string;
+    lastMileService?: string;
 }
 
 export type OrderProductType = {
@@ -243,11 +244,20 @@ export type OrderProductType = {
     volume: number;
 }
 
+
+export type LastMileServiceType = {
+    Country: string;
+    CourierService: string;
+    Description: string;
+    Warehouse: string;
+}
+
 export type OrderParamsType = {
     products?: DocProductParamsType[];
     warehouses: WarehouseType[];
     currencies: string[];
     actionAccessSettings?: UserAccessActionType[];
+    lastMileServices: LastMileServiceType[];
 }
 
 export type PickupPointsType = {

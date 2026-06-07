@@ -102,7 +102,26 @@ export const GeneralFields = (newObject: boolean, orderTitles: OrdersTenantDataT
     },
 ];
 
-export const DetailsFields = ({warehouses, courierServices, handleWarehouseChange, handleCourierServiceChange, linkToTrack, newObject, isCSEditable}: { warehouses: OptionType[], courierServices: OptionType[], handleWarehouseChange:(w: string)=>void, handleCourierServiceChange: (a: string)=>void, linkToTrack:any, newObject: boolean, isCSEditable: boolean}) => [
+export const DetailsFields = (
+    {
+        warehouses,
+        courierServices,
+        handleWarehouseChange,
+        handleCourierServiceChange,
+        linkToTrack,
+        newObject,
+        isCSEditable,
+        lastMileOptions
+    }: {
+        warehouses: OptionType[],
+        courierServices: OptionType[],
+        handleWarehouseChange:(w: string)=>void,
+        handleCourierServiceChange: (a: string)=>void,
+        linkToTrack:any,
+        newObject: boolean,
+        isCSEditable: boolean,
+        lastMileOptions: OptionType[],
+    }) => [
     {
         fieldType: FormFieldTypes.SELECT,
         type: "text",
@@ -149,6 +168,28 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         hint: OrderHints['preferredCourierServiceMandatory'] || '',
         disabled: !(newObject || isCSEditable),
     },
+    {
+        fieldType: FormFieldTypes.OTHER,
+        name: 'none',
+        label: '',
+        otherComponent: <p></p>,
+        width: WidthType.w50,
+        classNames: 'empty-space',
+        isDisplayed: newObject,
+    },
+    {
+        fieldType: FormFieldTypes.SELECT,
+        type: "text",
+        name: 'lastMileService',
+        label: 'Last mile service',
+        placeholder: "",
+        options: lastMileOptions,
+        disabled: lastMileOptions.length === 0,
+        width: WidthType.w50,
+        classNames: "",
+        isDisplayed: newObject,
+        fieldDescription: 'Depends on selected Courier service. If field is not editable, there are no last mile services available for the selected courier service.'
+    },
     // {
     //     fieldType: FormFieldTypes.TEXT,
     //     type: "text",
@@ -185,9 +226,22 @@ export const DetailsFields = ({warehouses, courierServices, handleWarehouseChang
         label: 'Courier service',
         placeholder: "",
         disabled: true,
-        width: WidthType.w50,
+        width: WidthType.w25,
         classNames: "",
         isDisplayed: !newObject,
+    },
+    {
+        fieldType: FormFieldTypes.SELECT,
+        type: "text",
+        name: 'lastMileService',
+        label: 'Last mile service',
+        placeholder: "",
+        options: lastMileOptions,
+        disabled: lastMileOptions.length === 0,
+        width: WidthType.w25,
+        classNames: "",
+        isDisplayed: !newObject,
+        fieldDescription: 'Depends on selected Courier service. If field is not editable, there are no last mile services available for the selected courier service.'
     },
     {
         fieldType: FormFieldTypes.TEXT,

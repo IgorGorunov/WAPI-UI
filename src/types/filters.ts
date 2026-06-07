@@ -16,6 +16,7 @@ export type FilterComponentType = {
     onClick: () => void;
     icon?: IconType;
     isCountry?: boolean;
+    isFiltersVisible?: boolean;
 }
 
 // export type FilterType = {

@@ -52,6 +52,8 @@ export type WarehouseType = {
 export const enum FILTER_TYPE {
     CHECKBOX = 'checkbox',
     COLORED_CIRCLE = 'colored-circle',
+    COLORED_TEXT = 'colored-text',
+    SLIDER = 'slider',
 }
 
 export type DocProductParamsType = {
