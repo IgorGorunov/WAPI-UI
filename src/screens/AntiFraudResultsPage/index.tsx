@@ -371,6 +371,12 @@ const AntiFraudResultsPage = () => {
         setDetailError(null);
     }, []);
 
+    const [canCheckPhoneNumber, setCanCheckPhoneNumber] = useState(false);
+    useEffect(() => {
+        setCanCheckPhoneNumber(isActionIsAccessible('AntiFraud/PhoneChecker', AccessActions.View))
+    }, []);
+
+
     const handleCheckPhoneNumber = () => {
         if (!isActionIsAccessible('AntiFraud/PhoneChecker', AccessActions.View)) {
             setModalStatusInfo({
@@ -402,7 +408,7 @@ const AntiFraudResultsPage = () => {
                 {/*{isLoading && <Loader />}*/}
 
                 <Header pageTitle="WAPI Checker Results" toRight >
-                    <Button icon="biggest-check" iconOnTheRight={true} onClick={handleCheckPhoneNumber}>Check phone</Button>
+                    {canCheckPhoneNumber ? <Button icon="biggest-check" iconOnTheRight={true} onClick={handleCheckPhoneNumber}>Check phone</Button> : null}
                 </Header>
 
                 <SearchContainer>
