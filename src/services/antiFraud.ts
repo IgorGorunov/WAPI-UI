@@ -55,6 +55,7 @@ export const getAntiFraudResultByPhoneNumber = async (data: {
     alias: string;
     ui?: string;
     phoneNumber: string;
+    country?: string;
 }): Promise<ApiResponseType<{ data: string }>> => {
     return api.post(`/GetAntiFraudResultByPhoneNumber`, data);
 };
