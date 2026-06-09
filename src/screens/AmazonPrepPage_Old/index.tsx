@@ -12,7 +12,7 @@ import { DateRangeType } from "@/types/dashboard";
 import { formatDateToString, getLastFewDays } from "@/utils/date";
 import { AmazonPrepOrderType } from "@/types/amazonPrep";
 import { exportFileXLS } from "@/utils/files";
-import AmazonPrepForm from "./components/AmazonPrepForm";
+import AmazonPrepForm from "@/screens/AmazonPrepPage/components/AmazonPrepForm";
 import Loader from "@/components/Loader";
 import useTourGuide from "@/context/tourGuideContext";
 import { TourGuidePages } from "@/types/tourGuide";
@@ -148,6 +148,13 @@ const AmazonPrepPage = () => {
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('CreateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject), body: {} });
             } catch { }
+            setModalStatusInfo({
+                statusModalType: STATUS_MODAL_TYPES.ERROR,
+                title: "Warning",
+                subtitle: `You have limited access to this action`,
+                onClose: closeErrorModal
+            });
+            setShowStatusModal(true);
         } else {
             setShowAmazonPrepOrderModal(true);
         }

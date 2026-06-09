@@ -134,6 +134,14 @@ const AmazonPrepPage = () => {
         if (!isActionIsAccessible(AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject)) {
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('CreateAmazonPrep', AccessObjectTypes["Orders/AmazonPrep"], AccessActions.CreateObject), body: {} });
+
+                setModalStatusInfo({
+                    statusModalType: STATUS_MODAL_TYPES.ERROR,
+                    title: "Warning",
+                    subtitle: `You have limited access to this action`,
+                    onClose: closeErrorModal
+                });
+                setShowStatusModal(true);
             } catch { }
         } else {
             setShowAmazonPrepOrderModal(true);
