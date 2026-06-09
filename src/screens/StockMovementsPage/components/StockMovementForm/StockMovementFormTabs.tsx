@@ -79,6 +79,10 @@ export const TabFields: TabFieldType[] = [
         tabName: 'Cargo info',
         fieldName: 'container40Amount'
     },
+    {
+        tabName: 'Cargo info',
+        fieldName: 'shippingUnits'
+    },
 
 ]
 
