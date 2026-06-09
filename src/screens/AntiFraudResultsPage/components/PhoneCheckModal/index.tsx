@@ -10,6 +10,7 @@ import { AntiFraudResultObject } from "../../types";
 import styles from "./styles.module.scss";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import {AccessActions, AccessObjectTypes} from "@/types/auth";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 type PhoneCheckModalProps = {
     onClose: () => void;
@@ -38,11 +39,15 @@ const PhoneCheckModal: React.FC<PhoneCheckModalProps> = ({ onClose, onSuccess })
         } catch { }
 
         try {
+            const parsedPhone = parsePhoneNumberFromString(phoneNumber);
+            const country = parsedPhone?.country;
+
             const res = await getAntiFraudResultByPhoneNumber({
                 token,
                 alias,
                 ui,
-                phoneNumber
+                phoneNumber,
+                country
             });
 
             if (res?.data) {
