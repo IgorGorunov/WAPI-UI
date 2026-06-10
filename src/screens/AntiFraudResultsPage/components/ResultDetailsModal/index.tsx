@@ -6,10 +6,12 @@ import {
     AntiFraudResultType,
     PremiumProductTypeResultsType,
 } from "@/screens/AntiFraudResultsPage/types";
-import {ZONE_COLORS, ANTIFRAUD_ACTIONS} from "@/screens/AntiFraudSettingsPage/types";
+import {ANTIFRAUD_ACTIONS, ZONE_COLORS} from "@/screens/AntiFraudSettingsPage/types";
 import styles from "./styles.module.scss";
 import {formatDateToDisplayString, formatTimeStringFromString} from "@/utils/date";
 import Icon from "@/components/Icon";
+import SingleDocument from "@/components/SingleDocument";
+import {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 
 type ResultDetailsModalProps = {
     row: AntiFraudResultType | null;
@@ -64,7 +66,14 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
             ? (ext.productsTypes as string[])
             : null;
 
-    return (
+    const [docUuid, setDocUuid] = React.useState<string | null>(null);
+
+    const handleOpenOrder = (uuid: string) => {
+        console.log('click', uuid);
+        setDocUuid(uuid);
+    }
+
+    return (<>
         <Modal title={`${hasOrder ? 'Shipment order '+row.shipmentOrder  : 'Phone number '+row.phoneNumber}`} onClose={onClose}>
             <div className={styles["modal-content"]}>
                 <div className={styles["modal-content-wrapper"]}>
@@ -72,7 +81,7 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                         {hasOrder ? <div className={styles["summary-header__item"]}>
                             <span className={styles["label"]}>WH number</span>
                             <span className={`${styles["value"]}`}>
-                                {row.shipmentOrder || "—"}
+                                <button className={styles['order-btn']} onClick={()=>handleOpenOrder(row.uuid)}>{row.shipmentOrder || "—"}</button>
                             </span>
                         </div> : null}
                         <div className={styles["summary-header__item"]}>
@@ -160,7 +169,7 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                             {isExtended && (
                                 <div className={styles["section"]}>
                                     <p className={`title-h4 ${styles["section-title"]}`}>Extended Statistics</p>
-                                    <div className={`${styles["stats-grid"]} ${hasOrder ? styles["has-order"] : ""}`}>
+                                    <div className={`${styles["stats-grid"]} ${(premiumProducts) ? styles["has-premium"] : ""}`}>
                                         <div className={`${styles["stat-card"]} ${styles["stat-card--blue"]}`}>
                                             <span className={`${styles["stat-label"]}`}>Total orders</span>
                                             <span className={styles["stat-value"]}>{ext.ordersCount ?? "—"}</span>
@@ -252,6 +261,9 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                 </div>
             </div>
         </Modal>
+
+        {docUuid ? <SingleDocument type={NOTIFICATION_OBJECT_TYPES.Fullfilment} uuid={docUuid} onClose={()=>setDocUuid(null)} /> : null}
+    </>
     );
 };
 
