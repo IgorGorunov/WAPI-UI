@@ -618,6 +618,7 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
                                         columns={getGradationColumns(control)}
                                         dataSource={gradationFields.map((field, idx) => ({ ...field, _mappedIndex: idx }))}
                                         pagination={false}
+                                        scroll={{ x: 'max-content' }}
                                         rowKey="id"
                                         onRow={(_record) => {
                                             const isDraggable = draggableRowIndex === _record._mappedIndex;

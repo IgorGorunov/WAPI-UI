@@ -7,6 +7,7 @@ export const GeneralFields = ({subscriptionOptions, codTypeOptions}:{subscriptio
         name: 'use',
         label: "Enable WAPI Checker",
         width: WidthType.w17,
+        classNames: 'wapi-checker-toggle',
     },
     {
         fieldType: FormFieldTypes.TOGGLE,
@@ -15,6 +16,7 @@ export const GeneralFields = ({subscriptionOptions, codTypeOptions}:{subscriptio
         label: "Demo mode",
         disabled: false,
         width: WidthType.w17,
+        classNames: 'wapi-checker-toggle',
     },
     {
         fieldType: FormFieldTypes.NUMBER,
@@ -23,6 +25,7 @@ export const GeneralFields = ({subscriptionOptions, codTypeOptions}:{subscriptio
         label: "Number of demo orders",
         disabled: true,
         width: WidthType.w17,
+        classNames: 'wapi-checker-toggle',
     },
     {
         fieldType: FormFieldTypes.SELECT,

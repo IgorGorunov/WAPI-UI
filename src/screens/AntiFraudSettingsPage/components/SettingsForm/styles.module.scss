@@ -9,7 +9,6 @@
     padding: 16px;
   }
 
-
   &__wrapper {
     margin: 0 -24px;
     max-height: calc(100vh - 280px);
@@ -20,6 +19,22 @@
       //display: flex;
       //flex-direction: column;
       //gap: 28px;
+    }
+  }
+
+  &__settings-main {
+    :global(.width-17) {
+      @include mobile {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+    }
+
+    :global(.width-25) {
+      @include mobile {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
     }
   }
 

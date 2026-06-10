@@ -96,6 +96,7 @@ const SettingsList: React.FC<SettingsListPropsType> = ({ settingsList, handleEdi
                         dataSource={paginatedData.map((r, i) => ({ ...r, key: r.code || `row_${i}` }))}
                         columns={columns}
                         pagination={false}
+                        scroll={{ x: 'max-content' }}
                         onRow={(record) => ({
                             onClick: () => {
                                 if (record.code) {
