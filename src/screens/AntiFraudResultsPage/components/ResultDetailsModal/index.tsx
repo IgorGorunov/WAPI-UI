@@ -6,7 +6,7 @@ import {
     AntiFraudResultType,
     PremiumProductTypeResultsType,
 } from "@/screens/AntiFraudResultsPage/types";
-import { ZONE_COLORS, ANTIFRAUD_ACTIONS } from "@/screens/AntiFraudSettingsPage/types";
+import {ZONE_COLORS, ANTIFRAUD_ACTIONS} from "@/screens/AntiFraudSettingsPage/types";
 import styles from "./styles.module.scss";
 import {formatDateToDisplayString, formatTimeStringFromString} from "@/utils/date";
 import Icon from "@/components/Icon";
@@ -52,6 +52,8 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
     const ext = detail?.antiFraudResult;
     const isExtended = !!ext;
 
+    const isStandard = row.subscription === 'Basic';
+
     const premiumProducts =
         isExtended && ext.productsTypes && isPremiumProductType(ext.productsTypes)
             ? ext.productsTypes
@@ -90,12 +92,12 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                                 }
                             </span>
                         </div>
-                        <div className={styles["summary-header__item"]}>
-                            <span className={styles["label"]}>Ransome %</span>
+                        {!isStandard ? <div className={styles["summary-header__item"]}>
+                            <span className={styles["label"]}>Buyout %</span>
                             <span className={`${styles["value"]} `}>
                                 {detail?.antiFraudResult?.ransom}%
                             </span>
-                        </div>
+                        </div> : null}
                     </div>
 
                     {isLoading && (
@@ -217,6 +219,8 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                                                     <span>Success</span>
                                                     <span>Failures</span>
                                                     <span>Avg. check</span>
+                                                    <span>Avg. quantity</span>
+                                                    <span>Buyout,%</span>
                                                     {hasOrder ? <span>Order has such product</span> : null}
                                                 </div>
                                                 {Object.entries(premiumProducts).map(([productName, data], i) => {
@@ -228,6 +232,8 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                                                             <span className={styles["green"]}>{data.succesfull}</span>
                                                             <span className={styles["red"]}>{data.failure}</span>
                                                             <span>{data.averageCheck}</span>
+                                                            <span>{data.averageProductsCount}</span>
+                                                            <span>{data.ransom}</span>
                                                             {hasOrder ? (
                                                                 <span>
                                                                     {data.orderHasProduct ? <Icon name="big-check"/> : <Icon name="close"/>}
