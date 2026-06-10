@@ -90,7 +90,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
 
     const columns: TableColumnProps<AntiFraudResultType>[] = [
         {
-            title: headerCell("Date", "requestPeriod", "110px", "140px"),
+            title: headerCell("Date", "requestPeriod", "70px", "100px"),
             dataIndex: "requestDate",
             key: "requestDate",
             render: (_val, record) => (
@@ -99,7 +99,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                 //         {formatDateTimeToStringWithDotWithoutSeconds(record.requestDate)}
                 //     </span>
                 // } />
-                <TableCell minWidth="60px" maxWidth="80px" contentPosition="start"
+                <TableCell minWidth="70px" maxWidth="100px" contentPosition="start"
                            childrenAfter={
                                <div className={styles["table-date-time-container"]}>
                                    <span className={styles["table-date"] || "table-date"}>{formatDateStringToDisplayString(record.requestPeriod)}</span>
@@ -143,7 +143,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
             responsive: ["sm"],
         },
         {
-            title: headerCell("Successful %", "successfullPercent", "140px", "180px", "Average fraud score percentage"),
+            title: headerCell("Buyout %", "successfullPercent", "140px", "180px", "Average fraud score percentage"),
             dataIndex: "averagePercent",
             key: "averagePercent",
             render: (_val, record) => {
@@ -152,13 +152,13 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                     <TableCell minWidth="140px" maxWidth="180px" contentPosition="left" childrenBefore={
                         <div className={styles["score-cell"]}>
                             <div className={styles["score-bar-track"]} title={`${record.successfullPercent}%`}>
-                                <div
+                                {record.subscription !== 'Basic' ? <div
                                     className={styles["score-bar-fill"]}
                                     style={{
                                         width: `${Math.min(record.successfullPercent, 100)}%`,
                                         backgroundColor: zoneColor,
                                     }}
-                                />
+                                /> : null}
                             </div>
                             <span className={styles["score-value"]}>{record.successfullPercent}%</span>
                         </div>
@@ -166,15 +166,16 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                 );
             },
             onHeaderCell: () => ({ onClick: () => handleHeaderCellClick("successfullPercent") }),
+            responsive: ["md"],
         },
         {
-            title: headerCell("Zone", "zone", "80px", "100px"),
+            title: headerCell("Zone", "zone", "70px", "100px"),
             dataIndex: "zone",
             key: "zone",
             render: (_val, record) => {
                 const color = ZONE_COLORS[record.zone as keyof typeof ZONE_COLORS] || "#7D8FB3";
                 return (
-                    <TableCell minWidth="80px" maxWidth="100px" contentPosition="left" childrenBefore={
+                    <TableCell minWidth="70px" maxWidth="100px" contentPosition="left" childrenBefore={
                         <span
                             className={styles["badge"]}
                             style={{ backgroundColor: `${color}11`, color, borderColor: `${color}55`, fontWeight: "bold"}}
@@ -185,7 +186,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                 );
             },
             onHeaderCell: () => ({ onClick: () => handleHeaderCellClick("zone") }),
-            responsive: ["md"],
+
         },
         {
             title: headerCell("Action", "action", "80px", "100px"),
@@ -238,6 +239,9 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
         if (onPageChange) onPageChange(page);
     };
 
+    const isOnlyBasic = results.length > 0 && results.every(r => r.subscription === 'Basic' || r.subscription === 'basic');
+    const visibleColumns = columns.filter(c => !(isOnlyBasic && c.key === 'averagePercent'));
+
     const handlePageSizeChange = (size: number) => {
         setPageSize(size);
         setCurrent(1);
@@ -262,8 +266,9 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
             <div className={`card ${styles["results-table"]} ${isLoading ? styles["results-table--loading"] : ""} table__container`}>
                 <Table<AntiFraudResultType>
                     dataSource={results.map(r => ({ ...r, key: r.uuid }))}
-                    columns={columns}
+                    columns={visibleColumns}
                     pagination={false}
+                    scroll={{ x: 'max-content' }}
                     loading={{ spinning: isLoading && results.length === 0, indicator: <Loader  /> }}
                     onRow={(record) => ({
                         onClick: () => onRowClick?.(record.uuid),
