@@ -143,7 +143,7 @@ const AntiFraudResultsPage = () => {
             isFiltersVisible: isFiltersVisible,
         },
         ...(isOnlyBasic ? [] : [{
-            filterTitle: 'Successful %',
+            filterTitle: 'Buyout %',
             icon: 'status',
             filterType: FILTER_TYPE.SLIDER,
             filterDescriptions: '',
@@ -160,7 +160,7 @@ const AntiFraudResultsPage = () => {
 
     const appliedAntiFraudFilters = antiFraudFilters.map(filter => {
         if (filter.filterTitle === 'Zone') return { ...filter, filterState: appliedFilterZone, onClose: () => { setFilterZone([]); setAppliedFilterZone([]); setCurrentPage(1); } };
-        if (filter.filterTitle === 'Successful %') return { ...filter, filterState: appliedFilterSuccessPercent, onClose: () => { setFilterSuccessPercent([]); setAppliedFilterSuccessPercent([]); setCurrentPage(1); } };
+        if (filter.filterTitle === 'Buyout %') return { ...filter, filterState: appliedFilterSuccessPercent, onClose: () => { setFilterSuccessPercent([]); setAppliedFilterSuccessPercent([]); setCurrentPage(1); } };
         return filter;
     });
 
