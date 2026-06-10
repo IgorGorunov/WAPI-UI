@@ -125,6 +125,8 @@ const AntiFraudResultsPage = () => {
         return false;
     }, [filterZone, appliedFilterZone, filterSuccessPercent, appliedFilterSuccessPercent]);
 
+    const isOnlyBasic = allResults.length > 0 && allResults.every(r => r.subscription === 'Basic' || r.subscription === 'basic');
+
     const antiFraudFilters: FilterComponentType[] = [
         {
             filterTitle: 'Zone',
@@ -140,7 +142,7 @@ const AntiFraudResultsPage = () => {
             onClick: () => { setIsFiltersVisible(true); setIsOpenFilterZone(true); },
             isFiltersVisible: isFiltersVisible,
         },
-        {
+        ...(isOnlyBasic ? [] : [{
             filterTitle: 'Successful %',
             icon: 'status',
             filterType: FILTER_TYPE.SLIDER,
@@ -153,7 +155,7 @@ const AntiFraudResultsPage = () => {
             onClose: () => handleFilterSuccessPercentChange([]),
             onClick: () => { setIsFiltersVisible(true); setIsOpenFilterSuccessPercent(true); },
             isFiltersVisible: isFiltersVisible,
-        }
+        } as FilterComponentType])
     ];
 
     const appliedAntiFraudFilters = antiFraudFilters.map(filter => {
@@ -254,7 +256,7 @@ const AntiFraudResultsPage = () => {
             })
             .filter(row => {
                 if (!appliedFilterSuccessPercent.length) return true;
-                const percent = row.successfullPercent ?? 0;
+                const percent = row.subscription === 'Basic' ? -1 : row.successfullPercent ?? 0;
                 const min = Number(appliedFilterSuccessPercent[0]);
                 const max = Number(appliedFilterSuccessPercent[1]);
                 return percent >= min && percent <= max;

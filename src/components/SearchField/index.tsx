@@ -28,7 +28,7 @@ const SearchField: React.FC<SearchFieldPropsType> = ({ searchTerm, handleClear, 
                 value={currentSearchTerm}
                 onChange={e => {
                     setCurrentSearchTerm(e.target.value);
-                    if (e.target.value === "" && searchTerm) {
+                    if (e.target.value === "") {
                         handleClear();
                     }
                     if (!manualSearch && handleChange) {
