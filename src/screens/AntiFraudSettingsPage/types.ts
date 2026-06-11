@@ -42,7 +42,7 @@ export type AntiFraudSettingsFormType = {
     use: boolean;
     checkingType: string;
     demoMode: boolean;
-    demoOrderCount: number;
+    demoOrdersCount: number;
     description: string;
     subscription: string;
     codType: ANTIFRAUD_COD_TYPES;
