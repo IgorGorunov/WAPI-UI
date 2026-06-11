@@ -21,7 +21,7 @@ export const GeneralFields = ({subscriptionOptions, codTypeOptions}:{subscriptio
     {
         fieldType: FormFieldTypes.NUMBER,
         type: "number",
-        name: 'demoOrderCount',
+        name: 'demoOrdersCount',
         label: "Number of demo orders",
         disabled: true,
         width: WidthType.w17,
