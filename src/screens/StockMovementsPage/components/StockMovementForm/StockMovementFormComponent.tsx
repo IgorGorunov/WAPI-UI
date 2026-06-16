@@ -1179,16 +1179,21 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         try {
             sendUserBrowserInfo({ ...getBrowserInfo('CreateStockMovement/' + docType), body: superUser && ui ? { ...requestData, ui } : requestData })
         } catch { }
+
+        console.log('sendDocument', data);
         return await sendInboundData(superUser && ui ? { ...requestData, ui } : requestData);
     }
 
     const onSubmitForm = async (data) => {
+
+
+
         const curAction = docData ? AccessActions.EditObject : AccessActions.CreateObject;
+        console.log(isActionIsAccessible(getAccessActionObject(docType), curAction))
         if (!isActionIsAccessible(getAccessActionObject(docType), curAction)) {
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('CreateUpdateStockMovement', getAccessActionObject(docType), curAction), body: { uuid: data?.uuid || '' } });
             } catch { }
-
             return null;
         }
 
@@ -1220,7 +1225,13 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
 
         if (data.shippingUnits.length === 0 && !isDraft && !isOutboundOrStockMovement && isWapiCarrier) {
             setError("shippingUnits", { type: "manual", message: "Shipping units are required!" });
-            updateTabTitles(['Cargo info']);
+            // toast.warn(`Shipping units are required!`, {
+            //     position: "top-right",
+            //     autoClose: 3000,
+            // });
+            updateTabTitles(['shippingUnits']);
+
+            setIsLoading(false);
             return;
         }
 
