@@ -26,9 +26,11 @@ interface DropZoneProps {
     title?: string;
     onFileMoved?: (fileId: string) => void;
     needSendBtn?: boolean;
+    showError?: boolean;
+    errorText?: string;
 }
 
-const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = false, docUuid = '', showSend = false, allowOnlyFormats = [] as string[], listType, title, onFileMoved, needSendBtn = true }: DropZoneProps) => {
+const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = false, docUuid = '', showSend = false, allowOnlyFormats = [] as string[], listType, title, onFileMoved, needSendBtn = true, showError, errorText='' }: DropZoneProps) => {
     const { token, superUser, ui } = useAuth();
     const { tenantData: { alias } } = useTenant();
 
@@ -40,10 +42,6 @@ const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = 
     //status modal
     const [showStatusModal, setShowStatusModal] = useState(false);
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: () => setShowStatusModal(false) })
-    // const closeSuccessModal = useCallback((isImport=false)=>{
-    //     setShowStatusModal(false);
-    //     !isImport && closeDocModal();
-    // }, []);
 
     const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: any, event: any) => {
         if (readOnly && !docUuid) {
@@ -225,7 +223,7 @@ const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = 
             <div
                 onClick={openFileDialog}
                 onPaste={onPaste}
-                className={`${styles['dropzone-container'] || 'dropzone-container'} dropzone-container ${readOnly ? 'read-only' : ''} ${readOnly && !docUuid ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''} ${listType ? `${styles['is-list'] || 'is-list'} is-list` : ''}`}
+                className={`${styles['dropzone-container'] || 'dropzone-container'} dropzone-container ${readOnly ? 'read-only' : ''} ${readOnly && !docUuid ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : ''} ${listType ? `${styles['is-list'] || 'is-list'} is-list` : ''} ${showError && errorText ? styles['has-error']: ''}`}
                 onDropCapture={handleNativeDrop}
                 onDragOverCapture={handleNativeDragOverEnter}
                 onDragEnterCapture={handleNativeDragOverEnter}
@@ -250,6 +248,7 @@ const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = 
                         <FileDisplay files={files} onFileDelete={onFileDelete} addedFiles={addedFiles} listType={listType} />
                     )}
                 </div>
+                {showError && errorText ? <p className={styles['error-message']}>{errorText}</p> : null}
             </div>
             {needSendBtn && (readOnly || showSend) && docUuid && addedFiles.length ?
                 <div className={`${styles['dropzone__btns'] || 'dropzone__btns'} dropzone__btns`}><Button onClick={handleSendDocFile}>Send files</Button></div>

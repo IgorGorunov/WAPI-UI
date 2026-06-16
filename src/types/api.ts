@@ -13,6 +13,8 @@ export type ApiResponseType<T> = {
         }
         status?: number;
     }
+    success?: boolean;
+    errorMessage?: string[];
 };
 
 export type BackendError = {

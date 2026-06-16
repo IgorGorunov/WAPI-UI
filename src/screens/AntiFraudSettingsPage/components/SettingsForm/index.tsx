@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo,  useState} from "react";
 import type { Control } from "react-hook-form";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import styles from "./styles.module.scss";
@@ -29,7 +29,7 @@ import {
     ZONE_OPTIONS,
     AntiFraudZoneType, AntiFraudDefaultSettingsType
 } from "@/screens/AntiFraudSettingsPage/types";
-import {round2, validateGradationCoverage} from "@/screens/AntiFraudSettingsPage/components/SettingsForm/utils";
+import {validateGradationCoverage} from "@/screens/AntiFraudSettingsPage/components/SettingsForm/utils";
 import Checkbox from "@/components/FormBuilder/Checkbox";
 import {Countries} from "@/types/countries";
 import {AccessActions, AccessObjectTypes} from "@/types/auth";
@@ -48,7 +48,7 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
     const [gradationError, setGradationError] = useState<string>('');
     const [countryError, setCountryError] = useState<string>('');
     const [isSaving, setIsSaving] = useState(false);
-    const [draggableRowIndex, setDraggableRowIndex] = useState<number | null>(null);
+    // const [draggableRowIndex, setDraggableRowIndex] = useState<number | null>(null);
 
     const [isEditForbidden, setIsEditForbidden] = useState(false);
 
@@ -121,66 +121,66 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
         defaultValues: defaultFormValues,
     });
 
-    const { fields: gradationFields, append: appendGradation, remove: removeGradation, move: moveGradation } = useFieldArray({ control, name: 'gradation' });
+    const { fields: gradationFields } = useFieldArray({ control, name: 'gradation' });
     const { append: appendPhone, remove: removePhone } = useFieldArray({ control, name: 'excludedPhoneNumbers' });
 
     const gradation = watch('gradation');
 
-    const addGradationRow = useCallback(() => {
-        const rows = getValues('gradation');
-        const last = rows[rows.length - 1];
-        const nextMin = last ? round2(last.maxValue + 0.01) : 0;
-        const nextMax = round2(Math.min(nextMin + 10, 100));
-        appendGradation({
-            key: `grad-${Date.now().toString()}_${last}`,
-            zone: 'Grey',
-            minValue: nextMin,
-            maxValue: nextMax,
-            action: 'Allow',
-            status: '',
-        });
-    }, [appendGradation, getValues]);
+    // const addGradationRow = useCallback(() => {
+    //     const rows = getValues('gradation');
+    //     const last = rows[rows.length - 1];
+    //     const nextMin = last ? round2(last.maxValue + 0.01) : 0;
+    //     const nextMax = round2(Math.min(nextMin + 10, 100));
+    //     appendGradation({
+    //         key: `grad-${Date.now().toString()}_${last}`,
+    //         zone: 'Grey',
+    //         minValue: nextMin,
+    //         maxValue: nextMax,
+    //         action: 'Allow',
+    //         status: '',
+    //     });
+    // }, [appendGradation, getValues]);
 
-    const removeGradationRow = useCallback((idx: number) => {
-        removeGradation(idx);
-        setTimeout(() => {
-            const rows = getValues('gradation');
-            if (idx < rows.length) {
-                const fixedMin = idx === 0 ? 0 : round2(rows[idx - 1].maxValue + 0.01);
-                setValue(`gradation.${idx}.minValue`, fixedMin, { shouldValidate: true });
-            }
-        }, 0);
-    }, [removeGradation, getValues, setValue]);
+    // const removeGradationRow = useCallback((idx: number) => {
+    //     removeGradation(idx);
+    //     setTimeout(() => {
+    //         const rows = getValues('gradation');
+    //         if (idx < rows.length) {
+    //             const fixedMin = idx === 0 ? 0 : round2(rows[idx - 1].maxValue + 0.01);
+    //             setValue(`gradation.${idx}.minValue`, fixedMin, { shouldValidate: true });
+    //         }
+    //     }, 0);
+    // }, [removeGradation, getValues, setValue]);
 
     //drag-and-drop
-    const dragIndex = useRef<number | null>(null);
+    // const dragIndex = useRef<number | null>(null);
 
-    const moveGradationRow = useCallback((fromIdx: number, toIdx: number) => {
-        if (fromIdx === toIdx) return;
-        moveGradation(fromIdx, toIdx);
-    }, [moveGradation]);
+    // const moveGradationRow = useCallback((fromIdx: number, toIdx: number) => {
+    //     if (fromIdx === toIdx) return;
+    //     moveGradation(fromIdx, toIdx);
+    // }, [moveGradation]);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getGradationColumns = (control: Control<any>) => {
         return [
-            {
-                title: '',
-                key: 'dragHandle',
-                width: 32,
-                render: (_text: any, _record: any) => {
-                    const index = _record._mappedIndex;
-                    return (
-                        <span
-                            className={styles['anti-fraud__drag-handle']}
-                            title="Drag to reorder"
-                            onMouseEnter={() => setDraggableRowIndex(index)}
-                            onMouseLeave={() => setDraggableRowIndex(null)}
-                        >
-                            ⠿
-                        </span>
-                    );
-                },
-            },
+            // {
+            //     title: '',
+            //     key: 'dragHandle',
+            //     width: 32,
+            //     render: (_text: any, _record: any) => {
+            //         const index = _record._mappedIndex;
+            //         return (
+            //             <span
+            //                 className={styles['anti-fraud__drag-handle']}
+            //                 title="Drag to reorder"
+            //                 onMouseEnter={() => setDraggableRowIndex(index)}
+            //                 onMouseLeave={() => setDraggableRowIndex(null)}
+            //             >
+            //                 ⠿
+            //             </span>
+            //         );
+            //     },
+            // },
             {
                 title: <TitleColumn
                     minWidth="100px"
@@ -212,11 +212,20 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
                                         {...field}
                                         value={field.value}
                                         options={ZONE_OPTIONS}
-                                        onChange={(val) => field.onChange(val)}
+                                        onChange={(val) => {
+                                            field.onChange(val);
+                                            if (val === 'Grey') {
+                                                setValue(`gradation.${index}.minValue`, 0, { shouldValidate: true });
+                                                setValue(`gradation.${index}.maxValue`, 0, { shouldValidate: true });
+                                            } else if (val === 'Green') {
+                                                setValue(`gradation.${index}.maxValue`, 100, { shouldValidate: true });
+                                            }
+                                        }}
                                         isClearable={false}
                                         isSearchable={false}
                                         errorMessage={error?.message}
                                         errors={errors}
+                                        disabled={true}
                                     />
                                 )}
                             />
@@ -252,6 +261,7 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
                                     onChange={(val) => field.onChange(val)}
                                     errorMessage={error?.message}
                                     errors={errors}
+                                    disabled={gradation?.[index]?.zone === 'Grey'}
                                 />
                             )}
                         />
@@ -287,6 +297,7 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
                                     onChange={(val) => field.onChange(val)}
                                     errorMessage={error?.message}
                                     errors={errors}
+                                    disabled={gradation?.[index]?.zone === 'Grey' || gradation?.[index]?.zone === 'Green'}
                                 />
                             )}
                         />
@@ -322,6 +333,7 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
                                         isSearchable={false}
                                         errorMessage={error?.message}
                                         errors={errors}
+                                        disabled={gradation?.[index]?.zone === 'Grey'}
                                     />
                                 )}
                             />
@@ -361,24 +373,24 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
                     );
                 },
             },
-            {
-                title: '',
-                key: 'action',
-                width: 50,
-                render: (_text: any, _record: any) => {
-                    const index = _record._mappedIndex;
-                    return (
-                    <button
-                        type="button"
-                        className="action-btn"
-                        onClick={() => removeGradationRow(index)}
-                        title="Delete row"
-                    >
-                        <Icon name="waste-bin" />
-                    </button>
-                    );
-                },
-            },
+            // {
+            //     title: '',
+            //     key: 'action',
+            //     width: 50,
+            //     render: (_text: any, _record: any) => {
+            //         const index = _record._mappedIndex;
+            //         return (
+            //         <button
+            //             type="button"
+            //             className="action-btn"
+            //             onClick={() => removeGradationRow(index)}
+            //             title="Delete row"
+            //         >
+            //             <Icon name="waste-bin" />
+            //         </button>
+            //         );
+            //     },
+            // },
         ];
     };
 
@@ -415,7 +427,7 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
                                 {...field}
                                 value={field.value}
                                 onChange={(val) => field.onChange(val)}
-                                placeholder="+380..."
+                                placeholder="+..."
                                 errorMessage={error?.message}
                                 errors={errors}
                             />
@@ -600,16 +612,16 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
                                         </p>
                                     </div>
 
-                                    <Button
-                                        type="button"
-                                        size={ButtonSize.SMALL}
-                                        variant={ButtonVariant.SECONDARY}
-                                        icon="add-table-row"
-                                        iconOnTheRight
-                                        onClick={addGradationRow}
-                                    >
-                                        Add row
-                                    </Button>
+                                    {/*<Button*/}
+                                    {/*    type="button"*/}
+                                    {/*    size={ButtonSize.SMALL}*/}
+                                    {/*    variant={ButtonVariant.SECONDARY}*/}
+                                    {/*    icon="add-table-row"*/}
+                                    {/*    iconOnTheRight*/}
+                                    {/*    onClick={addGradationRow}*/}
+                                    {/*>*/}
+                                    {/*    Add row*/}
+                                    {/*</Button>*/}
                                 </div>
 
 
@@ -620,27 +632,27 @@ const AntiFraudSettings: React.FC<AntiFraudSettingsPropsType> = ({antiFraudData,
                                         pagination={false}
                                         scroll={{ x: 'max-content' }}
                                         rowKey="id"
-                                        onRow={(_record) => {
-                                            const isDraggable = draggableRowIndex === _record._mappedIndex;
-                                            return {
-                                                draggable: isDraggable,
-                                                onDragStart: (e: React.DragEvent) => { 
-                                                    if (!isDraggable) {
-                                                        e.preventDefault();
-                                                        return;
-                                                    }
-                                                    dragIndex.current = _record._mappedIndex; 
-                                                },
-                                                onDragOver: (e: React.DragEvent) => { e.preventDefault(); },
-                                                onDrop: () => {
-                                                    if (dragIndex.current !== null && dragIndex.current !== _record._mappedIndex) {
-                                                        moveGradationRow(dragIndex.current, _record._mappedIndex);
-                                                    }
-                                                    dragIndex.current = null;
-                                                },
-                                                style: isDraggable ? { cursor: 'grab' } : {},
-                                            };
-                                        }}
+                                        // onRow={(_record) => {
+                                        //     const isDraggable = draggableRowIndex === _record._mappedIndex;
+                                        //     return {
+                                        //         draggable: isDraggable,
+                                        //         onDragStart: (e: React.DragEvent) => {
+                                        //             if (!isDraggable) {
+                                        //                 e.preventDefault();
+                                        //                 return;
+                                        //             }
+                                        //             dragIndex.current = _record._mappedIndex;
+                                        //         },
+                                        //         onDragOver: (e: React.DragEvent) => { e.preventDefault(); },
+                                        //         onDrop: () => {
+                                        //             if (dragIndex.current !== null && dragIndex.current !== _record._mappedIndex) {
+                                        //                 moveGradationRow(dragIndex.current, _record._mappedIndex);
+                                        //             }
+                                        //             dragIndex.current = null;
+                                        //         },
+                                        //         style: isDraggable ? { cursor: 'grab' } : {},
+                                        //     };
+                                        // }}
                                     />
                                 </div>
                             </div>

@@ -32,6 +32,9 @@ type ResultsTableProps = {
     onPageSizeChange?: (size: number) => void;
     onSortChange?: (sortBy: string, sortOrder: "asc" | "desc") => void;
     onRowClick?: (uuid: string) => void;
+    isResendMode?: boolean;
+    selectedRowKeys?: string[];
+    onSelectChange?: (selectedRowKeys: string[]) => void;
 };
 
 const ACTION_COLORS: Record<string, string> = {
@@ -52,6 +55,9 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
     onPageSizeChange,
     onSortChange,
     onRowClick,
+    isResendMode = false,
+    selectedRowKeys = [],
+    onSelectChange,
 }) => {
     const [current, setCurrent] = useState(currentPage);
     const [pageSize, setPageSize] = useState(propPageSize);
@@ -116,9 +122,12 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
             key: "numberForDisplay",
             render: (_val, record) => (
                 <TableCell minWidth="120px" maxWidth="180px" contentPosition="left" childrenBefore={
-                    <span className={`${styles["cell-text"]} ${styles["cell-text--phone"]}`}>
-                        {record.shipmentOrder==='None' ? <Icon name={'phone'}/> : <Icon name={'orders'}/>}{record.numberForDisplay || "—"}
-                    </span>
+                    <div className={styles["cell-text-container"]}>
+                        <span className={`${styles["cell-text"]} ${styles["cell-text--phone"]}`}>
+                            {record.shipmentOrder==='None' ? <Icon name={'phone'}/> : <Icon name={'orders'}/>}{record.numberForDisplay || "—"}
+                        </span>
+                        {record.shipmentOrder!=='None' ? <span className={styles["cell-text--status"]}>{record.orderStatus}</span> : null}
+                    </div>
                 } />
             ),
             onHeaderCell: () => ({ onClick: () => handleHeaderCellClick("shipmentOrder") }),
@@ -143,7 +152,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
             responsive: ["sm"],
         },
         {
-            title: headerCell("Buyout %", "successfullPercent", "140px", "180px", "Average fraud score percentage"),
+            title: headerCell("Buyout %", "buyout", "140px", "180px", "Average fraud score percentage"),
             dataIndex: "averagePercent",
             key: "averagePercent",
             render: (_val, record) => {
@@ -151,21 +160,21 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                 return (
                     <TableCell minWidth="140px" maxWidth="180px" contentPosition="left" childrenBefore={
                         <div className={styles["score-cell"]}>
-                            <div className={styles["score-bar-track"]} title={`${record.successfullPercent}%`}>
+                            <div className={styles["score-bar-track"]} title={`${record.buyout}%`}>
                                 {record.subscription !== 'Basic' ? <div
                                     className={styles["score-bar-fill"]}
                                     style={{
-                                        width: `${Math.min(record.successfullPercent, 100)}%`,
+                                        width: `${Math.min(record.buyout, 100)}%`,
                                         backgroundColor: zoneColor,
                                     }}
                                 /> : null}
                             </div>
-                            <span className={styles["score-value"]}>{record.successfullPercent}%</span>
+                            <span className={styles["score-value"]}>{record.buyout}%</span>
                         </div>
                     } />
                 );
             },
-            onHeaderCell: () => ({ onClick: () => handleHeaderCellClick("successfullPercent") }),
+            onHeaderCell: () => ({ onClick: () => handleHeaderCellClick("buyout") }),
             responsive: ["md"],
         },
         {
@@ -248,6 +257,18 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
         if (onPageSizeChange) onPageSizeChange(size);
     };
 
+    const rowSelection = isResendMode
+        ? {
+              selectedRowKeys,
+              onChange: (newSelectedRowKeys: React.Key[]) => {
+                  onSelectChange?.(newSelectedRowKeys as string[]);
+              },
+              getCheckboxProps: (record: AntiFraudResultType) => ({
+                  disabled: record.action !== ANTIFRAUD_ACTIONS.Block || record.shipmentOrder === 'None',
+              }),
+          }
+        : undefined;
+
     return (
         <div className={`table ${styles["results-table-wrapper"]} `}>
             <div className='filter-and-pagination-container'>
@@ -267,11 +288,17 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                 <Table<AntiFraudResultType>
                     dataSource={results.map(r => ({ ...r, key: r.uuid }))}
                     columns={visibleColumns}
+                    rowSelection={rowSelection}
                     pagination={false}
                     scroll={{ x: 'max-content' }}
                     loading={{ spinning: isLoading && results.length === 0, indicator: <Loader  /> }}
                     onRow={(record) => ({
-                        onClick: () => onRowClick?.(record.uuid),
+                        onClick: (e) => {
+                            if ((e.target as HTMLElement).closest('.ant-table-selection-column') || (e.target as HTMLElement).closest('.ant-checkbox-wrapper')) {
+                                return;
+                            }
+                            onRowClick?.(record.uuid);
+                        },
                         className: styles["results-row"],
                     })}
                     locale={{ emptyText: isLoading ? " " : "No results found" }}

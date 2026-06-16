@@ -59,3 +59,12 @@ export const getAntiFraudResultByPhoneNumber = async (data: {
 }): Promise<ApiResponseType<{ data: string }>> => {
     return api.post(`/GetAntiFraudResultByPhoneNumber`, data);
 };
+
+export const antiFraudAllowOrder = async (data: {
+    token: string;
+    alias: string;
+    ui?: string;
+    orderUuid: string;
+}): Promise<ApiResponseType<{ data: string }>> => {
+    return api.post(`/AntiFraudAllowOrder`, data);
+};

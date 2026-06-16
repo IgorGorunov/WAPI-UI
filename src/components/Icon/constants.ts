@@ -126,6 +126,7 @@ import Pallet from '@/assets/icons/pallet-freight.svg';
 import AntiFraud from '@/assets/icons/fraud-protect.svg';
 import Approval from '@/assets/icons/approval.svg';
 import Phone from '@/assets/icons/phone.svg';
+import SendWhite from '@/assets/icons/send-white.svg';
 
 export const icons = {
     "arrow-left": ArrowLeft,
@@ -256,4 +257,5 @@ export const icons = {
     'anti-fraud': AntiFraud,
     'approval': Approval,
     'phone': Phone,
+    'send-white': SendWhite,
 };
