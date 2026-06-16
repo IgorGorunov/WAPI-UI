@@ -48,10 +48,22 @@
         transform: scale(1.2);
     }
 
+    &-container {
+        display: flex;
+        flex-direction: column;
+    }
+
     &--phone {
         display: flex;
         gap: 6px;
         align-items: center;
+    }
+
+    &--status {
+        display: block;
+        font-size: 9px;
+        margin-top: -3px;
+        padding-left: 32px;
     }
 }
 

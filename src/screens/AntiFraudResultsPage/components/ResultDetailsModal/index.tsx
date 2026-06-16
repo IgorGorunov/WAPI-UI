@@ -33,7 +33,7 @@ function pct(value: number, total: number): string {
 }
 
 function isPremiumProductType(
-    types: AntiFraudResultObject["antiFraudResult"]["productsTypes"]
+    types: AntiFraudResultObject["result"]["productsTypes"]
 ): types is PremiumProductTypeResultsType {
     return types !== undefined && types !== null && typeof types === "object" && !Array.isArray(types);
 }
@@ -51,10 +51,11 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
     const zoneColor = ZONE_COLORS[detail?.zone as keyof typeof ZONE_COLORS] || "#7D8FB3";
     const actionColor = detail ? ACTION_COLORS[detail.action] || "var(--color-light-blue-gray)" : "transparent";
 
-    const ext = detail?.antiFraudResult;
+    const ext = detail?.result;
     const isExtended = !!ext;
 
     const isStandard = row.subscription === 'Basic';
+    const isPremium = row.subscription === 'Premium';
 
     const premiumProducts =
         isExtended && ext.productsTypes && isPremiumProductType(ext.productsTypes)
@@ -104,7 +105,7 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                         {!isStandard ? <div className={styles["summary-header__item"]}>
                             <span className={styles["label"]}>Buyout %</span>
                             <span className={`${styles["value"]} `}>
-                                {detail?.antiFraudResult?.ransom}%
+                                {detail?.result?.buyout}%
                             </span>
                         </div> : null}
                     </div>
@@ -159,17 +160,30 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                                         </span>
                                     </div>
 
-                                    <div className={`${styles["field"]} ${styles["field--status"]}`}>
+                                    <div className={`${styles["field"]} ${isPremium ? '' : styles["field--status"]}`}>
                                         <span className={styles["label"]}>Status</span>
                                         <span className={styles["value"]}>{detail.status || "—"}</span>
                                     </div>
+
+                                    {isPremium ? <div className={styles["field"]}>
+                                        <span className={styles["label"]}>Date of the last order</span>
+                                        <span className={styles["value"]}>
+                                            {detail.result.lastOrderDate ? (
+                                                <>
+                                                    <span className={styles["date"]}>{formatDateToDisplayString(new Date(detail.result.lastOrderDate))}</span>
+                                                    <span className={styles["time"]}>{formatTimeStringFromString(detail.result.lastOrderDate)}</span>
+                                                </>
+                                            ) : null}
+                                        </span>
+                                    </div> : null}
                                 </div>
+
                             </div>
 
                             {isExtended && (
                                 <div className={styles["section"]}>
                                     <p className={`title-h4 ${styles["section-title"]}`}>Extended Statistics</p>
-                                    <div className={`${styles["stats-grid"]} ${(premiumProducts) ? styles["has-premium"] : ""}`}>
+                                    <div className={`${styles["stats-grid"]} ${(premiumProducts) ? styles["has-premium"] : ""} ${(isPremium) ? styles["is-premium"] : ""}`}>
                                         <div className={`${styles["stat-card"]} ${styles["stat-card--blue"]}`}>
                                             <span className={`${styles["stat-label"]}`}>Total orders</span>
                                             <span className={styles["stat-value"]}>{ext.ordersCount ?? "—"}</span>
@@ -177,9 +191,9 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                                         <div className={`${styles["stat-card"]} ${styles["stat-card--green"]}`}>
                                             <span className={styles["stat-label"]}>Successful</span>
                                             <span className={styles["stat-value"]}>
-                                                {ext.succesfull ?? "—"}
+                                                {ext.successful ?? "—"}
                                                 <span className={styles["stat-sub"]}>
-                                                    {pct(ext.succesfull, ext.ordersCount)}
+                                                    {pct(ext.successful, ext.ordersCount)}
                                                 </span>
                                             </span>
                                         </div>
@@ -192,10 +206,19 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                                                 </span>
                                             </span>
                                         </div>
-                                        {/*<div className={styles["stat-card"]}>*/}
-                                        {/*    <span className={styles["stat-label"]}>Ransom</span>*/}
-                                        {/*    <span className={styles["stat-value"]}>{ext.ransom ?? "—"}</span>*/}
-                                        {/*</div>*/}
+                                        {isPremium ? (
+                                                <div className={`${styles["stat-card"]} ${styles["stat-card--blue"]}`}>
+                                                    <span className={styles["stat-label"]}>In transit</span>
+                                                    <span className={styles["stat-value"]}>
+                                                        {ext.inTransit ?? "—"}
+                                                                <span className={styles["stat-sub"]}>
+                                                            {pct(ext.inTransit, ext.ordersCount)}
+                                                        </span>
+                                                    </span>
+                                                    {/*<span className={styles["stat-value"]}>{ext.inTransit ?? "—"}</span>*/}
+                                                </div> )
+                                            : null
+                                        }
                                         <div className={styles["stat-card"]}>
                                             <span className={styles["stat-label"]}>Avg. check</span>
                                             <span className={styles["stat-value"]}>{ext.averageCheck ?? "—"}</span>
@@ -223,26 +246,31 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                                             <p className={`title-h4 ${styles["section-title"]} `}>Product types</p>
                                             <div className={styles["premium-products__table"]}>
                                                 <div className={`${styles["premium-products__header"]} ${hasOrder ? styles["has-order"] : ""}`}>
-                                                    <span style={{textAlign:"start"}}>Product</span>
+                                                    <span style={{justifyContent:"start"}}>Product</span>
                                                     <span>Orders</span>
                                                     <span>Success</span>
                                                     <span>Failures</span>
+                                                    <span>In transit</span>
                                                     <span>Avg. check</span>
                                                     <span>Avg. quantity</span>
                                                     <span>Buyout,%</span>
+                                                    {/*<span>Zone</span>*/}
                                                     {hasOrder ? <span>Order has such product</span> : null}
                                                 </div>
                                                 {Object.entries(premiumProducts).map(([productName, data], i) => {
                                                     if (!productName || !data) return null;
                                                     return (
-                                                        <div key={i} className={`${styles["premium-products__row"]}  ${hasOrder ? styles["has-order"] : ""}`}>
+                                                        //className={`${styles['product-with-zone']} ${styles[data.zone]}`}
+                                                        <div key={i} className={`${styles["premium-products__row"]}  ${hasOrder ? styles["has-order"] : ""} ${styles['product-with-zone']} ${styles[data.zone]}`}>
                                                             <span style={{textAlign:"start"}} title={productName}>{productName}</span>
                                                             <span>{data.ordersCount}</span>
-                                                            <span className={styles["green"]}>{data.succesfull}</span>
+                                                            <span className={styles["green"]}>{data.successful}</span>
                                                             <span className={styles["red"]}>{data.failure}</span>
+                                                            <span className={styles["blue"]}>{data.inTransit}</span>
                                                             <span>{data.averageCheck}</span>
                                                             <span>{data.averageProductsCount}</span>
-                                                            <span>{data.ransom}</span>
+                                                            <span>{data.buyout}</span>
+                                                            {/*<span>{data.zone}</span>*/}
                                                             {hasOrder ? (
                                                                 <span>
                                                                     {data.orderHasProduct ? <Icon name="big-check"/> : <Icon name="close"/>}

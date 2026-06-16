@@ -9,7 +9,7 @@ import useAuth from "@/context/authContext";
 import useTenant from "@/context/tenantContext";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays,} from "@/utils/date";
-import {getAntiFraudResultDetails, getAntiFraudResultList} from "@/services/antiFraud";
+import {getAntiFraudResultDetails, getAntiFraudResultList, antiFraudAllowOrder} from "@/services/antiFraud";
 import {AntiFraudResultDetailsCache, AntiFraudResultObject, AntiFraudResultType,} from "./types";
 import ResultsTable from "./components/ResultsTable";
 import ResultDetailsModal from "./components/ResultDetailsModal";
@@ -25,7 +25,7 @@ import {AccessActions, AccessObjectTypes} from "@/types/auth";
 import {FILTER_TYPE, STATUS_MODAL_TYPES} from "@/types/utility";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import {FilterComponentType} from "@/types/filters";
-import {ZONE_COLORS} from "@/screens/AntiFraudSettingsPage/types";
+import {ZONE_COLORS, ANTIFRAUD_ACTIONS} from "@/screens/AntiFraudSettingsPage/types";
 
 const AntiFraudResultsPage = () => {
     const { tenantData: { alias } } = useTenant();
@@ -48,6 +48,10 @@ const AntiFraudResultsPage = () => {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [appliedSearch, setAppliedSearch] = useState("");
+
+    const [isResendMode, setIsResendMode] = useState(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+    const [isResending, setIsResending] = useState(false);
 
     const [fullTextSearch, setFullTextSearch] = useState(false);
     const handleFullTextSearchChange = () => {
@@ -164,7 +168,7 @@ const AntiFraudResultsPage = () => {
         return filter;
     });
 
-    const isFiltersChosenVisible = appliedFilterZone.length > 0 || appliedFilterSuccessPercent.length > 0;
+    // const isFiltersChosenVisible = appliedFilterZone.length > 0 || appliedFilterSuccessPercent.length > 0;
 
     const [sortColumn, setSortColumn] = useState<keyof AntiFraudResultType>("requestPeriod");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -256,10 +260,16 @@ const AntiFraudResultsPage = () => {
             })
             .filter(row => {
                 if (!appliedFilterSuccessPercent.length) return true;
-                const percent = row.subscription === 'Basic' ? -1 : row.successfullPercent ?? 0;
+                const percent = row.subscription === 'Basic' ? -1 : row.buyout ?? 0;
                 const min = Number(appliedFilterSuccessPercent[0]);
                 const max = Number(appliedFilterSuccessPercent[1]);
                 return percent >= min && percent <= max;
+            })
+            .filter(row => {
+                if (isResendMode) {
+                    return row.action === ANTIFRAUD_ACTIONS.Block && row.shipmentOrder !== 'None';
+                }
+                return true;
             })
             .sort((a, b) => {
                 const av = a[sortColumn];
@@ -267,7 +277,7 @@ const AntiFraudResultsPage = () => {
                 const cmp = av > bv ? 1 : av < bv ? -1 : 0;
                 return sortDirection === "asc" ? cmp : -cmp;
             });
-    }, [allResults, appliedSearch, fullTextSearch, sortColumn, sortDirection, appliedFilterZone, appliedFilterSuccessPercent]);
+    }, [allResults, appliedSearch, fullTextSearch, sortColumn, sortDirection, appliedFilterZone, appliedFilterSuccessPercent, isResendMode]);
 
     const pagedResults = useMemo<AntiFraudResultType[]>(() => {
         const start = (currentPage - 1) * pageSize;
@@ -394,12 +404,81 @@ const AntiFraudResultsPage = () => {
         setIsPhoneModalOpen(true);
     };
 
-    const handlePhoneCheckSuccess = (data: AntiFraudResultType) => {
+    const handlePhoneCheckSuccess = (data: AntiFraudResultObject) => {
         setIsPhoneModalOpen(false);
 
-        setSelectedRow(data);
-        setModalDetail(data?.result);
+        setSelectedRow(data as unknown as AntiFraudResultType);
+        setModalDetail(data);
         fetchResults();
+    };
+
+    const handleSendOrders = async () => {
+        if (!selectedRowKeys.length) return;
+        setIsResending(true);
+        try {
+            const results = await Promise.allSettled(
+                selectedRowKeys.map(uuid => antiFraudAllowOrder({ token, alias, ui, orderUuid: uuid }))
+            );
+
+            const errors: string[] = [];
+            results.forEach((result, index) => {
+                // const uuid = selectedRowKeys[index];
+                // const orderItem = allResults.find(item => item.uuid === uuid);
+                // const orderLabel = orderItem?.shipmentOrder || uuid;
+
+                if ( 'value' in result && 'success' in result?.value?.data && !result?.value?.data?.success) {
+                    const err = result?.value?.data;
+                    const errMessage = 'errorMessage' in err ? (err?.errorMessage as string[] || []).map(item =>item == 'Order is already created' ? 'Order is already processed' : item ).join(', ') : 'Unknown error';
+                    const uuid = selectedRowKeys[index];
+                    const orderItem = allResults.find(item => item.uuid === uuid);
+                    const orderLabel = orderItem?.shipmentOrder || uuid;
+                    errors.push(`Order ${orderLabel}: ${errMessage}`);
+                }
+            });
+
+            if (errors.length > 0) {
+                setModalStatusInfo({
+                    statusModalType: STATUS_MODAL_TYPES.ERROR,
+                    title: "Resend Errors",
+                    subtitle: `Failed to resend ${errors.length} order(s):\n${errors.join('\n')}`,
+                    onClose: () => {
+                        setShowStatusModal(false);
+                        setIsResendMode(false);
+                        setSelectedRowKeys([]);
+                        fetchResults();
+                    }
+                });
+                setShowStatusModal(true);
+            } else {
+                setModalStatusInfo({
+                    statusModalType: STATUS_MODAL_TYPES.SUCCESS,
+                    title: "Success",
+                    subtitle: `Successfully resent ${selectedRowKeys.length} order(s).`,
+                    onClose: () => {
+                        setShowStatusModal(false);
+                        setIsResendMode(false);
+                        setSelectedRowKeys([]);
+                        fetchResults();
+                    }
+                });
+                setShowStatusModal(true);
+            }
+        } catch (err) {
+            setModalStatusInfo({
+                statusModalType: STATUS_MODAL_TYPES.ERROR,
+                title: "Error",
+                subtitle: "An unexpected error occurred. Please try again.",
+                onClose: () => {
+                    setShowStatusModal(false);
+                    setIsResendMode(false);
+                    setSelectedRowKeys([]);
+                    fetchResults();
+                }
+            });
+            setShowStatusModal(true);
+        } finally {
+            setIsResending(false);
+        }
     };
 
     return (
@@ -410,6 +489,32 @@ const AntiFraudResultsPage = () => {
                 {/*{isLoading && <Loader />}*/}
 
                 <Header pageTitle="WAPI Checker Results" toRight >
+                    {isResendMode ? (
+                        <>
+                            <Button
+                                disabled={selectedRowKeys.length === 0 || isResending}
+                                onClick={handleSendOrders}
+                                icon="send-white"
+                                iconOnTheRight
+                            >
+                                Send {selectedRowKeys.length} {selectedRowKeys.length === 1 ? 'order' : 'orders'}
+                            </Button>
+                            <Button 
+                                variant={ButtonVariant.SECONDARY}
+                                onClick={() => { setIsResendMode(false); setSelectedRowKeys([]); }}
+                            >
+                                Cancel
+                            </Button>
+                        </>
+                    ) : (
+                        <Button 
+                            icon="send-white"
+                            iconOnTheRight={true}
+                            onClick={() => setIsResendMode(true)}
+                        >
+                            Select orders to resend
+                        </Button>
+                    )}
                     {canCheckPhoneNumber ? <Button icon="biggest-check" iconOnTheRight={true} onClick={handleCheckPhoneNumber}>Check phone</Button> : null}
                 </Header>
 
@@ -446,6 +551,9 @@ const AntiFraudResultsPage = () => {
                     pageSize={pageSize}
                     sortBy={sortColumn}
                     sortOrder={sortDirection}
+                    isResendMode={isResendMode}
+                    selectedRowKeys={selectedRowKeys}
+                    onSelectChange={setSelectedRowKeys}
                     onPageChange={handlePageChange}
                     onPageSizeChange={handlePageSizeChange}
                     onSortChange={handleSortChange}

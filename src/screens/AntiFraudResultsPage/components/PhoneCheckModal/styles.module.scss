@@ -7,9 +7,13 @@
     min-width: min(calc(100vw - 34px), 350px);
 
     .error-message {
-        color: var(--status-red);
-        font-size: 14px;
-        margin-top: -8px;
+        //position: absolute;
+        //top: 100%;
+        color: var(--color-error);
+        font-size: 10px;
+        font-weight: bold;
+        margin-top: -20px;
+        padding: 0 6px;
     }
 
     .actions {

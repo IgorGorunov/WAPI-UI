@@ -3,22 +3,26 @@ import {AntiFraudActionType, ANTIFRAUD_ACTIONS} from "@/screens/AntiFraudSetting
 export type PremiumProductTypeResultsType = {
     [key: string]: {
         ordersCount: number;
-        succesfull: number;
+        successful: number;
         failure: number;
-        ransom: number;
+        buyout: number;
+        inTransit: number;
         averageCheck: number;
         averageProductsCount: number;
         orderHasProduct: boolean;
+        zone: string;
     }
 }
 
 export type AntiFraudExtendedResultsType = {
     ordersCount: number,
-    succesfull: number;
+    successful: number;
     failure: number;
-    ransom: number;
+    inTransit: number;
+    buyout: number;
     averageCheck: number;
     averageProductsCount: number;
+    lastOrderDate: string;
     productsTypes: string[] | PremiumProductTypeResultsType;
 }
 
@@ -31,7 +35,13 @@ export type AntiFraudResultObject = {
     status: string,
 
     //extended
-    antiFraudResult?: AntiFraudExtendedResultsType,
+    result?: AntiFraudExtendedResultsType,
+    uuid?: string,
+    requestPeriod?: string,
+    shipmentOrder?: string,
+    phoneNumber?: string,
+    buyout?: number,
+    accrualServices?: string,
 }
 
 export type AntiFraudResultType = {
@@ -40,13 +50,14 @@ export type AntiFraudResultType = {
     shipmentOrder: string;
     phoneNumber: string;
     subscription: string;
-    successfullPercent: number;
+    buyout: number;
     zone: string;
     action: ANTIFRAUD_ACTIONS;
     accrualServices: string; //for now, change later
     status: string;
     numberForDisplay?: string;
     result?: AntiFraudResultObject;
+    orderStatus?: string;
 }
 
 /** In-memory cache for extra-info detail responses, keyed by result uuid */
