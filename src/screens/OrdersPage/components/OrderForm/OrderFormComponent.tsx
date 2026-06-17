@@ -27,7 +27,7 @@ import Icon from "@/components/Icon";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import { message, Table } from "antd";
+import { Table } from "antd";
 import DropZone from "@/components/Dropzone";
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import Services from "./Services";
@@ -108,7 +108,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
     const currentDate = new Date();
 
-    const [isSelfCollect, setIsSelfCollect] = useState(!!orderData?.receiverPickUpID || !!orderData?.receiverPickUpName);
+    const [isSelfCollect, setIsSelfCollect] = useState(!!orderData?.receiverPickUpID || !!orderData?.receiverPickUpName || !!orderData?.receiverPickUpAddress || !!orderData?.receiverPickUpCity || !!orderData?.receiverPickUpAddress);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
