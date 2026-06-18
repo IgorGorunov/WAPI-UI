@@ -19,22 +19,28 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(
         classNames = '',
         name,
         label = '',
-        type = 'text',
+        // type = 'text',
         onChange,
         isRequired = false,
-        placeholder = '',
+        // placeholder = '',
         errorMessage,
         disabled = false,
         value = '',
-        rules,
-        errors,
-        needToasts = true,
+        // rules,
+        // errors,
+        // needToasts = true,
         width,
         hint = '',
-        noCounters = true,
-        valPhone,
-        onPhoneChange
+        // noCounters = true,
+        // valPhone,
+        // onPhoneChange,
+        onKeyDownFn,
     }, ref) => {
+
+        const onKeyDown = (e) => {
+            if (e.key === 'Enter') e.preventDefault();
+            if (onKeyDownFn && e.key === "Enter") onKeyDownFn();
+        }
 
         const handleChange = useCallback((phoneNumber: E164Number) => {
             if (onChange) onChange(phoneNumber);
@@ -51,6 +57,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(
                         value={value as E164Number}
                         onChange={handleChange}
                         disabled={disabled}
+
                     />
                     {errorMessage && <p className={`${styles.error || 'error'} error`}>{errorMessage}</p>}
                 </div>

@@ -10,7 +10,7 @@ import useTenant from "@/context/tenantContext";
 import {DateRangeType} from "@/types/dashboard";
 import {formatDateToString, getLastFewDays,} from "@/utils/date";
 import {getAntiFraudResultDetails, getAntiFraudResultList, antiFraudAllowOrder} from "@/services/antiFraud";
-import {AntiFraudResultDetailsCache, AntiFraudResultObject, AntiFraudResultType,} from "./types";
+import {AntiFraudResultDetailsCache, AntiFraudResultObject, AntiFraudResultType, getStatusColor,} from "./types";
 import ResultsTable from "./components/ResultsTable";
 import ResultDetailsModal from "./components/ResultDetailsModal";
 import PhoneCheckModal from "./components/PhoneCheckModal";
@@ -39,7 +39,7 @@ const AntiFraudResultsPage = () => {
     }, [])
 
     const [currentPeriod, setCurrentPeriod] = useState<DateRangeType>({
-        startDate: getLastFewDays(new Date(), 30),
+        startDate: getLastFewDays(new Date(), 7),
         endDate: new Date(),
     });
 
@@ -80,8 +80,12 @@ const AntiFraudResultsPage = () => {
     const [isOpenFilterSuccessPercent, setIsOpenFilterSuccessPercent] = useState(false);
     const [filterSuccessPercent, setFilterSuccessPercent] = useState<string[]>([]);
 
+    const [isOpenFilterOrderStatus, setIsOpenFilterOrderStatus] = useState(false);
+    const [filterOrderStatus, setFilterOrderStatus] = useState<string[]>([]);
+
     const [appliedFilterZone, setAppliedFilterZone] = useState<string[]>([]);
     const [appliedFilterSuccessPercent, setAppliedFilterSuccessPercent] = useState<string[]>([]);
+    const [appliedFilterOrderStatus, setAppliedFilterOrderStatus] = useState<string[]>([]);
 
     const calcFilterAmount = useCallback((property: keyof AntiFraudResultType, value: string) => {
         return allResults.filter(row => row[property] === value).length || 0;
@@ -97,6 +101,16 @@ const AntiFraudResultsPage = () => {
         }));
     }, [allResults, calcFilterAmount]);
 
+    const transformedOrderStatuses = useMemo(() => {
+        const uniqueStatuses = Array.from(new Set(allResults.map(r => r.orderStatus).filter(Boolean))) as string[];
+        return uniqueStatuses.map(status => ({
+            value: status,
+            label: status,
+            color: getStatusColor(status) || '#000000',
+            amount: calcFilterAmount('orderStatus', status)
+        }));
+    }, [allResults, calcFilterAmount]);
+
     const handleFilterZoneChange = (newZones: string[]) => {
         setFilterZone(newZones);
     };
@@ -105,17 +119,24 @@ const AntiFraudResultsPage = () => {
         setFilterSuccessPercent(newRange);
     };
 
+    const handleFilterOrderStatusChange = (newStatuses: string[]) => {
+        setFilterOrderStatus(newStatuses);
+    };
+
     const applyFilters = () => {
         setAppliedFilterZone(filterZone);
         setAppliedFilterSuccessPercent(filterSuccessPercent);
+        setAppliedFilterOrderStatus(filterOrderStatus);
         setCurrentPage(1);
     };
 
     const handleClearAllFilters = () => {
         setFilterZone([]);
         setFilterSuccessPercent([]);
+        setFilterOrderStatus([]);
         setAppliedFilterZone([]);
         setAppliedFilterSuccessPercent([]);
+        setAppliedFilterOrderStatus([]);
         setCurrentPage(1);
     };
 
@@ -126,8 +147,11 @@ const AntiFraudResultsPage = () => {
         if (filterSuccessPercent.length !== appliedFilterSuccessPercent.length) return true;
         if (filterSuccessPercent.some((v, i) => v !== appliedFilterSuccessPercent[i])) return true;
 
+        if (filterOrderStatus.length !== appliedFilterOrderStatus.length) return true;
+        if (filterOrderStatus.some(s => !appliedFilterOrderStatus.includes(s))) return true;
+
         return false;
-    }, [filterZone, appliedFilterZone, filterSuccessPercent, appliedFilterSuccessPercent]);
+    }, [filterZone, appliedFilterZone, filterSuccessPercent, appliedFilterSuccessPercent, filterOrderStatus, appliedFilterOrderStatus]);
 
     const isOnlyBasic = allResults.length > 0 && allResults.every(r => r.subscription === 'Basic' || r.subscription === 'basic');
 
@@ -146,9 +170,23 @@ const AntiFraudResultsPage = () => {
             onClick: () => { setIsFiltersVisible(true); setIsOpenFilterZone(true); },
             isFiltersVisible: isFiltersVisible,
         },
+        {
+            filterTitle: 'Order status',
+            icon: 'status',
+            filterDescriptions: '',
+            filterOptions: transformedOrderStatuses,
+            filterState: filterOrderStatus,
+            filterType: FILTER_TYPE.UNDERLINE,
+            setFilterState: handleFilterOrderStatusChange,
+            isOpen: isOpenFilterOrderStatus,
+            setIsOpen: setIsOpenFilterOrderStatus,
+            onClose: () => handleFilterOrderStatusChange([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterOrderStatus(true); },
+            isFiltersVisible: isFiltersVisible,
+        },
         ...(isOnlyBasic ? [] : [{
             filterTitle: 'Buyout %',
-            icon: 'status',
+            icon: 'diagram',
             filterType: FILTER_TYPE.SLIDER,
             filterDescriptions: '',
             filterOptions: [{ value: '0', label: '0' }, { value: '100', label: '100' }],
@@ -164,6 +202,7 @@ const AntiFraudResultsPage = () => {
 
     const appliedAntiFraudFilters = antiFraudFilters.map(filter => {
         if (filter.filterTitle === 'Zone') return { ...filter, filterState: appliedFilterZone, onClose: () => { setFilterZone([]); setAppliedFilterZone([]); setCurrentPage(1); } };
+        if (filter.filterTitle === 'Order status') return { ...filter, filterState: appliedFilterOrderStatus, onClose: () => { setFilterOrderStatus([]); setAppliedFilterOrderStatus([]); setCurrentPage(1); } };
         if (filter.filterTitle === 'Buyout %') return { ...filter, filterState: appliedFilterSuccessPercent, onClose: () => { setFilterSuccessPercent([]); setAppliedFilterSuccessPercent([]); setCurrentPage(1); } };
         return filter;
     });
@@ -271,13 +310,17 @@ const AntiFraudResultsPage = () => {
                 }
                 return true;
             })
+            .filter(row => {
+                if (!appliedFilterOrderStatus.length) return true;
+                return row.orderStatus && appliedFilterOrderStatus.includes(row.orderStatus);
+            })
             .sort((a, b) => {
                 const av = a[sortColumn];
                 const bv = b[sortColumn];
                 const cmp = av > bv ? 1 : av < bv ? -1 : 0;
                 return sortDirection === "asc" ? cmp : -cmp;
             });
-    }, [allResults, appliedSearch, fullTextSearch, sortColumn, sortDirection, appliedFilterZone, appliedFilterSuccessPercent, isResendMode]);
+    }, [allResults, appliedSearch, fullTextSearch, sortColumn, sortDirection, appliedFilterZone, appliedFilterSuccessPercent, appliedFilterOrderStatus, isResendMode]);
 
     const pagedResults = useMemo<AntiFraudResultType[]>(() => {
         const start = (currentPage - 1) * pageSize;

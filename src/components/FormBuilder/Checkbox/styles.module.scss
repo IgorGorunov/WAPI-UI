@@ -77,8 +77,10 @@
       }
     }
 
-    &-text {
+    &-text-span {
       display: inline-block;
+      border: solid transparent;
+      border-width: 0 0 2px;
     }
 
     &-extra-text {

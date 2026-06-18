@@ -20,6 +20,7 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
     isCheckboxHidden= false,
     circleColor,
     textColor,
+    underlineColor,
     isCountry = false,
     flagBefore = false,
     countryName='',
@@ -47,9 +48,9 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
             <span className={`${styles['checkbox-label-wrapper'] || 'checkbox-label-wrapper'} checkbox-label-wrapper`} >
               {circleColor ? <span className='colored-circle' style={{ backgroundColor: circleColor}}></span> : null}
 
-              <span className={`${styles['checkbox-label-text'] || 'checkbox-label-text'} checkbox-label-text`} style={{ color: textColor || 'inherit' }}>
+              <span className={`${styles['checkbox-label-text'] || 'checkbox-label-text'} checkbox-label-text`} >
                 {isCountry && countryName && flagBefore ? <span className={`fi fi-${countryName.toLowerCase()} flag-icon flag-first`}></span> : null}
-                {label}
+                <span className={styles['checkbox-label-text-span']} style={{ color: textColor || 'inherit', borderBottomColor: underlineColor || 'transparent' }}>{label}</span>
                 {isCountry && countryName && !flagBefore ? <span className={`fi fi-${countryName.toLowerCase()} flag-icon`}></span> : null}
                 {extraLabel ? <span className={`${styles['checkbox-label-extra-text'] || 'checkbox-label-extra-text'} checkbox-label-extra-text`}>{extraLabel}</span> : null }
               </span>

@@ -188,7 +188,7 @@ export const DetailsFields = (
         width: WidthType.w50,
         classNames: "",
         isDisplayed: newObject,
-        fieldDescription: 'Depends on selected Courier service. If field is not editable, there are no last mile services available for the selected courier service.'
+        fieldDescription: ['Depends on selected Courier service. If field is not editable, there are no last mile services available for the selected courier service.'],
     },
     // {
     //     fieldType: FormFieldTypes.TEXT,
@@ -241,7 +241,7 @@ export const DetailsFields = (
         width: WidthType.w25,
         classNames: "",
         isDisplayed: !newObject,
-        fieldDescription: 'Depends on selected Courier service. If field is not editable, there are no last mile services available for the selected courier service.'
+        fieldDescription: ['Depends on selected Courier service. If field is not editable, there are no last mile services available for the selected courier service.'],
     },
     {
         fieldType: FormFieldTypes.TEXT,

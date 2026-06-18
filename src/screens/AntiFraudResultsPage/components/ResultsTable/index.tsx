@@ -6,7 +6,7 @@ import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Loader from "@/components/Loader";
 import Icon from "@/components/Icon";
-import { AntiFraudResultType } from "@/screens/AntiFraudResultsPage/types";
+import {AntiFraudResultType, getStatusColor} from "@/screens/AntiFraudResultsPage/types";
 import {ZONE_COLORS, ANTIFRAUD_ACTIONS, SUBSCRIPTION_OPTIONS} from "@/screens/AntiFraudSettingsPage/types";
 import { PageOptions } from "@/constants/pagination";
 import {
@@ -126,7 +126,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                         <span className={`${styles["cell-text"]} ${styles["cell-text--phone"]}`}>
                             {record.shipmentOrder==='None' ? <Icon name={'phone'}/> : <Icon name={'orders'}/>}{record.numberForDisplay || "—"}
                         </span>
-                        {record.shipmentOrder!=='None' ? <span className={styles["cell-text--status"]}>{record.orderStatus}</span> : null}
+                        {record.shipmentOrder!=='None' ? <span className={styles["cell-text--status"]} style={{borderColor: getStatusColor(record.orderStatus)}}>{record.orderStatus}</span> : null}
                     </div>
                 } />
             ),

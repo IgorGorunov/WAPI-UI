@@ -17,13 +17,14 @@ const ToggleSwitch =  forwardRef<HTMLInputElement, FieldPropsType>(({
         hideTextOnMobile = false,
         hint='',
         disabled = false,
+        fieldDescription = [],
         ...otherProps
    },ref) => {
 
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`} position='left'>
             <div
-                className={`${styles['toggle-switch'] || 'toggle-switch'} ${classNames ? classNames.split(' ').map(item=> styles[item]).join(' ') : ""} ${hideTextOnMobile ? `${styles['hide-text-on-mobile'] || 'hide-text-on-mobile'} hide-text-on-mobile` : ''}`}>
+                className={`${styles['toggle-switch'] || 'toggle-switch'} ${errorMessage ? styles['has-error'] : ""} ${classNames ? classNames.split(' ').map(item=> styles[item]).join(' ') : ""} ${hideTextOnMobile ? `${styles['hide-text-on-mobile'] || 'hide-text-on-mobile'} hide-text-on-mobile` : ''}`}>
                 <input
                     {...otherProps}
                     className={`${styles['toggle-switch-checkbox']}`}
@@ -48,6 +49,13 @@ const ToggleSwitch =  forwardRef<HTMLInputElement, FieldPropsType>(({
                 </label>
                 <span className={`${styles['toggle-switch-label-text'] || 'toggle-switch-label-text'} toggle-switch-label-text`}>{label}</span>
             </div>
+            {errorMessage && <p className={styles['error']}>{errorMessage}</p>}
+            {fieldDescription?.length ? (
+                    <div className={styles['field-description-wrapper']}>
+                        {fieldDescription.map(item => <p className={`${styles['field-description-item']}`}>{item}</p> )}
+                    </div>)
+                : null
+            }
         </TutorialHintTooltip>
     );
 });
