@@ -183,7 +183,7 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                             {isExtended && (
                                 <div className={styles["section"]}>
                                     <p className={`title-h4 ${styles["section-title"]}`}>Extended Statistics</p>
-                                    <div className={`${styles["stats-grid"]} ${(premiumProducts) ? styles["has-premium"] : ""} ${(isPremium) ? styles["is-premium"] : ""}`}>
+                                    <div className={`${styles["stats-grid"]} ${(premiumProducts) ? styles["has-premium"] : ""}`}>
                                         <div className={`${styles["stat-card"]} ${styles["stat-card--blue"]}`}>
                                             <span className={`${styles["stat-label"]}`}>Total orders</span>
                                             <span className={styles["stat-value"]}>{ext.ordersCount ?? "—"}</span>
@@ -206,19 +206,17 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                                                 </span>
                                             </span>
                                         </div>
-                                        {isPremium ? (
-                                                <div className={`${styles["stat-card"]} ${styles["stat-card--blue"]}`}>
-                                                    <span className={styles["stat-label"]}>In transit</span>
-                                                    <span className={styles["stat-value"]}>
-                                                        {ext.inTransit ?? "—"}
-                                                                <span className={styles["stat-sub"]}>
-                                                            {pct(ext.inTransit, ext.ordersCount)}
-                                                        </span>
-                                                    </span>
-                                                    {/*<span className={styles["stat-value"]}>{ext.inTransit ?? "—"}</span>*/}
-                                                </div> )
-                                            : null
-                                        }
+
+                                        <div className={`${styles["stat-card"]} ${styles["stat-card--blue"]}`}>
+                                            <span className={styles["stat-label"]}>In transit</span>
+                                            <span className={styles["stat-value"]}>
+                                                {ext.inTransit ?? "—"}
+                                                        <span className={styles["stat-sub"]}>
+                                                    {pct(ext.inTransit, ext.ordersCount)}
+                                                </span>
+                                            </span>
+                                            {/*<span className={styles["stat-value"]}>{ext.inTransit ?? "—"}</span>*/}
+                                        </div>
                                         <div className={styles["stat-card"]}>
                                             <span className={styles["stat-label"]}>Avg. check</span>
                                             <span className={styles["stat-value"]}>{ext.averageCheck ?? "—"}</span>

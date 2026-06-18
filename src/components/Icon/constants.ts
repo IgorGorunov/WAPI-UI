@@ -127,6 +127,8 @@ import AntiFraud from '@/assets/icons/fraud-protect.svg';
 import Approval from '@/assets/icons/approval.svg';
 import Phone from '@/assets/icons/phone.svg';
 import SendWhite from '@/assets/icons/send-white.svg';
+import WarningExclamation from '@/assets/icons/warning-exclamation.svg';
+import Diagram from "@/assets/icons/pie-diagram.svg";
 
 export const icons = {
     "arrow-left": ArrowLeft,
@@ -258,4 +260,6 @@ export const icons = {
     'approval': Approval,
     'phone': Phone,
     'send-white': SendWhite,
+    'warning-exclamation': WarningExclamation,
+    'diagram': Diagram,
 };

@@ -54,6 +54,7 @@ export const enum FILTER_TYPE {
     COLORED_CIRCLE = 'colored-circle',
     COLORED_TEXT = 'colored-text',
     SLIDER = 'slider',
+    UNDERLINE = 'underline',
 }
 
 export type DocProductParamsType = {

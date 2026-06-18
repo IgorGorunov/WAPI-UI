@@ -22,6 +22,7 @@ const FilterOption: React.FC<FilterOptionType> = ({option, extraName='', isCheck
                 name={option.value+extraName.split(' ').join('_')}
                 circleColor={filterType === FILTER_TYPE.COLORED_CIRCLE ? option.color : ''}
                 textColor={filterType === FILTER_TYPE.COLORED_TEXT ? option.color : ''}
+                underlineColor={filterType === FILTER_TYPE.UNDERLINE ? option.color : ''}
                 label={`${option.label}`}
                 isCountry={isCountry}
                 countryName = {option.country || option.value}

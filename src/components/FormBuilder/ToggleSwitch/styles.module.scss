@@ -119,4 +119,38 @@
       right: 0;
     }
   }
+
+  &.has-error {
+    outline: 2px solid red;
+    outline-offset: 4px;
+    border-radius: 5px;
+    //.toggle-switch-label {
+    //  border: 2px solid var(--color-error);
+    //}
+  }
+
+
+}
+
+.error {
+  color: var(--color-error);
+  margin-top: -16px;
+  font-size: 10px;
+  margin-bottom: 6px;
+}
+
+.field-description {
+  &-wrapper{
+    //position: absolute;
+    //top: calc(100% - 10px);
+    padding: 0 6px;
+
+  }
+
+  &-item {
+    font-size: 11px;
+    line-height: 1.05;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
 }

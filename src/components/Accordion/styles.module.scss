@@ -68,6 +68,11 @@
       }
     }
 
+    :global(.icon-diagram) {
+      width: 20px;
+      height: 20px;
+    }
+
     .extra-actions & {
       justify-content: normal;
     }
