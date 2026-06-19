@@ -50,7 +50,20 @@ export const PRODUCT = {
 } as const;
 
 
-export const FormFieldsGeneral = ({countries, isNew=false, isAdditionalService=false, handleAdditionalServiceChange}: { countries: OptionType[], isNew: boolean, isAdditionalService: boolean, handleAdditionalServiceChange: (val:React.ChangeEvent<HTMLInputElement>)=>void }) => {
+export const FormFieldsGeneral = (
+    {
+        countries,
+        isNew=false,
+        needCertificate,
+        productTypeOptions,
+        handleAdditionalServiceChange
+    }: {
+        countries: OptionType[],
+        isNew: boolean,
+        needCertificate: boolean,
+        productTypeOptions: OptionType[],
+        handleAdditionalServiceChange: (val:React.ChangeEvent<HTMLInputElement>)=>void
+    }) => {
     return [
         {
             fieldType: FormFieldTypes.TEXT,
@@ -63,10 +76,26 @@ export const FormFieldsGeneral = ({countries, isNew=false, isAdditionalService=f
                 required: "Required field",
             },
             errorMessage: "Required field",
-            width: WidthType.w50,
+            width: WidthType.w25,
             classNames: "",
             hint: ProductHints['name'] || '',
             onlyAllowedSymbols: true,
+        },
+        {
+            fieldType: FormFieldTypes.SELECT,
+            type: "text",
+            name: 'productType',
+            label: "Product type",
+            options:productTypeOptions,
+            placeholder: "",
+            rules: {
+                required: "Required field",
+            },
+            errorMessage: "Required field",
+            width: WidthType.w25,
+            classNames: "",
+            hint: ProductHints['productType'] || '',
+            // onlyAllowedSymbols: true,
         },
         {
             fieldType: FormFieldTypes.SELECT,
@@ -133,6 +162,18 @@ export const FormFieldsGeneral = ({countries, isNew=false, isAdditionalService=f
             isDisplayed: !isNew,
             disabled: true,
         },
+        //
+        needCertificate ? {
+            fieldType: FormFieldTypes.TOGGLE,
+            name: 'certificate',
+            label: "Have certificate for the product",
+            width: WidthType.w100,
+            classNames: "",
+            hint: '',
+            fieldDescription: [`For dietary supplements, a certification or notification must be provided for each country from which the products are sold.
+For cosmetic products, a CPNP registration and a Product Information File (PIF) must be provided.`,
+            "Please, upload the certificate or PIF file in PDF format in 'Files' tab in 'Certificates' section."],
+        } : null,
 
     ];
 }

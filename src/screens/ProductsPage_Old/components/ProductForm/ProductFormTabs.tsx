@@ -43,10 +43,6 @@ export const TabFields: TabFieldType[] = [
         fieldName: 'typeOfStorage',
     },
     {
-        tabName: 'Primary',
-        fieldName: 'certificate',
-    },
-    {
         tabName: 'Dimensions',
         fieldName: 'unitOfMeasures',
     },
@@ -58,10 +54,5 @@ export const TabFields: TabFieldType[] = [
         tabName: 'Virtual bundle kit',
         fieldName: 'bundleKit',
     },
-    {
-        tabName: 'Files',
-        fieldName: 'certificates',
-    },
+
 ]
-
-

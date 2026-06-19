@@ -386,12 +386,12 @@ const AntiFraudResultsPage = () => {
             sendUserBrowserInfo({ ...getBrowserInfo('GetAntiFraudResult'), body: {token, alias, ui, uuid} })
         } catch { }
 
-        // Cache hit
-        if (detailCache.current[uuid]) {
-            setModalDetail(detailCache.current[uuid]);
-            console.log('Cache hit for UUID:', uuid);
-            return;
-        }
+        // Cache hit - commented for now
+        // if (detailCache.current[uuid]) {
+        //     setModalDetail(detailCache.current[uuid]);
+        //     console.log('Cache hit for UUID:', uuid);
+        //     return;
+        // }
 
         // Cache miss — fetch from backend
         setModalDetail(null);
@@ -399,7 +399,7 @@ const AntiFraudResultsPage = () => {
 
         try {
             const response = await getAntiFraudResultDetails({ token, alias, ui, uuid });
-            console.log('Response details:', response);
+
             if (response?.data) {
                 const parsed: AntiFraudResultObject =
                     typeof response.data === "string"
@@ -408,7 +408,7 @@ const AntiFraudResultsPage = () => {
 
                 detailCache.current[uuid] = parsed;
                 setModalDetail(parsed);
-                console.log('Parsed details:', parsed);
+
             } else {
                 setDetailError("No detail data returned from the server.");
             }

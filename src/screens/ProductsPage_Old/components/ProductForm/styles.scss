@@ -1,0 +1,193 @@
+@import "@/constants/devices.scss";
+
+.product-info {
+
+  //@media (min-width: $desktop) {
+  //  width: 1090px;
+  //}
+
+
+  .card {
+    padding: 28px;
+    margin-bottom: 16px;
+
+    @media (max-width: $tablet) {
+      padding: 16px;
+    }
+  }
+
+  &__block-title {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 25px;
+    color: var(--color-gray-blue);
+    margin-bottom: 16px;
+
+    &.title-small {
+      margin-bottom: 0;
+    }
+
+    svg {
+      margin-right: 16px;
+    }
+  }
+
+  &--unitOfMeasures {
+
+    &-select {
+      margin-bottom: 26px;
+
+      .input-select__container {
+        @media (max-width: $tablet) {
+          flex: 0 0 auto;
+        }
+      }
+
+    }
+
+    //.input-select__container {
+    //  @media (max-width: $tablet) {
+    //    width: auto;
+    //    flex: 0 0 50px;
+    //  }
+    //}
+
+
+
+  }
+
+  &--table {
+    margin: 0 -28px;
+
+    @media (max-width: $mobile) {
+      margin: 0 -16px;
+    }
+
+
+
+    &-btns {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding-bottom: 8px;
+      gap: 30px;
+
+      @media (max-width: $tablet) {
+        gap: 12px;
+        width: auto;
+        flex: 0 0 auto;
+        margin-left: auto;
+
+        .btn {
+          font-size: 0;
+          padding: 5px 9px 5px 5px;
+          gap: 0;
+        }
+      }
+
+      &.small-paddings {
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+  &__checkboxes {
+    align-items: center;
+
+    .tutorial-hint-tooltip {
+      margin-top: 0;
+    }
+  }
+
+  &--dimensions.form-table{
+    margin: 0;
+    overflow: scroll;
+    min-height: 172px;
+  }
+
+  .dropzoneBlock-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -8px;
+
+    &-item {
+      //flex: 0 0 50%;
+      display: flex;
+      padding: 8px;
+      width: 100%;
+      height: 100%;
+
+      .dropzone-wrapper {
+        width: 100%;
+      }
+    }
+  }
+
+  .ant-table {
+    &-thead {
+      .ant-table-cell {
+        padding: 20px 10px !important;
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--color-gray-blue) !important;
+        background-color: var(--color-white) !important;
+
+        &::before {
+          content: none !important;
+        }
+      }
+    }
+
+    &-cell {
+      padding: 8px 6px !important;
+    }
+  }
+
+  //.form-submit-btn {
+  //  display: flex;
+  //  justify-content: flex-end;
+  //  gap: 22px;
+  //  margin-top: 30px;
+  //
+  //  @media (max-width: $mobile) {
+  //    gap: 6px;
+  //    flex-wrap: wrap;
+  //  }
+  //}
+
+
+}
+
+.tutorial-info {
+  display: none;
+  max-height: 20vh;
+  overflow: hidden scroll;
+  p {
+    white-space: pre-wrap;
+  }
+  .tutorial-title {
+    font-weight: bold;
+    font-size: 14px;
+    //margin-right: 16px;
+  }
+
+  .tutorial-text {
+    font-size: 12px;
+  }
+
+  .tutorial-state & {
+    display: block;
+    margin-top: 16px;
+  }
+}
+
+.main-info {
+  max-height: calc(100vh - 245px);
+  overflow: hidden scroll;
+
+  .tutorial-state & {
+    max-height: calc(80vh - 245px - 57px);
+  }
+}

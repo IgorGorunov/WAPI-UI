@@ -1,17 +1,9 @@
-@import "@/constants/devices.scss";
-
 .product-info {
-
-  //@media (min-width: $desktop) {
-  //  width: 1090px;
-  //}
-
-
-  .card {
+  :global(.card) {
     padding: 28px;
     margin-bottom: 16px;
 
-    @media (max-width: $tablet) {
+    @include upToTablet {
       padding: 16px;
     }
   }
@@ -35,37 +27,24 @@
   }
 
   &--unitOfMeasures {
-
     &-select {
       margin-bottom: 26px;
 
       .input-select__container {
-        @media (max-width: $tablet) {
+        @include upToTablet {
           flex: 0 0 auto;
         }
       }
 
     }
-
-    //.input-select__container {
-    //  @media (max-width: $tablet) {
-    //    width: auto;
-    //    flex: 0 0 50px;
-    //  }
-    //}
-
-
-
   }
 
   &--table {
     margin: 0 -28px;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       margin: 0 -16px;
     }
-
-
 
     &-btns {
       display: flex;
@@ -74,7 +53,7 @@
       padding-bottom: 8px;
       gap: 30px;
 
-      @media (max-width: $tablet) {
+      @include upToTablet {
         gap: 12px;
         width: auto;
         flex: 0 0 auto;
@@ -101,7 +80,7 @@
     }
   }
 
-  &--dimensions.form-table{
+  &--dimensions.form-table {
     margin: 0;
     overflow: scroll;
     min-height: 172px;
@@ -119,7 +98,7 @@
       width: 100%;
       height: 100%;
 
-      .dropzone-wrapper {
+      :global(.dropzone-wrapper) {
         width: 100%;
       }
     }
@@ -144,29 +123,17 @@
       padding: 8px 6px !important;
     }
   }
-
-  //.form-submit-btn {
-  //  display: flex;
-  //  justify-content: flex-end;
-  //  gap: 22px;
-  //  margin-top: 30px;
-  //
-  //  @media (max-width: $mobile) {
-  //    gap: 6px;
-  //    flex-wrap: wrap;
-  //  }
-  //}
-
-
 }
 
 .tutorial-info {
   display: none;
   max-height: 20vh;
   overflow: hidden scroll;
+
   p {
     white-space: pre-wrap;
   }
+
   .tutorial-title {
     font-weight: bold;
     font-size: 14px;

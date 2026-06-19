@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { Table, Pagination, Tooltip, Popover, TableColumnProps } from 'antd';
 import { ColumnType } from "antd/es/table";
-import styles from "./styles.module.scss";
+import "./styles.scss";
 import "@/styles/tables.scss";
-import { ProductStockType, ProductStockFilterDataType } from "@/types/products";
+import { ProductStockType } from "@/types/products";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
@@ -21,52 +21,15 @@ import { useIsTouchDevice } from "@/hooks/useTouchDevice";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
 import { FilterComponentType } from "@/types/filters";
-import Select from "@/components/FormBuilder/Select/SelectField";
-
 type ProductListType = {
     products: ProductStockType[];
-    isLoading?: boolean;
-    totalProducts?: number;
-    filterMetadata?: ProductStockFilterDataType | null;
-    currentPage?: number;
-    pageSize?: number;
-    searchTerm?: string;
-    fullTextSearch?: boolean;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    selectedFilters?: Record<string, any>;
-    onPageChange?: (page: number) => void;
-    onPageSizeChange?: (size: number) => void;
-    onSearchChange?: (search: string, fullTextSearch: boolean) => void;
-    onSortChange?: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
-    onFiltersChange?: (filters: Record<string, any>) => void;
-    onClearFilters?: () => void;
-    handleRefresh?: () => void;
-    setWarehouseForExport: React.Dispatch<React.SetStateAction<string>>;
+    setFilteredProducts: React.Dispatch<React.SetStateAction<ProductStockType[]>>;
+    setWarehouseForExport: (warehouse: string) => void
 }
 
-const ProductList: React.FC<ProductListType> = ({
-    products, 
-    isLoading,
-    totalProducts,
-    filterMetadata,
-    currentPage = 1,
-    pageSize: propPageSize = 10,
-    searchTerm: propSearchTerm = '',
-    fullTextSearch: propFullTextSearch = false,
-    sortBy: propSortBy,
-    sortOrder: propSortOrder,
-    selectedFilters,
-    onPageChange,
-    onPageSizeChange,
-    onSearchChange,
-    onSortChange,
-    onFiltersChange,
-    onClearFilters,
-    handleRefresh,
-    setWarehouseForExport
-}) => {
+const ProductList: React.FC<ProductListType> = ({ products, setFilteredProducts, setWarehouseForExport }) => {
     const { sellersList, needSeller } = useAuth();
 
     const [animating, setAnimating] = useState(false);
@@ -96,171 +59,95 @@ const ProductList: React.FC<ProductListType> = ({
     }, []);
 
     // Pagination
-    const [current, setCurrent] = React.useState(currentPage);
-    const [pageSize, setPageSize] = React.useState(propPageSize);
-    const [searchTerm, setSearchTerm] = useState(propSearchTerm);
-    const [fullTextSearch, setFullTextSearch] = useState(propFullTextSearch);
-
-    React.useEffect(() => { setCurrent(currentPage); }, [currentPage]);
-    React.useEffect(() => { setPageSize(propPageSize); }, [propPageSize]);
-    React.useEffect(() => { setSearchTerm(propSearchTerm); }, [propSearchTerm]);
-    React.useEffect(() => { setFullTextSearch(propFullTextSearch); }, [propFullTextSearch]);
-
-    useEffect(() => {
-        if (!isLoading) {
-            setAnimating(true);
-            const id = setTimeout(() => setAnimating(false), 50);
-            return () => clearTimeout(id);
-        }
-    }, [products]);
-
+    const [current, setCurrent] = React.useState(1);
+    const [pageSize, setPageSize] = React.useState(10);
     const handleChangePage = (page: number) => {
-        setCurrent(page);
-        if (onPageChange) onPageChange(page);
+        setAnimating(true);
+        setTimeout(() => {
+            setCurrent(page);
+            setAnimating(false);
+        }, 500);
     };
-
     const handleChangePageSize = (size: number) => {
         setPageSize(size);
         setCurrent(1);
-        if (onPageSizeChange) onPageSizeChange(size);
     };
 
-    const handleFilterChange = (newSearchTerm: string) => {
-        setSearchTerm(newSearchTerm);
-        setCurrent(1);
-        if (onSearchChange) onSearchChange(newSearchTerm.trim(), fullTextSearch);
-    };
-
-    const handleFullTextSearchChange = () => {
-        setFullTextSearch(prev => !prev);
-        if (onSearchChange) onSearchChange(searchTerm.trim(), !fullTextSearch);
-    };
-
-    const fullTextSearchField = {
-        fieldType: FormFieldTypes.TOGGLE,
-        name: 'fullTextSearch',
-        label: 'Full text search',
-        checked: fullTextSearch,
-        onChange: handleFullTextSearchChange,
-        classNames: 'full-text-search-toggle',
-        hideTextOnMobile: true,
-    }
-
-    const [sortColumn, setSortColumn] = useState<keyof ProductStockType | null>('name');
+    // Sorting
+    const [sortColumn, setSortColumn] = useState<keyof ProductStockType>('name');
     const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
-
-    React.useEffect(() => {
-        if (propSortBy) setSortColumn(propSortBy as keyof ProductStockType);
-        if (propSortOrder) setSortDirection(propSortOrder === 'asc' ? 'ascend' : 'descend');
-    }, [propSortBy, propSortOrder]);
-
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof ProductStockType) => {
-        const newDirection = sortColumn === columnDataIndex && sortDirection === 'ascend' ? 'descend' : 'ascend';
-        setSortDirection(newDirection);
+        setSortDirection(currentDirection =>
+            sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
+        );
         setSortColumn(columnDataIndex);
-        if (onSortChange) onSortChange(String(columnDataIndex), newDirection === 'ascend' ? 'asc' : 'desc');
-    }, [sortColumn, sortDirection, onSortChange]);
+    }, [sortColumn]);
 
-    const [draftFilters, setDraftFilters] = useState<Record<string, string[]>>({});
-    const updateDraftFilter = useCallback((key: string, valuesOrUpdater: string[] | ((prev: string[]) => string[])) => {
-        setDraftFilters(prev => {
-            const currentValues = prev[key] || [];
-            const newValues = typeof valuesOrUpdater === 'function' ? valuesOrUpdater(currentValues) : valuesOrUpdater;
-            return { ...prev, [key]: newValues };
-        });
-    }, []);
 
-    const [openFilters, setOpenFilters] = useState<Record<string, boolean>>({});
-    const setFilterOpen = useCallback((key: string, isOpen: boolean) => {
-        setOpenFilters(prev => ({ ...prev, [key]: isOpen }));
-    }, []);
-
+    // Filter and searching
+    //Seller filter
     const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
-    useEffect(() => {
-        if (selectedFilters && selectedFilters.seller && typeof selectedFilters.seller === 'string') {
-            setSelectedSeller(selectedFilters.seller);
-        } else {
-            setSelectedSeller('All sellers');
-        }
-    }, [selectedFilters]);
 
-    const handleSellerChange = (value: string) => {
-        setSelectedSeller(value);
-        if (onFiltersChange) {
-            onFiltersChange({ seller: value === 'All sellers' ? [] : [value] });
-            setCurrent(1);
-        }
-    }
+    const calcOrderAmount = useCallback((property: string, value: string) => {
+        return products.filter(product => product[property].toLowerCase() === value.toLowerCase()).length || 0;
+    }, [products]);
 
     const sellersOptions = useMemo(() => {
-        return [{ label: 'All sellers', value: 'All sellers', amount: totalProducts || products.length }, ...sellersList.map(item => ({ ...item, amount: 0 }))];
-    }, [sellersList, totalProducts, products.length]);
+        return [{ label: 'All sellers', value: 'All sellers', amount: products.length }, ...sellersList.map(item => ({ ...item, amount: calcOrderAmount('seller', item.value) }))];
+    }, [sellersList, calcOrderAmount])
 
     const getSellerName = useCallback((sellerUid: string) => {
         const t = sellersList.find(item => item.value === sellerUid);
         return t ? t.label : ' - ';
     }, [sellersList]);
 
-    const transformedWarehouses = useMemo(() => {
-        if (!filterMetadata?.warehouses) return [];
-        return filterMetadata.warehouses.map(item => ({
-            value: item.id,
-            label: item.name || item.id,
-            amount: item.count,
-        }));
-    }, [filterMetadata?.warehouses]);
 
-    const transformedCountries = useMemo(() => {
-        if (!filterMetadata?.countries) return [];
-        return filterMetadata.countries.map(country => ({
-            value: country.id,
-            label: Countries[country.name || country.id] || country.name || country.id,
-            country: country.name,
-            amount: country.count,
-        }));
-    }, [filterMetadata?.countries]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterWarehouse, setFilterWarehouse] = useState<string[]>([]);
 
-    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
-    const toggleFilters = () => setIsFiltersVisible(!isFiltersVisible);
+    const uniqueWarehouses = useMemo(() => {
+        const warehouses = products.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(product => product.warehouse);
+        return Array.from(new Set(warehouses)).filter(warehouse => warehouse).sort();
+    }, [products, selectedSeller]);
+    uniqueWarehouses.sort();
+    const transformedWarehouses = useMemo(() => ([
+        ...uniqueWarehouses.map(warehouse => ({
+            value: warehouse,
+            label: warehouse,
+            amount: calcOrderAmount('warehouse', warehouse),
+        }))
+    ]), [uniqueWarehouses]);
 
-    const selectedFiltersString = JSON.stringify(selectedFilters);
-    useEffect(() => {
-        if (isFiltersVisible) return;
-        const newDraft: Record<string, string[]> = {};
-        if (selectedFilters) {
-            Object.entries(selectedFilters).forEach(([key, val]) => {
-                if (key === 'seller') return;
-                if (Array.isArray(val)) {
-                    newDraft[key] = val;
-                } else if (typeof val === 'string') {
-                    newDraft[key] = [val];
-                }
-            });
-        }
-        setDraftFilters(newDraft);
-    }, [selectedFiltersString, isFiltersVisible]);
+    // useEffect(() => {
+    //     setFilterWarehouse(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueWarehouses.includes(selectedValue))];
+    //     })
+    // }, [uniqueWarehouses]);
 
-    const applyFilters = useCallback(() => {
-        const fullUpdate: Record<string, string[]> = {};
-        Object.keys(draftFilters).forEach(key => {
-            fullUpdate[key] = draftFilters[key]?.length ? draftFilters[key] : [];
-        });
-        if (onFiltersChange) onFiltersChange(fullUpdate);
-        setCurrent(1);
-    }, [draftFilters, onFiltersChange]);
+    const [isOpenFilterWarehouse, setIsOpenFilterWarehouse] = useState(false);
 
-    const hasUnappliedChanges = useMemo(() => {
-        const applied = selectedFilters || {};
-        const draftKeys = Object.keys(draftFilters).filter(k => draftFilters[k]?.length > 0);
-        const appliedKeys = Object.keys(applied).filter(k => Array.isArray(applied[k]) && (applied[k] as string[]).length > 0);
+    const [filterCountry, setFilterCountry] = useState<string[]>([]);
 
-        if (draftKeys.length !== appliedKeys.length) return true;
-        return draftKeys.some(key => {
-            const draftVal = draftFilters[key] || [];
-            const appliedVal = Array.isArray(applied[key]) ? (applied[key] as string[]) : [];
-            return draftVal.length !== appliedVal.length || draftVal.some((v, i) => v !== appliedVal[i]);
-        });
-    }, [draftFilters, selectedFilters]);
+    const uniqueCountries = useMemo(() => {
+        const countries = products.filter(item => selectedSeller === 'All sellers' || selectedSeller === item.seller).map(product => product.country);
+        return Array.from(new Set(countries)).filter(country => country).sort();
+    }, [products, selectedSeller]);
+    uniqueCountries.sort();
+    const transformedCountries = useMemo(() => ([
+        ...uniqueCountries.map(country => ({
+            value: country,
+            label: Countries[country] || country,
+            amount: calcOrderAmount('country', country),
+        }))
+    ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)), [uniqueCountries]);
+
+    // useEffect(() => {
+    //     setFilterCountry(prevState => {
+    //         return [...prevState.filter(selectedValue => uniqueCountries.includes(selectedValue))];
+    //     })
+    // }, [uniqueCountries]);
+
+    const [isOpenFilterCountry, setIsOpenFilterCountry] = useState(false);
 
     const productFilters = [
         {
@@ -268,12 +155,12 @@ const ProductList: React.FC<ProductListType> = ({
             icon: 'warehouse',
             filterDescriptions: '',
             filterOptions: transformedWarehouses,
-            filterState: draftFilters['warehouse'] || [],
-            setFilterState: (val: string[]) => updateDraftFilter('warehouse', val),
-            isOpen: !!openFilters['warehouse'],
-            setIsOpen: (v: boolean) => setFilterOpen('warehouse', v),
-            onClose: () => updateDraftFilter('warehouse', []),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen('warehouse', true); },
+            filterState: filterWarehouse,
+            setFilterState: setFilterWarehouse,
+            isOpen: isOpenFilterWarehouse,
+            setIsOpen: setIsOpenFilterWarehouse,
+            onClose: () => setFilterWarehouse([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterWarehouse(true) },
         },
         {
             filterTitle: 'Country',
@@ -281,64 +168,86 @@ const ProductList: React.FC<ProductListType> = ({
             isCountry: true,
             filterDescriptions: '',
             filterOptions: transformedCountries,
-            filterState: draftFilters['country'] || [],
-            setFilterState: (val: string[]) => updateDraftFilter('country', val),
-            isOpen: !!openFilters['country'],
-            setIsOpen: (v: boolean) => setFilterOpen('country', v),
-            onClose: () => updateDraftFilter('country', []),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen('country', true); },
+            filterState: filterCountry,
+            setFilterState: setFilterCountry,
+            isOpen: isOpenFilterCountry,
+            setIsOpen: setIsOpenFilterCountry,
+            onClose: () => setFilterCountry([]),
+            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterCountry(true) },
         },
     ] as FilterComponentType[];
 
-    const activeProductFilters = useMemo(() => {
-        const currentFlags = [
-            {
-                key: 'warehouse',
-                filterTitle: 'Warehouse',
-                icon: 'warehouse' as any,
-                options: transformedWarehouses
-            },
-            {
-                key: 'country',
-                filterTitle: 'Country',
-                icon: 'country-location' as any,
-                isCountry: true,
-                options: transformedCountries
-            }
-        ];
+    const [fullTextSearch, setFullTextSearch] = useState(true);
+    const fullTextSearchField = {
+        fieldType: FormFieldTypes.TOGGLE,
+        name: 'fullTextSearch',
+        label: 'Full text search',
+        checked: fullTextSearch,
+        onChange: () => { setFullTextSearch(prevState => !prevState) },
+        classNames: 'full-text-search-toggle',
+        hideTextOnMobile: true,
+    }
 
-        return currentFlags.map(f => ({
-            filterTitle: f.filterTitle,
-            icon: f.icon,
-            isCountry: f.isCountry,
-            filterDescriptions: '',
-            filterOptions: f.options,
-            filterState: selectedFilters?.[f.key] ? (typeof selectedFilters[f.key] === 'string' ? [selectedFilters[f.key]] : selectedFilters[f.key]) : [],
-            setFilterState: () => {},
-            isOpen: false,
-            setIsOpen: () => {},
-            onClose: () => onFiltersChange?.({ [f.key]: [] }),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen(f.key, true); },
-        }));
-    }, [selectedFilters, transformedWarehouses, transformedCountries, onFiltersChange, setFilterOpen]);
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
-    const filteredProducts = products;
+    const toggleFilters = () => {
+        setIsFiltersVisible(!isFiltersVisible);
+    };
+
+    const handleClearAllFilters = () => {
+        setFilterWarehouse([]);
+        setFilterCountry([]);
+
+        //close filter modal
+        //setIsFiltersVisible(false);
+    }
+
+    const handleFilterChange = (newSearchTerm: string) => {
+        setSearchTerm(newSearchTerm);
+    };
+
+    const filteredProducts = useMemo(() => {
+        setCurrent(1);
+        const searchTermLower = searchTerm.toLowerCase();
+        const filtered = products.filter(product => {
+            const matchesSearch = !searchTerm || Object.keys(product).some(key => {
+                const value = product[key];
+                return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
+            });
+            const matchesWarehouse = !filterWarehouse.length || filterWarehouse.map(item => item.toLowerCase()).includes(product.warehouse.toLowerCase());
+            const matchesCountry = !filterCountry.length || filterCountry.map(item => item.toLowerCase()).includes(product.country.toLowerCase());
+            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === product.seller;
+
+            return matchesSearch && matchesWarehouse && matchesCountry && matchesSeller;
+        });
+
+        if (sortColumn) {
+            filtered.sort((a, b) => {
+                if (sortDirection === 'ascend') {
+                    return a[sortColumn] > b[sortColumn] ? 1 : -1;
+                } else {
+                    return a[sortColumn] < b[sortColumn] ? 1 : -1;
+                }
+            });
+        }
+        return filtered;
+    }, [products, searchTerm, filterWarehouse, filterCountry, sortColumn, sortDirection, sellersList, selectedSeller]);
 
     useEffect(() => {
-        if (selectedFilters && selectedFilters.warehouse) {
-            setWarehouseForExport(typeof selectedFilters.warehouse === 'string' ? selectedFilters.warehouse : selectedFilters.warehouse.join('_'))
-        } else {
-            setWarehouseForExport('');
-        }
-    }, [selectedFiltersString]);
+        setFilteredProducts(filteredProducts)
+    }, [filteredProducts]);
+
+    useEffect(() => {
+        setWarehouseForExport(filterWarehouse.join('_'))
+    }, [filterWarehouse]);
 
     const curWidth = useMemo(() => {
-        const displayedData = filteredProducts;
+        const displayedData = filteredProducts.slice((current - 1) * pageSize, current * pageSize);
         const maxAmount = displayedData.reduce((acc, item) => Math.max(acc, item.reserved), 0).toString().length;
 
         const width = 63 + maxAmount * 9;
         return width.toString() + 'px';
-    }, [filteredProducts]);
+    }, [current, pageSize, filteredProducts]);
 
 
     //Columns
@@ -517,22 +426,22 @@ const ProductList: React.FC<ProductListType> = ({
             />,
             render: (text: number, record: ProductStockType) => (
                 <TableCell minWidth="80px" maxWidth="80px" contentPosition="center"
-                    childrenBefore={
-                        <Popover
-                            content={record.reserved ? <SimplePopup
-                                items={getPopupItems(record)}
-                                width={200}
-                                hasCopyBtn={true}
-                                needScroll={true}
-                            /> : null}
-                            trigger={isTouchDevice ? 'click' : 'hover'}
-                            placement="left"
-                            overlayClassName="doc-list-popover"
-                        >
+                           childrenBefore={
+                               <Popover
+                                   content={record.reserved ? <SimplePopup
+                                       items={getPopupItems(record)}
+                                       width={200}
+                                       hasCopyBtn={true}
+                                       needScroll={true}
+                                   /> : null}
+                                   trigger={isTouchDevice ? 'click' : 'hover'}
+                                   placement="left"
+                                   overlayClassName="doc-list-popover"
+                               >
                             <span style={{ width: curWidth }} className="products-cell-style">{text} <Icon
                                 name="info" /></span>
-                        </Popover>
-                    }
+                               </Popover>
+                           }
                 />
             ),
             dataIndex: 'reserved',
@@ -634,22 +543,22 @@ const ProductList: React.FC<ProductListType> = ({
             />,
             render: (text: string, record: ProductStockType) => (
                 <TableCell minWidth="60px" maxWidth="60px" contentPosition="center"
-                    childrenBefore={
-                        <Popover
-                            content={record.onShipping ? <SimplePopup
-                                items={getOnShippingPopupItems(record)}
-                                width={300}
-                                hasCopyBtn={true}
-                                needScroll={true}
-                            /> : null}
-                            trigger={isTouchDevice ? 'click' : 'hover'}
-                            placement="left"
-                            overlayClassName="doc-list-popover"
-                        >
+                           childrenBefore={
+                               <Popover
+                                   content={record.onShipping ? <SimplePopup
+                                       items={getOnShippingPopupItems(record)}
+                                       width={300}
+                                       hasCopyBtn={true}
+                                       needScroll={true}
+                                   /> : null}
+                                   trigger={isTouchDevice ? 'click' : 'hover'}
+                                   placement="left"
+                                   overlayClassName="doc-list-popover"
+                               >
                             <span style={{ width: curWidth }} className="products-cell-style">{text} <Icon
                                 name="info" /></span>
-                        </Popover>
-                    }
+                               </Popover>
+                           }
                 />
             ),
             dataIndex: 'onShipping',
@@ -688,28 +597,23 @@ const ProductList: React.FC<ProductListType> = ({
     ], [handleHeaderCellClick, sortDirection, sortColumn]);
 
     return (
-        <div className={`${styles['product-stock-list']} table`}>
+        <div className='product-stock-list table'>
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 <div className='search-block'>
-                    <SearchField 
-                        searchTerm={searchTerm} 
-                        handleSearch={handleFilterChange} 
-                        handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} 
-                        manualSearch={true}
-                    />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
 
             {sellersList && needSeller() ?
                 <div className='seller-filter-block'>
-                    <Select
+                    <SelectField
                         key='seller-filter'
                         name='selectedSeller'
                         label='Seller: '
                         value={selectedSeller}
-                        onChange={(val) => handleSellerChange(val as string)}
+                        onChange={(val) => setSelectedSeller(val as string)}
                         //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
                         options={sellersOptions}
                         classNames='seller-filter full-sized'
@@ -721,7 +625,9 @@ const ProductList: React.FC<ProductListType> = ({
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <FiltersChosen filters={activeProductFilters} />
+                    <FiltersChosen filters={productFilters} />
+                    {/*<CurrentFilters title='Warehouse' filterState={filterWarehouse} options={transformedWarehouses} onClose={()=>setFilterWarehouse([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterWarehouse(true)}} />*/}
+                    {/*<CurrentFilters title='Country' filterState={filterCountry} options={transformedCountries} onClose={()=>setFilterCountry([])} onClick={()=>{setIsFiltersVisible(true); setIsOpenFilterCountry(true)}} />*/}
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -734,18 +640,18 @@ const ProductList: React.FC<ProductListType> = ({
             </div>
             <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredProducts?.length ? '' : 'is-empty'}`}>
                 <Table
-                    dataSource={filteredProducts.map(item => ({
+                    dataSource={filteredProducts.slice((current - 1) * pageSize, current * pageSize).map(item => ({
                         ...item,
                         key: item.tableKey,
                     }))}
                     columns={columns}
                     pagination={false}
-                    // scroll={{ y: 700 }}
+                    scroll={{ y: 700 }}
                     showSorterTooltip={false}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total products:<span className='order-products-total__list-item__value'>{totalProducts || products.length}</span></li>
+                        <li className='order-products-total__list-item'>Total products:<span className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
                     </ul>
                 </div>
             </div>
@@ -754,20 +660,16 @@ const ProductList: React.FC<ProductListType> = ({
                     current={current}
                     pageSize={pageSize}
                     onChange={handleChangePage}
-                    total={totalProducts || products.length}
+                    total={filteredProducts.length}
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
             </div>
 
-            <FiltersContainer 
-                isFiltersVisible={isFiltersVisible} 
-                setIsFiltersVisible={setIsFiltersVisible} 
-                onClearFilters={onClearFilters ? onClearFilters : () => { updateDraftFilter('warehouse', []); updateDraftFilter('country', []); }}
-                onApplyFilters={applyFilters}
-                hasUnappliedChanges={hasUnappliedChanges}
-            >
+            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
                 <FiltersListWithOptions filters={productFilters} />
+                {/*<FiltersBlock filterTitle='Warehouse' filterOptions={transformedWarehouses} filterState={filterWarehouse} setFilterState={setFilterWarehouse} isOpen={isOpenFilterWarehouse} setIsOpen={setIsOpenFilterWarehouse}/>*/}
+                {/*<FiltersBlock filterTitle='Country' isCountry={true} filterOptions={transformedCountries} filterState={filterCountry} setFilterState={setFilterCountry} isOpen={isOpenFilterCountry} setIsOpen={setIsOpenFilterCountry}/>*/}
             </FiltersContainer>
         </div>
     );

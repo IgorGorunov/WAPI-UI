@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import styles from "./styles.module.scss";
+import "./styles.scss";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes, UserAccessActionType } from "@/types/auth";
 import { ProductParamsType, ProductType, SingleProductType } from "@/types/products";
@@ -182,7 +182,7 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
         }
     };
 
-    return <div className={styles['product-info']}>
+    return <div className='product-info'>
         {isLoading && <Loader />}
         <ToastContainer />
         {productParams && (uuid && productData || !uuid) && (productsList !== null) && forbiddenTabs !== null ?

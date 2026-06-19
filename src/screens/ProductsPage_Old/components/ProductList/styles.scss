@@ -83,3 +83,18 @@
 		min-width: 130px;
 	}
 }
+
+.icon-warning-exclamation {
+	width: 20px;
+    fill: var(--color-dark-red2);
+	transform: scale(1.5);
+	cursor: pointer;
+}
+
+.warning-tooltip-overlay {
+	.ant-tooltip-inner {
+		font-size: 12px;
+		font-weight: 400;
+		font-family: var(--inner-font), sans-serif;
+	}
+}

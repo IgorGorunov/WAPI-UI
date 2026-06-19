@@ -2,6 +2,13 @@ import type {TicketType} from "@/types/tickets";
 import type {NOTIFICATION_OBJECT_TYPES} from "@/types/notifications";
 import type {AttachedFilesType} from "@/types/utility";
 import type {UserAccessActionType} from "@/context/authContext";
+import { BaseFilterMetadata, FilterType } from "@/types/filters";
+
+export type ProductTypeType = {
+    id: string;
+    name: string;
+    certificate: boolean;
+}
 
 export type ProductType = {
     selected?: boolean;
@@ -28,12 +35,17 @@ export type ProductType = {
     additionalService?: boolean,
     seller?: string;
     available: number;
+    productType?: ProductTypeType;
+    certificate?: boolean;
 }
 
 export type ReservedRowType = {
     document: string;
     reserved: number;
 }
+
+
+
 
 export type OnShippingRowType = {
     onshipping: number;
@@ -74,6 +86,7 @@ export type ProductParamsType = {
     typeOfStorage: string[];
     whoProvideExtraPacking: string[];
     actionAccessSettings?: UserAccessActionType[];
+    productsType?:ProductTypeType[];
 };
 
 export type UnitOfMeasuresType = {
@@ -91,13 +104,6 @@ export type BundleKitType = {
     uuid: string;
     quantity: number;
 }
-
-// export type AttachedFilesType = {
-//     id: string;
-//     name: string;
-//     type: string;
-//     data: string;
-// }
 
 export type StatusHistoryType = {
     date: string;
@@ -141,6 +147,8 @@ export type SingleProductType = {
     expiringTerm?: number;
     seller?: string;
     merywoodProduction: boolean;
+    productType?: string;
+    certificate?: boolean;
 };
 
 export type UnitOfMeasureFormType = {
@@ -267,4 +275,22 @@ export type SingleProductSendFormType = {
     // statusHistory: StatusHistoryType[];
     // canEdit: boolean;
     merywoodProduction: boolean;
+    productType?: string;
+    certificate?: boolean;
+}
+
+export type ProductFilterDataType = BaseFilterMetadata & {
+    products: number;
+    statuses: FilterType[];
+}
+
+export type ProductStockFilterDataType = BaseFilterMetadata & {
+    products: number;
+    warehouses: FilterType[];
+    countries: FilterType[];
+}
+
+export type ProductsFilters = {
+    status?: string;
+    seller?: string;
 }
