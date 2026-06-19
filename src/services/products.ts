@@ -3,15 +3,17 @@ import type {
     ProductStockType,
     ProductType,
     SingleProductSendFormType,
-    SingleProductType
+    SingleProductType,
+    ProductFilterDataType,
+    ProductStockFilterDataType
 } from '@/types/products';
 import type {AttachedFilesType} from "@/types/utility";
 import {api} from "@/services/api";
 import type {ApiResponseType} from "@/types/api";
+import {OrderFiltersSelectedType} from "@/types/orders";
 
 
 const getProducts = async (
-    //token: string,
     data: {
         token: string;
         alias: string;
@@ -19,17 +21,17 @@ const getProducts = async (
     }
 ): Promise<ApiResponseType<ProductType[]>> => {
     return api.post<ProductType[]>(`/GetProductsList`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetProductsList`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
+};
+
+const getPagedProducts = async (
+    data: {
+        token: string;
+        alias: string;
+        ui?: string;
+        page
+    }
+): Promise<ApiResponseType<ProductType[]>> => {
+    return api.post<ProductType[]>(`/GetProductsList`, data);
 };
 
 const getProductByUID = async (
@@ -41,17 +43,6 @@ const getProductByUID = async (
     }
 ): Promise<ApiResponseType<SingleProductType>> => {
     return api.post(`/GetProductData`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetProductData`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getProductParameters = async (
@@ -63,21 +54,9 @@ const getProductParameters = async (
     }
 ): Promise<ApiResponseType<ProductParamsType>> => {
     return api.post(`/GetProductParameters`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetProductParameters`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getProductsStock = async (
-    //token: string,
     data: {
         token: string;
         alias: string;
@@ -85,18 +64,60 @@ const getProductsStock = async (
     }
 ): Promise<ApiResponseType<ProductStockType[]>> => {
     return api.post(`/GetProductsStock`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetProductsStock`,
-    //         data
-    //
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
+};
+
+export const getProductsPage = async (
+    data: {
+        token: string;
+        alias?: string;
+        ui?: string;
+        page: number;
+        limit: number;
+        search?: string;
+        fullTextSearch?: boolean;
+        sortBy?: string;
+        sortOrder?: string;
+        filter?: any;
+    }
+): Promise<ApiResponseType<ProductType[]>> => {
+    return api.post(`/GetPagedProductsList`, data);
+};
+
+export const getProductsFilters = async (
+    data: {
+        token: string;
+        alias?: string;
+        ui?: string;
+    }
+): Promise<ApiResponseType<ProductFilterDataType>> => {
+    return api.post(`/GetPagedFiltersProduct`, data);
+};
+
+export const getProductsStockPage = async (
+    data: {
+        token: string;
+        alias?: string;
+        ui?: string;
+        page: number;
+        limit: number;
+        search?: string;
+        fullTextSearch?: boolean;
+        sortBy?: string;
+        sortOrder?: string;
+        filter?: any;
+    }
+): Promise<ApiResponseType<ProductStockType[]>> => {
+    return api.post(`/GetPagedProductsStock`, data);
+};
+
+export const getProductsStockFilters = async (
+    data: {
+        token: string;
+        alias?: string;
+        ui?: string;
+    }
+): Promise<ApiResponseType<ProductStockFilterDataType>> => {
+    return api.post(`/GetPagedFiltersProductStock`, data);
 };
 
 //send product info
@@ -110,17 +131,6 @@ const sendProductInfo = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/CreateUpdateProduct`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/CreateUpdateProduct`,
-    //         data
-    //
-    //     );
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 }
 
 const sendProductFiles = async (
@@ -132,17 +142,41 @@ const sendProductFiles = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/BulkProductsCreate`, data);
-    // try {
-    //     const response: Aunknown = await api.post(
-    //         `/BulkProductsCreate`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
+
+
+export const getProductsExcel = async (
+    data: {
+        token: string;
+        alias?: string;
+        startDate: string;
+        endDate: string;
+        ui?: string;
+        filter?: Partial<OrderFiltersSelectedType>;
+        search?: string;
+        fullTextSearch?: boolean;
+        sortBy?: string;
+        sortOrder?: string;
+    }
+): Promise<ApiResponseType<AttachedFilesType>> => {
+    return api.post(`/GetPagedProductsListFile`, data);
+}
+
+export const getProductsStockExcel = async (
+    data: {
+        token: string;
+        alias?: string;
+        // startDate: string;
+        // endDate: string;
+        ui?: string;
+        filter?: Partial<OrderFiltersSelectedType>;
+        search?: string;
+        fullTextSearch?: boolean;
+        sortBy?: string;
+        sortOrder?: string;
+    }
+): Promise<ApiResponseType<AttachedFilesType>> => {
+    return api.post(`/GetPagedProductsStockFile`, data);
+}
 
 export { getProducts, getProductByUID, getProductParameters, getProductsStock, sendProductInfo, sendProductFiles};

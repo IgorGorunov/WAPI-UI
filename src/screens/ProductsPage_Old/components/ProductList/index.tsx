@@ -1,112 +1,60 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Pagination, Popover, Table, TableColumnProps, Tooltip } from 'antd';
-import { ColumnType } from "antd/es/table";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
+import {ColumnType} from "antd/es/table";
 
-import styles from "./styles.module.scss";
+import "./styles.scss";
 import "@/styles/tables.scss";
 
-import { ProductType, ProductFilterDataType } from "@/types/products";
+import {ProductType} from "@/types/products";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"
 import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
-import { PageOptions } from '@/constants/pagination';
+import {PageOptions} from '@/constants/pagination';
 import SearchField from "@/components/SearchField";
-import { FormFieldTypes } from "@/types/forms";
-import Button, { ButtonVariant } from "@/components/Button/Button";
+import {FormFieldTypes} from "@/types/forms";
+import Button, {ButtonVariant} from "@/components/Button/Button";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import SearchContainer from "@/components/SearchContainer";
 import FiltersContainer from "@/components/FiltersContainer";
-import SimplePopup, { PopupItem } from "@/components/SimplePopup";
-import { useIsTouchDevice } from "@/hooks/useTouchDevice";
+import SimplePopup, {PopupItem} from "@/components/SimplePopup";
+import {useIsTouchDevice} from "@/hooks/useTouchDevice";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useAuth from "@/context/authContext";
-import { getSellerName } from "@/utils/seller";
-import { FilterComponentType } from "@/types/filters";
-import Select from "@/components/FormBuilder/Select/SelectField";
+import SelectField from "@/components/FormBuilder/Select/SelectField";
+import {getSellerName} from "@/utils/seller";
+import {FilterComponentType} from "@/types/filters";
 
 type ProductListType = {
     products: ProductType[];
-    isLoading?: boolean;
-    totalProducts?: number;
-    filterMetadata?: ProductFilterDataType | null;
-    currentPage?: number;
-    pageSize?: number;
-    searchTerm?: string;
-    fullTextSearch?: boolean;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    selectedFilters?: Record<string, any>;
-    onPageChange?: (page: number) => void;
-    onPageSizeChange?: (size: number) => void;
-    onSearchChange?: (search: string, fullTextSearch: boolean) => void;
-    onSortChange?: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
-    onFiltersChange?: (filters: Record<string, any>) => void;
-    onClearFilters?: () => void;
+    setFilteredProducts: React.Dispatch<React.SetStateAction<ProductType[]>>;
+    // setProductsData: React.Dispatch<React.SetStateAction<ProductType[]>>;
     handleEditProduct(uuid: string): void;
-    handleRefresh: () => void;
+    reFetchData: ()=>void;
 }
 
 const statusFilter = [
-    { value: 'All statuses', label: 'All statuses', color: 'var(--color-light-blue-gray)' },
-    { value: 'Approved', label: 'Approved', color: '#5380F5' },
-    { value: 'Declined', label: 'Declined', color: '#FF4000' },
-    { value: 'Draft', label: 'Draft', color: '#FEDB4F' },
-    { value: 'Pending', label: 'Pending', color: '#FFA500' },
-    { value: 'Rejected', label: 'Rejected', color: '#FF4000' },
-    { value: 'Expired', label: 'Expired', color: '#FF4000' },
+    { value: 'All statuses', label: 'All statuses' , color: 'var(--color-light-blue-gray)'},
+    { value: 'Approved', label: 'Approved' , color: '#5380F5'},
+    { value: 'Declined', label: 'Declined' , color: '#FF4000'},
+    { value: 'Draft', label: 'Draft' , color: '#FEDB4F'},
+    { value: 'Pending', label: 'Pending' , color: '#FFA500'},
+    { value: 'Rejected', label: 'Rejected' , color: '#FF4000'},
+    { value: 'Expired', label: 'Expired' , color: '#FF4000'},
 ];
 
 
 const extraStatusHints = {
-    'Draft': ' - needs to be send for approve',
+    'Draft' : ' - needs to be send for approve',
 }
 
 
 
-const ProductList: React.FC<ProductListType> = ({
-    products,
-    isLoading,
-    totalProducts,
-    filterMetadata,
-    currentPage = 1,
-    pageSize: propPageSize = 10,
-    searchTerm: propSearchTerm = '',
-    fullTextSearch: propFullTextSearch = false,
-    sortBy: propSortBy,
-    sortOrder: propSortOrder,
-    selectedFilters,
-    onPageChange,
-    onPageSizeChange,
-    onSearchChange,
-    onSortChange,
-    onFiltersChange,
-    onClearFilters,
-    handleEditProduct,
-    handleRefresh
-}) => {
+const ProductList: React.FC<ProductListType> = ({products, setFilteredProducts, handleEditProduct, reFetchData}) => {
     const { needSeller, sellersList } = useAuth();
     const isTouchDevice = useIsTouchDevice();
     const [animating, setAnimating] = useState(false);
-
-    const [current, setCurrent] = React.useState(currentPage);
-    const [pageSize, setPageSize] = React.useState(propPageSize);
-    const [searchTerm, setSearchTerm] = useState(propSearchTerm);
-    const [fullTextSearch, setFullTextSearch] = useState(propFullTextSearch);
-
-    React.useEffect(() => { setCurrent(currentPage); }, [currentPage]);
-    React.useEffect(() => { setPageSize(propPageSize); }, [propPageSize]);
-    React.useEffect(() => { setSearchTerm(propSearchTerm); }, [propSearchTerm]);
-    React.useEffect(() => { setFullTextSearch(propFullTextSearch); }, [propFullTextSearch]);
-
-    useEffect(() => {
-        if (!isLoading) {
-            setAnimating(true);
-            const id = setTimeout(() => setAnimating(false), 50);
-            return () => clearTimeout(id);
-        }
-    }, [products]);
 
     // Popup
     const getPopupItems = useCallback((hoveredProduct) => {
@@ -117,28 +65,41 @@ const ProductList: React.FC<ProductListType> = ({
         })) : [];
     }, []);
 
+    // Pagination
+    const [current, setCurrent] = React.useState(1);
+    const [pageSize, setPageSize] = React.useState(10);
     const handleChangePage = (page: number) => {
-        setCurrent(page);
-        if (onPageChange) onPageChange(page);
+        setAnimating(true);
+        setTimeout(() => {
+            setCurrent(page);
+            setAnimating(false);
+        }, 500);
     };
-
     const handleChangePageSize = (size: number) => {
         setPageSize(size);
         setCurrent(1);
-        if (onPageSizeChange) onPageSizeChange(size);
     };
 
-    const handleFilterChange = (newSearchTerm: string) => {
-        setSearchTerm(newSearchTerm);
-        setCurrent(1);
-        if (onSearchChange) onSearchChange(newSearchTerm.trim(), fullTextSearch);
-    };
+    // Sorting
+    const [sortColumn, setSortColumn] = useState<keyof ProductType | null>('name');
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
+    const handleHeaderCellClick = useCallback((columnDataIndex: keyof ProductType) => {
+        setSortDirection(currentDirection =>
+            sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
+        );
+        setSortColumn(columnDataIndex);
+    }, [sortColumn]);
 
+    // Filter and searching
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const [fullTextSearch, setFullTextSearch] = useState(true);
     const handleFullTextSearchChange = () => {
-        setFullTextSearch(prev => !prev);
-        if (onSearchChange) onSearchChange(searchTerm.trim(), !fullTextSearch);
-    };
-
+        setFullTextSearch(prevState => !prevState)
+        if (searchTerm) {
+            setCurrent(1);
+        }
+    }
     const fullTextSearchField = {
         fieldType: FormFieldTypes.TOGGLE,
         name: 'fullTextSearch',
@@ -149,111 +110,47 @@ const ProductList: React.FC<ProductListType> = ({
         hideTextOnMobile: true,
     }
 
-    const [sortColumn, setSortColumn] = useState<keyof ProductType | null>('name');
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('ascend');
-
-    React.useEffect(() => {
-        if (propSortBy) setSortColumn(propSortBy as keyof ProductType);
-        if (propSortOrder) setSortDirection(propSortOrder === 'asc' ? 'ascend' : 'descend');
-    }, [propSortBy, propSortOrder]);
-
-    const handleHeaderCellClick = useCallback((columnDataIndex: keyof ProductType) => {
-        const newDirection = sortColumn === columnDataIndex && sortDirection === 'ascend' ? 'descend' : 'ascend';
-        setSortDirection(newDirection);
-        setSortColumn(columnDataIndex);
-        if (onSortChange) onSortChange(String(columnDataIndex), newDirection === 'ascend' ? 'asc' : 'desc');
-    }, [sortColumn, sortDirection, onSortChange]);
-
-    // filters draft logic
-    const [draftFilters, setDraftFilters] = useState<Record<string, string[]>>({});
-    const updateDraftFilter = useCallback((key: string, valuesOrUpdater: string[] | ((prev: string[]) => string[])) => {
-        setDraftFilters(prev => {
-            const currentValues = prev[key] || [];
-            const newValues = typeof valuesOrUpdater === 'function' ? valuesOrUpdater(currentValues) : valuesOrUpdater;
-            return { ...prev, [key]: newValues };
-        });
-    }, []);
-
-    const [openFilters, setOpenFilters] = useState<Record<string, boolean>>({});
-    const setFilterOpen = useCallback((key: string, isOpen: boolean) => {
-        setOpenFilters(prev => ({ ...prev, [key]: isOpen }));
-    }, []);
-
+    //filters
+    //seller filter
     const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
-    useEffect(() => {
-        if (selectedFilters && selectedFilters.seller && typeof selectedFilters.seller === 'string') {
-            setSelectedSeller(selectedFilters.seller);
-        } else {
-            setSelectedSeller('All sellers');
-        }
-    }, [selectedFilters]);
 
-    const handleSellerChange = (value: string) => {
-        setSelectedSeller(value);
-        if (onFiltersChange) {
-            onFiltersChange({ seller: value === 'All sellers' ? [] : [value] });
-            setCurrent(1);
-        }
-    }
+    const calcSellersAmount = useCallback((seller: string) => {
+        return products.filter(order => order.seller.toLowerCase() === seller.toLowerCase()).length || 0;
+    },[products]);
 
-    const sellersOptions = useMemo(() => {
-        return [{ label: 'All sellers', value: 'All sellers', amount: totalProducts || products.length }, ...sellersList.map(item => ({ ...item, amount: 0 }))];
-    }, [sellersList, totalProducts, products.length]);
+    const sellersOptions = useMemo(()=>{
+        return [{label: 'All sellers', value: 'All sellers', amount: products.length}, ...sellersList.map(item=>({...item, amount: calcSellersAmount(item.value)}))];
+    }, [sellersList, calcSellersAmount]);
 
-    const transformedStatuses = useMemo(() => {
-        if (!filterMetadata?.statuses) return [];
-        return filterMetadata.statuses.map(status => ({
-            value: status.id || status.name,
-            label: status.name || status.id,
-            amount: status.count,
-            color: statusFilter.find(item => item.value === (status.id || status.name))?.color || 'white',
-        }));
-    }, [filterMetadata?.statuses]);
+    // const getSellerName = useCallback((sellerUid: string) => {
+    //     const t = sellersList.find(item=>item.value===sellerUid);
+    //     return t ? t.label : ' - ';
+    // }, [sellersList]);
 
-    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+    const calcProductAmount = useCallback((property: string, value: string) => {
+        return products.filter(product => product[property].toLowerCase() === value.toLowerCase() && (!selectedSeller || selectedSeller==='All sellers' || product.seller == selectedSeller)).length || 0;
+    },[products, selectedSeller]);
 
-    const toggleFilters = () => {
-        setIsFiltersVisible(!isFiltersVisible);
-    };
-
-    const selectedFiltersString = JSON.stringify(selectedFilters);
-    useEffect(() => {
-        if (isFiltersVisible) return;
-        const newDraft: Record<string, string[]> = {};
-        if (selectedFilters) {
-            Object.entries(selectedFilters).forEach(([key, val]) => {
-                if (key === 'seller') return;
-                if (Array.isArray(val)) {
-                    newDraft[key] = val;
-                } else if (typeof val === 'string') {
-                    newDraft[key] = [val];
-                }
-            });
-        }
-        setDraftFilters(newDraft);
-    }, [selectedFiltersString, isFiltersVisible]);
-
-    const applyFilters = useCallback(() => {
-        const fullUpdate: Record<string, string[]> = {};
-        Object.keys(draftFilters).forEach(key => {
-            fullUpdate[key] = draftFilters[key]?.length ? draftFilters[key] : [];
-        });
-        if (onFiltersChange) onFiltersChange(fullUpdate);
+    const [filterStatus, setFilterStatus] = useState<string[]>([]);
+    const handleFilterStatusChange = (newStatuses: string[]) => {
+        setFilterStatus(newStatuses);
         setCurrent(1);
-    }, [draftFilters, onFiltersChange]);
+    }
+    const uniqueStatuses = useMemo(() => {
+        const statuses = products.filter(product => !selectedSeller || selectedSeller==='All sellers' || product.seller == selectedSeller).map(invoice => invoice.status);
+        return Array.from(new Set(statuses)).filter(status => status).sort();
+    }, [products, selectedSeller]);
+    uniqueStatuses.sort();
+    const transformedStatuses = useMemo(() => ([
+        ...uniqueStatuses.map(status => ({
+            value: status,
+            label: status,
+            amount: calcProductAmount('status', status),
+            color: statusFilter.filter(item=>item.value===status)[0]?.color || 'white',
+        }))
+    ]), [uniqueStatuses, calcProductAmount]);
 
-    const hasUnappliedChanges = useMemo(() => {
-        const applied = selectedFilters || {};
-        const draftKeys = Object.keys(draftFilters).filter(k => draftFilters[k]?.length > 0);
-        const appliedKeys = Object.keys(applied).filter(k => Array.isArray(applied[k]) && (applied[k] as string[]).length > 0);
-
-        if (draftKeys.length !== appliedKeys.length) return true;
-        return draftKeys.some(key => {
-            const draftVal = draftFilters[key] || [];
-            const appliedVal = Array.isArray(applied[key]) ? (applied[key] as string[]) : [];
-            return draftVal.length !== appliedVal.length || draftVal.some((v, i) => v !== appliedVal[i]);
-        });
-    }, [draftFilters, selectedFilters]);
+    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
 
     const productFilters = [
         {
@@ -261,31 +158,56 @@ const ProductList: React.FC<ProductListType> = ({
             icon: 'status',
             filterDescriptions: '',
             filterOptions: transformedStatuses,
-            filterState: draftFilters['status'] || [],
-            setFilterState: (val: string[]) => updateDraftFilter('status', val),
-            isOpen: !!openFilters['status'],
-            setIsOpen: (v: boolean) => setFilterOpen('status', v),
-            onClose: () => updateDraftFilter('status', []),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen('status', true); },
+            filterState: filterStatus,
+            setFilterState: handleFilterStatusChange,
+            isOpen: isOpenFilterStatus,
+            setIsOpen: setIsOpenFilterStatus,
+            onClose: ()=>handleFilterStatusChange([]),
+            onClick: ()=>{setIsFiltersVisible(true); setIsOpenFilterStatus(true)},
         },
     ] as FilterComponentType[];
 
-    const activeProductFilters = useMemo(() => [
-        {
-            filterTitle: 'Status',
-            icon: 'status' as any,
-            filterDescriptions: '',
-            filterOptions: transformedStatuses,
-            filterState: selectedFilters?.status ? (typeof selectedFilters.status === 'string' ? [selectedFilters.status] : selectedFilters.status) : [],
-            setFilterState: () => { },
-            isOpen: false,
-            setIsOpen: () => { },
-            onClose: () => onFiltersChange?.({ status: [] }),
-            onClick: () => { setIsFiltersVisible(true); setFilterOpen('status', true) },
-        }
-    ] as FilterComponentType[], [selectedFilters, transformedStatuses, onFiltersChange, setFilterOpen]);
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
-    const filteredProducts = products;
+    const toggleFilters = () => {
+        setIsFiltersVisible(!isFiltersVisible);
+    };
+
+    const handleFilterChange = (newSearchTerm :string) => {
+        setSearchTerm(newSearchTerm);
+        setCurrent(1);
+    };
+
+    const filteredProducts = useMemo(() => {
+        //setCurrent(1);
+        const searchTermLower = searchTerm.toLowerCase();
+        const filtered = products.filter(product => {
+            const matchesSearch = !searchTerm || Object.keys(product).some(key => {
+                const value = product[key];
+                return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
+            });
+            const matchesStatus = !filterStatus.length || filterStatus.map(item=>item.toLowerCase()).includes(product.status.toLowerCase());
+            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === product.seller;
+
+            return matchesSearch && matchesStatus && matchesSeller;
+        });
+
+        if (sortColumn) {
+            filtered.sort((a, b) => {
+                if (sortDirection === 'ascend') {
+                    return a[sortColumn] > b[sortColumn] ? 1 : -1;
+                } else {
+                    return a[sortColumn] < b[sortColumn] ? 1 : -1;
+                }
+            });
+        }
+
+        return filtered;
+    }, [products, searchTerm, filterStatus, sortColumn, sortDirection, selectedSeller]);
+
+    useEffect(() => {
+        setFilteredProducts(filteredProducts)
+    }, [filteredProducts]);
 
     // Table
     const SellerColumns: TableColumnProps<ProductType>[] = [];
@@ -300,8 +222,8 @@ const ProductList: React.FC<ProductListType> = ({
                     <Tooltip title="Seller's name" >
                         <>
                             <span className='table-header-title'>Seller</span>
-                            {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='seller' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
@@ -333,9 +255,37 @@ const ProductList: React.FC<ProductListType> = ({
     }
 
     const columns: ColumnType<ProductType>[] = useMemo(() => [
+        // {
+        //     title: (
+        //         <div style={{width: '30px', justifyContent: 'center', alignItems: 'center'}}>
+        //             <FieldBuilder
+        //                 name={'selectedAllUnits'}
+        //                 fieldType={FormFieldTypes.CHECKBOX}
+        //                 checked={isAllSelected}
+        //                 //disabled={}
+        //                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
+        //                     selectAllProducts(e.target.checked);
+        //                 }}
+        //                 classNames={'no-margin vertical-center'}
+        //             /></div>
+        //
+        //     ),
+        //     dataIndex: 'selected',
+        //     width: '40px',
+        //     key: 'selected',
+        //     render: (text: string, record, index) => (
+        //         <FieldBuilder
+        //             name={`products.${index}.selected`}
+        //             fieldType={FormFieldTypes.CHECKBOX}
+        //             value={record?.selected || false}
+        //             onChange={(e: ChangeEvent<HTMLInputElement>)=>selectProduct(e.target.checked,record)}
+        //             classNames={'no-margin vertical-center'}
+        //         />
+        //     ),
+        // },
         {
             width: "33px",
-            title: <TitleColumn minWidth="20px" maxWidth="20px" contentPosition="center" />,
+            title: <TitleColumn minWidth="20px" maxWidth="20px" contentPosition="center"/>,
             render: (status: string, record) => {
                 const statusObj = statusFilter.find(s => s.value === status);
                 let color = statusObj ? statusObj.color : 'white';
@@ -349,9 +299,10 @@ const ProductList: React.FC<ProductListType> = ({
                                 content={<SimplePopup
                                     items={[{
                                         uuid: record?.uuid || '',
-                                        title: record?.status + (extraStatusHints[record?.status] || '') || ''
+                                        title: `${record?.status} ${extraStatusHints[record?.status]}`,
                                     } as PopupItem]
                                     }
+                                    //width={100}
                                 />}
                                 trigger={isTouchDevice ? 'click' : 'hover'}
                                 placement="right"
@@ -388,6 +339,22 @@ const ProductList: React.FC<ProductListType> = ({
                             maxWidth="20px"
                             contentPosition="center"
                             childrenAfter={
+                                // <Popover
+                                //     // content={<SimplePopup
+                                //     //     items={[{
+                                //     //         uuid: record?.uuid || '',
+                                //     //         title: record?.status + (extraStatusHints[record?.status] || '') || ''
+                                //     //     } as PopupItem]
+                                //     //     }
+                                //     // />}
+                                //     content={<div style={{width: '30px', height: '30px', backgroundColor:'red'}}></div>}
+                                //     trigger={isTouchDevice ? 'click' : 'hover'}
+                                //     placement="right"
+                                //     overlayClassName="doc-list-popover"
+                                // >
+                                //     <Icon name="warning-exclamation" className="warning-icon" />
+                                // </Popover>
+
                                 <Tooltip title="You need to upload certificate for this product to be approved!" placement="right" openClassName={'warning-tooltip'} overlayClassName={'warning-tooltip-overlay'} >
                                     <span><Icon name="warning-exclamation" className="warning-icon" /></span>
                                 </Tooltip>
@@ -411,8 +378,8 @@ const ProductList: React.FC<ProductListType> = ({
                     minWidth="20px"
                     maxWidth="20px"
                     contentPosition="center"
-                    childrenAfter={
-                        <span style={{ marginTop: '3px' }}>{record.notifications ? <Icon name="notification" /> : null}</span>}
+                    childrenAfter ={
+                        <span style={{marginTop:'3px'}}>{record.notifications ? <Icon name="notification" />: null}</span>}
                 >
                 </TableCell>
 
@@ -432,13 +399,13 @@ const ProductList: React.FC<ProductListType> = ({
                     <Tooltip title="A unique code for tracking each product in inventory">
                         <>
                             <span>SKU</span>
-                            {sortColumn === 'sku' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn === 'sku' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn==='sku' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='sku' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="110px" maxWidth="200px" contentPosition="start" />
+                <TableCell value={text} minWidth="110px" maxWidth="200px" contentPosition="start"/>
             ),
             dataIndex: 'sku',
             key: 'sku',
@@ -457,13 +424,13 @@ const ProductList: React.FC<ProductListType> = ({
                 childrenBefore={
                     <>
                         <span>Name</span>
-                        {sortColumn === 'name' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn === 'name' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn==='name' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='name' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="150px" maxWidth="500px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer' className="text-break-all" />
+                <TableCell value={text} minWidth="150px" maxWidth="500px" contentPosition="start" textColor='var(--color-blue)' cursor='pointer'/>
             ),
             dataIndex: 'name',
             key: 'name',
@@ -487,15 +454,20 @@ const ProductList: React.FC<ProductListType> = ({
                     <Tooltip title="Length, width, and height in millimeters">
                         <>
                             <span>Dimension | mm</span>
+                            {sortColumn==='dimension' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='dimension' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
-                } />,
+                }/>,
             render: (text: string) => (
-                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="center" />
+                <TableCell value={text} minWidth="100px" maxWidth="100px" contentPosition="center"/>
             ),
             dataIndex: 'dimension',
             key: 'dimension',
             sorter: true,
+            onHeaderCell: (column: ColumnType<ProductType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
+            }),
             responsive: ['md'],
         },
         {
@@ -507,13 +479,13 @@ const ProductList: React.FC<ProductListType> = ({
                 childrenBefore={
                     <>
                         <span>Weight | kg</span>
-                        {sortColumn === 'weight' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn === 'weight' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn==='weight' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                        {sortColumn==='weight' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                     </>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center" />
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center"/>
             ),
             dataIndex: 'weight',
             key: 'weight',
@@ -532,13 +504,13 @@ const ProductList: React.FC<ProductListType> = ({
                     <Tooltip title="Alternative names">
                         <>
                             <span>Aliases</span>
-                            {sortColumn === 'aliases' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn === 'aliases' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn==='aliases' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='aliases' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
-                } />,
+                }/>,
             render: (text: string) => (
-                <TableCell value={text.trim().slice(-1) === '|' ? text.trim().slice(0, text.length - 2) : text} minWidth="100px" maxWidth="300px" contentPosition="start" />
+                <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
             dataIndex: 'aliases',
             key: 'aliases',
@@ -558,14 +530,14 @@ const ProductList: React.FC<ProductListType> = ({
                     <Tooltip title="Alternative names">
                         <>
                             <span>Barcodes</span>
-                            {sortColumn === 'barcodes' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn === 'barcodes' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn==='barcodes' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='barcodes' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 }
             />,
             render: (text: string) => (
-                <TableCell value={text.trim().slice(-1) === '|' ? text.trim().slice(0, text.length - 2) : text} minWidth="100px" maxWidth="300px" contentPosition="start" />
+                <TableCell value={text.trim().slice(-1)==='|' ? text.trim().slice(0, text.length-2) : text} minWidth="100px" maxWidth="300px" contentPosition="start"/>
             ),
             dataIndex: 'barcodes',
             key: 'barcodes',
@@ -584,8 +556,8 @@ const ProductList: React.FC<ProductListType> = ({
                     <Tooltip title="Available products for new orders">
                         <>
                             <span>Available</span>
-                            {sortColumn === 'available' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn === 'available' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                            {sortColumn==='available' && sortDirection==='ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn==='available' && sortDirection==='descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
                         </>
                     </Tooltip>
                 } />,
@@ -604,7 +576,7 @@ const ProductList: React.FC<ProductListType> = ({
                             placement="left"
                             overlayClassName="doc-list-popover"
                         >
-                            <span className={styles["stock-cell-style"]}>{text} <Icon name="info" /></span>
+                            <span className="stock-cell-style">{text} <Icon name="info" /></span>
                         </Popover>
                     }>
                 </TableCell>
@@ -616,31 +588,31 @@ const ProductList: React.FC<ProductListType> = ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductType),
             }),
         },
-    ], [handleHeaderCellClick, sortDirection, sortColumn]);
+    ], [handleHeaderCellClick, sortDirection, sortColumn]);   //], [handleHeaderCellClick, isAllSelected]);
 
     return (
         <div className='table'>
+            {/*{isLoading && <Loader />}*/}
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER}
-                    icon={'filter'}></Button>
+                        icon={'filter'}></Button>
                 <div className='search-block'>
-                    <SearchField
-                        searchTerm={searchTerm}
-                        handleSearch={handleFilterChange}
-                        handleClear={() => { setSearchTerm(""); handleFilterChange(""); }}
-                        manualSearch={true}
-                    />
+                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => {
+                        setSearchTerm("");
+                        handleFilterChange("");
+                    }}/>
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
             {needSeller() ?
                 <div className='seller-filter-block'>
-                    <Select
+                    <SelectField
                         key='seller-filter'
                         name='selectedSeller'
                         label='Seller: '
                         value={selectedSeller}
-                        onChange={(val) => handleSellerChange(val as string)}
+                        onChange={(val)=>setSelectedSeller(val as  string)}
+                        //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
                         options={sellersOptions}
                         classNames='seller-filter full-sized'
                         isClearable={false}
@@ -648,13 +620,13 @@ const ProductList: React.FC<ProductListType> = ({
                 </div>
                 : null
             }
-            <div className={styles['product-list__notice']}>
+            <div className='product-list__notice'>
                 <p>Before sending a new product to our warehouse, please wait until the product receives "Approved" status</p>
             </div>
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <FiltersChosen filters={activeProductFilters} />
+                    <FiltersChosen filters={productFilters} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -672,16 +644,16 @@ const ProductList: React.FC<ProductListType> = ({
                         dataSource={filteredProducts.map(item => ({
                             ...item,
                             key: item.uuid
-                        }))}
+                        })).slice((current - 1) * pageSize, current * pageSize)}
                         columns={columns}
                         pagination={false}
-                        // scroll={{ y: 700 }}
+                        scroll={{y: 700}}
                         showSorterTooltip={false}
                     />
                     <div className="order-products-total">
                         <ul className='order-products-total__list'>
                             <li className='order-products-total__list-item'>Total products:<span
-                                className='order-products-total__list-item__value'>{totalProducts || products.length}</span></li>
+                                className='order-products-total__list-item__value'>{filteredProducts.length}</span></li>
                         </ul>
                     </div>
                 </div>
@@ -691,15 +663,13 @@ const ProductList: React.FC<ProductListType> = ({
                     current={current}
                     pageSize={pageSize}
                     onChange={handleChangePage}
-                    total={totalProducts || products.length}
+                    total={filteredProducts.length}
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
             </div>
             <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible}
-                onClearFilters={onClearFilters ? onClearFilters : () => updateDraftFilter('status', [])}
-                onApplyFilters={applyFilters}
-                hasUnappliedChanges={hasUnappliedChanges}>
+                              onClearFilters={() => handleFilterStatusChange([])}>
                 <FiltersListWithOptions filters={productFilters} />
             </FiltersContainer>
         </div>

@@ -51,7 +51,6 @@ const AntiFraudSettingsPage = () => {
             const res = await getAntiFraudSettingsList(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "data" in res) {
-                console.log('res anti fraud:', res);
 
                 if (res?.data?.defaultSettings) {
                     setSettingsDefaultData(res.data.defaultSettings);

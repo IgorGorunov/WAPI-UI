@@ -70,7 +70,6 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
     const [docUuid, setDocUuid] = React.useState<string | null>(null);
 
     const handleOpenOrder = (uuid: string) => {
-        console.log('click', uuid);
         setDocUuid(uuid);
     }
 

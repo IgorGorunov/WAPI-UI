@@ -1,0 +1,35 @@
+.product-stock-list {
+  .warehouse-filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+
+    @include mobile {
+      flex-wrap: wrap;
+    }
+
+    .input-select-container {
+      flex: 0 0 200px;
+
+      @include mobile {
+        flex: 1 0 100%;
+      }
+    }
+  }
+
+  .reserve {
+    display: flex;
+    align-items: center;
+  }
+
+  .info-icon {
+    svg {
+      margin-top: 3px;
+    }
+    svg path {
+      fill: var(--color-blue);
+    }
+  }
+}
