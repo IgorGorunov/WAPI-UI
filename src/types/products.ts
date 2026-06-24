@@ -36,7 +36,7 @@ export type ProductType = {
     seller?: string;
     available: number;
     productType?: ProductTypeType;
-    certificate?: boolean;
+    hasCertificate?: boolean;
 }
 
 export type ReservedRowType = {

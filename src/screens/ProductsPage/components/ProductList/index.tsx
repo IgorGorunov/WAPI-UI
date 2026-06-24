@@ -374,34 +374,34 @@ const ProductList: React.FC<ProductListType> = ({
             dataIndex: 'status',
             key: 'status',
         },
-        {
-            width: "20px",
-            title: <TitleColumn minWidth="10px" maxWidth="20px" contentPosition="center" />,
-            render: (_text: string, record) => {
-                // const statusObj = statusFilter.find(s => s.value === status);
-                // let color = statusObj ? statusObj.color : 'white';
-
-                if (!record?.certificate && record?.productType?.certificate && record.status == 'Draft') {
-                    return (
-                        <TableCell
-                            minWidth="20px"
-                            maxWidth="20px"
-                            contentPosition="center"
-                            childrenAfter={
-                                <Tooltip title="You need to upload certificate for this product to be approved!" placement="right" openClassName={'warning-tooltip'} overlayClassName={'warning-tooltip-overlay'} >
-                                    <span><Icon name="warning-exclamation" className="warning-icon" /></span>
-                                </Tooltip>
-
-                            }>
-                        </TableCell>
-                    )
-                } else {
-                    return <span></span>
-                }
-            },
-            dataIndex: 'certificate',
-            key: 'certificate',
-        },
+        // {
+        //     width: "20px",
+        //     title: <TitleColumn minWidth="10px" maxWidth="20px" contentPosition="center" />,
+        //     render: (_text: string, record) => {
+        //         // const statusObj = statusFilter.find(s => s.value === status);
+        //         // let color = statusObj ? statusObj.color : 'white';
+        //
+        //         if (!record?.hasCertificate && record?.productType?.certificate && record.status == 'Draft') {
+        //             return (
+        //                 <TableCell
+        //                     minWidth="20px"
+        //                     maxWidth="20px"
+        //                     contentPosition="center"
+        //                     childrenAfter={
+        //                         <Tooltip title="You need to upload certificate for this product to be approved!" placement="right" openClassName={'warning-tooltip'} overlayClassName={styles['warning-tooltip-overlay']} >
+        //                             <span><Icon name="warning-exclamation" className="warning-icon" /></span>
+        //                         </Tooltip>
+        //
+        //                     }>
+        //                 </TableCell>
+        //             )
+        //         } else {
+        //             return <span></span>
+        //         }
+        //     },
+        //     dataIndex: 'certificate',
+        //     key: 'certificate',
+        // },
         {
             title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
             />,

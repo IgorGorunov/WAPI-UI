@@ -248,8 +248,9 @@ const DropZone = ({ files, onFilesChange, readOnly = false, hint = '', banCSV = 
                         <FileDisplay files={files} onFileDelete={onFileDelete} addedFiles={addedFiles} listType={listType} />
                     )}
                 </div>
-                {showError && errorText ? <p className={styles['error-message']}>{errorText}</p> : null}
+
             </div>
+            {showError && errorText ? <p className={styles['error-message']}>{errorText}</p> : null}
             {needSendBtn && (readOnly || showSend) && docUuid && addedFiles.length ?
                 <div className={`${styles['dropzone__btns'] || 'dropzone__btns'} dropzone__btns`}><Button onClick={handleSendDocFile}>Send files</Button></div>
                 : null}

@@ -156,6 +156,9 @@
       }
     }
 
+    .ant-table-column-sorters {
+      padding-right: 8px !important;
+    }
     .ant-table-cell::before {
       display: none;
     }
@@ -183,6 +186,16 @@
 
     .animated-row {
       animation: fadeInDown 1s forwards;
+    }
+
+    .sorter-col-wrapper {
+      position: relative;
+
+      .sorter,
+      .lm-6 {
+        position: absolute;
+        right: -14px;
+      }
     }
   }
 
