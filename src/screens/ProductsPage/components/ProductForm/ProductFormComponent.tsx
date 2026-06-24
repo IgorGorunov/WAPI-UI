@@ -1,12 +1,12 @@
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import type { Control } from "react-hook-form";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { FormFieldTypes, WidthType } from "@/types/forms";
-import { COUNTRIES } from "@/types/countries";
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
+import type {Control} from "react-hook-form";
+import {Controller, useFieldArray, useForm} from "react-hook-form";
+import {FormFieldTypes, WidthType} from "@/types/forms";
+import {COUNTRIES} from "@/types/countries";
 import styles from "./styles.module.scss";
 import useAuth from "@/context/authContext";
-import { AccessActions, AccessObjectTypes } from "@/types/auth";
-import { ProductParamsType, SingleProductFormType, SingleProductType } from "@/types/products";
+import {AccessActions, AccessObjectTypes} from "@/types/auth";
+import {ProductParamsType, SingleProductFormType, SingleProductType} from "@/types/products";
 import {
     FormFieldsAdditional1,
     FormFieldsAdditional2,
@@ -15,37 +15,37 @@ import {
     FormFieldsWarehouse,
 } from "./ProductFormFields";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import Button, { ButtonSize, ButtonVariant } from "@/components/Button/Button";
-import { createOptions } from "@/utils/selectOptions";
-import { Table } from 'antd';
+import Button, {ButtonSize, ButtonVariant} from "@/components/Button/Button";
+import {createOptions} from "@/utils/selectOptions";
+import {Table} from 'antd';
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import Tabs from "@/components/Tabs";
 import Icon from "@/components/Icon";
-import { sendProductInfo } from "@/services/products";
-import { sendDocumentFiles } from "@/services/files";
-import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
+import {sendProductInfo} from "@/services/products";
+import {sendDocumentFiles} from "@/services/files";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
-import { toast, ToastContainer } from '@/components/Toast';
+import {toast, ToastContainer} from '@/components/Toast';
 import "@/styles/tables.scss";
 import '@/styles/forms.scss';
-import { TabFields, TabTitles } from "./ProductFormTabs";
-import { useTabsState } from "@/hooks/useTabsState";
+import {TabFields, TabTitles} from "./ProductFormTabs";
+import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
-import { AttachedFilesType, PRODUCT_FILE_TYPES, STATUS_MODAL_TYPES } from "@/types/utility";
+import {AttachedFilesType, PRODUCT_FILE_TYPES, STATUS_MODAL_TYPES} from "@/types/utility";
 import useNotifications from "@/context/notificationContext";
-import { NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType } from "@/types/notifications";
+import {NOTIFICATION_OBJECT_TYPES, NOTIFICATION_STATUSES, NotificationType} from "@/types/notifications";
 import DocumentTickets from "@/components/DocumentTickets";
 import SingleDocument from "@/components/SingleDocument";
-import { TICKET_OBJECT_TYPES } from "@/types/tickets";
+import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
-import { ProductDimensionsHints, ProductOtherHints } from "@/screens/ProductsPage/productsHints.constants";
+import {ProductDimensionsHints, ProductOtherHints} from "@/screens/ProductsPage/productsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
-import { CommonHints } from "@/constants/commonHints";
+import {CommonHints} from "@/constants/commonHints";
 import ConfirmModal from "@/components/ModalConfirm";
-import { sendUserBrowserInfo } from "@/services/userInfo";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
-import { isTabAllowed } from "@/utils/tabs";
+import {isTabAllowed} from "@/utils/tabs";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -152,7 +152,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
             additionalService: !!productData?.additionalService || false,
             seller: productData?.seller || '',
             productType: productData?.productType || '',
-            certificate: productData?.productType ? productParams.productsType.find(item => item.id === productData?.productType)?.certificate  || false : false,
+            certificate: productData?.productType ? productParams.productsType.find(item => item.id === productData?.productType)?.certificate && productData.attachedFiles.filter(item => item.productFileType === PRODUCT_FILE_TYPES.certificate)?.length  || false : false,
             unitOfMeasures:
                 productData && productData.unitOfMeasures
                     ? productData.unitOfMeasures.map((unit, index) => (
@@ -1078,39 +1078,26 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
                 if (certificate) {
                     if (selectedFiles.filter((file) => file.productFileType === 'certificate').length == 0) {
                         errorTabs.push('certificates');
-                        // toast.warn(`You need to upload certificate for this product!`, {
-                        //     position: "top-right",
-                        //     autoClose: 3000,
-                        // });
                     }
                 } else {
-                    errorTabs.push('certificate');
-                    setError('certificate', {
-                        type: 'manual',
-                        message: certificateErrorText,
-                    });
+                    // TEMPORARY commented, do not delete
+                    // errorTabs.push('certificate');
+                    // setError('certificate', {
+                    //     type: 'manual',
+                    //     message: certificateErrorText,
+                    // });
                 }
 
             }
         } else {
-            if (needCertificate && !certificate) {
-                errorTabs.push('certificate');
-                setError('certificate', {
-                    type: 'manual',
-                    message: certificateErrorText,
-                });
-                // toast.warn(certificateErrorText, {
-                //     position: "top-right",
-                //     autoClose: 3000,
-                // });
-                // if (selectedFiles.filter((file) => file.productFileType === 'certificate').length == 0) {
-                //     errorTabs.push('certificate');
-                //     toast.warn(`You need to upload certificate for this product!`, {
-                //         position: "top-right",
-                //         autoClose: 3000,
-                //     });
-                // }
-            }
+            // TEMPORARY commented, do not delete
+            // if (needCertificate && !certificate) {
+            //     errorTabs.push('certificate');
+            //     setError('certificate', {
+            //         type: 'manual',
+            //         message: certificateErrorText,
+            //     });
+            // }
         }
 
         if (errorTabs.length) {
@@ -1208,11 +1195,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
                         toast.warn('You need to upload certificates for this product!')
                     }
                 } else {
-                    fieldNames.push('certificate');
-                    setError('certificate', {
-                        type: 'manual',
-                        message: certificateErrorText,
-                    });
+                    // TEMPORARY commented, do not delete
+                    // fieldNames.push('certificate');
+                    // setError('certificate', {
+                    //     type: 'manual',
+                    //     message: certificateErrorText,
+                    // });
                 }
             }
 
@@ -1226,11 +1214,12 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
                         toast.warn('You need to upload certificates for this product!')
                     }
                 } else {
-                    fieldNames.push('certificate');
-                    setError('certificate', {
-                        type: 'manual',
-                        message: certificateErrorText,
-                    });
+                    // TEMPORARY commented, do not delete
+                    // fieldNames.push('certificate');
+                    // setError('certificate', {
+                    //     type: 'manual',
+                    //     message: certificateErrorText,
+                    // });
                 }
             }
 
@@ -1595,8 +1584,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
                                     title={'Certificate'}
                                     onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'certificate')}
                                     needSendBtn={false}
+                                    // TEMPORARY commented
                                     showError={needCertificate && certificate && selectedFiles.filter((file) => file.productFileType === 'certificate').length == 0}
-                                    errorText={'You need to upload a certificate for this product'}
+                                    errorText={"You need to upload a certificate for this product. Or turn off 'Have certificate for the product' toggle on Primaty tab"}
 
                                 />
                             </div>
