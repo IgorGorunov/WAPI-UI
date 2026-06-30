@@ -73,9 +73,17 @@
       transform-origin: left center;
       transition: .3s ease;
 
+      path {
+        transition: .3s ease;
+      }
+
       &:hover {
         transform: scale(1.05);
         color: var(--color-blue);
+
+        path {
+          fill: var(--color-blue);
+        }
       }
 
       &-btn {

@@ -26,6 +26,23 @@
     color: var(--color-gray-blue);
   }
 
+  &.primary {
+    &.color-change {
+
+      :global(path) {
+        transition: 0.3s ease-in;
+        fill: var(--color-white);
+      }
+
+      &:hover {
+        svg path {
+
+          fill: var(--color-gray-blue);
+        }
+      }
+    }
+  }
+
   &-size {
     &-x-sm {
       padding: 10px 16px;
@@ -148,8 +165,9 @@
     background-color: var(--color-gray2);
     box-shadow: 0 2px 5px 0 var(--color-gray2);
     color: var(--color-gray-blue);
-    border-radius: 20px;
+    //border-radius: 20px;
     border: none;
+
     &:hover {
       background-color: var(--color-gray2);
       box-shadow: 0 2px 5px 0 var(--color-gray2);

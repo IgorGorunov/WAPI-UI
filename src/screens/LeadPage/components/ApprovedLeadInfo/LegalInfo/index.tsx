@@ -1,10 +1,9 @@
 import React, {useCallback, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
 import {useForm} from "react-hook-form";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import {bankInfoFields, companyInfoFields, otherInfoFields} from "./legalInfoFields";
-import {ApiResponseType} from "@/types/api";
 import {sendLegalInfo} from "@/services/leads";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import useAuth from "@/context/authContext";
@@ -173,12 +172,12 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
         <>
             <LeadTutorialStep stepData={leadTutorialInfo.step5} />
             <LeadTutorialStep stepData={leadTutorialInfo.step6} />
-            {legalData ? <div className={`card legal-info`}>
+            {legalData ? <div className={`card ${styles['legal-info']}`}>
                 {isLoading && <Loader />}
-                <div className='legal-info__contract-download'>
+                <div className={styles['legal-info__contract-download']}>
                     <Button icon='download-file' iconOnTheRight onClick={handleContractDownload}>Contract sample</Button>
                 </div>
-                <div className='legal-info__form-wrapper'>
+                <div className={styles['legal-info__form-wrapper']}>
                     <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={companyInfoFields} errors={errors} isDisabled={noLegal || isDisabled}/>
@@ -191,29 +190,29 @@ const LegalInfo:React.FC<LegalInfoPropsType> = ({legalData}) => {
                         <div className='grid-row'>
                             <FormFieldsBlock control={control} fieldsArray={otherInfoFields} errors={errors} isDisabled={noLegal || isDisabled} />
                         </div>
-                        <div className='legal-info__form-btns'>
+                        <div className={styles['legal-info__form-btns']}>
                             <Button type='submit' disabled={isDisabled}>Submit contract</Button>
                         </div>
                     </form>
                 </div>
                 {showStatusModal && <ModalStatus {...modalStatusInfo}/>}
             </div> : null}
-            <ul className='lead-contract-faq__list'>
-                <li className='lead-contract-faq__list-item'>
-                    <p className='lead-contract-faq__list-item__question'>What to do if I don't have a company and VAT yet?</p>
-                    <p className='lead-contract-faq__list-item__answer'>You can register a company and get a VAT number first, then start an onboarding process with WAPI. If you need help we can share with you a proven partner for registration, please contact with manager.</p>
+            <ul className={styles['lead-contract-faq__list']}>
+                <li className={styles['lead-contract-faq__list-item']}>
+                    <p className={styles['lead-contract-faq__list-item__question']}>What to do if I don't have a company and VAT yet?</p>
+                    <p className={styles['lead-contract-faq__list-item__answer']}>You can register a company and get a VAT number first, then start an onboarding process with WAPI. If you need help we can share with you a proven partner for registration, please contact with manager.</p>
                 </li>
-                <li className='lead-contract-faq__list-item'>
-                    <p className='lead-contract-faq__list-item__question'>What if I have VAT in UK or outside EU and I want to operate in EU?</p>
-                    <p className='lead-contract-faq__list-item__answer'>To operate in the EU you must have a company and VAT in the EU.</p>
+                <li className={styles['lead-contract-faq__list-item']}>
+                    <p className={styles['lead-contract-faq__list-item__question']}>What if I have VAT in UK or outside EU and I want to operate in EU?</p>
+                    <p className={styles['lead-contract-faq__list-item__answer']}>To operate in the EU you must have a company and VAT in the EU.</p>
                 </li>
-                <li className='lead-contract-faq__list-item'>
-                    <p className='lead-contract-faq__list-item__question'>Do I have to register a company and get VAT in each country?</p>
-                    <p className='lead-contract-faq__list-item__answer'>No, if you plan to operate in the EU - one country within the EU and one VAT is sufficient.</p>
+                <li className={styles['lead-contract-faq__list-item']}>
+                    <p className={styles['lead-contract-faq__list-item__question']}>Do I have to register a company and get VAT in each country?</p>
+                    <p className={styles['lead-contract-faq__list-item__answer']}>No, if you plan to operate in the EU - one country within the EU and one VAT is sufficient.</p>
                 </li>
-                <li className='lead-contract-faq__list-item'>
-                    <p className='lead-contract-faq__list-item__question'>If I have a company in EU but no VAT, can we work?</p>
-                    <p className='lead-contract-faq__list-item__answer'>For further work with the product, it is recommended to get VAT, at the same time for work with «WAPI» fulfillment it is enough to have a registered company and willingness to pay taxes. Please contact a manager to get the full information about your individual situation.</p>
+                <li className={styles['lead-contract-faq__list-item']}>
+                    <p className={styles['lead-contract-faq__list-item__question']}>If I have a company in EU but no VAT, can we work?</p>
+                    <p className={styles['lead-contract-faq__list-item__answer']}>For further work with the product, it is recommended to get VAT, at the same time for work with «WAPI» fulfillment it is enough to have a registered company and willingness to pay taxes. Please contact a manager to get the full information about your individual situation.</p>
                 </li>
             </ul>
         </>

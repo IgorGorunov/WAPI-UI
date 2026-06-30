@@ -41,6 +41,7 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
     }, [])
 
     const fetchSingleOrder = async (uuid: string) => {
+        console.log('fetchSingleOrder', uuid)
         try {
             setIsLoadingOrder(true);
             const requestData = { token, alias, uuid };
@@ -55,7 +56,9 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
                 setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Warning", subtitle: `You have limited access to this action`, onClose: closeErrorModal })
                 setShowStatusModal(true);
 
+                setIsLoadingOrder(false);
                 return null;
+
             }
 
             const res = await getOrderData(superUser && ui ? { ...requestData, ui } : requestData);
@@ -77,10 +80,6 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
         try {
             setIsLoadingParams(true);
             const requestData = { token, alias };
-
-            // try {
-            //     sendUserBrowserInfo({...getBrowserInfo('GetOrderParameters'), body: superUser && ui ? {...requestData, ui} : requestData})
-            // } catch {}
 
             const resp = await getOrderParameters(superUser && ui ? { ...requestData, ui } : requestData);
 

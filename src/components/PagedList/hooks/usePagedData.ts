@@ -110,6 +110,7 @@ export function usePagedData<TData = object>(
     const [data, setData] = useState<TData[]>([]);
     const [count, setCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [isPreviousData, setIsPreviousData] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const [refetchCount, setRefetchCount] = useState(0);
 
@@ -122,6 +123,7 @@ export function usePagedData<TData = object>(
 
         const fetchData = async () => {
             setIsLoading(true);
+            setIsPreviousData(true);  // keep existing rows visible while loading
             setError(null);
 
             try {
@@ -185,11 +187,13 @@ export function usePagedData<TData = object>(
                     setData([]);
                     setCount(0);
                 }
+                setIsPreviousData(false);
             } catch (err) {
                 console.error('Error fetching data from', endpoint, err);
                 setError(err instanceof Error ? err : new Error('Unknown error'));
                 setData([]);
                 setCount(0);
+                setIsPreviousData(false);
             } finally {
                 setIsLoading(false);
             }
@@ -219,6 +223,7 @@ export function usePagedData<TData = object>(
         data,
         count,
         isLoading,
+        isPreviousData,
         error,
         refetch,
     };

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
 import { ColumnType } from "antd/es/table";
 import styles from "./styles.module.scss";
@@ -10,7 +10,6 @@ import TableCell from "@/components/TableCell";
 import Icon from "@/components/Icon";
 import { PageOptions } from '@/constants/pagination';
 import getSymbolFromCurrency from "currency-symbol-map";
-import { DateRangeType } from "@/types/dashboard";
 import DateInput from "@/components/DateInput";
 import { getCODReportForm } from "@/services/codReports";
 import useAuth from "@/context/authContext";
@@ -21,101 +20,88 @@ import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
 import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
+import { DateRangeType } from "@/types/dashboard";
 
 
 type CodReportsListType = {
     codReports: CodReportType[];
-    currentRange: DateRangeType;
-    setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
-    setFilteredCodReports: React.Dispatch<React.SetStateAction<CodReportType[]>>;
+    isLoading: boolean;
+    totalCodReports: number;
+    currentPage: number;
+    pageSize: number;
+    searchTerm: string;
+    sortBy: string;
+    sortOrder: 'asc' | 'desc';
+    onPageChange: (page: number) => void;
+    onPageSizeChange: (size: number) => void;
+    onSearchChange: (search: string) => void;
+    onSortChange: (col: string, order: 'asc' | 'desc') => void;
     selectedSeller: string;
+    startDate: string;
+    endDate: string;
+    onPeriodChange: (start: Date, end: Date) => void;
 }
 
-const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange, setCurrentRange, setFilteredCodReports, selectedSeller }) => {
+const CODReportsList: React.FC<CodReportsListType> = ({
+    codReports,
+    isLoading,
+    totalCodReports,
+    currentPage,
+    pageSize,
+    searchTerm: propSearchTerm = '',
+    sortBy,
+    sortOrder,
+    onPageChange,
+    onPageSizeChange,
+    onSearchChange,
+    onSortChange,
+    // selectedSeller,
+    startDate,
+    endDate,
+    onPeriodChange,
+}) => {
 
-    const [animating, setAnimating] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isDownloading, setIsDownloading] = useState(false);
+
+    // Local search term: typing doesn't trigger API — only Enter/Search button does
+    const [searchTerm, setSearchTerm] = useState(propSearchTerm);
+    React.useEffect(() => { setSearchTerm(propSearchTerm); }, [propSearchTerm]);
+
+    const handleSearchSubmit = (value: string) => {
+        onSearchChange(value.trim());
+    };
+
+    const handleSearchClear = () => {
+        setSearchTerm('');
+        onSearchChange('');
+    };
 
     const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
-    // Pagination
-    const [current, setCurrent] = React.useState(1);
-    const [pageSize, setPageSize] = React.useState(10);
-    const handleChangePage = (page: number) => {
-        setAnimating(true);
-        setTimeout(() => {
-            setCurrent(page);
-            setAnimating(false);
-        }, 500);
-    };
-    const handleChangePageSize = (size: number) => {
-        setPageSize(size);
-        setCurrent(1);
-    };
+    // ── Sorting — delegated to server; local state only tracks header arrows ──
+    const sortColumn = sortBy as keyof CodReportType;
+    const sortDirection = sortOrder === 'asc' ? 'ascend' : 'descend';
 
-    const getSellerName = useCallback((sellerUid: string) => {
-        const t = sellersList.find(item => item.value === sellerUid);
-        return t ? t.label : ' - ';
-    }, [sellersList]);
-
-    // Sorting
-    const [sortColumn, setSortColumn] = useState<keyof CodReportType>('date');
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('descend');
     const handleHeaderCellClick = useCallback((columnDataIndex: keyof CodReportType) => {
-        setSortDirection(currentDirection =>
-            sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
-        );
-        setSortColumn(columnDataIndex);
-    }, [sortColumn]);
+        const newOrder: 'asc' | 'desc' =
+            sortColumn === columnDataIndex && sortOrder === 'asc' ? 'desc' : 'asc';
+        onSortChange(String(columnDataIndex), newOrder);
+    }, [sortColumn, sortOrder, onSortChange]);
 
-
-    // Filter and searching
-    const [searchTerm, setSearchTerm] = useState('');
-
-    const handleFilterChange = (newSearchTerm: string) => {
-        if (newSearchTerm !== undefined) {
-            setSearchTerm(newSearchTerm);
-        }
-    };
-    const filteredCODReports = useMemo(() => {
-        setCurrent(1);
-        const searchTermLower = searchTerm.toLowerCase();
-        const filtered = codReports.filter(product => {
-            const matchesSearch = !searchTerm || Object.keys(product).some(key => {
-                const value = product[key];
-                return key !== 'uuid' && typeof value === 'string' && value.toLowerCase().includes(searchTermLower);
-            });
-
-            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || product.seller === selectedSeller;
-            return matchesSearch && matchesSeller;
-        });
-
-        if (sortColumn) {
-            filtered.sort((a, b) => {
-                if (sortDirection === 'ascend') {
-                    return a[sortColumn] > b[sortColumn] ? 1 : -1;
-                } else {
-                    return a[sortColumn] < b[sortColumn] ? 1 : -1;
-                }
-            });
-        }
-        return filtered;
-    }, [codReports, searchTerm, sortColumn, sortDirection, selectedSeller]);
-
-    //const [showDatepicker, setShowDatepicker] = useState(false);
-
-    useEffect(() => {
-        setFilteredCodReports(filteredCODReports)
-    }, [filteredCODReports]);
-
-    const handleDateRangeSave = (newRange) => {
-        setCurrentRange(newRange);
-        //setShowDatepicker(false);
+    // ── Date range ───────────────────────────────────────────────────────────
+    const handleDateRangeSave = (newRange: DateRangeType) => {
+        onPeriodChange(newRange.startDate, newRange.endDate);
     };
 
-    const handleDownloadCORReport = async (uuid) => {
-        setIsLoading(true);
+    const currentRange: DateRangeType = useMemo(() => ({
+        startDate: startDate ? new Date(startDate) : new Date(),
+        endDate: endDate ? new Date(endDate) : new Date(),
+    }), [startDate, endDate]);
+
+    // ── COD Report download ───────────────────────────────────────────────────
+    const handleDownloadCODReport = async (uuid: string) => {
+        setIsDownloading(true);
         try {
             const requestData = { token: token, alias, uuid: uuid };
 
@@ -134,39 +120,34 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                 if (files.length) {
                     files.forEach(file => {
                         const decodedData = atob(file.data);
-
-                        // Convert base64 to Uint8Array
                         const arrayBuffer = new Uint8Array(decodedData.length);
                         for (let i = 0; i < decodedData.length; i++) {
                             arrayBuffer[i] = decodedData.charCodeAt(i);
                         }
-
-                        // // Create a Blob
                         const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
-
-                        // Create a download link
                         const link = document.createElement('a');
                         link.href = URL.createObjectURL(blob);
                         link.download = file.name;
-
-                        // Append the link to the document and trigger a click event
                         document.body.appendChild(link);
                         link.click();
-
-                        // Remove the link from the document
                         document.body.removeChild(link);
                     });
                 }
             } else {
                 console.error("API did not return expected data");
             }
-
         } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error("Error fetching COD report print form:", error);
         } finally {
-            setIsLoading(false);
+            setIsDownloading(false);
         }
     };
+
+    // ── Seller column ────────────────────────────────────────────────────────
+    const getSellerName = useCallback((sellerUid: string) => {
+        const t = sellersList.find(item => item.value === sellerUid);
+        return t ? t.label : ' - ';
+    }, [sellersList]);
 
     const SellerColumns: TableColumnProps<CodReportType>[] = [];
     if (needSeller()) {
@@ -178,30 +159,24 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span className='table-header-title'>Seller</span>
                             {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
-            render: (_text: string, record) => {
-                return (
-                    <TableCell
-                        className='no-padding'
-                        minWidth="90px"
-                        maxWidth="100px"
-                        contentPosition="left"
-                        childrenBefore={
-                            <div className="seller-container">
-                                {getSellerName(record.seller)}
-                            </div>
-                        }
-                    >
-                    </TableCell>
-                );
-            },
+            render: (_text: string, record) => (
+                <TableCell
+                    className='no-padding'
+                    minWidth="90px"
+                    maxWidth="100px"
+                    contentPosition="left"
+                    childrenBefore={<div className="seller-container">{getSellerName(record.seller)}</div>}
+                >
+                </TableCell>
+            ),
             dataIndex: 'seller',
             key: 'seller',
             sorter: false,
@@ -212,6 +187,7 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
         } as TableColumnProps<CodReportType>);
     }
 
+    // ── Columns ───────────────────────────────────────────────────────────────
     const columns: ColumnType<CodReportType>[] = useMemo(() => [
         {
             title: <TitleColumn
@@ -220,13 +196,12 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                 maxWidth="80px"
                 contentPosition="start"
                 childrenBefore={
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span className='table-header-title'>Number</span>
                         {sortColumn === 'number' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'number' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 }
-
             />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="start" />
@@ -245,11 +220,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                 maxWidth="150px"
                 contentPosition="start"
                 childrenBefore={
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span className='table-header-title'>Date</span>
                         {sortColumn === 'date' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'date' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 }
             />,
             render: (text: string) => (
@@ -270,11 +245,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                 maxWidth="100px"
                 contentPosition="start"
                 childrenBefore={
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span className='table-header-title'>Amount</span>
                         {sortColumn === 'amount' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'amount' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 }
             />,
             render: (text: string, record) => {
@@ -282,27 +257,9 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                 const textColor = isNegative ? 'red' : undefined;
                 if (record.currency) {
                     const currencySymbol = getSymbolFromCurrency(record.currency);
-                    return (
-                        <TableCell
-                            value={`${text} ${currencySymbol}`}
-                            minWidth="100px"
-                            maxWidth="200px"
-                            contentPosition="start"
-                            textColor={textColor}
-                        >
-                        </TableCell>
-                    );
-                } else {
-                    return (
-                        <TableCell
-                            value={'-'}
-                            minWidth="100px"
-                            maxWidth="200px"
-                            contentPosition="start"
-                            textColor={textColor}>
-                        </TableCell>
-                    );
+                    return <TableCell value={`${text} ${currencySymbol}`} minWidth="100px" maxWidth="200px" contentPosition="start" textColor={textColor} />;
                 }
+                return <TableCell value={'-'} minWidth="100px" maxWidth="200px" contentPosition="start" textColor={textColor} />;
             },
             dataIndex: 'amount',
             key: 'amount',
@@ -318,11 +275,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                 maxWidth="200px"
                 contentPosition="start"
                 childrenBefore={
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span className='table-header-title'>Period</span>
                         {sortColumn === 'period' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'period' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 }
             />,
             render: (text: string) => (
@@ -343,11 +300,11 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                 maxWidth="150px"
                 contentPosition="start"
                 childrenBefore={
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span className='table-header-title'>Orders count</span>
                         {sortColumn === 'ordersCount' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'ordersCount' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 }
             />,
             render: (text: string) => (
@@ -371,7 +328,8 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
                     childrenBefore={
                         <span className={styles['lines-cell-style']}>
                             <Icon name="download-file" />
-                        </span>}>
+                        </span>}
+                >
                 </TableCell>
             ),
             dataIndex: 'uuid',
@@ -380,63 +338,59 @@ const CODReportsList: React.FC<CodReportsListType> = ({ codReports, currentRange
             onHeaderCell: (column: ColumnType<CodReportType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof CodReportType),
             }),
-            onCell: (record) => {
-                return {
-                    onClick: () => { handleDownloadCORReport(record.uuid) }
-                };
-            },
+            onCell: (record) => ({
+                onClick: () => { handleDownloadCODReport(record.uuid) }
+            }),
             responsive: ['lg'],
         },
     ], [handleHeaderCellClick, sortColumn, sortDirection]);
 
     return (
         <div className='table'>
-            {isLoading && <Loader />}
-            {/*<div className="date-filter-container">*/}
-            {/*    <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*/}
-            {/*    <Input*/}
-            {/*        placeholder="🔍 Search..."*/}
-            {/*        value={searchTerm}*/}
-            {/*        onChange={e => handleFilterChange(e.target.value)}*/}
-            {/*        className="search-input"*/}
-            {/*    />*/}
-            {/*</div>*/}
+            {isDownloading && <Loader />}
+
             <SearchContainer>
                 <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
                 <div className='search-block'>
-                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
+                    <SearchField
+                        searchTerm={searchTerm}
+                        handleSearch={handleSearchSubmit}
+                        handleClear={handleSearchClear}
+                        manualSearch={true}
+                    />
                 </div>
             </SearchContainer>
+
             <div className="page-size-container">
                 <span className="page-size-text"></span>
                 <PageSizeSelector
                     options={PageOptions}
                     value={pageSize}
-                    onChange={(value: number) => handleChangePageSize(value)}
+                    onChange={(value: number) => onPageSizeChange(value)}
                 />
             </div>
-            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredCODReports?.length ? '' : 'is-empty'}`}>
+
+            <div className={`card table__container mb-md fade-in-down ${codReports?.length ? '' : 'is-empty'} ${isLoading ? 'is-loading' : ''}`}>
                 <Table
-                    dataSource={filteredCODReports.slice((current - 1) * pageSize, current * pageSize).map(item => ({
-                        ...item,
-                        key: item.tableKey,
-                    }))}
+                    dataSource={codReports.map(item => ({ ...item, key: item.tableKey || item.uuid }))}
                     columns={columns}
                     pagination={false}
                     scroll={{ y: 700 }}
+                    loading={isLoading}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total COD reports:<span className='order-products-total__list-item__value'>{filteredCODReports.length}</span></li>
+                        <li className='order-products-total__list-item'>Total COD reports:<span className='order-products-total__list-item__value'>{totalCodReports}</span></li>
                     </ul>
                 </div>
             </div>
+
             <div className={'custom-pagination'}>
                 <Pagination
-                    current={current}
+                    current={currentPage}
                     pageSize={pageSize}
-                    onChange={handleChangePage}
-                    total={filteredCODReports.length}
+                    onChange={onPageChange}
+                    total={totalCodReports}
                     hideOnSinglePage
                     showSizeChanger={false}
                 />

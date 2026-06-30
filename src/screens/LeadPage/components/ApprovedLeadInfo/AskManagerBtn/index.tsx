@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
+import nextButtonStyles from "../NextButton/styles.module.scss";
 import Button, {ButtonVariant} from "@/components/Button/Button";
 import Modal from "@/components/Modal";
 import useAuth from "@/context/authContext";
@@ -8,7 +9,6 @@ import {FormFieldTypes, WidthType} from "@/types/forms";
 import {SubmitHandler, useForm} from "react-hook-form";
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import {sendQuestion} from "@/services/leads";
-import {ApiResponseType} from "@/types/api";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import useTenant from "@/context/tenantContext";
 
@@ -81,11 +81,11 @@ const AskManagerBtn = () => {
         };
 
         return (
-            <div className={'ask-manager__wrapper'}>
+            <div className={styles['ask-manager__wrapper']}>
                 <form onSubmit={handleSubmit(onSubmit)} className="small-form">
                     <FormFieldsBlock control={control} fieldsArray={askManagerFields} errors={errors} />
 
-                    <div className="ask-manager__btn-wrapper">
+                    <div className={styles["ask-manager__btn-wrapper"]}>
                         <Button type="submit" variant={ButtonVariant.PRIMARY} disabled={isLoading || !questionText}>
                             Send
                         </Button>
@@ -97,7 +97,7 @@ const AskManagerBtn = () => {
 
     return (
         <>
-            <div className='next-button__container'>
+            <div className={nextButtonStyles['next-button__container']}>
                 <Button onClick={handleAskManagerClick}>Need help?</Button>
             </div>
             {showAskManagerModal ? (

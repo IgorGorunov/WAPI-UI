@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
-import { getCodReports, getCODIndicators } from "@/services/codReports";
+import {getCODIndicators, getCodReportsExcel} from "@/services/codReports";
 import Layout from "@/components/Layout/Layout";
 import Header from '@/components/Header';
 import CodReportsList from "./components/CodReportsList";
 import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
-import { CODIndicatorsType, CODIndicatorType, CodReportType } from "@/types/codReports";
-import { exportFileXLS } from "@/utils/files";
+import { CODIndicatorsType, CODIndicatorType } from "@/types/codReports";
 import { formatDateToString, getLastFewDays } from "@/utils/date";
-import { DateRangeType } from "@/types/dashboard";
 import CODIndicatorsCard from "@/screens/CodReportsPage/components/CODIndicators";
 import Loader from "@/components/Loader";
 import useTourGuide from "@/context/tourGuideContext";
@@ -23,74 +21,97 @@ import {
 import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
-import SelectField from "@/components/FormBuilder/Select/SelectField";
+import Select from "@/components/FormBuilder/Select/SelectField";
+import {usePagedListState, usePagedData} from "@/components/PagedList";
+import { toast } from "react-toastify";
+import { CodReportType } from "@/types/codReports";
+import {base64ToBlob} from "@/utils/files";
 
 const CodReportsPage = () => {
     const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList } = useAuth();
 
+    const {
+        state,
+        updatePeriod,
+        updateSearch,
+        updatePage,
+        updatePageSize,
+        updateSort,
+    } = usePagedListState(
+        {},
+        {
+            defaultPageSize: 10,
+            defaultDateRange: { startDate: getLastFewDays(new Date(), 30), endDate: new Date() },
+            defaultSortBy: 'date',
+            defaultSortOrder: 'desc',
+        }
+    );
+
+    // ── Paginated COD report list ───────────────────────────────────────────
+    const {
+        data: codReports,
+        count: totalCodReports,
+        isLoading: isLoadingCodReports,
+        isPreviousData,
+    } = usePagedData<CodReportType>(
+        '/GetPagesCODReportsList',
+        state,
+        { token, alias, ui, enabled: !!token }
+    );
+
+    const isLoading = isLoadingCodReports;
+    const isFirstLoad = isLoading && !isPreviousData;
+
     const [CODIndicators, setCODIndicators] = useState<CODIndicatorsType | null>(null);
     const [CODIndicatorsBySeller, setCODIndicatorsBySeller] = useState<CODIndicatorsType | null>(null);
 
-    const [codReportsData, setCodReportsData] = useState<any | null>(null);
-    const [filteredCodReports, setFilteredCodReports] = useState<CodReportType[] | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+        const fetchIndicators = async () => {
+            try {
+                const requestData = {
+                    token: token,
+                    alias,
+                    startDate: formatDateToString(new Date(state.startDate)),
+                    endDate: formatDateToString(new Date(state.endDate)),
+                };
 
-    //period
-    const today = new Date();
-    const firstDay = getLastFewDays(today, 30);
-    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({ startDate: firstDay, endDate: today });
+                try {
+                    sendUserBrowserInfo({ ...getBrowserInfo('GetCODIndicators', AccessObjectTypes["Finances/CODReports"], AccessActions.View), body: superUser && ui ? { ...requestData, ui } : requestData })
+                } catch { }
 
-    //seller filter
+                if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.View)) {
+                    setCODIndicators({
+                        "currentAmount": [{ "amount": 0, "currency": "EUR" }],
+                        "monthAmount": [{ "amount": 0, "currency": "EUR" }],
+                        "yearAmount": [{ "amount": 0, "currency": "EUR" }]
+                    });
+                    return null;
+                }
+
+                const res = await getCODIndicators(superUser && ui ? { ...requestData, ui } : requestData);
+
+                if (res && "data" in res) {
+                    setCODIndicators(res.data);
+                } else {
+                    console.error("API did not return expected data");
+                }
+            } catch (error) {
+                console.error("Error fetching COD indicators:", error);
+            }
+        };
+
+        if (token && state.startDate && state.endDate) fetchIndicators();
+    }, [token, state.startDate, state.endDate]);
+
     const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
     const sellersOptions = useMemo(() => {
         return [{ label: 'All sellers', value: 'All sellers' }, ...sellersList.map(item => ({ ...item }))];
     }, [sellersList]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setIsLoading(true);
-                const requestData = { token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
-
-                try {
-                    sendUserBrowserInfo({ ...getBrowserInfo('GetCODReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
-                } catch { }
-
-                if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.ListView)) {
-                    console.log('no access')
-
-                    setCodReportsData([]);
-                    setFilteredCodReports([]);
-                    setIsLoading(false);
-                    return null;
-                }
-
-                console.log('has access')
-
-                const res = await getCodReports(superUser && ui ? { ...requestData, ui } : requestData);
-
-                if (res && "data" in res) {
-                    setCodReportsData(res.data.sort((a, b) => a.date > b.date ? -1 : 1));
-                    const filtered = !selectedSeller || selectedSeller === 'All sellers' ? res.data : res.data.filter(item => item.seller === selectedSeller);
-                    setFilteredCodReports(filtered.sort((a, b) => a.date > b.date ? -1 : 1));
-                } else {
-                    console.error("API did not return expected data");
-                }
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [token, curPeriod]);
-
-    const handleSelectedSellerChange = useCallback((selectedSeller: string) => {
-        setSelectedSeller(selectedSeller);
-    }, [codReportsData]);
+    const handleSelectedSellerChange = useCallback((seller: string) => {
+        setSelectedSeller(seller);
+    }, []);
 
     const getSumOfIndicators = useCallback((indicatorsArray: CODIndicatorType[]) => {
         let indicators = indicatorsArray;
@@ -101,75 +122,15 @@ const CodReportsPage = () => {
         return currency.map(currency => {
             const f = indicators.filter(item => item.currency === currency);
             const sum = f.reduce((acc, item) => acc + item.amount, 0);
-            return {
-                currency,
-                amount: sum,
-            }
+            return { currency, amount: sum };
         })
     }, [needSeller(), selectedSeller]);
 
-    const getFilteredIndicators = (data: CODIndicatorsType) => {
-        return {
-            "currentAmount": getSumOfIndicators(data?.currentAmount || []),
-            "monthAmount": getSumOfIndicators(data?.monthAmount || []),
-            "yearAmount": getSumOfIndicators(data?.yearAmount || []),
-        }
-    }
-
-    useEffect(() => {
-        const fetchDebtData = async () => {
-            try {
-                setIsLoading(true);
-                const requestData = { token: token, alias, startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) };
-
-                try {
-                    sendUserBrowserInfo({ ...getBrowserInfo('GetCODIndicators', AccessObjectTypes["Finances/CODReports"], AccessActions.View), body: superUser && ui ? { ...requestData, ui } : requestData })
-                } catch { }
-
-                if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.View)) {
-                    setCODIndicators({
-                        "currentAmount": [
-                            {
-                                "amount": 0,
-                                "currency": "EUR"
-                            }
-                        ],
-                        "monthAmount": [
-                            {
-                                "amount": 0,
-                                "currency": "EUR"
-                            }
-                        ],
-                        "yearAmount": [
-                            {
-                                "amount": 0,
-                                "currency": "EUR"
-                            }
-                        ]
-                    });
-                    return null;
-                }
-
-                const res = await getCODIndicators(superUser && ui ? { ...requestData, ui } : requestData);
-
-                if (res && "data" in res) {
-                    setCODIndicators(res.data);
-
-                } else {
-                    console.error("API did not return expected data");
-                    setIsLoading(false);
-                }
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchDebtData();
-
-    }, [token, curPeriod]);
+    const getFilteredIndicators = (data: CODIndicatorsType) => ({
+        "currentAmount": getSumOfIndicators(data?.currentAmount || []),
+        "monthAmount": getSumOfIndicators(data?.monthAmount || []),
+        "yearAmount": getSumOfIndicators(data?.yearAmount || []),
+    });
 
     useEffect(() => {
         setCODIndicatorsBySeller(getFilteredIndicators(CODIndicators));
@@ -177,57 +138,108 @@ const CodReportsPage = () => {
 
     const handleExportXLS = () => {
         try {
-            sendUserBrowserInfo({ ...getBrowserInfo('ExportCodReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ExportList), body: { startDate: formatDateToString(curPeriod.startDate), endDate: formatDateToString(curPeriod.endDate) } });
+            sendUserBrowserInfo({ ...getBrowserInfo('ExportCodReportsList', AccessObjectTypes["Finances/CODReports"], AccessActions.ExportList), body: { startDate: state.startDate, endDate: state.endDate } });
         } catch { }
 
         if (!isActionIsAccessible(AccessObjectTypes["Finances/CODReports"], AccessActions.ExportList)) {
-            return null;
+            return;
         }
 
-        const filteredData = filteredCodReports.map(item => ({
-            number: item.number,
-            date: item.date,
-            amount: item.amount,
-            currency: item.currency,
-            period: item.period,
-            ordersCount: item.ordersCount,
-        }));
-        exportFileXLS(filteredData, "Cod reports")
-    }
+        // toast.info('Export is coming soon — endpoint not yet confirmed.', { autoClose: 3000 });
+        const exportPromise = async () => {
+            const res = await getCodReportsExcel({
+                token,
+                alias,
+                ui,
+                startDate: state.startDate,
+                endDate: state.endDate,
+                // filter: processFiltersForApi(state.filters as Record<string, FilterValue>) as any,
+                search: state.search,
+                fullTextSearch: state.fullTextSearch,
+                sortBy: state.sortBy,
+                sortOrder: state.sortOrder
+            });
 
-    //tour guide
+            if (res && res.data) {
+                const attachedFile = res.data;
+                const blob = base64ToBlob(attachedFile.data, attachedFile.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+
+                //ensure extension exists and append unique timestamp to bypass OS "Save As/Overwrite" dialogs
+                let downloadName = attachedFile.name || "COD-reports.xlsx";
+
+                const parts = downloadName.split('.');
+                const ext = parts.length > 1 ? parts.pop() || 'xlsx' : 'xlsx';
+                const baseName = parts.length > 0 ? parts.join('.') : downloadName;
+
+                const finalExt = ext.toLowerCase().startsWith('xls') ? ext : 'xlsx';
+                a.download = `${baseName}.${finalExt}`;
+
+                setTimeout(() => {
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+                }, 100);
+            } else {
+                throw new Error("Empty response");
+            }
+        };
+
+        try {
+            toast.promise(
+                exportPromise(),
+                {
+                    pending: 'Downloading COD reports...',
+                    success: {
+                        render: 'File downloaded successfully!',
+                        autoClose: 2000 //disappear in 2 seconds
+                    },
+                    error: 'Failed to download file'
+                },
+                {
+                    className: 'download-toast'
+                }
+            );
+        } catch (error) {
+            console.error("Export failed", error);
+        }
+    };
+
+    // ── Tour guide ──────────────────────────────────────────────────────────
     const { runTour, setRunTour, isTutorialWatched } = useTourGuide();
 
     useEffect(() => {
         if (!isTutorialWatched(TourGuidePages.CodReports)) {
-            if (!isLoading && codReportsData !== null) {
+            if (!isLoading && codReports && codReports.length > 0) {
                 setTimeout(() => setRunTour(true), 1000);
             }
         }
-    }, [codReportsData]);
+    }, [isLoading, codReports]);
 
     const [steps, setSteps] = useState([]);
     useEffect(() => {
-        setSteps(codReportsData?.length ? tourGuideStepsCodReports : tourGuideStepsCodReportsNoDocs);
-    }, [codReportsData]);
+        setSteps(codReports?.length ? tourGuideStepsCodReports : tourGuideStepsCodReportsNoDocs);
+    }, [codReports]);
 
     return (
         <Layout hasHeader hasFooter>
             <SeoHead title='COD reports' description='Our COD reports page' />
             <div className={styles['cod-reports__container']}>
-                {isLoading && <Loader />}
+                {isFirstLoad && <Loader />}
                 <Header pageTitle='COD reports' toRight needTutorialBtn >
                     <Button classNames='export-file' icon="download-file" iconOnTheRight onClick={handleExportXLS}>Export list</Button>
                 </Header>
                 {needSeller() ?
                     <div className='seller-filter-block under-header-seller-filter'>
-                        <SelectField
+                        <Select
                             key='seller-filter'
                             name='selectedSeller'
                             label='Seller: '
                             value={selectedSeller}
                             onChange={(val) => { handleSelectedSellerChange(val as string) }}
-                            //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
                             options={sellersOptions}
                             classNames='seller-filter seller-filter--with-inactive-options full-sized'
                             isClearable={false}
@@ -254,9 +266,28 @@ const CodReportsPage = () => {
                         ) : null}
                     </div>
                 ) : null}
-                {codReportsData && <CodReportsList selectedSeller={selectedSeller || 'All sellers'} codReports={codReportsData} currentRange={curPeriod} setCurrentRange={setCurrentPeriod} setFilteredCodReports={setFilteredCodReports} />}
+                {codReports && (
+                    <CodReportsList
+                        codReports={codReports}
+                        isLoading={isPreviousData}
+                        totalCodReports={totalCodReports}
+                        currentPage={state.page}
+                        pageSize={state.limit}
+                        searchTerm={state.search}
+                        sortBy={state.sortBy}
+                        sortOrder={state.sortOrder}
+                        onPageChange={updatePage}
+                        onPageSizeChange={updatePageSize}
+                        onSearchChange={updateSearch}
+                        onSortChange={updateSort}
+                        selectedSeller={selectedSeller}
+                        startDate={state.startDate}
+                        endDate={state.endDate}
+                        onPeriodChange={updatePeriod}
+                    />
+                )}
             </div>
-            {codReportsData !== null && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.CodReports} /> : null}
+            {codReports !== null && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.CodReports} /> : null}
         </Layout>
     )
 }

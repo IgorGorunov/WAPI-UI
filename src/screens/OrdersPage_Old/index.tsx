@@ -16,7 +16,6 @@ import {
     getLastFewDays
 } from "@/utils/date";
 import { OrderType } from "@/types/orders";
-// import {exportFileXLS} from "@/utils/files";
 import Modal from "@/components/Modal";
 import OrderForm from "./components/OrderForm";
 import ImportFilesBlock from "@/components/ImportFilesBlock";
@@ -235,35 +234,37 @@ const OrdersPage = () => {
                     comment= comment + 'Comment: --cannot parse comment--'
                 }
             }
+
             return {
-            [orderTitles.trackingNumberTitle]: item.wapiTrackingNumber,
-            'Status': item.status,
-            "Status additional info": item.statusAdditionalInfo,
-            "Date": formatDateTimeToStringWithDotWithoutSeconds(item.date),
-            'Preferred delivery date': item.preferredDeliveryDate && item.preferredDeliveryDate !== '0001-01-01T00:00:00' ? formatDateStringToDisplayString(item.preferredDeliveryDate || '') : '',
-            "COD amount": item.codAmount,
-            "COD currency": item.codCurrency,
-            "Client order ID": item.clientOrderID,
-            "Products": item.productsByString,
-            "Warehouse": item.warehouse,
-            "Courier service": item.courierService,
-            "Tracking number": item.trackingNumber,
-            "Receiver Country": superUser ? '*' : item.receiverCountry,
-            "Receiver City": superUser ? '*' : item.receiverCity,
-            "Receiver ZIP": superUser ? '*' : item.receiverZip,
-            "Receiver Address": superUser ? '*' : item.receiverAddress,
-            "Receiver Full Name": superUser ? '*' : item.receiverFullName,
-            "Receiver E-mail": superUser ? '*' : item.receiverEMail,
-            "Receiver Phone": superUser ? '*' : item.receiverPhone,
-            "Last update date": item.lastUpdateDate.split("T").join(" "),
-            "Last trouble Status": `${item.troubleStatuses.length ? item.troubleStatuses[item.troubleStatuses.length - 1].period.split("T").join(" ") + '  ' + (item.troubleStatuses[item.troubleStatuses.length - 1].troubleStatus) : ""}`,
-            // "Logistic comment": `${item.logisticComment ? (item.logisticComment+(item.warehouseAdditionalInfo ? '; '+item.warehouseAdditionalInfo : '')) : item.warehouseAdditionalInfo ? item.warehouseAdditionalInfo : ''}`,
-            "Logistic comment": `${item.logisticComment}`,
-            "Tracking link": item.trackingNumber ? item.trackingLink : '',
-            "Has claims": item.claims.length ? "+" : "",
-            "Comment to courier service": comment,
-            "Pickup point": item.receiverPickUpAddress,
-        }});
+                [orderTitles.trackingNumberTitle]: item.wapiTrackingNumber,
+                'Status': item.status,
+                "Status additional info": item.statusAdditionalInfo,
+                "Date": formatDateTimeToStringWithDotWithoutSeconds(item.date),
+                'Preferred delivery date': item.preferredDeliveryDate && item.preferredDeliveryDate !== '0001-01-01T00:00:00' ? formatDateStringToDisplayString(item.preferredDeliveryDate || '') : '',
+                "COD amount": item.codAmount,
+                "COD currency": item.codCurrency,
+                "Client order ID": item.clientOrderID,
+                "Products": item.productsByString,
+                "Warehouse": item.warehouse,
+                "Courier service": item.courierService,
+                "Tracking number": item.trackingNumber,
+                "Receiver Country": superUser ? '*' : item.receiverCountry,
+                "Receiver City": superUser ? '*' : item.receiverCity,
+                "Receiver ZIP": superUser ? '*' : item.receiverZip,
+                "Receiver Address": superUser ? '*' : item.receiverAddress,
+                "Receiver Full Name": superUser ? '*' : item.receiverFullName,
+                "Receiver E-mail": superUser ? '*' : item.receiverEMail,
+                "Receiver Phone": superUser ? '*' : item.receiverPhone,
+                "Last update date": item.lastUpdateDate.split("T").join(" "),
+                "Last trouble Status": `${item.troubleStatuses.length ? item.troubleStatuses[item.troubleStatuses.length - 1].period.split("T").join(" ") + '  ' + (item.troubleStatuses[item.troubleStatuses.length - 1].troubleStatus) : ""}`,
+                // "Logistic comment": `${item.logisticComment ? (item.logisticComment+(item.warehouseAdditionalInfo ? '; '+item.warehouseAdditionalInfo : '')) : item.warehouseAdditionalInfo ? item.warehouseAdditionalInfo : ''}`,
+                "Logistic comment": `${item.logisticComment}`,
+                "Tracking link": item.trackingNumber ? item.trackingLink : '',
+                "Has claims": item.claims.length ? "+" : "",
+                "Comment to courier service": comment,
+                "Pickup point": item.receiverPickUpAddress,
+            }
+        });
 
         if (!isTabAllowed('Logistic comment', forbiddenTabs)) {
             filteredData.forEach(row => delete row["Logistic comment"]);
@@ -305,7 +306,7 @@ const OrdersPage = () => {
             }
             {showImportModal &&
                 <Modal title={`Import xls`} onClose={onImportModalClose} >
-                    <ImportFilesBlock file='OrderTemplate.xlsx' importFilesType={ImportFilesType.ORDERS} closeModal={() => setShowImportModal(false)} />
+                    <ImportFilesBlock file='OrderTemplate.xlsx' importFilesType={ImportFilesType.ORDERS} closeModal={() => {setShowImportModal(false);  fetchData();}} />
                 </Modal>
             }
             {ordersData && runTour && steps ? <TourGuide steps={steps} run={runTour} pageName={TourGuidePages.Orders} /> : null}

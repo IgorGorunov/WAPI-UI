@@ -1,5 +1,6 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
+import leadPageStyles from "../../styles.module.scss";
 import {QuestionnaireFormType, QuestionnaireParamsType, UserStatusType} from "@/types/leads";
 import {useFieldArray, useForm} from "react-hook-form";
 import {COUNTRIES} from "@/types/countries";
@@ -19,7 +20,6 @@ import {
 import SingleField from "@/components/FormFieldsBlock/SingleField";
 import Checkbox from "@/components/FormBuilder/Checkbox";
 import Button from "@/components/Button/Button";
-import {ApiResponseType} from "@/types/api";
 import {STATUS_MODAL_TYPES} from "@/types/utility";
 import {sendQuestionnaire} from "@/services/leads";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
@@ -269,15 +269,15 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
     return (
         <>
-            <p className='lead-page__warning-text'>
+            <p className={leadPageStyles['lead-page__warning-text']}>
                 To access the UI system, please fill out the form with information about your business
             </p>
-            <div className={`card lead-questionnaire`}>
+            <div className={`card ${styles['lead-questionnaire']}`}>
                 {isLoading && <Loader />}
                 {/*<div className={`title-h3`}>Client information</div>*/}
                 <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
                     <input autoComplete="false" name="hidden" type="text" style={{display: 'none'}}/>
-                    <div className={`lead-questionnaire__questions`}>
+                    <div className={styles['lead-questionnaire__questions']}>
                         <div className={`grid-row`}>
                             <SingleField key={CompanyNameField.name} curField={CompanyNameField} control={control}
                                          errors={errors}/>
@@ -294,13 +294,13 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                                     errors={errors}
                                 />
                             ))}
-                            <ul className={`lead-questionnaire__product-types-list lead-questionnaire-list`}>
-                                <p className={`lead-questionnaire-list-title`}>
+                            <ul className={`${styles['lead-questionnaire__product-types-list']} ${styles['lead-questionnaire-list']}`}>
+                                <p className={styles['lead-questionnaire-list-title']}>
                                     Product categories *
                                 </p>
                                 {questionnaireParams ? questionnaireParams.productTypes.map((item, index) => (
                                     <li key={item + '_' + index}
-                                        className='lead-questionnaire-list-item width-33'>
+                                        className={`${styles['lead-questionnaire-list-item']} width-33`}>
                                         <Checkbox
                                             name={item}
                                             label={item}
@@ -312,13 +312,13 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                                     </li>
                                 )) : null}
                             </ul>
-                            <ul className={`lead-questionnaire-list grid-row`}>
-                                <p className={`lead-questionnaire-list-title`}>
+                            <ul className={`${styles['lead-questionnaire-list']} grid-row`}>
+                                <p className={styles['lead-questionnaire-list-title']}>
                                     Choose your marketplaces (if any)
                                 </p>
                                 {questionnaireParams ? questionnaireParams.marketplaces.map((item, index) => (
                                     <li key={item + '_' + index}
-                                        className='lead-questionnaire-list-item width-33'>
+                                        className={`${styles['lead-questionnaire-list-item']} width-33`}>
                                         <Checkbox
                                             name={item}
                                             label={item}
@@ -330,13 +330,13 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                                     </li>
                                 )) : null}
                             </ul>
-                            <ul className={`lead-questionnaire-list grid-row`}>
-                                <p className={`lead-questionnaire-list-title`}>
+                            <ul className={`${styles['lead-questionnaire-list']} grid-row`}>
+                                <p className={styles['lead-questionnaire-list-title']}>
                                     Target countries *
                                 </p>
                                 {countryOptions.map((item, index) => (
                                     <li key={item.value + '_' + index}
-                                        className='lead-questionnaire-list-item width-33'>
+                                        className={`${styles['lead-questionnaire-list-item']} width-33`}>
                                         <Checkbox
                                             name={item.value}
                                             label={item.label}
@@ -362,19 +362,19 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
 
 
                         </div>
-                        <div className='product-type-descriptions'>
-                            {/*<p className="product-type-descriptions__title">*/}
+                        <div className={styles['product-type-descriptions']}>
+                            {/*<p className={styles["product-type-descriptions__title"]}>*/}
                             {/*    Please, describe types of the products you sell.*/}
                             {/*</p>*/}
-                            <p className="product-type-descriptions__title">
+                            <p className={styles["product-type-descriptions__title"]}>
                                 Please, specify each TYPE of the products you sell
                             </p>
-                            <p className="product-type-descriptions__sub-title-description">
+                            <p className={styles["product-type-descriptions__sub-title-description"]}>
                                 For example, if you sell shampoos, you don't need to specify each SKU, you just need to specify one example
                             </p>
-                            <ul className='product-type-descriptions__list'>
+                            <ul className={styles['product-type-descriptions__list']}>
                                 {productTypeDescriptions.map((item, index) => (
-                                    <li className='product-type-descriptions__list-item'
+                                    <li className={styles['product-type-descriptions__list-item']}
                                         key={`productTypeDescription.${index}.productTypeName-item`}>
                                         <div className={`grid-row`}>
                                             <SingleField
@@ -429,7 +429,7 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                                             ))}
                                         </div>
                                         {productTypeDescriptions.length > 1 ? (
-                                            <button className="product-type-descriptions__list-item-remove-btn"
+                                            <button className={styles["product-type-descriptions__list-item-remove-btn"]}
                                                     type='button' onClick={() => handleRemoveProduct(index)}>
                                                 <Icon name="waste-bin"/>
                                             </button>
@@ -437,17 +437,17 @@ const Questionnaire: React.FC<QuestionnairePropsType> = ({questionnaireParams}) 
                                     </li>
                                 ))}
                             </ul>
-                            <div className="product-type-descriptions__add-product-btn-wrapper">
+                            <div className={styles["product-type-descriptions__add-product-btn-wrapper"]}>
                                 <Button onClick={() => addProduct({...emptyProductTypeDescription})} icon={'add'}>Add
                                     another product / product type</Button>
                             </div>
                         </div>
                         {isSubmitted && submitErrors.length ?
-                            <div className={`lead-questionnaire__errors`}>
-                            {submitErrors.map(error => <p key={error} className={'submit-error'}>{error}</p>)}
+                            <div className={styles['lead-questionnaire__errors']}>
+                            {submitErrors.map(error => <p key={error} className={styles['submit-error']}>{error}</p>)}
                             </div> : null
                         }
-                        <div className={`lead-questionnaire__btns`}>
+                        <div className={styles['lead-questionnaire__btns']}>
                             <Button type='submit'>Submit for review</Button>
                         </div>
                     </div>

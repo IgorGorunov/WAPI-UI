@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import "./styles.scss";
+import React from "react";
+import styles from "./styles.module.scss";
 
 
 type EmojiPickerPropsType = {
@@ -16,11 +16,11 @@ const EmojiPicker: React.FC<EmojiPickerPropsType> = ({ onEmojiClick }) => {
 
 
     return (
-        <div className="emoji-picker">
-            <ul className='emoji-picker__list'>
+        <div className={styles["emoji-picker"]}>
+            <ul className={styles['emoji-picker__list']}>
                 {EMOJI_CODES.map((emojiSymbol, index)=>
-                    <li key={`emoji_${emojiSymbol}_${index}`} className='emoji-picker__list-item'>
-                        <button type='button' className='emoji-btn' onClick={()=>onEmojiClick(emojiSymbol)}>{emojiSymbol}</button>
+                    <li key={`emoji_${emojiSymbol}_${index}`} className={styles['emoji-picker__list-item']}>
+                        <button type='button' className={styles['emoji-btn']} onClick={()=>onEmojiClick(emojiSymbol)}>{emojiSymbol}</button>
                     </li>
                 )}
             </ul>

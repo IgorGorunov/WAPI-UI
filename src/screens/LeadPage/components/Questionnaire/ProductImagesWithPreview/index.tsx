@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {AttachedFilesType} from "@/types/utility";
 import Icon from "@/components/Icon";
 import Modal from "@/components/Modal";
@@ -26,15 +26,15 @@ const ProductImagesWithPreview:React.FC<ProductImagesWithPreviewPropsType> = ({p
     }
 
     return (
-        <div className="product-photos-with-preview">
-            <Button type='button' icon={'add'} classNames="product-photos-with-preview__add-btn" onClick={() => setShowDropzone(true)}>Add photo</Button>
-            <ul className={`product-photos-with-preview__list`}>
+        <div className={styles["product-photos-with-preview"]}>
+            <Button type='button' icon={'add'} classNames={styles["product-photos-with-preview__add-btn"]} onClick={() => setShowDropzone(true)}>Add photo</Button>
+            <ul className={styles['product-photos-with-preview__list']}>
                 {productPhotos && productPhotos.length > 0 ?
                     productPhotos.map((item, index) => (
-                        <li key={item.name + '_' + index} className={`product-photos-with-preview__list-item`}>
+                        <li key={item.name + '_' + index} className={styles['product-photos-with-preview__list-item']}>
                             <span>{item.name}</span>
                             <button
-                                className="remove-photo"
+                                className={styles["remove-photo"]}
                                 type='button'
                                 onClick={() => handleRemoveFile(item.id)}
                             >
@@ -42,7 +42,7 @@ const ProductImagesWithPreview:React.FC<ProductImagesWithPreviewPropsType> = ({p
                             </button>
                         </li>
                     ))
-                    : <span className="product-photos-with-preview__empty-label">(no photos)</span>}
+                    : <span className={styles["product-photos-with-preview__empty-label"]}>(no photos)</span>}
             </ul>
 
             {showDropzone && (
@@ -50,7 +50,7 @@ const ProductImagesWithPreview:React.FC<ProductImagesWithPreviewPropsType> = ({p
                     <>
                         <DropZone files={productPhotos} onFilesChange={setFiles} allowOnlyFormats={['jpeg', 'jpg', 'png']}
                               hint="Please, add images in JPEG, JPG or PNG formats"/>
-                        <div className="product-photos-with-preview__btn-wrapper">
+                        <div className={styles["product-photos-with-preview__btn-wrapper"]}>
                             <Button type="button" onClick={() => setShowDropzone(false)}>
                                 OK
                             </Button>

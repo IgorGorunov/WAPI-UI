@@ -14,18 +14,33 @@ const getCodReports = async (
     }
 ): Promise<ApiResponseType<CodReportType[]>> => {
     return api.post(`/GetCODReportsList`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetCODReportsList`,
-    //         data
-    //
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
+};
+
+const getCodReportsPage = async (
+    data: {
+        token: string;
+        alias: string;
+        startDate: string;
+        endDate: string;
+        ui?: string;
+    }
+): Promise<ApiResponseType<CodReportType[]>> => {
+    return api.post(`/GetPagesCODReportsList`, data);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getCodReportsExcel = async (_data: {
+    token: string;
+    alias: string;
+    ui?: string;
+    startDate?: string;
+    endDate?: string;
+    search?: string;
+    fullTextSearch?: boolean;
+    sortBy?: string;
+    sortOrder?: string;
+}): Promise<ApiResponseType<import('@/types/utility').AttachedFilesType>> => {
+    return api.post(`/GetPagedCODReportsListFile`, _data);
 };
 
 const getCODReportForm = async (
@@ -77,4 +92,4 @@ const getCODIndicators = async (
     // }
 };
 
-export { getCodReports, getCODReportForm, getCODIndicators};
+export { getCodReports, getCodReportsPage, getCODReportForm, getCODIndicators, getCodReportsExcel };

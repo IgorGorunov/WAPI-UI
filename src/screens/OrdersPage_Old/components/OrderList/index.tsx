@@ -32,8 +32,8 @@ import useNotifications from "@/context/notificationContext";
 import { NotificationType } from "@/types/notifications";
 import { isTabAllowed } from "@/utils/tabs";
 import useAuth from "@/context/authContext";
-import SelectField from "@/components/FormBuilder/Select/SelectField";
-import { SorterResult } from "antd/lib/table/interface";
+import Select from "@/components/FormBuilder/Select/SelectField";
+// import { SorterResult } from "antd/lib/table/interface";
 import { FilterComponentType } from "@/types/filters";
 
 type OrderListType = {
@@ -65,7 +65,7 @@ const hasCorrectNotifications = (record: OrderType, notifications: NotificationT
     return true;
 }
 
-const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRange, setFilteredOrders, handleEditOrder, current, setCurrent, forbiddenTabs, handleRefresh }) => {
+const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRange, setFilteredOrders, handleEditOrder, current, setCurrent, forbiddenTabs }) => {
     const isTouchDevice = useIsTouchDevice();
     const { needSeller, sellersList } = useAuth();
 
@@ -96,7 +96,7 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
     //notifications
     const { notifications } = useNotifications();
 
-    const [sortedInfo, setSortedInfo] = useState<SorterResult<OrderType>>({});
+    // const [sortedInfo, setSortedInfo] = useState<SorterResult<OrderType>>({});
     const handleTableChange: TableProps<OrderType>['onChange'] = (
         pagination,
         filters,
@@ -1534,7 +1534,7 @@ const OrderList: React.FC<OrderListType> = ({ orders, currentRange, setCurrentRa
 
             {needSeller() ?
                 <div className='seller-filter-block'>
-                    <SelectField
+                    <Select
                         key='seller-filter'
                         name='selectedSeller'
                         label='Seller: '

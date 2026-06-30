@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import "./styles.scss";
-import { ApiResponseType } from "@/types/api";
+import styles from "./styles.module.scss";
 import { getSingleTicket, getTicketParams } from "@/services/tickets";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
@@ -127,7 +126,7 @@ const Ticket: React.FC<TicketPropsType> = ({ ticketUuid = null, subjectType = nu
     }
 
     return (
-        <div className={`ticket ticket-wrapper  ${isTicketNew ? 'new-ticket' : 'existing-ticket'}`} >
+        <div className={`${styles['ticket']} ${styles['ticket-wrapper']} ${isTicketNew ? styles['new-ticket'] : styles['existing-ticket']}`} >
             {isLoading && <Loader />}
             <ToastContainer />
             {ticketParams && (ticketUuid && singleTicketData || !ticketUuid) ?

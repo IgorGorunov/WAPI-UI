@@ -2,10 +2,9 @@ import React, {useCallback, useEffect, useState} from "react";
 import useAuth from "@/context/authContext";
 import {useRouter} from "next/router";
 import Layout from "@/components/Layout/Layout";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Loader from "@/components/Loader";
 import {checkLeadStatus, getLeadParameters} from "@/services/leads";
-import {ApiResponseType} from "@/types/api";
 import {QuestionnaireParamsType, UserStatusType} from "@/types/leads";
 import Questionnaire from "./components/Questionnaire";
 import Header from "@/components/Header";
@@ -133,12 +132,11 @@ const LeadPage = () => {
     return (
         <Layout hasHeader hasFooter>
             <SeoHead title='Registration page' description='' />
-            {show && <div className="page-component lead-page lead-page__container">
+            {show && <div className={`page-component ${styles["lead-page"]} lead-page__container`}>
                 {isLoading && <Loader/>}
                 <Header pageTitle={getHeaderTitle(userStatus)} toRight needTutorialBtn  />
-
                 {userStatus === UserStatusType.Questionnaire && questionnaireParams ?
-                    <div className={`lead-page__questionnaire`}>
+                    <div className='lead-page__questionnaire'>
                         <Questionnaire questionnaireParams={questionnaireParams}/>
                     </div>
                     : (userStatus === UserStatusType.NoLegalNoPrices || userStatus === UserStatusType.LegalPrices

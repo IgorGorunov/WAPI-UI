@@ -381,12 +381,14 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                 title: 'Qty | units',
                 dataIndex: 'quantity',
                 key: 'quantity',
-                render: (text, record, index) => (
+                minWidth: 70,
+                maxWidth: 100,
+                render: (_text, _record, index) => (
                     <Controller
                         name={`products.${index}.quantity`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{ maxWidth: '80px' }}>
+                            <div style={{ maxWidth: '100px' }}>
                                 <FieldBuilder
                                     name={`products.${index}.quantity`}
                                     fieldType={FormFieldTypes.NUMBER}
@@ -405,12 +407,14 @@ const AmazonPrepFormComponent: React.FC<AmazonPrepFormType> = ({ amazonPrepOrder
                 title: 'Qty | boxes',
                 dataIndex: 'boxesQuantity',
                 key: 'quantity',
-                render: (text, record, index) => (
+                minWidth: 70,
+                maxWidth: 100,
+                render: (_text, _record, index) => (
                     <Controller
                         name={`products.${index}.boxesQuantity`}
                         control={control}
                         render={({ field }) => (
-                            <div style={{ maxWidth: '80px' }}>
+                            <div style={{ maxWidth: '100px' }}>
                                 <FieldBuilder
                                     name={`products.${index}.boxesQuantity`}
                                     fieldType={FormFieldTypes.NUMBER}

@@ -1,5 +1,5 @@
 import React from "react";
-import AmazonPrepPage from "@/screens/AmazonPrepPage_Old";
+import AmazonPrepPage from "@/screens/AmazonPrepPage";
 import AuthChecker from "@/components/AuthChecker";
 
 export default function Orders() {

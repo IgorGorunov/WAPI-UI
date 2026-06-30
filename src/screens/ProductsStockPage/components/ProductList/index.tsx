@@ -64,7 +64,7 @@ const ProductList: React.FC<ProductListType> = ({
     onSortChange,
     onFiltersChange,
     onClearFilters,
-    handleRefresh,
+    // handleRefresh,
     setWarehouseForExport
 }) => {
     const { sellersList, needSeller } = useAuth();
@@ -352,11 +352,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span className='table-header-title'>Seller</span>
                             {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -408,11 +408,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Code of warehouse" >
-                        <span style={{ display: 'flex', alignItems: 'center' }}>
+                        <div className='sorter-col-wrapper' style={{ display: 'flex', alignItems: 'center' }}>
                             <span><Icon name={"warehouse"} /></span>
                             {sortColumn === 'warehouse' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'warehouse' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </span>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -433,11 +433,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="A unique code for tracking each product in inventory">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>SKU</span>
                             {sortColumn === 'sku' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'sku' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -459,11 +459,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="A unique code for tracking each product in inventory">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Name</span>
                             {sortColumn === 'name' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'name' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -484,11 +484,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Available products for new orders">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Available</span>
                             {sortColumn === 'available' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'available' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -508,11 +508,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products that were reserved for orders or movements">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Reserve</span>
                             {sortColumn === 'reserved' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'reserved' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: number, record: ProductStockType) => (
@@ -550,11 +550,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Damaged products">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Damaged</span>
                             {sortColumn === 'damaged' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'damaged' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -575,11 +575,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products past usability">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Expired</span>
                             {sortColumn === 'expired' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'expired' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -600,11 +600,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products that are being returned to the warehouse">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Returning</span>
                             {sortColumn === 'forPlacement' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'forPlacement' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -620,20 +620,20 @@ const ProductList: React.FC<ProductListType> = ({
         },
         {
             title: <TitleColumn
-                minWidth="60px"
-                maxWidth="60px"
+                minWidth="80px"
+                maxWidth="80px"
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products currently in transit in stock movements">
-                        <span style={{ display: 'flex', alignItems: 'center' }}>
+                        <div className='sorter-col-wrapper' style={{ display: 'flex', alignItems: 'center' }}>
                             <span>On shipping</span>
                             {sortColumn === 'onShipping' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'onShipping' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </span>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string, record: ProductStockType) => (
-                <TableCell minWidth="60px" maxWidth="60px" contentPosition="center"
+                <TableCell minWidth="80px" maxWidth="80px" contentPosition="center"
                     childrenBefore={
                         <Popover
                             content={record.onShipping ? <SimplePopup
@@ -667,11 +667,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="All stock including all product statuses">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Total</span>
                             {sortColumn === 'total' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'total' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (

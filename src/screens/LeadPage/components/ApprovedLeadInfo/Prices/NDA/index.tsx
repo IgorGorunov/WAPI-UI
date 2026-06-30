@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 
 import Button from "@/components/Button/Button";
 import Checkbox from "@/components/FormBuilder/Checkbox";
@@ -12,8 +12,8 @@ const NDA: React.FC<NDAPropsType> = ({handleSignNDA}) => {
     const [isConfirmed, setIsConfirmed] = useState(false);
 
     return (
-        <div className={`lead-page__prices--NDA`}>
-            <div className={`card lead-page__prices--NDA-text has-scroll`}>
+        <div className={styles['lead-page__prices--NDA']}>
+            <div className={`card ${styles['lead-page__prices--NDA-text']} has-scroll`}>
                 <p className='title-h4'>MUTUAL NON-DISCLOSURE AGREEMENT</p>
                 <p>Confidential information is any kind of information about the Party that is not publicly available, which has also been transferred or became known to the other Party in any way before the conclusion of the Agreement or during the execution of the Agreement, as well as any other information, including financial information (such as the Party's prices and markups) and/or which has been designated by the Party as confidential in writing. The Parties shall be responsible for compliance with confidentiality obligations and shall be prohibited from disclosing confidential information to the third parties. The disclosure of confidential information shall mean the transfer of confidential information to the third parties in any way. If one of the Parties violates confidentiality obligations, the Party whose interests have been violated shall be entitled to demand recovery of damages and penalty of EUR 10,000.00.</p>
                 {/*<p>As part of discussions relating to a possible business relationship between Wapi OÜ (the Discloser) and the Recipient (the "Parties"), Discloser will disclose to Recipient certain Confidential Information, as defined below, Now therefore, in consideration of the mutual promises herein, the Parties agree as follows:</p>*/}
@@ -75,11 +75,11 @@ const NDA: React.FC<NDAPropsType> = ({handleSignNDA}) => {
                 {/*    Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC*/}
                 {/*    "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat."</p>*/}
 
-                <div className='lead-page__prices--NDA-confirm-checkbox'>
+                <div className={styles['lead-page__prices--NDA-confirm-checkbox']}>
                     <Checkbox name='ndaConfirmed' label='I have carefully reviewed the Non-Disclosure Agreement (NDA) and consent to its terms and conditions.' value={isConfirmed} onChange={(val: React.ChangeEvent<HTMLInputElement>)=>setIsConfirmed(val.target.checked)} />
                 </div>
             </div>
-            <Button classNames='lead-page__prices--NDA-confirm-btn' disabled={!isConfirmed} onClick={() => {handleSignNDA()}}>Sign NDA</Button>
+            <Button classNames={styles['lead-page__prices--NDA-confirm-btn']} disabled={!isConfirmed} onClick={() => {handleSignNDA()}}>Sign NDA</Button>
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
 import {ChatMessageType} from "@/types/tickets";
 import MessageFile from "./MessageFile";
@@ -44,26 +44,26 @@ const wrapEmojisInSpan = (text) => {
 
 const Message: React.FC<MessagePropsType> = ({message}) => {
     return (
-        <div className="single-message-block">
-            <div className={`single-message ${message.author === 'UI' ? 'UI-User' : 'User-UI'}`}>
-                <div className={`single-message__user-name`}>{message.author === 'UI' ? 'You' : message.author}</div>
-                <div className={`single-message__text `}>{splitMessage(message.message).map((item, index) => (
+        <div className={styles["single-message-block"]}>
+            <div className={`${styles['single-message']} ${message.author === 'UI' ? styles['UI-User'] : styles['User-UI']}`}>
+                <div className={styles['single-message__user-name']}>{message.author === 'UI' ? 'You' : message.author}</div>
+                <div className={styles['single-message__text']}>{splitMessage(message.message).map((item, index) => (
                         <React.Fragment key={`${item}_${index}`}>{item}</React.Fragment>
                     ))}
                 </div>
                 {message && message.attachedFiles && message.attachedFiles.length ? (
-                    <ul className='single-message__files'>
-                    {message.attachedFiles.map( file => <li key={file.id} className='single-message__file-wrapper'><MessageFile attachedFile={file} /></li>)}
+                    <ul className={styles['single-message__files']}>
+                    {message.attachedFiles.map( file => <li key={file.id} className={styles['single-message__file-wrapper']}><MessageFile attachedFile={file} /></li>)}
                     </ul>
                     ) : null
                 }
 
-                <div className={`single-message__period`}>{formatDateTimeToStringWithDotWithoutSeconds(message.date)}</div>
-                {/*<div className='single-message__checkmarks'>*/}
+                <div className={styles['single-message__period']}>{formatDateTimeToStringWithDotWithoutSeconds(message.date)}</div>
+                {/*<div className={styles['single-message__checkmarks']}>*/}
                 {/*    {message.status !== NOTIFICATION_STATUSES.NEW &&*/}
-                {/*        <span className='second-checkmark'><Icon name={'big-check'}/></span>*/}
+                {/*        <span className={styles['second-checkmark']}><Icon name={'big-check'}/></span>*/}
                 {/*    }*/}
-                {/*    <span className='first-checkmark'><Icon name={'big-check'}/></span>*/}
+                {/*    <span className={styles['first-checkmark']}><Icon name={'big-check'}/></span>*/}
                 {/*</div>*/}
             </div>
         </div>

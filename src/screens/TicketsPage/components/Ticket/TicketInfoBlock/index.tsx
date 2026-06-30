@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {formatDateTimeToStringWithDot} from "@/utils/date";
 import {SingleTicketType} from "@/types/tickets";
 import SingleDocument from "@/components/SingleDocument";
@@ -18,24 +18,34 @@ const TicketInfoBlock: React.FC<TicketInfoPropsType> = ({ticketData }) => {
     }
 
     return (
-        <div className="ticket-info-block">
+        <div className={styles["ticket-info-block"]}>
             <div className='grid-row'>
-                <p className='width-17 ticket-info--title'>Ticket number:</p>
-                <div className='width-50 ticket-info--info'>{ticketData.number}</div>
-                <p className='width-17 ticket-info--title'>Last update:</p>
-                <div className='width-17 ticket-info--info'>{formatDateTimeToStringWithDot(ticketData.date)}</div>
-                <p className='width-17 ticket-info--title'>Topic:</p>
-                <div className={`width-50 ticket-info--info`}>{ticketData.topic}</div>
-                <p className='width-17 ticket-info--title'>Status:</p>
-                <div className='width-17 ticket-info--info'>{ticketData.status}</div>
-                <p className='width-17 ticket-info--title'>Title:</p>
-                <div className={`width-83 ticket-info--info ${ticketData.subjectUuid ? 'is-link' : ''}`}
-                     onClick={() => setDisplayDocModal(true)}>{ticketData.subject.trim()}</div>
-                <p className='width-17 ticket-info--title'>Description:</p>
-                <div className='width-83 ticket-info--info'>{ticketData.description}</div>
+                <p className={`width-17 ${styles['ticket-info--title']} ${styles['ticket-info--title__width-17']}`}>Ticket number:</p>
+                <div className={`width-50 ${styles['ticket-info--info']} ${styles['ticket-info--info__width-50']}`}>{ticketData.number}</div>
+                <p className={`width-17 ${styles['ticket-info--title']} ${styles['ticket-info--title__width-17']}`}>Last update:</p>
+                <div className={`width-17 ${styles['ticket-info--info']} ${styles['ticket-info--info__width-17']}`}>{formatDateTimeToStringWithDot(ticketData.date)}</div>
+            </div>
+            <div className='grid-row'>
+                <p className={`width-17 ${styles['ticket-info--title']} ${styles['ticket-info--title__width-17']}`}>Topic:</p>
+                <div className={`width-50 ${styles['ticket-info--info']} ${styles['ticket-info--info__width-50']}`}>{ticketData.topic}</div>
+                <p className={`width-17 ${styles['ticket-info--title']} ${styles['ticket-info--title__width-17']}`}>Status:</p>
+                <div className={`width-17 ${styles['ticket-info--info']} ${styles['ticket-info--info__width-17']}`}>{ticketData.status}</div>
+            </div>
+            <div className='grid-row'>
+                <p className={`width-17 ${styles['ticket-info--title']} ${styles['ticket-info--title__width-17']}`}>Title:</p>
+                <div className={`width-83 ${styles['ticket-info--info']} ${styles['ticket-info--info__width-83']} ${ticketData.subjectUuid ? styles['ticket-info--info__is-link'] : ''}`}
+                     onClick={() => setDisplayDocModal(true)}>
+                    {ticketData.subject.trim()}
+                </div>
+            </div>
+            <div className='grid-row'>
+                <p className={`width-17 ${styles['ticket-info--title']} ${styles['ticket-info--title__width-17']}`}>Description:</p>
+                <div className={`width-83 ${styles['ticket-info--info']} ${styles['ticket-info--info__width-83']}`}>{ticketData.description}</div>
+            </div>
+            <div className='grid-row'>
                 {ticketData.result ? <div>
-                    <p className='width-17 ticket-info--title'>Result:</p>
-                    <div className='width-83 ticket-info--info'>{ticketData.result}</div>
+                    <p className={`width-17 ${styles['ticket-info--title']} ${styles['ticket-info--title__width-17']}`}>Result:</p>
+                    <div className={`width-83 ${styles['ticket-info--info']} ${styles['ticket-info--info__width-83']}`}>{ticketData.result}</div>
                 </div> : null}
             </div>
 

@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
 
 type NextButtonPropsType = {
@@ -13,7 +13,7 @@ const NextButton:React.FC<NextButtonPropsType> = ({setActiveTab, nextTab}) => {
     }
 
     return (
-        <div className='next-button__container'>
+        <div className={styles['next-button__container']}>
             <Button icon='arrow-right' iconOnTheRight onClick={handleNextButtonClick}>Next</Button>
         </div>
     );

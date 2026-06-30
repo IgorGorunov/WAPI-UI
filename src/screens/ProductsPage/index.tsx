@@ -208,10 +208,12 @@ const ProductsPage = () => {
                 const finalExt = ext.toLowerCase().startsWith('xls') ? ext : 'xlsx';
                 a.download = `${baseName}.${finalExt}`;
 
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
+                setTimeout(() => {
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+                }, 100);
             } else {
                 throw new Error("Empty response");
             }
@@ -221,7 +223,7 @@ const ProductsPage = () => {
             toast.promise(
                 exportPromise(),
                 {
-                    pending: 'Downloading Orders...',
+                    pending: 'Downloading products...',
                     success: {
                         render: 'File downloaded successfully!',
                         autoClose: 2000 //disappear in 2 seconds

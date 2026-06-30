@@ -1,10 +1,9 @@
 import React, {useCallback, useEffect, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Tabs from "@/components/Tabs";
 import LegalInfo from "./LegalInfo";
 import Prices from "./Prices";
 import {LegalInfoFormType} from "@/types/leads";
-import {ApiResponseType} from "@/types/api";
 import {getLegalData} from "@/services/leads";
 import useAuth from "@/context/authContext";
 import ApiInfo from "@/screens/LeadPage/components/ApprovedLeadInfo/ApiInfo";
@@ -52,43 +51,43 @@ const ApprovedLeadInfo: React.FC<ApprovedLeadInfoPropsType> = () => {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
-        <div className={`card lead-page__approved-block `}>
+        <div className={`card ${styles['lead-page__approved-block']}`}>
             <Tabs id='lead-tabs' tabTitles={tabTitles} curTab={activeTab} needMinHeight={false} needMinHeightSmall={true} setCurTab={setActiveTab} needContentScroll={false}>
-                <div key='company-tab' className='lead-page-tab'>
+                <div key='company-tab' className={styles['lead-page-tab']}>
                     <Company />
-                    <div className='lead-page__approved-block__next-btn'>
+                    <div className={styles['lead-page__approved-block__next-btn']}>
                         <AskManagerBtn />
                         <NextButton setActiveTab={setActiveTab} nextTab={1} />
                     </div>
                 </div>
-                <div key='prices-tab' className='lead-page-tab'>
+                <div key='prices-tab' className={styles['lead-page-tab']}>
                     <Prices/>
-                    <div className='lead-page__approved-block__next-btn'>
+                    <div className={styles['lead-page__approved-block__next-btn']}>
                         <AskManagerBtn />
                         <NextButton setActiveTab={setActiveTab} nextTab={2}/>
                     </div>
                 </div>
-                <div key='legal-tab' className='lead-page-tab'>
+                <div key='legal-tab' className={styles['lead-page-tab']}>
                     <LegalInfo legalData={legalData}/>
-                    <div className='lead-page__approved-block__next-btn'>
+                    <div className={styles['lead-page__approved-block__next-btn']}>
                         <AskManagerBtn />
                         <NextButton setActiveTab={setActiveTab} nextTab={3}/>
                     </div>
                 </div>
-                <div key='api-tab' className='lead-page-tab'>
+                <div key='api-tab' className={styles['lead-page-tab']}>
                     <ApiInfo/>
-                    <div className='lead-page__approved-block__next-btn'>
+                    <div className={styles['lead-page__approved-block__next-btn']}>
                         <AskManagerBtn />
                         <NextButton setActiveTab={setActiveTab} nextTab={4}/>
                     </div>
                 </div>
-                <div key='next-step-tab' className='lead-page-tab'>
+                <div key='next-step-tab' className={styles['lead-page-tab']}>
                     <NextStep/>
-                    <div className='lead-page__approved-block__next-btn'>
+                    <div className={styles['lead-page__approved-block__next-btn']}>
                         <AskManagerBtn/>
                     </div>
                 </div>
-                {/*<div key='ui-tab' className='lead-page-tab'>*/}
+                {/*<div key='ui-tab' className={styles['lead-page-tab']}>*/}
                 {/*    UI*/}
                 {/*</div>*/}
             </Tabs>

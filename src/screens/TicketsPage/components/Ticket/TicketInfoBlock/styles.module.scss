@@ -1,0 +1,46 @@
+.width-17 {}
+.width-50 {}
+.width-83 {}
+.is-link {}
+
+.ticket-info {
+  &--title {
+    padding: 2px 16px;
+
+    &__width-17 {
+      max-width: 120px;
+      width: 120px;
+    }
+  }
+
+  &--info {
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 2px;
+    padding: 2px 16px;
+    white-space: break-spaces;
+
+    &__width-17 {
+      min-width: 170px;
+    }
+
+    &__width-50,
+    &__width-83 {
+      flex: 1 1 49%;
+
+      @include upToLaptop {
+        flex: 1 1 calc(100% - 120px);
+      }
+    }
+
+    &__is-link {
+      color: var(--color-blue);
+      text-decoration: underline;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}

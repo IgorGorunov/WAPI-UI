@@ -248,7 +248,8 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
     }, [onClearFilters]);
 
     // Server total count
-    const totalCount = filterMetadata?.total || totalDocs || docs.length;
+    const totalCount = totalDocs !== undefined ? totalDocs : (filterMetadata?.count || docs.length || 0);
+    console.log("totalCount", totalCount, filterMetadata?.count)
 
     // Build filter options from server metadata
     const transformedStatuses = useMemo(() =>
@@ -388,9 +389,9 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
         if (onSortChange) onSortChange(String(columnDataIndex), newDirection === 'ascend' ? 'asc' : 'desc');
     }, [sortColumn, sortDirection, onSortChange]);
 
-    const handleDateRangeSave = (startDate: Date, endDate: Date) => {
-        if (onPeriodChange) onPeriodChange(startDate, endDate);
-    };
+    // const handleDateRangeSave = (startDate: Date, endDate: Date) => {
+    //     if (onPeriodChange) onPeriodChange(startDate, endDate);
+    // };
 
     const toggleFilters = () => {
         setIsFiltersVisible(!isFiltersVisible);
@@ -415,11 +416,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span className='table-header-title'>Seller</span>
                             {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -463,7 +464,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 }
             >
             </TitleColumn>,
-            render: (text: string, record) =>
+            render: (_text: string, record) =>
                 <TableCell
                     minWidth="50px"
                     maxWidth="50px"
@@ -494,11 +495,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title={`Current condition or state of ${getDocType(docType).substring(0, getDocType(docType).length - 1)} with estimated date`}>
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Status</span>
                             {sortColumn === 'status' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'status' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -540,11 +541,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 maxWidth="80px"
                 contentPosition="start"
                 childrenBefore={<Tooltip title="When an order was created">
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span>Date</span>
                         {sortColumn === 'incomingDate' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'incomingDate' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 </Tooltip>}
             />,
             render: (text: string) => (
@@ -563,11 +564,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 maxWidth="700px"
                 contentPosition="start"
                 childrenBefore={<Tooltip title="Document identifier within the system">
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span>Number</span>
                         {sortColumn === 'number' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'number' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 </Tooltip>
                 } />,
             render: (text: string) => (
@@ -598,11 +599,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 maxWidth="200px"
                 contentPosition="start"
                 childrenBefore={<Tooltip title="Document number in the seller's system">
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span>Incoming #</span>
                         {sortColumn === 'incomingNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'incomingNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 </Tooltip>}
             />,
             render: (text: string) => (
@@ -628,11 +629,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 maxWidth="120px"
                 contentPosition="start"
                 childrenBefore={<Tooltip title="The source responsible for initiating the movement of products">
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span>Sender</span>
                         {sortColumn === 'sender' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'sender' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 </Tooltip>
                 } />,
             render: (text: string) => (
@@ -653,11 +654,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 maxWidth="120px"
                 contentPosition="start"
                 childrenBefore={<Tooltip title="The recipient of products">
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span>Receiver</span>
                         {sortColumn === 'receiver' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'receiver' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 </Tooltip>
                 } />,
             render: (text: string) => (
@@ -677,11 +678,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 maxWidth="80px"
                 contentPosition="start"
                 childrenBefore={<Tooltip title="Estimated arrival time">
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span>ETA</span>
                         {sortColumn === 'estimatedTimeArrives' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'estimatedTimeArrives' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 </Tooltip>}
             />,
             render: (text: string) => (
@@ -698,11 +699,11 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
         {
             title: <TitleColumn minWidth="70px" maxWidth="70px" contentPosition="center" childrenBefore={
                 <Tooltip title="Products" >
-                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                    <div className='sorter-col-wrapper' style={{ display: 'flex', alignItems: 'center' }}>
                         <span><Icon name={"shopping-cart"} /></span>
                         {sortColumn === 'productLines' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'productLines' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </span>
+                    </div>
                 </Tooltip>
             } />,
             render: (text: string, record: StockMovementType) => {

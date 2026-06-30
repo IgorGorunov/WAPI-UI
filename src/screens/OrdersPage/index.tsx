@@ -27,7 +27,6 @@ import { usePagedListState, usePagedData, useFilterMetadata, processFiltersForAp
 import {getOrdersExcel} from "@/services/orders";
 import {base64ToBlob} from "@/utils/files";
 import {toast} from "react-toastify";
-// import { OrdersFilters } from "./types";
 
 const OrdersPage = () => {
     const Router = useRouter();
@@ -46,7 +45,7 @@ const OrdersPage = () => {
     );
 
     // fetch paginated orders
-    const { data: orders, count: totalOrders, isLoading: isLoadingOrders, refetch: refetchOrders } = usePagedData<OrderType>(
+    const { data: orders, count: totalOrders, isLoading: isLoadingOrders, isPreviousData, refetch: refetchOrders } = usePagedData<OrderType>(
         '/GetPagedOrdersList',
         state,
         { token, alias, ui, enabled: !!token }
@@ -60,6 +59,7 @@ const OrdersPage = () => {
     );
 
     const isLoading = isLoadingOrders || isLoadingFilters;
+    const isFirstLoad = isLoadingOrders && !isPreviousData;
 
     //track forbidden tabs
     const [forbiddenTabs, setForbiddenTabs] = useState<string[]>([]);
@@ -173,7 +173,6 @@ const OrdersPage = () => {
         setShowImportModal(true);
     };
 
-    //export handler
     const handleExportXLS = async () => {
         try {
             sendUserBrowserInfo({
@@ -186,7 +185,14 @@ const OrdersPage = () => {
             return;
         }
 
-        const exportPromise = async () => {
+        const toastId = toast.loading('Downloading Orders...', { className: 'download-toast' });
+
+        const handleError = (errorMsg: string, error?: any) => {
+            console.error("Export failed", error || new Error(errorMsg));
+            toast.update(toastId, { render: errorMsg, type: 'error', isLoading: false, autoClose: 3000 });
+        };
+
+        try {
             const res = await getOrdersExcel({
                 token,
                 alias,
@@ -200,8 +206,23 @@ const OrdersPage = () => {
                 sortOrder: state.sortOrder
             });
 
+            // Handle resolved AxiosError from api interceptor
+            if (res && (res as any).isAxiosError) {
+                const errorMsg = (res as any).response?.data?.errorMessage || "Failed to download file";
+                return handleError(errorMsg, res);
+            }
+
             if (res && res.data) {
+                // Check if backend returned 200 OK but with an errorMessage
+                if ((res.data as any).errorMessage) {
+                    return handleError((res.data as any).errorMessage);
+                }
+
                 const attachedFile = res.data;
+                if (!attachedFile.data) {
+                    return handleError("No data in response");
+                }
+
                 const blob = base64ToBlob(attachedFile.data, attachedFile.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -217,32 +238,20 @@ const OrdersPage = () => {
                 const finalExt = ext.toLowerCase().startsWith('xls') ? ext : 'xlsx';
                 a.download = `${baseName}.${finalExt}`;
 
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
+                setTimeout(() => {
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+                }, 100);
+                
+                toast.update(toastId, { render: 'File downloaded successfully!', type: 'success', isLoading: false, autoClose: 2000 });
             } else {
-                throw new Error("Empty response");
+                return handleError("Empty response");
             }
-        };
-
-        try {
-            toast.promise(
-                exportPromise(),
-                {
-                    pending: 'Downloading Orders...',
-                    success: {
-                        render: 'File downloaded successfully!',
-                        autoClose: 2000 //disappear in 2 seconds
-                    },
-                    error: 'Failed to download file'
-                },
-                {
-                    className: 'download-toast'
-                }
-            );
-        } catch (error) {
-            console.error("Export failed", error);
+        } catch (error: any) {
+            const errorMsg = typeof error?.message === 'string' ? error.message : 'Failed to download file';
+            handleError(errorMsg, error);
         }
     };
 
@@ -256,7 +265,7 @@ const OrdersPage = () => {
         <Layout hasHeader hasFooter>
             <SeoHead title='Orders (fulfillments)' description='Our orders page' />
             <div className={`page-component ${styles['orders-page__container']}`}>
-                {isLoading && (<Loader />)}
+                {isFirstLoad && (<Loader />)}
 
                 <Header pageTitle='Fulfillment' toRight needTutorialBtn>
                     <Button classNames='add-order' icon="add" iconOnTheRight onClick={handleAddOrder}>
@@ -273,7 +282,7 @@ const OrdersPage = () => {
                 {orders && (
                     <OrderList
                         orders={orders}
-                        isLoading={isLoading}
+                        isLoading={isPreviousData}
                         totalOrders={totalOrders}
                         filterMetadata={filterMetadata}
                         currentPage={state.page}

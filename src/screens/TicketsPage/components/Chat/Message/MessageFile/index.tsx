@@ -1,5 +1,5 @@
-import React, {useRef, useState} from "react";
-import "./styles.scss";
+import React from "react";
+import styles from "./styles.module.scss";
 import {CHAT_FILE_TYPES} from "@/types/tickets";
 import {AttachedFilesType} from "@/types/utility";
 import Icon from "@/components/Icon";
@@ -10,8 +10,8 @@ type MessageFilePropsType = {
 }
 
 const MessageFile: React.FC<MessageFilePropsType> = ({attachedFile}) => {
-    const {data, type, name, id} = attachedFile;
-    const [preview, setPreview] = useState<string | null>(null);
+    const {data, type, name} = attachedFile;
+    // const [preview, setPreview] = useState<string | null>(null);
 
 
     let fileType = CHAT_FILE_TYPES.OTHER;
@@ -61,21 +61,21 @@ const MessageFile: React.FC<MessageFilePropsType> = ({attachedFile}) => {
 
 
     return (
-        <div className="attached-file-block">
-            {fileType === CHAT_FILE_TYPES.IMAGE ? <div className='attached-file-block__file-wrapper'><img
+        <div className={styles["attached-file-block"]}>
+            {fileType === CHAT_FILE_TYPES.IMAGE ? <div className={styles['attached-file-block__file-wrapper']}><img
                     src={`data:${type};base64,${data}`} alt={name}/></div>
                     : fileType === CHAT_FILE_TYPES.PDF ?
-                    <div className='attached-file-block__file-wrapper'>
+                    <div className={styles['attached-file-block__file-wrapper']}>
                         <embed src={`data:application/pdf;base64,${data}`} type="application/pdf" width="100%"
                                height="auto"/>
-                        <div className='pdf-file'><Icon name='file'/><span
-                            className='attached-file-block__file-name'>{name}</span></div>
+                        <div className={styles['pdf-file']}><Icon name='file'/><span
+                            className={styles['attached-file-block__file-name']}>{name}</span></div>
                     </div>
-                    : <div className='attached-file-block__file'><Icon name='file'/><span
-                        className='attached-file-block__file-name'>{name}</span></div>}
+                    : <div className={styles['attached-file-block__file']}><Icon name='file'/><span
+                        className={styles['attached-file-block__file-name']}>{name}</span></div>}
 
-            <div className='download-file' onClick={handleDownload}><Icon name='download-file'/></div>
-            {fileType !== CHAT_FILE_TYPES.OTHER && <div className='preview-file' onClick={handleOpen}><Icon name={'preview'}/></div>}
+            <div className={styles['download-file']} onClick={handleDownload}><Icon name='download-file'/></div>
+            {fileType !== CHAT_FILE_TYPES.OTHER && <div className={styles['preview-file']} onClick={handleOpen}><Icon name={'preview'}/></div>}
         </div>
     );
 };

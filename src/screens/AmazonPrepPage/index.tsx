@@ -7,7 +7,6 @@ import Header from '@/components/Header';
 import AmazonPrepList from "./components/AmazonPrepList";
 import styles from "./styles.module.scss";
 import Button from "@/components/Button/Button";
-import { DateRangeType } from "@/types/dashboard";
 import { getLastFewDays, formatDateTimeToStringWithDotWithoutSeconds } from "@/utils/date";
 import { AmazonPrepOrderType } from "@/types/amazonPrep";
 import AmazonPrepForm from "./components/AmazonPrepForm";
@@ -28,9 +27,9 @@ const AmazonPrepPage = () => {
     const { tenantData: { alias } } = useTenant();
     const { token, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
-    const today = new Date();
-    const firstDay = getLastFewDays(today, 30);
-    const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({ startDate: firstDay, endDate: today })
+    // const today = new Date();
+    // const firstDay = getLastFewDays(today, 30);
+    // const [curPeriod, setCurrentPeriod] = useState<DateRangeType>({ startDate: firstDay, endDate: today })
     const Router = useRouter();
 
     const { state, updateFilters, updateSearch, updatePage, updatePageSize, updateSort, clearAllFilters, updatePeriod } = usePagedListState<AmazonPrepFilters>(
@@ -190,10 +189,12 @@ const AmazonPrepPage = () => {
                 const finalExt = ext.toLowerCase().startsWith('xls') ? ext : 'xlsx';
                 a.download = `${baseName}_${dateStr}.${finalExt}`;
 
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
+                setTimeout(() => {
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+                }, 100);
             } else {
                 throw new Error("Empty response");
             }

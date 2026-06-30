@@ -101,11 +101,13 @@ const Header: React.FC<HeaderType> = ({ pageTitle, toRight = false, children, ne
             <ul className={styles['main-header__urgent-notifications-list'] || 'main-header__urgent-notifications-list'}>
                 {notifications && notifications.length ?
                     notifications.filter(item => item.type === NOTIFICATION_TYPES.URGENT && item.status !== NOTIFICATION_STATUSES.READ).map(item => (
-                        <li key={item.uuid} className={`card ${styles['main-header__urgent-notifications-list-item'] || 'main-header__urgent-notifications-list-item'} ${item.objectUuid ? styles['is-clickable'] || 'is-clickable' : ''} `} onClick={() => handleNotificationClick(item)}>
-                            <Icon className={styles['main-header__urgent-notifications-list-item--icon'] || 'main-header__urgent-notifications-list-item--icon'} name={getNotificationIconName(item.type)} />
-                            <p className={styles['main-header__urgent-notifications-list-item--title'] || 'main-header__urgent-notifications-list-item--title'}>{item.title}</p>
-                            <p className={styles['main-header__urgent-notifications-list-item--text'] || 'main-header__urgent-notifications-list-item--text'}>{item.message}</p>
-                            <a href="#" className={styles['main-header__urgent-notifications-list-item--close'] || 'main-header__urgent-notifications-list-item--close'} onClick={() => handleMarkAsRead(item.uuid)}><Icon name='close' /></a>
+                        <li key={item.uuid} className={`card ${styles['main-header__urgent-notifications-list-item'] || 'main-header__urgent-notifications-list-item'} `}>
+                            <div className={`${item.objectUuid ? styles['is-clickable'] || 'is-clickable' : ''} `} onClick={() => handleNotificationClick(item)}>
+                                <Icon className={styles['main-header__urgent-notifications-list-item--icon'] || 'main-header__urgent-notifications-list-item--icon'} name={getNotificationIconName(item.type)} />
+                                <p className={styles['main-header__urgent-notifications-list-item--title'] || 'main-header__urgent-notifications-list-item--title'}>{item.title}</p>
+                                <p className={styles['main-header__urgent-notifications-list-item--text'] || 'main-header__urgent-notifications-list-item--text'}>{item.message}</p>
+                            </div>
+                            <button className={styles['main-header__urgent-notifications-list-item--close'] || 'main-header__urgent-notifications-list-item--close'} onClick={() => handleMarkAsRead(item.uuid)}><Icon name='close' /></button>
                         </li>
                     ))
                     : null}

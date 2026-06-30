@@ -1,3 +1,9 @@
+import { BaseFilterMetadata, FilterType } from "@/types/filters";
+
+export type InvoiceFilterDataType = BaseFilterMetadata & {
+    statuses: FilterType[];
+}
+
 export type InvoiceType = {
     tableKey: string,
     status: string;

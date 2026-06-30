@@ -30,3 +30,18 @@ export type WarehouseInfoType = {
     Address: string;
     InfoForClients: string;
 }
+
+export type AntiFraudType = {
+    subscription: string;
+    redZone: number;
+    yellowZone: number;
+    greenZone: number;
+
+    excludedPhoneNumbers: string[];
+    gradation: {
+        zone: string;
+        minValue: number;
+        maxValue: number;
+        additionalInfo: string;
+    }[]
+}

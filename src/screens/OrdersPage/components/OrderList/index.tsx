@@ -35,6 +35,7 @@ import { FilterComponentType } from "@/types/filters";
 import { Countries } from "@/types/countries";
 import { PageOptions } from "@/constants/pagination";
 import Select from "@/components/FormBuilder/Select/SelectField";
+import Loader from "@/components/Loader";
 
 type OrderListType = {
     orders: OrderType[];
@@ -293,7 +294,7 @@ const OrderList: React.FC<OrderListType> = ({
     const filteredOrders = orders;
 
     // Total count comes from /GetPagedFilters endpoint's 'orders' property
-    const totalCount = filterMetadata?.orders || totalOrders || orders.length;
+    const totalCount = totalOrders !== undefined ? totalOrders : (filterMetadata?.orders || orders.length || 0);
 
     const transformedStatuses = useMemo(() =>
         filterMetadata?.statuses ? filterTypeToOptions(filterMetadata.statuses) : [],
@@ -313,7 +314,7 @@ const OrderList: React.FC<OrderListType> = ({
 
     const transformedNonTroubleEvents = useMemo(() => {
         if (!filterMetadata) return [];
-        const items = filterTypeToOptions(filterMetadata.nonTroubleEvents);
+        const items = filterTypeToOptions(filterMetadata.nonTroubleEvents || filterMetadata.NonTroubleEvents);
         // const allNonTroubleCount = items.reduce((sum, i) => sum + (i.amount || 0), 0);
         return [
             ...items
@@ -327,12 +328,11 @@ const OrderList: React.FC<OrderListType> = ({
         ] : [],
         [filterMetadata, totalCount]
     );
-
-    // Server doesn't yet provide logisticComment count — calculate from orders
-    const logisticCommentFilterOptions = useMemo(() => {
-        const withCount = orders.filter(order => !!order.logisticComment).length;
-        return booleanFilterOptions('With order issue', 'Without order issue', withCount, totalCount);
-    }, [orders, totalCount]);
+    
+    const logisticCommentFilterOptions = useMemo(() =>
+        filterMetadata ? booleanFilterOptions('With order issue', 'Without order issue', filterMetadata.logisticComment || 0, totalCount) : [],
+        [filterMetadata, totalCount]
+    );
 
     const commentToCourierServiceFilterOptions = useMemo(() =>
         filterMetadata ? booleanFilterOptions('With comments', 'Without comments', filterMetadata.commentToCourierService || 0, totalCount) : [],
@@ -570,9 +570,9 @@ const OrderList: React.FC<OrderListType> = ({
             dataIndex: 'claimsExist',
             key: 'claimsExist',
             sorter: false,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
             responsive: ['lg'],
 
         } as TableColumnProps<OrderType>);
@@ -631,9 +631,9 @@ const OrderList: React.FC<OrderListType> = ({
             key: 'logisticComment',
             sorter: false,
             // sorter: (a, b) => !!a.logisticComment < !!b.logisticComment ? -1 : 1,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
             responsive: ['lg'],
         } as TableColumnProps<OrderType>);
     }
@@ -648,11 +648,11 @@ const OrderList: React.FC<OrderListType> = ({
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span className='table-header-title'>Seller</span>
                             {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -770,9 +770,9 @@ const OrderList: React.FC<OrderListType> = ({
             dataIndex: 'WarehouseAssemblyPhotos',
             key: 'WarehouseAssemblyPhotos',
             sorter: false,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
             responsive: ['lg'],
         },
         ...ClaimsColumns,
@@ -830,9 +830,9 @@ const OrderList: React.FC<OrderListType> = ({
             dataIndex: 'troubleStatusesExist',
             key: 'troubleStatusesExist',
             sorter: false,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
             responsive: ['lg'],
         },
         ...OrderIssueColumns,
@@ -857,9 +857,9 @@ const OrderList: React.FC<OrderListType> = ({
             dataIndex: 'notifications',
             key: 'notifications',
             sorter: false,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
             responsive: ['lg'],
         },
         {
@@ -868,11 +868,11 @@ const OrderList: React.FC<OrderListType> = ({
                 maxWidth="100px"
                 contentPosition="start"
                 childrenBefore={<Tooltip title="Current condition of an order">
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span>Status</span>
-                        {sortColumn === 'status' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn === 'status' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                        {sortColumn === 'status' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        {sortColumn === 'status' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                    </div>
                 </Tooltip>}
             />,
             render: (text: string, record) => {
@@ -923,11 +923,11 @@ const OrderList: React.FC<OrderListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="When an order was created">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Date</span>
                             {sortColumn === 'date' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'date' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -955,11 +955,11 @@ const OrderList: React.FC<OrderListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Order identifier within the warehouse system">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>WH number</span>
                             {sortColumn === 'wapiTrackingNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'wapiTrackingNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>} />,
             render: (text: string) => (
                 <TableCell
@@ -990,11 +990,11 @@ const OrderList: React.FC<OrderListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="The sum of cash on delivery">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>COD</span>
                             {sortColumn === 'codAmount' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'codAmount' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>} />,
             render: (text: string, record) => {
                 if (record.codCurrency) {
@@ -1034,11 +1034,11 @@ const OrderList: React.FC<OrderListType> = ({
                 childrenBefore={
                     <Tooltip
                         title="Unique code for order identification in the seller's system">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Order ID</span>
                             {sortColumn === 'clientOrderID' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'clientOrderID' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>} />,
             render: (text: string) => (
                 <TableCell value={text} minWidth="100px" maxWidth="120px" contentPosition="start" />
@@ -1060,11 +1060,11 @@ const OrderList: React.FC<OrderListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Code of warehouse">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Warehouse</span>
-                            {sortColumn === 'warehouse' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn === 'warehouse' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                            {sortColumn === 'warehouse' && sortDirection === 'ascend' ? <span className='sorter lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'warehouse' && sortDirection === 'descend' ? <span className='sorter lm-6'><Icon name='arrow-desc' /></span> : null}
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -1085,11 +1085,11 @@ const OrderList: React.FC<OrderListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Service responsible for transporting and delivering packages">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Courier</span>
                             {sortColumn === 'courierService' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'courierService' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -1110,11 +1110,11 @@ const OrderList: React.FC<OrderListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Number for monitoring the movement of products during transportation/delivery">
-                        <>
+                        <div className='sorter-col-wrapper11'>
                             <span>Tracking</span>
-                            {sortColumn === 'trackingNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                            {sortColumn === 'trackingNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                            {/*{sortColumn === 'trackingNumber' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}*/}
+                            {/*{sortColumn === 'trackingNumber' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}*/}
+                        </div>
                     </Tooltip>}
             />,
             render: (_text: string, record) => (
@@ -1122,10 +1122,10 @@ const OrderList: React.FC<OrderListType> = ({
             ),
             dataIndex: 'trackingNumber',
             key: 'trackingNumber',
-            sorter: true,
-            onHeaderCell: (column: ColumnType<OrderType>) => ({
-                onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
-            }),
+            // sorter: true,
+            // onHeaderCell: (column: ColumnType<OrderType>) => ({
+            //     onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
+            // }),
             onCell: (record) => {
                 return {
                     onClick: () => {
@@ -1144,11 +1144,11 @@ const OrderList: React.FC<OrderListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products" >
-                        <span style={{ display: 'flex', alignItems: 'center' }}>
+                        <div className='sorter-col-wrapper' style={{ display: 'flex', alignItems: 'center' }}>
                             <span><Icon name={"shopping-cart"} /></span>
                             {sortColumn === 'productLines' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'productLines' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </span>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -1177,8 +1177,8 @@ const OrderList: React.FC<OrderListType> = ({
                 </TableCell>
 
             ),
-            dataIndex: 'productsCount',
-            key: 'productsCount',
+            dataIndex: 'productLines',
+            key: 'productLines',
             sorter: true,
             onHeaderCell: (column: ColumnType<OrderType>) => ({
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof OrderType),
@@ -1191,7 +1191,7 @@ const OrderList: React.FC<OrderListType> = ({
     return (
         <div className={`table ${styles["order-list"] || "order-list"}`}>
             <SearchContainer>
-                <Button type="button" disabled={false} onClick={() => setIsFiltersVisible(prev => !prev)} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
+                <Button type="button" disabled={!filterMetadata} onClick={() => setIsFiltersVisible(prev => !prev)} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 {startDate && endDate && onPeriodChange && (
                     <DateInput
                         handleRangeChange={(newRange: DateRangeType) => onPeriodChange(newRange.startDate, newRange.endDate)}
@@ -1201,7 +1201,7 @@ const OrderList: React.FC<OrderListType> = ({
                         }}
                     />
                 )}
-                {/*<Button onClick={handleRefresh}>Refresh</Button>*/}
+
                 <div className='search-block'>
                     <SearchField
                         searchTerm={searchTerm}
@@ -1248,7 +1248,9 @@ const OrderList: React.FC<OrderListType> = ({
                     dataSource={filteredOrders.map(item => ({ ...item, key: item.uuid })) as OrderType[]}
                     columns={columns}
                     pagination={false}
+                    loading={{ spinning: isLoading, indicator: <Loader  /> }}
                     // scroll={{ y: 700 }}
+                    scroll={{ x: 'max-content' }}
                     showSorterTooltip={false}
                 // onChange={handleTableChange}
                 />
