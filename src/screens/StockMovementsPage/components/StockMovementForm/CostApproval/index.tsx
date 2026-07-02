@@ -3,7 +3,7 @@ import {STOCK_MOVEMENT_DOC_TYPE, StockMovementDeliveryCostApprovalType} from "@/
 import styles from "./styles.module.scss";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import Button, {ButtonVariant} from "@/components/Button/Button";
-import {ProcessApproval, updateInboundData} from "@/services/stockMovements";
+import {ProcessApproval} from "@/services/stockMovements";
 import {getAccessActionObject} from "@/screens/StockMovementsPage";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import {AccessActions} from "@/types/auth";
@@ -31,6 +31,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
     const [canEdit, setCanEdit] = useState(false);
 
     useEffect(() => {
+        console.log('canEdit', `${getAccessActionObject(docType)}/DeliveryCost`, isActionIsAccessible(`${getAccessActionObject(docType)}/DeliveryCost`, AccessActions.Edit));
         setCanEdit(isActionIsAccessible(`${getAccessActionObject(docType)}/DeliveryCost`, AccessActions.Edit));
     }, []);
 
@@ -49,7 +50,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
 
     const history = canEdit ? costApproval.filter(item => item.Status !== "Awaiting cost approval") : costApproval;
 
-    const needApproval = costApproval.filter(item => item.Status === "Awaiting cost approval");
+    const needApproval = costApproval.filter(item => item.Status !== "Awaiting cost approval");
 
     //reject modal
     const [showRejectModal, setShowRejectModal] = useState(false);
@@ -157,7 +158,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
             {
                 canEdit && needApproval.length ? (
                     <div className={styles["stock-movement-cost-approval__approval-block-wrapper"]}>
-                        {needApproval.map((item: StockMovementDeliveryCostApprovalType, index: number) => (
+                        {needApproval.map((item: StockMovementDeliveryCostApprovalType, _index: number) => (
                             <div className={styles["stock-movement-cost-approval__approval-block"]}>
                                 <p className={styles["stock-movement-cost-approval__approval-block-title"]}>Please approve the cost of the delivery!</p>
 

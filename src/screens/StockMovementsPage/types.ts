@@ -28,5 +28,5 @@ export type StockMovementFilterDataType = BaseFilterMetadata & {
     receiverCountries?: FilterType[];
     countTicket?: number;
     countTicketOpen?: number;
-    total?: number;
+    count?: number;
 }

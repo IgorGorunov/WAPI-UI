@@ -1,5 +1,5 @@
 import React from "react";
-import ProductsStockPage from "@/screens/ProductsStockPage_Old";
+import ProductsStockPage from "@/screens/ProductsStockPage";
 import AuthChecker from "@/components/AuthChecker";
 
 export default function Orders() {

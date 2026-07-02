@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
-import "./styles.scss";
+// import styles from "./styles.module.scss";
 import "@/styles/tables.scss";
 import { ColumnType } from "antd/es/table";
 import DateInput from "@/components/DateInput";
-import { DateRangeType } from "@/types/dashboard";
 import TitleColumn from "@/components/TitleColumn";
 import TableCell from "@/components/TableCell";
 import Button, { ButtonVariant } from "@/components/Button/Button";
@@ -17,22 +16,39 @@ import FiltersContainer from "@/components/FiltersContainer";
 import { formatDateTimeToStringWithDotWithoutSeconds } from "@/utils/date";
 import { ticketStatusColors, TicketType } from "@/types/tickets";
 import { FILTER_TYPE } from "@/types/utility";
-import { useRouter } from "next/router";
 import Icon from "@/components/Icon";
 import FiltersBlockWrapper from "@/components/FiltersBlockWrapper";
 import { Countries } from "@/types/countries";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
-import SelectField from "@/components/FormBuilder/Select/SelectField";
 import useAuth from "@/context/authContext";
-import { FilterComponentType } from "@/types/filters";
-
+import { FilterComponentType, FilterType } from "@/types/filters";
+import { TicketFilterDataType } from "../../types";
+import Select from "@/components/FormBuilder/Select/SelectField";
 
 type TicketListType = {
     tickets: TicketType[];
-    currentRange: DateRangeType;
-    setCurrentRange: React.Dispatch<React.SetStateAction<DateRangeType>>;
+    isLoading?: boolean;
+    totalTickets?: number;
+    filterMetadata?: TicketFilterDataType | null;
+    currentPage?: number;
+    pageSize?: number;
+    searchTerm?: string;
+    fullTextSearch?: boolean;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+    selectedFilters?: Record<string, any>;
+    onPageChange?: (page: number) => void;
+    onPageSizeChange?: (size: number) => void;
+    onSearchChange?: (search: string, fullTextSearch: boolean) => void;
+    onSortChange?: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
+    onFiltersChange?: (filters: Record<string, any>) => void;
+    onClearFilters?: () => void;
     handleEditTicket(uuid: string): void;
+    handleRefresh?: () => void;
+    startDate?: string;
+    endDate?: string;
+    onPeriodChange?: (startDate: Date, endDate: Date) => void;
 }
 
 const pageOptions = [
@@ -41,43 +57,83 @@ const pageOptions = [
     { value: '50', label: '50 per page' },
     { value: '100', label: '100 per page' },
     { value: '1000', label: '1000 per page' },
-    { value: '1000000', label: 'All' },
 ];
+
+function filterTypeToOptions(items: FilterType[]): { value: string; label: string; amount: number }[] {
+    return items && items.length ? items.map(item => ({
+        value: item.id || item.name,
+        label: item.name || '-Empty-',
+        amount: item.count,
+    })).sort((a, b) => a.label.localeCompare(b.label)) : []
+}
+
+function booleanFilterOptions(
+    withLabel: string,
+    withoutLabel: string,
+    withCount: number,
+    totalCount: number
+): { value: string; label: string; amount: number }[] {
+    return [
+        { value: 'true', label: withLabel, amount: withCount },
+        { value: 'false', label: withoutLabel, amount: totalCount - withCount },
+    ];
+}
 
 const noDocType = 'has no document';
 
-const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurrentRange, handleEditTicket }) => {
-    const router = useRouter();
+const TicketList: React.FC<TicketListType> = ({
+    tickets,
+    isLoading,
+    totalTickets,
+    filterMetadata,
+    currentPage = 1,
+    pageSize: propPageSize = 10,
+    searchTerm: propSearchTerm = '',
+    fullTextSearch: propFullTextSearch = false,
+    sortBy: propSortBy,
+    sortOrder: propSortOrder,
+    selectedFilters,
+    onPageChange,
+    onPageSizeChange,
+    onSearchChange,
+    onSortChange,
+    onFiltersChange,
+    onClearFilters,
+    handleEditTicket,
+    startDate,
+    endDate,
+    onPeriodChange,
+}) => {
     const { needSeller, sellersList } = useAuth();
 
-    const [current, setCurrent] = React.useState(1);
-    const [pageSize, setPageSize] = React.useState(10);
+    const [current, setCurrent] = React.useState(currentPage);
+    const [pageSize, setPageSize] = React.useState(propPageSize);
     const [animating, setAnimating] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(propSearchTerm);
+    const [fullTextSearch, setFullTextSearch] = useState(propFullTextSearch);
 
-    //seller filter
-    const [selectedSeller, setSelectedSeller] = useState<string>('All sellers');
+    useEffect(() => {
+        if (!isLoading) {
+            setAnimating(true);
+            const id = setTimeout(() => setAnimating(false), 50);
+            return () => clearTimeout(id);
+        }
+    }, [tickets, isLoading]);
 
-    const calcSellersAmount = useCallback((seller: string) => {
-        return tickets.filter(order => order.seller.toLowerCase() === seller.toLowerCase()).length || 0;
-    }, [tickets]);
+    React.useEffect(() => { setCurrent(currentPage); }, [currentPage]);
+    React.useEffect(() => { setPageSize(propPageSize); }, [propPageSize]);
+    React.useEffect(() => { setSearchTerm(propSearchTerm); }, [propSearchTerm]);
+    React.useEffect(() => { setFullTextSearch(propFullTextSearch); }, [propFullTextSearch]);
+    React.useEffect(() => {
+        if (propSortBy) setSortColumn(propSortBy as keyof TicketType);
+        if (propSortOrder) setSortDirection(propSortOrder === 'asc' ? 'ascend' : 'descend');
+    }, [propSortBy, propSortOrder]);
 
-    const sellersOptions = useMemo(() => {
-        return [{ label: 'All sellers', value: 'All sellers', amount: tickets.length }, ...sellersList.map(item => ({ ...item, amount: calcSellersAmount(item.value) }))];
-    }, [sellersList, calcSellersAmount]);
-
-    const getSellerName = useCallback((sellerUid: string) => {
-        const t = sellersList.find(item => item.value === sellerUid);
-        return t ? t.label : ' - ';
-    }, [sellersList]);
-
-
-    const [fullTextSearch, setFullTextSearch] = useState(true);
     const handleFullTextSearchChange = () => {
-        setFullTextSearch(prevState => !prevState)
-        if (searchTerm) {
-            setCurrent(1);
-            //setQuery({addParams: {page:1}})
+        const newVal = !fullTextSearch;
+        setFullTextSearch(newVal);
+        if (searchTerm && onSearchChange) {
+            onSearchChange(searchTerm, newVal);
         }
     }
     const fullTextSearchField = {
@@ -90,331 +146,203 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
         hideTextOnMobile: true,
     }
 
-    const calcOrderAmount = useCallback((property: string, value: string) => {
-        return tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).filter(order => order[property] === value || order[property].toLowerCase() === value.toLowerCase()).length || 0;
-    }, [tickets, selectedSeller]);
+    const [draftFilters, setDraftFilters] = useState<Record<string, string[]>>({});
 
-    const calcDocTypeAmount = useCallback((property: string, value: string) => {
-        return tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).filter(ticket => ticket[property] === null && value === null || ticket[property] !== null && value !== null && ticket[property].toString().toLowerCase() === value.toString().toLowerCase()).length || 0;
-    }, [tickets, selectedSeller]);
+    const updateDraftFilter = useCallback((key: string, valuesOrUpdater: string[] | ((prev: string[]) => string[])) => {
+        setDraftFilters(prev => {
+            const currentValues = prev[key] || [];
+            const newValues = typeof valuesOrUpdater === 'function'
+                ? valuesOrUpdater(currentValues)
+                : valuesOrUpdater;
 
-
-    const [filterStatus, setFilterStatus] = useState<string[]>([]);
-    const handleFilterStatusChange = (newStatuses: string[]) => {
-        setFilterStatus(newStatuses);
-        setCurrent(1);
-        //setQuery({addParams: {page:1}})
-    }
-    const uniqueStatuses = useMemo(() => {
-        const statuses = tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).map(order => order.status);
-        return Array.from(new Set(statuses)).filter(status => status).sort();
-    }, [tickets, selectedSeller]);
-    uniqueStatuses.sort();
-    const statusOptions = useMemo(() => ([
-        ...uniqueStatuses.map(status => ({
-            value: status,
-            label: status,
-            amount: calcOrderAmount('status', status),
-            color: ticketStatusColors.filter(item => item.value === status)[0]?.color || 'white',
-        }))
-    ]), [uniqueStatuses, calcOrderAmount]);
-
-    // useEffect(() => {
-    //     setFilterStatus(prevState => {
-    //         return [...prevState.filter(selectedStatus => uniqueStatuses.includes(selectedStatus))];
-    //     })
-    // }, [uniqueStatuses]);
-
-    const [filterTopic, setFilterTopic] = useState<string[]>([]);
-    const handleFilterTopicChange = (newTopics: string[]) => {
-        setFilterTopic(newTopics);
-        setCurrent(1);
-        //setQuery({addParams: {page:1}})
-    }
-    const uniqueTopics = useMemo(() => {
-        const topics = tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).map(order => order.topic);
-        return Array.from(new Set(topics)).filter(topic => topic).sort();
-    }, [tickets, selectedSeller]);
-    const topicOptions = useMemo(() => ([
-        ...uniqueTopics.map(item => ({
-            value: item,
-            label: item,
-            amount: calcOrderAmount('topic', item),
-        }))
-    ]), [uniqueTopics, calcOrderAmount]);
-
-    const [filterNewMessages, setFilterNewMessages] = useState<string[]>([]);
-    const handleFilterNewMessagesChange = (newMessages: string[]) => {
-        setFilterNewMessages(newMessages);
-        setCurrent(1);
-        //setQuery({addParams: {page:1}})
-    }
-    const newMessagesOptions = useMemo(() => ([
-        {
-            value: 'Has new messages',
-            label: 'Has new messages',
-            amount: tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller) ? tickets.filter(item => item.newMessages).length : 0,
-        },
-        {
-            value: "Doesn't have new messages",
-            label: "Doesn't have new messages",
-            amount: tickets ? tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).length - tickets.filter(item => item.newMessages).length : 0,
-        },
-
-    ]), [uniqueTopics, selectedSeller]);
-
-    const [filterDocType, setFilterDocType] = useState<string[]>([]);
-    const handleFilterDocTypeChange = (newDocTypes: string[]) => {
-        setFilterDocType(newDocTypes);
-        setCurrent(1);
-        //setQuery({addParams: {page:1}})
-    }
-    const uniqueDocTypes = useMemo(() => {
-        const docTypes = tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).map(order => order.subjectType ? order.subjectType : noDocType);
-        return Array.from(new Set(docTypes)).filter(item => item).sort();
-    }, [tickets, selectedSeller]);
-    uniqueStatuses.sort();
-    const docTypeOptions = useMemo(() => ([
-        ...uniqueDocTypes.map(item => ({
-            value: item,
-            label: item,
-            amount: item === noDocType ? calcDocTypeAmount('subjectType', null) : calcDocTypeAmount('subjectType', item),
-        }))
-    ]), [uniqueDocTypes, calcDocTypeAmount]);
-
-    const [filterOrderSenderWarehouse, setFilterOrderSenderWarehouse] = useState<string[]>([]);
-    const handleFilterOrderSenderWarehouseChange = (newDocTypes: string[]) => {
-        setFilterOrderSenderWarehouse(newDocTypes);
-        setCurrent(1);
-        //setQuery({addParams: {page:1}})
-    }
-    const uniqueOrderSenderWarehouses = useMemo(() => {
-        const warehouses = tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).filter(item => item.fulfillmentWarehouse).map(item => item.fulfillmentWarehouse);
-        return Array.from(new Set(warehouses)).filter(item => item).sort();
-    }, [tickets, selectedSeller]);
-    uniqueOrderSenderWarehouses.sort();
-    const orderSenderWarehousesOptions = useMemo(() => ([
-        ...uniqueOrderSenderWarehouses.map(item => ({
-            value: item,
-            label: item,
-            amount: calcDocTypeAmount('fulfillmentWarehouse', item),
-        }))
-    ]), [uniqueOrderSenderWarehouses, calcDocTypeAmount]);
-
-    const [filterOrderReceiverCountry, setFilterOrderReceiverCountry] = useState<string[]>([]);
-    const handleFilterOrderReceiverCountryChange = (newDocTypes: string[]) => {
-        setFilterOrderReceiverCountry(newDocTypes);
-        setCurrent(1);
-        //setQuery({addParams: {page:1}})
-    }
-    const uniqueOrderReceiverCountries = useMemo(() => {
-        const countries = tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).filter(item => item.fulfillmentCountryReceiver).map(item => item.fulfillmentCountryReceiver);
-        return Array.from(new Set(countries)).filter(item => item).sort();
-    }, [tickets, selectedSeller]);
-    uniqueOrderReceiverCountries.sort();
-    const orderReceiverCountryOptions = useMemo(() => ([
-        ...uniqueOrderReceiverCountries.map(item => ({
-            value: item,
-            label: Countries[item] as string || item,
-            amount: calcDocTypeAmount('fulfillmentCountryReceiver', item),
-        }))
-    ].sort((item1, item2) => item1.label < item2.label ? -1 : 1)),
-        [uniqueOrderReceiverCountries, calcDocTypeAmount]);
-
-    const [filterOrderCourierService, setFilterOrderCourierService] = useState<string[]>([]);
-    const handleFilterOrderCourierServiceChange = (newDocTypes: string[]) => {
-        setFilterOrderCourierService(newDocTypes);
-        setCurrent(1);
-        //setQuery({addParams: {page:1}})
-    }
-    const uniqueOrderCourierServices = useMemo(() => {
-        const services = tickets.filter(item => !selectedSeller || selectedSeller === 'All sellers' || selectedSeller === item.seller).filter(item => item.fulfillmentCourierService).map(item => item.fulfillmentCourierService);
-        return Array.from(new Set(services)).filter(item => item).sort();
-    }, [tickets, selectedSeller]);
-    uniqueOrderCourierServices.sort();
-    const orderCourierServiceOptions = useMemo(() => ([
-        ...uniqueOrderCourierServices.map(item => ({
-            value: item,
-            label: item,
-            amount: calcDocTypeAmount('fulfillmentCourierService', item),
-        }))
-    ]), [uniqueOrderCourierServices, calcDocTypeAmount]);
-
-    const handleClearAllFilters = () => {
-        setFilterStatus([]);
-        setFilterTopic([]);
-        setFilterNewMessages([]);
-        setFilterDocType([]);
-        setFilterOrderSenderWarehouse([]);
-        setFilterOrderReceiverCountry([]);
-        setFilterOrderCourierService([]);
-
-        setCurrent(1);
-        //setQuery({addParams: {page:1}})
-        //close filter modal
-        //setIsFiltersVisible(false);
-    }
-
-    const handleChangePage = (page: number) => {
-        setAnimating(true);
-        setTimeout(() => {
-            setCurrent(page);
-            setAnimating(false);
-        }, 500);
-        //setQuery({addParams: {page: page}});
-    };
-
-    const handleChangePageSize = (size: number) => {
-        setPageSize(size);
-        setCurrent(1);
-
-        //setQuery({addParams: {page:1, pageSize: size}});
-    };
-
-    const handleFilterChange = (newSearchTerm: string) => {
-        setSearchTerm(newSearchTerm);
-        setCurrent(1);
-        //setQuery({addParams: {page:1}})
-    };
-
-    const [sortColumn, setSortColumn] = useState<keyof TicketType | null>('date');
-    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('descend');
-    const handleHeaderCellClick = useCallback((columnDataIndex: keyof TicketType) => {
-        setSortDirection(currentDirection =>
-            sortColumn === columnDataIndex && currentDirection === 'ascend' ? 'descend' : 'ascend'
-        );
-        setSortColumn(columnDataIndex);
-    }, [sortColumn]);
-
-
-    const filteredOrders = useMemo(() => {
-        //setCurrent(1);
-
-        return tickets.filter(ticket => {
-
-            const matchesSearch = !searchTerm.trim() || Object.keys(ticket).some(key => {
-                const value = ticket[key];
-                if (key !== 'uuid') {
-                    const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
-                    const searchTermsArray = searchTerm.trim().toLowerCase().split(' ');
-
-                    if (fullTextSearch) {
-                        return searchTermsArray.every(word => stringValue.includes(word));
-                    } else {
-                        return searchTermsArray.some(word => stringValue.includes(word));
-                    }
-                }
-                return false;
-            });
-
-            const matchesStatus = !filterStatus.length ||
-                (filterStatus.includes(ticket.status));
-            const matchesTopic = !filterTopic.length ||
-                (filterTopic.includes(ticket.topic));
-            const matchesNewMessages = !filterNewMessages.length || (filterNewMessages.includes('Has new messages') && ticket.newMessages) ||
-                (filterNewMessages.includes("Doesn't have new messages") && !ticket.newMessages);
-            const matchesDocType = !filterDocType.length || (filterDocType.includes(noDocType) && ticket.subjectType === null) || filterDocType.includes(ticket.subjectType);
-            const matchesOrderSenderWarehouse = !filterOrderSenderWarehouse.length || filterOrderSenderWarehouse.includes(ticket.fulfillmentWarehouse);
-            const matchesOrderReceiverCountry = !filterOrderReceiverCountry.length || filterOrderReceiverCountry.includes(ticket.fulfillmentCountryReceiver);
-            const matchesOrderCourierService = !filterOrderCourierService.length || filterOrderCourierService.includes(ticket.fulfillmentCourierService);
-            const matchesSeller = !selectedSeller || selectedSeller === 'All sellers' || ticket.seller === selectedSeller;
-
-            return matchesSearch && matchesStatus && matchesTopic && matchesNewMessages && matchesDocType && matchesOrderSenderWarehouse && matchesOrderReceiverCountry && matchesOrderCourierService && matchesSeller;
-        }).sort((a, b) => {
-            if (!sortColumn) return 0;
-            if (sortDirection === 'ascend') {
-                return a[sortColumn] > b[sortColumn] ? 1 : -1;
-            } else {
-                return a[sortColumn] < b[sortColumn] ? 1 : -1;
-            }
+            return { ...prev, [key]: newValues };
         });
-    }, [tickets, searchTerm, filterStatus, filterTopic, filterNewMessages, filterDocType, filterOrderSenderWarehouse, filterOrderReceiverCountry, filterOrderCourierService, sortColumn, sortDirection, fullTextSearch, currentRange, selectedSeller]);
+    }, []);
 
-    const handleDateRangeSave = (newRange: DateRangeType) => {
-        setCurrentRange(newRange);
+    // Check if draft differs from applied (for Apply button highlight)
+    const hasUnappliedChanges = useMemo(() => {
+        const applied = selectedFilters || {};
+        const draftKeys = Object.keys(draftFilters).filter(k => draftFilters[k]?.length > 0);
+        const appliedKeys = Object.keys(applied).filter(k => Array.isArray(applied[k]) && (applied[k] as string[]).length > 0);
+
+        if (draftKeys.length !== appliedKeys.length) return true;
+        return draftKeys.some(key => {
+            const draftVal = draftFilters[key] || [];
+            const appliedVal = Array.isArray(applied[key]) ? (applied[key] as string[]) : [];
+            return draftVal.length !== appliedVal.length || draftVal.some((v, i) => v !== appliedVal[i]);
+        });
+    }, [draftFilters, selectedFilters]);
+
+    // Apply: triggers API call
+    const applyFilters = useCallback(() => {
+        const allKnownKeys = new Set([
+            ...Object.keys(draftFilters),
+            ...Object.keys(selectedFilters || {})
+        ]);
+
+        const fullUpdate: Record<string, string[]> = {};
+        allKnownKeys.forEach(key => {
+            const val = draftFilters[key];
+            if (['page', 'limit', 'startDate', 'endDate', 'search', 'fullTextSearch', 'sortBy', 'sortOrder'].includes(key)) return;
+            fullUpdate[key] = val?.length ? val : [];
+        });
+
+        if (onFiltersChange) onFiltersChange(fullUpdate);
         setCurrent(1);
-        //setQuery({addParams: {page: 1, periodStart:formatDateToString(newRange.startDate), periodEnd:formatDateToString(newRange.endDate)}})
-    };
+    }, [draftFilters, selectedFilters, onFiltersChange]);
 
-    //filters
+    const [openFilters, setOpenFilters] = useState<Record<string, boolean>>({});
+    const setFilterOpen = useCallback((key: string, isOpen: boolean) => {
+        setOpenFilters(prev => ({ ...prev, [key]: isOpen }));
+    }, []);
+
     const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
-    const toggleFilters = () => {
-        setIsFiltersVisible(prevState => !prevState);
-    };
-    const [isOpenFilterStatus, setIsOpenFilterStatus] = useState(false);
-    const [isOpenFilterTopic, setIsOpenFilterTopic] = useState(false);
-    const [isOpenFilterNewMessages, setIsOpenFilterNewMessages] = useState(true);
-    const [isOpenFilterDocTypes, setIsOpenFilterDocTypes] = useState(false);
+    const selectedFiltersString = JSON.stringify(selectedFilters);
 
-    const [isOpenFilterOrderSenderWarehouse, setIsOpenFilterOrderSenderWarehouse] = useState(false);
-    const [isOpenFilterOrderReceiverCountry, setIsOpenFilterOrderReceiverCountry] = useState(false);
-    const [isOpenFilterOrderCourierService, setIsOpenFilterOrderCourierService] = useState(false);
+    useEffect(() => {
+        if (isFiltersVisible) return;
+        const newDraft: Record<string, string[]> = {};
+        if (selectedFilters) {
+            Object.entries(selectedFilters).forEach(([key, val]) => {
+                if (Array.isArray(val)) {
+                    newDraft[key] = val;
+                } else if (typeof val === 'string') {
+                    newDraft[key] = [val];
+                }
+            });
+        }
+        setDraftFilters(newDraft);
+    }, [selectedFiltersString, isFiltersVisible]);
 
-    const ticketFilters = [
+    const handleClearAllFilters = useCallback(() => {
+        setDraftFilters({});
+        if (onClearFilters) onClearFilters();
+        setCurrent(1);
+    }, [onClearFilters]);
+
+    const totalCount = totalTickets !== undefined ? totalTickets : (filterMetadata?.total || tickets.length || 0);
+
+    const transformedStatuses = useMemo(() =>
+        filterMetadata?.statuses ? filterMetadata.statuses.map(status => ({
+            value: status.id || status.name,
+            label: ticketStatusColors.find(item => item.value === status.name)?.label || status.name || '-Empty-',
+            amount: status.count,
+            color: ticketStatusColors.find(item => item.value === status.name)?.color || 'white',
+        })).sort((a, b) => a.label.localeCompare(b.label)) : [],
+        [filterMetadata?.statuses]
+    );
+
+    const transformedTopics = useMemo(() =>
+        filterMetadata?.topic ? filterTypeToOptions(filterMetadata.topic) : [],
+        [filterMetadata?.topic]
+    );
+
+    const hasNewMessagesOptions = useMemo(() => {
+        if (!filterMetadata) return [];
+        const fullTotal = typeof filterMetadata.count == 'number' ? filterMetadata.count : 0 ;
+        return booleanFilterOptions(
+            'Has new messages',
+            "Doesn't have new messages",
+            filterMetadata.countNewMessages || 0,
+            fullTotal
+        );
+    }, [filterMetadata]);
+
+
+    const docTypeOptions = useMemo(() =>
+        filterMetadata?.documentType ? filterMetadata.documentType.map(item => ({
+            value: item.id || item.name || noDocType,
+            label: item.name || noDocType,
+            amount: item.count,
+        })).sort((a, b) => a.label.localeCompare(b.label)) : [],
+        [filterMetadata?.documentType]
+    );
+
+    const orderSenderWarehousesOptions = useMemo(() =>
+        filterMetadata?.warehouse ? filterTypeToOptions(filterMetadata.warehouse) : [],
+        [filterMetadata?.warehouse]
+    );
+
+    const orderReceiverCountryOptions = useMemo(() =>
+        filterMetadata?.receiverCountry ? filterMetadata.receiverCountry.map(item => ({
+            value: item.id || item.name,
+            label: Countries[item.name] as string || item.name || '-Empty-',
+            country: item.name,
+            amount: item.count,
+        })).sort((a, b) => a.label.localeCompare(b.label)) : [],
+        [filterMetadata?.receiverCountry]
+    );
+
+    const orderCourierServiceOptions = useMemo(() =>
+        filterMetadata?.courierService ? filterTypeToOptions(filterMetadata.courierService) : [],
+        [filterMetadata?.courierService]
+    );
+
+    const ticketFilters = useMemo(() => [
         {
             filterTitle: 'Status',
             icon: 'status',
             filterDescriptions: '',
             filterType: FILTER_TYPE.COLORED_CIRCLE,
-            filterOptions: statusOptions,
-            filterState: filterStatus,
-            setFilterState: handleFilterStatusChange,
-            isOpen: isOpenFilterStatus,
-            setIsOpen: setIsOpenFilterStatus,
-            onClose: () => handleFilterStatusChange([]),
-            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterStatus(true) },
+            filterOptions: transformedStatuses,
+            filterState: draftFilters['status'] || [],
+            setFilterState: (val: string[]) => updateDraftFilter('status', val),
+            isOpen: !!openFilters['status'],
+            setIsOpen: (v: boolean) => setFilterOpen('status', v),
+            onClose: () => updateDraftFilter('status', []),
+            onClick: () => { setIsFiltersVisible(true); setFilterOpen('status', true); },
         },
         {
             filterTitle: 'Topic',
             icon: 'topic',
             filterDescriptions: '',
-            filterOptions: topicOptions,
-            filterState: filterTopic,
-            setFilterState: handleFilterTopicChange,
-            isOpen: isOpenFilterTopic,
-            setIsOpen: setIsOpenFilterTopic,
-            onClose: () => handleFilterTopicChange([]),
-            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterTopic(true) },
+            filterOptions: transformedTopics,
+            filterState: draftFilters['topic'] || [],
+            setFilterState: (val: string[]) => updateDraftFilter('topic', val),
+            isOpen: !!openFilters['topic'],
+            setIsOpen: (v: boolean) => setFilterOpen('topic', v),
+            onClose: () => updateDraftFilter('topic', []),
+            onClick: () => { setIsFiltersVisible(true); setFilterOpen('topic', true); },
         },
         {
             filterTitle: 'New messages',
             icon: 'comment',
             filterDescriptions: '',
-            filterOptions: newMessagesOptions,
-            filterState: filterNewMessages,
-            setFilterState: handleFilterNewMessagesChange,
-            isOpen: isOpenFilterNewMessages,
-            setIsOpen: setIsOpenFilterNewMessages,
-            onClose: () => handleFilterNewMessagesChange([]),
-            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterNewMessages(true) },
+            filterOptions: hasNewMessagesOptions,
+            filterState: draftFilters['newMessages'] || [],
+            setFilterState: (val: string[]) => updateDraftFilter('newMessages', val),
+            isOpen: !!openFilters['newMessages'],
+            setIsOpen: (v: boolean) => setFilterOpen('newMessages', v),
+            onClose: () => updateDraftFilter('newMessages', []),
+            onClick: () => { setIsFiltersVisible(true); setFilterOpen('newMessages', true); },
         },
         {
             filterTitle: 'Document type',
             icon: 'doc-type',
             filterDescriptions: '',
             filterOptions: docTypeOptions,
-            filterState: filterDocType,
-            setFilterState: handleFilterDocTypeChange,
-            isOpen: isOpenFilterDocTypes,
-            setIsOpen: setIsOpenFilterDocTypes,
-            onClose: () => handleFilterDocTypeChange([]),
-            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterDocTypes(true) },
+            filterState: draftFilters['documentType'] || [],
+            setFilterState: (val: string[]) => updateDraftFilter('documentType', val),
+            isOpen: !!openFilters['documentType'],
+            setIsOpen: (v: boolean) => setFilterOpen('documentType', v),
+            onClose: () => updateDraftFilter('documentType', []),
+            onClick: () => { setIsFiltersVisible(true); setFilterOpen('documentType', true); },
         },
-    ] as FilterComponentType[];
+    ] as FilterComponentType[], [transformedStatuses, transformedTopics, hasNewMessagesOptions, docTypeOptions, draftFilters, openFilters, updateDraftFilter, setFilterOpen]);
 
-    const ticketExtraFilters = [
+    const ticketExtraFilters = useMemo(() => [
         {
             filterTitle: 'Sender warehouse',
             icon: 'warehouse',
             filterDescriptions: '',
             filterOptions: orderSenderWarehousesOptions,
-            filterState: filterOrderSenderWarehouse,
-            setFilterState: handleFilterOrderSenderWarehouseChange,
-            isOpen: isOpenFilterOrderSenderWarehouse,
-            setIsOpen: setIsOpenFilterOrderSenderWarehouse,
-            onClose: () => handleFilterOrderSenderWarehouseChange([]),
-            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterOrderSenderWarehouse(true) },
+            filterState: draftFilters['warehouse'] || [],
+            setFilterState: (val: string[]) => updateDraftFilter('warehouse', val),
+            isOpen: !!openFilters['warehouse'],
+            setIsOpen: (v: boolean) => setFilterOpen('warehouse', v),
+            onClose: () => updateDraftFilter('warehouse', []),
+            onClick: () => { setIsFiltersVisible(true); setFilterOpen('warehouse', true); },
         },
         {
             filterTitle: 'Receiver country',
@@ -422,27 +350,89 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
             isCountry: true,
             filterDescriptions: '',
             filterOptions: orderReceiverCountryOptions,
-            filterState: filterOrderReceiverCountry,
-            setFilterState: handleFilterOrderReceiverCountryChange,
-            isOpen: isOpenFilterOrderReceiverCountry,
-            setIsOpen: setIsOpenFilterOrderReceiverCountry,
-            onClose: () => handleFilterOrderReceiverCountryChange([]),
-            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterOrderReceiverCountry(true) },
+            filterState: draftFilters['receiverCountry'] || [],
+            setFilterState: (val: string[]) => updateDraftFilter('receiverCountry', val),
+            isOpen: !!openFilters['receiverCountry'],
+            setIsOpen: (v: boolean) => setFilterOpen('receiverCountry', v),
+            onClose: () => updateDraftFilter('receiverCountry', []),
+            onClick: () => { setIsFiltersVisible(true); setFilterOpen('receiverCountry', true); },
         },
         {
             filterTitle: 'Courier service',
             icon: 'courier-service',
             filterDescriptions: '',
             filterOptions: orderCourierServiceOptions,
-            filterState: filterOrderCourierService,
-            setFilterState: handleFilterOrderCourierServiceChange,
-            isOpen: isOpenFilterOrderCourierService,
-            setIsOpen: setIsOpenFilterOrderCourierService,
-            onClose: () => handleFilterOrderCourierServiceChange([]),
-            onClick: () => { setIsFiltersVisible(true); setIsOpenFilterOrderCourierService(true) },
+            filterState: draftFilters['courierService'] || [],
+            setFilterState: (val: string[]) => updateDraftFilter('courierService', val),
+            isOpen: !!openFilters['courierService'],
+            setIsOpen: (v: boolean) => setFilterOpen('courierService', v),
+            onClose: () => updateDraftFilter('courierService', []),
+            onClick: () => { setIsFiltersVisible(true); setFilterOpen('courierService', true); },
         },
+    ] as FilterComponentType[], [orderSenderWarehousesOptions, orderReceiverCountryOptions, orderCourierServiceOptions, draftFilters, openFilters, updateDraftFilter, setFilterOpen]);
 
-    ] as FilterComponentType[];
+    const allFilterConfigs = [...ticketFilters, ...ticketExtraFilters];
+
+    // Active (applied) filters for the chips display
+    const activeFilters = useMemo(() => allFilterConfigs.map(config => {
+        // find the actual key matching the config title/icon since config.key is not in FilterComponentType directly here
+        const key = config.filterTitle === 'Status' ? 'status' :
+            config.filterTitle === 'Topic' ? 'topic' :
+                config.filterTitle === 'New messages' ? 'newMessages' :
+                    config.filterTitle === 'Document type' ? 'documentType' :
+                        config.filterTitle === 'Sender warehouse' ? 'warehouse' :
+                            config.filterTitle === 'Receiver country' ? 'receiverCountry' :
+                                config.filterTitle === 'Courier service' ? 'courierService' : '';
+
+        let val = selectedFilters?.[key];
+        const state = typeof val === 'string' ? [val] : (Array.isArray(val) ? val : []);
+        return {
+            ...config,
+            filterState: state,
+            setFilterState: () => { },
+            isOpen: false,
+            setIsOpen: () => { },
+            onClose: () => onFiltersChange?.({ [key]: [] }),
+            onClick: () => { setIsFiltersVisible(true); setFilterOpen(key, true) },
+        };
+    }), [allFilterConfigs, selectedFilters, onFiltersChange, setFilterOpen]);
+
+    const handleChangePage = (page: number) => {
+        setCurrent(page);
+        if (onPageChange) onPageChange(page);
+    };
+
+    const handleChangePageSize = (size: number) => {
+        setPageSize(size);
+        setCurrent(1);
+        if (onPageSizeChange) onPageSizeChange(size);
+    };
+
+    const handleFilterChange = (newSearchTerm: string) => {
+        setSearchTerm(newSearchTerm);
+        setCurrent(1);
+        if (onSearchChange) {
+            onSearchChange(newSearchTerm.trim(), fullTextSearch);
+        }
+    };
+
+    const [sortColumn, setSortColumn] = useState<keyof TicketType | null>('date');
+    const [sortDirection, setSortDirection] = useState<'ascend' | 'descend'>('descend');
+    const handleHeaderCellClick = useCallback((columnDataIndex: keyof TicketType) => {
+        const newDirection = sortColumn === columnDataIndex && sortDirection === 'ascend' ? 'descend' : 'ascend';
+        setSortDirection(newDirection);
+        setSortColumn(columnDataIndex);
+        if (onSortChange) onSortChange(String(columnDataIndex), newDirection === 'ascend' ? 'asc' : 'desc');
+    }, [sortColumn, sortDirection, onSortChange]);
+
+
+    const handleDateRangeSave = (range: { startDate: Date, endDate: Date }) => {
+        if (onPeriodChange) onPeriodChange(range.startDate, range.endDate);
+    };
+
+    const toggleFilters = () => {
+        setIsFiltersVisible(prevState => !prevState);
+    };
 
     const SellerColumns: TableColumnProps<TicketType>[] = [];
     if (needSeller()) {
@@ -454,14 +444,16 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <span className='table-header-title'>Seller</span>
-                        {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
-                        {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-
+                        <div className='sorter-col-wrapper'>
+                            <span className='table-header-title'>Seller</span>
+                            {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        </div>
                     </Tooltip>
                 }
             />,
             render: (_text: string, record) => {
+                const sellerItem = sellersList.find(s => s.value === record.seller);
                 return (
                     <TableCell
                         className='no-padding'
@@ -470,7 +462,7 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                         contentPosition="left"
                         childrenBefore={
                             <div className="seller-container">
-                                {getSellerName(record.seller)}
+                                {sellerItem ? sellerItem.label : record.seller || ' - '}
                             </div>
                         }
                     >
@@ -528,11 +520,11 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Current ticket status" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Status</span>
                             {sortColumn === 'status' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'status' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -552,7 +544,7 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
         {
             title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
             />,
-            render: (text: string, record: TicketType) => (
+            render: (_text: string, record: TicketType) => (
                 <TableCell
                     className='no-padding'
                     minWidth="20px"
@@ -562,7 +554,6 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                         <span style={{ marginTop: '3px' }}>{record.newMessages ? <Icon name="notification" /> : null}</span>}
                 >
                 </TableCell>
-
             ),
             dataIndex: 'newMessages',
             key: 'newMessages',
@@ -579,11 +570,11 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Ticket number. Click on the number to view the correspondence" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Ticket #</span>
                             {sortColumn === 'number' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'number' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -616,11 +607,11 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="When the ticket was created" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Date</span>
                             {sortColumn === 'date' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'date' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -642,11 +633,11 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Ticket subject" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Topic</span>
                             {sortColumn === 'topic' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'topic' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -669,11 +660,11 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Ticket title" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Title</span>
                             {sortColumn === 'subject' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'subject' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -688,41 +679,39 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                 onClick: () => handleHeaderCellClick(column.dataIndex as keyof TicketType),
             }),
         },
-
     ];
 
-    //getting filter from query
-    useEffect(() => {
-        const { filter } = router.query;
-        if (filter) {
-            setFilterNewMessages(Array.isArray(filter) ? (filter.length ? filter : []) : [filter]);
-            router.replace('/tickets', undefined, { shallow: true });
-
-        }
-    }, [router.query]);
-
-    //const setQuery = createSetQueryFunction(router, '/tickets');
+    const selectedSeller = selectedFilters?.seller ? (typeof selectedFilters.seller === 'string' ? selectedFilters.seller : selectedFilters.seller[0]) : 'All sellers';
+    const sellersOptions = useMemo(() => {
+        return [{ label: 'All sellers', value: 'All sellers', amount: totalCount }, ...sellersList.map(item => ({ ...item, amount: 0 }))];
+    }, [sellersList, totalCount]);
 
     return (
         <div className="table order-list">
             <SearchContainer>
                 <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
-                <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
+                <DateInput
+                    handleRangeChange={handleDateRangeSave}
+                    currentRange={{ startDate: startDate ? new Date(startDate) : new Date(), endDate: endDate ? new Date(endDate) : new Date() }}
+                />
                 <div className='search-block'>
-                    <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
+                    <SearchField searchTerm={searchTerm} handleSearch={handleFilterChange} handleClear={() => { handleFilterChange(""); }} manualSearch={true} />
                     <FieldBuilder {...fullTextSearchField} />
                 </div>
             </SearchContainer>
 
             {needSeller() ?
                 <div className='seller-filter-block'>
-                    <SelectField
+                    <Select
                         key='seller-filter'
                         name='selectedSeller'
                         label='Seller: '
                         value={selectedSeller}
-                        onChange={(val) => setSelectedSeller(val as string)}
-                        //options={[{label: 'All sellers', value: 'All sellers'}, ...sellersList]}
+                        onChange={(val) => {
+                            if (onFiltersChange) {
+                                onFiltersChange({ seller: val === 'All sellers' ? [] : [val] });
+                            }
+                        }}
                         options={sellersOptions}
                         classNames='seller-filter full-sized'
                         isClearable={false}
@@ -733,7 +722,7 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
 
             <div className='filter-and-pagination-container'>
                 <div className='current-filter-container'>
-                    <FiltersChosen filters={[...ticketFilters, ...ticketExtraFilters]} />
+                    <FiltersChosen filters={activeFilters} />
                 </div>
                 <div className="page-size-container">
                     <span className="page-size-text"></span>
@@ -745,19 +734,20 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                 </div>
             </div>
 
-            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${filteredOrders?.length ? '' : 'is-empty'}`}>
+            <div className={`card table__container mb-md ${animating ? '' : 'fade-in-down '} ${tickets?.length ? '' : 'is-empty'}`}>
                 <Table
-                    dataSource={filteredOrders.slice((current - 1) * pageSize, current * pageSize).map(item => ({
+                    dataSource={tickets.map((item, id) => ({
                         ...item,
-                        key: item.tableKey,
+                        key: item.tableKey || item.uuid || id,
                     }))}
                     columns={columns}
                     pagination={false}
                     scroll={{ y: 700 }}
+                    showSorterTooltip={false}
                 />
                 <div className="order-products-total">
                     <ul className='order-products-total__list'>
-                        <li className='order-products-total__list-item'>Total tickets:<span className='order-products-total__list-item__value'>{filteredOrders.length}</span></li>
+                        <li className='order-products-total__list-item'>Total tickets:<span className='order-products-total__list-item__value'>{totalCount}</span></li>
                     </ul>
                 </div>
             </div>
@@ -766,20 +756,25 @@ const TicketList: React.FC<TicketListType> = ({ tickets, currentRange, setCurren
                     current={current}
                     pageSize={pageSize}
                     onChange={handleChangePage}
-                    total={filteredOrders.length}
+                    total={totalCount}
                     hideOnSinglePage
                     showSizeChanger={false}
                 />
             </div>
-            <FiltersContainer isFiltersVisible={isFiltersVisible} setIsFiltersVisible={setIsFiltersVisible} onClearFilters={handleClearAllFilters}>
+            <FiltersContainer
+                isFiltersVisible={isFiltersVisible}
+                setIsFiltersVisible={setIsFiltersVisible}
+                onClearFilters={handleClearAllFilters}
+                onApplyFilters={applyFilters}
+                hasUnappliedChanges={hasUnappliedChanges}
+            >
                 <FiltersListWithOptions filters={ticketFilters} />
-                <FiltersBlockWrapper title={'Fullfilment filters'}>
+                <FiltersBlockWrapper title={'Fulfillment filters'}>
                     <FiltersListWithOptions filters={ticketExtraFilters} />
                 </FiltersBlockWrapper>
             </FiltersContainer>
         </div>
     );
-}
-    ;
+};
 
 export default TicketList;

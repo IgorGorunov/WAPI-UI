@@ -19,7 +19,7 @@ import { TourGuidePages } from "@/types/tourGuide";
 import { sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
-import SelectField from "@/components/FormBuilder/Select/SelectField";
+import Select from "@/components/FormBuilder/Select/SelectField";
 import { OptionType } from "@/types/forms";
 
 
@@ -243,7 +243,7 @@ const DashboardPage: React.FC = () => {
           <div>
             {sellersList && needSeller() ?
               <div className='seller-filter-block under-header-seller-filter'>
-                <SelectField
+                <Select
                   key='seller-filter'
                   name='selectedSeller'
                   label='Seller: '
@@ -263,27 +263,27 @@ const DashboardPage: React.FC = () => {
                 <div className={`width-33 ${styles['dashboard-grid-col']}`}>
                   <Forecast
                     type="GMV"
-                    amountInPeriod={!sellerData.gmv?.gmvInPeriod ? 0 : sellerData.gmv?.gmvInPeriod}
-                    beginOfMonth={!sellerData.gmv?.gmvBEginOfMonth ? 0 : sellerData.gmv?.gmvBEginOfMonth}
-                    beginOfYear={!sellerData.gmv?.gmvBeginOfYear ? 0 : sellerData.gmv?.gmvBeginOfYear}
-                    forecastByMonth={!sellerData.gmv?.gmvForecastByMonth ? 0 : sellerData.gmv?.gmvForecastByMonth}
-                    forecastByYear={!sellerData.gmv?.gmvForecastByYear ? 0 : sellerData.gmv?.gmvForecastByYear}
+                    amountInPeriod={!sellerData?.gmv?.gmvInPeriod ? 0 : sellerData.gmv?.gmvInPeriod}
+                    beginOfMonth={!sellerData?.gmv?.gmvBEginOfMonth ? 0 : sellerData.gmv?.gmvBEginOfMonth}
+                    beginOfYear={!sellerData?.gmv?.gmvBeginOfYear ? 0 : sellerData.gmv?.gmvBeginOfYear}
+                    forecastByMonth={!sellerData?.gmv?.gmvForecastByMonth ? 0 : sellerData.gmv?.gmvForecastByMonth}
+                    forecastByYear={!sellerData?.gmv?.gmvForecastByYear ? 0 : sellerData.gmv?.gmvForecastByYear}
                     //temporary
                     isError={false}
                     errorMessage='This indicator is temporarily unavailable due to technical work until 22.01.2024'
                   />
                 </div>
                 <div className={`width-33 ${styles['dashboard-grid-col']}`}>
-                  <OrderStatuses ordersByStatuses={sellerData.ordersByStatuses} />
+                  <OrderStatuses ordersByStatuses={sellerData?.ordersByStatuses} />
                 </div>
                 <div className={`width-33 ${styles['dashboard-grid-col']}`}>
                   <Forecast
                     type="ORDERS"
-                    amountInPeriod={!sellerData.totalOrders?.ordersInPeriod ? 0 : sellerData.totalOrders?.ordersInPeriod}
-                    beginOfMonth={!sellerData.totalOrders?.ordersInPeriod ? 0 : sellerData.totalOrders?.ordersBeginOfMonth}
-                    beginOfYear={!sellerData.totalOrders?.ordersBeginOfYear ? 0 : sellerData.totalOrders?.ordersBeginOfYear}
-                    forecastByMonth={!sellerData.totalOrders?.ordersForecastByMonth ? 0 : sellerData.totalOrders?.ordersForecastByMonth}
-                    forecastByYear={!sellerData.totalOrders?.ordersForecastByYear ? 0 : sellerData.totalOrders?.ordersForecastByYear}
+                    amountInPeriod={!sellerData?.totalOrders?.ordersInPeriod ? 0 : sellerData.totalOrders?.ordersInPeriod}
+                    beginOfMonth={!sellerData?.totalOrders?.ordersInPeriod ? 0 : sellerData.totalOrders?.ordersBeginOfMonth}
+                    beginOfYear={!sellerData?.totalOrders?.ordersBeginOfYear ? 0 : sellerData.totalOrders?.ordersBeginOfYear}
+                    forecastByMonth={!sellerData?.totalOrders?.ordersForecastByMonth ? 0 : sellerData.totalOrders?.ordersForecastByMonth}
+                    forecastByYear={!sellerData?.totalOrders?.ordersForecastByYear ? 0 : sellerData.totalOrders?.ordersForecastByYear}
                   />
                 </div>
               </div>
@@ -303,8 +303,8 @@ const DashboardPage: React.FC = () => {
               }
               {
                 <OrdersByCountry
-                  arrival={!sellerData.orderByCountryArrival ? [] : sellerData.orderByCountryArrival}
-                  departure={!sellerData.orderByCountryDeparture ? [] : sellerData.orderByCountryDeparture}
+                  arrival={!sellerData?.orderByCountryArrival ? [] : sellerData.orderByCountryArrival}
+                  departure={!sellerData?.orderByCountryDeparture ? [] : sellerData.orderByCountryDeparture}
                 />
               }
             </div> : null}

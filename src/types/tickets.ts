@@ -5,8 +5,10 @@ export const ticketStatusColors = [
     { value: 'New', label: 'New' , color: 'var(--color-yellow)'},
     { value: 'Reopened', label: 'Reopen' , color: 'var(--color-yellow)'},
     { value: 'In progress', label: 'In progress' , color: 'var(--color-blue)'},
+    { value: 'InProgress', label: 'In progress' , color: 'var(--color-blue)'},
     { value: 'Resolved', label: 'Resolved' , color: 'var(--color-green)'},
-    { value: 'Need info from client', label: 'Need info from client', color: 'var(--color-violet)'}
+    { value: 'Need info from client', label: 'Need info from client', color: 'var(--color-violet)'},
+    { value: 'NeedInfoFromClient', label: 'Need info from client', color: 'var(--color-violet)'}
 ];
 
 export type TicketType = {

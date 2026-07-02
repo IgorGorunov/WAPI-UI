@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {createTicket, reopenTicket} from "@/services/tickets";
 import useAuth from "@/context/authContext";
 import {SingleTicketType, TICKET_OBJECT_TYPES, TicketParamsType} from "@/types/tickets";
@@ -214,7 +214,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
     };
 
     return (
-        <div className={`ticket ticket-wrapper  ${isTicketNew ? 'new-ticket' : 'existing-ticket'} `} >
+        <div className={`${styles['ticket']} ${styles['ticket-wrapper']} ${isTicketNew ? styles['new-ticket'] : styles['existing-ticket']} `} >
             {isLoading && <Loader/>}
             <ToastContainer/>
             <form onSubmit={handleSubmit(onSubmitForm, onError)} autoComplete="off">
@@ -223,7 +223,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                         <div className='' ref={ticketInfoBlockRef}>
                             <>
                                 {needSeller() ? (
-                                <div className='form-wrapper--seller card'>
+                                <div className={`${styles['form-wrapper--seller']} card`}>
                                     <div className='grid-row'>
                                         <Controller
                                             key='seller'
@@ -255,9 +255,9 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                                     </div>
                                 </div>
                                 ) : null}
-                            {isTicketNew ?
-                                <CardWithHelpIcon classNames='card ticket--info ticket--info-card' >
-                                    <div className='ticket--info-form'>
+                                {isTicketNew ?
+                                <CardWithHelpIcon classNames={`card ${styles['ticket--info']} ${styles['ticket--info-card']}`} >
+                                    <div className={styles['ticket--info-form']}>
 
                                         <div className='grid-row'>
                                             <FormFieldsBlock control={control} fieldsArray={createTicketFields}
@@ -265,16 +265,16 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                                         </div>
                                     </div>
                                 </CardWithHelpIcon>
-                            :   <div className='card ticket--info mb-md' ref={ticketInfoBlockRef}>
-                                    <div className='ticket--info-info'>
+                            :   <div className={`card ${styles['ticket--info']} mb-md`} ref={ticketInfoBlockRef}>
+                                    <div className={styles['ticket--info-info']}>
                                         {singleTicketData ? <TicketInfoBlock ticketData={singleTicketData}/> : null}
                                     </div>
                                 </div>
                             }</>
                         </div>
-                        {isTicketNew ? <div> <CardWithHelpIcon classNames="card ticket--files">
+                        {isTicketNew ? <div> <CardWithHelpIcon classNames={`card ${styles['ticket--files']}`}>
                             <TutorialHintTooltip hint={TicketHints['files'] || ''} position='left' >
-                                <h3 className='ticket__block-title title-small'>
+                                <h3 className={`${styles['ticket__block-title']} title-small`}>
                                     <Icon name='files'/>
                                     Files
                                 </h3>
@@ -292,7 +292,7 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                     </div>
                     {singleTicketData ?
                         <div key='messages-tab' className='files-tab'>
-                            <div className={`card ticket--messages`}>
+                            <div className={`card ${styles['ticket--messages']}`}>
                                 <ChatBlock objectUuid={singleTicketData?.uuid} canEdit={singleTicketData?.canEdit}/>
                             </div>
                         </div>
@@ -300,11 +300,11 @@ const TicketComponent: React.FC<TicketPropsType> = ({subjectType=null, subjectUu
                     }
                 </Tabs>
 
-                {isTicketNew && <div className='ticket--info-form-btns'>
+                {isTicketNew && <div className={styles['ticket--info-form-btns']}>
                     <Button type="submit" variant={ButtonVariant.PRIMARY}>Create ticket</Button>
                     <Button type="button" variant={ButtonVariant.SECONDARY} onClick={handleCancel}>Cancel</Button>
                 </div>}
-                {singleTicketData && singleTicketData.status==='Resolved' ? <div className='ticket--info-form-btns'>
+                {singleTicketData && singleTicketData.status==='Resolved' ? <div className={styles['ticket--info-form-btns']}>
                     <Button type="button" variant={ButtonVariant.PRIMARY} onClick={handleReopenTicket}>Reopen ticket</Button>
                 </div> : null}
             </form>

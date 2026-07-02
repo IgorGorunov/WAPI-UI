@@ -1658,7 +1658,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                                 <Button type="button" icon='selection' iconOnTheRight
                                                     size={ButtonSize.SMALL} disabled={isDisabled}
                                                     variant={ButtonVariant.SECONDARY}
-                                                    onClick={() => handleProductSelection()} classNames='selection-btn'>
+                                                    onClick={() => handleProductSelection()} classNames={styles['selection-btn']}>
                                                     Add from List
                                                 </Button>
                                             </TutorialHintTooltip>

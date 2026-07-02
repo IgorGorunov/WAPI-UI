@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import { sendTicketMessage } from "@/services/tickets";
@@ -223,7 +223,7 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({ objectUuid, onSendMe
     };
 
     return (
-        <div className="send-message-block" ref={dropRef} onDrop={handleDrop}>
+        <div className={styles["send-message-block"]} ref={dropRef} onDrop={handleDrop}>
             {isLoading && <Loader />}
             <input
                 type="file"
@@ -232,17 +232,17 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({ objectUuid, onSendMe
                 multiple
                 onChange={handleFileInputChange}
             />
-            <div className='send-message-block__text-block'>
+            <div className={styles['send-message-block__text-block']}>
                 <button
                     type='button'
-                    className={`add-file__btn`}
+                    className={styles['add-file__btn']}
                     disabled={!canEdit}
                     onClick={() => fileInputRef.current?.click()}
                 >
                     <Icon name={'files'} />
                 </button>
                 <textarea
-                    className={`send-message__input`}
+                    className={styles['send-message__input']}
                     name={'chat-message-input'}
                     rows={3}
                     value={userInput}
@@ -252,32 +252,32 @@ const SendMessageBlock: React.FC<SendMessagePropsType> = ({ objectUuid, onSendMe
                     ref={inputRef}
                     disabled={!canEdit}
                 />
-                <button type='button' className={`send-message__btn`} disabled={!canEdit || !userInput && (!files || !files.length)} onClick={sendMessage}><Icon
+                <button type='button' className={styles['send-message__btn']} disabled={!canEdit || !userInput && (!files || !files.length)} onClick={sendMessage}><Icon
                     name={'send'} />
                 </button>
-                {/*<button type='button' className={'emoji-btn'} onClick={()=>setShowEmojiPicker(!showEmojiPicker)}>*/}
+                {/*<button type='button' className={styles['emoji-btn']} onClick={()=>setShowEmojiPicker(!showEmojiPicker)}>*/}
                 {/*    <Icon name='emoji' />*/}
                 {/*</button>*/}
             </div>
             {/*{showEmojiPicker ? <EmojiPicker onEmojiClick={onAddEmoji} />: null}*/}
-            <div className={`send-message__file-preview`} onDrop={handleDrop}
+            <div className={styles['send-message__file-preview']} onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}>
                 {files && files.length ? files.map((file, index) => (
-                    <div key={index} className="file-container">
+                    <div key={index} className={styles["file-container"]}>
                         {file.fileType === CHAT_FILE_TYPES.IMAGE ?
-                            <div className="send-message__file-preview-image" onClick={() => handleFileClick(index)}>
-                                <img className={`send-message__file-preview-image__img`} src={file.imgSrc}
+                            <div className={styles["send-message__file-preview-image"]} onClick={() => handleFileClick(index)}>
+                                <img className={styles['send-message__file-preview-image__img']} src={file.imgSrc}
                                     alt={`Pasted Screenshot ${index + 1}`}
                                 />
                             </div>
                             :
-                            <div className={`send-message__file-preview-file ${file.fileType === CHAT_FILE_TYPES.PDF ? 'pdf' : ''}`} onClick={() => handleFileClick(index)}>
+                            <div className={`${styles['send-message__file-preview-file']} ${file.fileType === CHAT_FILE_TYPES.PDF ? styles['pdf'] : ''}`} onClick={() => handleFileClick(index)}>
                                 <Icon name='files' />
                                 <div>{file.file.name}</div>
                                 {/*<div>{file.file.type}</div>*/}
                             </div>
                         }
-                        <button className='file-container__remove-file'
+                        <button className={styles['file-container__remove-file']}
                             onClick={() => removeFile(index)}><Icon name='waste-bin' /></button>
                     </div>
                 )) : null}

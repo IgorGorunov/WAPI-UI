@@ -1,9 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import Message from "./Message";
 import SendMessageBlock from "@/screens/TicketsPage/components/Chat/SendMessageBlock";
 import useAuth from "@/context/authContext";
-import {ApiResponseType} from "@/types/api";
 import {getTicketMessages} from "@/services/tickets";
 import Loader from "@/components/Loader";
 import {ChatMessageType} from "@/types/tickets";
@@ -101,8 +100,8 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
     return (
         <>
             {isLoading && <Loader />}
-            <div className='chat-block__message-history' >
-                <ul className='chat-block__messages' ref={containerRef} style={{maxHeight:`calc(100vh - ${isMobile ? '200' : '300'}px - ${sendHeight}px)`, overflow: 'hidden scroll'}}>
+            <div className={styles['chat-block__message-history']} >
+                <ul className={styles['chat-block__messages']} ref={containerRef} style={{maxHeight:`calc(100vh - ${isMobile ? '200' : '300'}px - ${sendHeight}px)`, overflow: 'hidden scroll'}}>
                     {chatMessages && chatMessages.length ?
                         chatMessages.sort((a, b) => a.date > b.date ? 1 : -1)
                             .map(message => <li key={Math.random()}><Message message={message}/></li>)
@@ -111,7 +110,7 @@ const ChatBlock: React.FC<ChatPropsType> = ({objectUuid, canEdit=true }) => {
                     <div ref={bottomRef}></div>
                 </ul>
             </div>
-            <div className='chat-block__send' ref={sendTicketBlockRef}>
+            <div className={styles['chat-block__send']} ref={sendTicketBlockRef}>
                 <SendMessageBlock objectUuid={objectUuid} onSendMessage={handleSendMessage} canEdit={canEdit} showEmojiPicker={showEmojiPicker} setShowEmojiPicker={setShowEmojiPicker}/>
             </div>
         </>

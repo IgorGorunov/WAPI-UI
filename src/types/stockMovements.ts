@@ -215,3 +215,8 @@ export type SingleStockMovementFormType = {
     receiverZIP?: string;
     shippingUnits?: StockMovementShippingUnitsType[];
 }
+
+export type PagedStockMovesListType = {
+    count: number;
+    data: StockMovementType[];
+}

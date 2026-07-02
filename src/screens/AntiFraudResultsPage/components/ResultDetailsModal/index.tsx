@@ -3,7 +3,7 @@ import Modal from "@/components/Modal";
 import Loader from "@/components/Loader";
 import {
     AntiFraudResultObject,
-    AntiFraudResultType,
+    AntiFraudResultType, getStatusColor,
     PremiumProductTypeResultsType,
 } from "@/screens/AntiFraudResultsPage/types";
 import {ANTIFRAUD_ACTIONS, ZONE_COLORS} from "@/screens/AntiFraudSettingsPage/types";
@@ -82,6 +82,10 @@ const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                             <span className={styles["label"]}>WH number</span>
                             <span className={`${styles["value"]}`}>
                                 <button className={styles['order-btn']} onClick={()=>handleOpenOrder(row.uuid)}>{row.shipmentOrder || "—"}</button>
+                            </span>
+                            <span style={{display:"flex", marginTop: '2px'}}>
+                                <span className={styles["summary-header--order-status-title"]}>Status:</span>
+                                <span className={styles["summary-header--order-status"]} style={{borderColor: getStatusColor(row.orderStatus)}}>{row.orderStatus}</span>
                             </span>
                         </div> : null}
                         <div className={styles["summary-header__item"]}>

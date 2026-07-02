@@ -112,19 +112,20 @@ const ProfilePage = () => {
                 {isLoading && <Loader />}
                 <Header pageTitle='Profile' toRight />
                 <div className={`card ${styles['profile-page__container']}`}>
-                    <Tabs id='profile-tabs' tabTitles={tabTitles} withHorizontalDivider>
-                        <div key='profile-info-tab' className='profile-page-tab'>
+                    <Tabs id='profile-tabs' tabTitles={tabTitles} withHorizontalDivider needContentScroll={false}>
+                        <div key='profile-info-tab' className={styles['profile-page-tab']}>
                             <ProfileInfo userInfo={profileInfo} />
                         </div>
-                        {apiProtocolsData !== null ? <div key='protocols-tab' className='profile-page-tab'>
+                        {apiProtocolsData !== null ? <div key='protocols-tab' className={styles['profile-page-tab']}>
                             <ApiProtocols apiProtocols={apiProtocolsData} />
                         </div> : null}
-                        {pricesData !== null || contractsData !== null ? <div key='prices-and-contracts-tab' className='profile-page-tab'>
+                        {pricesData !== null || contractsData !== null ? <div key='prices-and-contracts-tab' className={styles['profile-page-tab']}>
                             <UserContractsAndPrices prices={pricesData} contracts={contractsData} />
                         </div> : null}
-                        {warehouseInfoData !== null ? <div key='warehouse-info-tab' className='profile-page-tab'>
+                        {warehouseInfoData !== null ? <div key='warehouse-info-tab' className={styles['profile-page-tab']}>
                             <WarehouseInfo warehouseInfoData={warehouseInfoData} />
                         </div> : null}
+
                     </Tabs>
                 </div>
             </div>

@@ -14,17 +14,36 @@ const getInvoices = async (
     }
 ): Promise<ApiResponseType<InvoiceType[]>> => {
     return await api.post(`/GetInvoicesList`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetInvoicesList`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
+};
+
+const getInvoicesPage = async (
+    //token: string,
+    data: {
+        token: string;
+        alias: string;
+        startDate: string;
+        endDate: string;
+        ui?: string;
+    }
+): Promise<ApiResponseType<InvoiceType[]>> => {
+    return await api.post(`/GetPagedInvoicesList`, data);
+};
+
+// PLACEHOLDER — wire up when export endpoint is confirmed
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getInvoicesExcel = async (_data: {
+    token: string;
+    alias: string;
+    ui?: string;
+    startDate?: string;
+    endDate?: string;
+    filter?: Record<string, unknown>;
+    search?: string;
+    fullTextSearch?: boolean;
+    sortBy?: string;
+    sortOrder?: string;
+}): Promise<ApiResponseType<import('@/types/utility').AttachedFilesType>> => {
+    return api.post(`/GetPagedInvoicesListFile`, _data);
 };
 
 const getInvoiceForm = async (
@@ -37,21 +56,6 @@ const getInvoiceForm = async (
     }
 ): Promise<ApiResponseType<AttachedFilesType[]>> => {
     return await api.post(`/GetInvoicePrintForm`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetInvoicePrintForm`,
-    //         data,
-    //         //{responseType: 'blob',} // Important for handling binary data
-    //     );
-    //
-    //     //Create a Blob object from the binary data
-    //     //const blob = new Blob([response.data], { type: response.headers['content-type'] });
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getInvoicesDebts = async (
@@ -62,17 +66,6 @@ const getInvoicesDebts = async (
     }
 ): Promise<ApiResponseType<InvoiceBalanceType>> => {
     return await api.post(`/GetInvoicesDebt`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetInvoicesDebt`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
-export { getInvoices, getInvoiceForm, getInvoicesDebts };
+export { getInvoices, getInvoicesPage, getInvoiceForm, getInvoicesDebts, getInvoicesExcel };

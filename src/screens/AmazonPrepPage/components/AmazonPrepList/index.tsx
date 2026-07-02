@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { Pagination, Popover, Table, TableColumnProps, Tooltip } from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
-import styles from "./styles.module.scss";
 import "@/styles/tables.scss";
 import Icon from "@/components/Icon";
 import { ColumnType } from "antd/es/table";
@@ -84,10 +83,10 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
     onSearchChange,
     onSortChange,
     onFiltersChange,
-    onClearFilters,
+    // onClearFilters,
     onPeriodChange,
     handleEditAmazonPrepOrder,
-    handleRefresh
+    // handleRefresh
 }) => {
     const isTouchDevice = useIsTouchDevice();
     const { needSeller, sellersList } = useAuth();
@@ -497,11 +496,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Current condition or state of an order">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Status</span>
                             {sortBy === 'status' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortBy === 'status' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string, record) => {
@@ -537,11 +536,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="When an order was created">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Date</span>
                             {sortBy === 'date' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortBy === 'date' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -561,11 +560,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Order identifier within the WAPI system">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>WH number</span>
                             {sortBy === 'wapiTrackingNumber' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortBy === 'wapiTrackingNumber' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -590,11 +589,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Amazon Shipment Notification Number">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>ASN</span>
                             {sortBy === 'asnNumber' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortBy === 'asnNumber' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -620,11 +619,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Unique code for order identification in the seller's system">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Order ID</span>
                             {sortBy === 'clientOrderID' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortBy === 'clientOrderID' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -646,11 +645,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Code of warehouse">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Warehouse</span>
                             {sortBy === 'warehouse' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortBy === 'warehouse' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -671,11 +670,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Service responsible for transporting and delivering packages">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Courier</span>
                             {sortBy === 'courierService' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortBy === 'courierService' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -696,11 +695,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Type of Amazon Prep Order: LTL or SPD">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Method</span>
                             {sortBy === 'deliveryMethod' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortBy === 'deliveryMethod' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -721,11 +720,11 @@ const AmazonPrepList: React.FC<AmazonPrepListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Products" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span><Icon name={"shopping-cart"} /></span>
                             {sortBy === 'productLines' && sortOrder === 'asc' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortBy === 'productLines' && sortOrder === 'desc' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,

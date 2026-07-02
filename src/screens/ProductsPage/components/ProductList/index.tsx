@@ -84,7 +84,7 @@ const ProductList: React.FC<ProductListType> = ({
     onFiltersChange,
     onClearFilters,
     handleEditProduct,
-    handleRefresh
+    // handleRefresh
 }) => {
     const { needSeller, sellersList } = useAuth();
     const isTouchDevice = useIsTouchDevice();
@@ -298,11 +298,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="left"
                 childrenBefore={
                     <Tooltip title="Seller's name" >
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span className='table-header-title'>Seller</span>
                             {sortColumn === 'seller' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'seller' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -405,7 +405,7 @@ const ProductList: React.FC<ProductListType> = ({
         {
             title: <TitleColumn title="" minWidth="20px" maxWidth="20px" contentPosition="start"
             />,
-            render: (text: string, record: ProductType) => (
+            render: (_text: string, record: ProductType) => (
                 <TableCell
                     className='no-padding'
                     minWidth="20px"
@@ -430,11 +430,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="A unique code for tracking each product in inventory">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>SKU</span>
                             {sortColumn === 'sku' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'sku' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>}
             />,
             render: (text: string) => (
@@ -455,11 +455,11 @@ const ProductList: React.FC<ProductListType> = ({
                 maxWidth="500px"
                 contentPosition="start"
                 childrenBefore={
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span>Name</span>
                         {sortColumn === 'name' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'name' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 }
             />,
             render: (text: string) => (
@@ -495,7 +495,7 @@ const ProductList: React.FC<ProductListType> = ({
             ),
             dataIndex: 'dimension',
             key: 'dimension',
-            sorter: true,
+            // sorter: true,
             responsive: ['md'],
         },
         {
@@ -505,11 +505,11 @@ const ProductList: React.FC<ProductListType> = ({
                 maxWidth="80px"
                 contentPosition="center"
                 childrenBefore={
-                    <>
+                    <div className='sorter-col-wrapper'>
                         <span>Weight | kg</span>
                         {sortColumn === 'weight' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                         {sortColumn === 'weight' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                    </>
+                    </div>
                 }
             />,
             render: (text: string) => (
@@ -530,11 +530,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Alternative names">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Aliases</span>
                             {sortColumn === 'aliases' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'aliases' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 } />,
             render: (text: string) => (
@@ -556,11 +556,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="start"
                 childrenBefore={
                     <Tooltip title="Alternative names">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Barcodes</span>
                             {sortColumn === 'barcodes' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'barcodes' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 }
             />,
@@ -582,11 +582,11 @@ const ProductList: React.FC<ProductListType> = ({
                 contentPosition="center"
                 childrenBefore={
                     <Tooltip title="Available products for new orders">
-                        <>
+                        <div className='sorter-col-wrapper'>
                             <span>Available</span>
                             {sortColumn === 'available' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
                             {sortColumn === 'available' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
-                        </>
+                        </div>
                     </Tooltip>
                 } />,
             render: (text: string, record: ProductType) => (

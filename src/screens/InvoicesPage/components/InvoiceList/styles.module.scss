@@ -1,14 +1,14 @@
-@import '@/constants/devices.scss';
-
 .status-filter-container {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
   justify-content: space-between;
-  @media (max-width: $mobile) {
+
+  @include mobile {
     flex-wrap: wrap;
   }
+
   .input-select-container {
     flex: 1 0 200px;
   }
@@ -22,18 +22,18 @@
   align-items: center;
   top: 15px;
   border-radius: 20px;
-  //border: 2px solid #5380F5;
   background: var(--color-blue);
   color: white;
   cursor: pointer;
   transition: 0.3s ease;
 
-  @media(max-width: $upToTablet) {
+  @include upToTablet {
     padding: 3px;
   }
 
-  svg path {
+  :global(path) {
     transition: .3s ease;
+    fill: white;
   }
 
   &:hover {

@@ -1,10 +1,10 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 
 const NextStep:React.FC = () => {
 
     return (
-        <ul className='next-step__container'>
+        <ul className={styles['next-step__container']}>
             <li key='next-step__list-item-1'>
                 <p>If you have any questions about warehouses, prices, contract or integration - please leave a request and we will connect with you by email.</p>
             </li>

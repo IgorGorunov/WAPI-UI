@@ -1,0 +1,64 @@
+@import '@/constants/devices.scss';
+
+.status-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  @media (max-width: $mobile) {
+    flex-wrap: wrap;
+  }
+  .input-select-container {
+    flex: 1 0 200px;
+  }
+}
+
+.services-cell-style {
+  display: flex;
+  height: 30px;
+  padding: 3px 10px 3px 10px;
+  justify-content: center;
+  align-items: center;
+  top: 15px;
+  border-radius: 20px;
+  //border: 2px solid #5380F5;
+  background: var(--color-blue);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+
+  @media(max-width: $upToTablet) {
+    padding: 3px;
+  }
+
+  svg path {
+    transition: .3s ease;
+  }
+
+  &:hover {
+    background-color: var(--color-blue-15);
+
+    svg path {
+      fill: var(--color-gray-blue);
+    }
+  }
+
+  &__wrapper {
+    max-width: 130px;
+    display: flex;
+    justify-content: space-around;
+    gap: 6px;
+    margin: 0 -8px;
+  }
+}
+
+.invoices-list {
+  .icon-preview {
+    width: 26px;
+
+    path {
+      fill: white;
+    }
+  }
+}

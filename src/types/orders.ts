@@ -94,7 +94,8 @@ export type OrderType = {
     marketplace: string;
     seller?: SellerType;
     preferredDeliveryDate?: string;
-    receiverPickUpAddress?: string;s
+    receiverPickUpAddress?: string;
+    productsCount?: number;
 }
 
 export type ProductInfoType = {
@@ -406,11 +407,13 @@ export type OrderFilterDataType = BaseFilterMetadata & {
     marketplaces: FilterType[];
     courierServices: FilterType[];
     sentSMS: number
+    NonTroubleEvents: FilterType[];
     nonTroubleEvents: FilterType[];
     customerReturns: number;
     warehouseAssemblyPhotos: number;
     commentToCourierService: number;
     claims: number;
+    logisticComment: number;
 }
 
 export type OrderFiltersSelectedType = BaseFiltersSelected & {
@@ -418,6 +421,7 @@ export type OrderFiltersSelectedType = BaseFiltersSelected & {
     commentToCourierService: boolean;
     customerReturns: boolean;
     nonTroubleEvents: string[];
+    NonTroubleEvents: string[];
     warehouseAssemblyPhotos: boolean
     sentSMS: boolean;
     selfCollect: boolean;
@@ -457,6 +461,7 @@ export type OrdersFilters = {
     courierService?: string;
     troubleStatus?: string;
     nonTroubleEvents?: string;
+    NonTroubleEvents?: string;
     marketplace?: string;
     seller?: string;
     receiverCountry?: string;

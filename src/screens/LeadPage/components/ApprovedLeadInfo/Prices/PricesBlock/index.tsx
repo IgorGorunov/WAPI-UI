@@ -1,9 +1,8 @@
 import React from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {PriceInfoType} from "@/types/leads";
 import {Countries} from "@/types/countries";
 import {base64ToBlob} from "@/utils/files";
-import {ApiResponseType} from "@/types/api";
 import {getPriceFile} from "@/services/leads";
 import useAuth from "@/context/authContext";
 import Icon from "@/components/Icon";
@@ -53,22 +52,20 @@ const PricesBlock: React.FC<PricesBlockPropsType> = ({prices}) => {
     }
 
     return (
-        <div className={`lead-page__prices-block`}>
-            <div className="lead-page__prices-block--header">
-                <div className='column column-country'>Country</div>
-                <div className='column column-prices'>Prices</div>
+        <div className={styles['lead-page__prices-block']}>
+            <div className={styles['lead-page__prices-block--header']}>
+                <div className={`${styles['column']} ${styles['column-country']}`}>Country</div>
+                <div className={`${styles['column']} ${styles['column-prices']}`}>Prices</div>
             </div>
-            <ul className="lead-page__prices-block--list">
+            <ul className={styles['lead-page__prices-block--list']}>
                 {prices && prices.map((price: PriceInfoType, index: number) => (
                     <li
                         key={price.name + "_" + index}
-                        className={`lead-page__prices-block--list-item ${
-                            index % 2 === 1 ? "highlight" : " "
-                        }`}
+                        className={`${styles['lead-page__prices-block--list-item']} ${index % 2 === 1 ? styles['highlight'] : ''}`}
                     >
-                        <div className='column column-country'><span><span className={`fi fi-${price.country.toLowerCase()} flag-icon`}></span>{Countries[price.country]}</span>
+                        <div className={`${styles['column']} ${styles['column-country']}`}><span><span className={`fi fi-${price.country.toLowerCase()} flag-icon`}></span>{Countries[price.country]}</span>
                         </div>
-                        <div className='column column-prices'><a href={'#'} onClick={(e)=>handleDownloadPrice(e,price.uuid)}><Icon name='download-file' />{price.name}</a></div>
+                        <div className={`${styles['column']} ${styles['column-prices']}`}><a href={'#'} onClick={(e)=>handleDownloadPrice(e,price.uuid)}><Icon name='download-file' />{price.name}</a></div>
                     </li>
                 ))}
             </ul>

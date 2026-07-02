@@ -1,10 +1,9 @@
 import React, {useCallback, useEffect, useState} from "react";
-import "./styles.scss";
+import styles from "./styles.module.scss";
 import {PriceInfoType, UserStatusType} from "@/types/leads";
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal";
 import NDA from "./NDA";
-import {ApiResponseType} from "@/types/api";
 import {getPricesInfo, sendSignNDA} from "@/services/leads";
 import useAuth from "@/context/authContext";
 import PricesBlock from "./PricesBlock";
@@ -81,9 +80,9 @@ const Prices: React.FC<PricesPropsType> = () => {
         <>
             <LeadTutorialStep stepData={leadTutorialInfo.step3} />
             <LeadTutorialStep stepData={leadTutorialInfo.step4} />
-            <div className={`card prices-info`}>
+            <div className={`card ${styles['prices-info']}`}>
 
-                <div className={`prices-info-wrapper`}>
+                <div className={styles['prices-info-wrapper']}>
                     {showPrices ? curPrices ? (
                         <PricesBlock prices={curPrices} />
                     ) : null : <Button onClick={()=>setShowNDA(true)}>Explore our pricing options</Button>}

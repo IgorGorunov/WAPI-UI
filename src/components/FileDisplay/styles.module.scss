@@ -35,6 +35,7 @@
   .file-details {
     display: flex;
     flex-direction: column;
+    word-break: break-word;
   }
 
   .file-actions {
@@ -58,9 +59,9 @@
     }
 
     &:hover {
-      border-color: var(--color-blue);
+      border-color: var(--color-red);
       svg path {
-        fill: var(--color-blue);
+        fill: var(--color-red);
         transition: all .3s ease;
       }
 

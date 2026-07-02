@@ -34,6 +34,7 @@ export type ButtonType = ComponentProps<"button"> & {
   variant?: ButtonVariant;
   isFullWidth?: boolean;
   isVisible?: boolean;
+  changeColor?: boolean;
 };
 
 const Button: React.FC<ButtonType> = (props) => {
@@ -48,6 +49,7 @@ const Button: React.FC<ButtonType> = (props) => {
     isVisible = true,
     children,
     classNames,
+      changeColor = true,
     ...otherProps
   } = props;
   const sizeClassName = styles[`btn-size-${size}`] || `btn-size-${size}`;
@@ -56,7 +58,7 @@ const Button: React.FC<ButtonType> = (props) => {
   return (
     <button
       type={type || "button"}
-      className={`${styles.btn} btn ${styles[classNames] || ''} ${classNames || ""} ${sizeClassName} ${formClassName} ${isFullWidth ? styles['full-width'] || "full-width" : ""} ${styles[variant] || variant} ${isVisible ? styles['fade-in'] || 'fade-in' : styles['fade-out'] || 'fade-out'}`}
+      className={`${styles.btn} btn ${styles[classNames] || ''} ${classNames || ""} ${sizeClassName} ${formClassName} ${isFullWidth ? styles['full-width'] || "full-width" : ""} ${styles[variant] || variant} ${isVisible ? styles['fade-in'] || 'fade-in' : styles['fade-out'] || 'fade-out'} ${changeColor ? styles['color-change'] : ''}`}
       {...otherProps}
     >
       {icon && !iconOnTheRight ? (

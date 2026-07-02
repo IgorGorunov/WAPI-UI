@@ -104,7 +104,7 @@ const sendAmazonPrepFiles = async (
 const getAmazonPrepsExcel = async (
     data: any
 ): Promise<ApiResponseType<{ data: string; name?: string; type?: string }>> => {
-    return api.post(`/GetAmazonPrepsListExcel`, data);
+    return api.post(`/GetPagedAmazonPrepListFile`, data);
 };
 
 export { getAmazonPrep, getSingleAmazonPrepData, getAmazonPrepParameters, sendAmazonPrepData, sendAmazonPrepFiles, getAmazonPrepsExcel};
