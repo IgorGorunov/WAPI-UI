@@ -54,6 +54,24 @@
             flex: 0 0 25%;
         }
     }
+
+    &--order-status {
+        width: fit-content;
+        font-size: 9px;
+        font-weight: bold;
+        //margin-top: 2px;
+        //margin-left: 32px;
+        //margin: 0 auto;
+        color: var(--color-gray-blue);
+        border:  solid transparent;
+        border-width: 0 0 1px;
+
+        &-title {
+            font-size: 9px;
+            color: var(--color-gray-blue);
+            margin-right: 4px;
+        }
+    }
 }
 
 .label {
