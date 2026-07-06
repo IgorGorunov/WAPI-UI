@@ -50,7 +50,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
 
     const history = canEdit ? costApproval.filter(item => item.Status !== "Awaiting cost approval") : costApproval;
 
-    const needApproval = costApproval.filter(item => item.Status !== "Awaiting cost approval");
+    const needApproval = costApproval.filter(item => item.Status == "Awaiting cost approval");
 
     //reject modal
     const [showRejectModal, setShowRejectModal] = useState(false);
