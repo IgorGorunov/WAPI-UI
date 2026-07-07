@@ -141,7 +141,7 @@ const InvoicesPage = () => {
         setInvoiceBalanceBySeller(getFilteredIndicators(invoiceBalance));
     }, [selectedSeller, invoiceBalance]);
 
-    const handleExportXLS = () => {
+    const handleExportXLS = async () => {
         try {
             sendUserBrowserInfo({ ...getBrowserInfo('ExportInvoicesList', AccessObjectTypes["Finances/Invoices"], AccessActions.ExportList), body: { startDate: state.startDate, endDate: state.endDate } });
         } catch { }
@@ -151,7 +151,15 @@ const InvoicesPage = () => {
         }
 
         // toast.info('Export is coming soon — endpoint not yet confirmed.', { autoClose: 3000 });
-        const exportPromise = async () => {
+        const toastId = toast.loading('Downloading Invoices...', { className: 'download-toast', closeButton: true });
+
+        const handleError = (errorMsg: string, error?: any) => {
+            console.error("Export failed", error || new Error(errorMsg));
+            toast.dismiss(toastId);
+            toast.error(errorMsg, { autoClose: 3000 });
+        };
+
+        try {
             const res = await getInvoicesExcel({
                 token,
                 alias,
@@ -165,7 +173,14 @@ const InvoicesPage = () => {
                 sortOrder: state.sortOrder
             });
 
+            if (res && (res as any).isAxiosError) {
+                return handleError((res as any).response?.data?.errorMessage || "Failed to download file", res);
+            }
+
             if (res && res.data) {
+                if ((res.data as any).errorMessage) {
+                    return handleError((res.data as any).errorMessage);
+                }
                 const attachedFile = res.data;
                 const blob = base64ToBlob(attachedFile.data, attachedFile.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 const url = window.URL.createObjectURL(blob);
@@ -188,28 +203,14 @@ const InvoicesPage = () => {
                     document.body.removeChild(a);
                     setTimeout(() => window.URL.revokeObjectURL(url), 100);
                 }, 100);
-            } else {
-                throw new Error("Empty response");
-            }
-        };
 
-        try {
-            toast.promise(
-                exportPromise(),
-                {
-                    pending: 'Downloading Invoices...',
-                    success: {
-                        render: 'File downloaded successfully!',
-                        autoClose: 2000 //disappear in 2 seconds
-                    },
-                    error: 'Failed to download file'
-                },
-                {
-                    className: 'download-toast'
-                }
-            );
-        } catch (error) {
-            console.error("Export failed", error);
+                toast.dismiss(toastId);
+                toast.success('File downloaded successfully!', { autoClose: 2000 });
+            } else {
+                return handleError("Empty response");
+            }
+        } catch (error: any) {
+            handleError(typeof error?.message === 'string' ? error.message : 'Failed to download file', error);
         }
     };
 
