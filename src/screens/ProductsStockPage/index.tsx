@@ -88,13 +88,19 @@ const ProductsStockPage = () => {
             return;
         }
 
-        const exportPromise = async () => {
+        const toastId = toast.loading('Downloading products...', { className: 'download-toast', closeButton: true });
+
+        const handleError = (errorMsg: string, error?: any) => {
+            console.error("Export failed", error || new Error(errorMsg));
+            toast.dismiss(toastId);
+            toast.error(errorMsg, { autoClose: 3000 });
+        };
+
+        try {
             const res = await getProductsStockExcel({
                 token,
                 alias,
                 ui,
-                // startDate: state.startDate,
-                // endDate: state.endDate,
                 filter: processFiltersForApi(state.filters as Record<string, FilterValue>) as any,
                 search: state.search,
                 fullTextSearch: state.fullTextSearch,
@@ -102,7 +108,14 @@ const ProductsStockPage = () => {
                 sortOrder: state.sortOrder
             });
 
+            if (res && (res as any).isAxiosError) {
+                return handleError((res as any).response?.data?.errorMessage || "Failed to download file", res);
+            }
+
             if (res && res.data) {
+                if ((res.data as any).errorMessage) {
+                    return handleError((res.data as any).errorMessage);
+                }
                 const { base64ToBlob } = await import('@/utils/files');
                 const attachedFile = res.data;
                 const blob = base64ToBlob(attachedFile.data, attachedFile.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -110,7 +123,6 @@ const ProductsStockPage = () => {
                 const a = document.createElement('a');
                 a.href = url;
 
-                // Ensure extension exists and append unique timestamp to bypass OS "Save As/Overwrite" dialogs
                 let downloadName = "Products stock.xlsx";
 
                 const parts = downloadName.split('.');
@@ -126,28 +138,14 @@ const ProductsStockPage = () => {
                     document.body.removeChild(a);
                     setTimeout(() => window.URL.revokeObjectURL(url), 100);
                 }, 100);
-            } else {
-                throw new Error("Empty response");
-            }
-        };
 
-        try {
-            toast.promise(
-                exportPromise(),
-                {
-                    pending: 'Downloading products...',
-                    success: {
-                        render: 'File downloaded successfully!',
-                        autoClose: 2000 //disappear in 2 seconds
-                    },
-                    error: 'Failed to download file'
-                },
-                {
-                    className: 'download-toast'
-                }
-            );
-        } catch (error) {
-            console.error("Export failed", error);
+                toast.dismiss(toastId);
+                toast.success('File downloaded successfully!', { autoClose: 2000 });
+            } else {
+                return handleError("Empty response");
+            }
+        } catch (error: any) {
+            handleError(typeof error?.message === 'string' ? error.message : 'Failed to download file', error);
         }
     };
 

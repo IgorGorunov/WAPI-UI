@@ -185,11 +185,12 @@ const OrdersPage = () => {
             return;
         }
 
-        const toastId = toast.loading('Downloading Orders...', { className: 'download-toast' });
+        const toastId = toast.loading('Downloading Orders...', { className: 'download-toast', closeButton: true });
 
         const handleError = (errorMsg: string, error?: any) => {
             console.error("Export failed", error || new Error(errorMsg));
-            toast.update(toastId, { render: errorMsg, type: 'error', isLoading: false, autoClose: 3000 });
+            toast.dismiss(toastId);
+            toast.error(errorMsg, { autoClose: 3000 });
         };
 
         try {
@@ -244,8 +245,9 @@ const OrdersPage = () => {
                     document.body.removeChild(a);
                     setTimeout(() => window.URL.revokeObjectURL(url), 100);
                 }, 100);
-                
-                toast.update(toastId, { render: 'File downloaded successfully!', type: 'success', isLoading: false, autoClose: 2000 });
+
+                toast.dismiss(toastId);
+                toast.success('File downloaded successfully!', { autoClose: 2000 });
             } else {
                 return handleError("Empty response");
             }

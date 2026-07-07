@@ -156,7 +156,16 @@ const AmazonPrepPage = () => {
             return;
         }
 
-        const exportPromise = async () => {
+        const { toast } = await import('@/components/Toast');
+        const toastId = toast.loading('Downloading Amazon preps...', { className: 'download-toast', closeButton: true });
+
+        const handleError = (errorMsg: string, error?: any) => {
+            console.error("Export failed", error || new Error(errorMsg));
+            toast.dismiss(toastId);
+            toast.error(errorMsg, { autoClose: 3000 });
+        };
+
+        try {
             const { getAmazonPrepsExcel } = await import('@/services/amazonePrep');
             const res = await getAmazonPrepsExcel({
                 token,
@@ -171,7 +180,14 @@ const AmazonPrepPage = () => {
                 sortOrder: state.sortOrder
             });
 
+            if (res && (res as any).isAxiosError) {
+                return handleError((res as any).response?.data?.errorMessage || "Failed to download file", res);
+            }
+
             if (res && res.data) {
+                if ((res.data as any).errorMessage) {
+                    return handleError((res.data as any).errorMessage);
+                }
                 const { base64ToBlob } = await import('@/utils/files');
                 const attachedFile = res.data;
                 const blob = base64ToBlob(attachedFile.data as string, attachedFile.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -195,29 +211,14 @@ const AmazonPrepPage = () => {
                     document.body.removeChild(a);
                     setTimeout(() => window.URL.revokeObjectURL(url), 100);
                 }, 100);
-            } else {
-                throw new Error("Empty response");
-            }
-        };
 
-        try {
-            const { toast } = await import('@/components/Toast');
-            toast.promise(
-                exportPromise(),
-                {
-                    pending: 'Downloading Amazon preps...',
-                    success: {
-                        render: 'File downloaded successfully!',
-                        autoClose: 2000
-                    },
-                    error: 'Failed to download file'
-                },
-                {
-                    className: 'download-toast'
-                }
-            );
-        } catch (error) {
-            console.error("Export failed", error);
+                toast.dismiss(toastId);
+                toast.success('File downloaded successfully!', { autoClose: 2000 });
+            } else {
+                return handleError("Empty response");
+            }
+        } catch (error: any) {
+            handleError(typeof error?.message === 'string' ? error.message : 'Failed to download file', error);
         }
     }
 
