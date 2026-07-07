@@ -1,0 +1,46 @@
+.segmented-input-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 10px;
+  text-align: center;
+  border-radius: 4px;
+  background-color: var(--color-white);
+  box-shadow: 0 1px 2px 0 rgba(35, 57, 66, .21);
+  border: 1px solid transparent;
+
+  &:focus-within {
+    outline: 1px solid var(--color-blue);
+  }
+
+  input {
+    width: 16px;
+    padding: 0;
+    text-align: center;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    outline: none;
+    border-radius: 2px;
+
+    &:active, &:focus {
+       outline: none;
+    }
+
+    &::selection {
+      background-color: rgba(0, 122, 255, 0.5); //#3498db; //#007aff; // rgba(61, 111, 224, 0.4); //var(--color-blue-25, #2860d4);
+      color: var(--color-dark-blue);
+    }
+  }
+
+  .year-input {
+    width: 32px;
+  }
+
+  span {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 20px;
+  }
+}
