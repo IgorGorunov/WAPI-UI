@@ -551,6 +551,7 @@ const OrderList: React.FC<OrderListType> = ({
                                     trigger={isTouchDevice ? 'click' : 'hover'}
                                     placement="right"
                                     overlayClassName="doc-list-popover"
+                                    getPopupContainer={() => document.getElementById('wapi-popover-container') || document.body}
                                 >
                                     <div style={{
                                         minHeight: '8px',
@@ -611,6 +612,7 @@ const OrderList: React.FC<OrderListType> = ({
                                     trigger={isTouchDevice ? 'click' : 'hover'}
                                     placement="right"
                                     overlayClassName="doc-list-popover"
+                                    getPopupContainer={() => document.getElementById('wapi-popover-container') || document.body}
                                 >
                                     <div style={{
                                         minHeight: '8px',
@@ -720,6 +722,7 @@ const OrderList: React.FC<OrderListType> = ({
                             trigger={isTouchDevice ? 'click' : 'hover'}
                             placement="right"
                             overlayClassName="doc-list-popover"
+                            getPopupContainer={() => document.getElementById('wapi-popover-container') || document.body}
                         >
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                 <span className={`fi fi-${record.receiverCountry.toLowerCase()} flag-icon`} />
@@ -810,6 +813,7 @@ const OrderList: React.FC<OrderListType> = ({
                                     trigger={isTouchDevice ? 'click' : 'hover'}
                                     placement="right"
                                     overlayClassName="doc-list-popover"
+                                    getPopupContainer={() => document.getElementById('wapi-popover-container') || document.body}
                                 >
                                     <div style={{
                                         minHeight: '8px',
@@ -897,6 +901,7 @@ const OrderList: React.FC<OrderListType> = ({
                                 trigger={isTouchDevice ? 'click' : 'hover'}
                                 placement="right"
                                 overlayClassName="doc-list-popover"
+                                getPopupContainer={() => document.getElementById('wapi-popover-container') || document.body}
                             >
                                 <span style={{
                                     borderBottom: `2px solid ${underlineColor}`,
@@ -1190,6 +1195,7 @@ const OrderList: React.FC<OrderListType> = ({
 
     return (
         <div className={`table ${styles["order-list"] || "order-list"}`}>
+            <div id="wapi-popover-container" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 9999 }} />
             <SearchContainer>
                 <Button type="button" disabled={!filterMetadata} onClick={() => setIsFiltersVisible(prev => !prev)} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
                 {startDate && endDate && onPeriodChange && (
