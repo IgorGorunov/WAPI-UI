@@ -118,8 +118,9 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
     }, [products]);
 
     const productTypeOptions = useMemo(()=>{
-        // return [{ label: 'Test type 1', value: '' }, { label: 'Test type 2', value: '2' }];
-        return productParams.productsType.map(item => ({ value: item.id, label: item.name }));
+        const options = productParams.productsType.map(item => ({ value: item.id, label: item.name })).sort((a,b)=>a.label < b.label ? -1 : 1);
+        const other = options.filter(item => item.label.toUpperCase() == 'OTHER');
+        return [...options.filter(item => item.label.toUpperCase() != 'OTHER'), ...other];
     }, [productParams.productsType]);
 
     const { control, handleSubmit, formState: { errors }, getValues, setValue, watch, setError, clearErrors } = useForm({
