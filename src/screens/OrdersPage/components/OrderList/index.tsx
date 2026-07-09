@@ -307,10 +307,10 @@ const OrderList: React.FC<OrderListType> = ({
         const allTroubleCount = items.reduce((sum, i) => sum + (i.amount || 0), 0);
         return [
             { value: 'ANY', label: '-All trouble statuses-', amount: allTroubleCount },
-            { value: 'NONE', label: '-NO trouble statuses-', amount: totalCount - allTroubleCount },
+            { value: 'NONE', label: '-NO trouble statuses-', amount: (filterMetadata?.orders || 0) - allTroubleCount },
             ...items,
         ];
-    }, [filterMetadata?.troubleStatuses, totalCount]);
+    }, [filterMetadata?.troubleStatuses, filterMetadata?.orders]);
 
     const transformedNonTroubleEvents = useMemo(() => {
         if (!filterMetadata) return [];
@@ -324,29 +324,29 @@ const OrderList: React.FC<OrderListType> = ({
     const claimFilterOptions = useMemo(() =>
         filterMetadata ? [
             { label: 'With claims', value: 'true', amount: filterMetadata.claims || 0 },
-            { label: 'Without claims', value: 'false', amount: totalCount - filterMetadata.claims || 0 }
+            { label: 'Without claims', value: 'false', amount: (filterMetadata?.orders || 0) - filterMetadata.claims || 0 }
         ] : [],
-        [filterMetadata, totalCount]
+        [filterMetadata]
     );
     
     const logisticCommentFilterOptions = useMemo(() =>
-        filterMetadata ? booleanFilterOptions('With order issue', 'Without order issue', filterMetadata.logisticComment || 0, totalCount) : [],
-        [filterMetadata, totalCount]
+        filterMetadata ? booleanFilterOptions('With order issue', 'Without order issue', filterMetadata.logisticComment || 0, filterMetadata?.orders || 0) : [],
+        [filterMetadata]
     );
 
     const commentToCourierServiceFilterOptions = useMemo(() =>
-        filterMetadata ? booleanFilterOptions('With comments', 'Without comments', filterMetadata.commentToCourierService || 0, totalCount) : [],
-        [filterMetadata, totalCount]
+        filterMetadata ? booleanFilterOptions('With comments', 'Without comments', filterMetadata.commentToCourierService || 0, filterMetadata?.orders || 0) : [],
+        [filterMetadata]
     );
 
     const selfCollectFilterOptions = useMemo(() =>
-        filterMetadata ? booleanFilterOptions('Self collect', 'Not self collect', filterMetadata.selfCollect || 0, totalCount) : [],
-        [filterMetadata, totalCount]
+        filterMetadata ? booleanFilterOptions('Self collect', 'Not self collect', filterMetadata.selfCollect || 0, filterMetadata?.orders || 0) : [],
+        [filterMetadata]
     );
 
     const sentSMSFilterOptions = useMemo(() =>
-        filterMetadata ? booleanFilterOptions('SMS was sent', "Doesn't have SMS", filterMetadata.sentSMS || 0, totalCount) : [],
-        [filterMetadata, totalCount]
+        filterMetadata ? booleanFilterOptions('SMS was sent', "Doesn't have SMS", filterMetadata.sentSMS || 0, filterMetadata?.orders || 0) : [],
+        [filterMetadata]
     );
 
     const transformedWarehouses = useMemo(() =>
@@ -372,23 +372,23 @@ const OrderList: React.FC<OrderListType> = ({
     );
 
     const hasTicketsOptions = useMemo(() =>
-        filterMetadata ? booleanFilterOptions('With tickets', 'Without tickets', filterMetadata.tickets || 0, totalCount) : [],
-        [filterMetadata, totalCount]
+        filterMetadata ? booleanFilterOptions('With tickets', 'Without tickets', filterMetadata.tickets || 0, filterMetadata?.orders || 0) : [],
+        [filterMetadata]
     );
 
     const hasOpenTicketsOptions = useMemo(() =>
-        filterMetadata ? booleanFilterOptions('With open tickets', 'Without open tickets', filterMetadata.ticketsOpen || 0, totalCount) : [],
-        [filterMetadata, totalCount]
+        filterMetadata ? booleanFilterOptions('With open tickets', 'Without open tickets', filterMetadata.ticketsOpen || 0, filterMetadata?.orders || 0) : [],
+        [filterMetadata]
     );
 
     const photoFilterOptions = useMemo(() =>
-        filterMetadata ? booleanFilterOptions('With photos', 'Without photos', filterMetadata.warehouseAssemblyPhotos || 0, totalCount) : [],
-        [filterMetadata, totalCount]
+        filterMetadata ? booleanFilterOptions('With photos', 'Without photos', filterMetadata.warehouseAssemblyPhotos || 0, filterMetadata?.orders || 0) : [],
+        [filterMetadata]
     );
 
     const customerReturnsOptions = useMemo(() =>
-        filterMetadata ? booleanFilterOptions('With customer returns', 'Without customer returns', filterMetadata.customerReturns || 0, totalCount) : [],
-        [filterMetadata, totalCount]
+        filterMetadata ? booleanFilterOptions('With customer returns', 'Without customer returns', filterMetadata.customerReturns || 0, filterMetadata?.orders || 0) : [],
+        [filterMetadata]
     );
 
     const marketplaceOptions = useMemo(() =>

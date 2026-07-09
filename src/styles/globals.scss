@@ -554,6 +554,7 @@ input[type="date"]::before {
 .doc-list-popover {
   background-color: var(--color-dark-blue);
   border-radius: 8px;
+  pointer-events: auto;
 
   .ant-popover-inner {
     padding: 0;
