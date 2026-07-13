@@ -208,7 +208,7 @@ const ImportFilesBlock: React.FC<ImportFilesBlockType> = ({ file, importFilesTyp
                     />
                 </div>
             )}
-            <Button icon='download-file' iconOnTheRight onClick={downloadFile}>Download sample</Button>
+            <Button icon='download-file' iconOnTheRight onClick={downloadFile} classNames={styles['download-btn']}>Download sample</Button>
             <DropZone readOnly={false} files={selectedFilesImport} onFilesChange={handleFilesChange} />
             <Button onClick={sendFiles}>Send</Button>
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}
