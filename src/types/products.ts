@@ -8,6 +8,7 @@ export type ProductTypeType = {
     id: string;
     name: string;
     certificate: boolean;
+    parentDescription: string;
 }
 
 export type ProductType = {
@@ -43,9 +44,6 @@ export type ReservedRowType = {
     document: string;
     reserved: number;
 }
-
-
-
 
 export type OnShippingRowType = {
     onshipping: number;
