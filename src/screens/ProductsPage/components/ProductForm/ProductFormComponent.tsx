@@ -117,8 +117,18 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
         return products.map(item => { return { value: item.uuid, label: item.name } })
     }, [products]);
 
-    const productTypeOptions = useMemo(()=>{
-        const options = productParams.productsType.map(item => ({ value: item.id, label: item.name })).sort((a,b)=>a.label < b.label ? -1 : 1);
+
+    const productTypeGroupOptions = useMemo(()=>{
+        const uniqueGroups = productParams.productsType.map(item => item.parentDescription);
+        const options = Array.from(new Set(uniqueGroups)).map(item=>({value: item, label: item.trim()})).sort((a,b)=>a.label < b.label ? -1 : 1);
+        const other = options.filter(item => item.label.toUpperCase() == 'OTHERS');
+        return [...options.filter(item => item.label.toUpperCase() != 'OTHERS'), ...other];
+    }, [productParams.productsType]);
+
+    const [selectedGroup, setSelectedGroup] = useState(productData?.productType ? productParams.productsType.find(item=>item.id==productData?.productType)?.parentDescription : '');
+
+    const getProductTypeOptions = useCallback((selectedGroup: string)=>{
+        const options = productParams.productsType.filter(item=>item.parentDescription == selectedGroup).map(item => ({ value: item.id, label: item.name })).sort((a,b)=>a.label < b.label ? -1 : 1);
         const other = options.filter(item => item.label.toUpperCase() == 'OTHER');
         return [...options.filter(item => item.label.toUpperCase() != 'OTHER'), ...other];
     }, [productParams.productsType]);
@@ -152,6 +162,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
             withoutMasterCartonData: productData?.withoutMasterCartonData || productData?.unitOfMeasures.length <= 1 || false,
             additionalService: !!productData?.additionalService || false,
             seller: productData?.seller || '',
+            productTypeGroup: selectedGroup ||'',
             productType: productData?.productType || '',
             certificate: productData?.productType ? productParams.productsType.find(item => item.id === productData?.productType)?.certificate && productData.attachedFiles.filter(item => item.productFileType === PRODUCT_FILE_TYPES.certificate)?.length  || false : false,
             unitOfMeasures:
@@ -1235,7 +1246,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
         }
     };
 
-    const generalFields = useMemo(() => FormFieldsGeneral({ countries: countryArr, isNew: !productData?.uuid, needCertificate, productTypeOptions, handleAdditionalServiceChange }), [COUNTRIES, isAdditionalService, needCertificate])
+    const generalFields = useMemo(() => FormFieldsGeneral({ countries: countryArr, isNew: !productData?.uuid, needCertificate, productTypeOptions:getProductTypeOptions(selectedGroup), handleAdditionalServiceChange, productTypeGroupOptions, onProductTypeGroupChange: (val)=>{setSelectedGroup(val); setValue('productType', ''); console.log('111: ', val)} }), [COUNTRIES, isAdditionalService, needCertificate, selectedGroup])
     const skuFields = useMemo(() => FormFieldsSKU(), []);
     const warehouseFields = useMemo(() => FormFieldsWarehouse({ typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial: createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements), isAdditionalService }), [productParams, isAdditionalService])
     const additionalFields = useMemo(() => FormFieldsAdditional1({ whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking) }), [])
@@ -1295,7 +1306,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
                                 </div>
                             </div>
                         ) : null}
-                        <CardWithHelpIcon classNames='card product-info--general'>
+                        <CardWithHelpIcon classNames={`card ${styles['product-info--general']}`}>
                             <h3 className={styles['product-info__block-title']}>
                                 <Icon name='general' />
                                 General
