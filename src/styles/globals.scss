@@ -522,9 +522,15 @@ input[type="date"]::before {
   color: var(--color-error);
 }
 
-.has-error-decor {
-  border: 2px solid red;
+.has-border {
+  border: 2px solid transparent;
   border-radius: 5px;
+  transition: .3s ease;
+}
+
+.has-error-decor {
+  border-color: red;
+  //border-radius: 5px;
 }
 
 .tour-guide {

@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 import {TabFieldType, TabTitleType} from "@/types/tabs";
 
 export const useTabsState = (tabTitleArray: string[], tabFields: TabFieldType[]) => {
 
-    const noErrors= tabTitleArray.map((item: string)=>({title: item, hasError: false} as TabTitleType));
+    const noErrors = useMemo(() => {
+        return tabTitleArray.map((item: string)=>({title: item, hasError: false} as TabTitleType));
+    }, [tabTitleArray]);
+
     const [initialState, setInitialState] = useState(noErrors);
     //const initialState = tabTitleArray.map((item: string)=>({title: item, hasError: false} as TabTitleType));
 
     const [tabTitles, setTabTitles] = useState(initialState);
 
-    const updateTabTitles = (errorFields: string[]) => {
-        // const updatedState = [...initialState];
-        const updatedState = [...noErrors];
+    const updateTabTitles = useCallback((errorFields: string[]) => {
+        const updatedState = noErrors.map(item => ({...item}));
         errorFields.forEach((errorField) => {
             const field = tabFields.find(field => field.fieldName === errorField);
             if (field && field.tabName) {
@@ -24,18 +26,18 @@ export const useTabsState = (tabTitleArray: string[], tabFields: TabFieldType[])
         })
 
         setTabTitles(updatedState);
-    }
+    }, [noErrors, tabFields]);
 
-    const clearTabTitles = () => {
+    const clearTabTitles = useCallback(() => {
         setInitialState(noErrors);
         setTabTitles(noErrors)
-    }
+    }, [noErrors]);
 
-    const resetTabTables = (newTabTitleArray: string[]) => {
+    const resetTabTables = useCallback((newTabTitleArray: string[]) => {
         const newInitState = newTabTitleArray.map((item: string)=>({title: item, hasError: false} as TabTitleType));
         setInitialState(newInitState);
         setTabTitles(newInitState);
-    }
+    }, []);
 
     return {tabTitles, updateTabTitles, clearTabTitles, resetTabTables};
 }

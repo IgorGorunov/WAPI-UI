@@ -419,13 +419,13 @@ const ProductSelection: React.FC<ProductSelectionPropsType> = ({ alreadyAdded, h
                 title: 'Quantity',
                 dataIndex: 'quantity',
                 key: 'quantity',
-                minWidth: 0,
+                minWidth: 50,
                 render: (text, record, index) => (
                     <Controller
                         name={`products.${index}.quantity`}
                         control={control}
                         render={({ field, fieldState: { error } }) => (
-                            <div style={{ maxWidth: '70px' }}>
+                            <div style={{ minWidth: '50px', maxWidth: '70px' }}>
                                 <FieldBuilder
                                     name={`products.${index}.quantity`}
                                     fieldType={FormFieldTypes.NUMBER}

@@ -187,7 +187,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     }
 
     //tab titles
-    const tabTitleArray = TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length), !!(docData?.PrecalculatedDeliveryCost && docData.PrecalculatedDeliveryCost.length), forbiddenTabs);
+    const tabTitleArray = useMemo(() => TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length), !!(docData?.PrecalculatedDeliveryCost && docData.PrecalculatedDeliveryCost.length), forbiddenTabs), [docData, forbiddenTabs]);
     const { tabTitles, updateTabTitles, clearTabTitles, resetTabTables } = useTabsState(tabTitleArray, TabFields);
 
 
@@ -264,12 +264,17 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     //shipping units
     const { append: appendShippingUnit, remove: removeShippingUnit } = useFieldArray({ control, name: 'shippingUnits' });
     const shippingUnits = watch('shippingUnits');
-
     const sender = watch('sender');
     const receiver = watch('receiver');
-    const [importType, setImportType] = useState('');
-
     const selectedSeller = watch('seller');
+
+    // Ensure the component subscribes to errors for all fields mapped to tabs 
+    // by triggering the react-hook-form proxy getter during render.
+    TabFields.forEach(f => {
+        const _ = errors[f.fieldName as keyof typeof errors];
+    });
+
+    const [importType, setImportType] = useState('');
 
     //countries
     const allCountries = COUNTRIES.map(item => ({ label: item.label, value: item.value.toUpperCase() }));
@@ -971,6 +976,12 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         }
     }, [products]);
 
+    useEffect(() => {
+        if (shippingUnits.length) {
+            clearErrors('shippingUnits');
+        }
+    }, [shippingUnits]);
+
 
     //form fields
     const generalFields = useMemo(() => GeneralFields(
@@ -1269,6 +1280,30 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         }
     }
 
+    const serializedErrors = JSON.stringify(errors);
+
+    useEffect(() => {
+        const errorFields = Object.keys(errors).filter(key => {
+            const err = errors[key];
+            if (!err) return false;
+            
+            const hasRealError = (e: any): boolean => {
+                if (!e) return false;
+                if (e.message || e.type) return true;
+                if (Array.isArray(e)) return e.some(hasRealError);
+                if (typeof e === 'object') return Object.values(e).some(hasRealError);
+                return false;
+            };
+            return hasRealError(err);
+        });
+
+        if (errorFields.length > 0) {
+            updateTabTitles(errorFields);
+        } else {
+            clearTabTitles();
+        }
+    }, [serializedErrors, updateTabTitles, clearTabTitles]);
+
     const onError = (props: any) => {
         const curAction = docData ? AccessActions.EditObject : AccessActions.CreateObject;
         if (!isActionIsAccessible(getAccessActionObject(docType), curAction)) {
@@ -1332,7 +1367,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                     autoClose: 3000,
                 });
 
-                fieldNames.push('Cargo info');
+                fieldNames.push('shippingUnits');
             }
 
             updateTabTitles(fieldNames);
@@ -1484,7 +1519,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                             dataSource={getValues('shippingUnits')?.map((field, index) => ({ key: field.unitName + '-' + index, ...field })) || []}
                                             pagination={false}
                                             rowKey="key"
-                                            className={errors.shippingUnits ? 'has-error-decor' : ''}
+                                            className={`has-border ${errors.shippingUnits ? 'has-error-decor' : ''}`}
                                         />
                                         {errors.shippingUnits && <p className={'error-message'}>{errors.shippingUnits?.message}</p>}
                                     </div>
@@ -1572,7 +1607,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                 dataSource={getValues('products')?.map((field, index) => ({ key: field.product + '-' + index, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
-                                className={errors.products ? 'has-error-decor' : ''}
+                                className={`has-border ${errors.products ? 'has-error-decor' : ''}`}
                             />
                             {errors.products && <p className={'error-message'}>{errors.products.message}</p>}
 

@@ -1202,7 +1202,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                 dataSource={getValues('products')?.map((field, index) => ({ key: field.product + '-' + index, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
-                                className={errors.products ? 'has-error-decor' : ''}
+                                className={`has-border ${errors.products ? 'has-error-decor' : ''}`}
                             />
                             {errors.products && <p className={'error-message'}>{errors.products.message}</p>}
 
