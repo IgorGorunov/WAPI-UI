@@ -25,7 +25,7 @@ const WarehouseCutOffBlock: React.FC<WarehouseBlockPropsType> = ({warehouseCutof
             <p className={styles['cutoff-times__warehouse-title']}>
                 <span className={`fi fi-${warehouse.warehouse.country.toLowerCase()} flag-icon ${styles['cutoff-times__warehouse-flag']}`}></span>
                 <span className={styles['cutoff-times__warehouse-name']}>{warehouse.warehouse.name}</span>
-                <span className={`${styles['cutoff-times__warehouse-open-from']}`}>(opens at {formatTime(warehouse.workingTimeBegin)})</span>
+                <span className={`${styles['cutoff-times__warehouse-open-from']}`}>(opens at {formatTime(warehouse.workingTimeBegin)} local time)</span>
             </p>
 
             <div className={`${styles['cutoff-times__container']} card`}>
