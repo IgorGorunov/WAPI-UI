@@ -1,7 +1,7 @@
 import {api} from "@/services/api";
 import type {ApiResponseType} from "@/types/api";
 import type {AttachedFilesType} from "@/types/utility";
-import type {ApiProtocolType, UserContractType, UserPriceType, WarehouseInfoType} from "@/types/profile";
+import {ApiProtocolType, CutOffDataType, UserContractType, UserPriceType, WarehouseInfoType} from "@/types/profile";
 
 export const getApiProtocols = async (
     data: {
@@ -86,4 +86,15 @@ export const getWarehouseInfo = async (
     }
 ): Promise<ApiResponseType<WarehouseInfoType[]>> => {
     return api.post(`/GetWarehouseInfo`, data);
+};
+
+export const getCutoffTimes = async (
+
+    data: {
+        token: string,
+        alias: string;
+        ui?: string;
+    }
+): Promise<ApiResponseType<CutOffDataType[]>> => {
+    return api.post(`/GetWarehouseSchedule`, data);
 };

@@ -6,8 +6,8 @@ import Header from "@/components/Header";
 import Tabs from "@/components/Tabs";
 import ProfileInfo from "./components/ProfileInfo";
 import ApiProtocols from "./components/ApiProtocols";
-import { ApiProtocolType, UserContractType, UserPriceType, WarehouseInfoType } from "@/types/profile";
-import { getApiProtocols, getUserContracts, getUserPrices, getWarehouseInfo } from "@/services/profile";
+import {ApiProtocolType, CutOffDataType, UserContractType, UserPriceType, WarehouseInfoType} from "@/types/profile";
+import {getApiProtocols, getCutoffTimes, getUserContracts, getUserPrices, getWarehouseInfo} from "@/services/profile";
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes, UserInfoType } from "@/types/auth";
 import UserContractsAndPrices from "./components/UserContractsAndPrices";
@@ -15,6 +15,7 @@ import WarehouseInfo from "@/screens/ProfilePage/components/WarehouseInfo";
 import { getUserProfile, sendUserBrowserInfo } from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
+import CutOffTime from "@/screens/ProfilePage/components/CutOffTime";
 
 const ProfilePage = () => {
     const { tenantData: { alias } } = useTenant();
@@ -24,6 +25,7 @@ const ProfilePage = () => {
     const [pricesData, setPricesData] = useState<UserPriceType[] | null>(null);
     const [contractsData, setContractsData] = useState<UserContractType[] | null>(null);
     const [warehouseInfoData, setWarehouseInfoData] = useState<WarehouseInfoType[] | null>(null);
+    const [cutoffTimes, setCutoffTimes] = useState<CutOffDataType[] | null>(null);
     const [profileInfo, setProfileInfo] = useState<UserInfoType | null>(null);
 
     const fetchProfileData = useCallback(async () => {
@@ -31,11 +33,11 @@ const ProfilePage = () => {
             setIsLoading(true);
             const requestData = { token, alias };
 
+            // profile info
             const res = await getUserProfile(superUser && ui ? { ...requestData, ui } : requestData);
             if (res.status === 200) {
                 setProfileInfo(res.data?.userProfile?.userInfo);
             }
-
 
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('GetDeliveryProtocols', AccessObjectTypes["Profile/DeliveryProtocols"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
@@ -50,6 +52,7 @@ const ProfilePage = () => {
                 }
             }
 
+            // prices
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('GetClientPriceList', AccessObjectTypes["Profile/Prices"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
             } catch { }
@@ -63,6 +66,7 @@ const ProfilePage = () => {
                 }
             }
 
+            //contracts
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('GetContractsList', AccessObjectTypes["Profile/Contracts"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
             } catch { }
@@ -75,6 +79,7 @@ const ProfilePage = () => {
                 }
             }
 
+            // warehouse info
             try {
                 sendUserBrowserInfo({ ...getBrowserInfo('GetWarehousesList', AccessObjectTypes["Profile/WarehouseInfo"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
             } catch { }
@@ -86,12 +91,32 @@ const ProfilePage = () => {
                     setWarehouseInfoData(resWarehouseInfo.data);
                 }
             }
+
+            // cutoff time
+            try {
+                sendUserBrowserInfo({ ...getBrowserInfo('GetCutoffTimes', AccessObjectTypes["Profile/CutoffTimes"], AccessActions.ListView), body: superUser && ui ? { ...requestData, ui } : requestData })
+            } catch { }
+            if (!isActionIsAccessible(AccessObjectTypes["Profile/CutoffTimes"], AccessActions.ListView)) {
+                setWarehouseInfoData(null);
+            } else {
+
+
+            // requestData.token = "46104416-ced0-4d1d-a5d4-7d614e776be1";
+                const resCutoffTimes = await getCutoffTimes(superUser && ui ? { ...requestData, ui } : requestData);
+                if (resCutoffTimes.status === 200) {
+                    setCutoffTimes(resCutoffTimes.data);
+                }
+            }
         } catch {
             //something went wrong
         } finally {
             setIsLoading(false);
         }
     }, [token, ui]);
+
+    useEffect(() => {
+        console.log('cutoff times: ', cutoffTimes)
+    }, [cutoffTimes]);
 
     useEffect(() => {
         fetchProfileData();
@@ -101,6 +126,7 @@ const ProfilePage = () => {
     if (apiProtocolsData !== null) tabTitlesArr.push('Delivery protocols');
     if (pricesData !== null || contractsData !== null) tabTitlesArr.push('Contracts and prices');
     if (warehouseInfoData !== null) tabTitlesArr.push('Warehouses info');
+    if (cutoffTimes !== null) tabTitlesArr.push('Cutoff times');
     const tabTitles = tabTitlesArr.map(item => ({ title: item }));
 
     console.log('tabTitles', apiProtocolsData, pricesData, contractsData, warehouseInfoData);
@@ -124,6 +150,9 @@ const ProfilePage = () => {
                         </div> : null}
                         {warehouseInfoData !== null ? <div key='warehouse-info-tab' className={styles['profile-page-tab']}>
                             <WarehouseInfo warehouseInfoData={warehouseInfoData} />
+                        </div> : null}
+                        {cutoffTimes !== null ? <div key='cutoff-times-tab' className={styles['profile-page-tab']}>
+                            <CutOffTime cutoffTimes={cutoffTimes} />
                         </div> : null}
 
                     </Tabs>
