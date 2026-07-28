@@ -31,17 +31,36 @@ export type WarehouseInfoType = {
     InfoForClients: string;
 }
 
-export type AntiFraudType = {
-    subscription: string;
-    redZone: number;
-    yellowZone: number;
-    greenZone: number;
+// export type AntiFraudType = {
+//     subscription: string;
+//     redZone: number;
+//     yellowZone: number;
+//     greenZone: number;
+//
+//     excludedPhoneNumbers: string[];
+//     gradation: {
+//         zone: string;
+//         minValue: number;
+//         maxValue: number;
+//         additionalInfo: string;
+//     }[]
+// }
 
-    excludedPhoneNumbers: string[];
-    gradation: {
-        zone: string;
-        minValue: number;
-        maxValue: number;
-        additionalInfo: string;
-    }[]
+export type CutOffWarehouseType = {
+    id: string;
+    name: string;
+    country: string;
+}
+
+export type CutOffCourierServiceType = {
+    id: string;
+    name: string;
+}
+
+export type CutOffDataType = {
+    warehouse: CutOffWarehouseType;
+    courierService: CutOffCourierServiceType;
+    workingTimeBegin: string;
+    cutOffTime: string;
+    timeZone: string;
 }
