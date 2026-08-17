@@ -12,7 +12,12 @@ export const reportBlocks: ReportsListBlockType[] = [
                 reportPageLink: Routes.ProductsOnStocks,
                 reportDescription: 'The report shows history of product movements',
             },
-
+            {
+                reportType: REPORT_TYPES.PRODUCT_EXPIRATION,
+                reportName: "Reports/ProductExpirationOnStocks",
+                reportPageLink: Routes.ProductExpirationOnStocks,
+                reportDescription: 'The report shows product expiration dates',
+            },
         ]
     },
     {

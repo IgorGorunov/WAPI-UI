@@ -3,7 +3,7 @@ import {
     AllVariantsType,
     COD_REPORT_VARIANTS,
     DELIVERY_RATES_PARTIAL_VARIANTS,
-    DELIVERY_RATES_VARIANTS,
+    DELIVERY_RATES_VARIANTS, PRODUCT_EXPIRATION_VARIANTS,
     PRODUCTS_ON_STOCKS_VARIANTS,
     REPORT_SALES_PARTIAL_VARIANTS,
     REPORT_SALES_VARIANTS,
@@ -56,6 +56,14 @@ import {
     getCodReportVariantSortingCols
 } from "@/screens/ReportPage/Reports/CodReport";
 import { AccessObjectTypes } from "@/types/auth";
+import {
+    getProductExpirationVariantColumns,
+    getProductExpirationVariantDimensionCols,
+    getProductExpirationVariantDimensionNumber,
+    getProductExpirationVariantGroupCols,
+    getProductExpirationVariantResourceCols,
+    getProductExpirationVariantSortingCols, ProductExpirationHeaderNames
+} from "@/screens/ReportPage/Reports/ProductExpirationOnStocks";
 
 
 export const getVariantByReportType = (reportType: REPORT_TYPES, variant: string) => {
@@ -71,6 +79,8 @@ export const getVariantByReportType = (reportType: REPORT_TYPES, variant: string
             return SALE_DYNAMIC_VARIANTS[variant] as SALE_DYNAMIC_VARIANTS;
         case REPORT_TYPES.COD_REPORT:
             return COD_REPORT_VARIANTS[variant] as COD_REPORT_VARIANTS;
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return PRODUCT_EXPIRATION_VARIANTS[variant] as PRODUCT_EXPIRATION_VARIANTS;
 
         default:
             return null;
@@ -90,6 +100,8 @@ export const getVariantColumnsByReportType = (reportType: REPORT_TYPES, variant:
             return getSaleDynamicVariantColumns(variant as SALE_DYNAMIC_VARIANTS, resourceNames);
         case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantColumns(variant as COD_REPORT_VARIANTS);
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return getProductExpirationVariantColumns(variant as PRODUCT_EXPIRATION_VARIANTS);
 
         default:
             return null;
@@ -107,6 +119,8 @@ export const getVariantOptionsByReportType = (reportType: REPORT_TYPES) => {
             return Object.keys(SALE_DYNAMIC_VARIANTS).map(item => ({ value: item.toString(), label: SALE_DYNAMIC_VARIANTS[item], }))
         case REPORT_TYPES.COD_REPORT:
             return Object.keys(COD_REPORT_VARIANTS).map(item => ({ value: item.toString(), label: COD_REPORT_VARIANTS[item], }))
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return Object.keys(PRODUCT_EXPIRATION_VARIANTS).map(item => ({ value: item.toString(), label: PRODUCT_EXPIRATION_VARIANTS[item], }))
 
         default:
             return [];
@@ -125,6 +139,8 @@ export const getVariantDimensionColsByReportType = (reportType: REPORT_TYPES, va
             return getSaleDynamicVariantDimensionCols(variant as SALE_DYNAMIC_VARIANTS)
         case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantDimensionCols(variant as COD_REPORT_VARIANTS)
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return getProductExpirationVariantDimensionCols(variant as PRODUCT_EXPIRATION_VARIANTS)
 
         default:
             return [];
@@ -143,6 +159,8 @@ export const getVariantDimensionNumberByReportType = (reportType: REPORT_TYPES, 
             return getSaleDynamicVariantDimensionNumber(variant as SALE_DYNAMIC_VARIANTS);
         case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantDimensionNumber(variant as COD_REPORT_VARIANTS);
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return getProductExpirationVariantDimensionNumber(variant as PRODUCT_EXPIRATION_VARIANTS);
 
         default:
             return [];
@@ -161,6 +179,8 @@ export const getVariantGroupColsByReportType = (reportType: REPORT_TYPES, varian
             return getSaleDynamicVariantGroupCols(variant as SALE_DYNAMIC_VARIANTS);
         case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantGroupCols(variant as COD_REPORT_VARIANTS);
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return getProductExpirationVariantGroupCols(variant as PRODUCT_EXPIRATION_VARIANTS);
 
         default:
             return [];
@@ -179,6 +199,8 @@ export const getVariantResourceColsByReportType = (reportType: REPORT_TYPES, var
             return getSaleDynamicVariantResourceCols(arr, variant as SALE_DYNAMIC_VARIANTS);
         case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantResourceCols(variant as COD_REPORT_VARIANTS);
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return getProductExpirationVariantResourceCols(variant as PRODUCT_EXPIRATION_VARIANTS);
 
         default:
             return { sumCols: [], uniqueCols: [], concatenatedCols: [] };
@@ -197,6 +219,8 @@ export const isFilterVisibleByReportType = (reportType: REPORT_TYPES, filterName
             return ['country'].includes(filterName);
         case REPORT_TYPES.COD_REPORT:
             return ['status'].includes(filterName);
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return ['country', 'warehouse', 'product'].includes(filterName);
 
         default:
             return false;
@@ -215,6 +239,8 @@ export const getVariantSortingColsByReportType = (reportType: REPORT_TYPES, vari
             return getSaleDynamicVariantSortingCols(variant as SALE_DYNAMIC_VARIANTS);
         case REPORT_TYPES.COD_REPORT:
             return getCodReportVariantSortingCols(variant as COD_REPORT_VARIANTS);
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return getProductExpirationVariantSortingCols(variant as PRODUCT_EXPIRATION_VARIANTS);
 
         default:
             return [];
@@ -241,6 +267,8 @@ export const getHeaderNameById = (reportType: REPORT_TYPES, headerId: string) =>
             return getSaleDynamicHeaderNames(headerId) || '';
         case REPORT_TYPES.COD_REPORT:
             return CodReportHeaderNames[headerId] || '';
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return ProductExpirationHeaderNames[headerId] || '';
 
         default:
             return '';
@@ -259,6 +287,8 @@ export const transformReportType = (reportType: REPORT_TYPES) => {
             return AccessObjectTypes["Reports/SaleDynamic"];
         case REPORT_TYPES.COD_REPORT:
             return AccessObjectTypes["Reports/CodCheck"];
+        case REPORT_TYPES.PRODUCT_EXPIRATION:
+            return AccessObjectTypes["Reports/PProductExpirationOnStocks"];
 
         default:
             return null;
