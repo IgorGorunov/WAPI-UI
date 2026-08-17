@@ -1,25 +1,19 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import useAuth from "@/context/authContext";
-import { AccessActions } from "@/types/auth";
-import { useRouter } from "next/router";
-import { Routes } from "@/types/routes";
+import {AccessActions} from "@/types/auth";
+import {useRouter} from "next/router";
+import {Routes} from "@/types/routes";
 import Layout from "@/components/Layout/Layout";
 import Header from "@/components/Header";
 import styles from "./styles.module.scss";
-import { getReportData, getReportParams } from "@/services/reports";
-import {
-    REPORT_TITLES,
-    REPORT_TYPES,
-    ReportParametersType,
-} from "@/types/reports";
+import {getReportData, getReportParams} from "@/services/reports";
+import {REPORT_TITLES, REPORT_TYPES, ReportParametersType,} from "@/types/reports";
 import Loader from "@/components/Loader";
-import Button, { ButtonVariant } from "@/components/Button/Button";
-import DateInput from "@/components/DateInput";
+import Button, {ButtonVariant} from "@/components/Button/Button";
 import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
-import { formatDateToString, getLastFewDays } from "@/utils/date";
-import { DateRangeType } from "@/types/dashboard";
-import FiltersContainer from "@/components/FiltersContainer";
+import {formatDateToString, getLastFewDays} from "@/utils/date";
+import {DateRangeType} from "@/types/dashboard";
 import ReportTable from "./ReportTable";
 import RadioButton from "@/components/FormBuilder/RadioButton";
 import {
@@ -30,25 +24,28 @@ import {
     getVariantOptionsByReportType,
     getVariantResourceColsByReportType,
     getVariantSortingColsByReportType,
-    isFilterVisibleByReportType, transformReportType
+    isFilterVisibleByReportType,
+    transformReportType
 } from "./utils";
 
-import { Countries } from "@/types/countries";
+import {Countries} from "@/types/countries";
 import RadioSwitch from "@/components/FormBuilder/RadioSwitch";
 import Icon from "@/components/Icon";
-import { Tooltip } from "antd";
-import { aggregateTableData } from "@/utils/aggregateTable";
+import {Tooltip} from "antd";
+import {aggregateTableData} from "@/utils/aggregateTable";
 import useTourGuide from "@/context/tourGuideContext";
-import { TourGuidePages } from "@/types/tourGuide";
+import {TourGuidePages} from "@/types/tourGuide";
 import TourGuide from "@/components/TourGuide";
-import { tourGuideStepsReports, tourGuideStepsReportsWithoutVariants } from "./reportTourGuideSteps.constants";
-import { sendUserBrowserInfo } from "@/services/userInfo";
+import {tourGuideStepsReports, tourGuideStepsReportsWithoutVariants} from "./reportTourGuideSteps.constants";
+import {sendUserBrowserInfo} from "@/services/userInfo";
 import FiltersListWithOptions from "@/components/FiltersListWithOptions";
 import FiltersChosen from "@/components/FiltersChosen";
 import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 import {ChangeEventType} from "@/types/forms";
 import Select from "@/components/FormBuilder/Select/SelectField";
+import DateInput from "@/components/DateInput";
+import FiltersContainer from "@/components/FiltersContainer";
 
 type ReportPagePropType = {
     reportType: REPORT_TYPES;
@@ -607,7 +604,8 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
                 {/*filters , search , + */}
                 <SearchContainer>
                     <Button type="button" disabled={false} onClick={toggleFilters} variant={ButtonVariant.FILTER} icon={'filter'}></Button>
-                    <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />
+                    {reportType === REPORT_TYPES.PRODUCT_EXPIRATION ? null : <DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />}
+                    {/*<DateInput handleRangeChange={handleDateRangeSave} currentRange={currentRange} />*/}
                     <div className='search-block'>
                         <SearchField searchTerm={searchTerm} handleChange={handleFilterChange} handleClear={() => { setSearchTerm(""); handleFilterChange(""); }} />
                         {/*<FieldBuilder {...fullTextSearchField} />*/}
@@ -691,7 +689,7 @@ const ReportPage: React.FC<ReportPagePropType> = ({ reportType }) => {
                             />
                         </> :
                             <div className={styles['report-generate-hint']}>
-                                Please select a period, variant and click on the Generate button
+                                {reportType == REPORT_TYPES.PRODUCT_EXPIRATION ? <p>Click Generate button</p> : <p>Please select a period, variant and click on the Generate button</p>}
                             </div>
                         }
                     </div>

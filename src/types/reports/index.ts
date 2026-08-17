@@ -9,12 +9,18 @@ import type { REPORT_SALES_VARIANTS, ReportSalesReportType, ReportSalesRowType }
 import type { SALE_DYNAMIC_VARIANTS, SaleDynamicReportType, SaleDynamicRowType } from "@/types/reports/saleDynamic";
 import type { CodReportType } from "@/types/codReports";
 import type { COD_REPORT_VARIANTS, CodReportRowType } from "@/types/reports/codReport";
+import {
+    PRODUCT_EXPIRATION_VARIANTS,
+    ProductExpirationReportType,
+    ProductExpirationRowType
+} from "@/types/reports/productExpirationOnStocks";
 
 export * from './productsOnStocks';
 export * from './deliveryRates';
 export * from './reportSales';
 export * from './saleDynamic';
 export * from './codReport';
+export * from './productExpirationOnStocks';
 
 export enum REPORT_TYPES {
     PRODUCTS_ON_STOCKS = 'ProductsOnStocks',
@@ -22,6 +28,7 @@ export enum REPORT_TYPES {
     REPORT_SALES = 'ReportSales',
     SALE_DYNAMIC = 'ReportSaleDynamic',
     COD_REPORT = 'ReportCodCheck',
+    PRODUCT_EXPIRATION = 'ProductExpirationOnStocks',
 }
 
 export const REPORT_TITLES = {
@@ -30,6 +37,7 @@ export const REPORT_TITLES = {
     [REPORT_TYPES.REPORT_SALES]: "Sales report",
     [REPORT_TYPES.SALE_DYNAMIC]: "Sales dynamic report",
     [REPORT_TYPES.COD_REPORT]: 'COD check report',
+    [REPORT_TYPES.PRODUCT_EXPIRATION]: "Product expiration report",
 }
 
 export type BlockReportsType = {
@@ -63,9 +71,9 @@ export type ReportParametersType = {
     productTypes: string[];
 }
 
-export type AllReportsType = ProductsOnStocksReportType | DeliveryRatesReportType | ReportSalesReportType | SaleDynamicReportType | CodReportType;
+export type AllReportsType = ProductsOnStocksReportType | DeliveryRatesReportType | ReportSalesReportType | SaleDynamicReportType | CodReportType | ProductExpirationReportType;
 
-export type AllReportsRowType = ProductOnStockRowType | DeliveryRatesRowType | ReportSalesRowType | SaleDynamicRowType | CodReportRowType;
-export type AllReportsRowArrayType = (ProductOnStockRowType | DeliveryRatesRowType | ReportSalesRowType | SaleDynamicRowType | CodReportRowType)[];
+export type AllReportsRowType = ProductOnStockRowType | DeliveryRatesRowType | ReportSalesRowType | SaleDynamicRowType | CodReportRowType | ProductExpirationRowType;
+export type AllReportsRowArrayType = (ProductOnStockRowType | DeliveryRatesRowType | ReportSalesRowType | SaleDynamicRowType | CodReportRowType | ProductExpirationRowType)[];
 
-export type AllVariantsType = PRODUCTS_ON_STOCKS_VARIANTS | DELIVERY_RATES_VARIANTS | REPORT_SALES_VARIANTS | SALE_DYNAMIC_VARIANTS | COD_REPORT_VARIANTS;
+export type AllVariantsType = PRODUCTS_ON_STOCKS_VARIANTS | DELIVERY_RATES_VARIANTS | REPORT_SALES_VARIANTS | SALE_DYNAMIC_VARIANTS | COD_REPORT_VARIANTS | PRODUCT_EXPIRATION_VARIANTS;

@@ -9,23 +9,12 @@ const getReportData = async (
         token: string;
         alias: string;
         reportType: string;
-        startDate: string;
-        endDate: string;
+        startDate?: string;
+        endDate?: string;
         ui?: string;
     }
 ): Promise<ApiResponseType<AllReportsRowArrayType>> => {
     return api.post(`/GetReportData`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetReportData`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 const getReportParams = async (
@@ -38,17 +27,6 @@ const getReportParams = async (
     }
 ): Promise<ApiResponseType<ReportParametersType>> => {
     return api.post(`/GetReportParameters`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/GetReportParameters`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
 
 export {getReportData, getReportParams}
