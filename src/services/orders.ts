@@ -83,6 +83,18 @@ const getOrderPickupPoints = async (
     return api.post(`/GetPickupPoints`, data);
 };
 
+export const getOrderDataWarehousePhotos= async (
+    //token: string,
+    data: {
+        uuid: string;
+        alias: string;
+        token: string;
+        ui?: string;
+    }
+): Promise<ApiResponseType<AttachedFilesType[]>> => {
+    return api.post(`/WarehouseAssemblyPhotos`, data);
+};
+
 const sendOrderData = async (
     data: CreateOrderRequestType
 ): Promise<ApiResponseType<unknown>> => {

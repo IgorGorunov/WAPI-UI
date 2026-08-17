@@ -18,7 +18,13 @@ import Tabs from '@/components/Tabs';
 import Button, { ButtonSize, ButtonVariant } from "@/components/Button/Button";
 import { COUNTRIES } from "@/types/countries";
 import { createOptions } from "@/utils/selectOptions";
-import { cancelOrder, getOrderPickupPoints, sendAddressData, sendOrderData } from '@/services/orders';
+import {
+    cancelOrder,
+    getOrderDataWarehousePhotos,
+    getOrderPickupPoints,
+    sendAddressData,
+    sendOrderData
+} from '@/services/orders';
 import { DetailsFields, GeneralFields, PickUpPointFields, ReceiverFields } from "./OrderFormFields";
 import { TabFields, TabTitles } from "./OrderFormTabs";
 import { FormFieldTypes, OptionType, WidthType } from "@/types/forms";
@@ -28,7 +34,6 @@ import StatusHistory from "./StatusHistory";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import { Table } from "antd";
 import DropZone from "@/components/Dropzone";
-import { ApiResponseType } from '@/types/api';
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
 import Services from "./Services";
 import ProductsTotal from "./ProductsTotal";
@@ -1319,6 +1324,42 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     }
 
     const [showWarehousePhotos, setShowWarehousePhotos] = useState(false);
+    const [warehousePhotos, setWarehousePhotos] = useState([]);
+
+    useEffect(() => {
+        const getWarehousePhotos = async () => {
+            try {
+                setIsLoading(true);
+                const requestData = { token, alias, uuid: orderData?.uuid };
+
+                try {
+                    sendUserBrowserInfo({ ...getBrowserInfo('GetOrderWarehousePhotos', AccessObjectTypes["Orders/Fullfillment"], AccessActions.ViewObject), body: superUser && ui ? { ...requestData, ui } : requestData })
+                } catch { }
+
+                const res = await getOrderDataWarehousePhotos(superUser && ui ? { ...requestData, ui } : requestData);
+
+                if (res && "data" in res) {
+                    setWarehousePhotos(res.data);
+
+                    if (res.data.length == 0) {
+                        setShowWarehousePhotos(false);
+                    }
+                } else {
+                    console.error("API did not return expected data");
+                    setShowWarehousePhotos(false);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setShowWarehousePhotos(false);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        if (showWarehousePhotos) {
+            getWarehousePhotos();
+        }
+    }, [showWarehousePhotos]);
 
     return <div className='order-info'>
         {(isLoading || !orderParameters) && <Loader />}
@@ -1384,7 +1425,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                 <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors}
                                     isDisabled={isDisabled} />
                             </div>
-                            {orderData?.warehouseAssemblyPhotos && orderData?.warehouseAssemblyPhotos.length > 0 ? (
+                            {orderData?.getWarehouseAssemblyPhotosSuccess ? (
                                 <>
                                     <div className={`order-info--warehouse-photos`} onClick={() => setShowWarehousePhotos(true)}>
                                         <Icon name={'webcam'} />
@@ -1698,7 +1739,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                 onCancel={() => setShowConfirmModal(false)}
             />}
         </> : null}
-        {showWarehousePhotos ? <ImageSlider images={orderData?.warehouseAssemblyPhotos || []} show={showWarehousePhotos} setShow={setShowWarehousePhotos} /> : null}
+        {showWarehousePhotos && warehousePhotos.length ? <ImageSlider images={warehousePhotos || []} show={showWarehousePhotos} setShow={setShowWarehousePhotos} /> : null}
     </div>
 }
 

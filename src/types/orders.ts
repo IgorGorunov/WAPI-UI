@@ -217,7 +217,8 @@ export type SingleOrderType = {
     logisticComment: string;
     addressEditAllowedOnly?: boolean;
     warehouseAdditionalInfo?: string;
-    warehouseAssemblyPhotos?: AttachedFilesType[];
+    // warehouseAssemblyPhotos?: AttachedFilesType[];
+    getWarehouseAssemblyPhotosSuccess: boolean;
     customerReturns: OrderCustomerReturnType[];
     seller?: string;
     addressJSONStructure?: string;
