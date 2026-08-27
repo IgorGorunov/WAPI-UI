@@ -475,8 +475,8 @@ const PrivacyPolicyPage = () => {
                                             performed by an employee of the {companyName}, to submit the relevant
                                             application;
                                         </li>
-                                        <li>by sending a written application to the legal address of the relevant
-                                            {companyName}, indicating in the application postal address to which a reply must
+                                        <li>by sending a written application to the legal address of the relevant {companyName},
+                                            indicating in the application postal address to which a reply must
                                             be provided. The answer to such application will be provided only by
                                             registered mail, to the postal address indicated in application.
                                         </li>
