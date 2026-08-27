@@ -191,7 +191,7 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
                     productParams={productParams}
                     productData={productData}
                     uuid={uuid}
-                    products={productsAsOptions}
+                    // products={productsAsOptions}
                     closeProductModal={onCloseModalOnSuccess}
                     refetchDoc={() => { fetchProductData(uuid) }}
                     forbiddenTabs={forbiddenTabs}

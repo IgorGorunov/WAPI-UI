@@ -9,7 +9,7 @@ import "@/styles/tables.scss";
 import '@/styles/forms.scss';
 import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
-import ProductFormComponent from "@/screens/ProductsPage/components/ProductForm/ProductFormComponent";
+import ProductFormComponent from "./ProductFormComponent";
 import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
 import { sendUserBrowserInfo } from "@/services/userInfo";
 import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";

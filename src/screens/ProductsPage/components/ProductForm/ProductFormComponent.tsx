@@ -6,7 +6,7 @@ import {COUNTRIES} from "@/types/countries";
 import styles from "./styles.module.scss";
 import useAuth from "@/context/authContext";
 import {AccessActions, AccessObjectTypes} from "@/types/auth";
-import {ProductParamsType, SingleProductFormType, SingleProductType} from "@/types/products";
+import {ProductParamsType, ProductType, SingleProductFormType, SingleProductType} from "@/types/products";
 import {
     FormFieldsAdditional1,
     FormFieldsAdditional2,
@@ -21,7 +21,7 @@ import {Table} from 'antd';
 import FormFieldsBlock from "@/components/FormFieldsBlock";
 import Tabs from "@/components/Tabs";
 import Icon from "@/components/Icon";
-import {sendProductInfo} from "@/services/products";
+import {getProducts, sendProductInfo} from "@/services/products";
 import {sendDocumentFiles} from "@/services/files";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
@@ -62,11 +62,11 @@ type ProductPropsType = {
     productParams: ProductParamsType;
     productData?: SingleProductType | null;
     closeProductModal: () => void;
-    products: { name: string; uuid: string; quantity: number }[];
+    // products: { name: string; uuid: string; quantity: number }[];
     refetchDoc: () => void;
     forbiddenTabs: string[] | null;
 }
-const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, productParams, productData, closeProductModal, refetchDoc, forbiddenTabs }) => {
+const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams, productData, closeProductModal, refetchDoc, forbiddenTabs }) => {
     const { notifications } = useNotifications();
     const { tenantData: { alias } } = useTenant();
     const { needSeller, sellersList, sellersListActive } = useAuth();
@@ -79,7 +79,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
 
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
 
-    const certificateErrorText = 'Selected product type needs a certificate!'
+    // const certificateErrorText = 'Selected product type needs a certificate!'
 
     //status modal
     const [showStatusModal, setShowStatusModal] = useState(false);
@@ -104,14 +104,26 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
 
     const countryArr = COUNTRIES.map(item => ({ label: item.label, value: item.value.toUpperCase() }));
 
-    type ApiResponse = {
-        data?: any;
-        response?: {
-            data?: {
-                errorMessage: string[];
+    //TEMPORARY
+    const [products, setProducts] = useState<ProductType[]>([]);
+    useEffect(() => {
+        const getOldProducts = async () => {
+            try {
+                const requestData = { token, alias, uuid };
+                const res = await getProducts(superUser && ui ? { ...requestData, ui } : requestData);
+
+                if (res && "data" in res) {
+                    setProducts(res.data);
+                } else {
+                    console.error("API did not return expected data");
+                }
+            } catch(err) {
+                console.error(err);
             }
         }
-    };
+
+        getOldProducts();
+    }, []);
 
     const analogueOptions = useMemo(() => {
         return products.map(item => { return { value: item.uuid, label: item.name } })
@@ -1142,7 +1154,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, products, prod
                 sendUserBrowserInfo({ ...getBrowserInfo('CreateUpdateProduct'), body: superUser && ui ? { ...requestData, ui } : requestData })
             } catch { }
 
-            const res: ApiResponse = await sendProductInfo(superUser && ui ? { ...requestData, ui } : requestData);
+            const res = await sendProductInfo(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "status" in res && res?.status === 200) {
                 //success
