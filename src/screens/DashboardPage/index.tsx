@@ -229,6 +229,12 @@ const DashboardPage: React.FC = () => {
       <SeoHead title='Dashboard' description='Our dashboard page' />
       <div className={styles['dashboard-page__container']}>
         {isLoading && <Loader />}
+        <div style={{margin: '0 0 12px'}}>
+          <div style={{padding: '6px 16px', background:'#B91C1C', color: 'white', borderRadius:'9px', fontWeight:'bold'}}>
+            {/*<p>Our platform will undergo scheduled technical maintenance on [Date] from 12:00 PM (Noon) to 12:00 AM (Midnight) Riga time (EEST / UTC+3) [09:00 to 21:00 UTC]. During this 12-hour window, services will be temporarily unavailable. We sincerely apologize for any inconvenience caused and appreciate your patience as we complete these system upgrades.</p>*/}
+            <p>Technical maintenance will be carried out this Saturday, 29.08.2026, from 12:00 to 20:00 Riga time (09:00–17:00 UTC). During this time, all data exchanges with WAPI will be temporarily unavailable.</p>
+          </div>
+        </div>
         <div className='header'>
           <Header pageTitle="Dashboard" needTutorialBtn>
             {/*<Header pageTitle="Dashboard" >*/}
@@ -239,6 +245,7 @@ const DashboardPage: React.FC = () => {
               setClickedPeriod={setClickedPeriod} />
           </Header>
         </div>
+
         {(isActionIsAccessible(AccessObjectTypes["Dashboard"], AccessActions.View) && isNavItemAccessible('Dashboard')) ? (
           <div>
             {sellersList && needSeller() ?
