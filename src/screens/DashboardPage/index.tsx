@@ -21,6 +21,7 @@ import useTenant from "@/context/tenantContext";
 import SeoHead from "@/components/SeoHead";
 import Select from "@/components/FormBuilder/Select/SelectField";
 import { OptionType } from "@/types/forms";
+// import { useMaintenanceNotifications } from "@/hooks/useMaintenanceNotifications";
 
 
 // Moved inline to avoid Fast Refresh violations
@@ -85,6 +86,8 @@ const DashboardPage: React.FC = () => {
   const { tenantData } = useTenant();
   const alias = tenantData?.alias;
   const { token, getBrowserInfo, superUser, ui, isActionIsAccessible, isNavItemAccessible, needSeller, sellersList } = useAuth();
+
+  // const futureMaintenanceMessages = useMaintenanceNotifications();
 
   const currentDate = new Date();
 
@@ -229,12 +232,15 @@ const DashboardPage: React.FC = () => {
       <SeoHead title='Dashboard' description='Our dashboard page' />
       <div className={styles['dashboard-page__container']}>
         {isLoading && <Loader />}
-        <div style={{margin: '0 0 12px'}}>
-          <div style={{padding: '6px 16px', background:'#B91C1C', color: 'white', borderRadius:'9px', fontWeight:'bold'}}>
-            {/*<p>Our platform will undergo scheduled technical maintenance on [Date] from 12:00 PM (Noon) to 12:00 AM (Midnight) Riga time (EEST / UTC+3) [09:00 to 21:00 UTC]. During this 12-hour window, services will be temporarily unavailable. We sincerely apologize for any inconvenience caused and appreciate your patience as we complete these system upgrades.</p>*/}
-            <p>Technical maintenance will be carried out this Saturday, 29.08.2026, from 12:00 to 20:00 Riga time (09:00–17:00 UTC). During this time, all data exchanges with WAPI will be temporarily unavailable.</p>
-          </div>
-        </div>
+        {/*{futureMaintenanceMessages.length > 0 && (*/}
+        {/*  <div style={{margin: '0 0 12px'}}>*/}
+        {/*    {futureMaintenanceMessages.map((message, idx) => (*/}
+        {/*      <div key={idx} style={{padding: '6px 16px', background:'#B91C1C', color: 'white', borderRadius:'9px', fontWeight:'bold', marginBottom: idx < futureMaintenanceMessages.length - 1 ? '8px' : 0}}>*/}
+        {/*        <p>{message}</p>*/}
+        {/*      </div>*/}
+        {/*    ))}*/}
+        {/*  </div>*/}
+        {/*)}*/}
         <div className='header'>
           <Header pageTitle="Dashboard" needTutorialBtn>
             {/*<Header pageTitle="Dashboard" >*/}
