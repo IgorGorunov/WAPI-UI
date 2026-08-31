@@ -439,7 +439,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                     fieldType={FormFieldTypes.TEXT}
                                     {...field}
                                     onChange={(newValue: string) => { field.onChange(newValue); handleUnitNameChange(newValue, index) }}
-                                    disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    // disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -466,7 +467,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                     name={`unitOfMeasures[${index}].coefficient`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    // disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
@@ -478,7 +480,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                 ),
             },
             {
-                title: `Width | mm${isAdditionalService ? '' : ' *'}`,
+                // title: `Width | mm${isAdditionalService ? '' : ' *'}`,
+                title: `Width | mm *`,
                 dataIndex: 'width',
                 key: 'width',
                 minWidth: 90,
@@ -493,18 +496,21 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                     name={`unitOfMeasures[${index}].width`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    // disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: isAdditionalService ? false : "Required field" }}
+                        // rules={{ required: isAdditionalService ? false : "Required field" }}
+                        rules={{ required: "Required field" }}
                     />
                 ),
             },
             {
-                title: `Length | mm${isAdditionalService ? '' : ' *'}`,
+                // title: `Length | mm${isAdditionalService ? '' : ' *'}`,
+                title: `Length | mm *`,
                 dataIndex: 'length',
                 key: 'length',
                 minWidth: 95,
@@ -519,18 +525,21 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                     name={`unitOfMeasures[${index}].length`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    // disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: isAdditionalService ? false : "Required field" }}
+                        // rules={{ required: isAdditionalService ? false : "Required field" }}
+                        rules={{ required:  "Required field" }}
                     />
                 ),
             },
             {
-                title: `Height | mm${isAdditionalService ? '' : ' *'}`,
+                // title: `Height | mm${isAdditionalService ? '' : ' *'}`,
+                title: `Height | mm *`,
                 dataIndex: 'height',
                 key: 'height',
                 minWidth: 95,
@@ -545,18 +554,21 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                     name={`unitOfMeasures[${index}].height`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    // disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: isAdditionalService ? false : "Required field" }}
+                        // rules={{ required: isAdditionalService ? false : "Required field" }}
+                        rules={{ required: "Required field" }}
                     />
                 ),
             },
             {
-                title: `Weight gross | kg${isAdditionalService ? '' : ' *'}`,
+                // title: `Weight gross | kg${isAdditionalService ? '' : ' *'}`,
+                title: `Weight gross | kg *`,
                 dataIndex: 'weightGross',
                 key: 'weightGross',
                 minWidth: 80,
@@ -571,13 +583,15 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                     name={`unitOfMeasures[${index}].weightGross`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    // disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved}
                                     errorMessage={error?.message}
                                     errors={errors}
                                     isRequired={true}
                                 /></div>
                         )}
-                        rules={{ required: isAdditionalService ? false : "Required field" }}
+                        // rules={{ required: isAdditionalService ? false : "Required field" }}
+                        rules={{ required: "Required field" }}
                     />
                 ),
             },
@@ -597,7 +611,8 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                     name={`unitOfMeasures[${index}].weightNet`}
                                     fieldType={FormFieldTypes.NUMBER}
                                     {...field}
-                                    disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    // disabled={isDisabled || productIsApproved || isAdditionalService}
+                                    disabled={isDisabled || productIsApproved}
                                 /></div>
 
                         )}
