@@ -2,6 +2,7 @@ import axios, { type AxiosError } from "axios";
 import { type BackendError } from "@/types/api";
 
 const API_URL = "https://api.wapi.com/WAPI/hs/v1/UI";
+// const API_URL = "https://api2.wapi.com/DB1/hs/v1/UI";
 // const API_URL = "https://api2.wapi.com/DB3/hs/v1/UI";
 
 let setError: (title: string, messages: string[]) => void;

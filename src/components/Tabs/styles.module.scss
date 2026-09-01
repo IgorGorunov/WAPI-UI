@@ -124,20 +124,20 @@
         margin: 0 -24px;
 
         @include upToLaptop {
-          margin: 0 -16px;
+          margin: 0;
         }
 
         &-wrapper {
           padding: 24px 24px 0;
 
           @include upToLaptop {
-            padding: 0 16px;
+            padding: 0;
           }
         }
 
         &::-webkit-scrollbar {
-          width: 10px;
-          margin-right: 50px;
+          width: 6px;
+          margin-left: 16px;
         }
 
         &::-webkit-scrollbar-thumb {

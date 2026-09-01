@@ -238,6 +238,7 @@ const LoginForm: React.FC<LoginFormPropsType> = ({ oneTimeToken, setOneTimeToken
             icon={"arrow-right"}
             iconOnTheRight={true}
             disabled={isLoading}
+            haveTextOnMobile={true}
           >
             Sign in
           </Button>

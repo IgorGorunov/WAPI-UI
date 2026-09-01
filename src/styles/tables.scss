@@ -136,6 +136,10 @@
     margin-top: 5px;
     overflow: hidden;
 
+    .ant-table-content {
+      overflow-x: auto;
+    }
+
     .ant-table-thead > tr > th {
       background-color: white !important;
       color: var(--color-gray-blue) !important;

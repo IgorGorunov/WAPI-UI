@@ -6,6 +6,7 @@
   flex-direction: column;
   height: 100%;
   margin: 0 -28px;
+  overflow-x: auto;
 
   @include upToTablet {
     margin: 0 -16px;

@@ -427,6 +427,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                 title: <TutorialHintTooltip hint={ProductDimensionsHints['name'] || ''}><div>Name *</div></TutorialHintTooltip>,
                 dataIndex: 'name',
                 width: '100%',
+                minWidth: 70,
                 key: 'name',
                 render: (text, record, index) => (
                     <Controller

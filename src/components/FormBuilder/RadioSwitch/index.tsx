@@ -45,7 +45,7 @@ const RadioSwitch = forwardRef<HTMLDivElement, FieldPropsType>(({
 
     return (
         <TutorialHintTooltip hint={hint} classNames={`${width ? "width-"+width : ""}`} >
-            <div className={`${styles['radio-switch__wrapper'] || 'radio-switch__wrapper'} ${classNames ? classNames : ""}  ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : `${styles['is-active'] || 'is-active'} is-active`}`}>
+            <div className={`${styles['radio-switch__wrapper'] || 'radio-switch__wrapper'} ${classNames ? classNames.split(' ').map(item=>styles[item]).join( ) : ""}  ${disabled ? `${styles['is-disabled'] || 'is-disabled'} is-disabled` : `${styles['is-active'] || 'is-active'} is-active`}`}>
                 {label ? <label className={styles['radio-switch-label'] || 'radio-switch-label'}>{label}</label> : null}
                 {options && options.length && <div className={styles['radio-switch'] || 'radio-switch'}>
                     {options && options.length && options.map((item, index) => (
