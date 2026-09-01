@@ -2,7 +2,7 @@ import { VscFileMedia } from 'react-icons/vsc';
 import { BsPuzzle, BsReverseLayoutTextWindowReverse, BsTable } from "react-icons/bs";
 import { RiQuestionAnswerLine } from "react-icons/ri";
 import {FaFileImport, FaRegImages, FaRegObjectGroup} from "react-icons/fa";
-import {MdOutlineQuestionAnswer, MdOutlineTextSnippet} from "react-icons/md";
+import {MdOutlineBuildCircle, MdOutlineQuestionAnswer, MdOutlineTextSnippet} from "react-icons/md";
 import { GoVideo } from "react-icons/go";
 import { FiDownload } from "react-icons/fi";
 
@@ -79,4 +79,9 @@ export const structure = (S) =>
                 .icon(FaFileImport)
                 .schemaType("importFile")
                 .child(S.documentTypeList("importFile").title("Import Files")),
+            S.listItem()
+                .title("Maintenance Notifications")
+                .icon(MdOutlineBuildCircle)
+                .schemaType("maintenanceNotification")
+                .child(S.documentTypeList("maintenanceNotification").title("Maintenance Notifications")),
         ]);

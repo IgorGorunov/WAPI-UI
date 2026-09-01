@@ -82,6 +82,32 @@ export async function getDocumentationPage(slug: string) {
 }
 
 
+export interface MaintenanceNotificationType {
+    _id: string;
+    title: string;
+    messageFuture: string;
+    messageCurrent: string;
+    dateStart: string; // UTC ISO 8601 datetime string
+    dateEnd: string;   // UTC ISO 8601 datetime string
+}
+
+export async function getMaintenanceNotifications(): Promise<MaintenanceNotificationType[]> {
+    const query = `*[_type == "maintenanceNotification"]{
+        _id,
+        title,
+        messageFuture,
+        messageCurrent,
+        dateStart,
+        dateEnd
+    }`;
+    try {
+        return await createClient(clientConfig).fetch<MaintenanceNotificationType[]>(query);
+    } catch (error) {
+        console.error('Error fetching maintenance notifications:', error);
+        return [];
+    }
+}
+
 
 // export async function getFaqBlock(slug: string): Promise<FaqBlockType | null> {
 //     const query = `*[_type == "faqBlock"][0]{
