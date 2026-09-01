@@ -490,7 +490,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
         },
         {
             title: <TitleColumn
-                minWidth="100px"
+                minWidth="90px"
                 maxWidth="100px"
                 contentPosition="start"
                 childrenBefore={
@@ -506,7 +506,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
             render: (text: string, record) => {
                 return (
                     <TableCell
-                        minWidth="100px"
+                        minWidth="90px"
                         maxWidth="100px"
                         contentPosition="start"
                         childrenBefore={
@@ -537,7 +537,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
         },
         {
             title: <TitleColumn
-                minWidth="80px"
+                minWidth="55px"
                 maxWidth="80px"
                 contentPosition="start"
                 childrenBefore={<Tooltip title="When an order was created">
@@ -549,7 +549,7 @@ const StockMovementsList: React.FC<StockMovementsListType> = ({
                 </Tooltip>}
             />,
             render: (text: string) => (
-                <TableCell value={formatDateStringToDisplayString(text)} minWidth="80px" maxWidth="80px" contentPosition="start" />
+                <TableCell value={formatDateStringToDisplayString(text)} minWidth="55px" maxWidth="80px" contentPosition="start" />
             ),
             dataIndex: 'incomingDate',
             key: 'incomingDate',

@@ -35,6 +35,7 @@ export type ButtonType = ComponentProps<"button"> & {
   isFullWidth?: boolean;
   isVisible?: boolean;
   changeColor?: boolean;
+  haveTextOnMobile?: boolean;
 };
 
 const Button: React.FC<ButtonType> = (props) => {
@@ -47,6 +48,7 @@ const Button: React.FC<ButtonType> = (props) => {
     isFullWidth = false,
     variant = ButtonVariant.PRIMARY,
     isVisible = true,
+    haveTextOnMobile = false,
     children,
     classNames,
       changeColor = true,
@@ -58,7 +60,7 @@ const Button: React.FC<ButtonType> = (props) => {
   return (
     <button
       type={type || "button"}
-      className={`${styles.btn} btn ${styles[classNames] || ''} ${classNames || ""} ${sizeClassName} ${formClassName} ${isFullWidth ? styles['full-width'] || "full-width" : ""} ${styles[variant] || variant} ${isVisible ? styles['fade-in'] || 'fade-in' : styles['fade-out'] || 'fade-out'} ${changeColor ? styles['color-change'] : ''}`}
+      className={`${styles.btn} btn ${styles[classNames] || ''} ${classNames || ""} ${sizeClassName} ${formClassName} ${isFullWidth ? styles['full-width'] || "full-width" : ""} ${styles[variant] || variant} ${isVisible ? styles['fade-in'] || 'fade-in' : styles['fade-out'] || 'fade-out'} ${changeColor ? styles['color-change'] : ''} ${icon && !haveTextOnMobile ? styles['has-icon'] : ''}`}
       {...otherProps}
     >
       {icon && !iconOnTheRight ? (
@@ -66,7 +68,7 @@ const Button: React.FC<ButtonType> = (props) => {
           <Icon name={icon} />
         </span>
       ) : null}
-      {children}
+      <span className={styles['btn-text']}>{children}</span>
       {icon && iconOnTheRight ? (
         <span className={`${styles.icon || ''} icon ${styles['icon-right'] || "icon-right"}`}>
           <Icon name={icon} />

@@ -1449,7 +1449,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                             <Icon name='general' />
                             General
                         </h3>
-                        <div className='grid-row'>
+                        <div className='grid-row grid-row-mobile--100'>
                             <FormFieldsBlock control={control} fieldsArray={generalFields} errors={errors}
                                 isDisabled={isDisabled} />
                         </div>
@@ -1459,7 +1459,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                             <Icon name='additional' />
                             Details
                         </h3>
-                        <div className='grid-row '>
+                        <div className='grid-row grid-row-mobile--100'>
                             <FormFieldsBlock control={control} fieldsArray={detailsFields} errors={errors}
                                 isDisabled={isDisabled} />
                         </div>
@@ -1473,7 +1473,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                         </h3>
                         <div className={`${styles['stock-movement--cargo-inner-wrapper']}`}>
                             <div className='ttt'>
-                                <div className='grid-row '>
+                                <div className='grid-row grid-row-mobile--100'>
                                     <FormFieldsBlock control={control} fieldsArray={cargoFields} errors={errors}
                                                      isDisabled={isDisabled} />
                                 </div>

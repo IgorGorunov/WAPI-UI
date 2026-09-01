@@ -8,9 +8,9 @@
     }
   }
 
-  @include upToDesktop {
-    min-width: 90vw;
-  }
+  //@include upToDesktop {
+  //  min-width: 90vw;
+  //}
 
   @include desktopAndUp {
     width: 1320px;

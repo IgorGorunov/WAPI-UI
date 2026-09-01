@@ -1,0 +1,39 @@
+.maintenance-message {
+    &-container {
+        margin: 0 0 12px;
+
+        &.is-login {
+            margin: -24px auto 16px;
+            max-width: 670px;
+            width: fit-content;
+        }
+    }
+    &-wrapper {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 6px 16px;
+        background:#B91C1C;
+        color: white;
+        border-radius: 9px;
+        font-weight:bold;
+
+        &--has-other-below {
+            margin-bottom: 8px;
+        }
+    }
+
+    &-icon-wrapper {
+        height: 24px;
+
+        :global(svg) {
+            width: 24px;
+            fill: var(--color-white);
+        }
+    }
+
+    &-text {
+        color: white;
+    }
+
+}

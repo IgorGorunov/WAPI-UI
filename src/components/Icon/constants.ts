@@ -129,6 +129,7 @@ import Phone from '@/assets/icons/phone.svg';
 import SendWhite from '@/assets/icons/send-white.svg';
 import WarningExclamation from '@/assets/icons/warning-exclamation.svg';
 import Diagram from "@/assets/icons/pie-diagram.svg";
+import Maintenance from "@/assets/icons/maintenance.svg";
 
 export const icons = {
     "arrow-left": ArrowLeft,
@@ -262,4 +263,5 @@ export const icons = {
     'send-white': SendWhite,
     'warning-exclamation': WarningExclamation,
     'diagram': Diagram,
+    'maintenance': Maintenance,
 };

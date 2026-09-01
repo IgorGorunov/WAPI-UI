@@ -348,6 +348,7 @@ export const CargoFields = (
             errorMessage: "Required field",
             isClearable: true,
             hint: docHintsObj['deliveryType'] || '',
+            classNames: 'radio-switch--is-long',
         },
         !isCargoInfoFieldsDisplayed ? {
             fieldType: FormFieldTypes.TOGGLE,

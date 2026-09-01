@@ -10,6 +10,7 @@ import downloadableFile from "./components/downloadableFile";
 import importFile from "./components/importFile";
 import faqQuestionGroup from "./components/faqQuestionGroup";
 import faqItem from "./components/faqItem";
+import maintenanceNotification from "@/sanity/schemas/components/maintenanceNotification";
 
 const schemas = [
     //pages
@@ -26,6 +27,7 @@ const schemas = [
     videoComponent,
     downloadableFile,
     importFile,
+    maintenanceNotification,
 ];
 
 export default schemas;

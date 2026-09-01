@@ -24,18 +24,25 @@
     padding: 12px 28px;
 
     @include upToTablet {
-      display: block;
+      //display: block;
+      flex-direction: column;
+      max-height: 100vh;
+      gap: 12px;
     }
   }
 
   :global(.icon-cookie) {
-    flex: 0 0 140px;
+    flex: 0 1 180px;
     fill: var(--color-gray-blue);
   }
 
   &__text {
     padding-top: 32px;
     padding-bottom: 32px;
+
+    @include mobile {
+      padding-top: 8px;
+    }
 
     p {
       font-size: 14px;
@@ -54,8 +61,8 @@
         gap: 12px;
         padding-right: 0;
 
-        .btn {
-          width: 100%
+        :global(.btn) {
+          width: 100%;
         }
       }
     }

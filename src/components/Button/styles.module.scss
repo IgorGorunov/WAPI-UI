@@ -26,6 +26,24 @@
     color: var(--color-gray-blue);
   }
 
+  &.has-icon {
+
+    @include mobile {
+      min-width: 40px;
+      font-size: 0;
+      gap: 0;
+      padding: 8px;
+
+      .btn-text {
+        display: none;
+      }
+
+      .icon {
+        margin: 0;
+      }
+    }
+  }
+
   &.primary {
     &.color-change {
 
