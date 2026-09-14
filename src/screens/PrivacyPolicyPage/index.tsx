@@ -8,6 +8,7 @@ import useTenant from "@/context/tenantContext";
 const PrivacyPolicyPage = () => {
     const {tenant, getTenantData} = useTenant();
     const tenantData = getTenantData(tenant);
+    const email = tenantData?.email || '';
     const companyName = tenantData?.name || '';
     const privacyPolicy = tenantData?.privacyPolicy;
 
@@ -46,7 +47,7 @@ const PrivacyPolicyPage = () => {
                                     provide a Data Subject with information on purpose, legal basis, scope,
                                     terms of processing, protection measures performed by {companyName}, as well as
                                     on the Data Subject's rights in relation to Personal Data processing.
-                                    <br/>
+                                    {/*<br/>*/}
                                     Additional information on processing of Personal Data may be included in
                                     agreements, confidentiality notices and other documents, as well as on
                                     the {companyName} websites.
@@ -142,44 +143,67 @@ const PrivacyPolicyPage = () => {
                             <ol>
                                 <li><span className={`${styles['sub-heading'] || 'sub-heading'} sub-heading`} >{companyName} processes Personal Data mainly for the following purposes:</span>
                                     <ol>
-                                        <li>compliance with legal requirements;</li>
-                                        <li>conclusion and execution of contracts;</li>
+                                        <li>compliance with legal requirements (legal basis: legal obligation, Article 6(1)(c) of the General Data
+                                            Protection Regulation);</li>
+                                        <li>conclusion and execution of contracts (legal basis: performance of a contract or pre-contractual measures,
+                                            Article 6(1)(b) of the General Data Protection Regulation);</li>
                                         <li>for registration of a client in the Electronic Commerce System, for
                                             ensuring operation of the Electronic Commerce System and for improvement
-                                            of operation;
+                                            of operation (legal basis: performance of a contract, Article 6(1)
+                                            (b) of the General Data Protection Regulation);
                                         </li>
                                         <li>for placing orders, delivery of goods, fulfillment of product warranty
-                                            obligations;
+                                            obligations (legal basis: performance
+                                            of a contract, Article 6(1)(b) of the General Data Protection Regulation);
                                         </li>
-                                        <li>for preparation of invoices, settlements;</li>
-                                        <li>for identification of client / Data Subject;</li>
-                                        <li>to ensure communication;</li>
+                                        <li>for preparation of invoices, settlements (legal basis: performance of a contract, Article 6(1)(b), and legal
+                                            obligation, Article 6(1)(c) of the General Data Protection Regulation);</li>
+                                        <li>for identification of client / Data Subject (legal basis: performance of a contract, Article 6(1)(b), and legal
+                                            obligation, Article 6(1)(c) of the General Data Protection Regulation);</li>
+                                        <li>to ensure communication (legal basis: performance of a contract, Article 6(1)(b), and legitimate interests
+                                            of the controller, Article 6(1)(f) of the General Data Protection Regulation – maintaining business
+                                            relationships and responding to inquiries);</li>
                                         <li>for {companyName} activities, incl. to ensure administrative, accounting and
-                                            archival functions;
+                                            archival functions (legal basis: legal
+                                            obligation, Article 6(1)(c) of the General Data Protection Regulation);
                                         </li>
                                         <li>to ensure the course of {companyName} personnel selection process and to
                                             ensure legal interests of {companyName} insofar as they are related to the
-                                            personnel selection;
+                                            personnel selection (legal basis: legitimate interests of the controller,
+                                            Article 6(1)(f) of the General Data Protection Regulation; where Special category data is processed,
+                                            consent of the Data Subject, Article 9(2)(a) of the General Data Protection Regulation);
                                         </li>
-                                        <li>for implementation of rights of {companyName};</li>
+                                        <li>for implementation of rights of {companyName} (legal basis: legitimate interests of the controller, Article 6(1)(f)
+                                            of the General Data Protection Regulation);</li>
                                         <li>for {companyName} marketing activities (e.g. submission of information and
                                             offers, organization of events for business partners / employees and their
                                             family members and their coverage in the media and social networks,
-                                            promotion of recognition of {companyName} image);
+                                            promotion of recognition of {companyName} image) (legal basis: consent of the Data Subject, Article
+                                            6(1)(a) of the General Data Protection Regulation, or legitimate interests of the controller, Article 6(1)(f) of
+                                            the General Data Protection Regulation, in which case the Data Subject is informed separately);
                                         </li>
                                         <li>for video surveillance in the respective {companyName}'s premises,
-                                            warehouses and territories;
+                                            warehouses and territories (legal basis:
+                                            legitimate interests of the controller, Article 6(1)(f) of the General Data Protection Regulation – protection
+                                            of property and prevention of criminal offenses);
                                         </li>
-                                        <li>for prevention and detection of criminal offenses;</li>
-                                        <li>for obtaining and preservation of evidence in civil disputes;</li>
-                                        <li>for reviewing applications / complaints and other documents;</li>
-                                        <li>for other purposes in legally justified cases;</li>
+                                        <li>for prevention and detection of criminal offenses (legal basis: legitimate interests of the controller, Article
+                                            6(1)(f) of the General Data Protection Regulation);</li>
+                                        <li>for obtaining and preservation of evidence in civil disputes (legal basis: legitimate interests of the
+                                            controller, Article 6(1)(f) of the General Data Protection Regulation);</li>
+                                        <li>for reviewing applications / complaints and other documents (legal basis: performance of a contract,
+                                            Article 6(1)(b), and legitimate interests of the controller, Article 6(1)(f) of the General Data Protection
+                                            Regulation);</li>
+                                        <li>for other purposes in legally justified cases (legal basis: the applicable legal basis corresponding to the
+                                            specific case as determined under Article 6(1) of the General Data Protection Regulation);</li>
                                         <li className={`${styles['list-item--new'] || 'list-item--new'} list-item--new`}>
                                             for ensuring accountability, audit logging and system security, including recording
                                             actions performed by users within their accounts and storing related metadata such
                                             as login identifier (email). These logs are necessary for the provision of services,
                                             contractual reporting to client account holders, and for the detection and prevention
-                                            of unauthorized access or misuse.
+                                            of unauthorized access or misuse (legal basis: performance of a contract, Article
+                                            6(1)(b), and legitimate interests of the controller, Article 6(1)(f) of the General Data Protection Regulation
+                                            – security and accountability).
                                         </li>
                                     </ol>
                                 </li>
@@ -187,6 +211,14 @@ const PrivacyPolicyPage = () => {
                                     Personal Data to the extent permitted by the specific purpose of
                                     Personal Data Processing and in accordance with the procedures required
                                     and permitted by applicable laws and regulations.
+                                </li>
+                                <li>
+                                    The provision of Personal Data by the Data Subject may be required by law or by contract, or may
+                                    be necessary to enter into a contract with {companyName}. Where the Data Subject does not
+                                    provide the required Personal Data, {companyName} may not be able to conclude or perform the
+                                    contract, provide the requested services, or fulfill its legal obligations. The Data
+                                    Subject will be informed at the point of data collection whether the provision of
+                                    specific data is mandatory or voluntary and what the consequences of non-provision are.
                                 </li>
                             </ol>
                         </li>
@@ -219,7 +251,7 @@ const PrivacyPolicyPage = () => {
                                             debt
                                             collection, prevention of loss, for protection of {companyName} rights and
                                             interests
-                                            of {companyName} clients, business partners, promotion of {companyName}image
+                                            of {companyName} clients, business partners, promotion of {companyName} image
                                             recognition. Based on the legitimate interests of {companyName}, Personal Data is
                                             also processed within the {companyName} personnel selection process. In such
                                             cases, it is assessed that the Privacy of a Data Subject will not be harmed
@@ -354,14 +386,14 @@ const PrivacyPolicyPage = () => {
                                     required by law or contract with the main client account holder. They are stored
                                     within the European Union / EEA data-hosting infrastructure used by {companyName}.
                                 </li>
-                                <li>{companyName} does not regularly or systematically transfer Personal Data to
-                                    third countries (countries outside the European Union and the European
-                                    Economic Area), however, Personal Data may be processed by Data
-                                    Processors located in third countries (for example, technical solution
-                                    developers or service providers). In this case, when transferring Personal
-                                    Data, {companyName} ensures the procedures provided for in regulatory
-                                    enactments to ensure a level of Personal Data Processing and protection
-                                    equivalent to the General Data Protection Regulation.
+                                <li>{companyName} does not regularly or systematically transfer Personal Data to third countries (countries outside the
+                                    European Union and the European Economic Area), however, Personal Data may be processed by Data
+                                    Processors located in third countries (for example, technical solution developers or service providers). In such
+                                    cases, {companyName} ensures that an appropriate safeguard mechanism is in place, such as the European
+                                    Commission's standard contractual clauses (Article 46(2)(c) of the General Data Protection Regulation), a
+                                    European Commission adequacy decision (Article 45 of the General Data Protection Regulation), or another
+                                    safeguard permitted under Articles 46-49 of the General Data Protection Regulation. A copy of the applicable
+                                    safeguards may be obtained by contacting {companyName} at <a className={`${styles['is-link'] || 'is-link'} is-link`} href={`mailto:${email || ''}`}>{email || ''}</a>.
                                 </li>
                             </ol>
                         </li>
@@ -372,9 +404,34 @@ const PrivacyPolicyPage = () => {
                                     the respective purpose of Personal Data Processing, or longer than specified
                                     in the binding regulatory enactments.
                                 </li>
-                                <li>The period of storage of Personal Data depends on the purpose for
-                                    which Personal Data has been obtained and whether the period of storage is
-                                    provided for in regulatory enactments.
+                                <li>The period of storage of Personal Data depends on the purpose for which Personal Data has been obtained
+                                    and whether the period of storage is provided for in regulatory enactments. In general, the following retention
+                                    criteria apply:
+                                    {/*<ol className={styles['lower-alpha-list']}>*/}
+                                    <ol>
+                                        <li>
+                                            Personal Data processed for the performance of a contract is retained for the duration of the
+                                            contractual relationship and for a period of up to 10 years after the end of the relationship (to cover the
+                                            applicable statute of limitations);
+                                        </li>
+                                        <li>
+                                            Personal Data processed on the basis of the Data Subject's consent is
+                                            retained up to 2 years or until the consent is withdrawn;
+                                        </li>
+                                        <li>
+                                            Personal Data processed for compliance with legal
+                                            obligations (such as accounting or anti-money laundering requirements) is retained for the period required by
+                                            the applicable law;
+                                        </li>
+                                        <li>
+                                            video surveillance recordings are retained for no longer than 30 days, unless a longer
+                                            period is required to investigate a specific incident;
+                                        </li>
+                                        <li>
+                                            personnel selection data is retained for up to 4 months
+                                            after the selection process is concluded, unless the candidate has given separate consent for a longer period.
+                                        </li>
+                                    </ol>
                                 </li>
                                 <li>{companyName} shall determine the term of Personal Data Processing taking
                                     into account, inter alia, the end date of the business relationship, withdrawal
@@ -439,8 +496,7 @@ const PrivacyPolicyPage = () => {
                                     <ol>
                                         <li>to request deletion of Personal Data of the Data Subject;</li>
                                         <li>to restrict Processing of Personal Data of the Data Subject;</li>
-                                        <li>to restrict Processing of Personal Data of the Data Subject;
-                                            12.2.3. To object to the Processing of Personal Data of the Data Subject, if
+                                        <li>to object to the Processing of Personal Data of the Data Subject, if
                                             Processing takes place on the basis of legitimate interests of {companyName};
                                         </li>
                                         <li>to receive Personal Data submitted by a Data Subject to the relevant
@@ -454,7 +510,7 @@ const PrivacyPolicyPage = () => {
                                         </li>
                                     </ol>
                                 </li>
-                                <li>The rights of the Data Subject referred to in Clause 13.1 of the Privacy Policy shall
+                                <li>The rights of the Data Subject referred to in this Section 12 of the Privacy Policy shall
                                     be exercised insofar as the Processing of Personal Data does not conflict with the
                                     obligations of {companyName} under applicable laws, or infringe upon the rights and
                                     freedoms of other individuals, including the right to privacy and data protection.
@@ -502,12 +558,10 @@ const PrivacyPolicyPage = () => {
                                             financial resources.</li>
                                     </ol>
                                 </li>
-                                <li>Data Subject may submit a complaint regarding Personal Data
-                                    Processing performed by the respective {companyName} to the Personal Data
-                                    Protection Supervisory Authority of the country where the respective {companyName} is
-                                    registered, if the Data Subject considers that the Data Subject's
-                                    Personal Data Processing violates the Data Subject's rights and interests in
-                                    accordance with Personal Data Protection Acts.</li>
+                                <li>Data Subject has the right to submit a complaint regarding Personal Data Processing performed by
+                                    {companyName} to the competent supervisory authority. In particular, the Data Subject may lodge a complaint with
+                                    the supervisory authority in the Member State of his / her habitual residence, place of work, or place of the
+                                    alleged infringement.</li>
                                 <li>Contact information of Personal Data Protection supervisory
                                     authorities is available on their websites: Latvia - www.dvi.gov.lv, Lithuania -
                                     www.ada.lt, Estonia - www.aki.ee, Poland - www.uodo.gov.pl, Czech
@@ -521,7 +575,7 @@ const PrivacyPolicyPage = () => {
                             <ol>
                                 <li>In case of doubt or for additional information regarding processing of
                                     Personal Data by {companyName}, please contact {companyName} by sending an e-mail
-                                    to: <a className={`${styles['is-link'] || 'is-link'} is-link`} href={`mailto:${tenantData?.email || ''}`}>{tenantData?.email || ''}</a>
+                                    to: <a className={`${styles['is-link'] || 'is-link'} is-link`} href={`mailto:${email || ''}`}>{email || ''}</a>
                                 </li>
                             </ol>
                         </li>
