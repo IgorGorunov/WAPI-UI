@@ -65,4 +65,23 @@
       margin-top: 48px;
     }
   }
+
+  .lower-alpha-list {
+    list-style: none;
+    counter-reset: letter;
+    padding-left: 1.5rem;
+
+    & > li {
+      padding-left: 0;
+      counter-increment: letter;
+      position: relative;
+    }
+
+    &>li::before {
+      content: counter(letter, lower-alpha) ")";
+      position: absolute;
+
+      left: -1.5rem;
+    }
+  }
 }
