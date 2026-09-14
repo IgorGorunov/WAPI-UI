@@ -13,8 +13,8 @@ const config = defineConfig({
     plugins: [
         structureTool({
             structure
-        }),
-        table(),
+        } as any) as any,
+        table() as any,
     ],
     schema: { types: schemas },
 })
