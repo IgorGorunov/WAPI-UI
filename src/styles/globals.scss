@@ -46,6 +46,64 @@
   --yarl__thumbnails_thumbnail_border_color: #7D8FB3;
   --yarl__thumbnails_thumbnail_active_border_color: white;
 
+  //colors for Bonus program
+  --color-base-tier: #6B7B94; //#4F6B8A;
+  --color-silver-tier: #7899BD; //#A8B4C5;
+  --color-gold-tier: #E8A317;
+  --color-platinum-tier: #43B8D8;
+  --color-vip-tier: #7C4DFF;
+
+  // Tier backgrounds (subtle tints for pills, badges, cards)
+  --color-base-tier-bg: rgba(107, 123, 148, 0.13);
+  --color-silver-tier-bg: rgba(120, 153, 189, 0.16);
+  --color-gold-tier-bg: rgba(232, 163, 23, 0.18);
+  --color-platinum-tier-bg: rgba(67, 184, 216, 0.18);
+  --color-vip-tier-bg: rgba(124, 77, 255, 0.18);
+
+  // Tier borders
+  --color-base-tier-border: rgba(107, 123, 148, 0.38);
+  --color-silver-tier-border: rgba(120, 153, 189, 0.45);
+  --color-gold-tier-border: rgba(232, 163, 23, 0.5);
+  --color-platinum-tier-border: rgba(67, 184, 216, 0.5);
+  --color-vip-tier-border: rgba(124, 77, 255, 0.5);
+
+  // Tier text (accessible contrast against light backgrounds)
+  --color-base-tier-text: #4D5C73;
+  --color-silver-tier-text: #486A91;
+  --color-gold-tier-text: #B27B00;
+  --color-platinum-tier-text: #0E7F99;
+  --color-vip-tier-text: #5B2ECC;
+
+  // Tier glows
+  --color-base-tier-glow: #6B7B94;
+  --color-silver-tier-glow: #7899BD;
+  --color-gold-tier-glow: #E8A317;
+  --color-platinum-tier-glow: #43B8D8;
+  --color-vip-tier-glow: #7C4DFF;
+
+  // Tier card gradients
+  --color-base-tier-gradient: linear-gradient(135deg, rgba(107, 123, 148, 0.2) 0%, rgba(107, 123, 148, 0.04) 100%);
+  --color-silver-tier-gradient: linear-gradient(135deg, rgba(120, 153, 189, 0.22) 0%, rgba(120, 153, 189, 0.04) 100%);
+  --color-gold-tier-gradient: linear-gradient(135deg, rgba(232, 163, 23, 0.22) 0%, rgba(232, 163, 23, 0.04) 100%);
+  --color-platinum-tier-gradient: linear-gradient(135deg, rgba(67, 184, 216, 0.22) 0%, rgba(67, 184, 216, 0.04) 100%);
+  --color-vip-tier-gradient: linear-gradient(135deg, rgba(124, 77, 255, 0.22) 0%, rgba(124, 77, 255, 0.04) 100%);
+
+  // Tier progress bar gradients
+  --color-base-tier-progress: linear-gradient(90deg, #6B7B94, #7899BD);
+  --color-silver-tier-progress: linear-gradient(90deg, #7899BD, #E8A317);
+  --color-gold-tier-progress: linear-gradient(90deg, #E8A317, #43B8D8);
+  --color-platinum-tier-progress: linear-gradient(90deg, #43B8D8, #7C4DFF);
+  --color-vip-tier-progress: linear-gradient(90deg, #7C4DFF, #9D71FF);
+
+  // Main colors for bonus program
+  --color-gold: #ffd34d;
+  --color-subtitle-gray: #afbdd6;
+  --color-bright-blue: #64c2ff;
+  --color-bonus-green: #059669;
+  --color-bonus-green-bg: #EAF8F1;
+  --color-bonus-green-border: #9FE0C0;
+  --color-bonus-green-tint: rgba(5, 150, 105, 0.04);
+
 
   --max-width: 1440px;
   --border-radius: 12px;
@@ -425,7 +483,8 @@ input[type="date"]::before {
   &-trouble,
   &-lightning-bolt,
   &-pallet-freight,
-  &-preview {
+  &-preview,
+  &-clock {
     flex: 0 0 auto;
     width: 24px;
   }
@@ -435,13 +494,20 @@ input[type="date"]::before {
     width: 20px;
   }
 
+  &-calendar {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 20px;
+  }
+
   &-download-file {
     width: 26px;
   }
 
   &-minus,
   &-close,
-  &-orders {
+  &-orders,
+  &-keyboard-arrow-up {
     width: 30px;
   }
 

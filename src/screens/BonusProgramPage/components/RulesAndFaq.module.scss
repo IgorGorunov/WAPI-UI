@@ -1,0 +1,312 @@
+@use "@/styles/devices.scss" as *;
+
+// ---------------- Section Common ----------------
+.section-header {
+  margin: 32px 0 20px;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--color-dark-blue);
+  margin: 0 0 4px;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: var(--color-gray-blue);
+  margin: 0;
+}
+
+// ---------------- Rules & FAQ ----------------
+.rules-faq-section {
+  width: 100%;
+}
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+
+  @include upToTablet {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rule-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray2);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 2px 8px rgba(38, 51, 77, 0.04);
+
+  &__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(61, 111, 224, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--color-blue);
+
+      path {
+        fill: var(--color-blue);
+      }
+    }
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-dark-blue);
+    margin: 0 0 6px;
+  }
+
+  &__desc {
+    font-size: 13px;
+    color: var(--color-gray-blue);
+    line-height: 1.45;
+    margin: 0;
+  }
+}
+
+.faq-support-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+
+  @include upToLaptop {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sub-heading {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-dark-blue);
+  margin: 0 0 14px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.faq-accordion {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray2);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-light-blue-gray);
+  }
+
+  :global {
+    .accordion-item__title {
+      padding: 14px 18px;
+      color: var(--color-dark-blue);
+      font-weight: 800;
+      width: 100%;
+
+      &:hover {
+        color: var(--color-blue);
+      }
+    }
+
+    .accordion-item__title-wrapper {
+      padding-right: 28px;
+    }
+
+    .accordion-item__title-text {
+      font-size: 14px;
+      font-weight: 800;
+      color: inherit;
+    }
+
+    .accordion-item__title-icon {
+      top: 8px;
+      right: 16px;
+      //width: 18px;
+      //height: 18px;
+      fill: var(--color-gray-blue);
+    }
+
+    .accordion-item__content-wrapper {
+      background-color: transparent;
+      border-bottom: none;
+    }
+
+    .accordion-item__content {
+      padding: 0 18px 16px;
+    }
+  }
+}
+
+.faq-answer {
+  font-size: 13px;
+  color: var(--color-gray);
+  line-height: 1.5;
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+}
+
+// ---------------- Program Highlights Panel ----------------
+.highlights-panel {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray2);
+  border-radius: 20px;
+  padding: 26px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 2px 8px rgba(38, 51, 77, 0.04);
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 6px;
+    background: rgba(61, 111, 224, 0.1);
+    color: var(--color-blue);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    width: fit-content;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--color-dark-blue);
+    margin: 0;
+  }
+
+  &__desc {
+    font-size: 13px;
+    color: var(--color-gray-blue);
+    line-height: 1.45;
+    margin: 0;
+  }
+}
+
+.highlights-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+.highlights-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  &__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .highlight-svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    :global(.icon-trending-up) {
+      width: 30px;
+      height: 30px;
+    }
+
+    &--green {
+      background: var(--color-bonus-green-bg);
+      .highlight-svg, .highlight-svg path, .highlight-svg polygon, .highlight-svg g {
+        fill: var(--color-bonus-green);
+      }
+    }
+
+    &--blue {
+      background: rgba(61, 111, 224, 0.1);
+      .highlight-svg, .highlight-svg path, .highlight-svg polygon, .highlight-svg g {
+        fill: var(--color-blue);
+      }
+    }
+
+    &--gold {
+      background: var(--color-gold-tier-bg);
+      .highlight-svg, .highlight-svg path, .highlight-svg polygon, .highlight-svg g {
+        fill: var(--color-gold-tier);
+      }
+    }
+
+    &--vip {
+      background: var(--color-vip-tier-bg);
+      .highlight-svg, .highlight-svg path, .highlight-svg polygon, .highlight-svg g {
+        fill: var(--color-vip-tier);
+      }
+    }
+  }
+
+  &__title {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--color-dark-blue);
+    margin-bottom: 2px;
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: var(--color-gray-blue);
+    line-height: 1.45;
+    margin: 0;
+  }
+}
+
+.highlights-cta {
+  background: transparent;
+  border: 1px solid var(--color-light-blue-gray);
+  border-radius: 20px;
+  padding: 9px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-gray-blue);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  width: 100%;
+
+  &:hover {
+    border-color: var(--color-blue);
+    color: var(--color-blue);
+  }
+}
+
+.icon-sm {
+  width: 14px;
+  height: 14px;
+}

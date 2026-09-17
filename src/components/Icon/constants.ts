@@ -130,6 +130,17 @@ import SendWhite from '@/assets/icons/send-white.svg';
 import WarningExclamation from '@/assets/icons/warning-exclamation.svg';
 import Diagram from "@/assets/icons/pie-diagram.svg";
 import Maintenance from "@/assets/icons/maintenance.svg";
+import Rocket from '@/assets/icons/rocket.svg';
+import GiftBox from '@/assets/icons/gift-box.svg';
+import Crown from '@/assets/icons/crown.svg';
+import Star from '@/assets/icons/star.svg';
+import VIP from '@/assets/icons/vip.svg';
+import TargetWithArrow from '@/assets/icons/target-with-arrow.svg';
+import Target from '@/assets/icons/target.svg';
+import Diamond from '@/assets/icons/diamond.svg';
+import Shield from '@/assets/icons/shield.svg';
+import Medal from '@/assets/icons/medal.svg';
+import RefreshClock from '@/assets/icons/refresh-clock.svg';
 
 export const icons = {
     "arrow-left": ArrowLeft,
@@ -264,4 +275,15 @@ export const icons = {
     'warning-exclamation': WarningExclamation,
     'diagram': Diagram,
     'maintenance': Maintenance,
+    'rocket': Rocket,
+    'gift-box': GiftBox,
+    'crown': Crown,
+    'star': Star,
+    'vip': VIP,
+    'target-with-arrow': TargetWithArrow,
+    'target': Target,
+    'diamond': Diamond,
+    'shield': Shield,
+    'medal': Medal,
+    'refresh-clock': RefreshClock,
 };

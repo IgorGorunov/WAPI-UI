@@ -22,6 +22,7 @@ export const enum Routes {
 
   //other
   Profile = '/profile',
+  BonusProgram = '/bonus-program',
   ForgottenPassword = '/password/recover',
   EmailValidation = '/password/email-validation',
   CreatePassword = '/password/create',

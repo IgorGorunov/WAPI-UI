@@ -37,10 +37,10 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, titleAmount, titleIcon
     }, [children]);
 
     useEffect(() => {
-        if (!isActive && isOpen) {
+        if (!isActive && isOpen && setIsOpen) {
             setIsOpen(false);
         }
-    }, [isActive]);
+    }, [isActive, isOpen, setIsOpen]);
 
 
     const toggleAccordion = (e) => {
@@ -75,14 +75,14 @@ const Accordion: React.FC<AccordionPropsType> = ({ title, titleAmount, titleIcon
                     </p>
                     {description ? <p className="accordion-item__title-dscription">{description}</p> : null}
                 </div>
-                <Icon name='keyboard-arrow-up' className={`${styles['accordion-item__title-icon']} ${isActive ? styles['active'] || 'active' : ''}`} />
+                <Icon name='keyboard-arrow-up' className={`${styles['accordion-item__title-icon']} accordion-item__title-icon ${isActive ? styles['active'] || 'active' : ''}`} />
             </button>
             <div
                 ref={contentSpace}
                 style={{ maxHeight: `${height}` }}
                 className={styles['accordion-item__content-wrapper']}
             >
-                <div className={styles['accordion-item__content']}>{children}</div>
+                <div className={`${styles['accordion-item__content']} accordion-item__content` }>{children}</div>
             </div>
         </div>
     );

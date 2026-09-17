@@ -57,7 +57,7 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
     const [activeTab, setActiveTab] = useState<number>(curTab);
 
     useEffect(() => {
-        if (curTab) {
+        if (curTab !== undefined) {
             setActiveTab(curTab);
         }
     }, [curTab]);
@@ -70,18 +70,19 @@ const Tabs: React.FC<TabsType> = ({id, curTab = 0, setCurTab, classNames='', tab
     }, [activeTab]);
 
     const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, index: number) => {
-        e.preventDefault(); setActiveTab(index);
-        if (setCurTab && curTab && curTab !== index) {
+        e.preventDefault();
+        setActiveTab(index);
+        if (setCurTab && curTab !== undefined && curTab !== index) {
             setCurTab(index);
         }
     }
 
     return <div className={`${styles['tabs-block'] || 'tabs-block'} ${classNames ? classNames : ''}`} id={id}>
         <div className={styles['tabs-block__wrapper'] || 'tabs-block__wrapper'}>
-            <ul id='tabList' className={`${styles['tabs-block__tablist'] || 'tabs-block__tablist'}${withHorizontalDivider ? ` ${styles['with-h-divider'] || 'with-h-divider'}` : ''}`} role='tablist' ref={tabListRef}>
+            <ul id='tabList' className={`${styles['tabs-block__tablist']} tabs-block__tablist${withHorizontalDivider ? ` ${styles['with-h-divider'] || 'with-h-divider'}` : ''}`} role='tablist' ref={tabListRef}>
                 {tabTitles.map((tab, index) => <li className={`${styles['tabs-block__tab'] || 'tabs-block__tab'} ${index===activeTab ? 'active-tab' : ''}`} key={`tab-${index}`}>
                     <a key={`tab-link-${index}`}
-                       className={`${styles['tabs-block__tab-link'] || 'tabs-block__tab-link'} ${index === activeTab ? styles.active || 'active' : ''} ${tab.hasError ? styles['has-error'] || 'has-error' : ''} ${tab.title.replaceAll(' ','-').toLowerCase()+'-tab'}`}
+                       className={`${styles['tabs-block__tab-link']} tabs-block__tab-link ${index === activeTab ? styles.active || 'active' : ''} ${tab.hasError ? styles['has-error'] || 'has-error' : ''} ${tab.title.replaceAll(' ','-').toLowerCase()+'-tab'}`}
                        href='#' role='tab'
                        aria-controls={`panel-id-${index}`}
                        aria-selected={activeTab===index}

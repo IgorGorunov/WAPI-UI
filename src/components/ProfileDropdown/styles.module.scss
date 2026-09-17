@@ -6,12 +6,17 @@
     display: flex;
     align-items: center;
     gap: 2px;
-    padding: 6px 15px 6px 12px;
+    padding: 6px 12px 6px 12px;
     border-radius: 20px;
     cursor: pointer;
     box-shadow: 0 2px 5px 0 var(--color-gray2);
     transition: all .3s ease-in;
     z-index: 2;
+
+    &.has-tier {
+      //padding-right: 24px;
+      //padding-top: 8px;
+    }
 
     @include upToTablet {
       padding: 6px;
@@ -113,6 +118,163 @@
     100% {
       transform: translateY(0);
       opacity: 1;
+    }
+  }
+}
+
+.header-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+
+  svg, .badge-icon {
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0;
+    margin: 0 !important;
+  }
+
+  .icon-base {
+    fill: var(--color-base-tier);
+    path, polygon, g {
+      fill: var(--color-base-tier);
+    }
+  }
+
+  .icon-silver {
+    fill: var(--color-silver-tier);
+    path, polygon, g {
+      fill: var(--color-silver-tier);
+    }
+  }
+
+  .icon-gold {
+    fill: var(--color-gold-tier);
+    path, polygon, g {
+      fill: var(--color-gold-tier);
+    }
+  }
+
+  .icon-platinum {
+    fill: var(--color-platinum-tier);
+    path, polygon, g {
+      fill: var(--color-platinum-tier);
+    }
+  }
+
+  .icon-vip {
+    fill: var(--color-vip-tier);
+    path, polygon, g {
+      fill: var(--color-vip-tier);
+    }
+  }
+}
+
+.bonus-menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
+.bonus-menu-icon {
+  path {
+    fill: var(--color-blue);
+  }
+}
+
+.bonus-menu-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-tier-pill {
+  //display: inline-flex;
+  //align-items: center;
+  //justify-content: center;
+  //padding: 3px 6px;
+  //border-radius: 999px;
+  //line-height: 1;
+
+  .menu-tier-icon {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0;
+    margin: 0 !important;
+  }
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--color-gray2);
+  margin: 6px 0;
+}
+
+// Tier Colors
+.tier-base {
+  //color: var(--color-base-tier-text);
+  //background-color: var(--color-base-tier-bg);
+  //border: 1px solid var(--color-base-tier-border);
+
+  .menu-tier-icon {
+    fill: var(--color-base-tier);
+    path, polygon, g {
+      fill: var(--color-base-tier);
+    }
+  }
+}
+
+.tier-silver {
+  //color: var(--color-silver-tier-text);
+  //background-color: var(--color-silver-tier-bg);
+  //border: 1px solid var(--color-silver-tier-border);
+
+  .menu-tier-icon {
+    fill: var(--color-silver-tier);
+    path, polygon, g {
+      fill: var(--color-silver-tier);
+    }
+  }
+}
+
+.tier-gold {
+  //color: var(--color-gold-tier-text);
+  //background-color: var(--color-gold-tier-bg);
+  //border: 1px solid var(--color-gold-tier-border);
+
+  .menu-tier-icon {
+    fill: var(--color-gold-tier);
+    path, polygon, g {
+      fill: var(--color-gold-tier);
+    }
+  }
+}
+
+.tier-platinum {
+  //color: var(--color-platinum-tier-text);
+  //background-color: var(--color-platinum-tier-bg);
+  //border: 1px solid var(--color-platinum-tier-border);
+
+  .menu-tier-icon {
+    fill: var(--color-platinum-tier);
+    path, polygon, g {
+      fill: var(--color-platinum-tier);
+    }
+  }
+}
+
+.tier-vip {
+  //color: var(--color-vip-tier-text);
+  //background-color: var(--color-vip-tier-bg);
+  //border: 1px solid var(--color-vip-tier-border);
+
+  .menu-tier-icon {
+    fill: var(--color-vip-tier);
+    path, polygon, g {
+      fill: var(--color-vip-tier);
     }
   }
 }

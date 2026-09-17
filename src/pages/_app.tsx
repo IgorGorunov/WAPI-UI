@@ -31,6 +31,7 @@ import { HintsTrackingProvider } from "@/context/hintsContext";
 import { getTenantData, TENANT_TYPE, TenantDataType, TENANTS, tenants } from '@/lib/tenants';
 import { TenantContext } from "@/context/tenantContext";
 import { ToastContainer } from "@/components/Toast";
+import { BonusProgramProvider } from "@/context/bonusProgramContext";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -117,12 +118,14 @@ export function App({ Component, pageProps, tenantHost }: AppProps & { tenantHos
         <TenantContext.Provider value={{ tenant, setTenant, getTenantData, tenantData }}>
           <NotificationsProvider>
             <AuthProvider>
-              <TourGuideProvider>
-                <HintsTrackingProvider>
-                  <Component {...pageProps} />
-                  <ToastContainer />
-                </HintsTrackingProvider>
-              </TourGuideProvider>
+              <BonusProgramProvider>
+                <TourGuideProvider>
+                  <HintsTrackingProvider>
+                    <Component {...pageProps} />
+                    <ToastContainer />
+                  </HintsTrackingProvider>
+                </TourGuideProvider>
+              </BonusProgramProvider>
             </AuthProvider>
           </NotificationsProvider>
         </TenantContext.Provider>
@@ -138,7 +141,7 @@ App.getInitialProps = async (appContext: AppContext) => {
 
   if (typeof window === 'undefined') {
     // SSR: Extract from headers
-    const rawHost = ctx.req?.headers['x-forwarded-host'] || ctx.req?.headers.host || 'localhostq:3000';
+    const rawHost = ctx.req?.headers['x-forwarded-host'] || ctx.req?.headers.host || 'localhost:3000';
     host = Array.isArray(rawHost) ? rawHost[0] : rawHost;
   } else {
     // CSR: Use browser location
