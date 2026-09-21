@@ -375,9 +375,12 @@ const PrivacyPolicyPage = () => {
                                         <li>debt collection service providers, assignees, insolvency
                                             administrators;
                                         </li>
-                                        <li>other persons and suppliers related to the provision of services to {companyName},
-                                            incl. video surveillance, IT, telecommunications, archiving, postal
-                                            service providers, etc.
+                                        <li>other persons and suppliers related to the provision of services to {companyName}, incl. video surveillance, IT,
+                                            telecommunications, archiving, postal service providers, and platform partners such as online
+                                            marketplaces and shop integration platforms through which {companyName} provides its services (for example,
+                                            TikTok Shop). Personal Data shared with such platform partners is limited to what is necessary to provide
+                                            the relevant service, and is deleted or returned in accordance with the retention provisions below once the
+                                            relevant partnership or integration ends.
                                         </li>
                                     </ol>
                                 </li>
@@ -446,6 +449,15 @@ const PrivacyPolicyPage = () => {
                                     accountability and contractual reporting, normally no longer than 90–180 days, unless
                                     required longer by law or to resolve incidents.
                                 </li>
+                                <li className={`${styles['list-item--new'] || 'list-item--new'} list-item--new`}>
+                                    Where {companyName} processes Personal Data of end users on behalf of, or in connection with, a
+                                    platform partner (such as an online marketplace or shop integration platform,
+                                    including TikTok Shop), {companyName} shall delete or irreversibly anonymize the Personal
+                                    Data obtained through that specific partnership or integration within thirty (30) days
+                                    after the partnership or integration ends, save where a longer retention period is required by
+                                    applicable law, by a legal or regulatory obligation, or to resolve an ongoing dispute
+                                    or investigation. This is without prejudice to the general retention criteria set out above.
+                                </li>
                             </ol>
                         </li>
                         {/*10*/}
@@ -509,6 +521,12 @@ const PrivacyPolicyPage = () => {
                                             Data.
                                         </li>
                                     </ol>
+                                </li>
+                                <li>
+                                    Where the Data Subject's Personal Data was obtained through a platform partner's shop or marketplace
+                                    integration (such as TikTok Shop), requests under this Section 12 may also be submitted through that platform
+                                    partner, and {companyName} shall support and action such requests, including updating or deleting the relevant
+                                    Personal Data, within the timeframes set out below.
                                 </li>
                                 <li>The rights of the Data Subject referred to in this Section 12 of the Privacy Policy shall
                                     be exercised insofar as the Processing of Personal Data does not conflict with the
@@ -592,7 +610,7 @@ const PrivacyPolicyPage = () => {
                             </ol>
                         </li>
                     </ol>
-                    <p className={`${styles['validity-date'] || 'validity-date'} validity-date`}>This document is valid as of the 27th of October 2025.</p>
+                    <p className={`${styles['validity-date'] || 'validity-date'} validity-date`}>This document is valid as of the 17th of September 2026.</p>
                     {/*<p>This Cookie Policy explains how we use cookies and similar tracking technologies when you visit*/}
                     {/*    our website <Link className='is-link' href='/'>https://ui.wapi.com</Link>. By continuing to browse the site, you are agreeing to our use*/}
                     {/*    of cookies as outlined in this policy.</p>*/}
