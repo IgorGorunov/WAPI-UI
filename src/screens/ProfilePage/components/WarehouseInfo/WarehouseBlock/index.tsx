@@ -7,6 +7,15 @@ import {WarehouseInfoType} from "@/types/profile";
 type WarehouseBlockPropsType = {
     warehouseData: WarehouseInfoType;
 }
+
+const formatText = (text: string) =>
+    text.trim().split('\n').map((line, index) => {
+        const trimmed = line.trim();
+        return trimmed
+            ? <span key={index} className={styles['warehouse-block__line']}>{trimmed}</span>
+            : <span key={index} className={styles['warehouse-block__empty-line']} />;
+    });
+
 const WarehouseBlock: React.FC<WarehouseBlockPropsType> = ({warehouseData}) => {
 
     return (
@@ -19,13 +28,13 @@ const WarehouseBlock: React.FC<WarehouseBlockPropsType> = ({warehouseData}) => {
                 <div className={styles['warehouse-block__card-wrapper']}>
                     <div className={`${styles['warehouse-block__card']} card`}>
                         <p className={styles['warehouse-block__card-title']}>Address: </p>
-                        <p className={styles['warehouse-block__card-text']}>{warehouseData.Address}</p>
+                        <p className={styles['warehouse-block__card-text']}>{formatText(warehouseData.Address)}</p>
                     </div>
                 </div>
                 <div className={styles['warehouse-block__card-wrapper']}>
                     <div className={`${styles['warehouse-block__card']} card`}>
                         <p className={styles['warehouse-block__card-title']}>Additional info: </p>
-                        <p className={styles['warehouse-block__card-text']}>{warehouseData.InfoForClients}</p>
+                        <p className={styles['warehouse-block__card-text']}>{formatText(warehouseData.InfoForClients)}</p>
                     </div>
                 </div>
             </div>

@@ -38,4 +38,17 @@
     font-weight: bold;
     margin-bottom: 6px;
   }
+
+  &__card-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__line {
+    line-height: 1.4;
+  }
+
+  &__empty-line {
+    height: 8px;
+  }
 }
