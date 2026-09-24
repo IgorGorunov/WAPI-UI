@@ -1,5 +1,6 @@
 .warehouse-block {
   background-color: var(--color-modal-bg);
+  padding: 0 8px;
 
   &__warehouse {
     display: flex;
@@ -23,25 +24,40 @@
 
   &__card {
     padding: 16px;
+    height: 100%;
 
     &-wrapper {
       flex: 0 0 50%;
-      padding: 0 16px 16px;
+      padding: 0 8px 16px;
+      display: flex;
+      flex-direction: column;
+
+      &:first-child {
+        flex-basis: 35%;
+      }
+      &:last-child {
+        flex-basis: 65%;
+      }
 
       @include upToTablet {
         flex: 0 0 100%;
+
+        &:first-child,
+        &:last-child {
+          flex-basis: 100%;
+        }
       }
     }
-  }
 
-  &__card-title {
-    font-weight: bold;
-    margin-bottom: 6px;
-  }
+    &-title {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
 
-  &__card-text {
-    display: flex;
-    flex-direction: column;
+    &-text {
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   &__line {
