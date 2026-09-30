@@ -131,6 +131,12 @@
     }
   }
 
+  .dropzone__btns {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 32px;
+  }
+
   .ant-table {
     &-thead {
       .ant-table-cell {

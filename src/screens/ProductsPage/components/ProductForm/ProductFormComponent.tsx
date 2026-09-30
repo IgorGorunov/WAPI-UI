@@ -27,8 +27,8 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
 import {toast, ToastContainer} from '@/components/Toast';
-import "@/styles/tables.scss";
-import '@/styles/forms.scss';
+// import "@/styles/tables.scss";
+// import '@/styles/forms.scss';
 import {TabFields, TabTitles} from "./ProductFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
@@ -1674,7 +1674,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                             </div>
                         </div>
                         {isDisabled && productData?.uuid && selectedFiles.some(file => file.isNew) ? (
-                            <div className='dropzone__btns'>
+                            <div className={styles['dropzone__btns']}>
                                 <Button onClick={handleSendDocFiles}>Send files</Button>
                             </div>
                         ) : null}
