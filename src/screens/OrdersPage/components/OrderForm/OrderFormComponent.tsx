@@ -10,7 +10,7 @@ import {
 } from "@/types/orders";
 import { AttachedFilesType, STATUS_MODAL_TYPES, WarehouseType } from "@/types/utility";
 import styles from "./styles.module.scss";
-import '@/styles/forms.scss';
+// import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import type { Control, FieldValues, SubmitErrorHandler } from "react-hook-form";
@@ -82,7 +82,7 @@ const receiverFieldsPickUpPoint = [
     'receiverPickUpDescription',
     'receiverPickUpID',
     'receiverPickUpName',
-    'receiverPickUpCountry'
+    // 'receiverPickUpCountry'
 ];
 
 const getCorrectNotifications = (record: SingleOrderType, notifications: NotificationType[]) => {
@@ -282,7 +282,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         receiverPhone: orderData?.receiverPhone || '',
         receiverPickUpAddress: orderData?.receiverPickUpAddress || '',
         receiverPickUpCity: orderData?.receiverPickUpCity || '',
-        receiverPickUpCountry: orderData?.receiverPickUpCountry || '',
+        // receiverPickUpCountry: orderData?.receiverPickUpCountry || '',
         receiverPickUpDescription: orderData?.receiverPickUpDescription || '',
         receiverPickUpID: orderData?.receiverPickUpID || '',
         receiverPickUpName: orderData?.receiverPickUpName || '',
@@ -363,10 +363,11 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const createPickupOptions = useCallback((curPickupPoints: PickupPointsType[]) => {
         if (curPickupPoints && curPickupPoints.length) {
             if (orderData && orderData.addressEditAllowedOnly) {
-                if (orderData.receiverPickUpCountry) {
-                    //filter by this country
-                    return curPickupPoints.filter(item => item.country == orderData.receiverPickUpCountry).map((item: PickupPointsType) => { return { label: `${item.id} (${item.description})`, value: item.id } as OptionType })
-                } else if (orderData.receiverCountry) {
+                // if (orderData.receiverPickUpCountry) {
+                //     //filter by this country
+                //     return curPickupPoints.filter(item => item.country == orderData.receiverPickUpCountry).map((item: PickupPointsType) => { return { label: `${item.id} (${item.description})`, value: item.id } as OptionType })
+                // } else
+                if (orderData.receiverCountry) {
                     //filter by receiverCountry
                     return curPickupPoints.filter(item => item.country == orderData.receiverCountry).map((item: PickupPointsType) => { return { label: `${item.id} (${item.description})`, value: item.id } as OptionType })
                 }
@@ -388,7 +389,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
 
             if (pickupPoints.length) {
                 setValue('receiverPickUpName', pickupPoints[0].name);
-                setValue('receiverPickUpCountry', pickupPoints[0].country);
+                // setValue('receiverPickUpCountry', pickupPoints[0].country);
                 setValue('receiverPickUpCity', pickupPoints[0].city);
                 setValue('receiverPickUpAddress', pickupPoints[0].address);
                 setValue('receiverPickUpDescription', pickupPoints[0].description);
@@ -399,7 +400,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const clearPickUpPoint = useCallback(() => {
         setValue('receiverPickUpID', '');
         setValue('receiverPickUpName', '');
-        setValue('receiverPickUpCountry', '');
+        // setValue('receiverPickUpCountry', '');
         setValue('receiverPickUpCity', '');
         setValue('receiverPickUpAddress', '');
         setValue('receiverPickUpDescription', '');
@@ -920,9 +921,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                 changedFields[field] = data[field] || '';
             });
 
-            if (!data.receiverPickUpCountry) {
-                changedFields['receiverPickUpCountry'] = data.receiverCountry || '';
-            }
+            // if (!data.receiverPickUpCountry) {
+            //     changedFields['receiverPickUpCountry'] = data.receiverCountry || '';
+            // }
         }
 
         return changedFields;
@@ -955,7 +956,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     }, [setAtLeastOneFieldIsFilled, getValues]);
 
     const clearPickUpPointFields = useCallback(() => {
-        setValue('receiverPickUpCountry', '');
+        // setValue('receiverPickUpCountry', '');
         setValue('receiverPickUpName', '');
         setValue('receiverPickUpCity', '');
         setValue('receiverPickUpAddress', '');
@@ -1267,7 +1268,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
             data.receiverPickUpName = '';
             data.receiverPickUpCity = '';
             data.receiverPickUpAddress = '';
-            data.receiverPickUpCountry = '';
+            // data.receiverPickUpCountry = '';
         }
 
         // if (receiverCountry && receiverCountry === 'MX') {
@@ -1574,7 +1575,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                 <Icon name='receiver' />
                                 Receiver
                             </h3>
-                            <div className='grid-row'>
+                            <div className={`grid-row grid-row-mobile--100`}>
                                 <FormFieldsBlock control={control} fieldsArray={receiverFields} errors={errors}
                                 // isDisabled={isDisabled}/>
                                 />

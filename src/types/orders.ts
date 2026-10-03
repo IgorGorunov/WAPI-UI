@@ -191,7 +191,7 @@ export type SingleOrderType = {
     receiverPhone: string;
     receiverPickUpAddress: string;
     receiverPickUpCity: string;
-    receiverPickUpCountry: string;
+    // receiverPickUpCountry: string;
     receiverPickUpDescription: string;
     receiverPickUpID: string;
     receiverPickUpName: string;
@@ -362,7 +362,7 @@ export type SingleOrderFormType = {
     receiverPhone: string;
     receiverPickUpAddress: string;
     receiverPickUpCity: string;
-    receiverPickUpCountry: string;
+    // receiverPickUpCountry: string;
     receiverPickUpDescription: string;
     receiverPickUpID: string;
     receiverPickUpName: string;

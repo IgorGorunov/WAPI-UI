@@ -337,18 +337,18 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
 
 export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed, onChangeFn, atLeastOneFieldIsFilled}: { countries: OptionType[]; isDisabled: boolean; isAddressAllowed: boolean, onChangeFn:()=>void, atLeastOneFieldIsFilled: boolean }) => {
     return [
-        {
-            fieldType: FormFieldTypes.SELECT,
-            type: "text",
-            name: 'receiverPickUpCountry',
-            label: 'Country',
-            placeholder: "",
-            options: countries,
-            width: WidthType.w25,
-            classNames: "",
-            disabled: isDisabled,
-            onChange: onChangeFn,
-        },
+        // {
+        //     fieldType: FormFieldTypes.SELECT,
+        //     type: "text",
+        //     name: 'receiverPickUpCountry',
+        //     label: 'Country',
+        //     placeholder: "",
+        //     options: countries,
+        //     width: WidthType.w25,
+        //     classNames: "",
+        //     disabled: isDisabled,
+        //     onChange: onChangeFn,
+        // },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",

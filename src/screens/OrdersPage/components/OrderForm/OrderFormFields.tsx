@@ -567,18 +567,18 @@ export const ReceiverFields = ({countries, prefix='', isDisabled, isAddressAllow
 
 export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed, onChangeFn, atLeastOneFieldIsFilled, isSelfCollect}: { countries: OptionType[]; isDisabled: boolean; isAddressAllowed: boolean, onChangeFn:()=>void, atLeastOneFieldIsFilled: boolean, isSelfCollect: boolean }) => {
     return [
-        {
-            fieldType: FormFieldTypes.SELECT,
-            type: "text",
-            name: 'receiverPickUpCountry',
-            label: 'Country',
-            placeholder: "",
-            options: countries,
-            width: WidthType.w25,
-            classNames: "",
-            disabled: isDisabled,
-            onChange: onChangeFn,
-        },
+        // {
+        //     fieldType: FormFieldTypes.SELECT,
+        //     type: "text",
+        //     name: 'receiverPickUpCountry',
+        //     label: 'Country',
+        //     placeholder: "",
+        //     options: countries,
+        //     width: WidthType.w25,
+        //     classNames: "",
+        //     disabled: isDisabled,
+        //     onChange: onChangeFn,
+        // },
         {
             fieldType: FormFieldTypes.TEXT,
             type: "text",
@@ -599,7 +599,7 @@ export const PickUpPointFields = ({countries, isDisabled, isAddressAllowed, onCh
             rules: {
                 required: atLeastOneFieldIsFilled && isSelfCollect ? "Required field" : false,
             },
-            width: WidthType.w25,
+            width: WidthType.w50,
             classNames: "",
             disabled: isDisabled && !isAddressAllowed,
             onChange: onChangeFn,
