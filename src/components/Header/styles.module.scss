@@ -167,13 +167,24 @@
 
         &--icon {
           position: absolute;
-          top: 10px;
-          left: 8px;
+          top: calc(50% - 10px) ;
+          left: 12px;
           fill: var(--color-red);
+          width: 16px;
+
+          path {
+            fill: var(--color-red);
+          }
         }
 
         &--title {
-          font-size: 16px;
+          font-size: 14px;
+          color: var(--color-dark-red2);
+        }
+
+        &--text {
+          font-size: 12px;
+          color: var(--color-red);
         }
 
         &--close {

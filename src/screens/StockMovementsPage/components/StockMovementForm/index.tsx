@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styles from "./styles.module.scss";
-import '@/styles/forms.scss';
+// import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, UserAccessActionType } from "@/types/auth";
 import Loader from "@/components/Loader";

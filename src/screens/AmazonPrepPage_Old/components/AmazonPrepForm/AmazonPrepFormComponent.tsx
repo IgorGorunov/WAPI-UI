@@ -7,7 +7,7 @@ import {
     WarehouseType,
 } from "@/types/amazonPrep";
 import "./styles.scss";
-import '@/styles/forms.scss';
+// import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes } from "@/types/auth";
 import { Controller, useFieldArray, useForm } from "react-hook-form";

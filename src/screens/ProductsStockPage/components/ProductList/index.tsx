@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { Table, Pagination, Tooltip, Popover, TableColumnProps } from 'antd';
 import { ColumnType } from "antd/es/table";
 import styles from "./styles.module.scss";
-import "@/styles/tables.scss";
+// import "@/styles/tables.scss";
 import { ProductStockType, ProductStockFilterDataType } from "@/types/products";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"

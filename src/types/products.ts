@@ -78,6 +78,13 @@ export type ProductStockType = {
     seller?: string;
 }
 
+
+export type CertificateCountriesType = {
+    typeDocumentId: string;
+    typeDocumentName: string;
+    Countries: {id: string; country: string;}[];
+}
+
 export type ProductParamsType = {
     salesPackingMaterial: string[];
     specialDeliveryOrStorageRequirements: string[];
@@ -85,6 +92,7 @@ export type ProductParamsType = {
     whoProvideExtraPacking: string[];
     actionAccessSettings?: UserAccessActionType[];
     productsType?:ProductTypeType[];
+    countriesRegistrationDocument: CertificateCountriesType[];
 };
 
 export type UnitOfMeasuresType = {
@@ -107,6 +115,18 @@ export type StatusHistoryType = {
     date: string;
     status: string;
     comment: string;
+}
+
+export type RegistrationDocumentType = {
+    approvalStatus: string;
+    country: {
+        id: string;
+        country: string;
+    }
+    dueDate: string;
+    id?: string;
+    name: string;
+    type: string; //CPNP or Proof of notification
 }
 
 export type SingleProductType = {
@@ -147,6 +167,7 @@ export type SingleProductType = {
     merywoodProduction: boolean;
     productType?: string;
     certificate?: boolean;
+    registrationDocuments: RegistrationDocumentType[];
 };
 
 export type UnitOfMeasureFormType = {
@@ -215,6 +236,7 @@ export type SingleProductFormType = {
     // statusHistory: StatusHistoryType[];
     // canEdit: boolean;
     merywoodProduction: boolean;
+    registrationDocuments?: RegistrationDocumentType[];
 }
 
 export type SingleProductSendFormType = {
@@ -275,6 +297,7 @@ export type SingleProductSendFormType = {
     merywoodProduction: boolean;
     productType?: string;
     certificate?: boolean;
+    registrationDocuments?: RegistrationDocumentType[];
 }
 
 export type ProductFilterDataType = BaseFilterMetadata & {

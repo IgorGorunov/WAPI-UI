@@ -34,12 +34,12 @@ const AuthChecker: React.FC<AuthCheckerPropsType> = ({ isUser = true, pageName =
     useEffect(() => {
         const checkUser = async () => {
             if (!Router.isReady || isNavigatingRef.current) {
-                console.log('[AuthChecker] skipping: isReady=', Router.isReady, 'isNavigating=', isNavigatingRef.current);
+                // console.log('[AuthChecker] skipping: isReady=', Router.isReady, 'isNavigating=', isNavigatingRef.current);
                 return;
             }
 
             const authorized = isUser && isAuthorizedUserRef.current() || !isUser && isAuthorizedLeadRef.current();
-            console.log('[AuthChecker] check: token=', token?.substring(0, 10), 'authorized=', authorized, 'isUser=', isUser);
+            // console.log('[AuthChecker] check: token=', token?.substring(0, 10), 'authorized=', authorized, 'isUser=', isUser);
 
             if (!authorized) {
                 console.log('[AuthChecker] NOT authorized → redirecting to login');

@@ -5,8 +5,8 @@ import { AccessActions, AccessObjectTypes, UserAccessActionType } from "@/types/
 import { ProductParamsType, ProductType, SingleProductType } from "@/types/products";
 import { getProductByUID, getProductParameters, getProducts } from "@/services/products";
 import { ToastContainer } from '@/components/Toast';
-import "@/styles/tables.scss";
-import '@/styles/forms.scss';
+// import "@/styles/tables.scss";
+// import '@/styles/forms.scss';
 import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
 import ProductFormComponent from "@/screens/ProductsPage/components/ProductForm/ProductFormComponent";
@@ -42,9 +42,11 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
         setShowStatusModal(false);
     }, [])
 
-    const fetchProductData = async (uuid) => {
+    const fetchProductData = async (uuid, silent = false) => {
         try {
-            setIsLoading(true);
+            if (!silent) {
+                setIsLoading(true);
+            }
             const requestData = { token, alias, uuid };
 
             try {
@@ -67,9 +69,13 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
 
         } catch (error) {
             console.error("Error fetching data:", error);
-            setIsLoading(false);
+            if (!silent) {
+                setIsLoading(false);
+            }
         } finally {
-            setIsLoading(false);
+            if (!silent) {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -193,7 +199,7 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
                     uuid={uuid}
                     // products={productsAsOptions}
                     closeProductModal={onCloseModalOnSuccess}
-                    refetchDoc={() => { fetchProductData(uuid) }}
+                    refetchDoc={() => { fetchProductData(uuid, true) }}
                     forbiddenTabs={forbiddenTabs}
                 />
             </Modal> : null

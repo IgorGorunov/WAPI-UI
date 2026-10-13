@@ -4,7 +4,7 @@ import {
     SingleAmazonPrepOrderType,
 } from "@/types/amazonPrep";
 import "./styles.scss";
-import '@/styles/forms.scss';
+// import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes, UserAccessActionType } from "@/types/auth";
 import { getAmazonPrepParameters, getSingleAmazonPrepData } from '@/services/amazonePrep';

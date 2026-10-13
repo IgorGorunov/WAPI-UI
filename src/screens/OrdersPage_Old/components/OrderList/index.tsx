@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pagination, Popover, Table, TableColumnProps, TableProps, Tooltip } from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
-import "@/styles/tables.scss";
+// import "@/styles/tables.scss";
 import Icon from "@/components/Icon";
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { StatusColors } from '@/screens/DashboardPage/components/OrderStatuses';

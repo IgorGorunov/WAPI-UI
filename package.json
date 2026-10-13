@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate:icons": "svgr --out-dir src/assets/icons-components --typescript --icon src/assets/icons"
+    "generate:icons": "svgr --out-dir src/assets/icons-components --typescript src/assets/icons"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.16",

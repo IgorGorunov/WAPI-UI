@@ -5,8 +5,8 @@ import { AccessActions, AccessObjectTypes, UserAccessActionType } from "@/types/
 import { ProductParamsType, ProductType, SingleProductType } from "@/types/products";
 import { getProductByUID, getProductParameters, getProducts } from "@/services/products";
 import { ToastContainer } from '@/components/Toast';
-import "@/styles/tables.scss";
-import '@/styles/forms.scss';
+// import "@/styles/tables.scss";
+// import '@/styles/forms.scss';
 import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
 import ProductFormComponent from "./ProductFormComponent";

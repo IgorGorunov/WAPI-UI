@@ -15,9 +15,18 @@
     margin-bottom: 4px;
     margin-left: -2px;
     font-size: 10px;
-    padding: 7px 16px;
+    padding: 6px 16px;
     outline: none;
     box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+
+    &.clickable {
+      cursor: pointer;
+    }
+
+    &::placeholder {
+      color: var(--placeholder-color, var(--color-placeholder, #C3CAD9));
+      opacity: 1;
+    }
   }
 
   .date-input {
@@ -30,12 +39,14 @@
         position: absolute;
         top: 8px;
         right: 20px;
+        cursor: pointer;
       }
 
       .clear-icon {
         position: absolute;
         top: 8px;
         right: 40px;
+        cursor: pointer;
       }
     }
   }

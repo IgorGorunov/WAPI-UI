@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
 import "./styles.scss";
-import "@/styles/tables.scss";
+// import "@/styles/tables.scss";
 import { ColumnType } from "antd/es/table";
 import DateInput from "@/components/DateInput";
 import { DateRangeType } from "@/types/dashboard";

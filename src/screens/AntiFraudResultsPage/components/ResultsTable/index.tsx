@@ -14,7 +14,7 @@ import {
     formatTimeStringFromString
 } from "@/utils/date";
 import styles from "./styles.module.scss";
-import "@/styles/tables.scss";
+// import "@/styles/tables.scss";
 import PageSizeSelector from "@/components/LabelSelect";
 import FiltersChosen from "@/components/FiltersChosen";
 import { FilterComponentType } from "@/types/filters";

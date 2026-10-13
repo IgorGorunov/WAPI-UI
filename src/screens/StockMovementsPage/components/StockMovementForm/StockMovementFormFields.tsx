@@ -492,7 +492,7 @@ export const CargoFields = (
                     fieldType: FormFieldTypes.NUMBER,
                     type: "number",
                     name: 'cartonsAmount',
-                    label: 'Cartons, pcs',
+                    label: `Cartons, pcs${isCartons ? ' *' : ''}`,
                     placeholder: "0",
                     width: WidthType.w50,
                     isDisplayed: (isCargoInfoFieldsDisplayed || isInbound || isLogisticService),

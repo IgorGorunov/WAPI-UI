@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./styles.module.scss";
-import '@/styles/tables.scss';
-import '@/styles/forms.scss';
+// import '@/styles/tables.scss';
+// import '@/styles/forms.scss';
 import Button from "@/components/Button/Button";
 import { ProductsSelectionType } from "@/types/utility";
 import SearchContainer from "@/components/SearchContainer";

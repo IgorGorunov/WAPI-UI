@@ -98,7 +98,7 @@ export const FormFieldsGeneral = (
             errorMessage: "Required field",
             width: WidthType.w17,
             classNames: "",
-            hint: ProductHints['productType'] || '',
+            hint: ProductHints['category'] || '',
             onChange: onProductTypeGroupChange,
             // onlyAllowedSymbols: true,
         },
@@ -214,6 +214,7 @@ export const FormFieldsSKU = () => [
             width: WidthType.w33,
             classNames: "",
             hint: ProductHints['sku'] || '',
+            // onlyAllowedSymbols: true,
         },
         {
             fieldType: FormFieldTypes.TEXT,

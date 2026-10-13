@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { OrderParamsType, SingleOrderType } from "@/types/orders";
 import "./styles.scss";
-import '@/styles/forms.scss';
+// import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions, AccessObjectTypes, UserAccessActionType } from "@/types/auth";
 import { getOrderData, getOrderParameters } from '@/services/orders';

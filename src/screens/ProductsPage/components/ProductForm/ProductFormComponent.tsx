@@ -6,7 +6,7 @@ import {COUNTRIES} from "@/types/countries";
 import styles from "./styles.module.scss";
 import useAuth from "@/context/authContext";
 import {AccessActions, AccessObjectTypes} from "@/types/auth";
-import {ProductParamsType, ProductType, SingleProductFormType, SingleProductType} from "@/types/products";
+import {ProductParamsType, ProductType, RegistrationDocumentType, SingleProductFormType, SingleProductType} from "@/types/products";
 import {
     FormFieldsAdditional1,
     FormFieldsAdditional2,
@@ -27,8 +27,8 @@ import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
 import DropZone from '@/components/Dropzone';
 import StatusHistory from "./StatusHistory";
 import {toast, ToastContainer} from '@/components/Toast';
-import "@/styles/tables.scss";
-import '@/styles/forms.scss';
+// import "@/styles/tables.scss";
+// import '@/styles/forms.scss';
 import {TabFields, TabTitles} from "./ProductFormTabs";
 import {useTabsState} from "@/hooks/useTabsState";
 import Loader from "@/components/Loader";
@@ -46,6 +46,7 @@ import ConfirmModal from "@/components/ModalConfirm";
 import {sendUserBrowserInfo} from "@/services/userInfo";
 import useTenant from "@/context/tenantContext";
 import {isTabAllowed} from "@/utils/tabs";
+import CpnpBlock from "./CpnpBlock";
 
 const enum SendStatusType {
     DRAFT = 'draft',
@@ -78,8 +79,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
     // const isDisabled = (productData?.status !== 'Draft' && productData?.status !=='Pending' && productData !== null);
 
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
-
-    // const certificateErrorText = 'Selected product type needs a certificate!'
 
     //status modal
     const [showStatusModal, setShowStatusModal] = useState(false);
@@ -364,7 +363,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
     const handleSendDocFiles = async (event: React.MouseEvent) => {
         event.preventDefault();
 
-        const newFiles = selectedFiles.filter(file => file.isNew);
+        const newFiles = selectedFiles.filter(file => file.isNew && !isRegistrationFile(file));
         if (productData?.uuid && isDisabled && newFiles.length) {
             try {
                 setSendStatus(SendStatusType.PENDING); // Acts as a loader flag conceptually similar to Dropzone
@@ -381,7 +380,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                 if (res?.status === 200) {
                     // Update successfully sent files to strip the 'isNew' flag internally
                     setSelectedFiles(prevState => prevState.map(file => {
-                        if (file.isNew) {
+                        if (file.isNew && !isRegistrationFile(file)) {
                             return { ...file, isNew: false };
                         }
                         return file;
@@ -1021,27 +1020,104 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
         if (!needCertCurrent) setValue('certificate', false);
     }, [productData, productType, certificate, productParams]);
 
+    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(productData?.attachedFiles || []);
+    const [registrationDocuments, setRegistrationDocuments] = useState<RegistrationDocumentType[]>(
+        productData?.registrationDocuments || []
+    );
+
+    useEffect(() => {
+        if (productData) {
+            setSelectedFiles(productData.attachedFiles || []);
+            setRegistrationDocuments(productData.registrationDocuments || []);
+        }
+    }, [productData]);
+
+    const isRegistrationFile = useCallback(
+        (file: AttachedFilesType) => {
+            const pft = (file.productFileType || '') as string;
+            return (
+                pft === PRODUCT_FILE_TYPES.CPNP ||
+                pft === PRODUCT_FILE_TYPES['Proof of notification'] ||
+                pft.toLowerCase() === 'cpnp' ||
+                pft.toLowerCase() === 'proof of notification' ||
+                registrationDocuments.some(
+                    (doc) =>
+                        (doc.name && file.name && doc.name.trim() === file.name.trim()) ||
+                        (doc.id && file.id && doc.id === file.id)
+                )
+            );
+        },
+        [registrationDocuments]
+    );
+
+    // Determine if the CPNP / Proof-of-Notification block should be shown
+    // based on the selected category group (parentDescription).
+    const productTypeGroupWatch = watch('productTypeGroup');
+    const cpnpMode: 'cosmetics' | 'nutra' | null = useMemo(() => {
+        const group = selectedGroup || productTypeGroupWatch;
+        if (group) {
+            const lower = group.trim().toLowerCase();
+            if (lower === 'cosmetics') return 'cosmetics';
+            if (lower.includes('nutra') || lower.includes('supplement')) return 'nutra';
+            return null;
+        }
+        if (registrationDocuments.length > 0) {
+            const firstType = (registrationDocuments[0].type || '').toLowerCase();
+            if (firstType.includes('cpnp')) return 'cosmetics';
+            if (firstType.includes('proof')) return 'nutra';
+        }
+        return null;
+    }, [selectedGroup, productTypeGroupWatch, registrationDocuments]);
+
     /////////////////////////
     const prepareProductDataForSending = (data) => {
+        const preparedAttachedFiles = selectedFiles.map((file) => {
+            if (!file.id || (file.isNew && isRegistrationFile(file))) {
+                const { id, ...rest } = file;
+                return rest;
+            }
+            return file;
+        });
+
+        const preparedRegistrationDocuments = registrationDocuments.map((doc) => {
+            if (!doc.id) {
+                const { id, ...rest } = doc;
+                return rest;
+            }
+            return doc;
+        });
+
         return {
             ...data,
             aliases: data.aliases.map(item => item.alias).filter(item => item !== ""),
             barcodes: data.barcodes.map(item => item.barcode).filter(item => item !== ""),
             analogues: data.analogues.map(item => item.analogue).filter(item => item !== ""),
-            attachedFiles: selectedFiles,
+            attachedFiles: preparedAttachedFiles,
+            registrationDocuments: preparedRegistrationDocuments,
         }
     }
 
-    const [selectedFiles, setSelectedFiles] = useState<AttachedFilesType[]>(productData?.attachedFiles || []);
+    const handleRegistrationFilesChange = (files: AttachedFilesType[], productFileType: PRODUCT_FILE_TYPES) => {
+        setSelectedFiles((prevState) => {
+            const filteredState = prevState.filter((file) => !isRegistrationFile(file));
+            return [...filteredState, ...files.map((file) => ({ productFileType, ...file }))];
+        });
+    };
+
     const handleFilesChange = (files: AttachedFilesType[], productFileType: PRODUCT_FILE_TYPES, isImage = false) => {
         setSelectedFiles(prevState => {
             // Remove existing files of the same type
             const filteredState = prevState.filter(file => {
                 if (isImage) {
-                    return file.type !== 'image';
+                    return file.type !== 'image' || isRegistrationFile(file);
                 }
                 if (productFileType === PRODUCT_FILE_TYPES.other) {
-                    return file.type === 'image' || file.productFileType === PRODUCT_FILE_TYPES.certificate || file.productFileType === PRODUCT_FILE_TYPES.purchaseInvoice;
+                    return (
+                        file.type === 'image' ||
+                        file.productFileType === PRODUCT_FILE_TYPES.certificate ||
+                        file.productFileType === PRODUCT_FILE_TYPES.purchaseInvoice ||
+                        isRegistrationFile(file)
+                    );
                 }
                 return file.productFileType !== productFileType;
             });
@@ -1109,42 +1185,6 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
 
 
         clearTabTitles();
-
-
-        const errorTabs: string[] = [];
-
-        if (sendStatus != SendStatusType.DRAFT) {
-            if (needCertificate) {
-                if (certificate) {
-                    if (selectedFiles.filter((file) => file.productFileType === 'certificate').length == 0) {
-                        errorTabs.push('certificates');
-                    }
-                } else {
-                    // TEMPORARY commented, do not delete
-                    // errorTabs.push('certificate');
-                    // setError('certificate', {
-                    //     type: 'manual',
-                    //     message: certificateErrorText,
-                    // });
-                }
-
-            }
-        } else {
-            // TEMPORARY commented, do not delete
-            // if (needCertificate && !certificate) {
-            //     errorTabs.push('certificate');
-            //     setError('certificate', {
-            //         type: 'manual',
-            //         message: certificateErrorText,
-            //     });
-            // }
-        }
-
-        if (errorTabs.length) {
-            updateTabTitles(errorTabs);
-            setIsLoading(false);
-            return null;
-        }
 
         setIsLoading(true);
 
@@ -1227,42 +1267,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                 const formData = getValues();
                 return onSubmitForm(formData as SingleProductFormType);
             }
-
-            if (needCertificate) {
-                if (certificate) {
-                    if (selectedFiles.filter((file) => file.productFileType === 'certificate').length == 0) {
-                        fieldNames.push('certificates');
-                        toast.warn('You need to upload certificates for this product!')
-                    }
-                } else {
-                    // TEMPORARY commented, do not delete
-                    // fieldNames.push('certificate');
-                    // setError('certificate', {
-                    //     type: 'manual',
-                    //     message: certificateErrorText,
-                    // });
-                }
-            }
-
         } else {
-
-
-            if (needCertificate) {
-                if (certificate) {
-                    if (selectedFiles.filter((file) => file.productFileType === 'certificate').length == 0) {
-                        fieldNames.push('certificates');
-                        toast.warn('You need to upload certificates for this product!')
-                    }
-                } else {
-                    // TEMPORARY commented, do not delete
-                    // fieldNames.push('certificate');
-                    // setError('certificate', {
-                    //     type: 'manual',
-                    //     message: certificateErrorText,
-                    // });
-                }
-            }
-
             if (fieldNames.length > 0) {
                 toast.warn(`Validation error. Fields: ${fieldNames.join(', ')}`, {
                     position: "top-right",
@@ -1611,7 +1616,32 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                 Files
                             </h3>
                         </TutorialHintTooltip>
-                        <div className={`dropzoneBlock ${styles['dropzoneBlock-list']}`}>
+                        {/* CPNP / Proof-of-Notification block – shown only for Cosmetics or Nutra/Supplements */}
+                        {cpnpMode ? (
+                            <CpnpBlock
+                                label={cpnpMode === 'cosmetics' ? 'CPNP (Cosmetics)' : 'Proof of Notification'}
+                                documentTypeLabel={cpnpMode === 'cosmetics' ? 'CPNP' : 'Proof of Notification'}
+                                categoryLabel={cpnpMode === 'cosmetics' ? 'Cosmetics' : 'Nutra/Supplements'}
+                                registrationDocuments={registrationDocuments}
+                                onRegistrationDocumentsChange={setRegistrationDocuments}
+                                files={selectedFiles.filter((file) => isRegistrationFile(file))}
+                                onFilesChange={(files) =>
+                                    handleRegistrationFilesChange(
+                                        files,
+                                        cpnpMode === 'cosmetics'
+                                            ? PRODUCT_FILE_TYPES.CPNP
+                                            : PRODUCT_FILE_TYPES['Proof of notification']
+                                    )
+                                }
+                                readOnly={false}
+                                countriesRegistrationDocument={productParams.countriesRegistrationDocument}
+                                docUuid={productData?.uuid || ''}
+                                showSyncSend={!!isDisabled && !!productData?.uuid}
+                                onSyncSuccess={refetchDoc}
+                            />
+                        ) : null}
+                        {/* certificates */}
+                        {cpnpMode && selectedFiles.filter((file) => file.productFileType === 'certificate').length || !cpnpMode ? (
                             <div className={`${styles['dropzoneBlock-list-item']} certificate`}>
                                 <DropZone
                                     readOnly={!!isDisabled}
@@ -1624,12 +1654,11 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                     title={'Certificate'}
                                     onFileMoved={(fileId) => handleFileMovedToBlock(fileId, 'certificate')}
                                     needSendBtn={false}
-                                    // TEMPORARY commented
-                                    showError={needCertificate && certificate && selectedFiles.filter((file) => file.productFileType === 'certificate').length == 0}
-                                    errorText={"You need to upload a certificate for this product. Or turn off 'Have certificate for the product' toggle on Primaty tab"}
-
                                 />
                             </div>
+                        ) : null}
+
+                        <div className={`dropzoneBlock ${styles['dropzoneBlock-list']}`}>
                             <div className={`${styles['dropzoneBlock-list-item']} purchase-invoice`}>
                                 <DropZone
                                     readOnly={!!isDisabled}
@@ -1647,7 +1676,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                             <div className={`${styles['dropzoneBlock-list-item']} image`}>
                                 <DropZone
                                     readOnly={!!isDisabled}
-                                    files={selectedFiles.filter((file) => file.type === 'image')}
+                                    files={selectedFiles.filter((file) => file.type === 'image' && !isRegistrationFile(file))}
                                     onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.other, true)}
                                     docUuid={productData?.canEdit ? productData?.uuid : ''}
                                     allowOnlyFormats={['png', 'jpg', 'jpeg']}
@@ -1661,7 +1690,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                             <div className={`${styles['dropzoneBlock-list-item']} other`}>
                                 <DropZone
                                     readOnly={!!isDisabled}
-                                    files={selectedFiles.filter((file) => file.type !== 'image' && file.productFileType !== 'certificate' && file.productFileType !== 'purchaseInvoice')}
+                                    files={selectedFiles.filter((file) => file.type !== 'image' && !['certificate', 'purchaseInvoice', 'CPNP', 'Proof of notification'].includes(file.productFileType) && !isRegistrationFile(file))}
                                     onFilesChange={(files) => handleFilesChange(files, PRODUCT_FILE_TYPES.other)}
                                     docUuid={productData?.canEdit ? productData?.uuid : ''}
                                     allowOnlyFormats={['png', 'jpg', 'jpeg', 'pdf']}
@@ -1673,7 +1702,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                 />
                             </div>
                         </div>
-                        {isDisabled && productData?.uuid && selectedFiles.some(file => file.isNew) ? (
+                        {isDisabled && productData?.uuid && selectedFiles.some(file => file.isNew && !isRegistrationFile(file)) ? (
                             <div className='dropzone__btns'>
                                 <Button onClick={handleSendDocFiles}>Send files</Button>
                             </div>
