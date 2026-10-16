@@ -2284,7 +2284,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             onCancel={() => setShowConfirmModalFillByStock(false)}
         />}
         {showCertConfirmModal && <ConfirmModal
-            icon="warning"
+            icon="error"
             title="Some documents in your inbound are not approved yet."
             okText="Send anyway"
             cancelText="Cancel"

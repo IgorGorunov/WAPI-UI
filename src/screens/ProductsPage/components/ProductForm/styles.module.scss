@@ -125,6 +125,10 @@
       width: 100%;
       height: 100%;
 
+      &:global(.certificate) {
+        padding: 8px 0;
+      }
+
       :global(.dropzone-wrapper) {
         width: 100%;
       }
