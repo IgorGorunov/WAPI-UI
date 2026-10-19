@@ -2285,7 +2285,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         />}
         {showCertConfirmModal && <ConfirmModal
             icon="error"
-            title="Some documents in your inbound are not approved yet."
+            title="Some certificates in your inbound are not approved yet."
             okText="Send anyway"
             cancelText="Cancel"
             onOk={handleConfirmSendAnyway}

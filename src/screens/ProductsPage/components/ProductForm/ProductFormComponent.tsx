@@ -1279,7 +1279,7 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
         }
     };
 
-    const generalFields = useMemo(() => FormFieldsGeneral({ countries: countryArr, isNew: !productData?.uuid, needCertificate, productTypeOptions:getProductTypeOptions(selectedGroup), handleAdditionalServiceChange, productTypeGroupOptions, onProductTypeGroupChange: (val)=>{setSelectedGroup(val); setValue('productType', ''); console.log('111: ', val)} }), [COUNTRIES, isAdditionalService, needCertificate, selectedGroup])
+    const generalFields = useMemo(() => FormFieldsGeneral({ countries: countryArr, isNew: !productData?.uuid, productTypeOptions:getProductTypeOptions(selectedGroup), handleAdditionalServiceChange, productTypeGroupOptions, onProductTypeGroupChange: (val)=>{setSelectedGroup(val); setValue('productType', ''); console.log('111: ', val)} }), [COUNTRIES, isAdditionalService, needCertificate, selectedGroup])
     const skuFields = useMemo(() => FormFieldsSKU(), []);
     const warehouseFields = useMemo(() => FormFieldsWarehouse({ typeOfStorage: createOptions(productParams.typeOfStorage), salesPackingMaterial: createOptions(productParams.salesPackingMaterial), specialDeliveryOrStorageRequirements: createOptions(productParams.specialDeliveryOrStorageRequirements), isAdditionalService }), [productParams, isAdditionalService])
     const additionalFields = useMemo(() => FormFieldsAdditional1({ whoProvidesPackagingMaterial: createOptions(productParams.whoProvideExtraPacking) }), [])

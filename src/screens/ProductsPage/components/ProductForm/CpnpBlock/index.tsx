@@ -200,7 +200,7 @@ const CpnpBlock: React.FC<CpnpBlockProps> = ({
 
     const getDocKey = useCallback(
         (doc: RegistrationDocumentType): string => {
-            return doc.id || `${getDocCountryId(doc)}_${doc.name}`;
+            return doc.id || (doc as any).uuid || `${getDocCountryId(doc)}_${doc.name}`;
         },
         [getDocCountryId]
     );
@@ -374,16 +374,31 @@ const CpnpBlock: React.FC<CpnpBlockProps> = ({
         }
     }, []);
 
+    const getDocStatusRaw = (doc: RegistrationDocumentType): string => {
+        return (
+            doc.approvalStatus ||
+            (doc as any).status ||
+            (doc as any).approval_status ||
+            (doc as any).approvalState ||
+            ''
+        ).trim();
+    };
+
     const canModifyFile = (doc: RegistrationDocumentType) => {
         const att = findAttachedFile(doc);
-        // Just now added files (not yet sent to backend)
-        if (att?.isNew || !doc.approvalStatus || !doc.approvalStatus.trim() || doc.approvalStatus === 'Just added') {
+        const raw = getDocStatusRaw(doc);
+        const cleanStatus = raw.toLowerCase().replace(/[_-]/g, ' ');
+
+        // Declined / rejected files can always be modified (edited / deleted)
+        if (cleanStatus === 'declined' || cleanStatus === 'rejected') {
             return true;
         }
 
-        // Declined files
-        const cleanStatus = (doc.approvalStatus || '').trim().toLowerCase();
-        if (cleanStatus === 'declined' || cleanStatus === 'rejected') {
+        // Just now added files (added in this session, not yet saved to backend)
+        // Must be locally new (has isNew on attached file or no backend id), and not have a finalized backend status
+        const hasBackendId = !!(doc.id || (doc as any).uuid);
+        const isJustAdded = (!!att?.isNew || !hasBackendId) && (!raw || cleanStatus === 'just added');
+        if (isJustAdded) {
             return true;
         }
 
@@ -543,7 +558,8 @@ const CpnpBlock: React.FC<CpnpBlockProps> = ({
                             : (typeof doc.country === 'object' ? doc.country?.country || '' : ''),
                     },
                     approvalStatus: '',
-                };
+                    status: '',
+                } as any;
                 updatedDocEntry = nextDoc;
                 return nextDoc;
             }
@@ -710,6 +726,7 @@ const CpnpBlock: React.FC<CpnpBlockProps> = ({
 
             if (res && 'status' in res && res.status === 200) {
                 setStagedSyncEntries([]);
+                handleCancelEdit();
                 setModalStatusInfo({
                     statusModalType: STATUS_MODAL_TYPES.SUCCESS,
                     title: 'Success',
@@ -813,13 +830,18 @@ const CpnpBlock: React.FC<CpnpBlockProps> = ({
     // ── Status badge helper ─────────────────────────────────────────────────
     const getStatusInfo = (doc: RegistrationDocumentType): { label: string; className: string } | null => {
         const att = findAttachedFile(doc);
-        // For just added (not yet sent) files, status is empty
-        if (att?.isNew || !doc.approvalStatus || !doc.approvalStatus.trim() || doc.approvalStatus === 'Just added') {
+        const raw = getDocStatusRaw(doc);
+        const clean = raw.toLowerCase().replace(/[_-]/g, ' ');
+
+        // For files added locally in this session (not yet saved to backend and without a status)
+        const hasBackendId = !!(doc.id || (doc as any).uuid);
+        if ((att?.isNew || !hasBackendId) && (!raw || clean === 'just added')) {
             return null;
         }
 
-        const raw = doc.approvalStatus.trim();
-        const clean = raw.toLowerCase().replace(/[_-]/g, ' ');
+        if (!raw) {
+            return null;
+        }
 
         if (clean === 'approved') {
             return { label: 'Approved', className: styles['status--approved'] };
@@ -1214,6 +1236,23 @@ const CpnpBlock: React.FC<CpnpBlockProps> = ({
                             rowClassName={(record) =>
                                 getDocKey(record) === editingId ? styles['row--editing'] : ''
                             }
+                            onRow={(record) => {
+                                const isEditingThisRow = editingId === getDocKey(record);
+                                if (!isEditingThisRow) return {};
+                                return {
+                                    onKeyDown: (e: React.KeyboardEvent) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleSaveEdit();
+                                        } else if (e.key === 'Escape') {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleCancelEdit();
+                                        }
+                                    },
+                                };
+                            }}
                         />
                     </div>
                 </div>
