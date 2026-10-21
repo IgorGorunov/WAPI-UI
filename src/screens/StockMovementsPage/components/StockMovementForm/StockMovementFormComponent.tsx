@@ -1,6 +1,6 @@
-import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from 'react';
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from "./styles.module.scss";
-import '@/styles/forms.scss';
+// import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import {AccessActions} from "@/types/auth";
 import useHintsTracking from "@/context/hintsContext";
@@ -46,6 +46,7 @@ import {TICKET_OBJECT_TYPES} from "@/types/tickets";
 import {formatDateStringToDisplayString} from "@/utils/date";
 import CardWithHelpIcon from "@/components/CardWithHelpIcon";
 import {StockMovementsHints} from "@/screens/StockMovementsPage/stockMovementsHints.constants";
+import {ProductHints} from "@/screens/ProductsPage/productsHints.constants";
 import TutorialHintTooltip from "@/components/TutorialHintTooltip";
 import {docNamesSingle, getAccessActionObject} from "@/screens/StockMovementsPage";
 import {CommonHints} from "@/constants/commonHints";
@@ -87,6 +88,433 @@ const deliveryMethodOptions = [
 
 
 
+const EU_COUNTRY_CODES = [
+    'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR',
+    'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL',
+    'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'
+];
+
+const isRegDocCategory = (category?: string): boolean => {
+    if (!category) return false;
+    const cat = category.trim().toLowerCase();
+    return (
+        cat === 'cosmetics' ||
+        cat.includes('nutra') ||
+        cat.includes('supplement')
+    );
+};
+
+const getDocCountryCode = (doc: any, fallbackCountry?: string): string => {
+    let countryVal = '';
+    if (typeof doc?.country === 'string') {
+        countryVal = doc.country.trim();
+    } else if (doc?.country && typeof doc.country === 'object') {
+        if (doc.country.id && typeof doc.country.id === 'string' && doc.country.id.trim().length === 2) {
+            return doc.country.id.trim().toUpperCase();
+        }
+        countryVal = (doc.country.country || doc.country.id || '').trim();
+    }
+
+    const upper = countryVal.toUpperCase();
+    if (
+        upper === 'MULTI (EU)' ||
+        upper === 'MULTI(EU)' ||
+        upper === 'MULTI' ||
+        upper === 'EU'
+    ) {
+        return 'EU';
+    }
+
+    if (countryVal) {
+        const found = COUNTRIES.find(
+            (c) => c.value.toUpperCase() === upper || c.label.toUpperCase() === upper
+        );
+        if (found) {
+            return found.value.toUpperCase();
+        }
+        if (countryVal.length === 2) {
+            return upper;
+        }
+    }
+
+    if (fallbackCountry) {
+        const fallbackUpper = fallbackCountry.trim().toUpperCase();
+        if (
+            fallbackUpper === 'MULTI (EU)' ||
+            fallbackUpper === 'MULTI(EU)' ||
+            fallbackUpper === 'MULTI' ||
+            fallbackUpper === 'EU'
+        ) {
+            return 'EU';
+        }
+        const found = COUNTRIES.find(
+            (c) => c.value.toUpperCase() === fallbackUpper || c.label.toUpperCase() === fallbackUpper
+        );
+        if (found) {
+            return found.value.toUpperCase();
+        }
+        if (fallbackCountry.length === 2) {
+            return fallbackUpper;
+        }
+    }
+
+    return '';
+};
+
+const getDocCountryLabel = (doc: any, countryCode: string, fallbackCountryLabel?: string): string => {
+    if (countryCode === 'EU') {
+        return 'Multi (EU)';
+    }
+    const found = COUNTRIES.find((c) => c.value.toUpperCase() === countryCode || c.label.toUpperCase() === countryCode);
+    if (found) {
+        return found.label;
+    }
+    if (typeof doc?.country === 'string' && doc.country.trim()) {
+        const raw = doc.country.trim();
+        const foundRaw = COUNTRIES.find((c) => c.label.toUpperCase() === raw.toUpperCase() || c.value.toUpperCase() === raw.toUpperCase());
+        if (foundRaw) return foundRaw.label;
+        return raw;
+    }
+    if (doc?.country && typeof doc.country === 'object' && doc.country.country) {
+        return doc.country.country;
+    }
+    return fallbackCountryLabel || countryCode;
+};
+
+const resolveDocType = (doc: any, category?: string): string => {
+    if (doc?.documentType && typeof doc.documentType === 'string' && doc.documentType.trim()) {
+        return doc.documentType.trim();
+    }
+    if (doc?.type && typeof doc.type === 'string' && doc.type.trim()) {
+        return doc.type.trim();
+    }
+    const cat = (category || '').trim().toLowerCase();
+    if (cat === 'cosmetics') {
+        return 'CPNP';
+    }
+    return 'Proof of notification';
+};
+
+const resolveDocFileName = (doc: any): string => {
+    if (typeof doc?.name === 'string' && doc.name.trim()) return doc.name.trim();
+    if (typeof doc?.fileName === 'string' && doc.fileName.trim()) return doc.fileName.trim();
+    if (typeof doc?.file === 'string' && doc.file.trim()) return doc.file.trim();
+    return '';
+};
+
+const resolveDocDueDate = (doc: any): string => {
+    if (!doc?.dueDate || typeof doc.dueDate !== 'string') return '';
+    return formatDateStringToDisplayString(doc.dueDate);
+};
+
+const getProductDocumentInfo = (
+    productUuid: string | undefined,
+    receiverCountry: string | undefined,
+    docParameters?: StockMovementParamsType
+) => {
+    if (!productUuid) {
+        return {
+            requiresCertificate: false,
+            hasCertificate: false,
+            isApproved: false,
+            status: '',
+            countryCode: '',
+            countryName: '',
+            documentType: '',
+            fileName: '',
+            dueDate: '',
+            displayText: '',
+        };
+    }
+
+    const paramProduct = docParameters?.products?.find(
+        (p) => p.uuid === productUuid || p.name === productUuid || p.sku === productUuid
+    );
+    if (!paramProduct) {
+        return {
+            requiresCertificate: false,
+            hasCertificate: false,
+            isApproved: false,
+            status: '',
+            countryCode: '',
+            countryName: '',
+            documentType: '',
+            fileName: '',
+            dueDate: '',
+            displayText: '',
+        };
+    }
+
+    const category = paramProduct.category || paramProduct.productType || '';
+    const requiresCertificate = isRegDocCategory(category);
+
+    // If user has not selected the receiverCountry, we leave column empty
+    if (!receiverCountry || !receiverCountry.trim()) {
+        return {
+            requiresCertificate,
+            hasCertificate: false,
+            isApproved: false,
+            status: '',
+            countryCode: '',
+            countryName: '',
+            receiverCountryCode: '',
+            documentType: '',
+            fileName: '',
+            dueDate: '',
+            displayText: '',
+        };
+    }
+
+    const userCountry = receiverCountry.trim().toUpperCase();
+    const userCountryObj = COUNTRIES.find(
+        (c) => c.value.toUpperCase() === userCountry || c.label.toUpperCase() === userCountry
+    );
+    const userCountryCode = userCountryObj?.value.toUpperCase() || userCountry;
+    const userCountryLabel = userCountryObj?.label.toUpperCase();
+    const isUserCountryEu = EU_COUNTRY_CODES.includes(userCountryCode) || userCountryCode === 'EU';
+
+    // If category is different from Cosmetics or Nutra/Supplements, display 'Not required'
+    if (!requiresCertificate) {
+        return {
+            requiresCertificate: false,
+            hasCertificate: false,
+            isApproved: false,
+            status: 'Not required',
+            countryCode: '',
+            countryName: '',
+            receiverCountryCode: userCountryCode,
+            documentType: '',
+            fileName: '',
+            dueDate: '',
+            displayText: 'Not required',
+        };
+    }
+
+    const docs = paramProduct.documents || [];
+    if (!docs.length) {
+        return {
+            requiresCertificate: true,
+            hasCertificate: false,
+            isApproved: false,
+            status: 'No',
+            countryCode: '',
+            countryName: '',
+            receiverCountryCode: userCountryCode,
+            documentType: '',
+            fileName: '',
+            dueDate: '',
+            displayText: 'No',
+        };
+    }
+
+    // Direct match by country code, label, or id
+    const directMatch = docs.find((doc) => {
+        const docCountry = (typeof doc.country === 'string' ? doc.country : doc.country?.country || '').trim().toUpperCase();
+        const docCountryId = (typeof doc.country === 'object' && doc.country?.id ? doc.country.id : '').trim().toUpperCase();
+        if (docCountryId && (docCountryId === userCountry || docCountryId === userCountryCode)) return true;
+        if (docCountry && (docCountry === userCountry || docCountry === userCountryCode)) return true;
+        if (userCountryLabel && docCountry === userCountryLabel) return true;
+        return false;
+    });
+
+    if (directMatch) {
+        const status = directMatch.approvalStatus || (directMatch as any).status || 'Approved';
+        const countryCode = getDocCountryCode(directMatch, userCountryCode);
+        const countryName = getDocCountryLabel(directMatch, countryCode, userCountryObj?.label || receiverCountry);
+        const documentType = resolveDocType(directMatch, category);
+        const fileName = resolveDocFileName(directMatch);
+        const dueDate = resolveDocDueDate(directMatch);
+        const isApproved = status.trim().toLowerCase() === 'approved';
+        return {
+            requiresCertificate: true,
+            hasCertificate: true,
+            isApproved,
+            status,
+            countryCode,
+            countryName,
+            receiverCountryCode: userCountryCode,
+            documentType,
+            fileName,
+            dueDate,
+            displayText: countryCode ? `${status}` : status,
+        };
+    }
+
+    // Check Multi (EU) match if receiver is an EU country
+    if (isUserCountryEu) {
+        const euMatch = docs.find((doc) => {
+            const docCountry = (typeof doc.country === 'string' ? doc.country : doc.country?.country || '').trim().toUpperCase();
+            return (
+                docCountry === 'MULTI (EU)' ||
+                docCountry === 'MULTI(EU)' ||
+                docCountry === 'MULTI' ||
+                docCountry === 'EU'
+            );
+        });
+        if (euMatch) {
+            const status = euMatch.approvalStatus || (euMatch as any).status || 'Approved';
+            const countryCode = getDocCountryCode(euMatch, 'EU');
+            const countryName = getDocCountryLabel(euMatch, countryCode, 'Multi (EU)');
+            const documentType = resolveDocType(euMatch, category);
+            const fileName = resolveDocFileName(euMatch);
+            const dueDate = resolveDocDueDate(euMatch);
+            const isApproved = status.trim().toLowerCase() === 'approved';
+            return {
+                requiresCertificate: true,
+                hasCertificate: true,
+                isApproved,
+                status,
+                countryCode,
+                countryName,
+                receiverCountryCode: userCountryCode,
+                documentType,
+                fileName,
+                dueDate,
+                displayText: countryCode ? `${status}` : status,
+            };
+        }
+    }
+
+    return {
+        requiresCertificate: true,
+        hasCertificate: false,
+        isApproved: false,
+        status: 'No',
+        countryCode: '',
+        countryName: '',
+        receiverCountryCode: userCountryCode,
+        documentType: '',
+        fileName: '',
+        dueDate: '',
+        displayText: 'No',
+    };
+};
+
+const getProductDocumentStatus = (
+    productUuid: string | undefined,
+    receiverCountry: string | undefined,
+    docParameters?: StockMovementParamsType
+): string => {
+    return getProductDocumentInfo(productUuid, receiverCountry, docParameters).displayText;
+};
+
+const renderCertificateStatus = (
+    productUuid: string | undefined,
+    receiverCountry: string | undefined,
+    docParameters?: StockMovementParamsType
+) => {
+    const info = getProductDocumentInfo(productUuid, receiverCountry, docParameters);
+    const text = info.displayText;
+
+    if (!text) return null;
+
+    if (text === 'Not required') {
+        return (
+            <Tooltip
+                title="This product type doesn't require any CPNP / Proof of notification"
+                placement="top"
+            >
+                <div style={{ minWidth: '130px', whiteSpace: 'nowrap', cursor: 'default' }}>
+                    <span className={styles['cert-status--plain']}>{text}</span>
+                </div>
+            </Tooltip>
+        );
+    }
+
+    if (text === 'No') {
+        const countryCode = info.receiverCountryCode ? ` (${info.receiverCountryCode})` : '';
+        const hintText = `No CPNP / Proof of notification were provided for this product for selected Country of receiver${countryCode}`;
+
+        return (
+            <Tooltip
+                title={hintText}
+                placement="top"
+            >
+                <div style={{ minWidth: '130px', whiteSpace: 'nowrap', cursor: 'default' }}>
+                    <span className={styles['cert-status--no']}>{text}</span>
+                </div>
+            </Tooltip>
+        );
+    }
+
+    const rawStatus = (info.status || '').trim().toLowerCase().replace(/[_-]/g, ' ');
+
+    let iconName: 'clock' | 'biggest-check' | 'close' | null = null;
+    let statusClass = '';
+
+    if (rawStatus === 'approved') {
+        iconName = 'biggest-check';
+        statusClass = styles['cert-status--approved'];
+    } else if (rawStatus === 'pending') {
+        iconName = 'clock';
+        statusClass = styles['cert-status--pending'];
+    } else if (rawStatus === 'in progress' || rawStatus === 'inprogress') {
+        iconName = 'clock';
+        statusClass = styles['cert-status--in-progress'];
+    } else if (rawStatus === 'declined' || rawStatus === 'rejected') {
+        iconName = 'close';
+        statusClass = styles['cert-status--declined'];
+    }
+
+    const tooltipContent = (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '12px', lineHeight: '1.4', padding: '2px 0' }}>
+            <div>
+                <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Document type: </span>
+                <span>{info.documentType}</span>
+            </div>
+            {info.fileName ? (
+                <div>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>File name: </span>
+                    <span>{info.fileName}</span>
+                </div>
+            ) : null}
+            <div>
+                <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Country: </span>
+                <span>{info.countryName}</span>
+            </div>
+            {info.dueDate ? (
+                <div>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Due date: </span>
+                    <span>{info.dueDate}</span>
+                </div>
+            ) : null}
+            <div>
+                <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Status: </span>
+                <span>{info.status || text}</span>
+            </div>
+        </div>
+    );
+
+    const statusLabel = info.status || text;
+
+    const cellNode = !iconName ? (
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', minWidth: '130px', whiteSpace: 'nowrap', cursor: 'default' }}>
+            <span className={styles['cert-status--plain']}>{statusLabel}</span>
+            {info.countryCode ? (
+                <span className={styles['cert-status-country']}>({info.countryCode})</span>
+            ) : null}
+        </div>
+    ) : (
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', minWidth: '150px', whiteSpace: 'nowrap', cursor: 'default' }}>
+            <span className={`${styles['cert-status-badge']} ${statusClass}`}>
+                <span className={styles['cert-status-circle']}>
+                    <Icon name={iconName} />
+                </span>
+                <span>{statusLabel}</span>
+            </span>
+            {info.countryCode ? (
+                <span className={styles['cert-status-country']}>({info.countryCode})</span>
+            ) : null}
+        </div>
+    );
+
+    return (
+        <Tooltip title={tooltipContent} placement="top">
+            {cellNode}
+        </Tooltip>
+    );
+};
+
 const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, docData, docParameters, closeDocModal, refetchDoc, forbiddenTabs }) => {
     const { tenantData: { alias, orderTitles } } = useTenant();
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible, needSeller, sellersList, sellersListActive } = useAuth();
@@ -109,6 +537,34 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
 
     }
     const [showAllHints, setShowAllHints] = useState(false);
+    const productsCardRef = useRef<HTMLDivElement | null>(null);
+    const [isProductsTutorialMode, setIsProductsTutorialMode] = useState<boolean>(false);
+
+    useEffect(() => {
+        const cardEl =
+            productsCardRef.current?.closest('.card-with-help-icon') ||
+            productsCardRef.current?.closest('.stock-movement--products') ||
+            productsCardRef.current?.closest('.card');
+        if (!cardEl) return;
+
+        const updateMode = () => {
+            setIsProductsTutorialMode(cardEl.classList.contains('tutorial-mode'));
+        };
+
+        updateMode();
+
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    updateMode();
+                }
+            }
+        });
+
+        observer.observe(cardEl, { attributes: true, attributeFilter: ['class'] });
+
+        return () => observer.disconnect();
+    }, []);
     useEffect(() => {
         if (docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS && !visitedStockMovements && cancelHintsNumber < 2) {
             setShowHintQuestion(true);
@@ -142,6 +598,23 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     const [showConfirmModalFillByStock, setShowConfirmModalFillByStock] = useState(false);
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showCertConfirmModal, setShowCertConfirmModal] = useState(false);
+    const [pendingSubmitData, setPendingSubmitData] = useState<any>(null);
+
+    const handleConfirmSendAnyway = async () => {
+        setShowCertConfirmModal(false);
+        if (pendingSubmitData) {
+            const dataToSend = pendingSubmitData;
+            setPendingSubmitData(null);
+            await executeSend(dataToSend);
+        }
+    };
+
+    const handleCancelSendAnyway = () => {
+        setShowCertConfirmModal(false);
+        setPendingSubmitData(null);
+        setIsLoading(false);
+    };
 
     const handleConfirmCancelDoc = async () => {
         setShowConfirmModal(false);
@@ -266,7 +739,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
     const shippingUnits = watch('shippingUnits');
     const sender = watch('sender');
     const receiver = watch('receiver');
+    const receiverCountry = watch('receiverCountry');
     const selectedSeller = watch('seller');
+
+    const isInboundOrStockMovement = docType === STOCK_MOVEMENT_DOC_TYPE.INBOUNDS || docType === STOCK_MOVEMENT_DOC_TYPE.STOCK_MOVEMENT;
 
     // Ensure the component subscribes to errors for all fields mapped to tabs 
     // by triggering the react-hook-form proxy getter during render.
@@ -454,6 +930,52 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                     />
                 ),
             },
+            ...(isInboundOrStockMovement
+                ? [
+                      {
+                          title: 'Product type',
+                          dataIndex: 'productType',
+                          key: 'productType',
+                          minWidth: 110,
+                          render: (_text, record, index) => {
+                              const productUuid = products?.[index]?.product || record?.product;
+                              const paramProduct = docParameters?.products?.find(
+                                  (p) => p.uuid === productUuid || p.name === productUuid || p.sku === productUuid
+                              );
+                              return (
+                                  <div style={{ minWidth: '90px' }}>
+                                      <span>{paramProduct?.productType || ''}</span>
+                                  </div>
+                              );
+                          },
+                      },
+                      {
+                          title: (
+                              <Tooltip
+                                  title={
+                                      StockMovementsHints(docNamesSingle[docType])['certificate'] ||
+                                      ProductHints['category'] ||
+                                      "Status of certificate (CPNP / Proof of notification) for the selected product (if required). 'No' means no certificates were provided"
+                                  }
+                                  open={isProductsTutorialMode ? true : undefined}
+                                  placement="top"
+                                  autoAdjustOverflow={false}
+                                  getPopupContainer={(triggerNode) => (triggerNode.closest('.card') as HTMLElement) || document.body}
+                                  overlayClassName={styles['tutorial-hint-antd-tooltip']}
+                              >
+                                  <span style={{ cursor: 'default' }}>CPNP / Proof of notification</span>
+                              </Tooltip>
+                          ),
+                          dataIndex: 'documentStatus',
+                          key: 'documentStatus',
+                          minWidth: 180,
+                          render: (_text, record, index) => {
+                              const productUuid = products?.[index]?.product || record?.product;
+                              return renderCertificateStatus(productUuid, receiverCountry, docParameters);
+                          },
+                      },
+                  ]
+                : []),
             {
                 //title: 'Quantity plan*',
                 title: <Tooltip title="Quantity of the product in pcs" >
@@ -1220,8 +1742,6 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             data.incomingDate = (new Date()).toISOString();
         }
 
-        setIsLoading(true);
-
         data.draft = isDraft;
         data.attachedFiles = selectedFiles;
         data.products.forEach(item => item.quality = item.quality || 'Saleable');
@@ -1242,10 +1762,31 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             // });
             updateTabTitles(['shippingUnits']);
 
-            setIsLoading(false);
             return;
         }
 
+        if (!isDraft && !isJustETA && isInboundOrStockMovement) {
+            const hasUnapprovedCertificates = data.products.some((item) => {
+                const info = getProductDocumentInfo(
+                    item.product,
+                    data.receiverCountry || receiverCountry,
+                    docParameters
+                );
+                return info.requiresCertificate && (!info.hasCertificate || !info.isApproved);
+            });
+
+            if (hasUnapprovedCertificates) {
+                setPendingSubmitData(data);
+                setShowCertConfirmModal(true);
+                return;
+            }
+        }
+
+        await executeSend(data);
+    }
+
+    const executeSend = async (data: any) => {
+        setIsLoading(true);
         try {
             const res = isJustETA ? await sendJustETA(data) : await sendDocument(data);
 
@@ -1541,7 +2082,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                     <div
                                         className='stock-movement--table-btns form-table--btns small-paddings width-100'>
                                         {(isOutboundOrStockMovement) ? (
-                                            <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['fillByStock'] || ''} forBtn >
+                                            <TutorialHintTooltip hint={StockMovementsHints(docNamesSingle[docType])['fillByStock'] || ''} forBtn positionTop={isInboundOrStockMovement}>
                                                 {<Tooltip title={!sender ? 'Please, select the sender warehouse first!' : ''} >
                                                     <span><Button
                                                         type="button"
@@ -1560,14 +2101,16 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                         }
                                         <TutorialHintTooltip
                                             hint={StockMovementsHints(docNamesSingle[docType])['importProducts'] || ''}
-                                            forBtn>
+                                            forBtn
+                                            positionTop={isInboundOrStockMovement}>
                                             <Button type="button" icon="import-file" iconOnTheRight
                                                 size={ButtonSize.SMALL} disabled={isDisabled}
                                                 onClick={handleImportXLS}>Import from xls</Button>
                                         </TutorialHintTooltip>
                                         <TutorialHintTooltip
                                             hint={StockMovementsHints(docNamesSingle[docType])['selection'] || ''}
-                                            forBtn>
+                                            forBtn
+                                            positionTop={isInboundOrStockMovement}>
                                             <Button type="button" icon='selection' iconOnTheRight
                                                 size={ButtonSize.SMALL} disabled={isDisabled}
                                                 variant={ButtonVariant.SECONDARY}
@@ -1575,7 +2118,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                                 Add from List
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn>
+                                        <TutorialHintTooltip hint={CommonHints['addLine'] || ''} forBtn positionTop={isInboundOrStockMovement}>
                                             <Button type="button" icon='add-table-row' iconOnTheRight
                                                 size={ButtonSize.SMALL} disabled={isDisabled}
                                                 variant={ButtonVariant.SECONDARY} onClick={() => appendProduct({
@@ -1590,7 +2133,7 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                                 Add by SKU
                                             </Button>
                                         </TutorialHintTooltip>
-                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn>
+                                        <TutorialHintTooltip hint={CommonHints['removeSelected'] || ''} forBtn positionTop={isInboundOrStockMovement}>
                                             <Button type="button" icon='remove-table-row' iconOnTheRight
                                                 size={ButtonSize.SMALL} disabled={isDisabled}
                                                 variant={ButtonVariant.SECONDARY} onClick={removeProducts}>
@@ -1601,10 +2144,10 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                                 </div>
                             </div>
                         </div>
-                        <div className={`${styles['stock-movement--table']} table-form-fields form-table`}>
+                        <div ref={productsCardRef} className={`${styles['stock-movement--table']} table-form-fields form-table`}>
                             <Table
                                 columns={getProductColumns(control)}
-                                dataSource={getValues('products')?.map((field, index) => ({ key: field.product + '-' + index, ...field })) || []}
+                                dataSource={products?.map((field, index) => ({ key: field.product + '-' + index, ...field })) || []}
                                 pagination={false}
                                 rowKey="key"
                                 className={`has-border ${errors.products ? 'has-error-decor' : ''}`}
@@ -1740,6 +2283,18 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
             onOk={() => { setValue('products', []); setShowConfirmModalFillByStock(false); fillByStock(); }}
             onCancel={() => setShowConfirmModalFillByStock(false)}
         />}
+        {showCertConfirmModal && <ConfirmModal
+            icon="error"
+            title="Some certificates in your inbound are not approved yet."
+            okText="Send anyway"
+            cancelText="Cancel"
+            onOk={handleConfirmSendAnyway}
+            onCancel={handleCancelSendAnyway}
+        >
+            <p>
+                You can still create and send the inbound, but please note that inbound processing may take longer than usual, and there is a risk that the products will not be added to stock until a valid document is provided.
+            </p>
+        </ConfirmModal>}
         {showHintQuestion && <HintsModal docName="Inbounds" onClose={handleCancelHints} onOk={showHints} />}
     </div>
 }

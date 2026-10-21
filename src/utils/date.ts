@@ -29,7 +29,7 @@ const formatDateToDisplayString = (date: Date) => {
         day = "" + d.getDate(),
         year = "" +d.getFullYear();
 
-    if (year==="1") return '';
+    if (year === "1" || year === "1901" || year === "0") return '';
 
     if (month.length < 2) month = "0" + month;
     if (day.length < 2) day = "0" + day;
@@ -39,7 +39,7 @@ const formatDateToDisplayString = (date: Date) => {
 };
 
 const formatDateStringToDisplayString = (dateString: string) => {
-    if (dateString === '0001-01-01T00:00:00') return "";
+    if (dateString === '0001-01-01T00:00:00' || dateString === '1901-01-01T00:00:00') return "";
     return formatDateToDisplayString(new Date(dateString));
 }
 

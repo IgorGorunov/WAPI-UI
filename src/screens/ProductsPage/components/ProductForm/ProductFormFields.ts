@@ -54,7 +54,7 @@ export const FormFieldsGeneral = (
     {
         countries,
         isNew=false,
-        needCertificate,
+        // needCertificate,
         productTypeGroupOptions,
         onProductTypeGroupChange,
         productTypeOptions,
@@ -62,7 +62,7 @@ export const FormFieldsGeneral = (
     }: {
         countries: OptionType[],
         isNew: boolean,
-        needCertificate: boolean,
+        // needCertificate: boolean,
         productTypeOptions: OptionType[],
         productTypeGroupOptions: OptionType[],
         onProductTypeGroupChange: (val: string) => void,
@@ -98,7 +98,7 @@ export const FormFieldsGeneral = (
             errorMessage: "Required field",
             width: WidthType.w17,
             classNames: "",
-            hint: ProductHints['productType'] || '',
+            hint: ProductHints['category'] || '',
             onChange: onProductTypeGroupChange,
             // onlyAllowedSymbols: true,
         },
@@ -184,17 +184,17 @@ export const FormFieldsGeneral = (
             disabled: true,
         },
         //
-        needCertificate ? {
-            fieldType: FormFieldTypes.TOGGLE,
-            name: 'certificate',
-            label: "Have certificate for the product",
-            width: WidthType.w100,
-            classNames: "",
-            hint: '',
-            fieldDescription: [`For dietary supplements, a certification or notification must be provided for each country from which the products are sold.
-For cosmetic products, a CPNP registration and a Product Information File (PIF) must be provided.`,
-            "Please, upload the certificate or PIF file in PDF format in 'Files' tab in 'Certificates' section."],
-        } : null,
+//         needCertificate ? {
+//             fieldType: FormFieldTypes.TOGGLE,
+//             name: 'certificate',
+//             label: "Have certificate for the product",
+//             width: WidthType.w100,
+//             classNames: "",
+//             hint: '',
+//             fieldDescription: [`For dietary supplements, a certification or notification must be provided for each country from which the products are sold.
+// For cosmetic products, a CPNP registration and a Product Information File (PIF) must be provided.`,
+//             "Please, upload the certificate or PIF file in PDF format in 'Files' tab in 'Certificates' section."],
+//         } : null,
 
     ];
 }
@@ -214,6 +214,7 @@ export const FormFieldsSKU = () => [
             width: WidthType.w33,
             classNames: "",
             hint: ProductHints['sku'] || '',
+            // onlyAllowedSymbols: true,
         },
         {
             fieldType: FormFieldTypes.TEXT,

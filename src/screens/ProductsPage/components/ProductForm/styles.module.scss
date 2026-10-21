@@ -125,6 +125,10 @@
       width: 100%;
       height: 100%;
 
+      &:global(.certificate) {
+        padding: 8px 0;
+      }
+
       :global(.dropzone-wrapper) {
         width: 100%;
       }
@@ -152,36 +156,38 @@
   }
 }
 
-.tutorial-info {
-  display: none;
-  max-height: 20vh;
-  overflow: hidden scroll;
-
-  p {
-    white-space: pre-wrap;
-  }
-
-  .tutorial-title {
-    font-weight: bold;
-    font-size: 14px;
-    //margin-right: 16px;
-  }
-
-  .tutorial-text {
-    font-size: 12px;
-  }
-
-  .tutorial-state & {
-    display: block;
-    margin-top: 16px;
-  }
-}
-
-.main-info {
-  max-height: calc(100vh - 245px);
-  overflow: hidden scroll;
-
-  .tutorial-state & {
-    max-height: calc(80vh - 245px - 57px);
-  }
-}
+  // Unused legacy styles
+  // .tutorial-info {
+  //   display: none;
+  //   max-height: 20vh;
+  //   overflow: hidden scroll;
+  //
+  //   p {
+  //     white-space: pre-wrap;
+  //   }
+  //
+  //   .tutorial-title {
+  //     font-weight: bold;
+  //     font-size: 14px;
+  //     //margin-right: 16px;
+  //   }
+  //
+  //   .tutorial-text {
+  //     font-size: 12px;
+  //   }
+  //
+  //   .tutorial-state & {
+  //     display: block;
+  //     margin-top: 16px;
+  //   }
+  // }
+  //
+  // .main-info {
+  //   max-height: calc(100vh - 245px);
+  //   overflow: hidden scroll;
+  //
+  //   .tutorial-state & {
+  //     max-height: calc(80vh - 245px - 57px);
+  //   }
+  // }
+//}

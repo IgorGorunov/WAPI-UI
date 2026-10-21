@@ -1,135 +1,139 @@
-import ArrowRight from "../../assets/icons/arrow-right.svg";
-import ArrowLeft from "../../assets/icons/arrow-left.svg";
-import MenuIcon from "@/assets/icons/MenuIcon.svg";
-import Notification from "@/assets/icons/notification.svg";
-import BGLogo from "@/assets/icons/bg-logo.svg";
-import Search from "@/assets/icons/search.svg";
-import Home from "@/assets/icons/home.svg";
-import Close from "@/assets/icons/close.svg";
-import Products from "@/assets/icons/products.svg";
-import KeyboardArrowUp from "@/assets/icons/keyboard_arrow_up.svg";
-import KeyboardArrowRight from "@/assets/icons/keyboard_arrow_right.svg";
-import Expand from "@/assets/icons/expand.svg";
-import Info from "@/assets/icons/info.svg";
-import Add from "@/assets/icons/add.svg";
-import ImportFile from "@/assets/icons/import-file.svg";
-import DownloadFile from "@/assets/icons/download.svg";
-import User from "@/assets/icons/user-icon.svg";
-import Orders from "@/assets/icons/orders.svg";
-import Car from "@/assets/icons/car.svg";
-import Calendar from "@/assets/icons/calendar.svg";
-import Remove from "@/assets/icons/remove.svg";
-import Check from "@/assets/icons/check.svg";
-import General from '@/assets/icons/general.svg';
-import SKU from '@/assets/icons/sku.svg';
-import Warehouse from "@/assets/icons/warehouse.svg";
-import Additional from '@/assets/icons/additional.svg';
-import Dimensions from "@/assets/icons/dimensions.svg";
-import Barcodes from '@/assets/icons/barcodes.svg';
-import UnderConstruction from "@/assets/icons/under-construction.svg";
-import Aliases from '@/assets/icons/aliases.svg';
-import SuccessIcon from '@/assets/icons/success-icon.svg';
-import ErrorIcon from '@/assets/icons/error-icon.svg';
-import CloseInCircle from '@/assets/icons/close-in-circle.svg'
-import Upload from '@/assets/icons/upload.svg'
-import Bundle from '@/assets/icons/bundle.svg'
-import History from '@/assets/icons/history.svg'
-import History2 from '@/assets/icons/history2.svg'
-import Analogues from '@/assets/icons/analogues.svg'
-import Files from '@/assets/icons/files.svg'
-import Delete from '@/assets/icons/delete.svg'
-import Goods from '@/assets/icons/goods.svg'
-import Receiver from '@/assets/icons/receiver.svg'
-import Filter from '@/assets/icons/filter.svg'
-import Exit from '@/assets/icons/exit.svg'
-import AddTableRow from '@/assets/icons/add-table-row.svg'
-import RemoveTableRow from '@/assets/icons/remove-table-row.svg'
-import Finances from '@/assets/icons/finances.svg'
-import Mastercard from '@/assets/icons/mastercard.svg'
-import Visa from '@/assets/icons/visa.svg'
-import Paypal from '@/assets/icons/paypal.svg'
-import Message from '@/assets/icons/message.svg'
-import StockMovement from '@/assets/icons/stock-movements.svg'
-import Plus from '@/assets/icons/plus.svg'
-import Minus from '@/assets/icons/minus.svg'
-import SortAsc from '@/assets/icons/sort_asc.svg'
-import SortDesc from '@/assets/icons/sort_desc.svg'
-import ShoppingCart from '@/assets/icons/shopping_cart.svg'
-import Track from '@/assets/icons/track_changes.svg'
-import Complaint from '@/assets/icons/complaint.svg'
-import Trouble from '@/assets/icons/trouble.svg'
-import Burger from '@/assets/icons/burger.svg'
-import WasteBin from "@/assets/icons/waste-bin.svg"
-import Clear from '@/assets/icons/clear.svg'
-import TrendingUp from '@/assets/icons/trending_up.svg'
-import ReportFolder from '@/assets/icons/reports-folder.svg'
-import ArrowUpGreen from '@/assets/icons/arrow-up-green.svg'
-import ArrowDownRed from '@/assets/icons/arrow-down-red.svg'
-import Question from '@/assets/icons/question.svg'
-import Copy from '@/assets/icons/copy.svg'
-import Selection from '@/assets/icons/selection.svg'
-import Select from '@/assets/icons/select.svg'
-import Send from '@/assets/icons/send.svg'
-import BigCheck from '@/assets/icons/big-check.svg'
-import PreviewFile from '@/assets/icons/preview.svg'
-import File from '@/assets/icons/file.svg'
-import Options from '@/assets/icons/options.svg'
-import Ticket from '@/assets/icons/ticket.svg'
-import Emoji from '@/assets/icons/emoji.svg'
-import Book from '@/assets/icons/book.svg'
-import Edit from '@/assets/icons/edit.svg'
-import ApiDocumentation from '@/assets/icons/api-documentation.svg'
-import Profile from '@/assets/icons/profile.svg'
-import Folder from '@/assets/icons/folder.svg'
-import Analytics from '@/assets/icons/analytics.svg'
-import FinTransparency from '@/assets/icons/fin-transparency.svg'
-import GalaSettings from '@/assets/icons/gala_settings.svg'
-import OutlineClock from '@/assets/icons/clock-outline.svg'
-import OutlineShopping from '@/assets/icons/outline_shopping.svg'
-import Lines from '@/assets/icons/lines.svg'
-import Admin from '@/assets/icons/admin.svg'
-import Settings from '@/assets/icons/settings.svg'
-import FillDoc from '@/assets/icons/fillDoc.svg'
-import LightningBolt from '@/assets/icons/lightning-bolt.svg'
-import Warning from '@/assets/icons/warning.svg'
-import Shipping from '@/assets/icons/shipping.svg'
-import FAQ from '@/assets/icons/faq.svg'
-import Webcam from '@/assets/icons/webcam.svg'
-import Event from '@/assets/icons/event.svg';
-import Issue from '@/assets/icons/issue.svg';
-import Comment from '@/assets/icons/comment.svg';
-import SelfCollect from '@/assets/icons/self-collect.svg';
-import Sms from '@/assets/icons/sms.svg';
-import CourierService from '@/assets/icons/service-courier.svg';
-import CountryIn from '@/assets/icons/country-in.svg';
-import CountryOut from '@/assets/icons/country-out.svg';
-import Status from '@/assets/icons/status.svg';
-import TicketGray from '@/assets/icons/ticket-gray.svg';
-import TicketOpen from '@/assets/icons/ticket-open.svg';
-import CountryLocation from '@/assets/icons/country-location.svg';
-import Sender from '@/assets/icons/sender.svg';
-import PackageReceiver from '@/assets/icons/pachege-receiver.svg';
-import Topic from '@/assets/icons/topic.svg';
-import DocType from '@/assets/icons/document-type.svg';
-import Package from '@/assets/icons/package.svg';
-import PackageReturn from '@/assets/icons/package-return.svg';
-import Marketplace from '@/assets/icons/shop-icon.svg';
-import Whitelabel from '@/assets/icons/whitelabel.svg';
-import Cookie from '@/assets/icons/cookie.svg';
-import ArrowUpSmall from '@/assets/icons/arrow-up-small.svg';
-import ArrowDownSmall from '@/assets/icons/arrow-down-small.svg';
-import ClearFilters from '@/assets/icons/filter-clear.svg';
-import ApplyFilters from '@/assets/icons/filter-apply.svg';
-import BiggestCheck from '@/assets/icons/biggest-check.svg';
-import CalendarNav from '@/assets/icons/calendar-nav.svg';
-import Pallet from '@/assets/icons/pallet-freight.svg';
-import AntiFraud from '@/assets/icons/fraud-protect.svg';
-import Approval from '@/assets/icons/approval.svg';
-import Phone from '@/assets/icons/phone.svg';
-import SendWhite from '@/assets/icons/send-white.svg';
-import WarningExclamation from '@/assets/icons/warning-exclamation.svg';
-import Diagram from "@/assets/icons/pie-diagram.svg";
-import Maintenance from "@/assets/icons/maintenance.svg";
+import {
+    ArrowRight,
+    ArrowLeft,
+    MenuIcon,
+    Notification,
+    BgLogo as BGLogo,
+    Search,
+    Home,
+    Close,
+    Products,
+    KeyboardArrowUp,
+    KeyboardArrowRight,
+    Expand,
+    Info,
+    Add,
+    ImportFile,
+    Download as DownloadFile,
+    UserIcon as User,
+    Orders,
+    Car,
+    Calendar,
+    Remove,
+    Check,
+    General,
+    Sku as SKU,
+    Warehouse,
+    Additional,
+    Dimensions,
+    Barcodes,
+    UnderConstruction,
+    Aliases,
+    SuccessIcon,
+    ErrorIcon,
+    CloseInCircle,
+    Upload,
+    Bundle,
+    History,
+    History2,
+    Analogues,
+    Files,
+    Delete,
+    Goods,
+    Receiver,
+    Filter,
+    Exit,
+    AddTableRow,
+    RemoveTableRow,
+    Finances,
+    Mastercard,
+    Visa,
+    Paypal,
+    Message,
+    StockMovements as StockMovement,
+    Plus,
+    Minus,
+    SortAsc,
+    SortDesc,
+    ShoppingCart,
+    TrackChanges as Track,
+    Complaint,
+    Trouble,
+    Burger,
+    WasteBin,
+    Clear,
+    TrendingUp,
+    ReportsFolder as ReportFolder,
+    ArrowUpGreen,
+    ArrowDownRed,
+    Question,
+    Copy,
+    Selection,
+    Select,
+    Send,
+    BigCheck,
+    Preview as PreviewFile,
+    File,
+    Options,
+    Ticket,
+    Emoji,
+    Book,
+    Edit,
+    ApiDocumentation,
+    Profile,
+    Folder,
+    Analytics,
+    FinTransparency,
+    GalaSettings,
+    ClockOutline as OutlineClock,
+    OutlineShopping,
+    Lines,
+    Admin,
+    Settings,
+    FillDoc,
+    LightningBolt,
+    Warning,
+    Shipping,
+    Faq as FAQ,
+    Webcam,
+    Event,
+    Issue,
+    Comment,
+    SelfCollect,
+    Sms,
+    ServiceCourier as CourierService,
+    CountryIn,
+    CountryOut,
+    Status,
+    TicketGray,
+    TicketOpen,
+    CountryLocation,
+    Sender,
+    PachegeReceiver as PackageReceiver,
+    Topic,
+    DocumentType as DocType,
+    Package,
+    PackageReturn,
+    ShopIcon as Marketplace,
+    Whitelabel,
+    Cookie,
+    ArrowUpSmall,
+    ArrowDownSmall,
+    FilterClear as ClearFilters,
+    FilterApply as ApplyFilters,
+    BiggestCheck,
+    CalendarNav,
+    PalletFreight as Pallet,
+    FraudProtect as AntiFraud,
+    Approval,
+    Phone,
+    SendWhite,
+    WarningExclamation,
+    PieDiagram as Diagram,
+    Maintenance,
+    FileFilled,
+    Replace,
+} from "@/assets/icons-components";
 
 export const icons = {
     "arrow-left": ArrowLeft,
@@ -264,4 +268,6 @@ export const icons = {
     'warning-exclamation': WarningExclamation,
     'diagram': Diagram,
     'maintenance': Maintenance,
+    'file-filled': FileFilled,
+    'replace': Replace,
 };

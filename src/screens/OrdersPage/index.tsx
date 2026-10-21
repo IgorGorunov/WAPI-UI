@@ -143,9 +143,9 @@ const OrdersPage = () => {
         setShowOrderModal(true);
     };
 
-    useEffect(() => {
-        console.log('showOrderModal ', showOrderModal, 'orderUuid ', orderUuid);
-    }, [showOrderModal, orderUuid]);
+    // useEffect(() => {
+    //     console.log('showOrderModal ', showOrderModal, 'orderUuid ', orderUuid);
+    // }, [showOrderModal, orderUuid]);
 
     //add order handler
     const handleAddOrder = () => {

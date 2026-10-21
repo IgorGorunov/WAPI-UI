@@ -93,7 +93,8 @@
         background-color: var(--color-light-gray) !important;
       }
 
-      .input-select__container {
+      .input-select__container,
+      .form-control-date {
         padding-top: 0;
         padding-bottom: 0;
       }
@@ -101,6 +102,10 @@
 
     &-cell {
       padding: 8px 6px !important;
+      font-size: 10px;
+      font-weight: bold;
+      color: var(--color-gray-blue) !important;
+
     }
 
     .error {

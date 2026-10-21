@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pagination, Popover, Table, TableColumnProps, Tooltip } from 'antd';
 import PageSizeSelector from '@/components/LabelSelect';
-import "@/styles/tables.scss";
+// import "@/styles/tables.scss";
 import Icon from "@/components/Icon";
 import { IconType } from "@/components/Icon";
 import { ColumnType } from "antd/es/table";

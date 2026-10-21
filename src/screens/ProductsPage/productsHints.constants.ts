@@ -1,5 +1,6 @@
 export const ProductHints = {
     name: 'Short product name. Max length is 75 characters',
+    category: 'Please note that a CPNP or Proof of Notification is required if you choose Cosmetics or Nutra/Supplements.',
     countryOfOrigin: 'Where product was produced',
     purchaseValue: 'Purchase cost',
     fullName: 'Full name of the product. Max length is 250 characters',
@@ -28,6 +29,13 @@ export const ProductOtherHints = {
     virtualBundleKit: 'If the product is a set and should be break down into several products, specify the products and quantities here',
     analogues: 'If the product is out of stock, the system will take its analogue (specify it here)',
     files: 'Any files related to the product (e.g., pictures or certificates). The supported file formats: PNG, JPEG, PDF',
+
+    //category certificate's hints
+    certificateCountryCPNP: 'Select the country for the certificate. Select Multi for a multilanguage CPNP certificate',
+    certificateCountryProof: 'Select the country for the certificate.',
+    certificateFile: 'Upload one certificate. Supported formats: PDF, JPG, PNG. Max file size: 10 MB.',
+    certificateDueDate: 'Please enter the certificate expiry date when applicable',
+    certificateStatus: 'Document status. You’ll receive a push notification when it’s updated.',
 
     // 'add-barcode-btn': 'Add barcode',
     // 'remove-barcode-btn': 'Delete a chosen barcode',

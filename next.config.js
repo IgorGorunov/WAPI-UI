@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const path = require('path');
+// const path = require('path');
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -10,7 +10,7 @@ const nextConfig = {
 
   // Enable production optimizations
   compress: true,
-  swcMinify: true,
+  // swcMinify: true,
   productionBrowserSourceMaps: false,
 
   // Optimize fonts
@@ -23,12 +23,12 @@ const nextConfig = {
     } : false,
   },
 
-  // Modularize imports for better tree-shaking
-  modularizeImports: {
-    'react-icons': {
-      transform: 'react-icons/{{member}}',
-    },
-  },
+  // // Modularize imports for better tree-shaking
+  // modularizeImports: {
+  //   'react-icons': {
+  //     transform: 'react-icons/{{member}}',
+  //   },
+  // },
 
   transpilePackages: [
     'rc-util',
@@ -130,41 +130,52 @@ const nextConfig = {
     ];
   },
 
-  webpack(config) {
-    const fileLoaderRule = config.module.rules.find((rule) =>
-      rule.test?.test?.('.svg'),
-    );
+  // webpack(config) {
+  //   const fileLoaderRule = config.module.rules.find((rule) =>
+  //     rule.test?.test?.('.svg'),
+  //   );
+  //
+  //   config.module.rules.push(
+  //     {
+  //       ...fileLoaderRule,
+  //       test: /\.svg$/i,
+  //       resourceQuery: /url/,
+  //     },
+  //     {
+  //       test: /\.svg$/i,
+  //       issuer: /\.[jt]sx?$/,
+  //       resourceQuery: { not: /url/ },
+  //       use: ['@svgr/webpack'],
+  //     },
+  //   );
+  //
+  //   fileLoaderRule.exclude = /\.svg$/i;
+  //
+  //   config.module.rules.forEach(rule => {
+  //     if (!rule.oneOf) return;
+  //
+  //     rule.oneOf.forEach(one => {
+  //       if (!`${one.issuer?.and}`.includes('_app')) return;
+  //       one.issuer.and = [path.resolve(__dirname)];
+  //     });
+  //   });
+  //
+  //   config.resolve.extensions.push('.js', '.mjs');
 
-    config.module.rules.push(
-      {
-        ...fileLoaderRule,
-        test: /\.svg$/i,
-        resourceQuery: /url/,
-      },
-      {
-        test: /\.svg$/i,
-        issuer: /\.[jt]sx?$/,
-        resourceQuery: { not: /url/ },
-        use: ['@svgr/webpack'],
-      },
-    );
-
-    fileLoaderRule.exclude = /\.svg$/i;
-
-    config.module.rules.forEach(rule => {
-      if (!rule.oneOf) return;
-
-      rule.oneOf.forEach(one => {
-        if (!`${one.issuer?.and}`.includes('_app')) return;
-        one.issuer.and = [path.resolve(__dirname)];
-      });
-    });
-
-    config.resolve.extensions.push('.js', '.mjs');
-
-
-    return config;
-  },
+  // webpack(config) {
+  //   // Allow global CSS/SCSS to be imported from components (not just _app).
+  //   // Next.js restricts global CSS imports to _app by default; this widens the
+  //   // issuer allowlist to the entire project root.
+  //   config.module.rules.forEach(rule => {
+  //     if (!rule.oneOf) return;
+  //     rule.oneOf.forEach(one => {
+  //       if (!`${one.issuer?.and}`.includes('_app')) return;
+  //       one.issuer.and = [path.resolve(__dirname)];
+  //     });
+  //   });
+  //
+  //   return config;
+  // },
 };
 
 module.exports = withBundleAnalyzer(nextConfig);

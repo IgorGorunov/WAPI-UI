@@ -26,4 +26,6 @@ export const StockMovementsHints = (docType = '') => {
     // removeSelected: 'Delete chosen products',
 
     files: 'Put here the following files: packing list/shipment labels/CRMs/photos and other documents',
+
+    certificate: "Status of certificate (CPNP / Proof of notification) for the selected product for receiver country (if required). 'No' means no certificates were provided."
 }};

@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import styles from "./styles.module.scss";
-import LogoWAPI from "@/assets/icons/LogoWAPI.svg";
+import LogoWAPI from "@/assets/icons-components/LogoWapi";
 import { Routes } from "@/types/routes";
 import useTenant from "@/context/tenantContext";
 import { TENANT_TYPE, TenantFooterDataType, TENANTS } from "@/lib/tenants";

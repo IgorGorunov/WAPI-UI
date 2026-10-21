@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pagination, Table, TableColumnProps, Tooltip } from 'antd';
 import { ColumnType } from "antd/es/table";
 import styles from "./styles.module.scss";
-import "@/styles/tables.scss";
+// import "@/styles/tables.scss";
 import { InvoiceType } from "@/types/invoices";
 import PageSizeSelector from '@/components/LabelSelect';
 import TitleColumn from "@/components/TitleColumn"

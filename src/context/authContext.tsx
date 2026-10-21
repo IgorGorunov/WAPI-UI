@@ -434,10 +434,10 @@ export const AuthProvider = (props: PropsWithChildren) => {
     if (!accessForActions) { return []; }
     const forbiddenTabs = accessForActions.filter(item => item.objectType.includes(document + '/') && item.forbidden && (item.objectType.includes('DeliveryCost') ? item.action === AccessActions.View : true));
 
-    console.log('getForbiddenTabs', document, forbiddenTabs, forbiddenTabs.map(item => {
-      const temp = item.objectType.split('/');
-      return temp[temp.length - 1];
-    }));
+    // console.log('getForbiddenTabs', document, forbiddenTabs, forbiddenTabs.map(item => {
+    //   const temp = item.objectType.split('/');
+    //   return temp[temp.length - 1];
+    // }));
     return forbiddenTabs.map(item => {
       const temp = item.objectType.split('/');
       return temp[temp.length - 1];

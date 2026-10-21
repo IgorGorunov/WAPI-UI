@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import "./styles.scss";
-import '@/styles/forms.scss';
+// import '@/styles/forms.scss';
 import useAuth from "@/context/authContext";
 import { AccessActions } from "@/types/auth";
 import useHintsTracking from "@/context/hintsContext";

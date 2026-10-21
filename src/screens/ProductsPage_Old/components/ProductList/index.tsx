@@ -3,7 +3,7 @@ import {Pagination, Popover, Table, TableColumnProps, Tooltip} from 'antd';
 import {ColumnType} from "antd/es/table";
 
 import "./styles.scss";
-import "@/styles/tables.scss";
+// import "@/styles/tables.scss";
 
 import {ProductType} from "@/types/products";
 import PageSizeSelector from '@/components/LabelSelect';

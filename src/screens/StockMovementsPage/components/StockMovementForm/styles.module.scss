@@ -34,9 +34,10 @@
     }
   }
 
-  &--helper-text p {
-    line-height: normal;
-  }
+  // Unused style
+  // &--helper-text p {
+  //   line-height: normal;
+  // }
 
   .delivery-type-hint {
     padding-top: 0;
@@ -67,9 +68,8 @@
     //padding: 32px 28px 16px 38px;
     padding: 0 16px;
 
-    &.can-edit {
-
-    }
+    // &.can-edit {
+    // }
 
     &.no-edit {
       .shipping-units-btns {
@@ -107,16 +107,17 @@
     }
   }
 
-  &--order-btns {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin-bottom: 8px;
-
-    @include upToTablet {
-      flex: 1 1 50%;
-    }
-  }
+  // Unused style
+  // &--order-btns {
+  //   display: flex;
+  //   justify-content: flex-end;
+  //   align-items: flex-end;
+  //   margin-bottom: 8px;
+  //
+  //   @include upToTablet {
+  //     flex: 1 1 50%;
+  //   }
+  // }
 
   &--products,
   &--history,
@@ -158,19 +159,20 @@
     }
   }
 
-  :global(.order-tracking-link) {
-    a {
-      font-size: 12px;
-      font-weight: bold;
-      color: var(--color-blue);
-      text-decoration: underline;
-
-      &:hover,
-      &:focus {
-        text-decoration: none;
-      }
-    }
-  }
+  // Unused style (from OrdersPage)
+  // :global(.order-tracking-link) {
+  //   a {
+  //     font-size: 12px;
+  //     font-weight: bold;
+  //     color: var(--color-blue);
+  //     text-decoration: underline;
+  //
+  //     &:hover,
+  //     &:focus {
+  //       text-decoration: none;
+  //     }
+  //   }
+  // }
 
   .selection-btn {
     svg path {
@@ -187,4 +189,123 @@
   .dropzoneBlock {
     margin-top: 12px;
   }
+}
+
+.tutorial-hint-antd-tooltip {
+  max-width: 260px !important;
+
+  :global {
+    .ant-tooltip-inner {
+      background-color: var(--color-tooltip-bg) !important;
+      color: var(--color-white) !important;
+      font-size: 10px !important;
+      font-weight: bold !important;
+      text-align: center !important;
+      border-radius: 15px !important;
+      padding: 6px 12px !important;
+      line-height: 1.35 !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .ant-tooltip-arrow::before {
+      background: var(--color-tooltip-bg) !important;
+    }
+  }
+}
+
+.cert-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.cert-status-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// Approved (green)
+.cert-status--approved {
+  background: var(--color-status-approved-bg);
+  color: var(--color-status-approved-text);
+  border: 1px solid var(--color-status-approved-border);
+
+  .cert-status-circle {
+    background-color: var(--color-status-approved-circle);
+
+    svg {
+      width: 10px;
+      height: 10px;
+      fill: var(--color-white) !important;
+    }
+  }
+}
+
+// Pending and In progress (yellow)
+.cert-status--pending,
+.cert-status--in-progress {
+  background: var(--color-status-pending-bg);
+  color: var(--color-status-pending-text);
+  border: 1px solid var(--color-status-pending-border);
+
+  .cert-status-circle {
+    svg {
+      width: 16px;
+      height: 16px;
+
+      path {
+        stroke: var(--color-status-pending-icon) !important;
+      }
+    }
+  }
+}
+
+// Declined (red)
+.cert-status--declined {
+  background: var(--color-status-declined-bg);
+  color: var(--color-status-declined-text);
+  border: 1px solid var(--color-status-declined-border);
+
+  .cert-status-circle {
+    background-color: var(--color-status-declined-circle);
+    width: 14px;
+    height: 14px;
+
+    svg {
+      width: 10px;
+      height: 10px;
+
+      path {
+        fill: var(--color-white) !important;
+        stroke: var(--color-white) !important;
+      }
+    }
+  }
+}
+
+.cert-status--plain {
+  font-size: 10px;
+  color: var(--color-gray-blue);
+}
+
+.cert-status--no {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-dark-red);
+}
+
+.cert-status-country {
+  font-size: 12px;
+  color: var(--color-gray-blue);
+  font-weight: 500;
 }

@@ -120,6 +120,10 @@ export type FieldPropsType<T extends FieldValues = FieldValues> = {
   btnName?: string;
   onBtnClick?: () => void;
   fieldDescription?: string[];
+  allowManualInput?: boolean;
+  isManualInput?: boolean;
+  manualInput?: boolean;
+  placeholderColor?: string;
 }
 
 export type FormBuilderType = FieldPropsType & {

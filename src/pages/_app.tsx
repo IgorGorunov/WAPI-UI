@@ -1,5 +1,4 @@
 import type { AppContext, AppProps } from "next/app";
-import { Roboto } from "next/font/google";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/context/authContext";
 import "@/styles/globals.scss";
@@ -20,24 +19,14 @@ import "react-phone-number-input/style.css";
 
 
 // Dashboard internal components
-
-
 import { NotificationsProvider } from "@/context/notificationContext";
 import { TourGuideProvider } from "@/context/tourGuideContext";
-// import { clarity } from 'react-microsoft-clarity';
 import { applyClarityConsent, getPerformanceConsent } from '@/utils/clarity-consent';
 import { useEffect, useState } from "react";
 import { HintsTrackingProvider } from "@/context/hintsContext";
 import { getTenantData, TENANT_TYPE, TenantDataType, TENANTS, tenants } from '@/lib/tenants';
 import { TenantContext } from "@/context/tenantContext";
 import { ToastContainer } from "@/components/Toast";
-
-const roboto = Roboto({
-  weight: ["300", "400", "500", "700"],
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const inter = Inter({
   weight: ["400", "700", "900"],
@@ -49,31 +38,6 @@ const inter = Inter({
 export function App({ Component, pageProps, tenantHost }: AppProps & { tenantHost?: string, host?: string }) {
   const [tenant, setTenant] = useState<null | TENANT_TYPE>(null);
   const [tenantData, setTenantData] = useState<TenantDataType | null>(null);
-
-  console.log("App: Render");
-  useEffect(() => { console.log("App: Mount (First Load/Reload)"); }, []);
-
-  // console.log("tenant", host, tenantHost);
-
-  // useEffect(() => {
-  //   if (!clarity.hasStarted()) {
-  //     clarity.init('mgi3bjcotp');
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   // Create a queueing shim if not present
-  //   (window as any).clarity =
-  //       (window as any).clarity ||
-  //       function () {
-  //         ((window as any).clarity.q = (window as any).clarity.q || []).push(arguments);
-  //       };
-  //
-  //   // Start in denied mode
-  //   (window as any).clarity("consentv2", {
-  //     ad_Storage: "denied",
-  //     analytics_Storage: "denied",
-  //   });
-  // }, []);
 
   useEffect(() => {
     // On first load, read current consent and apply
@@ -100,7 +64,6 @@ export function App({ Component, pageProps, tenantHost }: AppProps & { tenantHos
       setTenantData(getTenantData(TENANTS[tenantHost] as TENANT_TYPE) || null);
       // console.log("Host", host, tenantHost, '---', TENANTS[tenantHost], '--', getTenantData(TENANTS[tenantHost]));
     }
-    // console.log('tenant 11:  ', tenantHost)
   }, [tenantHost]);
 
 
@@ -108,7 +71,6 @@ export function App({ Component, pageProps, tenantHost }: AppProps & { tenantHos
     <>
       <style jsx global>{`
         :root {
-          --roboto-font: ${roboto.style.fontFamily};
           --inter-font: ${inter.style.fontFamily};
         }
       `}</style>

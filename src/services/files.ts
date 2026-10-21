@@ -9,6 +9,17 @@ import {type ApiResponseType} from "@/types/api";
 //     return api.post<DashboardDataType[]>(`/GetDashboardData`, data);
 //
 
+export type SyncAttachedFileAction = 'new' | 'update' | 'delete';
+
+export type SyncAttachedFileItemType = {
+    action: SyncAttachedFileAction;
+    id: string;
+    name: string;
+    dueDate: string;
+    country: string;
+    data: string;
+};
+
 export const sendDocumentFiles = async (
     data: {
         attachedFiles: AttachedFilesType[],
@@ -19,15 +30,16 @@ export const sendDocumentFiles = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/PutAttachedFiles`, data);
-    // try {
-    //     const response:  = await api.post(
-    //         `/PutAttachedFiles`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
+};
+
+export const syncAttachedFiles = async (
+    data: {
+        attachedFiles: SyncAttachedFileItemType[];
+        token: string;
+        alias?: string;
+        uuid: string;
+        ui?: string;
+    }
+): Promise<ApiResponseType<unknown>> => {
+    return api.post(`/SyncAttachedFiles`, data);
 };

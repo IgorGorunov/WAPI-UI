@@ -12,7 +12,7 @@ import {
     NOTIFICATION_TYPES,
     NotificationType
 } from "@/types/notifications";
-import { getNotificationIconName } from "@/components/HeaderNotifications/NotificationsBlock";
+// import { getNotificationIconName } from "@/components/HeaderNotifications/NotificationsBlock";
 import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
 import SingleDocument from "@/components/SingleDocument";
 import useAuth from "@/context/authContext";
@@ -103,7 +103,9 @@ const Header: React.FC<HeaderType> = ({ pageTitle, toRight = false, children, ne
                     notifications.filter(item => item.type === NOTIFICATION_TYPES.URGENT && item.status !== NOTIFICATION_STATUSES.READ).map(item => (
                         <li key={item.uuid} className={`card ${styles['main-header__urgent-notifications-list-item'] || 'main-header__urgent-notifications-list-item'} `}>
                             <div className={`${item.objectUuid ? styles['is-clickable'] || 'is-clickable' : ''} `} onClick={() => handleNotificationClick(item)}>
-                                <Icon className={styles['main-header__urgent-notifications-list-item--icon'] || 'main-header__urgent-notifications-list-item--icon'} name={getNotificationIconName(item.type)} />
+                                <Icon className={styles['main-header__urgent-notifications-list-item--icon'] || 'main-header__urgent-notifications-list-item--icon'} name={'notification'} />
+                                {/*name={getNotificationIconName(item.type)} />*/}
+
                                 <p className={styles['main-header__urgent-notifications-list-item--title'] || 'main-header__urgent-notifications-list-item--title'}>{item.title}</p>
                                 <p className={styles['main-header__urgent-notifications-list-item--text'] || 'main-header__urgent-notifications-list-item--text'}>{item.message}</p>
                             </div>

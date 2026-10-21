@@ -1,0 +1,12 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const SvgLightningBolt = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 560.317 560.316"
+    {...props}
+  >
+    <path d="M207.523 560.316s194.42-421.925 194.444-421.986l10.79-23.997c-41.824 12.02-135.271 34.902-135.57 35.833C286.96 122.816 329.017 0 330.829 0H210.902l-12.167 57.938-51.176 209.995 135.191-36.806z" />
+  </svg>
+);
+export default SvgLightningBolt;

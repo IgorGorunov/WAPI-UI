@@ -1,7 +1,7 @@
 .dropzone {
   padding: 20px 20px 20px 20px;
   box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-  border-radius: 30px;
+  border-radius: 15px;
   text-align: center;
   cursor: pointer;
   color: var(--color-gray-blue);
@@ -37,7 +37,7 @@
     display: flex;
     border: 1px solid var(--color-gray2);
     box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
-    border-radius: 30px;
+    border-radius: 15px;
     height: 100%;
     width: 100%;
     padding: 20px 20px 20px 20px;

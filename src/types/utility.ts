@@ -32,10 +32,12 @@ export enum PRODUCT_FILE_TYPES {
     "certificate" = "certificate",
     "purchaseInvoice" = "purchaseInvoice",
     "other" = "other",
+    "CPNP" = "CPNP",
+    "Proof of notification" = "Proof of notification",
 }
 
 export type AttachedFilesType = {
-    id: string;
+    id?: string;
     name: string;
     type: string;
     data: string;
@@ -57,6 +59,18 @@ export const enum FILTER_TYPE {
     UNDERLINE = 'underline',
 }
 
+export type ProductRegDocumentType = {
+    documentType: string;
+    approvalStatus: string;
+    country: {
+        id: string;
+        country: string;
+    }
+    id: string;
+    dueDate: string;
+    name?: string;
+}
+
 export type DocProductParamsType = {
     tableKey: string;
     name: string;
@@ -70,6 +84,10 @@ export type DocProductParamsType = {
     volumeWeight?: number;
     seller?: string;
     //unitOfMeasures: string[];
+    // for stock-moves
+    productType?: string;
+    category?: string;
+    documents?: ProductRegDocumentType[];
 }
 
 export type ProductsSelectionType = {
