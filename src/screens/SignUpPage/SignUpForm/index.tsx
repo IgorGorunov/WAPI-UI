@@ -5,6 +5,7 @@ import type { FormBuilderType } from "@/types/forms";
 import { Routes } from "@/types/routes";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button from "@/components/Button/Button";
+import Turnstile from "@/components/Turnstile";
 import styles from "./styles.module.scss";
 import { signUpFormFields } from "./SingUpFormFields";
 import Link from "next/link";
@@ -31,6 +32,8 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [utmQuery, setUtmQuery] = useState<Record<string, string>>({});
+    const [turnstileToken, setTurnstileToken] = useState<string>("");
+    const [honeypot, setHoneypot] = useState<string>("");
 
     //getting uuid from query
     useEffect(() => {
@@ -72,7 +75,17 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
     }, [])
 
     const handleFormSubmit = async (data: Record<string, unknown>) => {
-        const lead = { lead: data as SignUpFormValues, utm: utm || utmQuery };
+        if (!turnstileToken) {
+            setError("Please complete the security check.");
+            return;
+        }
+
+        const lead = {
+            lead: data as SignUpFormValues,
+            utm: utm || utmQuery,
+            turnstileToken,
+            website_hp: honeypot,
+        };
 
         try {
             setIsLoading(true);
@@ -83,27 +96,71 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
             if (res?.status === 200) {
                 //success modal
                 setModalStatusInfo({
-                    statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Congratulations! Sign-up complete!
-                The confirmation email is on its way to the email you provided.`, onClose: closeSuccessModal, disableAutoClose: true
-                })
+                    statusModalType: STATUS_MODAL_TYPES.SUCCESS,
+                    title: "Success",
+                    subtitle: `Congratulations! Sign-up complete!
+                The confirmation email is on its way to the email you provided.`,
+                    onClose: closeSuccessModal,
+                    disableAutoClose: true,
+                });
                 setShowStatusModal(true);
-            } else if (res?.response) {
-                //error modal
-                const errResponse = res.response;
-
-                if (errResponse && 'data' in errResponse && 'errorMessage' in errResponse.data) {
-                    const errorMessages = errResponse?.data.errorMessage;
-
-                    setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", text: errorMessages, onClose: closeErrorModal })
-                    setShowStatusModal(true);
-                }
             } else {
-                //something went wrong
-                setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.ERROR, title: "Error", text: ['Something went wrong. Please, try again a bit later.'], onClose: closeErrorModal })
+                // Extract error message from any response format
+                const errData = (res as any)?.response?.data ?? (res as any)?.data;
+                let errorMessages: string[] = [];
+
+                if (typeof errData === 'string' && errData.trim().length > 0) {
+                    errorMessages = [errData];
+                } else if (errData?.errorMessage) {
+                    errorMessages = Array.isArray(errData.errorMessage)
+                        ? errData.errorMessage
+                        : [String(errData.errorMessage)];
+                } else if (errData?.message) {
+                    errorMessages = Array.isArray(errData.message)
+                        ? errData.message
+                        : [String(errData.message)];
+                } else if (errData?.error) {
+                    errorMessages = Array.isArray(errData.error)
+                        ? errData.error
+                        : [String(errData.error)];
+                } else {
+                    errorMessages = ['Something went wrong. Please, try again a bit later.'];
+                }
+
+                setModalStatusInfo({
+                    statusModalType: STATUS_MODAL_TYPES.ERROR,
+                    title: "Error",
+                    text: errorMessages,
+                    onClose: closeErrorModal,
+                });
                 setShowStatusModal(true);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
+            const errData = err?.response?.data;
+            let errorText: string[] = [];
+
+            if (typeof errData === 'string' && errData.trim().length > 0) {
+                errorText = [errData];
+            } else if (errData?.errorMessage) {
+                errorText = Array.isArray(errData.errorMessage)
+                    ? errData.errorMessage
+                    : [String(errData.errorMessage)];
+            } else if (errData?.message) {
+                errorText = Array.isArray(errData.message)
+                    ? errData.message
+                    : [String(errData.message)];
+            } else {
+                errorText = ['Something went wrong. Please, try again a bit later.'];
+            }
+
+            setModalStatusInfo({
+                statusModalType: STATUS_MODAL_TYPES.ERROR,
+                title: "Error",
+                text: errorText,
+                onClose: closeErrorModal,
+            });
+            setShowStatusModal(true);
         } finally {
             setIsLoading(false);
         }
@@ -138,13 +195,40 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
                 ))}
 
                 {error && <p className={styles['sign-up-error']}>{error}</p>}
-                <div className={styles['sign-up-submit-block']}>
 
+                {/* Honeypot field invisible to humans, traps automated scrapers */}
+                <div
+                    style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, overflow: "hidden" }}
+                    aria-hidden="true"
+                    tabIndex={-1}
+                >
+                    <input
+                        type="text"
+                        name="website_hp"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                    />
+                </div>
+
+                {/* Cloudflare Turnstile bot verification */}
+                <div className={styles['sign-up-turnstile']}>
+                    <Turnstile
+                        onVerify={(token) => {
+                            setTurnstileToken(token);
+                            setError(null);
+                        }}
+                        onExpire={() => setTurnstileToken("")}
+                    />
+                </div>
+
+                <div className={styles['sign-up-submit-block']}>
                     <Button
                         type="submit"
                         icon={"arrow-right"}
                         iconOnTheRight={true}
-                        disabled={isLoading || !checkbox}
+                        disabled={isLoading || !checkbox || !turnstileToken}
                     >
                         Register
                     </Button>

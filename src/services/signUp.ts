@@ -8,8 +8,11 @@ const signUp = async (
             contact: string;
             phone: string;
             email: string;
+            personalData?: boolean;
         };
         utm: Record<string, unknown>;
+        turnstileToken?: string;
+        website_hp?: string;
     }
 ): Promise<ApiResponseType<unknown>> => {
     try {
