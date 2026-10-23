@@ -11,6 +11,53 @@ const CLOUDFLARE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/si
 // Cloudflare official testing secret key that always passes if TURNSTILE_SECRET_KEY is not yet set
 const DEFAULT_TEST_SECRET_KEY = "1x0000000000000000000000000000000AA";
 
+// Single-use token tracker: burns tokens immediately so they cannot be replayed in curl/terminal
+const usedTokens = new Map<string, number>();
+const TOKEN_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
+const isTokenReused = (token: string): boolean => {
+  const now = Date.now();
+  // Periodic cleanup if map grows
+  if (usedTokens.size > 2000) {
+    usedTokens.forEach((timestamp, key) => {
+      if (now - timestamp > TOKEN_TTL_MS) {
+        usedTokens.delete(key);
+      }
+    });
+  }
+
+  const timestamp = usedTokens.get(token);
+  if (timestamp && now - timestamp < TOKEN_TTL_MS) {
+    return true; // Already used!
+  }
+
+  usedTokens.set(token, now);
+  return false;
+};
+
+// IP Rate limiting: max 5 requests per 10 minutes per IP
+const ipRequests = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+const MAX_REQUESTS_PER_IP = 5;
+
+const isRateLimited = (ip: string): boolean => {
+  if (!ip) return false;
+  const now = Date.now();
+  const record = ipRequests.get(ip);
+
+  if (!record || now > record.resetTime) {
+    ipRequests.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  if (record.count >= MAX_REQUESTS_PER_IP) {
+    return true;
+  }
+
+  record.count += 1;
+  return false;
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ errorMessage: ["Method Not Allowed"] });
@@ -38,7 +85,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ errorMessage: ["Spam detected"] });
     }
 
-    // 3. Cloudflare Turnstile Verification (blocks curl / terminal scripts completely)
+    const ip =
+      (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+      req.socket.remoteAddress ||
+      "";
+
+    // 3. Rate limiting per IP
+    if (ip && isRateLimited(ip)) {
+      console.warn(`=== [SIGN-UP] Rate limit exceeded for IP: ${ip} ===`);
+      return res.status(429).json({
+        errorMessage: ["Too many sign-up attempts. Please try again in a few minutes."],
+      });
+    }
+
+    // 4. Cloudflare Turnstile Verification
     const turnstileToken = body.turnstileToken;
     if (!turnstileToken) {
       return res.status(400).json({
@@ -46,11 +106,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
+    // 5. Single-use token invalidation: burn token immediately to prevent replay attacks
+    if (isTokenReused(turnstileToken)) {
+      console.warn("=== [SIGN-UP] Replay attack detected: token already used ===");
+      return res.status(403).json({
+        errorMessage: ["Security verification expired. Please try submitting again."],
+      });
+    }
+
     const secret = process.env.TURNSTILE_SECRET_KEY || DEFAULT_TEST_SECRET_KEY;
-    const ip =
-      (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
-      req.socket.remoteAddress ||
-      "";
 
     const verifyParams = new URLSearchParams();
     verifyParams.append("secret", secret);
@@ -73,11 +137,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!verifyResponse.data?.success) {
       console.error("=== [SIGN-UP] Turnstile Verification Failed ===", verifyResponse.data);
       return res.status(403).json({
-        errorMessage: ["Security check failed. Please refresh the page and try again."],
+        errorMessage: ["Security check failed. Please try submitting again."],
       });
     }
 
-    // 4. Clean up security fields before passing payload to backend
+    // 6. Clean up security fields before passing payload to backend
     const { turnstileToken: _token, website_hp: _hp, ...payloadWithoutSecurityFields } = body;
 
     const token =

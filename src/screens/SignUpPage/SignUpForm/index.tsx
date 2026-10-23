@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // import type { FieldValues } from "react-hook-form";
 import type { FormBuilderType } from "@/types/forms";
 import { Routes } from "@/types/routes";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import Button from "@/components/Button/Button";
-import Turnstile from "@/components/Turnstile";
+import Turnstile, { type TurnstileRef } from "@/components/Turnstile";
 import styles from "./styles.module.scss";
 import { signUpFormFields } from "./SingUpFormFields";
 import Link from "next/link";
@@ -34,6 +34,7 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
     const [utmQuery, setUtmQuery] = useState<Record<string, string>>({});
     const [turnstileToken, setTurnstileToken] = useState<string>("");
     const [honeypot, setHoneypot] = useState<string>("");
+    const turnstileRef = useRef<TurnstileRef | null>(null);
 
     //getting uuid from query
     useEffect(() => {
@@ -163,6 +164,8 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
             setShowStatusModal(true);
         } finally {
             setIsLoading(false);
+            setTurnstileToken("");
+            turnstileRef.current?.reset();
         }
     };
 
@@ -215,6 +218,7 @@ const SignUpForm: React.FC<SignUpFormPropsType> = ({ utm }) => {
                 {/* Cloudflare Turnstile bot verification */}
                 <div className={styles['sign-up-turnstile']}>
                     <Turnstile
+                        ref={turnstileRef}
                         onVerify={(token) => {
                             setTurnstileToken(token);
                             setError(null);
