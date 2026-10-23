@@ -73,6 +73,7 @@ export type ProductStockType = {
     weightGross: number,
     weightNet: number,
     onShipping: number;
+    // undefinedStatus:number;
     reservedRows: ReservedRowType[];
     onShippingRows: OnShippingRowType[];
     seller?: string;

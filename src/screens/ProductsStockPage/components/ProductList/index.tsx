@@ -662,6 +662,30 @@ const ProductList: React.FC<ProductListType> = ({
         },
         {
             title: <TitleColumn
+                minWidth="80px"
+                maxWidth="80px"
+                contentPosition="center"
+                childrenBefore={
+                    <Tooltip title="Do not have certificates">
+                        <div className='sorter-col-wrapper'>
+                            <span>Undefined status</span>
+                            {sortColumn === 'undefinedStatus' && sortDirection === 'ascend' ? <span className='lm-6'><Icon name='arrow-asc' /></span> : null}
+                            {sortColumn === 'undefinedStatus' && sortDirection === 'descend' ? <span className='lm-6'><Icon name='arrow-desc' /></span> : null}
+                        </div>
+                    </Tooltip>}
+            />,
+            render: (text: string) => (
+                <TableCell value={text} minWidth="80px" maxWidth="80px" contentPosition="center" />
+            ),
+            dataIndex: 'undefinedStatus',
+            key: 'undefinedStatus',
+            sorter: true,
+            onHeaderCell: (column: ColumnType<ProductStockType>) => ({
+                onClick: () => handleHeaderCellClick(column.dataIndex as keyof ProductStockType),
+            }),
+        },
+        {
+            title: <TitleColumn
                 minWidth="60px"
                 maxWidth="60px"
                 contentPosition="center"
