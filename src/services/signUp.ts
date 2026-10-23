@@ -1,29 +1,23 @@
+import axios from "axios";
 import { api } from "@/services/api";
 import { type ApiResponseType } from "@/types/api";
 
 const signUp = async (
-    //token: string,
     data: {
         lead: {
             contact: string;
             phone: string;
             email: string;
-        }
+        };
         utm: Record<string, unknown>;
     }
 ): Promise<ApiResponseType<unknown>> => {
-    return api.post(`/CreateLead`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/CreateLead`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
+    try {
+        const response = await axios.post(`/api/sign-up`, data);
+        return response as ApiResponseType<unknown>;
+    } catch (err) {
+        return err as ApiResponseType<unknown>;
+    }
 };
 
 const confirmEmail = async (
@@ -33,18 +27,6 @@ const confirmEmail = async (
     }
 ): Promise<ApiResponseType<unknown>> => {
     return api.post(`/LeadEmailConfirmation`, data);
-    // try {
-    //     const response: unknown = await api.post(
-    //         `/LeadEmailConfirmation`,
-    //         data
-    //     );
-    //
-    //     return response;
-    // } catch (err) {
-    //     console.error(err);
-    //     return err;
-    // }
 };
-
 
 export { signUp, confirmEmail };
