@@ -23,6 +23,7 @@ import Select from "@/components/FormBuilder/Select/SelectField";
 import { OptionType } from "@/types/forms";
 import { useFutureMaintenanceNotifications } from "@/hooks/useFutureMaintenanceNotifications";
 import MaintenanceNotifications from "@/components/MaintenanceNotification";
+import FeedbackPopup from "@/components/FeedbackPopup";
 
 
 // Moved inline to avoid Fast Refresh violations
@@ -319,6 +320,7 @@ const DashboardPage: React.FC = () => {
           </div>) : null}
       </div>
 
+      <FeedbackPopup />
     </Layout>
   );
 };

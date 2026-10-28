@@ -73,7 +73,15 @@
       transform-origin: left center;
       transition: .3s ease;
 
-      path {
+      :global(.icon-questionnaire) {
+        transform: scale(.8);
+
+        path, rect {
+          fill: #C3CAD9;
+        }
+      }
+
+      path, rect {
         transition: .3s ease;
       }
 
@@ -81,7 +89,7 @@
         transform: scale(1.05);
         color: var(--color-blue);
 
-        path {
+        path, rect {
           fill: var(--color-blue);
         }
       }

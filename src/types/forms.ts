@@ -60,7 +60,7 @@ export type FieldPropsType<T extends FieldValues = FieldValues> = {
   key?: string
   name: Path<T>;
   rules?: RegisterOptions<T, Path<T>>;
-  label?: string
+  label?: string | ReactNode
   type?: string
   placeholder?: string
   errorMessage?: string | undefined
@@ -99,6 +99,7 @@ export type FieldPropsType<T extends FieldValues = FieldValues> = {
   hideTextOnMobile?: boolean;
   extraLabel?: string;
   isCheckboxHidden?: boolean;
+  hasHover?: boolean;
   circleColor?: string;
   textColor?: string;
   underlineColor?: string;

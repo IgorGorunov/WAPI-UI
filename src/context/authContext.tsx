@@ -134,6 +134,8 @@ type authContextType = {
   setActionAccess: (val: UserAccessActionType[]) => void;
 
   saveSuperUserName: (val: string) => void;
+  superUserName: string | null;
+  userEmail: string | null;
 
   userType: USER_TYPES | null;
   setCurrentUserType: (val: USER_TYPES | null) => void;
@@ -194,6 +196,9 @@ export const AuthProvider = (props: PropsWithChildren) => {
       Cookie.set('token', token, { expires: expireTime });
     } else {
       Cookie.set('token', token);
+      if (typeof window !== 'undefined' && token) {
+        sessionStorage.setItem('wapi_show_feedback_popup_after_login', 'true');
+      }
     }
 
     setUserToken(token);
@@ -314,7 +319,13 @@ export const AuthProvider = (props: PropsWithChildren) => {
     Cookie.remove('userType');
     Cookie.remove('sellers');
     Cookie.remove('userEmail');
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('wapi_show_feedback_popup_after_login');
+    }
 
+    setUserToken('');
+    setCurrentUserStatus(null);
+    setSuperUser(false);
     setNotifications([]);
   }
 
@@ -475,7 +486,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
       textInfo, getTextInfo, setTextInfo, logout, isAuthorizedUser, isAuthorizedLead, cookieConsent,
       setReceivedCookieConsent, setNavItemsAccess, isNavItemAccessible, userInfo, setUserInfoProfile, superUser,
       setIsSuperUser, ui, setUserUi, userBrowserInfo, setUserBrowserInfoFn, getBrowserInfo, setActionAccess,
-      isActionIsAccessible, saveSuperUserName, userType, setCurrentUserType, getUserType, getForbiddenTabs,
+      isActionIsAccessible, saveSuperUserName, superUserName, userEmail, userType, setCurrentUserType, getUserType, getForbiddenTabs,
       sellersList, setSellers, needSeller, sellersListActive
     }}>
       {props.children}

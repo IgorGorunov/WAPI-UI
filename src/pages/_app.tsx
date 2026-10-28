@@ -27,6 +27,7 @@ import { HintsTrackingProvider } from "@/context/hintsContext";
 import { getTenantData, TENANT_TYPE, TenantDataType, TENANTS, tenants } from '@/lib/tenants';
 import { TenantContext } from "@/context/tenantContext";
 import { ToastContainer } from "@/components/Toast";
+import { FeedbackProvider } from "@/context/feedbackContext";
 
 const inter = Inter({
   weight: ["400", "700", "900"],
@@ -81,8 +82,10 @@ export function App({ Component, pageProps, tenantHost }: AppProps & { tenantHos
             <AuthProvider>
               <TourGuideProvider>
                 <HintsTrackingProvider>
-                  <Component {...pageProps} />
-                  <ToastContainer />
+                  <FeedbackProvider>
+                    <Component {...pageProps} />
+                    <ToastContainer />
+                  </FeedbackProvider>
                 </HintsTrackingProvider>
               </TourGuideProvider>
             </AuthProvider>

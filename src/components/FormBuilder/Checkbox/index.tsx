@@ -24,12 +24,13 @@ const Checkbox= forwardRef<HTMLInputElement, FieldPropsType>( ({
     isCountry = false,
     flagBefore = false,
     countryName='',
+    hasHover = false,
   ...otherProps
 },ref) => {
-
+  const isChecked = !!value || checked;
 
   return (
-    <div className={`${styles.checkbox || 'checkbox'} checkbox ${classNames ? styles[classNames] || classNames : ""} ${width ? "width-"+width : ""}  ${styles['vertical-center'] ? '' : ''}`}>
+    <div className={`${styles.checkbox || 'checkbox'} checkbox ${classNames ? styles[classNames] || classNames : ""} ${width ? "width-"+width : ""}  ${styles['vertical-center'] ? '' : ''} ${hasHover ? `${styles['has-hover'] || 'has-hover'} has-hover` : ''} ${hasHover && isChecked ? `${styles['is-checked'] || 'is-checked'} is-checked` : ''}`}>
       <label
           htmlFor={`${name}-checkbox`}
           className={`${styles['checkbox-label'] || 'checkbox-label'} checkbox-label ${isCheckboxHidden ? `${styles['hide-checkbox'] || 'hide-checkbox'} hide-checkbox` : ''}`}
