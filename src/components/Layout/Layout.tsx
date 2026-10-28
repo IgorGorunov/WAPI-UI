@@ -12,6 +12,8 @@ import BackToTop from "@/components/BackToTop";
 // Dynamically import non-critical components
 const Footer = dynamic(() => import("@/components/Footer/Footer"), { ssr: false });
 const CookieConsent = dynamic(() => import("@/components/CookieConsent"), { ssr: false });
+const FeedbackWidget = dynamic(() => import("@/components/FeedbackWidget"), { ssr: false });
+const FeedbackDrawer = dynamic(() => import("@/components/FeedbackDrawer"), { ssr: false });
 
 type Props = {
     hasHeader?: boolean;
@@ -86,6 +88,8 @@ const Layout: React.FC<Props> = ({
                 text={apiErrorMessages}
                 onClose={handleClose} /> : null
             }
+            <FeedbackWidget />
+            <FeedbackDrawer />
             <BackToTop />
         </main>
     );

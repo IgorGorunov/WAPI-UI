@@ -136,3 +136,7 @@ export { default as Webcam } from "./Webcam";
 export { default as Whitelabel } from "./Whitelabel";
 export { default as FileFilled } from "./FileFilled";
 export { default as Replace } from "./Replace";
+export { default as Questionnaire } from "./Questionnaire";
+export { default as LightningContour } from "./LightlingContour";
+export { default as SandClock } from "./SandClock";
+export { default as Star } from "./Star";

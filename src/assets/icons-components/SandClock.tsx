@@ -1,0 +1,26 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const SvgSandClock = (props: SVGProps<SVGSVGElement>) => (
+//     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"  {...props}>
+// {/*<style type="text/css">*/}
+// {/*	.st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}*/}
+// {/*</style>*/}
+//         <path className="st0" d="M22,6H10C8.3,6,7,4.7,7,3v0h18v0C25,4.7,23.7,6,22,6z"/>
+//         <path className="st0" d="M10,26h12c1.7,0,3,1.3,3,3v0H7v0C7,27.3,8.3,26,10,26z"/>
+//         <path className="st0"
+//               d="M23,26v-4c0-0.6-0.3-1.2-0.8-1.6l-3.7-2.8c-1.1-0.8-1.1-2.4,0-3.2l3.7-2.8c0.5-0.4,0.8-1,0.8-1.6V6"/>
+//         <path className="st0"
+//               d="M9,6v4c0,0.6,0.3,1.2,0.8,1.6l3.7,2.8c1.1,0.8,1.1,2.4,0,3.2l-3.7,2.8C9.3,20.8,9,21.4,9,22v4"/>
+//         <polygon className="st0" points="11,26 16,21 21,26 "/>
+//         <polygon className="st0" points="16,12 13,10 19,10 "/>
+// </svg>
+    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 32 32" {...props}>
+        <path d="M24,25.6V22c0-0.9-0.4-1.8-1.2-2.4l-3.7-2.8c-0.3-0.2-0.4-0.5-0.4-0.8s0.1-0.6,0.4-0.8l3.7-2.8c0.8-0.6,1.2-1.5,1.2-2.4V6.4
+            c1.2-0.7,2-2,2-3.4c0-0.6-0.4-1-1-1H7C6.4,2,6,2.4,6,3c0,1.5,0.8,2.7,2,3.4V10c0,0.9,0.4,1.8,1.2,2.4l3.7,2.8
+            c0.3,0.2,0.4,0.5,0.4,0.8s-0.1,0.6-0.4,0.8l-3.7,2.8C8.4,20.2,8,21.1,8,22v3.6c-1.2,0.7-2,2-2,3.4c0,0.6,0.4,1,1,1h18
+            c0.6,0,1-0.4,1-1C26,27.5,25.2,26.3,24,25.6z M12.4,10.8c-0.4-0.2-0.5-0.7-0.4-1.1C12.2,9.3,12.6,9,13,9h6c0.4,0,0.8,0.3,1,0.7
+            c0.1,0.4,0,0.9-0.4,1.1l-3,2C16.4,12.9,16.2,13,16,13s-0.4-0.1-0.6-0.2L12.4,10.8z M15.3,20.3c0.4-0.4,1-0.4,1.4,0l4.7,4.7H10.6
+            L15.3,20.3z"/>
+    </svg>
+);
+export default SvgSandClock;

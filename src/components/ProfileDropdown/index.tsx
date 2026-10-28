@@ -12,10 +12,12 @@ import UserList, { UserType } from "@/components/ProfileDropdown/UserList";
 import { getUserList } from "@/services/auth";
 import Loader from "@/components/Loader";
 import useTenant from "@/context/tenantContext";
+import { useFeedback } from "@/context/feedbackContext";
 
 const ProfileDropdown = () => {
     const { token, userName, logout, userStatus, superUser } = useAuth();
     const { tenantData } = useTenant();
+    const { openFeedback } = useFeedback();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showUserList, setShowUserList] = useState(false);
@@ -84,6 +86,17 @@ const ProfileDropdown = () => {
                             {superUser ? <li key='user-list' className={styles["profile-dropdown__menu-item"]}>
                                 <button className={styles["profile-dropdown__menu-item-btn"]} onClick={handleUserList}><Icon
                                     name='lines' />Switch user
+                                </button>
+                            </li> : null}
+                            {superUser ? <li key='feedback' className={styles["profile-dropdown__menu-item"]}>
+                                <button
+                                    className={styles["profile-dropdown__menu-item-btn"]}
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                        openFeedback();
+                                    }}
+                                >
+                                    <Icon name='questionnaire' /> Feedback & Wishes
                                 </button>
                             </li> : null}
                             <li key='logout' className={styles["profile-dropdown__menu-item"]}>

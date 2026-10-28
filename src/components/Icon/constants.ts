@@ -133,6 +133,10 @@ import {
     Maintenance,
     FileFilled,
     Replace,
+    Questionnaire,
+    LightningContour,
+    SandClock,
+    Star,
 } from "@/assets/icons-components";
 
 export const icons = {
@@ -270,4 +274,8 @@ export const icons = {
     'maintenance': Maintenance,
     'file-filled': FileFilled,
     'replace': Replace,
+    'questionnaire': Questionnaire,
+    'lightning-contour': LightningContour,
+    'sand-clock': SandClock,
+    'star': Star,
 };
