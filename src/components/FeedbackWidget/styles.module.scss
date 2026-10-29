@@ -9,10 +9,19 @@
   align-items: center;
   gap: 4px;
   animation: floatUp 0.3s ease-out;
+  transition: bottom 0.3s ease;
+
+  &--shifted {
+    bottom: 76px;
+  }
 
   @include mobile {
     bottom: 16px;
     right: 16px;
+
+    &--shifted {
+      bottom: 68px;
+    }
   }
 }
 
