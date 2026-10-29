@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles.module.scss';
 import { useFeedback } from '@/context/feedbackContext';
 import useAuth from '@/context/authContext';
@@ -9,6 +9,16 @@ const FeedbackWidget: React.FC = () => {
   const { openFeedback } = useFeedback();
   const { userStatus, superUser } = useAuth();
   const [isDismissed, setIsDismissed] = useState(false);
+  const [hasBackToTop, setHasBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setHasBackToTop(window.scrollY > 300);
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Temporary: Only display for logged-in superusers
   if (userStatus !== UserStatusType.user || !superUser || isDismissed) {
@@ -16,7 +26,11 @@ const FeedbackWidget: React.FC = () => {
   }
 
   return (
-    <div className={styles['floating-widget']}>
+    <div
+      className={`${styles['floating-widget']} ${
+        hasBackToTop ? styles['floating-widget--shifted'] : ''
+      }`}
+    >
       <button
         type="button"
         className={styles['pill-button']}

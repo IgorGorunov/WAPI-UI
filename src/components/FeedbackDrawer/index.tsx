@@ -205,8 +205,7 @@ const FeedbackDrawer: React.FC = () => {
     isQ3Valid &&
     isQ4Valid &&
     isQ5Valid &&
-    isQ6Valid &&
-    isQ7Valid;
+    isQ6Valid;
 
   const answeredCount = [
     isQ1Valid,
@@ -274,9 +273,9 @@ const FeedbackDrawer: React.FC = () => {
     ? 'Please select how often you use WAPI UI.'
     : '';
 
-  const q7Error = hasAttemptedSubmit && !isQ7Valid
-    ? 'Please provide your feedback or suggestions.'
-    : '';
+  // const q7Error = hasAttemptedSubmit && !isQ7Valid
+  //   ? 'Please provide your feedback or suggestions.'
+  //   : '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -289,8 +288,7 @@ const FeedbackDrawer: React.FC = () => {
         (!isQ3Valid && q3Ref) ||
         (!isQ4Valid && q4Ref) ||
         (!isQ5Valid && q5Ref) ||
-        (!isQ6Valid && q6Ref) ||
-        (!isQ7Valid && q7Ref);
+        (!isQ6Valid && q6Ref);
 
       if (firstInvalidRef && firstInvalidRef.current) {
         firstInvalidRef.current.scrollIntoView({
@@ -872,9 +870,7 @@ const FeedbackDrawer: React.FC = () => {
             {/* Q7: Additional suggestions */}
             <div
               ref={q7Ref}
-              className={`${styles['question-block']} ${styles['additional-question']} ${
-                q7Error ? styles['has-error'] : ''
-              } ${isQ7Valid ? styles['is-answered'] : ''}`}
+              className={`${styles['question-block']} ${styles['additional-question']}  ${isQ7Valid ? styles['is-answered'] : ''}`}
             >
               <div className={styles['question-block__header']}>
                 <span
@@ -886,18 +882,19 @@ const FeedbackDrawer: React.FC = () => {
                 </span>
                 <div className={styles['question-block__titles']}>
                   <label className={styles['question-block__label']}>
-                    Is there anything else you would like to see changed or added?{' '}
-                    <span className={styles['required-star']}>*</span>
+                    Is there anything else you would like to see changed or added?
+                    {/*<span className={styles['required-star']}>*</span>*/}
                   </label>
+                  <span className={styles['question-block__hint']}>Optional</span>
                 </div>
               </div>
               <TextArea
                 name="additionalComments"
                 label=""
-                isRequired={true}
+                isRequired={false}
                 placeholder="Share any specific suggestions, pain points, or ideas..."
                 value={additionalComments}
-                errorMessage={q7Error || undefined}
+                // errorMessage={q7Error || undefined}
                 onChange={(val: string) => setAdditionalComments(val)}
                 rows={4}
               />
