@@ -42,6 +42,25 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
         setShowStatusModal(false);
     }, [])
 
+    const handleCloseErrorAndForm = useCallback(() => {
+        setShowStatusModal(false);
+        onClose();
+    }, [onClose]);
+
+    const showEmptyResponseError = useCallback(() => {
+        const message = uuid
+            ? "Sorry, we couldn’t open this product due to an internal error. Please try again in a few moments or contact our support team for assistance."
+            : "Sorry, we couldn’t open the form to create a new product due to an internal error. Please try again in a few moments or contact our support team for assistance.";
+
+        setModalStatusInfo({
+            statusModalType: STATUS_MODAL_TYPES.ERROR,
+            title: "Error",
+            subtitle: message,
+            onClose: handleCloseErrorAndForm
+        });
+        setShowStatusModal(true);
+    }, [uuid, handleCloseErrorAndForm]);
+
     const fetchProductData = async (uuid, silent = false) => {
         try {
             if (!silent) {
@@ -61,10 +80,11 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
 
             const res: ApiResponse = await getProductByUID(superUser && ui ? { ...requestData, ui } : requestData);
 
-            if (res && "data" in res) {
+            if (res && "data" in res && res.data) {
                 setProductData(res.data);
             } else {
                 console.error("API did not return expected data");
+                showEmptyResponseError();
             }
 
         } catch (error) {
@@ -90,7 +110,7 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
 
             const resParams: ApiResponse = await getProductParameters(superUser && ui ? { ...requestData, ui } : requestData);
 
-            if (resParams && "data" in resParams) {
+            if (resParams && "data" in resParams && resParams.data) {
                 setProductParams(resParams.data);
                 if (resParams.data.actionAccessSettings) {
                     const tabs = resParams.data.actionAccessSettings as UserAccessActionType[];
@@ -107,6 +127,7 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
                 }
             } else {
                 console.error("API did not return expected data");
+                showEmptyResponseError();
             }
 
         } catch (error) {
@@ -114,7 +135,7 @@ const ProductForm: React.FC<ProductPropsType> = ({ uuid, products = null, onClos
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [showEmptyResponseError]);
 
     const fetchProductsList = useCallback(async () => {
         try {

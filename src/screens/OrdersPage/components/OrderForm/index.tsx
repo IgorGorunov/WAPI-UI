@@ -40,6 +40,25 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
         setShowStatusModal(false);
     }, [])
 
+    const handleCloseErrorAndForm = useCallback(() => {
+        setShowStatusModal(false);
+        closeOrderModal();
+    }, [closeOrderModal]);
+
+    const showEmptyResponseError = useCallback(() => {
+        const message = orderUuid
+            ? "Sorry, we couldn’t open this order due to an internal error. Please try again in a few moments or contact our support team for assistance."
+            : "Sorry, we couldn’t open the form to create a new order due to an internal error. Please try again in a few moments or contact our support team for assistance.";
+
+        setModalStatusInfo({
+            statusModalType: STATUS_MODAL_TYPES.ERROR,
+            title: "Error",
+            subtitle: message,
+            onClose: handleCloseErrorAndForm
+        });
+        setShowStatusModal(true);
+    }, [orderUuid, handleCloseErrorAndForm]);
+
     const fetchSingleOrder = async (uuid: string) => {
         console.log('fetchSingleOrder', uuid)
         try {
@@ -63,10 +82,11 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
 
             const res = await getOrderData(superUser && ui ? { ...requestData, ui } : requestData);
 
-            if (res && "data" in res) {
+            if (res && "data" in res && res.data) {
                 setOrderData(res.data);
             } else {
                 console.error("API did not return expected data");
+                showEmptyResponseError();
             }
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -83,7 +103,7 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
 
             const resp = await getOrderParameters(superUser && ui ? { ...requestData, ui } : requestData);
 
-            if (resp && "data" in resp) {
+            if (resp && "data" in resp && resp.data) {
                 setOrderParameters(resp.data);
 
                 if (resp.data.actionAccessSettings) {
@@ -101,6 +121,7 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
                 }
             } else {
                 console.error("API did not return expected data");
+                showEmptyResponseError();
             }
 
         } catch (error) {
@@ -108,7 +129,7 @@ const OrderForm: React.FC<OrderFormType> = ({ orderUuid, closeOrderModal, closeO
         } finally {
             setIsLoadingParams(false);
         }
-    }, [token]);
+    }, [token, showEmptyResponseError]);
 
     useEffect(() => {
         fetchOrderParams();
