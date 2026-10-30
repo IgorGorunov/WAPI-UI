@@ -42,6 +42,26 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
         setShowStatusModal(false);
     }, [])
 
+    const handleCloseErrorAndForm = useCallback(() => {
+        setShowStatusModal(false);
+        closeDocModal();
+    }, [closeDocModal]);
+
+    const showEmptyResponseError = useCallback(() => {
+        const docName = docNamesSingle[docType]?.toLowerCase() || "document";
+        const message = docUuid
+            ? `Sorry, we couldn’t open this ${docName} due to an internal error. Please try again in a few moments or contact our support team for assistance.`
+            : `Sorry, we couldn’t open the form to create a new ${docName} due to an internal error. Please try again in a few moments or contact our support team for assistance.`;
+
+        setModalStatusInfo({
+            statusModalType: STATUS_MODAL_TYPES.ERROR,
+            title: "Error",
+            subtitle: message,
+            onClose: handleCloseErrorAndForm
+        });
+        setShowStatusModal(true);
+    }, [docUuid, docType, handleCloseErrorAndForm]);
+
     const fetchSingleStockMovement = async (uuid: string) => {
 
         try {
@@ -60,10 +80,11 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
             }
             const res = await getInboundData(superUser && ui ? { ...requestData, ui } : requestData);
 
-            if (res && "data" in res) {
+            if (res && "data" in res && res.data) {
                 setDocData(res.data);
             } else {
                 console.error("API did not return expected data");
+                showEmptyResponseError();
             }
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -83,7 +104,7 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
 
             const resp = await getInboundParameters(superUser && ui ? { ...requestData, ui } : requestData);
 
-            if (resp && "data" in resp) {
+            if (resp && "data" in resp && resp.data) {
                 setDocParameters(resp.data);
 
                 if (resp.data.actionAccessSettings) {
@@ -101,12 +122,15 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
                 }
             } else {
                 console.error("API did not return expected data");
+                showEmptyResponseError();
             }
 
         } catch (error) {
             console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
         }
-    }, [token]);
+    }, [token, showEmptyResponseError]);
 
     useEffect(() => {
         fetchStockMovementParams();
@@ -135,9 +159,9 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
 
     return (
         <div>
+            {isLoading && <Loader />}
             {docParameters && (docUuid && docData || !docUuid ? (
                 <div className={`${styles['stock-movement']} is-${docType}`}>
-                    {isLoading && <Loader />}
                     <ToastContainer />
                     {docParameters && (docUuid && docData || !docUuid) ? (
                         <Modal title={docNamesSingle[docType]} onClose={onClose} classNames='document-modal'>
