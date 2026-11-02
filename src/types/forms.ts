@@ -72,6 +72,7 @@ export type FieldPropsType<T extends FieldValues = FieldValues> = {
   count?: number | undefined
   maxLength?: number | undefined
   disabled?: boolean
+  isLoading?: boolean
   // size?: SizeTypes.large | SizeTypes.medium | SizeTypes.small;
   innerRef?: RefType
   value?: E164Number | string | number | boolean | Date;
