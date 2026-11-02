@@ -13,6 +13,7 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
       placeholder = '',
       errorMessage,
       disabled = false,
+      isLoading = false,
       value='',
       rules,
       errors,
@@ -81,8 +82,9 @@ const TextField = forwardRef<HTMLInputElement, FieldPropsType>(({
                 {...otherProps}
                 autoComplete="new-user-email"
                 aria-autocomplete='none'
-                className={noCounters ? 'no-counters' : ''}
+                className={`${noCounters ? 'no-counters' : ''} ${isLoading ? styles['input--loading'] || '' : ''}`.trim()}
               />
+              {isLoading ? <span className={styles['input-spinner']} aria-label="Loading" /> : null}
               {btnName && onBtnClick ? <button type={'button'} disabled={disabled} className={styles['form-input-btn']} onClick={onBtnClick}>{btnName}</button> : null}
             </div>
             {errorMessage && <p className={`${styles.error} error`}>{errorMessage}</p>}

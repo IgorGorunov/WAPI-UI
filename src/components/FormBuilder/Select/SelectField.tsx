@@ -24,6 +24,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
             onChange,
             value,
             disabled = false,
+            isLoading = false,
             errors,
             errorMessage,
             isSearchable = true,
@@ -125,6 +126,7 @@ const SelectField = forwardRef<HTMLInputElement, FieldPropsType>(
                             placeholder={placeholder}
                             onChange={handleChange}
                             isDisabled={!!disabled}
+                            isLoading={isLoading}
                             isClearable={isClearable}
                             isSearchable={isSearchable}
                             filterOption={filterOption}

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     CreateOrderRequestType, OrderFullAddressType,
     OrderParamsType,
@@ -117,6 +117,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     const [isSelfCollect, setIsSelfCollect] = useState(!!orderData?.receiverPickUpID || !!orderData?.receiverPickUpName || !!orderData?.receiverPickUpAddress || !!orderData?.receiverPickUpCity || !!orderData?.receiverPickUpAddress);
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingPickupPoints, setIsLoadingPickupPoints] = useState(false);
+    const pickupPointsRequestIdRef = useRef(0);
     const [isDisabled, setIsDisabled] = useState(!!orderUuid);
     const [isAddressAllowed, setIsAddressAllowed] = useState(!orderUuid);
     const [isAddressChange, setIsAddressChange] = useState(false);
@@ -134,8 +136,17 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
     // const [messageApi, contextHolder] = message.useMessage();
 
     const fetchPickupPoints = useCallback(async (courierService: string) => {
+        if (!courierService) {
+            pickupPointsRequestIdRef.current += 1;
+            setIsLoadingPickupPoints(false);
+            setCurPickupPoints([]);
+            setPickupOptions([]);
+            return;
+        }
+
+        const requestId = ++pickupPointsRequestIdRef.current;
         try {
-            setIsLoading(true);
+            setIsLoadingPickupPoints(true);
             const requestData = { token, alias, courierService };
 
             try {
@@ -143,6 +154,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
             } catch { }
 
             const res = await getOrderPickupPoints(superUser && ui ? { ...requestData, ui } : requestData);
+
+            if (requestId !== pickupPointsRequestIdRef.current) return;
 
             if (res && "data" in res) {
                 setCurPickupPoints(res.data)
@@ -153,14 +166,26 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
-            setIsLoading(false);
+            if (requestId === pickupPointsRequestIdRef.current) {
+                setIsLoadingPickupPoints(false);
+            }
         }
     }, [token]);
 
 
 
     const fetchPickupPointsForCreatedOrder = useCallback(async (courierService: string) => {
+        if (!courierService) {
+            pickupPointsRequestIdRef.current += 1;
+            setIsLoadingPickupPoints(false);
+            setCurPickupPoints([]);
+            setPickupOptions([]);
+            return;
+        }
+
+        const requestId = ++pickupPointsRequestIdRef.current;
         try {
+            setIsLoadingPickupPoints(true);
             const requestData = { token, alias, courierService };
 
             try {
@@ -168,6 +193,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
             } catch { }
 
             const res = await getOrderPickupPoints(superUser && ui ? { ...requestData, ui } : requestData);
+
+            if (requestId !== pickupPointsRequestIdRef.current) return;
 
             if (res && "data" in res) {
                 setCurPickupPoints(res.data);
@@ -190,7 +217,9 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
-            setIsLoading(false);
+            if (requestId === pickupPointsRequestIdRef.current) {
+                setIsLoadingPickupPoints(false);
+            }
         }
     }, [token]);
 
@@ -845,6 +874,8 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         setSelectedCourierService(selectedOption);
         //let user know that pickUp point info is cleared
         informUserAboutPickUpPointClearing('PickUp point is cleared! Please, fill this info for chosen courier service (if needed)')
+        setCurPickupPoints([]);
+        setPickupOptions([]);
         fetchPickupPoints(selectedOption);
         clearPickUpPoint();
     }
@@ -857,7 +888,10 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
         clearPickUpPoint();
         setSelectedCourierService('');
         setValue('preferredCourierService', '');
+        pickupPointsRequestIdRef.current += 1;
+        setIsLoadingPickupPoints(false);
         setCurPickupPoints([]);
+        setPickupOptions([]);
 
         //clean selected products
         const currentProducts = getValues('products');
@@ -1610,12 +1644,13 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                             ref={ref}
                                             name='receiverPickUpID'
                                             label='ID'
-                                            fieldType={curPickupPoints && curPickupPoints.length && createdPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
+                                            fieldType={!isLoadingPickupPoints && curPickupPoints && curPickupPoints.length && createdPickupPoints.length ? FormFieldTypes.SELECT : FormFieldTypes.TEXT}
                                             options={createdPickupPoints}
-                                            placeholder={curPickupPoints && curPickupPoints.length ? 'Select' : ''}
+                                            placeholder={isLoadingPickupPoints ? 'Loading pickup points...' : (curPickupPoints && curPickupPoints.length ? 'Select' : '')}
                                             errorMessage={error?.message}
                                             errors={errors}
-                                            disabled={isDisabled && !((orderData?.receiverPickUpID || orderData?.receiverPickUpName) && isAddressAllowed)}
+                                            disabled={isLoadingPickupPoints || (isDisabled && !((orderData?.receiverPickUpID || orderData?.receiverPickUpName) && isAddressAllowed))}
+                                            isLoading={isLoadingPickupPoints}
                                             onChange={(selectedOption) => {
                                                 if (!selectedOption) {
                                                     clearPickUpPointFields();
