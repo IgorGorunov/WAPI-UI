@@ -1663,6 +1663,7 @@ const OrderFormComponent: React.FC<OrderFormType> = ({ orderData, orderParameter
                                             isRequired={isSelfCollect}
                                             width={WidthType.w25}
                                             hint={OrderHints['pickupID'] || ''}
+                                            isSearchable={true}
                                         />
                                     )}
                                     rules={{ required: atLeastOneFieldIsFilled ? "Required field" : false }}

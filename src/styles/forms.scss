@@ -180,6 +180,13 @@
         line-height: 1 !important;
       }
 
+      &-highlight {
+        background-color: var(--color-yellow);
+        color: var(--color-dark-blue);
+        border-radius: 2px;
+        padding: 0 1px;
+      }
+
       &.is-focused {
         background-color: var(--color-blue-15) !important;
         color: var(--color-blue) !important;
