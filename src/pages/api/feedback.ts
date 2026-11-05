@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .from(primaryTable)
         .select('user_login')
         .eq('user_login', userLogin)
-        .eq('survey_code', 'ui_feedback_v1')
+        .eq('survey_code', 'ui_feedback_clients_v1')
         .limit(1);
 
       if (!error && data && data.length > 0) {
@@ -59,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       client: userMetadata?.client || null,
       token: userMetadata?.token || null,
       user_uuid: userMetadata?.userUuid || null,
-      survey_code: 'ui_feedback_v1',
+      survey_code: 'ui_feedback_clients_v1',
       responses,
     };
 

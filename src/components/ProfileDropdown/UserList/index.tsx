@@ -63,6 +63,9 @@ const UserList: React.FC<UserListPropsType> = ({ users, onClose }) => {
         setNavItemsAccess(user.access);
         setUserInfoProfile(user.userProfile.userInfo);
         Cookie.remove('orders-period');
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('wapi_show_feedback_popup_after_login', 'true');
+        }
         onClose();
     }
 

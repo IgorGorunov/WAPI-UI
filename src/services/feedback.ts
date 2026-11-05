@@ -27,13 +27,12 @@ export interface SubmitFeedbackResult {
   error?: string;
 }
 
-const FEEDBACK_SUBMITTED_STORAGE_KEY = 'wapi_ui_feedback_submitted_v1';
+const FEEDBACK_SUBMITTED_STORAGE_KEY = 'wapi_ui_feedback_clients_v1';
 
 export const markFeedbackSubmittedLocally = (userLogin?: string) => {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(FEEDBACK_SUBMITTED_STORAGE_KEY, 'true');
-    if (userLogin) {
+    if (userLogin && userLogin !== 'anonymous') {
       localStorage.setItem(`${FEEDBACK_SUBMITTED_STORAGE_KEY}_${userLogin}`, 'true');
     }
   } catch (e) {
@@ -44,19 +43,16 @@ export const markFeedbackSubmittedLocally = (userLogin?: string) => {
 export const checkHasUserSubmittedFeedback = async (userLogin?: string): Promise<boolean> => {
   if (typeof window === 'undefined') return false;
 
+  if (!userLogin || userLogin === 'anonymous') {
+    return false;
+  }
+
   try {
-    if (userLogin && localStorage.getItem(`${FEEDBACK_SUBMITTED_STORAGE_KEY}_${userLogin}`) === 'true') {
-      return true;
-    }
-    if (localStorage.getItem(FEEDBACK_SUBMITTED_STORAGE_KEY) === 'true') {
+    if (localStorage.getItem(`${FEEDBACK_SUBMITTED_STORAGE_KEY}_${userLogin}`) === 'true') {
       return true;
     }
   } catch (e) {
     // Ignore localStorage read errors
-  }
-
-  if (!userLogin || userLogin === 'anonymous') {
-    return false;
   }
 
   try {

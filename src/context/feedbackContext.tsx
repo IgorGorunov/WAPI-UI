@@ -20,12 +20,12 @@ const FeedbackContext = createContext<FeedbackContextType>({
 export const FeedbackProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPopupDismissed, setIsPopupDismissed] = useState(false);
-  const { token } = useAuth();
+  const { token, ui } = useAuth();
 
-  // Reset popup dismissal state whenever the user logs in or switches session token
+  // Reset popup dismissal state whenever the user logs in, switches session token, or switches user
   useEffect(() => {
     setIsPopupDismissed(false);
-  }, [token]);
+  }, [token, ui]);
 
   const openFeedback = useCallback(() => {
     if (typeof window !== 'undefined') {

@@ -362,11 +362,6 @@ const FeedbackDrawer: React.FC = () => {
     }
   };
 
-  // Temporary: Only display feedback sidebar for superusers
-  if (!superUser) {
-    return null;
-  }
-
   return (
     <div
       className={`${styles['feedback-backdrop']} ${
