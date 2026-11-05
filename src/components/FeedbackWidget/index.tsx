@@ -5,9 +5,15 @@ import useAuth from '@/context/authContext';
 import { UserStatusType } from '@/types/leads';
 import Icon from "@/components/Icon";
 
+/**
+ * Set to `true` when the review starts to display the floating feedback button.
+ * Currently `false` to temporarily hide it for all users.
+ */
+const IS_FEEDBACK_WIDGET_ENABLED = false;
+
 const FeedbackWidget: React.FC = () => {
   const { openFeedback } = useFeedback();
-  const { userStatus, superUser } = useAuth();
+  const { userStatus } = useAuth();
   const [isDismissed, setIsDismissed] = useState(false);
   const [hasBackToTop, setHasBackToTop] = useState(false);
 
@@ -20,8 +26,8 @@ const FeedbackWidget: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Temporary: Only display for logged-in superusers
-  if (userStatus !== UserStatusType.user || !superUser || isDismissed) {
+  // Only display for logged-in users when feedback review is active
+  if (!IS_FEEDBACK_WIDGET_ENABLED || userStatus !== UserStatusType.user || isDismissed) {
     return null;
   }
 

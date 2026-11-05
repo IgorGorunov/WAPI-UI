@@ -12,11 +12,17 @@ import Icon from '@/components/Icon';
  * even if they have already submitted the feedback form.
  * Set to `false` in production to permanently hide the pop-up once the user has submitted feedback.
  */
-const SHOW_POPUP_EVEN_IF_SUBMITTED = true;
+const SHOW_POPUP_EVEN_IF_SUBMITTED = false;
+
+/**
+ * Set to `true` when the review starts to activate the feedback popup.
+ * Currently `false` to temporarily pause the review for all users.
+ */
+const IS_FEEDBACK_POPUP_ENABLED = false;
 
 const FeedbackPopup: React.FC = () => {
   const { isOpen: isDrawerOpen, openFeedback, isPopupDismissed, dismissPopup } = useFeedback();
-  const { userEmail, userInfo, userName, token, superUser } = useAuth();
+  const { userEmail, userInfo, userName, token, superUser, ui } = useAuth();
 
   const [shouldShow, setShouldShow] = useState(false);
   const [isAnimatedVisible, setIsAnimatedVisible] = useState(false);
@@ -29,13 +35,19 @@ const FeedbackPopup: React.FC = () => {
     cleanValue(userName) ||
     '';
 
+  // Superusers should only see the popup if they switched to a user.
+  // Regular users (!superUser) are always eligible to see the popup after login if not submitted.
+  const isSwitchedSuperUser = Boolean(superUser && (ui || Cookie.get('ui')));
+  const isEligibleUser = !superUser || isSwitchedSuperUser;
+
   useEffect(() => {
     let isMounted = true;
     let timer: NodeJS.Timeout;
 
     const evaluatePopupVisibility = async () => {
-      if (!superUser || isPopupDismissed || isDrawerOpen) {
+      if (!IS_FEEDBACK_POPUP_ENABLED || !isEligibleUser || isPopupDismissed || isDrawerOpen) {
         setIsAnimatedVisible(false);
+        setShouldShow(false);
         return;
       }
 
@@ -48,6 +60,9 @@ const FeedbackPopup: React.FC = () => {
       }
 
       if (!SHOW_POPUP_EVEN_IF_SUBMITTED) {
+        if (!userLoginValue) {
+          return;
+        }
         const alreadySubmitted = await checkHasUserSubmittedFeedback(userLoginValue);
         if (!isMounted) return;
         if (alreadySubmitted) {
@@ -73,7 +88,7 @@ const FeedbackPopup: React.FC = () => {
       isMounted = false;
       if (timer) clearTimeout(timer);
     };
-  }, [superUser, isPopupDismissed, isDrawerOpen, userLoginValue, token]);
+  }, [isEligibleUser, isPopupDismissed, isDrawerOpen, userLoginValue, token, ui]);
 
   const handleClose = () => {
     if (typeof window !== 'undefined') {
@@ -107,7 +122,7 @@ const FeedbackPopup: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [shouldShow, isPopupDismissed]);
 
-  if (!superUser || !shouldShow || isPopupDismissed || isDrawerOpen) {
+  if (!IS_FEEDBACK_POPUP_ENABLED || !isEligibleUser || !shouldShow || isPopupDismissed || isDrawerOpen) {
     return null;
   }
 

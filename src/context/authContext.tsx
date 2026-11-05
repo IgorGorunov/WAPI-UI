@@ -326,6 +326,7 @@ export const AuthProvider = (props: PropsWithChildren) => {
     setUserToken('');
     setCurrentUserStatus(null);
     setSuperUser(false);
+    setUserUi(null);
     setNotifications([]);
   }
 
