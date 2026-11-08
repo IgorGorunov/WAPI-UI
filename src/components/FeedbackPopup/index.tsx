@@ -15,14 +15,13 @@ import Icon from '@/components/Icon';
 const SHOW_POPUP_EVEN_IF_SUBMITTED = false;
 
 /**
- * Set to `true` when the review starts to activate the feedback popup.
- * Currently `false` to temporarily pause the review for all users.
+ * Set to `true` to activate the feedback popup.
  */
-const IS_FEEDBACK_POPUP_ENABLED = false;
+const IS_FEEDBACK_POPUP_ENABLED = true;
 
 const FeedbackPopup: React.FC = () => {
   const { isOpen: isDrawerOpen, openFeedback, isPopupDismissed, dismissPopup } = useFeedback();
-  const { userEmail, userInfo, userName, token, superUser, ui } = useAuth();
+  const { userEmail, userInfo, userName, token, superUser } = useAuth();
 
   const [shouldShow, setShouldShow] = useState(false);
   const [isAnimatedVisible, setIsAnimatedVisible] = useState(false);
@@ -35,10 +34,8 @@ const FeedbackPopup: React.FC = () => {
     cleanValue(userName) ||
     '';
 
-  // Superusers should only see the popup if they switched to a user.
-  // Regular users (!superUser) are always eligible to see the popup after login if not submitted.
-  const isSwitchedSuperUser = Boolean(superUser && (ui || Cookie.get('ui')));
-  const isEligibleUser = !superUser || isSwitchedSuperUser;
+  // Normal users see the popup after login if not submitted. Superusers do not see the popup.
+  const isEligibleUser = !superUser;
 
   useEffect(() => {
     let isMounted = true;
@@ -88,7 +85,7 @@ const FeedbackPopup: React.FC = () => {
       isMounted = false;
       if (timer) clearTimeout(timer);
     };
-  }, [isEligibleUser, isPopupDismissed, isDrawerOpen, userLoginValue, token, ui]);
+  }, [isEligibleUser, isPopupDismissed, isDrawerOpen, userLoginValue, token]);
 
   const handleClose = () => {
     if (typeof window !== 'undefined') {
