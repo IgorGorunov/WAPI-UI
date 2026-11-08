@@ -64,6 +64,7 @@ const UserList: React.FC<UserListPropsType> = ({ users, onClose }) => {
         setUserInfoProfile(user.userProfile.userInfo);
         Cookie.remove('orders-period');
         if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('wapi_feedback_popup_dismissed');
             sessionStorage.setItem('wapi_show_feedback_popup_after_login', 'true');
         }
         onClose();

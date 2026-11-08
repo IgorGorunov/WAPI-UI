@@ -72,7 +72,7 @@ const FREQUENCY_OPTIONS: OptionType[] = [
 
 const FeedbackDrawer: React.FC = () => {
   const { isOpen, closeFeedback } = useFeedback();
-  const { userName, userInfo, token, superUser, ui, superUserName, userEmail } = useAuth();
+  const { userName, userInfo, token, superUser, ui, userEmail } = useAuth();
   const { tenantData } = useTenant();
 
   // Fresh question state
@@ -339,10 +339,9 @@ const FeedbackDrawer: React.FC = () => {
       'anonymous';
 
     const userNameValue =
-      cleanValue(userInfo?.userName) ||
-      cleanValue(superUserName) ||
-      cleanValue(Cookie.get('suName')) ||
       cleanValue(userName) ||
+      cleanValue(Cookie.get('userName')) ||
+      cleanValue(userInfo?.userName) ||
       undefined;
 
     const res = await submitFeedback(responses, {

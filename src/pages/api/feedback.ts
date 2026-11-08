@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSupabaseClient } from '@/lib/supabase';
 
+const CHECK_SURVEY_CODES = ['ui_feedback_v2', 'ui_feedback_clients_v1', 'ui_feedback_v1'];
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const supabase = getSupabaseClient();
 
@@ -16,8 +18,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     process.env.SUPABASE_FEEDBACK_TABLE ||
     'user_feedback';
 
-  // GET /api/feedback?userLogin=... -> check if user already submitted feedback
+  // GET /api/feedback?all=true -> fetch all feedback records
+  // GET /api/feedback?userLogin=... -> check if user already submitted feedback in any version
   if (req.method === 'GET') {
+    if (req.query.all === 'true') {
+      try {
+        const { data, error } = await supabase
+          .from(primaryTable)
+          .select('*')
+          .in('survey_code', CHECK_SURVEY_CODES);
+
+        if (error) {
+          return res.status(500).json({ success: false, error: error.message });
+        }
+
+        return res.status(200).json({ success: true, items: data || [] });
+      } catch (err: any) {
+        return res.status(500).json({
+          success: false,
+          error: err?.message || 'Failed to fetch feedback results',
+        });
+      }
+    }
+
     const userLogin = typeof req.query.userLogin === 'string' ? req.query.userLogin.trim() : '';
 
     if (!userLogin || userLogin === 'anonymous') {
@@ -29,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .from(primaryTable)
         .select('user_login')
         .eq('user_login', userLogin)
-        .eq('survey_code', 'ui_feedback_clients_v1')
+        .in('survey_code', CHECK_SURVEY_CODES)
         .limit(1);
 
       if (!error && data && data.length > 0) {
@@ -59,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       client: userMetadata?.client || null,
       token: userMetadata?.token || null,
       user_uuid: userMetadata?.userUuid || null,
-      survey_code: 'ui_feedback_clients_v1',
+      survey_code: 'ui_feedback_v2',
       responses,
     };
 

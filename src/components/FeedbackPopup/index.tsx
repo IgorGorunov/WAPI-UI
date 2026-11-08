@@ -21,7 +21,7 @@ const IS_FEEDBACK_POPUP_ENABLED = true;
 
 const FeedbackPopup: React.FC = () => {
   const { isOpen: isDrawerOpen, openFeedback, isPopupDismissed, dismissPopup } = useFeedback();
-  const { userEmail, userInfo, userName, token, superUser } = useAuth();
+  const { userEmail, userInfo, userName, token, superUser, ui } = useAuth();
 
   const [shouldShow, setShouldShow] = useState(false);
   const [isAnimatedVisible, setIsAnimatedVisible] = useState(false);
@@ -30,40 +30,39 @@ const FeedbackPopup: React.FC = () => {
   const userLoginValue =
     cleanValue(userEmail) ||
     cleanValue(Cookie.get('userEmail')) ||
+    cleanValue(typeof window !== 'undefined' ? localStorage.getItem('userEmail') : '') ||
     cleanValue(userInfo?.userLogin) ||
     cleanValue(userName) ||
+    cleanValue(Cookie.get('userName')) ||
     '';
 
-  // Normal users see the popup after login if not submitted. Superusers do not see the popup.
-  const isEligibleUser = !superUser;
+  // Superusers should only see the popup if they switched to a user.
+  // Regular users (!superUser) are always eligible to see the popup if not submitted.
+  const isSwitchedSuperUser = Boolean(superUser && (ui || Cookie.get('ui')));
+  const isEligibleUser = !superUser || isSwitchedSuperUser;
 
   useEffect(() => {
     let isMounted = true;
     let timer: NodeJS.Timeout;
 
     const evaluatePopupVisibility = async () => {
-      if (!IS_FEEDBACK_POPUP_ENABLED || !isEligibleUser || isPopupDismissed || isDrawerOpen) {
+      const isDismissedInSession =
+        typeof window !== 'undefined' &&
+        sessionStorage.getItem('wapi_feedback_popup_dismissed') === 'true';
+
+      if (!IS_FEEDBACK_POPUP_ENABLED || !isEligibleUser || isPopupDismissed || isDismissedInSession || isDrawerOpen) {
         setIsAnimatedVisible(false);
         setShouldShow(false);
         return;
       }
 
-      const justLoggedIn =
-        typeof window !== 'undefined' &&
-        sessionStorage.getItem('wapi_show_feedback_popup_after_login') === 'true';
-
-      if (!justLoggedIn && !shouldShow) {
-        return;
-      }
-
-      if (!SHOW_POPUP_EVEN_IF_SUBMITTED) {
-        if (!userLoginValue) {
-          return;
-        }
+      if (!SHOW_POPUP_EVEN_IF_SUBMITTED && userLoginValue) {
         const alreadySubmitted = await checkHasUserSubmittedFeedback(userLoginValue);
         if (!isMounted) return;
         if (alreadySubmitted) {
-          sessionStorage.removeItem('wapi_show_feedback_popup_after_login');
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('wapi_feedback_popup_dismissed', 'true');
+          }
           setShouldShow(false);
           return;
         }
@@ -85,10 +84,11 @@ const FeedbackPopup: React.FC = () => {
       isMounted = false;
       if (timer) clearTimeout(timer);
     };
-  }, [isEligibleUser, isPopupDismissed, isDrawerOpen, userLoginValue, token]);
+  }, [isEligibleUser, isPopupDismissed, isDrawerOpen, userLoginValue, token, ui]);
 
   const handleClose = () => {
     if (typeof window !== 'undefined') {
+      sessionStorage.setItem('wapi_feedback_popup_dismissed', 'true');
       sessionStorage.removeItem('wapi_show_feedback_popup_after_login');
     }
     setIsAnimatedVisible(false);
@@ -100,6 +100,7 @@ const FeedbackPopup: React.FC = () => {
 
   const handleOpenFeedbackForm = () => {
     if (typeof window !== 'undefined') {
+      sessionStorage.setItem('wapi_feedback_popup_dismissed', 'true');
       sessionStorage.removeItem('wapi_show_feedback_popup_after_login');
     }
     setIsAnimatedVisible(false);

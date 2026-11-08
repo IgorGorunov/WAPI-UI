@@ -320,6 +320,8 @@ export const AuthProvider = (props: PropsWithChildren) => {
     Cookie.remove('sellers');
     Cookie.remove('userEmail');
     if (typeof window !== 'undefined') {
+      localStorage.removeItem('userEmail');
+      sessionStorage.removeItem('wapi_feedback_popup_dismissed');
       sessionStorage.removeItem('wapi_show_feedback_popup_after_login');
     }
 
@@ -375,6 +377,10 @@ export const AuthProvider = (props: PropsWithChildren) => {
     if (userEmailFromCookie) {
       return userEmailFromCookie;
     }
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('userEmail');
+      if (stored) return stored;
+    }
     return null;
   }
   const [userEmail, setUserEmail] = useState<string | null>(getUserEmailFromCookie());
@@ -382,7 +388,11 @@ export const AuthProvider = (props: PropsWithChildren) => {
     //setUserInfo(val);
     //Cookie.set('profile_info', JSON.stringify(val));
     setUserEmail(val?.userLogin || null);
-    Cookie.set('userEmail', val?.userLogin || '', { secure: true });
+    if (typeof window !== 'undefined' && val?.userLogin) {
+      localStorage.setItem('userEmail', val.userLogin);
+    }
+    const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+    Cookie.set('userEmail', val?.userLogin || '', isHttps ? { secure: true } : {});
   }
 
   const setIsSuperUser = (isSU: boolean) => {
