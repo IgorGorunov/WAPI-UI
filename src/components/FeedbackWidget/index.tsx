@@ -6,10 +6,9 @@ import { UserStatusType } from '@/types/leads';
 import Icon from "@/components/Icon";
 
 /**
- * Set to `true` when the review starts to display the floating feedback button.
- * Currently `false` to temporarily hide it for all users.
+ * Set to `true` to display the floating feedback button.
  */
-const IS_FEEDBACK_WIDGET_ENABLED = false;
+const IS_FEEDBACK_WIDGET_ENABLED = true;
 
 const FeedbackWidget: React.FC = () => {
   const { openFeedback } = useFeedback();
