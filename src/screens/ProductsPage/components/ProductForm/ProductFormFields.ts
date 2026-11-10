@@ -214,7 +214,7 @@ export const FormFieldsSKU = () => [
             width: WidthType.w33,
             classNames: "",
             hint: ProductHints['sku'] || '',
-            // onlyAllowedSymbols: true,
+            onlyAllowedSymbols: true,
         },
         {
             fieldType: FormFieldTypes.TEXT,

@@ -15,6 +15,8 @@ import Modal from "@/components/Modal";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
 import {FormFieldTypes} from "@/types/forms";
 import Icon from "@/components/Icon";
+import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
+import useNotifications from "@/context/notificationContext";
 
 type PropsType = {
     docName: string;
@@ -27,6 +29,8 @@ type PropsType = {
 const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docType, refetchDoc }) => {
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const { tenantData: { alias } } = useTenant();
+    const { setDocMandatoryNotificationsAsRead } = useMarkNotificationAsRead();
+    const { refreshNotifications } = useNotifications();
 
     const [canEdit, setCanEdit] = useState(false);
 
@@ -89,6 +93,10 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
             const res = await ProcessApproval(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "status" in res && res?.status === 200) {
+                if (uuid) {
+                    setDocMandatoryNotificationsAsRead(uuid);
+                }
+                refreshNotifications();
                 //success
                 setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Thank you! Cost is approved!`, onClose: closeSuccessModal })
                 setShowStatusModal(true);
@@ -128,6 +136,10 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
             const res = await ProcessApproval(superUser && ui ? { ...requestData, ui } : requestData);
 
             if (res && "status" in res && res?.status === 200) {
+                if (uuid) {
+                    setDocMandatoryNotificationsAsRead(uuid);
+                }
+                refreshNotifications();
                 //success
                 setModalStatusInfo({ statusModalType: STATUS_MODAL_TYPES.SUCCESS, title: "Success", subtitle: `Thank you! Cost is rejected!`, onClose: closeSuccessModal })
                 setShowStatusModal(true);

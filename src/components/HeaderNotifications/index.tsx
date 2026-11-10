@@ -1,8 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Icon from "@/components/Icon";
 import useAuth from "@/context/authContext";
-import { checkNewNotifications, getNotifications } from "@/services/notifications";
-import { NOTIFICATION_STATUSES, NotificationResponseType, NotificationType } from "@/types/notifications";
+import {checkNewNotifications, getNotifications} from "@/services/notifications";
+import {markNotificationAsRead} from "@/utils/notifications";
+import {
+    NOTIFICATION_STATUSES,
+    NOTIFICATION_TYPES,
+    NotificationResponseType,
+    NotificationType
+} from "@/types/notifications";
 import NotificationsBlock from "@/components/HeaderNotifications/NotificationsBlock";
 import useNotifications from "@/context/notificationContext";
 import useTenant from "@/context/tenantContext";
@@ -17,7 +23,7 @@ const removeEmptyBrackets = (notificationsArray: NotificationType[]) => {
 const HeaderNotifications: React.FC = () => {
     const { tenantData: { alias } } = useTenant();
     const { token, superUser, ui } = useAuth();
-    const { notifications, setNotifications, newNotifications, setNewNotifications } = useNotifications();
+    const { notifications, setNotifications, newNotifications, setNewNotifications, refreshTrigger } = useNotifications();
 
     const [isNotificationsListOpen, setIsNotificationsListOpen] = useState(false);
     const [needAnimation, setNeedAnimation] = useState(false);
@@ -49,10 +55,27 @@ const HeaderNotifications: React.FC = () => {
             if (res && res.data) {
                 const notificationsData = res.data as NotificationResponseType;
                 if (notificationsData.notifications && Array.isArray(notificationsData.notifications)) {
-                    setNotifications(removeEmptyBrackets(notificationsData.notifications));
-                    setNeedAnimation(true);
-                    const newNotificationsAmount = notificationsData.notificationsStatuses[NOTIFICATION_STATUSES.NEW] + notificationsData.notificationsStatuses[NOTIFICATION_STATUSES.UNREAD];
+                    // Mark any unread DoNotShow notifications as read upon receiving
+                    const unreadDoNotShow = notificationsData.notifications.filter(
+                        item => item.type === NOTIFICATION_TYPES.DO_NOT_SHOW && item.status !== NOTIFICATION_STATUSES.READ
+                    );
+                    unreadDoNotShow.forEach(item => {
+                        markNotificationAsRead(token, alias, item.uuid);
+                    });
+
+                    // Hide DoNotShow notifications from everywhere
+                    const visibleNotifications = notificationsData.notifications.filter(
+                        item => item.type !== NOTIFICATION_TYPES.DO_NOT_SHOW
+                    );
+                    setNotifications(removeEmptyBrackets(visibleNotifications));
+
+                    const rawNewAmount = (notificationsData.notificationsStatuses?.[NOTIFICATION_STATUSES.NEW] || 0) + (notificationsData.notificationsStatuses?.[NOTIFICATION_STATUSES.UNREAD] || 0);
+                    const newNotificationsAmount = Math.max(0, rawNewAmount - unreadDoNotShow.length);
                     setNewNotifications(newNotificationsAmount);
+
+                    if (newNotificationsAmount > 0) {
+                        setNeedAnimation(true);
+                    }
                 }
             } else {
                 console.error("API did not return expected data");
@@ -76,6 +99,12 @@ const HeaderNotifications: React.FC = () => {
             clearInterval(fetchDataInterval);
         };
     }, [notifications]);
+
+    useEffect(() => {
+        if (refreshTrigger > 0) {
+            fetchNotificationsData();
+        }
+    }, [refreshTrigger]);
 
     // useEffect(() => {
     //     //setNotifications(null);

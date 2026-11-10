@@ -11,6 +11,8 @@ export enum NOTIFICATION_TYPES {
     ERROR = 'Error',
     IMPORTANT = 'Important',
     URGENT = 'Urgent',
+    STOCK_MOVEMENTS_COST_APPROVAL = 'StockMovementCostApproval',
+    DO_NOT_SHOW = 'DoNotShow',
 }
 
 export enum NOTIFICATION_OBJECT_TYPES {
