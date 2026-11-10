@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-// const path = require('path');
+const path = require('path');
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -18,6 +18,7 @@ const nextConfig = {
 
   // Compiler optimizations
   compiler: {
+    styledComponents: true,
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],
     } : false,
@@ -40,7 +41,8 @@ const nextConfig = {
     '@ant-design/icons',
     '@ant-design/icons-svg',
     'next-sanity',
-    '@portabletext/react'
+    '@portabletext/react',
+    '@sanity/table',
   ],
   experimental: {
     esmExternals: 'loose', // important for Vercel builds!
@@ -162,20 +164,13 @@ const nextConfig = {
   //
   //   config.resolve.extensions.push('.js', '.mjs');
 
-  // webpack(config) {
-  //   // Allow global CSS/SCSS to be imported from components (not just _app).
-  //   // Next.js restricts global CSS imports to _app by default; this widens the
-  //   // issuer allowlist to the entire project root.
-  //   config.module.rules.forEach(rule => {
-  //     if (!rule.oneOf) return;
-  //     rule.oneOf.forEach(one => {
-  //       if (!`${one.issuer?.and}`.includes('_app')) return;
-  //       one.issuer.and = [path.resolve(__dirname)];
-  //     });
-  //   });
-  //
-  //   return config;
-  // },
+  webpack(config) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'styled-components': path.resolve(__dirname, 'node_modules/styled-components'),
+    };
+    return config;
+  },
 };
 
 module.exports = withBundleAnalyzer(nextConfig);
