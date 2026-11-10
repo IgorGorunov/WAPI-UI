@@ -1,5 +1,4 @@
 import type { AppContext, AppProps } from "next/app";
-import { Inter } from "next/font/google";
 import { AuthProvider } from "@/context/authContext";
 import "@/styles/globals.scss";
 import "@/styles/forms.scss";
@@ -28,13 +27,6 @@ import { getTenantData, TENANT_TYPE, TenantDataType, TENANTS, tenants } from '@/
 import { TenantContext } from "@/context/tenantContext";
 import { ToastContainer } from "@/components/Toast";
 import { FeedbackProvider } from "@/context/feedbackContext";
-
-const inter = Inter({
-  weight: ["400", "700", "900"],
-  style: ["normal"],
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export function App({ Component, pageProps, tenantHost }: AppProps & { tenantHost?: string, host?: string }) {
   const [tenant, setTenant] = useState<null | TENANT_TYPE>(null);
@@ -72,7 +64,7 @@ export function App({ Component, pageProps, tenantHost }: AppProps & { tenantHos
     <>
       <style jsx global>{`
         :root {
-          --inter-font: ${inter.style.fontFamily};
+          --inter-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
       `}</style>
 

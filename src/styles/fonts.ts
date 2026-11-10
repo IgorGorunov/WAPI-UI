@@ -1,8 +1,6 @@
-import { Inter } from 'next/font/google'
-
-export const inter = Inter({
-    subsets: ['latin'],
-    display: 'swap',
-    preload: true,
-    variable: '--font-inter',
-})
+export const inter = {
+  style: {
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  },
+  variable: '--font-inter',
+};
