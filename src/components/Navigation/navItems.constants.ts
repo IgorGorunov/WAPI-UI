@@ -109,6 +109,14 @@ export const navBlocks = (unreadAmount: number = 0) => ([
     },
 
     {
+        submenuTitle: `Price calculator`,
+        submenuName: "PriceCalculator",
+        submenuIcon: 'finances',
+        submenuLink: '/price-calculator',
+        navItems: [],
+    },
+
+    {
         submenuTitle: 'WAPI Checker',
         submenuName: "AntiFraud",
         submenuIcon: 'anti-fraud',

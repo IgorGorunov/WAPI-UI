@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
-import Icon, { IconType } from "@/components/Icon";
+import React, {useEffect, useState} from "react";
+import Icon, {IconType} from "@/components/Icon";
 import {
     NOTIFICATION_OBJECT_TYPES,
     NOTIFICATION_STATUSES,
     NOTIFICATION_TYPES,
     NotificationType
 } from "@/types/notifications";
-import ModalStatus, { ModalStatusType } from "@/components/ModalStatus";
-import { STATUS_MODAL_TYPES } from "@/types/utility";
+import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
+import {STATUS_MODAL_TYPES} from "@/types/utility";
 import SearchField from "@/components/SearchField";
 import SearchContainer from "@/components/SearchContainer";
-import { formatDateTimeToStringWithDotWithoutSeconds } from "@/utils/date";
-import { useMarkNotificationAsRead } from "@/hooks/useMarkNotificationAsRead";
+import {formatDateTimeToStringWithDotWithoutSeconds} from "@/utils/date";
+import {useMarkNotificationAsRead} from "@/hooks/useMarkNotificationAsRead";
 import useNotifications from "@/context/notificationContext";
 import ConfirmModal from "@/components/ModalConfirm";
 import FieldBuilder from "@/components/FormBuilder/FieldBuilder";
-import { FormFieldTypes, OptionType } from "@/types/forms";
+import {FormFieldTypes, OptionType} from "@/types/forms";
 import SingleDocument from "@/components/SingleDocument";
 import useAuth from "@/context/authContext";
-import { getSellerName } from "@/utils/seller";
+import {getSellerName} from "@/utils/seller";
 import styles from "./styles.module.scss";
 import Select from "@/components/FormBuilder/Select/SelectField";
 
@@ -38,7 +38,9 @@ export const getNotificationIconName = (notificationType: NOTIFICATION_TYPES) =>
         case NOTIFICATION_TYPES.IMPORTANT:
             return 'warning';
         case NOTIFICATION_TYPES.URGENT:
-            return 'lightning-bolt';
+            return 'notification';
+        case NOTIFICATION_TYPES.STOCK_MOVEMENTS_COST_APPROVAL:
+            return 'lightning-contour';
         default:
             return 'info';
     }
@@ -116,10 +118,12 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({ notificatio
         //})
     }
     const handleToggleStatus = (notification: NotificationType) => {
+        if (notification.type === NOTIFICATION_TYPES.STOCK_MOVEMENTS_COST_APPROVAL) {
+            return;
+        }
+
         if (notification.status === NOTIFICATION_STATUSES.READ) {
             setNotificationAsUnread(notification.uuid);
-        } else {
-            setNotificationAsRead(notification.uuid)
         }
     }
 
@@ -158,7 +162,7 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({ notificatio
 
     useEffect(() => {
         //search
-        const filterNotifications = notificationsList.filter(notification => {
+        const filterNotifications = notificationsList.filter(item=>item.type !==NOTIFICATION_TYPES.DO_NOT_SHOW).filter(notification => {
             const matchesSearch = !searchTermNotifications.trim() || Object.keys(notification).some(key => {
                 const value = notification[key];
                 if (key !== 'uuid' && key !== 'objectUuid') {
@@ -262,10 +266,13 @@ const NotificationsBlock: React.FC<NotificationsBlockPropsType> = ({ notificatio
                                                         <Icon name={getNotificationIconName(item.type) as IconType} />
                                                     </div>
                                                 </button>
-                                                <button
-                                                    className={`${styles['notification-toggle-status-btn']} ${item.status === NOTIFICATION_STATUSES.READ ? styles['is-read'] : styles['is-unread']} ${styles[`type-${item.type}`]}`}
-                                                    onClick={() => handleToggleStatus(item)}
-                                                />
+                                                {(item.type !== NOTIFICATION_TYPES.STOCK_MOVEMENTS_COST_APPROVAL) && (
+                                                    <button
+                                                        className={`${styles['notification-toggle-status-btn']} ${item.status === NOTIFICATION_STATUSES.READ ? styles['is-read'] : styles['is-unread']} ${styles[`type-${item.type}`]}`}
+                                                        onClick={() => handleToggleStatus(item)}
+                                                        title={item.status === NOTIFICATION_STATUSES.READ ? "Mark as unread" : "Mark as read"}
+                                                    />
+                                                )}
                                             </li>
                                         ))}
                                     </ul>
