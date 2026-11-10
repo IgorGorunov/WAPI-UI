@@ -9,6 +9,10 @@ export default function Document() {
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
+          rel="stylesheet"
+        />
 
         {/* Preconnect to external domains for better performance */}
         <link rel="preconnect" href="https://cdn.sanity.io" />
