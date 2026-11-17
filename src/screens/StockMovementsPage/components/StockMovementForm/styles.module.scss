@@ -34,6 +34,25 @@
     }
   }
 
+  &--cost-approval-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .stock-movement__block-title {
+      margin-bottom: 0;
+    }
+
+    :global(.icon-replace) {
+      width: 20px;
+
+      path {
+        stroke: var(--color-gray-blue);
+      }
+    }
+  }
+
   // Unused style
   // &--helper-text p {
   //   line-height: normal;

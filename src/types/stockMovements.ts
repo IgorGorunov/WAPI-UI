@@ -91,6 +91,8 @@ export type StockMovementShippingUnitsType = {
 }
 
 export type StockMovementDeliveryCostApprovalType = {
+    key?: string;
+    Key?: string;
     Comment: string;
     CustomerPrice: number;
     ETA: string;

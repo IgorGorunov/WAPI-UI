@@ -26,6 +26,12 @@ type PropsType = {
     refetchDoc?: () => void;
 };
 
+export const isAwaitingApproval = (status?: string) => {
+    if (!status) return false;
+    const s = status.trim().toLowerCase();
+    return s === "awaiting cost approval" || s === "awaiting approval" || s.includes("awaiting");
+};
+
 const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docType, refetchDoc }) => {
     const { token, superUser, ui, getBrowserInfo, isActionIsAccessible } = useAuth();
     const { tenantData: { alias } } = useTenant();
@@ -52,12 +58,15 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
     }, [refetchDoc]);
     const [modalStatusInfo, setModalStatusInfo] = useState<ModalStatusType>({ onClose: closeErrorModal })
 
-    const history = canEdit ? costApproval.filter(item => item.Status !== "Awaiting cost approval") : costApproval;
+    const history = canEdit
+        ? (costApproval?.filter(item => !isAwaitingApproval(item.Status)) || [])
+        : (costApproval || []);
 
-    const needApproval = costApproval.filter(item => item.Status == "Awaiting cost approval");
+    const needApproval = costApproval?.filter(item => isAwaitingApproval(item.Status)) || [];
 
     //reject modal
     const [showRejectModal, setShowRejectModal] = useState(false);
+    const [rejectingItem, setRejectingItem] = useState<StockMovementDeliveryCostApprovalType | null>(null);
     const [rejectReason, setRejectReason] = useState<string>("Need a cheaper rate");
     const [rejectComment, setRejectComment] = useState<string>("");
     const [rejectPrice, setRejectPrice] = useState<string>("");
@@ -65,15 +74,27 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
     const [rejectError, setRejectError] = useState<string>("");
     const [rejectFormErrors, setRejectFormErrors] = useState<{[key: string]: string}>({});
 
+    const openRejectModal = useCallback((item: StockMovementDeliveryCostApprovalType | null) => {
+        setRejectingItem(item);
+        setRejectReason("Need a cheaper rate");
+        setRejectComment("");
+        setRejectPrice("");
+        setRejectETD(item ? item.ETD : (needApproval.length ? needApproval[0].ETD : ""));
+        setRejectError("");
+        setRejectFormErrors({});
+        setShowRejectModal(true);
+    }, [needApproval]);
+
     const closeRejectModal = useCallback(() => {
         setShowRejectModal(false);
+        setRejectingItem(null);
         setRejectReason("Need a cheaper rate");
         setRejectComment("");
         setRejectPrice("");
         setRejectETD(needApproval.length ? needApproval[0].ETD : "");
         setRejectError("");
         setRejectFormErrors({});
-    }, []);
+    }, [needApproval]);
 
 
     const handleApprove = async(item: StockMovementDeliveryCostApprovalType) => {
@@ -82,12 +103,14 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
         } catch { }
 
         try {
+            const costKey = item.key || item.Key;
             const requestData = {
                 token,
                 alias,
                 uuid: uuid,
                 status: "Approved",
                 requestedPrice: item.CustomerPrice,
+                ...(costKey ? { key: costKey } : {}),
             };
 
             const res = await ProcessApproval(superUser && ui ? { ...requestData, ui } : requestData);
@@ -169,36 +192,60 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
             </div>
             {
                 canEdit && needApproval.length ? (
-                    <div className={styles["stock-movement-cost-approval__approval-block-wrapper"]}>
-                        {needApproval.map((item: StockMovementDeliveryCostApprovalType, _index: number) => (
-                            <div className={styles["stock-movement-cost-approval__approval-block"]}>
-                                <p className={styles["stock-movement-cost-approval__approval-block-title"]}>Please approve the cost of the delivery!</p>
+                    <div className={styles["stock-movement-cost-approval__approval-section"]}>
+                        <div className={styles["stock-movement-cost-approval__approval-block-wrapper"]}>
+                            {needApproval.map((item: StockMovementDeliveryCostApprovalType, _index: number) => (
+                                <div key={item.key || item.Key || `need-approval-${_index}`} className={styles["stock-movement-cost-approval__approval-block"]}>
+                                    <div className={styles["stock-movement-cost-approval__approval-block-inner-wrapper"]}>
+                                        <p className={styles["stock-movement-cost-approval__approval-block-title"]}>
+                                            {needApproval.length > 1 ? `Option #${_index + 1}` : "Please approve the cost of the delivery!"}
+                                        </p>
 
-                                <p>
-                                    <span className={styles['approval-block__title']}>Document: </span>
-                                    <span className={styles['approval-block__value']}>{docName}</span>
-                                </p>
-                                <p>
-                                    <span className={styles['approval-block__title']}>Price: </span>
-                                    <span className={styles['approval-block__value']}>€ {item.CustomerPrice}</span>
-                                </p>
-                                <p>
-                                    <span className={styles['approval-block__title']}>ETD: </span>
-                                    <span className={styles['approval-block__value']}>{item.ETD ? formatDateStringToDisplayString(item.ETD) : ''}</span>
-                                </p>
-                                {item.Comment ? (
-                                    <p>
-                                        <span className={styles['approval-block__title']}>Comment: </span>
-                                        <span className={styles['approval-block__value']}>{item.Comment}</span>
-                                    </p>
-                                ): null}
+                                        <p>
+                                            <span className={styles['approval-block__title']}>Document: </span>
+                                            <span className={styles['approval-block__value']}>{docName}</span>
+                                        </p>
+                                        <p>
+                                            <span className={styles['approval-block__title']}>Price: </span>
+                                            <span className={styles['approval-block__value']}>€ {item.CustomerPrice}</span>
+                                        </p>
+                                        <p>
+                                            <span className={styles['approval-block__title']}>ETD: </span>
+                                            <span className={styles['approval-block__value']}>{item.ETD ? formatDateStringToDisplayString(item.ETD) : ''}</span>
+                                        </p>
+                                        {item.ETA ? (
+                                            <p>
+                                                <span className={styles['approval-block__title']}>ETA: </span>
+                                                <span className={styles['approval-block__value']}>{formatDateStringToDisplayString(item.ETA)}</span>
+                                            </p>
+                                        ) : null}
+                                        {item.Comment ? (
+                                            <p>
+                                                <span className={styles['approval-block__title']}>Comment: </span>
+                                                <span className={styles['approval-block__value']}>{item.Comment}</span>
+                                            </p>
+                                        ): null}
+                                    </div>
 
-                                <div className={styles['approval-block__buttons-wrapper']}>
-                                    <Button type={"button"} variant={ButtonVariant.PRIMARY} onClick={()=>handleApprove(item)}>Approve</Button>
-                                    <Button type={"button"} variant={ButtonVariant.TETRIARY} classNames={styles['reject-button']} onClick={()=>setShowRejectModal(true)}>Reject</Button>
-                                </div>
-                            </div>))
-                        }
+                                    <div className={styles['approval-block__buttons-wrapper']}>
+                                        <Button type={"button"} variant={ButtonVariant.PRIMARY} onClick={()=>handleApprove(item)}>Approve</Button>
+                                        {needApproval.length == 1 ? <Button type={"button"} variant={ButtonVariant.TETRIARY} classNames={styles['reject-button']} onClick={()=>openRejectModal(item)}>Reject</Button> : null}
+                                    </div>
+                                </div>))
+                            }
+                        </div>
+                        {needApproval.length > 1 && (
+                            <div className={styles["stock-movement-cost-approval__reject-all-wrapper"]}>
+                                <Button
+                                    type={"button"}
+                                    variant={ButtonVariant.TETRIARY}
+                                    classNames={styles['reject-button']}
+                                    onClick={() => openRejectModal(null)}
+                                >
+                                    Reject all propositions
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 ) : null
             }
@@ -217,7 +264,7 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
                         {history &&
                             history.map((item: StockMovementDeliveryCostApprovalType, index: number) => (
                                 <li
-                                    key={item.ETA+ "_" + item.ETD + "_" + item.Comment + "_" + item.CustomerPrice + "_" + index}
+                                    key={item.key || item.Key || (item.ETA+ "_" + item.ETD + "_" + item.Comment + "_" + item.CustomerPrice + "_" + index)}
                                     className={`${styles["stock-movement-cost-approval__history-list-item"]} ${
                                         index % 2 === 1 ? styles["highlight"] : " "
                                     }`}
@@ -235,7 +282,14 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
 
             {showStatusModal && <ModalStatus {...modalStatusInfo} />}
             {showRejectModal &&
-                <Modal title={`Reason for rejection`} onClose={ closeRejectModal } >
+                <Modal
+                    title={
+                        rejectingItem
+                            ? (needApproval.length > 1 ? `Reason for rejection (Price: €${rejectingItem.CustomerPrice})` : `Reason for rejection`)
+                            : `Reason for rejection (All propositions)`
+                    }
+                    onClose={ closeRejectModal }
+                >
                     <>
                     <div className={`card ${styles['reject-modal-wrapper']}`}>
                         <FieldBuilder
@@ -301,11 +355,13 @@ const CostApproval: React.FC<PropsType> = ({ costApproval, docName, uuid, docTyp
 
                                 setRejectError("");
                                 setRejectFormErrors({});
+                                const costKey = rejectingItem ? (rejectingItem.key || rejectingItem.Key) : undefined;
                                 handleReject({
                                     rejectionReason: rejectReason,
                                     comment: rejectComment,
                                     requestedPrice: rejectPrice,
-                                    requestedDeliveryDate: rejectETD
+                                    requestedDeliveryDate: rejectETD,
+                                    ...(costKey ? { key: costKey } : {}),
                                 });
                                 closeRejectModal();
                             }}>Submit</Button>

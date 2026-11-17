@@ -16,7 +16,7 @@ export const reportBlocks: ReportsListBlockType[] = [
                 reportType: REPORT_TYPES.PRODUCT_EXPIRATION,
                 reportName: "Reports/ProductExpirationOnStocks",
                 reportPageLink: Routes.ProductExpirationOnStocks,
-                reportDescription: 'The report shows product expiration dates',
+                reportDescription: 'The report shows product batches and expiration dates',
             },
         ]
     },

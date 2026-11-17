@@ -2,16 +2,20 @@ import * as React from "react";
 import type { SVGProps } from "react";
 const SvgReplace = (props: SVGProps<SVGSVGElement>) => (
 
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" enable-background="new 0 0 52 52" {...props}>
-        <path d="M20,37.5c0-0.8-0.7-1.5-1.5-1.5h-15C2.7,36,2,36.7,2,37.5v11C2,49.3,2.7,50,3.5,50h15c0.8,0,1.5-0.7,1.5-1.5
-        V37.5z"/>
-        <path d="M8.1,22H3.2c-1,0-1.5,0.9-0.9,1.4l8,8.3c0.4,0.3,1,0.3,1.4,0l8-8.3c0.6-0.6,0.1-1.4-0.9-1.4h-4.7
-        c0-5,4.9-10,9.9-10V6C15,6,8.1,13,8.1,22z"/>
-        <path d="M41.8,20.3c-0.4-0.3-1-0.3-1.4,0l-8,8.3c-0.6,0.6-0.1,1.4,0.9,1.4h4.8c0,6-4.1,10-10.1,10v6
-        c9,0,16.1-7,16.1-16H49c1,0,1.5-0.9,0.9-1.4L41.8,20.3z"/>
-        <path d="M50,3.5C50,2.7,49.3,2,48.5,2h-15C32.7,2,32,2.7,32,3.5v11c0,0.8,0.7,1.5,1.5,1.5h15c0.8,0,1.5-0.7,1.5-1.5
-        V3.5z"/>
-    </svg>
+
+<svg  viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <g clip-path="url(#clip0_137_3278)">
+        <path d="M9.25 8.5L7 10.75L9.25 13" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+        <path d="M4.75 5.49999L7 3.24999L4.75 1" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+        <path d="M7 10.75H11.5C12.6046 10.75 13.5 9.85457 13.5 8.75V5.25C13.5 4.14543 12.6046 3.25 11.5 3.25H10" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+        <path d="M7 3.25H2.5C1.39543 3.25 0.5 4.14543 0.5 5.25V8.75C0.5 9.85457 1.39543 10.75 2.5 10.75H4" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+    </g>
+    <defs>
+        <clipPath id="clip0_137_3278">
+            <rect width="14" height="14"  fill="white"/>
+        </clipPath>
+    </defs>
+</svg>
 )
 
 export default SvgReplace;

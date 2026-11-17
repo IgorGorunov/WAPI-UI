@@ -29,7 +29,8 @@ import {
     formatDateStringToDisplayString,
     formatDateToShowMonthYear,
     formatDateToString,
-    formatDateToWeekRange
+    formatDateToWeekRange,
+    formatExpirationDate,
 } from "@/utils/date";
 import getSymbolFromCurrency from "currency-symbol-map";
 import {
@@ -214,6 +215,11 @@ const ReportTable: React.FC<ReportTablePropsType> = ({ curPeriod, reportType, re
                         return formatDateToWeekRange(cell.getValue() as string)
                     } else if (cell.column.id === 'deliveryDate' || cell.column.id === 'period') {
                         return cell.getValue<string>() ? formatDateStringToDisplayString(cell.getValue<string>()) : ' '
+                    } else if (cell.column.id === 'expiration') {
+                        return formatExpirationDate(cell.getValue<string>());
+                    } else if (cell.column.id === 'batch') {
+                        const val = cell.getValue<string>();
+                        return val && val.trim() ? val : '-';
                     } else if (cell.column.id === 'price') {
                         const val = cell.getValue();
                         //@ts-ignore

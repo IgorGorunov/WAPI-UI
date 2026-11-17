@@ -144,8 +144,11 @@ export const ProcessApproval = async (
         status: string;
         rejectionReason?: string;
         comment?: string;
-        requestedPrice: number;
+        requestedPrice?: number | string;
         requestedDeliveryDays?: string;
+        requestedDeliveryDate?: string;
+        key?: string;
+        Key?: string;
     }
 ): Promise<ApiResponseType<AttachedFilesType>> => {
     return api.post(`/ProcessStockMovementCostApproval`, data);

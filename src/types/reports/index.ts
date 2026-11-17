@@ -37,7 +37,7 @@ export const REPORT_TITLES = {
     [REPORT_TYPES.REPORT_SALES]: "Sales report",
     [REPORT_TYPES.SALE_DYNAMIC]: "Sales dynamic report",
     [REPORT_TYPES.COD_REPORT]: 'COD check report',
-    [REPORT_TYPES.PRODUCT_EXPIRATION]: "Product expiration report",
+    [REPORT_TYPES.PRODUCT_EXPIRATION]: "Product batches and expiration dates",
 }
 
 export type BlockReportsType = {

@@ -3,7 +3,7 @@ import {PRODUCT_EXPIRATION_VARIANTS, ProductExpirationRowType} from "@/types/rep
 import {ColumnDef} from "@tanstack/react-table";
 import {formatNumbers} from "@/screens/ReportPage/utils";
 import {Tooltip} from "antd";
-import {formatDateStringToDisplayString} from "@/utils/date";
+import {formatExpirationDate} from "@/utils/date";
 
 
 const resourceColumns: ColumnDef<ProductExpirationRowType>[] = [
@@ -66,6 +66,20 @@ const productColumn = (width: number) => [
     } as ColumnDef<ProductExpirationRowType>,
 ];
 
+const batchColumn: ColumnDef<ProductExpirationRowType>[] = [
+    {
+        accessorKey: 'batch',
+        header: () => <Tooltip title="Batch"><span>Batch</span></Tooltip>,
+        size: 100,
+        maxSize: 400,
+        cell: ({ getValue }) => {
+            const val = getValue<string>();
+            return val && val.trim() ? val : '-';
+        },
+        aggregatedCell: ({ getValue }) => "",
+    },
+];
+
 const expirationColumn: ColumnDef<ProductExpirationRowType>[] = [
     {
         accessorKey: 'expiration',
@@ -74,7 +88,7 @@ const expirationColumn: ColumnDef<ProductExpirationRowType>[] = [
         size: 120,
         maxSize: 1800,
         cell: ({getValue }) =>
-            formatDateStringToDisplayString(getValue<string>()),
+            formatExpirationDate(getValue<string>()),
         aggregatedCell: ({ getValue }) =>
             "",
     },
@@ -84,6 +98,7 @@ const expirationColumn: ColumnDef<ProductExpirationRowType>[] = [
 export const columns_Warehouse_Product: ColumnDef<ProductExpirationRowType>[] = [
     ...warehouseColumn,
     ...productColumn(80),
+    ...batchColumn,
     ...expirationColumn,
     ...resourceColumns,
 ];
@@ -91,6 +106,7 @@ export const columns_Warehouse_Product: ColumnDef<ProductExpirationRowType>[] = 
 export const columns_Product_Warehouse: ColumnDef<ProductExpirationRowType>[] = [
     ...productColumn(80),
     ...warehouseColumn,
+    ...batchColumn,
     ...expirationColumn,
     ...resourceColumns,
 ];
@@ -121,24 +137,24 @@ export const getProductExpirationVariantGroupCols = (variant: PRODUCT_EXPIRATION
 export const getProductExpirationVariantDimensionNumber = (variant: PRODUCT_EXPIRATION_VARIANTS) => {
     switch (variant) {
         case PRODUCT_EXPIRATION_VARIANTS.WAREHOUSE_PRODUCT:
-            return ['warehouse', 'product', 'sku'];
+            return ['warehouse', 'product', 'batch', 'expiration'];
         case PRODUCT_EXPIRATION_VARIANTS.PRODUCT_WAREHOUSE:
-            return ['product', 'warehouse', 'sku'];
+            return ['product', 'warehouse', 'batch', 'expiration'];
 
         default:
-            return ['warehouse', 'product', 'sku'];
+            return ['warehouse', 'product', 'batch', 'expiration'];
     }
 }
 
 export const getProductExpirationVariantDimensionCols = (variant: PRODUCT_EXPIRATION_VARIANTS) => {
     switch (variant) {
         case PRODUCT_EXPIRATION_VARIANTS.WAREHOUSE_PRODUCT:
-            return ['warehouse', 'product','country', 'expiration', 'sku'];
+            return ['warehouse', 'product','country', 'batch', 'expiration', 'sku'];
         case PRODUCT_EXPIRATION_VARIANTS.PRODUCT_WAREHOUSE:
-            return ['product','warehouse', 'country', 'expiration', 'sku'];
+            return ['product','warehouse', 'country', 'batch', 'expiration', 'sku'];
 
         default:
-            return ['warehouse', 'product', 'country', 'expiration', 'sku'];
+            return ['warehouse', 'product', 'country', 'batch', 'expiration', 'sku'];
     }
 }
 
@@ -153,12 +169,12 @@ export const getProductExpirationVariantResourceCols = (variant: PRODUCT_EXPIRAT
 export const getProductExpirationVariantSortingCols = (variant: PRODUCT_EXPIRATION_VARIANTS) => {
     switch (variant) {
         case PRODUCT_EXPIRATION_VARIANTS.WAREHOUSE_PRODUCT:
-            return ['warehouse', 'product', 'expiration'];
+            return ['warehouse', 'product', 'batch', 'expiration'];
         case PRODUCT_EXPIRATION_VARIANTS.PRODUCT_WAREHOUSE:
-            return ['product', 'warehouse', 'expiration'];
+            return ['product', 'warehouse', 'batch', 'expiration'];
 
         default:
-            return ['warehouse', 'product', 'expiration'];
+            return ['warehouse', 'product', 'batch', 'expiration'];
     }
 }
 
@@ -166,6 +182,8 @@ export const getProductExpirationVariantSortingCols = (variant: PRODUCT_EXPIRATI
 export const ProductExpirationHeaderNames = {
     'warehouse': "Warehouse",
     'product': "Product",
-
+    'batch': "Batch",
+    'expiration': "Expiration date",
+    'quantity': "Quantity",
     'available': "Available",
 }

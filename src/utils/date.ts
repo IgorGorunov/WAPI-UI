@@ -43,6 +43,25 @@ const formatDateStringToDisplayString = (dateString: string) => {
     return formatDateToDisplayString(new Date(dateString));
 }
 
+const formatExpirationDate = (date: string | number | null | undefined): string => {
+    if (!date) {
+        return '-';
+    }
+    const dateStr = String(date).trim();
+    if (!dateStr || dateStr === '0001-01-01T00:00:00' || dateStr === '1901-01-01T00:00:00') {
+        return '-';
+    }
+    if (dateStr.includes('3999')) {
+        return '-';
+    }
+    const d = typeof date === 'number' ? new Date(date) : new Date(dateStr);
+    if (isNaN(d.getTime()) || d.getFullYear() === 3999 || d.getFullYear() <= 1901) {
+        return '-';
+    }
+    const formatted = formatDateToDisplayString(d);
+    return formatted || '-';
+}
+
 const formatDateToDisplayStringWithTime = (selectedDate: Date) => {
     const date = formatDateToDisplayString(selectedDate);
     const time = formatTimeStringFromString(selectedDate.toString());
@@ -166,6 +185,7 @@ export {
     formatDateToString,
     formatDateTimeToStringWithDot,
     formatDateStringToDisplayString,
+    formatExpirationDate,
     getFirstDayOfMonth,
     formatDateToDisplayString,
     formatDateToDisplayStringWithTime,

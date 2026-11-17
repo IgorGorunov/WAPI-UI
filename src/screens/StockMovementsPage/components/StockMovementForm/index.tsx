@@ -82,9 +82,11 @@ const StockMovementForm: React.FC<StockMovementFormType> = ({ docType, docUuid =
 
             if (res && "data" in res && res.data) {
                 setDocData(res.data);
+                return res.data;
             } else {
                 console.error("API did not return expected data");
                 showEmptyResponseError();
+                return null;
             }
         } catch (error) {
             console.error("Error fetching data:", error);

@@ -12,8 +12,8 @@ export type ProductExpirationRowType = {
     country: string;
     available: number;
     quantity: number;
-    expiration: number;
-
+    expiration: string | number;
+    batch: string;
     seller?: string;
 }
 
