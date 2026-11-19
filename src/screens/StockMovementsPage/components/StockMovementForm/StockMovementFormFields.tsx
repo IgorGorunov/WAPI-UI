@@ -267,6 +267,7 @@ export const DetailsFields = (
             notDisable: isInbound && canEditETA,
             //isDisplayed: !newObject,
             hint: docHintsObj['courierServiceTrackingNumber'] || '',
+            hasLink: true,
         },
         {
             fieldType: FormFieldTypes.TEXT_AREA,

@@ -46,6 +46,79 @@
     padding-right: 32px !important;
   }
 
+  .input--with-link {
+    padding-right: 36px !important;
+  }
+
+  .form-input-link-btn {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--color-links, #2f80ed);
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 2;
+
+    &:hover {
+      background-color: rgba(47, 128, 237, 0.12);
+      color: var(--color-blue);
+    }
+
+    svg {
+      display: block;
+    }
+  }
+
+  .disabled-link-field {
+    width: 100%;
+    margin-bottom: 4px;
+    margin-left: -2px;
+    font-family: var(--inter-font), sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 20px;
+    min-height: 34px;
+    padding: 5px 10px;
+    border: 2px solid var(--border-color);
+    border-radius: 30px;
+    background-color: var(--color-light-gray) !important;
+    color: var(--color-gray-blue) !important;
+    box-shadow: 0 2px 5px 0 rgba(38, 51, 77, 0.03);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+
+    &.has-link-btn {
+      padding-right: 36px;
+    }
+
+    a {
+      color: var(--color-links, #2f80ed);
+      text-decoration: underline;
+      cursor: pointer;
+      word-break: break-all;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    .placeholder-text {
+      color: var(--color-placeholder) !important;
+    }
+  }
+
   .input-spinner {
     position: absolute;
     right: 12px;
@@ -119,7 +192,8 @@
     padding: 0;
     margin-bottom: 0;
 
-    input {
+    input,
+    .disabled-link-field {
       margin-bottom: 0;
       box-shadow: none;
       border-radius: 5px;
@@ -137,13 +211,15 @@
   }
 
   &.has-error {
-    input {
+    input,
+    .disabled-link-field {
       border-color: var(--color-error);
     }
   }
 
   &.is-disabled {
-    input {
+    input,
+    .disabled-link-field {
       background-color: var(--color-light-gray) !important;
       color: var(--color-gray-blue) !important;
     }
@@ -154,7 +230,8 @@
       margin-bottom: 12px;
     }
 
-    input {
+    input,
+    .disabled-link-field {
       font-size: 12px;
       padding: 10px 16px;
     }

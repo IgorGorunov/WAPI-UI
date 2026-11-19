@@ -126,6 +126,7 @@ export type FieldPropsType<T extends FieldValues = FieldValues> = {
   isManualInput?: boolean;
   manualInput?: boolean;
   placeholderColor?: string;
+  hasLink?: boolean;
 }
 
 export type FormBuilderType = FieldPropsType & {

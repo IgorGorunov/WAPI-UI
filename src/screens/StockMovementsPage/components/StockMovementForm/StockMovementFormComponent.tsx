@@ -28,6 +28,7 @@ import {
     SingleStockMovementType,
     STOCK_MOVEMENT_DOC_SUBJECT,
     STOCK_MOVEMENT_DOC_TYPE,
+    StockMovementDeliveryCostApprovalType,
     StockMovementParamsType
 } from "@/types/stockMovements";
 import ModalStatus, {ModalStatusType} from "@/components/ModalStatus";
@@ -56,7 +57,7 @@ import {sendUserBrowserInfo} from "@/services/userInfo";
 import HintsModal from "@/screens/StockMovementsPage/components/StockMovementForm/HintsModal";
 import useTenant from "@/context/tenantContext";
 import {isTabAllowed} from "@/utils/tabs";
-import CostApproval from "@/screens/StockMovementsPage/components/StockMovementForm/CostApproval";
+import CostApproval, { isAwaitingApproval } from "@/screens/StockMovementsPage/components/StockMovementForm/CostApproval";
 
 
 type ResponsiveBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -67,7 +68,7 @@ type StockMovementFormType = {
     docData?: SingleStockMovementType;
     docParameters?: StockMovementParamsType;
     closeDocModal: () => void;
-    refetchDoc: () => void;
+    refetchDoc: () => Promise<any> | void;
     forbiddenTabs: string[] | null;
 }
 
@@ -659,8 +660,56 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
         setShowTicketForm(true)
     }
 
+    const [currentDeliveryCosts, setCurrentDeliveryCosts] = useState<StockMovementDeliveryCostApprovalType[]>(
+        docData?.PrecalculatedDeliveryCost || (docData as any)?.precalculatedDeliveryCost || []
+    );
+
+    useEffect(() => {
+        const costs = docData?.PrecalculatedDeliveryCost || (docData as any)?.precalculatedDeliveryCost || [];
+        setCurrentDeliveryCosts(costs);
+    }, [docData?.PrecalculatedDeliveryCost, (docData as any)?.precalculatedDeliveryCost]);
+
+    const [isUpdatingCosts, setIsUpdatingCosts] = useState(false);
+    const canEditCostApproval = isActionIsAccessible(`${getAccessActionObject(docType)}/DeliveryCost`, AccessActions.Edit);
+    const hasNeedCostApproval = currentDeliveryCosts && currentDeliveryCosts.some(item => isAwaitingApproval(item.Status));
+
+    const handleUpdateDeliveryCosts = async () => {
+        if (!refetchDoc) return;
+        try {
+            setIsUpdatingCosts(true);
+            const prevCostJson = JSON.stringify(currentDeliveryCosts || []);
+            const updated = await refetchDoc();
+            console.log('handleUpdateDeliveryCosts fetched doc:', updated);
+
+            const updatedCosts: StockMovementDeliveryCostApprovalType[] =
+                (updated as any)?.PrecalculatedDeliveryCost ||
+                (updated as any)?.precalculatedDeliveryCost ||
+                (updated as any)?.data?.PrecalculatedDeliveryCost ||
+                (updated as any)?.data?.precalculatedDeliveryCost ||
+                [];
+
+            console.log('handleUpdateDeliveryCosts parsed costs:', updatedCosts);
+
+            if (updatedCosts && updatedCosts.length > 0) {
+                setCurrentDeliveryCosts(updatedCosts);
+            }
+
+            const newCostJson = JSON.stringify(updatedCosts);
+            if (prevCostJson !== newCostJson) {
+                toast.success('Delivery costs updated successfully!');
+            } else {
+                toast.info('Delivery costs are up to date.');
+            }
+        } catch (error) {
+            console.error('Error updating delivery costs:', error);
+            toast.error('Failed to update delivery costs');
+        } finally {
+            setIsUpdatingCosts(false);
+        }
+    };
+
     //tab titles
-    const tabTitleArray = useMemo(() => TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length), !!(docData?.PrecalculatedDeliveryCost && docData.PrecalculatedDeliveryCost.length), forbiddenTabs), [docData, forbiddenTabs]);
+    const tabTitleArray = useMemo(() => TabTitles(!!docData?.uuid, !!(docData?.tickets && docData?.tickets.length), !!(currentDeliveryCosts && currentDeliveryCosts.length), forbiddenTabs), [docData?.uuid, docData?.tickets, currentDeliveryCosts, forbiddenTabs]);
     const { tabTitles, updateTabTitles, clearTabTitles, resetTabTables } = useTabsState(tabTitleArray, TabFields);
 
 
@@ -2183,15 +2232,30 @@ const StockMovementFormComponent: React.FC<StockMovementFormType> = ({ docType, 
                     </div>
                 </div>}
                 {
-                    docData?.uuid && docData?.PrecalculatedDeliveryCost && docData?.PrecalculatedDeliveryCost.length > 0 && isTabAllowed('DeliveryCost', forbiddenTabs) ? (
+                    docData?.uuid && currentDeliveryCosts && currentDeliveryCosts.length > 0 && isTabAllowed('DeliveryCost', forbiddenTabs) ? (
                         <div key='delivery-cost-approval-tab' className='delivery-cost-approval-tab'>
                             <div className={`card min-height-600 ${styles['stock-movement--cost-approval']}`}>
-                                <h3 className={styles['stock-movement__block-title']}>
-                                    <Icon name='approval' />
-                                    Delivery cost approval
-                                </h3>
+                                <div className={styles['stock-movement--cost-approval-header']}>
+                                    <h3 className={styles['stock-movement__block-title']}>
+                                        <Icon name='approval' />
+                                        Delivery cost approval
+                                    </h3>
+                                    {canEditCostApproval && hasNeedCostApproval ? (
+                                        <Button
+                                            type="button"
+                                            size={ButtonSize.SMALL}
+                                            variant={ButtonVariant.SECONDARY}
+                                            icon="replace"
+                                            disabled={isUpdatingCosts}
+                                            onClick={handleUpdateDeliveryCosts}
+                                        >
+                                            {isUpdatingCosts ? 'Updating...' : 'Update delivery costs'}
+                                        </Button>
+                                    ) : null}
+                                </div>
                                 <CostApproval
-                                    costApproval={docData?.PrecalculatedDeliveryCost}
+                                    key={`cost-approval-${currentDeliveryCosts.length}-${JSON.stringify(currentDeliveryCosts)}`}
+                                    costApproval={currentDeliveryCosts}
                                     docName={`${docType} ${docData?.number} from ${formatDateStringToDisplayString(docData.date)}`}
                                     uuid={docData?.uuid}
                                     docType={docType}
