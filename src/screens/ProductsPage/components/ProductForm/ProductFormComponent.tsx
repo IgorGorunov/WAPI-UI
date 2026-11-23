@@ -1702,15 +1702,20 @@ const ProductFormComponent: React.FC<ProductPropsType> = ({ uuid, productParams,
                                 />
                             </div>
                         </div>
-                        {isDisabled && productData?.uuid && selectedFiles.some(file => file.isNew && !isRegistrationFile(file)) ? (
-                            <div className='dropzone__btns'>
-                                <Button onClick={handleSendDocFiles}>Send files</Button>
-                            </div>
-                        ) : null}
+                        {/*{isDisabled && productData?.uuid && selectedFiles.some(file => file.isNew && !isRegistrationFile(file)) ? (*/}
+                        {/*    <div className='dropzone__btns'>*/}
+                        {/*        <Button onClick={handleSendDocFiles}>Send files</Button>*/}
+                        {/*    </div>*/}
+                        {/*) : null}*/}
                     </CardWithHelpIcon>
                 </div> : null}
             </Tabs>
             <div className='form-submit-btn'>
+                {isDisabled && productData?.uuid && selectedFiles.some(file => file.isNew && !isRegistrationFile(file)) ? (
+                    <div className='dropzone__btns'>
+                        <Button onClick={handleSendDocFiles}>Send files</Button>
+                    </div>
+                ) : null}
                 {productData && productData.uuid && isTabAllowed('Tickets', forbiddenTabs) ? <Button type='button' variant={ButtonVariant.PRIMARY} icon='add' iconOnTheRight onClick={handleCreateTicket}>Create ticket</Button> : null}
                 {isDisabled && !productIsApproved && <Button type="button" disabled={false} onClick={handleClickEdit} variant={ButtonVariant.PRIMARY}>Edit</Button>}
                 {!isDisabled && !productIsApproved && <Button type="submit" disabled={isDisabled || productIsApproved} onClick={() => setSendStatus(SendStatusType.DRAFT)} variant={ButtonVariant.PRIMARY}>Save as draft</Button>}
